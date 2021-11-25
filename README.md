@@ -3,7 +3,7 @@ git init
 git add .
 git commit -m "Maqsad"
 git push
-
+Islom
 Installation
 Laravel Framework 8.40 composer update (composer self-update)
 php artisan voyager:install
