@@ -14,10 +14,10 @@ class CreateFoodCompositionsTable extends Migration
     public function up()
     {
         Schema::create('food_compositions', function (Blueprint $table) {
-            $table->increments('food_com_id');
-            $table->integer('food_name_id')->references('food_id')->on('food');
-            $table->integer('product_name_id')->references('product_name_id')->on('products');
-            $table->integer('age_name_id')->references('age_id')->on('age_ranges');
+            $table->increments('id');
+            $table->integer('food_name_id')->references('id')->on('food');
+            $table->integer('product_name_id')->references('id')->on('products');
+            $table->integer('age_name_id')->references('id')->on('age_ranges');
             $table->integer('product_weight');
             $table->timestamps();
         });
