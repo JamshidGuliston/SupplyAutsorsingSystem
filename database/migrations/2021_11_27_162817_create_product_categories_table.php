@@ -14,7 +14,7 @@ class CreateProductCategoriesTable extends Migration
     public function up()
     {
         Schema::create('product_categories', function (Blueprint $table) {
-            $table->increments('pro_cat_id');
+            $table->increments('id');
             $table->string('pro_cat_name');
             $table->string('pro_cat_image');
             $table->timestamps();

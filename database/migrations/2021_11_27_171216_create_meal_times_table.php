@@ -14,7 +14,7 @@ class CreateMealTimesTable extends Migration
     public function up()
     {
         Schema::create('meal_times', function (Blueprint $table) {
-            $table->increments('meal_time_id');
+            $table->increments('id');
             $table->string('meal_time_name');
             $table->timestamps();
         });

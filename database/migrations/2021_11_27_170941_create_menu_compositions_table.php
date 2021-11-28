@@ -14,10 +14,10 @@ class CreateMenuCompositionsTable extends Migration
     public function up()
     {
         Schema::create('menu_compositions', function (Blueprint $table) {
-            $table->increments('menu_compos_id');
-            $table->integer('one_day_menu_id')->references('one_day_menu_id')->on('one_day_menus');
-            $table->integer('menu_meal_time_id')->references('meal_time_id')->on('meal_times');
-            $table->integer('menu_food_id')->references('food_id')->on('food');
+            $table->increments('id');
+            $table->integer('one_day_menu_id')->references('id')->on('one_day_menus');
+            $table->integer('menu_meal_time_id')->references('id')->on('meal_times');
+            $table->integer('menu_food_id')->references('id')->on('food');
             $table->timestamps();
         });
     }
