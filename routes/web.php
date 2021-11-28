@@ -18,6 +18,6 @@ Route::get('/', function () {
 });
 
 
-Route::get('/admin', function () {
-    return view('admin');
+Route::group(['prefix' => 'admin'], function () {
+    Voyager::routes();
 });
