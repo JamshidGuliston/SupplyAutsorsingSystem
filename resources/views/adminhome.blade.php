@@ -15,6 +15,7 @@
 
 
     <!-- Modal -->
+    
     <div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered" role="document">
             <div class="modal-content">
@@ -24,22 +25,23 @@
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
-                <div class="modal-body">
+                <form action='/newday' method="post" >@csrf
+                	<div class="modal-body">
                     <div class="form-group">
                         <label for="exampleFormControlSelect1">Menyular ro'yhati</label>
-                        <select class="form-control" id="exampleFormControlSelect1">
-                            <option>1</option>
-                            <option>2</option>
-                            <option>3</option>
-                            <option>4</option>
-                            <option>5</option>
+                        <select class="form-control" name='menus' id="exampleFormControlSelect1">
+                        	
+                        	@foreach($menu as $menus)
+                            <option value="{{$menus->id}}">{{$menus->one_day_menu_name}}</option>
+                            @endforeach
                         </select>
                     </div>
                 </div>
-                <div class="modal-footer">
+                	<div class="modal-footer">
                     <button type="button" class="btn btn-warning" data-dismiss="modal">Yopish</button>
-                    <button type="button" class="btn btn-success">Saqlash</button>
+                    <button type="submit" class="btn btn-success">Saqlash</button>
                 </div>
+               </form> 
             </div>
         </div>
     </div>

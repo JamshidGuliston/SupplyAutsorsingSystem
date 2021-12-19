@@ -15,6 +15,14 @@ use App\Http\Controllers\TestController;
 
 Route::get('/', [TestController::class, 'index']);
 
+Route::get('/controller', [TestController::class, 'start']);
+
+Route::post('/newday', [TestController::class, 'menustart']);
+
+Route::get('/showmenu/{kid}/{did}/{aid}', [TestController::class, 'showmenu']);
+
+Route::get('/gow', [TestController::class, 'addchilds']);
+
 Route::get('/cron', [TestController::class, 'tomorrowdate']);
 
 Route::group(['prefix' => 'admin'], function () {
