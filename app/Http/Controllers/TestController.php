@@ -12,6 +12,7 @@ use App\Models\Menu_composition;
 use App\Models\Number_children;
 use App\Models\One_day_menu;
 use Illuminate\Http\Request;
+use Dompdf\Dompdf;
 
 class TestController extends Controller
 {
@@ -32,24 +33,23 @@ class TestController extends Controller
         if (empty($days["day_number"])) {
             $days["day_number"] = 0;
         }
-        // dd($days["day_number"]);
         
         date_default_timezone_set('Asia/Tashkent');
 		// date("h:i:sa:M-d-Y");
         $d = strtotime("+1 day");
-        if (date("w", $d) != 6) {
+        // if (date("w", $d) != 6) {
         	// dd(date("w", $d));
-            DB::insert('insert into days (day_number, year_id, month_id) values (?, ?, ?)', [date('d', $d), $year[0]['id'], $month[0]['id']]);
-        } else {
-            $startdate = strtotime("Monday");
-            date("d", $startdate);
-        }
+        DB::insert('insert into days (day_number, year_id, month_id) values (?, ?, ?)', [date('d', $d), $year[0]['id'], $month[0]['id']]);
+        // } else {
+        //     $startdate = strtotime("Monday");
+        //     date("d", $startdate);
+        // }
     }
     
     
     
     public function menustart(Request $request){
-    	$days = Day::orderBy('id', 'DESC')->first();
+		$days = Day::orderBy('id', 'DESC')->first();
     	$chil_number = Temporary::all();
     	
     	foreach($chil_number as $child){
@@ -105,6 +105,39 @@ class TestController extends Controller
     	
     }
     
+	public function downloadPDF(Request $request, $kid, $did, $aid){
+		$menu = Number_children::where([
+			['kingar_name_id', '=', $kid],
+			['day_id', '=', $did],
+			['king_age_name_id', '=', $aid]
+		])->get();
+		
+		// dd($menu [0]['kingar_menu_id']);
+		$menuitem = DB::table('menu_compositions')
+					->where('menu_compositions.one_day_menu_id', '=', $menu[0]['kingar_menu_id'])
+					->join('food_compositions', 'menu_compositions.menu_food_id', '=', 'food_compositions.food_name_id')
+					->where('food_compositions.age_name_id', '=', $menu[0]['king_age_name_id'])
+					->join('meal_times', 'menu_compositions.menu_meal_time_id', '=', 'meal_times.id')
+					->join('food', 'food_compositions.food_name_id', '=', 'food.id')
+					->join('products', 'food_compositions.product_name_id', '=', 'products.id')
+					->orderBy('menu_meal_time_id')
+					->get();
+		$dompdf = new Dompdf('UTF-8');
+		$html = mb_convert_encoding(view('alltable', ['menu' => $menu, 'menuitem' => $menuitem]), 'HTML-ENTITIES', 'UTF-8');
+		$dompdf->loadHtml($html);
+	
+		// (Optional) Setup the paper size and orientation
+		$dompdf->setPaper('A4', 'landscape');
+		// $customPaper = array(0,0,360,360);
+		// $dompdf->setPaper($customPaper);
+	
+		// Render the HTML as PDF
+		$dompdf->render();
+	
+		// Output the generated PDF to Browser
+		$dompdf->stream('demo.pdf', ['Attachment'=>0]);
+	}
+
     public function start(Request $request)
     {
     	$temp = Temporary::truncate();

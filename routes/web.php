@@ -12,14 +12,32 @@ use App\Http\Controllers\TestController;
 | contains the "web" middleware group. Now create something great!
 |
 */
+use Dompdf\Dompdf;
 
 Route::get('/', [TestController::class, 'index']);
 
 Route::get('/controller', [TestController::class, 'start']);
 
-Route::post('/newday', [TestController::class, 'menustart']);
+Route::get('/newday', [TestController::class, 'menustart']);
 
 Route::get('/showmenu/{kid}/{did}/{aid}', [TestController::class, 'showmenu']);
+
+Route::get('/downloadPDF/{kid}/{did}/{aid}', [TestController::class, 'downloadPDF']);
+
+Route::get('/pdf', function(){
+    $dompdf = new Dompdf();
+    $dompdf->loadHtml('hello world');
+
+    // (Optional) Setup the paper size and orientation
+    $dompdf->setPaper('A4', 'landscape');
+
+    // Render the HTML as PDF
+    $dompdf->render();
+
+    // Output the generated PDF to Browser
+    $dompdf->stream('demo.pdf', ['Attachment'=>0]);
+
+});
 
 Route::get('/gow', [TestController::class, 'addchilds']);
 
