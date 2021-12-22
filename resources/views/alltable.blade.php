@@ -49,6 +49,7 @@
 		-ms-transform: rotate(-90deg);
 		-o-transform: rotate(-90deg);
 		transform: rotate(-90deg);
+		white-space: nowrap;
 	}
 </style>
 </head>
