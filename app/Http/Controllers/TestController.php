@@ -16,6 +16,11 @@ use Dompdf\Dompdf;
 
 class TestController extends Controller
 {
+	public function __construct()
+    {
+        $this->middleware('auth');
+    }
+
     function index(Request $request)
     {
         $gr = Temporary::join('kindgardens', 'temporaries.kingar_name_id', '=', 'kindgardens.id')->orderBy('kingar_name_id')->get();
