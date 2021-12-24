@@ -25,8 +25,8 @@ class TestController extends Controller
     {
         $gr = Temporary::join('kindgardens', 'temporaries.kingar_name_id', '=', 'kindgardens.id')->orderBy('kingar_name_id')->get();
         $menu = One_day_menu::all();
-        
-        return view('adminhome', ['gardens' => $gr, 'menu'=> $menu ]);
+        $days = Day::orderBy('id', 'DESC')->first();
+        return view('adminhome', ['gardens' => $gr, 'menu'=> $menu, 'days'=>$days]);
     }
 
     public function tomorrowdate(Request $request)
