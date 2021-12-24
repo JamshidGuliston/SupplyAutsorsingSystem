@@ -16,10 +16,10 @@ use Dompdf\Dompdf;
 
 class TestController extends Controller
 {
-	public function __construct()
-    {
-        $this->middleware('auth');
-    }
+	// public function __construct()
+    // {
+    //     $this->middleware('auth');
+    // }
 
     function index(Request $request)
     {

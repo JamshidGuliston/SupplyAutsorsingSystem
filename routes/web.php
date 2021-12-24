@@ -3,6 +3,10 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\TestController;
 use App\Http\Controllers\Controller;
+
+use App\Http\Controllers\StorageController;
+use App\Http\Controllers\TechnologController;
+use Illuminate\Support\Facades\Auth;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -40,3 +44,11 @@ Route::group(['prefix' => 'admin'], function () {
 Auth::routes();
 
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+
+Route::group(['prefix'=>'storage', 'middleware'=>['isStorage','auth']], function(){
+    Route::get('home', [StorageController::class, 'index'])->name('storage.home');
+});
+
+Route::group(['prefix'=>'technolog', 'middleware'=>['isTechnolog','auth']], function(){
+    Route::get('home', [TechnologController::class, 'index'])->name('technolog.home');
+});
