@@ -23,6 +23,9 @@ Route::get('/wel', function(){
 
 Route::get('/hello', [Controller::class, 'hello']);
 
+// dashboart test
+Route::get('/dash', [TestController::class, 'dash']);
+
 Route::get('/', [TestController::class, 'index']);
 
 Route::get('/controller', [TestController::class, 'start']);
