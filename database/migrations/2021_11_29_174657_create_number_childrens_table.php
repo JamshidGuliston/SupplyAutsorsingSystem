@@ -19,6 +19,7 @@ class CreateNumberChildrensTable extends Migration
             $table->integer('day_id');
             $table->integer('king_age_name_id');
             $table->integer('kingar_children_number');
+            $table->integer('workers_count');
             $table->integer('kingar_menu_id');
             $table->timestamps();
         });

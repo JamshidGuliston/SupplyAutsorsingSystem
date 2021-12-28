@@ -16,7 +16,7 @@ class CreatePeopleTable extends Migration
         Schema::create('people', function (Blueprint $table) {
             $table->increments('id');
             $table->integer('kingar_id');
-            $table->integer('telegram_id');
+            $table->biginteger('telegram_id');
             $table->string('telegram_name');
             $table->string('telegram_password');
             $table->timestamps();

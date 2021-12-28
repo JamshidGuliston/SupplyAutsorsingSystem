@@ -85,8 +85,7 @@ class TestController extends Controller
     				['kingar_name_id', '=', $kid],
     				['day_id', '=', $did],
     				['king_age_name_id', '=', $aid]
-    			])->get();
-    			
+    			])->join('kindgardens', 'number_childrens.kingar_name_id', '=', 'kindgardens.id')->get();		
     			// dd($menu [0]['kingar_menu_id']);
     	$menuitem = DB::table('menu_compositions')
     				->where('menu_compositions.one_day_menu_id', '=', $menu[0]['kingar_menu_id'])
@@ -112,10 +111,10 @@ class TestController extends Controller
     
 	public function downloadPDF(Request $request, $kid, $did, $aid){
 		$menu = Number_children::where([
-			['kingar_name_id', '=', $kid],
 			['day_id', '=', $did],
+			['kingar_name_id', '=', $kid],
 			['king_age_name_id', '=', $aid]
-		])->get();
+		])->join('kindgardens', 'number_childrens.kingar_name_id', '=', 'kindgardens.id')->get();
 		
 		// dd($menu [0]['kingar_menu_id']);
 		$menuitem = DB::table('menu_compositions')

@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateKindgardensTable extends Migration
+class CreateKingarAgesTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,12 +13,10 @@ class CreateKindgardensTable extends Migration
      */
     public function up()
     {
-        Schema::create('kindgardens', function (Blueprint $table) {
-            $table->increments('id');
-            $table->string('kingar_name');
-            $table->string('kingar_password');
-            $table->integer('telegram_user_id');
-            $table->integer('worker_count');
+        Schema::create('kingar_ages', function (Blueprint $table) {
+            $table->id();
+            $table->integer('kingar_name_id');
+            $table->integer('age_range_id');
             $table->timestamps();
         });
     }
@@ -30,6 +28,6 @@ class CreateKindgardensTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('kindgardens');
+        Schema::dropIfExists('kingar_ages');
     }
 }
