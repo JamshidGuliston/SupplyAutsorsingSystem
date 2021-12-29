@@ -23,7 +23,7 @@
         </div>
         @endif
         @if($date[0]->day_number != date("d", $tomm))
-        <div class="dot" id="four" type="button" data-bs-toggle="modal" data-bs-target="#exampleModal">
+        <div class="dot" id="four" type="button" data-bs-toggle="modal" data-bs-target="#exampleModals">
             <span>{{ date("d", $tomm) }}</span>
             <date>{{ date("F", $tomm) }}</date>
         </div>
@@ -45,45 +45,70 @@
 
     <!-- Modal -->
     <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <form method="post" action="{{ route('technolog.newday') }}">
-                @csrf
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">Yangi ish kuni</h5>
+                    <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <input type="hidden" class="form-control" name="daynum" value="{{ date('d', $tomm) }}"/>
-                    <input type="hidden" class="form-control" name="daymonth" value="{{ date('F', $tomm) }}"/>
-                    <input type="hidden" class="form-control" name="dayyear" value="{{ date('Y', $tomm) }}"/>
-                    {{ date('d', $tomm) ." - ". date("F", $tomm) }}
+                    ...
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
-                    <button type="submit" class="btn btn-success">Yaratish</button>
+                    <button type="button" class="btn btn-success" data-bs-dismiss="modal">Close</button>
+
                 </div>
-            </form>
+            </div>
         </div>
     </div>
+
+    <div class="modal fade" id="exampleModals" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form method="post" action="{{ route('technolog.newday') }}">
+                    @csrf
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">Yangi ish kuni</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <input type="hidden" class="form-control" name="daynum" value="{{ date('d', $tomm) }}" />
+                        <input type="hidden" class="form-control" name="daymonth" value="{{ date('F', $tomm) }}" />
+                        <input type="hidden" class="form-control" name="dayyear" value="{{ date('Y', $tomm) }}" />
+                        {{ date('d', $tomm) ." - ". date("F", $tomm) }}
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-success">Yaratish</button>
+                    </div>
+                </form>
+            </div>
+        </div>
     </div>
+
+
     <!-- end date -->
 
     <div class="row g-3 my-2">
         @foreach($kingardens as $item)
-        <div class="col-md-2">
+        <div class="col-md-3">
             <div class="p-3 bg-white shadow-sm d-flex justify-content-around align-items-center rounded">
                 <div>
-                    <h3 class="fs-2">{{ $item->id }}</h3>
-                    <p class="fs-5">Products</p>
+
+                    <a href="#!" class="list-group-item-action bg-transparent second-text fw-bold" class="fs-5" data-bs-toggle="modal" data-bs-target="#exampleModal">{{$item-> kingar_name}}</a>
+
+                    <div class="user-box">
+                        <h4 class="text-sizes fs-2 m-0">{{ $item->worker_count}}</h4>
+                        <i class="fas user fa-user-alt ml-1"></i>
+                    </div>
                 </div>
-                <i class="fas fa-gift fs-1 primary-text border rounded-full secondary-bg p-3"></i>
+                <i class="fas fa-school fs-1 primary-text border rounded-full secondary-bg p-3"></i>
             </div>
         </div>
         @endforeach
     </div>
 
-    <div class="row my-5">
+    <!-- <div class="row my-5">
         <h3 class="fs-4 mb-3">Recent Orders</h3>
         <div class="col">
             <table class="table bg-white rounded shadow-sm  table-hover">
@@ -171,7 +196,25 @@
                 </tbody>
             </table>
         </div>
-    </div>
+    </div> -->
 
 </div>
+@endsection
+@section('script')
+<script>
+    window.addEventListener('load', MyFunc, true);
+    var i = 0;
+    var j = 0;
+
+    function divchange() {
+        var divtag = document.getElementById("four");
+        var bgcolor = ["#d2f8e9", "#ee928e"];
+        divtag.style.backgroundColor = bgcolor[i];
+        i = (i + 1) % bgcolor.length;
+    }
+
+    function MyFunc() {
+        setInterval(divchange, 1000);
+    }
+</script>
 @endsection

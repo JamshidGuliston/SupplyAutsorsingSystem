@@ -17,7 +17,8 @@ use Illuminate\Support\Facades\Auth;
 | contains the "web" middleware group. Now create something great!
 |
 */
-Route::get('/wel', function(){
+
+Route::get('/wel', function () {
     return view('welcome');
 });
 
@@ -48,12 +49,13 @@ Auth::routes();
 
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 
-Route::group(['prefix'=>'storage', 'middleware'=>['isStorage','auth']], function(){
+Route::group(['prefix' => 'storage', 'middleware' => ['isStorage', 'auth']], function () {
     Route::get('home', [StorageController::class, 'index'])->name('storage.home');
     Route::get('newday', [StorageController::class, 'index'])->name('storage.newday');
 });
 
-Route::group(['prefix'=>'technolog', 'middleware'=>['isTechnolog','auth']], function(){
+Route::group(['prefix' => 'technolog', 'middleware' => ['isTechnolog', 'auth']], function () {
     Route::get('home', [TechnologController::class, 'index'])->name('technolog.home');
     Route::post('newday', [TechnologController::class, 'newday'])->name('technolog.newday');
+    Route::get('sendmenu', [TechnologController::class, 'sendmenu'])->name('technolog.sendmenu');
 });
