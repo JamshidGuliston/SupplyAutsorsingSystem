@@ -29,7 +29,42 @@ class TechnologController extends Controller
         date_default_timezone_set('Asia/Tashkent');
         // date("h:i:sa:M-d-Y");
         $d = strtotime("+1 day");
-        // dd(date("h:i:sa:M-d-Y", $d));
         return view('technolog.home', ['date'=>$days, 'tomm'=>$d, 'kingardens'=>$kingar]);
+    }
+
+    public function newday(Request $request){
+        $months = Month::all();
+        $year = Year::orderBy('id', 'DESC')->first();
+        date_default_timezone_set('Asia/Tashkent');
+        $d = strtotime("+1 day");
+        foreach($months as $month){
+            if($month->month_en == date("F", $d)){
+                Month::where('month_en', $request->daymonth)
+                    ->update(['month_active' => 1]);
+                $activeID = $month;
+            }
+            else{
+                Month::where('month_en', $month->month_en)
+                    ->update(['month_active' => 0]);
+            }
+        }
+
+        if(date("Y", $d) != $year->year_name){
+            Year::where('id', $year->id)
+                ->update(['year_active' => 0]);
+            $rr = Year::create([
+                'year_name' => $request->dayyear,
+                'year_active' => 1
+            ]);
+            $year = $rr;
+        }
+        
+        $newday = Day::create([
+            'day_number' => date("d", $d),
+            'month_id' => $activeID->id,
+            'year_id' => $year->id
+        ]);
+
+        return view('technolog.newday', ['newday'=>$newday, 'month'=>$activeID, 'year'=>$year]);
     }
 }

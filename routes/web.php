@@ -50,8 +50,10 @@ Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name
 
 Route::group(['prefix'=>'storage', 'middleware'=>['isStorage','auth']], function(){
     Route::get('home', [StorageController::class, 'index'])->name('storage.home');
+    Route::get('newday', [StorageController::class, 'index'])->name('storage.newday');
 });
 
 Route::group(['prefix'=>'technolog', 'middleware'=>['isTechnolog','auth']], function(){
     Route::get('home', [TechnologController::class, 'index'])->name('technolog.home');
+    Route::post('newday', [TechnologController::class, 'newday'])->name('technolog.newday');
 });
