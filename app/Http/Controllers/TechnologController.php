@@ -58,12 +58,17 @@ class TechnologController extends Controller
             ]);
             $year = $rr;
         }
+        $bool = Day::where('year_id', $year->id)
+            ->where('month_id', $activeID->id)
+            ->where('day_number', date("d", $d))->get();
         
-        $newday = Day::create([
-            'day_number' => date("d", $d),
-            'month_id' => $activeID->id,
-            'year_id' => $year->id
-        ]);
+        if(empty($bool)){
+            $newday = Day::create([
+                'day_number' => date("d", $d),
+                'month_id' => $activeID->id,
+                'year_id' => $year->id
+            ]);
+        }
 
         return view('technolog.newday', ['newday'=>$newday, 'month'=>$activeID, 'year'=>$year]);
     }
