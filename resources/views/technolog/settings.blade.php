@@ -2,14 +2,16 @@
 
 @section('css')
 <style>
-    form{
+    form {
         width: 85%;
         margin-top: 30px;
     }
-    .form-group{
+
+    .form-group {
         margin-bottom: 20px;
     }
-    .form-group .btn{
+
+    .form-group .btn {
         width: 100%;
         background-color: #2f8d2f;
     }
@@ -19,45 +21,60 @@
 @section('content')
 <div class="py-5 px-5">
     <h2>{{ $garden->kingar_name }}</h2>
-    <form>
+    <form method="POST" action="{{route('updategarden')}}">
         @csrf
+
+
         <div class="form-group row">
             <label class="col-sm-2 col-form-label">Nomi</label>
             <div class="col-sm-10">
-            <input type="text" class="form-control" id="staticEmail" value="{{ $garden->kingar_name }}">
+                <input type="text" class="form-control" name="kinname" id="staticEmail" value="{{ $garden->kingar_name }}">
+                <input type="hidden" class="form-control" name="kinname_id" id="staticEmail" value="{{ $garden->id }}">
             </div>
         </div>
         <div class="form-group row">
             <label for="staticEmail" class="col-sm-2 col-form-label">Parol</label>
             <div class="col-sm-10">
-            <input type="text" class="form-control" id="staticEmail" value="{{ $garden->kingar_password }}">
+                <input type="text" name="kinparol" class="form-control" id="staticEmail" value="{{ $garden->kingar_password }}">
             </div>
         </div>
         <div class="form-group row">
             <label for="inputPassword" class="col-sm-2 col-form-label">Xodimlar soni</label>
             <div class="col-sm-10">
-            <input type="number" class="form-control" value="{{ $garden->worker_count }}">
+                <input type="number" name="worker" class="form-control" value="{{ $garden->worker_count }}">
             </div>
         </div>
         <div class="form-group row">
+
             <label for="inputPassword" class="col-sm-2 col-form-label">Boloar guruhi</label>
-            <div class="col-sm-3">
-                <input class="form-check-input" type="checkbox" id="inlineCheckbox1" value="option1">
-                <label class="form-check-label" for="inlineCheckbox1">3-4 yosh</label>
+            @foreach($ages as $rows)
+            <div class="col-sm-2">
+                <input class="form-check-input" name="yongchek[]" type="checkbox" id="inlineCheckbox1" value="{{$rows['id']}}">
+                <label class="form-check-label" for="inlineCheckbox1">{{$rows['age_name']}}</label>
             </div>
-            <div class="col-sm-3">
-                <input class="form-check-input" type="checkbox" id="inlineCheckbox1" value="option1">
-                <label class="form-check-label" for="inlineCheckbox1">4-7 yosh</label>
-            </div>
-            <div class="col-sm-3">
-                <input class="form-check-input" type="checkbox" id="inlineCheckbox1" value="option1">
-                <label class="form-check-label" for="inlineCheckbox1">qisqa guruh</label>
+            @endforeach
+        </div>
+
+        <div class="form-group row">
+            <label for="inputPassword" class="col-sm-2 col-form-label">Tumanlar</label>
+            <div class="col-sm-10">
+                <select class="form-select" name="region" aria-label="Default select example">
+                    @foreach($regions as $region)
+                    @if($garden->region_id == $region->id)
+                    <option selected value="{{$region['id']}}">{{$region['region_name']}}</option>
+                    @else
+                    <option value="{{$region['id']}}">{{$region['region_name']}}</option>
+                    @endif
+
+                    @endforeach
+                </select>
             </div>
         </div>
+
         <div class="form-group row">
             <label for="inputPassword" class="col-sm-2 col-form-label">Ish faoliyati</label>
             <div class="col-sm-10">
-            <input type="number" class="form-control" value="{{ $garden->hide}}">
+                <input type="number" name="hide" class="form-control" value="{{ $garden->hide}}">
             </div>
         </div>
         <div class="form-group row">
@@ -66,7 +83,7 @@
                 <button type="submit" class="btn btn-success">Saqlash</button>
             </div>
         </div>
-    </form> 
+    </form>
 </div>
 @endsection
 

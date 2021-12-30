@@ -59,4 +59,5 @@ Route::group(['prefix' => 'technolog', 'middleware' => ['isTechnolog', 'auth']],
     Route::post('newday', [TechnologController::class, 'newday'])->name('technolog.newday');
     Route::get('sendmenu', [TechnologController::class, 'sendmenu'])->name('technolog.sendmenu');
     Route::get('settings/{id}', [TechnologController::class, 'settings'])->name('technolog.settings');
+    Route::post('updategarden', [TechnologController::class, 'updategarden'])->name('updategarden');
 });

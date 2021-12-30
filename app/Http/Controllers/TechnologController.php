@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Age_range;
+use App\Models\Region;
 use Illuminate\Support\Facades\DB;
 use App\Models\Day;
 use App\Models\Month;
@@ -52,7 +54,7 @@ class TechnologController extends Controller
                     ->update(['month_active' => 0]);
             }
         }
-        if(empty($year->year_name)){
+        if (empty($year->year_name)) {
             $rr = Year::create([
                 'year_name' => $request->dayyear,
                 'year_active' => 1
@@ -71,8 +73,8 @@ class TechnologController extends Controller
         $bool = Day::where('year_id', $year->id)
             ->where('month_id', $activeID->id)
             ->where('day_number', date("d", $d))->get();
-        
-        if(empty($bool->day_number)){
+
+        if (empty($bool->day_number)) {
             $newday = Day::create([
                 'day_number' => date("d", $d),
                 'month_id' => $activeID->id,
@@ -91,9 +93,29 @@ class TechnologController extends Controller
 
     // bog'chalar sozlanmalari
 
-    public function settings(Request $request, $id){
-        $kgarden = Kindgarden::find($id);
-        // dd($kgarden->kingar_name);
-        return view('technolog.settings', ['garden' => $kgarden]);
+    public function settings(Request $request, $id)
+    {
+        $kgarden = Kindgarden::where('id', $id)->with('age_range')->get();
+        $age = Age_range::all();
+        $region = Region::all();
+        dd($kgarden);
+        return view('technolog.settings', ['garden' => $kgarden, 'ages' => $age, 'regions' => $region]);
+    }
+
+    public function updategarden(Request $request)
+    {
+        $kind = Kindgarden::find($request->kinname_id);
+        $tags = $request->yongchek;
+        $kind->age_range()->sync($tags);
+        // dd($request->all());
+        Kindgarden::where('id', $request->kinname_id)
+            ->update([
+                'kingar_name' => $request->kinname,
+                'region_id' => $request->region,
+                'kingar_password' => $request->kinparol,
+                'worker_count' => $request->worker,
+                'hide' => $request->hide,
+            ]);
+        return redirect()->route('technolog.home');
     }
 }
