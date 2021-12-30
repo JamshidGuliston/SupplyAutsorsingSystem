@@ -13,4 +13,8 @@ class Age_range extends Model
     protected $fillable = [
         'age_name'
     ];
+
+    public function kindgarden(){
+        return $this->belongsToMany(Kindgarden::class);
+    }
 }

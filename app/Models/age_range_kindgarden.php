@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Kingar_age extends Model
+class age_range_kindgarden extends Model
 {
     use HasFactory;
 }

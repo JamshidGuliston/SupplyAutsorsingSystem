@@ -10,8 +10,8 @@
     <link rel="stylesheet" href="/css/app.css" />
     <link rel="stylesheet" href="/css/storage/date.css" />
     <script src="/js/app.js"></script>
-
-    <title>Bootstap 5 Responsive Admin Dashboard</title>
+    <title>system</title>
+    @yield('css')
 </head>
 
 <body>

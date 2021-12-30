@@ -31,6 +31,12 @@ class TestController extends Controller
         return view('adminhome', ['gardens' => $gr, 'menu'=> $menu ]);
     }
 
+	public function tomany(){
+		$kind = Kindgarden::find(2);
+		$tags = [1, 3];
+		$kind->age_range()->sync($tags);
+		dd($kind->age_range);
+	}
     public function tomorrowdate(Request $request)
     {
         $days = Day::orderBy('id', 'DESC')->first();
@@ -147,10 +153,10 @@ class TestController extends Controller
     public function start(Request $request)
     {
     	$temp = Temporary::truncate();
-    	$users = Kindgarden::all();
+    	$users = Kindgarden::where('hide', 1)->get();
     	$path = "https://api.telegram.org/bot";
     	$token = "1843436308:AAE9-UuWjEeAuNkz_lwpuEEQSufTL_Yky9Y";
-    	$text = "Боғчангиз учун эртанги овқатлар менюсига болалар сонини критинг.| 3 yoshgacha = 0; | 4-7 yoshgacha = 0";
+    	$text = "Боғчангиз учун эртанги овқатлар менюсига болалар сонини критинг.| 3-4 yoshgacha = 0; | 4-7 yoshgacha = 0";
         $buttons = '{"inline_keyboard":[[{"text":"1","callback_data":"addnumber_1"}, {"text":"2","callback_data":"addnumber_2"}, {"text":"3","callback_data":"addnumber_3"}], [{"text":"4","callback_data":"addnumber_4"}, {"text":"5","callback_data":"addnumber_5"}, {"text":"6","callback_data":"addnumber_6"}], [{"text":"7","callback_data":"addnumber_7"}, {"text":"8","callback_data":"addnumber_8"}, {"text":"9","callback_data":"addnumber_9"}], [{"text":"4-7 yoshlilar","callback_data":"addnumber_@"}, {"text":"<","callback_data":"addnumber_<"}], [{"text":"Yuborish","callback_data":"addnumber_ok"}]]}';
     	// dd($users);
     	foreach($users as $user){

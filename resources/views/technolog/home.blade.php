@@ -19,20 +19,24 @@
         @if(!empty($date) and count($date)>0)
         <div class="dot" id="three">
             <span>{{ $date[0]->day_number }}</span>
-            <date>{{ $date[1]->month_name }}</date>
+            <date>{{ $date[0]->month_name }}</date>
         </div>
         @endif
-        @if($date[0]->day_number != date("d", $tomm))
-        <div class="dot" id="four" type="button" data-bs-toggle="modal" data-bs-target="#exampleModals">
-            <span>{{ date("d", $tomm) }}</span>
-            <date>{{ date("F", $tomm) }}</date>
-        </div>
-        @endif
-        @if($date[0]->day_number == date("d", $tomm))
-        <div class="dot" id="four2">
-            <span>{{ date("d", $tomm) }}</span>
-            <date>{{ date("F", $tomm) }}</date>
-        </div>
+        @if(empty($date))
+            <div class="dot" id="four" type="button" data-bs-toggle="modal" data-bs-target="#exampleModals">
+                <span>{{ date("d", $tomm) }}</span>
+                <date>{{ date("F", $tomm) }}</date>
+            </div>
+        @elseif($date[0]->day_number != date("d", $tomm))
+            <div class="dot" id="four" type="button" data-bs-toggle="modal" data-bs-target="#exampleModals">
+                <span>{{ date("d", $tomm) }}</span>
+                <date>{{ date("F", $tomm) }}</date>
+            </div>
+            @elseif($date[0]->day_number == date("d", $tomm))
+            <div class="dot" id="four2">
+                <span>{{ date("d", $tomm) }}</span>
+                <date>{{ date("F", $tomm) }}</date>
+            </div>
         @endif
         <div class="inside"></div>
     </div>
@@ -95,11 +99,12 @@
             <div class="p-3 bg-white shadow-sm d-flex justify-content-around align-items-center rounded">
                 <div>
 
-                    <a href="#!" class="list-group-item-action bg-transparent second-text fw-bold" class="fs-5" data-bs-toggle="modal" data-bs-target="#exampleModal">{{$item-> kingar_name}}</a>
+                    <a href="#!" class="list-group-item-action bg-transparent first-text fw-bold" class="fs-5" data-bs-toggle="modal" data-bs-target="#exampleModal" style="color: #6ac3de;">{{$item-> kingar_name}}</a>
 
                     <div class="user-box">
                         <h4 class="text-sizes fs-2 m-0">{{ $item->worker_count}}</h4>
-                        <i class="fas user fa-user-alt ml-1"></i>
+                        <i class="fas fa-users" style="color: #959fa3; font-size: 20px;"></i>
+                        <a href="{{ route('technolog.settings',  ['id' => $item->id ]) }}" style="color: #959fa3; font-size: 20px;"><i class="fas fa-cog"></i></a>
                     </div>
                 </div>
                 <i class="fas fa-school fs-1 primary-text border rounded-full secondary-bg p-3"></i>

@@ -18,6 +18,7 @@ class CreatePeopleTable extends Migration
             $table->integer('kingar_id');
             $table->biginteger('telegram_id');
             $table->string('telegram_name');
+            $table->string('childs_count');
             $table->string('telegram_password');
             $table->timestamps();
         });

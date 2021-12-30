@@ -31,9 +31,11 @@ class TechnologController extends Controller
         date_default_timezone_set('Asia/Tashkent');
         // date("h:i:sa:M-d-Y");
         $d = strtotime("+1 day");
+        // dd($days[0]->day_number);
         return view('technolog.home', ['date' => $days, 'tomm' => $d, 'kingardens' => $kingar]);
     }
 
+    // yangi kun ishlari
     public function newday(Request $request)
     {
         $months = Month::all();
@@ -50,7 +52,13 @@ class TechnologController extends Controller
                     ->update(['month_active' => 0]);
             }
         }
-
+        if(empty($year->year_name)){
+            $rr = Year::create([
+                'year_name' => $request->dayyear,
+                'year_active' => 1
+            ]);
+            $year = $rr;
+        }
         if (date("Y", $d) != $year->year_name) {
             Year::where('id', $year->id)
                 ->update(['year_active' => 0]);
@@ -64,7 +72,7 @@ class TechnologController extends Controller
             ->where('month_id', $activeID->id)
             ->where('day_number', date("d", $d))->get();
         
-        if(empty($bool)){
+        if(empty($bool->day_number)){
             $newday = Day::create([
                 'day_number' => date("d", $d),
                 'month_id' => $activeID->id,
@@ -79,5 +87,13 @@ class TechnologController extends Controller
     public function sendmenu()
     {
         return view('technolog.newday');
+    }
+
+    // bog'chalar sozlanmalari
+
+    public function settings(Request $request, $id){
+        $kgarden = Kindgarden::find($id);
+        // dd($kgarden->kingar_name);
+        return view('technolog.settings', ['garden' => $kgarden]);
     }
 }

@@ -22,7 +22,7 @@ Route::get('/wel', function () {
     return view('welcome');
 });
 
-Route::get('/hello', [Controller::class, 'hello']);
+Route::get('/hello', [TestController::class, 'tomany']);
 
 // dashboart test
 Route::get('/dash', [TestController::class, 'dash']);
@@ -58,4 +58,5 @@ Route::group(['prefix' => 'technolog', 'middleware' => ['isTechnolog', 'auth']],
     Route::get('home', [TechnologController::class, 'index'])->name('technolog.home');
     Route::post('newday', [TechnologController::class, 'newday'])->name('technolog.newday');
     Route::get('sendmenu', [TechnologController::class, 'sendmenu'])->name('technolog.sendmenu');
+    Route::get('settings/{id}', [TechnologController::class, 'settings'])->name('technolog.settings');
 });
