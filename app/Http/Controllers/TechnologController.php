@@ -13,6 +13,7 @@ use App\Models\Temporary;
 use App\Models\Menu_composition;
 use App\Models\Number_children;
 use App\Models\One_day_menu;
+use App\Models\One_day_menu;
 use Dompdf\Dompdf;
 
 class TechnologController extends Controller
@@ -93,6 +94,7 @@ class TechnologController extends Controller
 
     public function settings(Request $request, $id){
         $kgarden = Kindgarden::find($id);
+        $age = 
         // dd($kgarden->kingar_name);
         return view('technolog.settings', ['garden' => $kgarden]);
     }
