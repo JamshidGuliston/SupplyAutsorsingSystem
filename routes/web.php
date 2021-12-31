@@ -57,6 +57,7 @@ Route::group(['prefix' => 'storage', 'middleware' => ['isStorage', 'auth']], fun
 Route::group(['prefix' => 'technolog', 'middleware' => ['isTechnolog', 'auth']], function () {
     Route::get('home', [TechnologController::class, 'index'])->name('technolog.home');
     Route::post('newday', [TechnologController::class, 'newday'])->name('technolog.newday');
-    Route::get('sendmenu', [TechnologController::class, 'sendmenu'])->name('technolog.sendmenu');
+    Route::get('sendmenu/{day}', [TechnologController::class, 'sendmenu'])->name('technolog.sendmenu');
     Route::get('settings/{id}', [TechnologController::class, 'settings'])->name('technolog.settings');
+    Route::post('updategarden', [TechnologController::class, 'updategarden'])->name('updategarden');
 });

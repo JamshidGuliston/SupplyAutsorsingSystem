@@ -99,7 +99,8 @@
     margin-left: 8px;
 }
 .text-sizes {
-    font-size: 20px !important;
+    font-size: 16px !important;
+    color: #959fa3;
 }
 
 @media (min-width: 768px) {

@@ -14,7 +14,7 @@ class Age_range extends Model
         'age_name'
     ];
 
-    public function kindgarden(){
-        return $this->belongsToMany(Kindgarden::class);
-    }
+    // public function kindgarden(){
+    //     return $this->belongsToMany(Kindgarden::class);
+    // }
 }

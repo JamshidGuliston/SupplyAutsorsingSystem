@@ -75,7 +75,7 @@
             </div>
             <div class="modal-footer">
                 <!-- <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button> -->
-                <button type="button" class="btn btn-info text-white">Saqlash</button>
+                <button type="button" class="btn btn-info text-white">Qo'shish</button>
             </div>
         </div>
     </div>
@@ -85,8 +85,9 @@
 <div class="py-4 px-4">
     <div class="box-sub" style="
         display: flex;
-        justify-content: flex-end;">
-        <input type="submit" class="btn btn-success text-white mb-2" value="SAQLASH">
+        justify-content: space-between;">
+        <p>Bog'chalar soni: {{ count($temps) }}</p>
+        <input type="submit" class="btn btn-success text-white mb-2" value="Yuborish">
     </div>
     <table class="table table-light py-4 px-4">
         <thead>
@@ -95,7 +96,7 @@
                     <input type="checkbox" id="select-all">
                 </th>
                 <th colspan="3">
-                    <select style="width: 32%;
+                    <select name="manu1" style="width: 32%;
                                     border: navajowhite;
                                     padding: 7px 4px;
                                     background-color: #555;
@@ -103,13 +104,14 @@
                                     display: inline-flex;
                                     border-radius: 3px;
                                     box-sizing: border-box;">
-                        <option value="1-menu">1-menyu</option>
-                        <option value="1-menu">1-menyu</option>
-                        <option value="1-menu">1-menyu</option>
+                        @foreach($menus as $menu)
+                        <option value="{{ $menu->id }}">{{ $menu->one_day_menu_name }}</option>
+                        @endforeach
                     </select>
                 </th>
+                <th></th>
                 <th>
-                    <select style="width: 100%;
+                    <select name="menu2" style="width: 100%;
                                     border: navajowhite;
                                     padding: 7px 4px;
                                     background-color: #80afc6;
@@ -117,9 +119,9 @@
                                     display: inline-flex;
                                     border-radius: 3px;
                                     box-sizing: border-box;">
-                        <option value="1-menu">1-menyu</option>
-                        <option value="1-menu">1-menyu</option>
-                        <option value="1-menu">1-menyu</option>
+                        @foreach($menus as $menu)
+                        <option value="{{ $menu->id }}">{{ $menu->one_day_menu_name }}</option>
+                        @endforeach
                     </select>
                 </th>
 
@@ -129,22 +131,29 @@
             <tr>
                 <th scope="col">ID</th>
                 <th scope="col">MTT-nomi</th>
-                <th scope="col">3-4 yosh</th>
-                <th scope="col">4-7 yosh</th>
-                <th scope="col">Qisqa guruh</th>
+                <th scope="col">Xodimlar</th>
+                @foreach($ages as $age)
+                <th scope="col">{{ $age->age_name }}</th>
+                @endforeach
                 <th style="width: 70px;">Edit</th>
             </tr>
         </thead>
         <tbody>
+        @foreach($temps as $temp)
             <tr>
                 <th scope="row"><input type="checkbox" id="bike" name="vehicle" value="gentra"></th>
-                <td>Mark</td>
-                <td>Otto</td>
-                <td>@mdo</td>
-                <td>@mdo</td>
+                <td>{{ $temp['name'] }}</td>
+                <td>{{ $temp['workers'] }}</td>
+                @foreach($ages as $age)
+                @if(isset($temp[$age->id]))
+                    <td>{{ $temp[$age->id] }}</td>
+                @else
+                    <td><i class="far fa-window-close" style="color: red;"></i></td>
+                @endif
+                @endforeach
                 <td><i class="far fa-edit text-info" data-bs-toggle="modal" data-bs-target="#exampleModal" style="cursor: pointer; margin-right: 16px;"> </i><i class="fas fa-trash-alt text-danger" data-bs-toggle="modal" data-bs-target="#exampleModals" style="cursor: pointer;"></i></td>
             </tr>
-
+        @endforeach
 
         </tbody>
     </table>

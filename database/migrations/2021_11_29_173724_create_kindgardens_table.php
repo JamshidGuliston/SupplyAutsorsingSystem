@@ -15,10 +15,12 @@ class CreateKindgardensTable extends Migration
     {
         Schema::create('kindgardens', function (Blueprint $table) {
             $table->increments('id');
+            $table->integer('region_id');
             $table->string('kingar_name');
             $table->string('kingar_password');
             $table->integer('telegram_user_id');
             $table->integer('worker_count');
+            $table->boolean('hide');
             $table->timestamps();
         });
     }

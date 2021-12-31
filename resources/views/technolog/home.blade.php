@@ -6,19 +6,19 @@
         <!-- //date -->
         @if(!empty($date) and count($date)>2)
         <div class="dot" id="one">
-            <span>{{ $date[count($date)-1]->day_number }}</span>
+        <a href="{{ route('technolog.sendmenu', ['day'=> $date[count($date)-1]->id]); }}"><span>{{ $date[count($date)-1]->day_number }}</span></a>
             <date>{{ $date[count($date)-1]->month_name }}</date>
         </div>
         @endif
         @if(!empty($date) and count($date)>1)
         <div class="dot" id="two">
-            <span>{{ $date[1]->day_number }}</span>
+            <a href="{{ route('technolog.sendmenu', ['day'=> $date[1]->id]); }}"><span>{{ $date[1]->day_number }}</span></a>
             <date>{{ $date[1]->month_name }}</date>
         </div>
         @endif
         @if(!empty($date) and count($date)>0)
         <div class="dot" id="three">
-            <span>{{ $date[0]->day_number }}</span>
+            <a href="{{ route('technolog.sendmenu', ['day'=> $date[0]->id]); }}"><span>{{ $date[0]->day_number }}</span></a>
             <date>{{ $date[0]->month_name }}</date>
         </div>
         @endif
@@ -34,7 +34,7 @@
             </div>
             @elseif($date[0]->day_number == date("d", $tomm))
             <div class="dot" id="four2">
-                <span>{{ date("d", $tomm) }}</span>
+                <a href="{{ route('technolog.sendmenu', ['day'=> date('d-F-Y', $tomm)]); }}"><span>{{ date("d", $tomm) }}</span></a>
                 <date>{{ date("F", $tomm) }}</date>
             </div>
         @endif
@@ -102,8 +102,8 @@
                     <a href="#!" class="list-group-item-action bg-transparent first-text fw-bold" class="fs-5" data-bs-toggle="modal" data-bs-target="#exampleModal" style="color: #6ac3de;">{{$item-> kingar_name}}</a>
 
                     <div class="user-box">
-                        <h4 class="text-sizes fs-2 m-0">{{ $item->worker_count}}</h4>
                         <i class="fas fa-users" style="color: #959fa3; font-size: 20px;"></i>
+                        <h2 class="text-sizes fs-2 m-0">{{ "ходимлар:" . $item->worker_count}}</h2>
                         <a href="{{ route('technolog.settings',  ['id' => $item->id ]) }}" style="color: #959fa3; font-size: 20px;"><i class="fas fa-cog"></i></a>
                     </div>
                 </div>
