@@ -75,7 +75,7 @@ class TechnologController extends Controller
         $newday = Day::where('year_id', $year->id)
             ->where('month_id', $activeID->id)
             ->where('day_number', date("d", $d))->first();
-       
+
         if (empty($newday->day_number)) {
             $newday = Day::create([
                 'day_number' => date("d", $d),
@@ -85,17 +85,17 @@ class TechnologController extends Controller
         }
 
         $users = Kindgarden::where('hide', 1)->get();
-    	$path = "https://api.telegram.org/bot";
-    	$token = "5064211282:AAH8CZUdU5i2Vl-4WB3PF4Kll6KoCzgHk8k";
-    	$text = "Боғчангиз учун эртанги овқатлар менюсига болалар сонини критинг. <b>3-4 ёшгача = ?</b>";
+        $path = "https://api.telegram.org/bot";
+        $token = "5064211282:AAH8CZUdU5i2Vl-4WB3PF4Kll6KoCzgHk8k";
+        $text = "Боғчангиз учун эртанги овқатлар менюсига болалар сонини критинг. <b>3-4 ёшгача = ?</b>";
         $buttons = '{"inline_keyboard":[[{"text":"1","callback_data":"addnumber_1"}, {"text":"2","callback_data":"addnumber_2"}, {"text":"3","callback_data":"addnumber_3"}], [{"text":"4","callback_data":"addnumber_4"}, {"text":"5","callback_data":"addnumber_5"}, {"text":"6","callback_data":"addnumber_6"}], [{"text":"7","callback_data":"addnumber_7"}, {"text":"8","callback_data":"addnumber_8"}, {"text":"9","callback_data":"addnumber_9"}], [{"text":"0","callback_data":"addnumber_0"}, {"text":"<","callback_data":"remove_<"}]]}';
-    	// dd($users);
-    	foreach($users as $user){
-    		Person::where('telegram_id', $user->telegram_user_id)->update(array('childs_count' => '0'));
-    		$this->curl_get_contents($path.$token.'/sendmessage?chat_id='.$user->telegram_user_id.'&text='.$text.'&parse_mode=html&reply_markup='.$buttons);
-    	}
+        // dd($users);
+        foreach ($users as $user) {
+            Person::where('telegram_id', $user->telegram_user_id)->update(array('childs_count' => '0'));
+            $this->curl_get_contents($path . $token . '/sendmessage?chat_id=' . $user->telegram_user_id . '&text=' . $text . '&parse_mode=html&reply_markup=' . $buttons);
+        }
 
-        return redirect()->route('technolog.sendmenu', ['day'=> date("d-F-Y", $d)]);
+        return redirect()->route('technolog.sendmenu', ['day' => date("d-F-Y", $d)]);
     }
 
 
@@ -103,35 +103,56 @@ class TechnologController extends Controller
     {
         date_default_timezone_set('Asia/Tashkent');
         $d = strtotime("+1 day");
-        if($day == date("d-F-Y", $d)){
+        if ($day == date("d-F-Y", $d)) {
+
             $ages = Age_range::all();
+
             $sid = Season::where('hide', 1)->first();
+            // dd($sid);
             $menus = One_day_menu::where('menu_season_id', $sid->id)->get();
             $gr = Temporary::join('kindgardens', 'temporaries.kingar_name_id', '=', 'kindgardens.id')
                 ->orderby('kindgardens.id', 'ASC')->get();
+
             $gar = Kindgarden::with('age_range')->get();
+            // unset($gar[0]);
+            // dd($gar);
             $mass = array();
             $loo = 0;
-            for($i=0; $i<count($gr); $i++){
+            for ($i = 0; $i < count($gr); $i++) {
+
                 $mass[$loo]['id'] = $gr[$i]->id;
                 $mass[$loo]['name'] = $gr[$i]->kingar_name;
                 $mass[$loo]['workers'] = $gr[$i]->worker_count;
                 // for($l=0; $l<count($age); $l++){
                 $kages = Kindgarden::find($gr[$i]->id);
-                foreach($kages->age_range as $age){
-                    if($age->id == $gr[$i]->age_id){
+                foreach ($kages->age_range as $age) {
+                    if ($age->id == $gr[$i]->age_id) {
+
                         $mass[$loo][$age->id] = $gr[$i]->age_number;
                     }
                 }
                 // }
-                if($i+1<count($gr) and $gr[$i+1]->id != $mass[$loo]['id']){
+                $j = 0;
+
+                for ($j = 0; $j < count($gar); $j++) {
+
+                    if ($gar[$j]['id'] == $gr[$i]['id']) {
+                        $gar[$j]['ok'] = 1;
+                    }
+                }
+                // foreach ($gar as $add) {
+
+
+                //     $s++;
+                // }
+                if ($i + 1 < count($gr) and $gr[$i + 1]->id != $mass[$loo]['id']) {
+
                     $loo++;
                 }
             }
             // dd($gar[0]->age_range[1]->id);
-            return view('technolog.newday', ['ages'=>$ages, 'menus'=>$menus, 'temps'=> $mass]);
-        }
-        else{
+            return view('technolog.newday', ['ages' => $ages, 'menus' => $menus, 'temps' => $mass, 'gardens' => $gar]);
+        } else {
             return view('technolog.showdate');
         }
     }
@@ -147,6 +168,36 @@ class TechnologController extends Controller
         return view('technolog.settings', ['garden' => $kgarden, 'ages' => $age, 'regions' => $region]);
     }
 
+    public function ageranges(Request $request, $id)
+    {
+        $results = Kindgarden::where('id', $id)->with('age_range')->get();
+        // dd($results[0]->age_range);
+        $html = [];
+        foreach ($results[0]->age_range as $rows) {
+            // $html = $html + "<input type='text' value='salom'>";
+            array_push($html, "<div class='input-group mb-3 mt-3'>
+            <span class='input-group-text' id='inputGroup-sizing-default'>" . $rows['age_name'] . "</span>
+            <input type='number' name='ages[]' data-id=" . $rows['id'] . "  class='form-control' aria-label='Sizing example input' aria-describedby='inputGroup-sizing-default'>
+            </div>");
+        }
+        return $html;
+    }
+
+
+    public function addage(Request $request, $bogid, $ageid, $qiymati)
+    {
+        // $find = Temporary::where('kingar_name_id', $bogid)->first();
+        // if ($find->age_id == $ageid) {
+        //     $find->delete();
+        //     return 0;
+        // }
+
+        Temporary::create([
+            'kingar_name_id' => $bogid,
+            'age_id' => $ageid,
+            'age_number' => $qiymati
+        ]);
+    }
     public function updategarden(Request $request)
     {
         $kind = Kindgarden::find($request->kinname_id);
@@ -164,14 +215,56 @@ class TechnologController extends Controller
         return redirect()->route('technolog.home');
     }
 
+    public function getage(Request $request, $bogid)
+    {
+        $results = Kindgarden::where('id', $bogid)->with('age_range')->get();
+        // dd($results[0]->age_range);
+        $htmls = [];
+        array_push($htmls, "<h3>" . $results[0]['kingar_name'] . "</h3> <input type='hidden' class='kingarediteid' value=" . $results[0]['id'] . " >");
+        foreach ($results[0]->age_range as $rows) {
+            $edite =  Temporary::where('kingar_name_id', $bogid)->where('age_id', $rows['id'])->first();
+            if (empty($edite['age_number'])) {
+
+                $edite['age_number'] = 0;
+            }
+            // $html = $html + "<input type='text' value='salom'>";
+            array_push($htmls, "  <div class='input-group mb-3 mt-3'>
+            <span class='input-group-text' id='inputGroup-sizing-default'>" . $rows['age_name'] . "</span>
+            <input type='number' required name='ages[]' value=" . $edite['age_number'] . " data-id=" . $rows['id'] . "  class='form-control' aria-label='Sizing example input' aria-describedby='inputGroup-sizing-default'>
+            </div>");
+        }
+        return $htmls;
+    }
+
+    public function editage(Request $request, $bogid, $ageid, $qiymati)
+    {
+        $find = Temporary::where('kingar_name_id', $bogid)->where('age_id', $ageid)->get();
+
+        // dd($find);
+
+        if (empty($find[0])) {
+            Temporary::create([
+                'kingar_name_id' => $bogid,
+                'age_id' => $ageid,
+                'age_number' => $qiymati
+            ]);
+        } else {
+            Temporary::where('kingar_name_id', $bogid)->where('age_id', $ageid)->update([
+                'kingar_name_id' => $bogid,
+                'age_id' => $ageid,
+                'age_number' => $qiymati
+            ]);
+        }
+    }
+
     function curl_get_contents($url)
-	{
-		$ch = curl_init();
-		curl_setopt($ch, CURLOPT_HEADER, 0);
-		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-		curl_setopt($ch, CURLOPT_URL, $url);
-		$data = curl_exec($ch);
-		curl_close($ch);
-		return $data;
-	}
+    {
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_HEADER, 0);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($ch, CURLOPT_URL, $url);
+        $data = curl_exec($ch);
+        curl_close($ch);
+        return $data;
+    }
 }

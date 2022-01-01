@@ -3,7 +3,7 @@
 @section('content')
 <!-- EDIT -->
 <!-- Modal -->
-<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<div class="modal editesmodal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header bg-warning">
@@ -15,7 +15,7 @@
             </div>
             <div class="modal-footer">
                 <!-- <button type="button" class="btn btn-warning" data-bs-dismiss="modal">Close</button> -->
-                <button type="button" class="btn btn-warning">Saqlash</button>
+                <button type="button" class="btn editsub btn-warning">Saqlash</button>
             </div>
         </div>
     </div>
@@ -56,26 +56,24 @@
             <div class="modal-body">
                 <div class="kingarden">
                     <label for="basic-url" class="form-label">MTM nomi</label>
-                    <select class="form-select" aria-label="Default select example">
-                        <option selected>12-MTM</option>
-                        <option value="1">One</option>
-                        <option value="2">Two</option>
-                        <option value="3">Three</option>
+                    <select class="form-select" id="select-add" aria-label="Default select example">
+                        <option>--</option>
+
+
+                        @foreach($gardens as $gardenall)
+                        @if(!isset($gardenall['ok']))
+                        <option value="{{$gardenall['id']}}">{{$gardenall['kingar_name']}}</option>
+                        @endif
+                        @endforeach
                     </select>
                 </div>
+                <div class="yang-ages">
 
-                <div class="input-group mb-3 mt-3">
-                    <span class="input-group-text" id="inputGroup-sizing-default">3-4 yosh</span>
-                    <input type="number" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default">
-                </div>
-                <div class="input-group mb-3">
-                    <span class="input-group-text" id="inputGroup-sizing-default">4-7 yosh</span>
-                    <input type="number" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default">
                 </div>
             </div>
             <div class="modal-footer">
                 <!-- <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button> -->
-                <button type="button" class="btn btn-info text-white">Qo'shish</button>
+                <button type="button" class="btn add-age btn-info text-white">Qo'shish</button>
             </div>
         </div>
     </div>
@@ -139,21 +137,21 @@
             </tr>
         </thead>
         <tbody>
-        @foreach($temps as $temp)
+            @foreach($temps as $temp)
             <tr>
                 <th scope="row"><input type="checkbox" id="bike" name="vehicle" value="gentra"></th>
                 <td>{{ $temp['name'] }}</td>
                 <td>{{ $temp['workers'] }}</td>
                 @foreach($ages as $age)
                 @if(isset($temp[$age->id]))
-                    <td>{{ $temp[$age->id] }}</td>
+                <td>{{ $temp[$age->id] }}</td>
                 @else
-                    <td><i class="far fa-window-close" style="color: red;"></i></td>
+                <td><i class="far fa-window-close" style="color: red;"></i></td>
                 @endif
                 @endforeach
-                <td><i class="far fa-edit text-info" data-bs-toggle="modal" data-bs-target="#exampleModal" style="cursor: pointer; margin-right: 16px;"> </i><i class="fas fa-trash-alt text-danger" data-bs-toggle="modal" data-bs-target="#exampleModals" style="cursor: pointer;"></i></td>
+                <td><i class=" edites far fa-edit text-info" data-bs-toggle="modal" data-bs-target="#exampleModal" data-kinid="{{$temp['id']}}" style="cursor: pointer; margin-right: 16px;"> </i></td>
             </tr>
-        @endforeach
+            @endforeach
 
         </tbody>
     </table>
@@ -170,6 +168,77 @@
             checkbox.checked = this.checked;
         }
     }
+    $(document).ready(function() {
+        $('#select-add').change(function() {
+            g = $(this).val();
+            h = $('.yang-ages');
+            $.ajax({
+                method: "GET",
+                url: '/technolog/ageranges/' + g,
+                success: function(data) {
+                    h.html(data);
+                }
+            })
+        });
+
+        $('.add-age').click(function() {
+            var inp = $('.form-control');
+            var k = inp.attr('data-id');
+            inp.each(function() {
+                var j = $(this).attr('data-id');
+                console.log(j);
+                var valuess = $(this).val();
+                console.log(valuess);
+                console.log(g)
+                $.ajax({
+                    method: 'GET',
+                    url: '/technolog/addage/' + g + '/' + j + '/' + valuess,
+                    success: function(data) {
+                        location.reload();
+                    }
+                })
+            })
+        })
+
+        var edite = $('.edites');
+        edite.click(function() {
+            var ll = $(this).attr('data-kinid');
+            $.ajax({
+                method: 'GET',
+                url: '/technolog/getage/' + ll,
+                success: function(data) {
+                    var modaledite = $('.editesmodal .modal-body');
+                    modaledite.html(data);
+                },
+            })
+        })
+
+        var editSub = $('.editsub');
+        editSub.click(function() {
+            var inp = $('.form-control');
+            var k = inp.attr('data-id');
+            var b = $('.kingarediteid').val();
+            inp.each(function() {
+                var j = $(this).attr('data-id');
+                if ($(this).val() == "" || $(this).val() == 0) {
+                    alert('Maydonlarni to`ldiring');
+                } else {
+                    var valuess = $(this).val();
+                    $.ajax({
+                        method: 'GET',
+                        url: '/technolog/editage/' + b + '/' + j + '/' + valuess,
+                        success: function(data) {
+                            location.reload();
+                        }
+                    })
+                };
+
+
+            })
+        })
+
+
+    });
 </script>
 
 @endsection

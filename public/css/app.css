@@ -82,7 +82,7 @@
 .rounded-full {
     font-size: 42px !important;
     color: #6ac3de !important;
-    background-color: #ffffff  !important;
+    background-color: #ffffff !important;
     border-radius: 28% !important;
 }
 
@@ -90,7 +90,7 @@
     display: flex;
     margin-top: 5px;
     align-items: center;
-    justify-content: space-around;
+    justify-content: space-between;
     margin: 0px !important;
 }
 
@@ -101,6 +101,10 @@
 .text-sizes {
     font-size: 16px !important;
     color: #959fa3;
+}
+.user-worker-number {
+    display: flex;
+    align-items: center;
 }
 
 @media (min-width: 768px) {

@@ -60,4 +60,8 @@ Route::group(['prefix' => 'technolog', 'middleware' => ['isTechnolog', 'auth']],
     Route::get('sendmenu/{day}', [TechnologController::class, 'sendmenu'])->name('technolog.sendmenu');
     Route::get('settings/{id}', [TechnologController::class, 'settings'])->name('technolog.settings');
     Route::post('updategarden', [TechnologController::class, 'updategarden'])->name('updategarden');
+    Route::get('ageranges/{id}', [TechnologController::class, 'ageranges']);
+    Route::get('addage/{bogid}/{ageid}/{qiymati}', [TechnologController::class, 'addage']);
+    Route::get('getage/{bogid}', [TechnologController::class, 'getage']);
+    Route::get('editage/{bogid}/{ageid}/{qiymati}', [TechnologController::class, 'editage']);
 });
