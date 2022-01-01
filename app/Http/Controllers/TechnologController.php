@@ -122,6 +122,9 @@ class TechnologController extends Controller
                     if($age->id == $gr[$i]->age_id){
                         $mass[$loo][$age->id] = $gr[$i]->age_number;
                     }
+                    if(empty($mass[$loo][$age->id]) and $age->id>0 and $age->id != $gr[$i]->age_id){
+                        $mass[$loo][$age->id] = "-";
+                    }
                 }
                 // }
                 if($i+1<count($gr) and $gr[$i+1]->id != $mass[$loo]['id']){
