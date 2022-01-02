@@ -47,7 +47,7 @@
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
                     <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
                         <li class="nav-item">
-                            <a class="nav-link first-text fw-bold" href="#" role="button" aria-expanded="false">
+                            <a class="nav-link first-text fw-bold" href="/technolog/addproduct" role="button" aria-expanded="false">
                                 <i class="fas fa-paste me-2"></i>skladga buyurtma
                             </a>
                         </li>

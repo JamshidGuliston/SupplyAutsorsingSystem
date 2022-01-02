@@ -46,16 +46,16 @@
 
             <label for="inputPassword" class="col-sm-2 col-form-label">Bolalar guruhi</label>
             @foreach($ages as $rows)
-            <?php $i=1; ?>
+            <?php $i = 1; ?>
             <div class="col-sm-2">
                 @foreach($garden->age_range as $b)
                 @if($b->id == $rows->id)
-                <?php $i=0; ?>
-                    <input checked class="form-check-input" name="yongchek[]" type="checkbox" id="inlineCheckbox1" value="{{$rows['id']}}">
+                <?php $i = 0; ?>
+                <input checked class="form-check-input" name="yongchek[]" type="checkbox" id="inlineCheckbox1" value="{{$rows['id']}}">
                 @endif
                 @endforeach
                 @if($i)
-                    <input class="form-check-input" name="yongchek[]" type="checkbox" id="inlineCheckbox1" value="{{$rows['id']}}">
+                <input class="form-check-input" required name="yongchek[]" type="checkbox" id="inlineCheckbox1" value="{{$rows['id']}}">
                 @endif
                 <label class="form-check-label" for="inlineCheckbox1">{{$rows['age_name']}}</label>
             </div>
@@ -81,7 +81,7 @@
         <div class="form-group row">
             <label for="inputPassword" class="col-sm-2 col-form-label">Ish faoliyati</label>
             <div class="col-sm-10">
-                <input type="number" name="hide" class="form-control" value="{{ $garden->hide}}">
+                <input type="number" required name="hide" class="form-control" value="{{ $garden->hide}}">
             </div>
         </div>
         <div class="form-group row">

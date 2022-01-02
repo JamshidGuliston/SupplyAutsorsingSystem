@@ -521,16 +521,10 @@
             </div>
         </div>
     </div>
-<<<<<<< HEAD
-    <script src="{{ mix('js/app.js') }}">
-
-    </script>
-=======
     <div id="app">
         <app></app>
     </div>
     <script src="./js/app.js"></script>
->>>>>>> f426397bf1f19ce19df01ddc2ece66b7bf528a58
 </body>
 
 </html>

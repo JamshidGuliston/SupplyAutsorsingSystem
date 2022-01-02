@@ -15,6 +15,10 @@ use App\Models\Temporary;
 use App\Models\Menu_composition;
 use App\Models\Number_children;
 use App\Models\One_day_menu;
+use App\Models\order_product;
+use App\Models\history_process;
+use App\Models\order_product_structure;
+use App\Models\Product;
 use App\Models\Season;
 use Dompdf\Dompdf;
 
@@ -126,7 +130,7 @@ class TechnologController extends Controller
                     if ($age->id == $gr[$i]->age_id) {
                         $mass[$loo][$age->id] = $gr[$i]->age_number;
                     }
-                    if(empty($mass[$loo][$age->id]) and $age->id>0 and $age->id != $gr[$i]->age_id){
+                    if (empty($mass[$loo][$age->id]) and $age->id > 0 and $age->id != $gr[$i]->age_id) {
                         $mass[$loo][$age->id] = "-";
                     }
                 }
@@ -244,6 +248,50 @@ class TechnologController extends Controller
             ]);
         }
     }
+
+    // mayda skladlarga product buyurtma berish
+
+    public function addproduct()
+    {
+        $orederproduct = order_product::join('kindgardens', 'kindgardens.id', '=', 'order_products.kingar_name_id')->join('days', 'days.id', '=', 'order_products.day_id')
+            ->get();
+        // dd($orederproduct);
+        $kingar = Kindgarden::where('hide', 1)->get();
+        return view('technolog.addproduct', ['gardens' => $kingar, 'orders' => $orederproduct]);
+    }
+
+    public function ordername(Request $request)
+    {
+        $days = Day::orderby('id', 'DESC')->get();
+        $orederproduct = order_product::create([
+            'kingar_name_id' => $request->mtmname,
+            'day_id' => $days[1]->id,
+            'order_title' => $request->title,
+            'document_processes_id' => 1,
+        ]);
+
+        return redirect()->route('technolog.addproduct');
+    }
+
+    public function orderitem(Request $request, $id)
+    {
+        // shu joyida hide ishlatishimiz kerak majbur
+        $newsproduct = Product::all();
+
+        return view('technolog.orderitem', ['orderid' => $id, 'productall' => $newsproduct]);
+    }
+    public function plusproduct(Request $request, $id)
+    {
+        order_product_structure::create([
+            'order_product_name_id' => $request->titleid,
+            'product_name_id' => $request->productsid,
+            'product_weight' => $request->sizeproduct,
+        ]);
+        return redirect()->route('technolog.orderitem', $request->titleid);
+    }
+
+
+
 
     function curl_get_contents($url)
     {
