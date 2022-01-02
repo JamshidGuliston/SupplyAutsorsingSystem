@@ -103,10 +103,8 @@ class TechnologController extends Controller
     {
         date_default_timezone_set('Asia/Tashkent');
         $d = strtotime("+1 day");
+        $ages = Age_range::all();
         if ($day == date("d-F-Y", $d)) {
-
-            $ages = Age_range::all();
-
             $sid = Season::where('hide', 1)->first();
             // dd($sid);
             $menus = One_day_menu::where('menu_season_id', $sid->id)->get();
@@ -119,7 +117,6 @@ class TechnologController extends Controller
             $mass = array();
             $loo = 0;
             for ($i = 0; $i < count($gr); $i++) {
-
                 $mass[$loo]['id'] = $gr[$i]->id;
                 $mass[$loo]['name'] = $gr[$i]->kingar_name;
                 $mass[$loo]['workers'] = $gr[$i]->worker_count;
@@ -127,36 +124,24 @@ class TechnologController extends Controller
                 $kages = Kindgarden::find($gr[$i]->id);
                 foreach ($kages->age_range as $age) {
                     if ($age->id == $gr[$i]->age_id) {
-
                         $mass[$loo][$age->id] = $gr[$i]->age_number;
                     }
                     if(empty($mass[$loo][$age->id]) and $age->id>0 and $age->id != $gr[$i]->age_id){
                         $mass[$loo][$age->id] = "-";
                     }
                 }
-                // }
-                $j = 0;
-
                 for ($j = 0; $j < count($gar); $j++) {
-
                     if ($gar[$j]['id'] == $gr[$i]['id']) {
                         $gar[$j]['ok'] = 1;
                     }
                 }
-                // foreach ($gar as $add) {
-
-
-                //     $s++;
-                // }
                 if ($i + 1 < count($gr) and $gr[$i + 1]->id != $mass[$loo]['id']) {
-
                     $loo++;
                 }
             }
-            // dd($gar[0]->age_range[1]->id);
             return view('technolog.newday', ['ages' => $ages, 'menus' => $menus, 'temps' => $mass, 'gardens' => $gar]);
         } else {
-            return view('technolog.showdate');
+            return view('technolog.showdate', ['ages' => $ages]);
         }
     }
 
