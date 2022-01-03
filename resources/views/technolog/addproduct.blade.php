@@ -23,6 +23,9 @@
 <!-- DELET -->
 
 <div class="py-4 px-4">
+    @if(isset($orders[0]->day_number))
+    <h4>Oyning {{ $orders[0]->day_number."-sanasi" }}</h4>
+    @endif      
     <form action="{{route('technolog.ordername')}}" method="post">
         @csrf
         <div class="row">
@@ -31,7 +34,9 @@
                     <select class="form-select" name="mtmname" required>
                         <option value="">MTM-nomi</option>
                         @foreach($gardens as $rows)
+                        @if(!isset($rows['ok']))
                         <option value="{{$rows['id']}}">{{$rows['kingar_name']}}</option>
+                        @endif
                         @endforeach
                     </select>
                 </div>
@@ -106,6 +111,7 @@
             @endforeach
         </tbody>
     </table>
+    <a href="/technolog/home">Orqaga</a>
 </div>
 
 @endsection

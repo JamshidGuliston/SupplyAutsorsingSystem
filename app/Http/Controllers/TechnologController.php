@@ -255,19 +255,28 @@ class TechnologController extends Controller
 
     public function addproduct()
     {
+        $days = Day::orderby('id', 'DESC')->get();
         $orederproduct = order_product::join('kindgardens', 'kindgardens.id', '=', 'order_products.kingar_name_id')
             ->join('days', 'days.id', '=', 'order_products.day_id')
-            ->select('order_products.id', 'order_products.order_title', 'order_products.document_processes_id', 'kindgardens.kingar_name') 
+            ->where('day_id', $days[1]->id)
+            ->select('order_products.id', 'days.day_number', 'order_products.order_title', 'order_products.document_processes_id', 'kindgardens.kingar_name') 
+            ->orderby('order_products.id', 'DESC')
             ->get();
         $orederitems = order_product_structure::join('products', 'products.id', '=', 'order_product_structures.product_name_id')
             ->get();
         // dd($orederproduct);
         $kingar = Kindgarden::where('hide', 1)->get();
-        // foreach($orederproduct as $item){
-        //     foreach($kingar as $ki){
-            // agar bitta bogchaga bir kunda faqat bitta hujjat 
-        //     }
-        // }
+        
+        foreach($orederproduct as $item){
+            $t = 0;
+            foreach($kingar as $ki){
+                if($item->kingar_name == $ki->kingar_name)
+                {
+                    $kingar[$t]['ok'] = 1;
+                }
+                $t++;
+            }
+        }
         return view('technolog.addproduct', ['gardens' => $kingar, 'orders' => $orederproduct, 'products'=>$orederitems]);
     }
 
@@ -309,6 +318,15 @@ class TechnologController extends Controller
             ->join('products', 'products.id', '=', 'order_product_structures.product_name_id')
             ->select('order_product_structures.id', 'order_product_structures.product_weight', 'products.product_name') 
             ->get();
+        foreach($items as $item){
+            $t = 0;
+            foreach($newsproduct as $pro){
+                if($item->product_name == $pro->product_name){
+                    $newsproduct[$t]['ok'] = 1;
+                }
+                $t++;
+            }
+        }
         // dd($items);
         return view('technolog.orderitem', ['orderid' => $id, 'productall' => $newsproduct, 'items'=>$items, 'ordername'=>$orederproduct]);
     }

@@ -84,7 +84,9 @@
                     <select class="form-select" name="productsid" required aria-label="Default select example">
                         <option value="">--Mahsulotlar--</option>
                         @foreach($productall as $all)
+                        @if(!isset($all['ok']))
                         <option value="{{$all['id']}}">{{$all['product_name']}}</option>
+                        @endif
                         @endforeach
                     </select>
                 </div>
