@@ -123,8 +123,9 @@ $(document).ready(function() {
                 'password': pass
             },
             success: function(data) {
-                if(data){
+                if(data==1){
                     h.html("<i class='fas fa-check' style='color: seagreen;'></i>");
+                    location.reload();
                 }
                 else{
                     h.html("<i class='fas fa-exclamation-triangle' style='color: red;'></i>");
