@@ -3,19 +3,19 @@
 @section('content')
 <!-- DELET -->
 <!-- Modal -->
-<div class="modal fade" id="exampleModals" tabindex="-1" aria-labelledby="exampleModalLabels" aria-hidden="true">
+<div class="modal fade" id="exampleModalss" tabindex="-1" aria-labelledby="exampleModalLabelss" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header bg-danger">
-                <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+                <h5 class="modal-title text-white" id="exampleModalLabel">O'chirish</h5>
                 <button type="button" class="btn-close " data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                ...
+                Bu mahsulotni o'chirasizmi
             </div>
             <div class="modal-footer">
                 <!-- <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button> -->
-                <button type="button" class="btn btn-danger">Ok</button>
+                <button type="button" class="btn dele btn-danger">O'chirish</button>
             </div>
         </div>
     </div>
@@ -31,7 +31,7 @@
                 <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <div class="modal-body">
+            <div class="modal-body editesproduct">
                 ...
             </div>
             <div class="modal-footer">
@@ -125,7 +125,7 @@
                         <th scope="row">{{ ++$i }}</th>
                         <td>{{ $item->product_name }}</td>
                         <td>{{ $item->product_weight }}</td>
-                        <td style="text-align: end;"><i class="edites far fa-edit text-info" data-bs-toggle="modal" data-bs-target="#exampleModal" data-kinid="" style="cursor: pointer; margin-right: 16px;"> </i><i class="fa fa-trash" aria-hidden="true"></i></td>
+                        <td style="text-align: end;"><i data-edites-id="{{ $item->id }}" class="editess far fa-edit text-info" data-bs-toggle="modal" data-bs-target="#exampleModal" data-kinid="" style="cursor: pointer; margin-right: 16px;"> </i><i class="detete  fa fa-trash" aria-hidden="true" data-delet-id="{{$item->id}}" data-bs-toggle="modal" data-bs-target="#exampleModalss"></i></td>
                     </tr>
                     @endforeach
                 </tbody>
@@ -140,75 +140,57 @@
 
 @section('script')
 <script>
-$(document).ready(function() {
-    // $('#select-add').change(function() {
-    // g = $(this).val();
-    // h = $('.yang-ages');
-    // $.ajax({
-    //     method: "GET",
-    //     url: '/technolog/ageranges/' + g,
-    //     success: function(data) {
-    //         h.html(data);
-    //     }
-    // })
-    // });
+    $(document).ready(function() {
+        $('.editess').click(function() {
+            var g = $(this).attr('data-edites-id');
+            $.ajax({
+                method: 'GET',
+                url: '/technolog/getproduct',
+                data: {
+                    'id': g
+                },
+                success: function(data) {
+                    var $editesproduct = $('.editesproduct');
+                    varproducts = $editesproduct.html(data);
+                }
 
-    // $('.add-age').click(function() {
-    // var inp = $('.form-control');
-    // var k = inp.attr('data-id');
-    // inp.each(function() {
-    //     var j = $(this).attr('data-id');
-    //     console.log(j);
-    //     var valuess = $(this).val();
-    //     console.log(valuess);
-    //     console.log(g)
-    //     $.ajax({
-    //         method: 'GET',
-    //         url: '/technolog/addage/' + g + '/' + j + '/' + valuess,
-    //         success: function(data) {
-    //             location.reload();
-    //         }
-    //     })
-    // })
-    // })
+            })
+        });
 
-    // var edite = $('.edites');
-    // edite.click(function() {
-    // var ll = $(this).attr('data-kinid');
-    // $.ajax({
-    //     method: 'GET',
-    //     url: '/technolog/getage/' + ll,
-    //     success: function(data) {
-    //         var modaledite = $('.editesmodal .modal-body');
-    //         modaledite.html(data);
-    //     },
-    // })
-    // })
+        $('.editsub').click(function() {
+            var orderinpval = $('.product_order').val();
+            var orderinpid = $('.product_order').attr('data-producy');
+            $.ajax({
+                method: 'GET',
+                url: '/technolog/editproduct',
+                data: {
+                    'producid': orderinpid,
+                    'orderinpval': orderinpval
+                },
+                success: function(data) {
+                    location.reload();
+                }
+            })
+        });
 
-    // var editSub = $('.editsub');
-    // editSub.click(function() {
-    // var inp = $('.form-control');
-    // var k = inp.attr('data-id');
-    // var b = $('.kingarediteid').val();
-    // inp.each(function() {
-    //     var j = $(this).attr('data-id');
-    //     if ($(this).val() == "" || $(this).val() == 0) {
-    //         alert('Maydonlarni to`ldiring');
-    //     } else {
-    //         var valuess = $(this).val();
-    //         $.ajax({
-    //             method: 'GET',
-    //             url: '/technolog/editage/' + b + '/' + j + '/' + valuess,
-    //             success: function(data) {
-    //                 location.reload();
-    //             }
-    //         })
-    //     };
+        $('.detete').click(function() {
+            deletes = $(this).attr('data-delet-id');
+        });
 
+        $('.dele').click(function() {
+            var del = deletes
+            $.ajax({
+                method: "GET",
+                url: '/technolog/deleteid',
+                data: {
+                    'id': del,
+                },
+                success: function(data) {
+                    location.reload();
+                }
 
-    // })
-    // })
-
+            })
+        })
 
     });
 </script>
