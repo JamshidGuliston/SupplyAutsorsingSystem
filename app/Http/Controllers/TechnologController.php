@@ -257,7 +257,7 @@ class TechnologController extends Controller
     {
         $orederproduct = order_product::join('kindgardens', 'kindgardens.id', '=', 'order_products.kingar_name_id')
             ->join('days', 'days.id', '=', 'order_products.day_id')
-            ->select('order_products.id', 'order_products.order_title', 'order_products.document_processes_id', 'kindgardens.kingar_name') 
+            ->select('order_products.id', 'order_products.order_title', 'order_products.document_processes_id', 'kindgardens.kingar_name')
             ->get();
         $orederitems = order_product_structure::join('products', 'products.id', '=', 'order_product_structures.product_name_id')
             ->get();
@@ -265,10 +265,10 @@ class TechnologController extends Controller
         $kingar = Kindgarden::where('hide', 1)->get();
         // foreach($orederproduct as $item){
         //     foreach($kingar as $ki){
-            // agar bitta bogchaga bir kunda faqat bitta hujjat 
+        // agar bitta bogchaga bir kunda faqat bitta hujjat 
         //     }
         // }
-        return view('technolog.addproduct', ['gardens' => $kingar, 'orders' => $orederproduct, 'products'=>$orederitems]);
+        return view('technolog.addproduct', ['gardens' => $kingar, 'orders' => $orederproduct, 'products' => $orederitems]);
     }
 
     public function ordername(Request $request)
@@ -300,17 +300,17 @@ class TechnologController extends Controller
             ->first();
         $days = Day::orderby('id', 'DESC')->get();
         // agar yangi kun ochilsa hujjat oxiriga yetmagan hisoblanadi
-        if(empty($orederproduct->day_number) or $days[1]->day_number != $orederproduct->day_number or $days[1]->month_id != $orederproduct->month_id){
+        if (empty($orederproduct->day_number) or $days[1]->day_number != $orederproduct->day_number or $days[1]->month_id != $orederproduct->month_id) {
             return redirect()->route('technolog.addproduct');
         }
         // shu joyida hide ishlatishimiz kerak majbur
         $newsproduct = Product::all();
         $items = order_product_structure::where('order_product_name_id', $id)
             ->join('products', 'products.id', '=', 'order_product_structures.product_name_id')
-            ->select('order_product_structures.id', 'order_product_structures.product_weight', 'products.product_name') 
+            ->select('order_product_structures.id', 'order_product_structures.product_weight', 'products.product_name')
             ->get();
         // dd($items);
-        return view('technolog.orderitem', ['orderid' => $id, 'productall' => $newsproduct, 'items'=>$items, 'ordername'=>$orederproduct]);
+        return view('technolog.orderitem', ['orderid' => $id, 'productall' => $newsproduct, 'items' => $items, 'ordername' => $orederproduct]);
     }
     public function plusproduct(Request $request)
     {
@@ -323,17 +323,51 @@ class TechnologController extends Controller
         return redirect()->route('technolog.orderitem', $request->titleid);
     }
     // parolni tasdiqlash
-    public function controlpassword(Request $request){
+    public function controlpassword(Request $request)
+    {
         $password = Auth::user()->password;
-        if(Hash::check($request->password, $password)){
+        if (Hash::check($request->password, $password)) {
             $result = 1;
-        }
-        else{
+            order_product::where('id', $request->orderid)->update([
+                'document_processes_id' => 2
+            ]);
+        } else {
             $result = 0;
         }
         return $result;
     }
 
+    // orderproduct malulotlarini olish 
+    public function getproduct(Request $request)
+    {
+
+        $number = order_product_structure::where('order_product_structures.id', $request->id)
+            ->join('products', 'products.id', '=', 'order_product_structures.product_name_id')
+            ->select('order_product_structures.id', 'order_product_structures.product_weight', 'products.product_name')
+            ->first();
+
+        $htmlproduct = "<div class='input-group mb-3'>
+            <span class='input-group-text' id='basic-addon2'>" . $number['product_name'] . " </span>
+            <input  type='number' data-producy=" . $number['id'] . " value=" . $number['product_weight'] . " required class='form-control  product_order'  placeholder='raqam kiriting'></div>";
+
+        return $htmlproduct;
+    }
+
+    // orderproduct malumotlarni tahrirlash
+
+    public function editproduct(Request $request)
+    {
+        order_product_structure::where('id', $request->producid)->update(
+            ['product_weight' => $request->orderinpval]
+        );
+    }
+
+    //  orderproduct malumotlarini o'chirish 
+
+    public function deleteid(Request $request)
+    {
+        order_product_structure::where('id', $request->id)->delete();
+    }
 
     function curl_get_contents($url)
     {

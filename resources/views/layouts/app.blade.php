@@ -47,9 +47,16 @@
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
                     <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
                         <li class="nav-item">
+
+                            @if(Auth::user()->id==3)
                             <a class="nav-link first-text fw-bold" href="/technolog/addproduct" role="button" aria-expanded="false">
-                                <i class="fas fa-paste me-2"></i>skladga buyurtma
+                                <i class="fas fa-paste me-2"></i> skladga buyurtma
                             </a>
+                            @elseif(Auth::user()->id==2)
+                            <a class="nav-link first-text d-flex align-items-center justify-content-between fw-bold" href="/technolog/addproduct" role="button" aria-expanded="false">
+                                <i class="fas fa-envelope fs-3 mr-1" style="margin-right: 5px;"></i> <span>2</span>
+                            </a>
+                            @endif
                         </li>
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle second-text fw-bold" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">

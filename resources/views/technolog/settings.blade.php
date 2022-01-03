@@ -55,7 +55,7 @@
                 @endif
                 @endforeach
                 @if($i)
-                <input class="form-check-input" required name="yongchek[]" type="checkbox" id="inlineCheckbox1" value="{{$rows['id']}}">
+                <input class="form-check-input" name="yongchek[]" type="checkbox" id="inlineCheckbox1" value="{{$rows['id']}}">
                 @endif
                 <label class="form-check-label" for="inlineCheckbox1">{{$rows['age_name']}}</label>
             </div>

@@ -21,7 +21,55 @@
     </div>
 </div>
 <!-- EDIT -->
+<style>
+    .loader-box {
+        width: 100%;
+        background-color: #80afc68a;
+        height: 100%;
+        position: absolute;
+        top: 0;
+        left: 0;
+        display: flex;
+        align-items: center;
+        display: none;
+        justify-content: center;
+    }
 
+    .loader {
+        border: 9px solid #f3f3f3;
+        border-radius: 50%;
+        border-top: 9px solid #3498db;
+        width: 60px;
+        display: block;
+        height: 60px;
+        -webkit-animation: spin 2s linear infinite;
+        animation: spin 2s linear infinite;
+        position: absolute;
+        left: 353px;
+        top: 153px;
+    }
+
+    /* Safari */
+    @-webkit-keyframes spin {
+        0% {
+            -webkit-transform: rotate(0deg);
+        }
+
+        100% {
+            -webkit-transform: rotate(360deg);
+        }
+    }
+
+    @keyframes spin {
+        0% {
+            transform: rotate(0deg);
+        }
+
+        100% {
+            transform: rotate(360deg);
+        }
+    }
+</style>
 
 <!-- DELET -->
 <!-- Modal -->
@@ -48,7 +96,7 @@
 <!-- EDD -->
 <div class="modal fade" id="exampleModalsadd" tabindex="-1" aria-labelledby="exampleModalLabelsadd" aria-hidden="true">
     <div class="modal-dialog  modal-lg">
-        <div class="modal-content">
+        <div class="modal-content loaders">
             <div class="modal-header bg-info">
                 <h5 class="modal-title text-white" id="exampleModalLabel">Modal title</h5>
                 <button type="button" class="btn-close " data-bs-dismiss="modal" aria-label="Close"></button>
@@ -57,7 +105,7 @@
                 <div class="kingarden">
                     <label for="basic-url" class="form-label">MTM nomi</label>
                     <select class="form-select" id="select-add" aria-label="Default select example">
-                        <option>--</option>
+                        <option selected>--</option>
 
 
                         @foreach($gardens as $gardenall)
@@ -70,6 +118,10 @@
                 <div class="yang-ages">
 
                 </div>
+
+            </div>
+            <div class="loader-box">
+                <div class="loader"></div>
             </div>
             <div class="modal-footer">
                 <!-- <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button> -->
@@ -175,8 +227,12 @@
             $.ajax({
                 method: "GET",
                 url: '/technolog/ageranges/' + g,
+                beforeSend: function() {
+                    $('.loader-box').show();
+                },
                 success: function(data) {
                     h.html(data);
+                    $('.loader-box').hide();
                 }
             })
         });

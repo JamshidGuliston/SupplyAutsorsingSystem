@@ -69,4 +69,7 @@ Route::group(['prefix' => 'technolog', 'middleware' => ['isTechnolog', 'auth']],
     Route::get('orderitem/{id}', [TechnologController::class, 'orderitem'])->name('technolog.orderitem');
     Route::post('plusproduct', [TechnologController::class, 'plusproduct'])->name('technolog.plusproduct');
     Route::get('controlpassword', [TechnologController::class, 'controlpassword']);
+    Route::get('getproduct', [TechnologController::class, 'getproduct']);
+    Route::get('editproduct', [TechnologController::class, 'editproduct']);
+    Route::get('deleteid', [TechnologController::class, 'deleteid']);
 });
