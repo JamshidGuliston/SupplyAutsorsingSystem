@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 use App\Models\Age_range;
 use App\Models\Region;
 use Illuminate\Support\Facades\DB;
@@ -321,8 +322,17 @@ class TechnologController extends Controller
         ]);
         return redirect()->route('technolog.orderitem', $request->titleid);
     }
-
-
+    // parolni tasdiqlash
+    public function controlpassword(Request $request){
+        $password = Auth::user()->password;
+        if(Hash::check($request->password, $password)){
+            $result = 1;
+        }
+        else{
+            $result = 0;
+        }
+        return $result;
+    }
 
 
     function curl_get_contents($url)

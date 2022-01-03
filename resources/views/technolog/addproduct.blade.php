@@ -1,6 +1,26 @@
 @extends('layouts.app')
 
 @section('content')
+<!-- DELET -->
+<!-- Modal -->
+<div class="modal fade" id="Modaldelete" tabindex="-1" aria-labelledby="exampleModalLabels" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Shaxsingizni tasdiqlang</h5>
+                <button type="button" class="btn-close " data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <input type="password" class='form-control' id="passw" name="password" placeholder="password" required>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn" id="succ"></button>
+                <button type="button" id="sendpass" class="btn bg-success" style="color: white">Tasdiqlash</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- DELET -->
 
 <div class="py-4 px-4">
     <form action="{{route('technolog.ordername')}}" method="post">
@@ -62,20 +82,24 @@
                 </td>
                 <td>
                     @if($order['document_processes_id'] == 1)
-                    <span style="color: green">Yaratildi</span>
-                    @else
-                        Yuborildi
+                    <span>Yaratildi</span>
+                    @elseif($order['document_processes_id'] == 2)
+                    <span style="color: green">Yuborildi</span>                       
+                    @elseif($order['document_processes_id'] == 3)
+                    <span style="color: green">Qabul qilindi</span> 
+                    @elseif($order['document_processes_id'] == 4)
+                    <span style="color: white; background-color: green">Yuborildi</span> 
                     @endif
                 </td>
                 <td>
                     @if($order['document_processes_id'] == 1)
-                    <a href="/technolog/"><i class="far fa-paper-plane"></i></a></td>
+                    <i class="far fa-paper-plane" data-bs-toggle="modal" data-bs-target="#Modaldelete" style="cursor: pointer; margin-left: 16px; color: deepskyblue"></i>
                     @elseif($order['document_processes_id'] == 2)
                     <i class="fas fa-check" style="color: #1a61aa;"></i>                       
                     @elseif($order['document_processes_id'] == 3)
                     <i class="fas fa-check-double"></i>
                     @elseif($order['document_processes_id'] == 4)
-
+                    <i class="fas fa-clipboard-check"></i>
                     @endif
                 </td>
             </tr>
@@ -84,4 +108,30 @@
     </table>
 </div>
 
+@endsection
+
+@section('script')
+<script>
+$(document).ready(function() {
+    $('#sendpass').click(function() {
+        var pass = $('#passw').val(); 
+        var h = $('#succ');
+        $.ajax({
+            method: "GET",
+            url: '/technolog/controlpassword',
+            data:{
+                'password': pass
+            },
+            success: function(data) {
+                if(data){
+                    h.html("<i class='fas fa-check' style='color: seagreen;'></i>");
+                }
+                else{
+                    h.html("<i class='fas fa-exclamation-triangle' style='color: red;'></i>");
+                }
+            }
+        })
+    });
+})
+</script>
 @endsection
