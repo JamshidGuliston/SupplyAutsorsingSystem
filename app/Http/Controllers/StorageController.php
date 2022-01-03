@@ -40,6 +40,7 @@ class StorageController extends Controller
     }
 
     // hujjatni qabul qilish
+    // hujjat
     public function getdoc(Request $request)
     {
         order_product::where('id', $request->getid)->update([
