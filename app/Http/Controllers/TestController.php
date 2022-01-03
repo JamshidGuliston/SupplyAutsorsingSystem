@@ -17,15 +17,24 @@ use Dompdf\Dompdf;
 class TestController extends Controller
 {
 	// public function __construct()
-    // {
-    //     $this->middleware('auth');
-    // }
+ //   {
+ //       $this->middleware('auth');
+ //   }
 
     function index(Request $request)
     {
         $gr = Temporary::join('kindgardens', 'temporaries.kingar_name_id', '=', 'kindgardens.id')->orderBy('kingar_name_id')->get();
         $menu = One_day_menu::all();
-        $days = Day::orderBy('id', 'DESC')->first();
+        $days = Day::join('years', 'days.year_id', '=', 'years.id')
+        			->join('months', 'days.month_id', '=', 'months.id')
+        			 ->select(
+			                  'days.id',
+			                  'days.day_number',
+			                  'years.year_name',
+			                  'months.month_name'
+			        )
+        			->orderBy('days.id', 'DESC')->get();
+        // dd($days);
         return view('adminhome', ['gardens' => $gr, 'menu'=> $menu, 'days'=>$days]);
     }
 
@@ -41,10 +50,10 @@ class TestController extends Controller
         
         date_default_timezone_set('Asia/Tashkent');
 		// date("h:i:sa:M-d-Y");
-        $d = strtotime("+1 day");
+        // $d = strtotime("+1 day");
         // if (date("w", $d) != 6) {
         	// dd(date("w", $d));
-        DB::insert('insert into days (day_number, year_id, month_id) values (?, ?, ?)', [date('d', $d), $year[0]['id'], $month[0]['id']]);
+        DB::insert('insert into days (day_number, day_name, year_id, month_id) values (?, ?, ?, ?)', [$days["day_number"]+1, 'Dushanba', $year[0]['id'], $month[0]['id']]);
         // } else {
         //     $startdate = strtotime("Monday");
         //     date("d", $startdate);
@@ -55,23 +64,23 @@ class TestController extends Controller
     
     public function menustart(Request $request){
 		$days = Day::orderBy('id', 'DESC')->first();
-    	$chil_number = Temporary::all();
+    	$chil_number = Temporary::join('age_ranges', 'temporaries.age_id', '=', 'age_ranges.id')->get();
+    	
     	
     	foreach($chil_number as $child){
     		Number_children::create([
 	    		'kingar_name_id' => $child->kingar_name_id,
-	    		'day_id' => (int)$days['day_number'],
+	    		'day_id' => (int)$days['id'],
 	    		'king_age_name_id' => $child->age_id,
 	    		'kingar_children_number'=> $child->age_number,
 	    		'kingar_menu_id'=> $request->menus,
 			]);
 			$path = "https://api.telegram.org/bot";
-	    	$token = "1843436308:AAE9-UuWjEeAuNkz_lwpuEEQSufTL_Yky9Y";
-	    	$tday = $days['day_number'];
-	    	$text = "Менюни юклаб олинг.";
-	        $buttons = '{"inline_keyboard":[[{"text":"1-Меню","url":"https://cj56359.tmweb.ru/showmenu/'.$child->kingar_name_id.'/'.$tday.'/1"}]]}';
+	    	$token = "5064211282:AAH8CZUdU5i2Vl-4WB3PF4Kll6KoCzgHk8k";
+	    	$tday = $days['id'];
+	    	$text = $child->age_name. "ли болалар учун менюни юклаб олинг.";
 	    	$user = Kindgarden::where('id', '=', $child->kingar_name_id)->get();
-	    	$this->curl_get_contents($path.$token.'/sendmessage?chat_id='.$user[0]['telegram_user_id'].'&text='.$text.'&reply_markup='.$buttons);
+	    	$this->curl_get_contents($path.$token.'/sendmessage?chat_id='.$user[0]['telegram_user_id']."&text=<a href='https://cj56359.tmweb.ru/downloadPDF/".$child->kingar_name_id."/".$tday."/".$child->age_id."'>".$text."</a>&parse_mode=HTML");
     	}
     	
     	$temp = Temporary::truncate();
@@ -97,17 +106,8 @@ class TestController extends Controller
     				->join('products', 'food_compositions.product_name_id', '=', 'products.id')
     				->orderBy('menu_meal_time_id')
     				->get();
-    	$child = 1;
-    	$days = 4;
-    	$path = "https://api.telegram.org/bot";
-    	$token = "1843436308:AAE9-UuWjEeAuNkz_lwpuEEQSufTL_Yky9Y";
-    	$text = "Менюни юклаб олинг. 1-меню https://cj56359.tmweb.ru/showmenu/".$child."/".(int)$days."/1";
-        $buttons = '{"inline_keyboard":[[{"text":"1-Меню","url":"https://cj56359.tmweb.ru/showmenu/'.$child.'/'.$days.'/1"}, {"text":"2-Меню","url":"https://cj56359.tmweb.ru/showmenu/2/4/2"}]]}';
-    	$user = Kindgarden::where('id', '=', 4)->get();
-    	$this->curl_get_contents($path.$token.'/sendmessage?chat_id='.$user[0]['telegram_user_id'].'&text='.$text.'&reply_markup='.$buttons);		
-    	
+    
     	return view('alltable', ['menu' => $menu, 'menuitem' => $menuitem]);
-    	
     }
     
 	public function downloadPDF(Request $request, $kid, $did, $aid){
@@ -130,31 +130,26 @@ class TestController extends Controller
 		$dompdf = new Dompdf('UTF-8');
 		$html = mb_convert_encoding(view('alltable', ['menu' => $menu, 'menuitem' => $menuitem]), 'HTML-ENTITIES', 'UTF-8');
 		$dompdf->loadHtml($html);
-	
-		// (Optional) Setup the paper size and orientation
+		
 		$dompdf->setPaper('A4', 'landscape');
-		// $customPaper = array(0,0,360,360);
-		// $dompdf->setPaper($customPaper);
-	
-		// Render the HTML as PDF
+		
 		$dompdf->render();
 	
-		// Output the generated PDF to Browser
 		$dompdf->stream('demo.pdf', ['Attachment'=>0]);
 	}
 
     public function start(Request $request)
     {
     	$temp = Temporary::truncate();
-    	$users = Kindgarden::all();
+    	$users = Kindgarden::where('hide', 1)->get();
     	$path = "https://api.telegram.org/bot";
-    	$token = "1843436308:AAE9-UuWjEeAuNkz_lwpuEEQSufTL_Yky9Y";
-    	$text = "Боғчангиз учун эртанги овқатлар менюсига болалар сонини критинг.| 3 yoshgacha = 0; | 4-7 yoshgacha = 0";
-        $buttons = '{"inline_keyboard":[[{"text":"1","callback_data":"addnumber_1"}, {"text":"2","callback_data":"addnumber_2"}, {"text":"3","callback_data":"addnumber_3"}], [{"text":"4","callback_data":"addnumber_4"}, {"text":"5","callback_data":"addnumber_5"}, {"text":"6","callback_data":"addnumber_6"}], [{"text":"7","callback_data":"addnumber_7"}, {"text":"8","callback_data":"addnumber_8"}, {"text":"9","callback_data":"addnumber_9"}], [{"text":"4-7 yoshlilar","callback_data":"addnumber_@"}, {"text":"<","callback_data":"addnumber_<"}], [{"text":"Yuborish","callback_data":"addnumber_ok"}]]}';
+    	$token = "5064211282:AAH8CZUdU5i2Vl-4WB3PF4Kll6KoCzgHk8k";
+    	$text = "Боғчангиз учун эртанги овқатлар менюсига болалар сонини критинг. <b>3-4 ёшгача = ?</b>";
+        $buttons = '{"inline_keyboard":[[{"text":"1","callback_data":"addnumber_1"}, {"text":"2","callback_data":"addnumber_2"}, {"text":"3","callback_data":"addnumber_3"}], [{"text":"4","callback_data":"addnumber_4"}, {"text":"5","callback_data":"addnumber_5"}, {"text":"6","callback_data":"addnumber_6"}], [{"text":"7","callback_data":"addnumber_7"}, {"text":"8","callback_data":"addnumber_8"}, {"text":"9","callback_data":"addnumber_9"}], [{"text":"0","callback_data":"addnumber_0"}, {"text":"<","callback_data":"remove_<"}]]}';
     	// dd($users);
     	foreach($users as $user){
     		Person::where('telegram_id', $user->telegram_user_id)->update(array('childs_count' => '0'));
-    		$this->curl_get_contents($path.$token.'/sendmessage?chat_id='.$user->telegram_user_id.'&text='.$text.'&reply_markup='.$buttons);
+    		$this->curl_get_contents($path.$token.'/sendmessage?chat_id='.$user->telegram_user_id.'&text='.$text.'&parse_mode=html&reply_markup='.$buttons);
     	}
     }
     

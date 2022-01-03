@@ -128,9 +128,9 @@
 
                         <div class="event1Bubble">
                             <div class="eventTime">
-                                <div class="DayDigit">01</div>
+                                <div class="DayDigit">{{ $days[1]->day_number }}</div>
                                 <div class="Day">
-                                    Chorchanba
+                                    {{ $days[1]->day_name }}
                                     <div class="MonthYear">dekabr 2021</div>
                                 </div>
                             </div>

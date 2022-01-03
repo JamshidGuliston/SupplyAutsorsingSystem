@@ -11,7 +11,7 @@ class NishonBot
 {
 	 // dastlabki ma'lumotlar
 	private $path = "https://api.telegram.org/bot";
-    private $token = "1843436308:AAE9-UuWjEeAuNkz_lwpuEEQSufTL_Yky9Y";
+    private $token = "5064211282:AAH8CZUdU5i2Vl-4WB3PF4Kll6KoCzgHk8k";
     private $img_path = "img"; // rasmlar bilan katalogga yo'l
     private $host = 'localhost';
     private $db = 'cj56359_mtm';
@@ -61,7 +61,7 @@ class NishonBot
         		if($text == "/start") {
         			$this->startBot($chat_id, $data);
         		}
-        		if($text[0] == "@") {
+        		elseif($text[0] == "@") {
         			$this->password($chat_id, $data);
         		}
         		else{
@@ -182,17 +182,14 @@ class NishonBot
     		$this->buildInlineKeyBoardButton("9", "addnumber_9")
     	];
     	$buttons[] = [
-    		$this->buildInlineKeyBoardButton("4-7 yoshgacha", "addnumber_@"),
+    		$this->buildInlineKeyBoardButton("0", "addnumber_0"),
     		$this->buildInlineKeyBoardButton("<", "addnumber_<")
-    	];
-    	$buttons[] = [
-    		$this->buildInlineKeyBoardButton("Yuborish", "childnumbertotemp_ok")
     	];
     	
     	$obj = $user->fetch()['childs_count'];
     	$count = explode("_", $obj);
     	
-    	$ok = "  |  ";
+    	$ok = "  ";
     	$textcount1 = "";
     	$textcount2 = "";
     	
@@ -200,15 +197,23 @@ class NishonBot
  
     		$updateSql = $this->pdo->prepare("UPDATE people SET childs_count = :childs_count  WHERE telegram_id = :telegram_id");
         	
-        	$ok = "   =>   ";
+        	$ok = "                             .";
         	
         	if($param[1] != '@'){
-        		$textcount1 = $count[0].$param[1];
-        		$ok = "  |  ";
+        		if($param[1] == '<'){
+					$textcount1 = substr($count[0], 0, -1);
+				}
+				else{
+        			$textcount1 = $count[0].$param[1];
+				}
         		$textcount1 = (int)$textcount1;
+        		$buttons[] = [
+		    		$this->buildInlineKeyBoardButton("4-7 ёшгача", "addnumber_@")
+		    	];
         	}
         	else{
         		$textcount1 = $count[0]."_0";
+        		$ok = " <b>4-7 ёшгача: = ?</b>";
         	}
         	
 	        if (!$updateSql->execute([
@@ -220,9 +225,19 @@ class NishonBot
     	}
 		
 		if(count($count) == 2){
-			$ok = " => ";
+			$buttons[] = [
+	    		$this->buildInlineKeyBoardButton("Юбориш", "childnumbertotemp_ok")
+	    	];
 			$textcount1 = $count[0];
-    		$textcount2 = $count[1].$param[1];
+			
+			if($param[1] == '<'){
+				$textcount2 = substr($count[1], 0, -1);
+			}
+			else{
+				$textcount2 = $count[1].$param[1];	
+			}
+    		
+    		$ok = " <b>4-7 ёшгача: = </b>".(int)$textcount2;
     		
     		$updateSql = $this->pdo->prepare("UPDATE people SET childs_count = :childs_count  WHERE telegram_id = :telegram_id");
           
@@ -235,7 +250,7 @@ class NishonBot
 		}
     	
     	
-    	$this->editMessageText($chat_id2, $mid, "3 yoshgacha: ".(int)$textcount1.$ok." 4-7 yoshgacha: ".(int)$textcount2, $buttons);	
+    	$this->editMessageText($chat_id2, $mid, "<b>3 ёшгача = </b> ".(int)$textcount1." ".$ok, $buttons);	
     }
     
     private function childnumbertotemp($data, $chat_id2, $mid){
@@ -252,7 +267,7 @@ class NishonBot
         file_get_contents("https://cj56359.tmweb.ru/gow/?bogcha=".$row['kingar_id']."&yoshi=1&soni=".$param[0]);
         file_get_contents("https://cj56359.tmweb.ru/gow/?bogcha=".$row['kingar_id']."&yoshi=2&soni=".$param[1]);
         
-        $this->editMessageText($chat_id2, $mid, "Юборилди" );
+        $this->editMessageText($chat_id2, $mid, "Болалар сони 3 ёшгача = ".$param[0]." та ва 4-7 ёшгача = ".$param[1]." та. Маълумотлар юборилди, тез орада менюни оласиз!" );
         
     }
     //////////////////////////////////

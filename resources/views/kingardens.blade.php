@@ -22,7 +22,7 @@
 		    <td>{{ $loop->index+1 }}</td>
 		    <td>{{ $garden->kingar_name }}</td>
 		    <td>04/12/2021</td>
-		    <td><a href="/showmenu/{{ $garden->id }}/{{ $day->day_number }}/1">MЕНЮ 3-4 ёш </a><a href="/showmenu/{{ $garden->id }}/{{ $day->day_number }}/2" style="padding-left: 20px">MЕНЮ 4-7 ёш </a><a href="#" style="padding-left: 20px"> НАКЛАДНАЯ</a></td>
+		    <td><a href="/showmenu/{{ $garden->id }}/{{ $day->id }}/1">MЕНЮ 3-4 ёш </a><a href="/showmenu/{{ $garden->id }}/{{ $day->id }}/2" style="padding-left: 20px">MЕНЮ 4-7 ёш </a><a href="#" style="padding-left: 20px"> НАКЛАДНАЯ</a></td>
 		  </tr>
 		  @endforeach
 		  
