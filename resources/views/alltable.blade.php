@@ -10,7 +10,7 @@
 <!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"> -->
 <title>Title</title>
 <style>
-	 @page { margin: 1.1in 0.8in 0in 0.2in; }
+	 @page { margin: 0.2in 0.8in 0in 0.3in; }
 	body{
 		font-family: DejaVu Sans;
 		font-size:8px;
@@ -20,11 +20,14 @@
 		background-size: 100%;
 		/* padding: 300px 100px 10px 100px; */
 		width:100%;
-		height:100%;
 	}
 	table{
 		border-collapse: collapse;
-		width: 100%;
+		border: 2px solid black;
+		width: 100%;	
+	}
+	thead{
+		border: 2px solid black;
 	}
 	td {
 		text-align: center;
@@ -33,12 +36,12 @@
 		word-wrap: break-word;
 	}
 	th{
-		border: 1px solid #444;
+		border: 1px solid black;
 		padding: 0px;
 	}
 	td{
 		border-right: 1px dashed black;
-		border-bottom: 1px solid #444;
+		border-bottom: 1px solid black;
 		padding: 0px;
 	}
 	.vrt-header span{
@@ -54,13 +57,13 @@
 </style>
 </head>
 <body>
-
     <div class="container-fluid">
         <div class="row mt-5">
             <div class="col-md-12">
                 <div class="table" id="table_with_data">
                 	<?php
-                		echo (($menu[0]['king_age_name_id'] == 1)? "3-4 ": "4-7 "). "ёшли болалар сони: " . $menu[0]['kingar_children_number'];
+						echo "Боғча номи: <b>".$menu[0]['kingar_name']."</b><br/>";
+                		echo (($menu[0]['king_age_name_id'] == 1)? "3-4 ": "4-7 "). "ёшли болалар сони: <b>" . $menu[0]['kingar_children_number']."</b>";
                 	?>
                     <table style="width:100%; table-layout: fixed;">
                         <thead>
@@ -73,6 +76,7 @@
                           	 $prid = array();
                           	 $lo = 0;
                           	 $ind = -1;
+							 $onew = [];
                           	 foreach($menuitem as $items){
                           		if(empty($food1[$items->meal_time_name.$items->food_name])){
                           				$ind++;
@@ -90,9 +94,12 @@
                           			array_push($products, $items->product_name);
                           			$buling[$items->product_name]=true;
                           			$prid[$items->product_name] = $lo;
-                          			$lo++;
+                          			// jami miqdorlar uchun
+									$onew[$lo] = 0;
+									$allw[$lo] = 0;
+									$lo++;
                           			?>
-                          			<th class='vrt-header' style="padding: 0px; width: 3%; height: 80px"><?php echo '<span>'.$items->product_name. '</span>';?></th>
+                          			<th class='vrt-header' style="padding: 0px; width: 3%; height: 95px"><?php echo '<span>'.$items->product_name. '</span>';?></th>
                           			<?php
                           		}
                           		$tree[$ind][$prid[$items->product_name]] = $items->product_weight;
@@ -107,19 +114,19 @@
                         	?>
 			                        <tr>
 			                        	<?php if(!empty($tree[$i]['time'])){ ?>
-			                        				<th scope="row" rowspan="<?php echo 2*$mealtime[$tree[$i]['time']]; ?>" class='vrt-header' style="padding: 0px; height: 60px"><?php echo '<span>'.$tree[$i]['time']. '</span>'; ?></th>
+												<th scope="row" rowspan="<?php echo 2*$mealtime[$tree[$i]['time']]; ?>" class='vrt-header' style="padding: 0px; height: 60px;"><?php echo '<span>'.$tree[$i]['time']. '</span>'; ?></th>
 			                            <?php } ?>
 			                            <td scope="row" rowspan="2" class="align-baseline" style="padding: 2px;"><?php echo $tree[$i]['food_name'] ?></td>
 			                            <?php
 			                            for($t = 0; $t < count($products); $t++){
 			                            	if(!empty($tree[$i][$t])){
 			                            ?>
-			                            		<td style="padding: 2px;"><?php echo $tree[$i][$t]; ?></td>
+			                            		<td style="padding: 0px;"><?php $onew[$t] += $tree[$i][$t]; echo $tree[$i][$t]; ?></td>
 			                            <?php
 				                            }
 			                            	else{
 			                            ?>
-			                            		<td style="padding: 2px;"></td>
+			                            		<td style="padding: 0px;"></td>
 			                            <?php	
 			                            	}
                     					}
@@ -130,12 +137,12 @@
 			                            for($t = 0; $t < count($products); $t++){
 			                            	if(!empty($tree[$i][$t])){
 			                            ?>
-			                            		<td style="padding: 2px;"><?php echo ($menu[0]['kingar_children_number']*$tree[$i][$t])/1000.; ?></td>
+			                            		<td style="padding: 0px;"><?php $allw[$t] += ($menu[0]['kingar_children_number']*$tree[$i][$t])/1000.; echo ($menu[0]['kingar_children_number']*$tree[$i][$t])/1000.; ?></td>
 			                            <?php
 				                            }
 			                            	else{
 			                            ?>
-			                            		<td style="padding: 2px;"></td>
+			                            		<td style="padding: 0px;"></td>
 			                            <?php	
 			                            	}
                     					}
@@ -144,10 +151,144 @@
                     	<?php		
                         		}
                         	?>
-                     
+									<tr>
+										<th scope="row" rowspan="5" class='vrt-header' style="padding: 0px; border-top: 2px solid black"><span>Болалар</span></th>
+										<td scope="row" class="align-baseline" style="padding: 0px; border-top: 2px solid black">1 та бола учун гр</td>
+										<?php
+			                            for($t = 0; $t < count($products); $t++){
+			                            ?>
+			                            	<td style="padding: 0px; font-size: 5px; border-top: 2px solid black"><?= $onew[$t]; ?></td>
+			                            <?php	
+                    					}
+			                            ?>
+									</tr>
+									<tr>
+										<td scope="row" class="align-baseline" style="padding: 0px;">Жами миқдори</td>
+										<?php
+			                            for($t = 0; $t < count($products); $t++){
+			                            ?>
+			                            	<td style="padding: 0px; font-size: 5px"><?= $allw[$t]; ?></td>
+			                            <?php	
+                    					}
+			                            ?>
+									</tr>
+									<tr>
+										<td scope="row" class="align-baseline" style="padding: 0px;">Нархи</td>
+										<?php
+			                            for($t = 0; $t < count($products); $t++){
+			                            ?>
+			                            	<td style="padding: 0px; font-size: 5px">1</td>
+			                            <?php	
+                    					}
+			                            ?>
+									</tr>
+									<tr>
+										<td scope="row" class="align-baseline" style="padding: 0px;"><b>Сумма жами:</b></td>
+										<?php
+			                            for($t = 0; $t < count($products); $t++){
+			                            ?>
+			                            	<td style="padding: 0px; font-size: 5px">0</td>
+			                            <?php	
+                    					}
+			                            ?>
+									</tr>
+									<tr>
+										<td scope="row" class="align-baseline" style="padding: 0px;">Жами харажат</td>
+			                            <td style="padding: 0px; font-size: 5px" colspan="<?= count($products); ?>">1</td>
+									</tr>
+									<tr style="border-top: 2px solid black;">
+										<th scope="row" rowspan="5" class='vrt-header' style="padding: 0px; border-top: 2px solid black"><span>Ходимлар</span></th>
+										<td scope="row" class="align-baseline" style="padding: 0px; border-top: 2px solid black">1 та ходим учун гр</td>
+										<?php
+			                            for($t = 0; $t < count($products); $t++){
+			                            ?>
+			                            	<td style="padding: 0px; font-size: 5px; border-top: 2px solid black">1</td>
+			                            <?php	
+                    					}
+			                            ?>
+									</tr>
+									<tr>
+										<td scope="row" class="align-baseline" style="padding: 0px;">Жами миқдори</td>
+										<?php
+			                            for($t = 0; $t < count($products); $t++){
+			                            ?>
+			                            	<td style="padding: 0px; font-size: 5px">0</td>
+			                            <?php	
+                    					}
+			                            ?>
+									</tr>
+									<tr>
+										<td scope="row" class="align-baseline" style="padding: 0px;">Нархи</td>
+										<?php
+			                            for($t = 0; $t < count($products); $t++){
+			                            ?>
+			                            	<td style="padding: 0px; font-size: 5px">1</td>
+			                            <?php	
+                    					}
+			                            ?>
+									</tr>
+									<tr>
+										<td scope="row" class="align-baseline" style="padding: 0px;"><b>Сумма жами</b></td>
+										<?php
+			                            for($t = 0; $t < count($products); $t++){
+			                            ?>
+			                            	<td style="padding: 0px; font-size: 5px">0</td>
+			                            <?php	
+                    					}
+			                            ?>
+									</tr>
+									<tr>
+										<td scope="row" class="align-baseline" style="padding: 0px;">Жами харажат</td>
+			                            <td style="padding: 0px; font-size: 5px" colspan="<?= count($products); ?>">1</td>
+									</tr>
+									<tr style="border-top: 2px solid black;">
+										<th scope="row" colspan="2" class='vrt-header' style="padding: 0px; border-top: 2px solid black"><b>Жами махсулот оғирлиги</b></th>
+										<?php
+			                            for($t = 0; $t < count($products); $t++){
+			                            ?>
+			                            	<td style="padding: 0px; font-size: 5px; border-top: 2px solid black">1</td>
+			                            <?php	
+                    					}
+			                            ?>
+									</tr>
+									<tr>
+										<th scope="row" colspan="2" class="align-baseline" style="padding: 0px;">Жами сарфланган маблағ</th>
+			                            <td style="padding: 0px; font-size: 5px" colspan="<?= count($products); ?>">0</td>
+									</tr>
+									<tr>
+										<th scope="row" colspan="2" class="align-baseline" style="padding: 0px;">1 нафар бола учун</th>
+										<?php
+			                            for($t = 0; $t < count($products); $t++){
+			                            ?>
+			                            	<td style="padding: 0px; font-size: 5px">0</td>
+			                            <?php	
+                    					}
+			                            ?>
+									</tr>
+									<tr>
+										<th scope="row" colspan="2" class="align-baseline" style="padding: 0px;">1 нафар ходим учун</th>
+										<?php
+			                            for($t = 0; $t < count($products); $t++){
+			                            ?>
+			                            	<td style="padding: 0px; font-size: 5px">1</td>
+			                            <?php	
+                    					}
+			                            ?>
+									</tr>
+									<!-- <tr>
+										<th style="border: 0px"></th>
+										<td style="border: 0px"></td>
+										<td colspan="" style="border: 0px;">	
+										</td>
+										<td colspan="7" style="border: 0px; padding-top: 4px">
+										<img src="images/qrcode.jpg" alt="QR-code" width="150">	
+										</td>
+									</tr> -->
                         </tbody>
                       </table>
-                      <!-- <button><a href="/downloadPDF/1/4/1">to PDF</a></button> -->
+                      <div style="text-align: end; width: 100%; ">
+					  	<img src="images/qrcode.jpg" alt="QR-code" width="150">
+					  </div>
                 </div>
             </div>
         </div>

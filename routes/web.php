@@ -17,11 +17,15 @@ use Illuminate\Support\Facades\Auth;
 | contains the "web" middleware group. Now create something great!
 |
 */
-Route::get('/wel', function(){
+
+Route::get('/wel', function () {
     return view('welcome');
 });
 
-Route::get('/hello', [Controller::class, 'hello']);
+Route::get('/hello', [TestController::class, 'tomany']);
+
+// dashboart test
+Route::get('/dash', [TestController::class, 'dash']);
 
 Route::get('/', [TestController::class, 'index']);
 
@@ -45,10 +49,27 @@ Auth::routes();
 
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 
-Route::group(['prefix'=>'storage', 'middleware'=>['isStorage','auth']], function(){
+Route::group(['prefix' => 'storage', 'middleware' => ['isStorage', 'auth']], function () {
     Route::get('home', [StorageController::class, 'index'])->name('storage.home');
+    Route::get('newday', [StorageController::class, 'index'])->name('storage.newday');
 });
 
-Route::group(['prefix'=>'technolog', 'middleware'=>['isTechnolog','auth']], function(){
+Route::group(['prefix' => 'technolog', 'middleware' => ['isTechnolog', 'auth']], function () {
     Route::get('home', [TechnologController::class, 'index'])->name('technolog.home');
+    Route::post('newday', [TechnologController::class, 'newday'])->name('technolog.newday');
+    Route::get('sendmenu/{day}', [TechnologController::class, 'sendmenu'])->name('technolog.sendmenu');
+    Route::get('settings/{id}', [TechnologController::class, 'settings'])->name('technolog.settings');
+    Route::post('updategarden', [TechnologController::class, 'updategarden'])->name('updategarden');
+    Route::get('ageranges/{id}', [TechnologController::class, 'ageranges']);
+    Route::get('addage/{bogid}/{ageid}/{qiymati}', [TechnologController::class, 'addage']);
+    Route::get('getage/{bogid}', [TechnologController::class, 'getage']);
+    Route::get('editage/{bogid}/{ageid}/{qiymati}', [TechnologController::class, 'editage']);
+    Route::get('addproduct', [TechnologController::class, 'addproduct'])->name('technolog.addproduct');
+    Route::post('ordername', [TechnologController::class, 'ordername'])->name('technolog.ordername');
+    Route::get('orderitem/{id}', [TechnologController::class, 'orderitem'])->name('technolog.orderitem');
+    Route::post('plusproduct', [TechnologController::class, 'plusproduct'])->name('technolog.plusproduct');
+    Route::get('controlpassword', [TechnologController::class, 'controlpassword']);
+    Route::get('getproduct', [TechnologController::class, 'getproduct']);
+    Route::get('editproduct', [TechnologController::class, 'editproduct']);
+    Route::get('deleteid', [TechnologController::class, 'deleteid']);
 });

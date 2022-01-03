@@ -13,4 +13,6 @@ class Temporary extends Model
     		'age_id',
     		'age_number'
     ];
+
+    
 }
