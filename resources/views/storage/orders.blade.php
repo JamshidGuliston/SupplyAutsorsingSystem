@@ -1,7 +1,29 @@
 @extends('layouts.app')
 
 @section('content')
+<!-- edite -->
+<div class="modal fade" id="exampleModalsadd" tabindex="-1" aria-labelledby="exampleModalLabelsadd" aria-hidden="true">
+    <div class="modal-dialog  modal-lg">
+        <div class="modal-content loaders">
+            <div class="modal-header bg-info">
+                <h5 class="modal-title text-white" id="exampleModalLabel">Tasdiqlash</h5>
+                <button type="button" class="btn-close " data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <h3>Tanlangan hujjatni qabul qilasizmi</h3>
+                <div class="modal-footer">
+                    <!-- <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button> -->
+                    <button type="button" class="btn ok btn-info text-white">Ha</button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+<!-- edite  -->
+
 <!-- DELET -->
+
 <!-- Modal -->
 <div class="modal fade" id="Modaldelete" tabindex="-1" aria-labelledby="exampleModalLabels" aria-hidden="true">
     <div class="modal-dialog">
@@ -26,36 +48,6 @@
     @if(isset($orders[0]->day_number))
     <h4>Oyning {{ $orders[0]->day_number."-sanasi" }}</h4>
     @endif
-    <form action="{{route('technolog.ordername')}}" method="post">
-        @csrf
-        <div class="row">
-            <div class="col-md-4">
-                <div class="add-sklad">
-                    <select class="form-select" name="mtmname" required>
-                        <option value="">MTM-nomi</option>
-                        @foreach($gardens as $rows)
-                        @if(!isset($rows['ok']))
-                        <option value="{{$rows['id']}}">{{$rows['kingar_name']}}</option>
-                        @endif
-                        @endforeach
-                    </select>
-                </div>
-            </div>
-
-            <div class="col-md-6">
-                <div class="input-group input-group-sm mb-3">
-                    <span class="input-group-text" id="inputGroup-sizing-sm">Izoh</span>
-                    <input name="title" required style="padding: 8px 6px !important;" type="text" class="form-control">
-                </div>
-            </div>
-
-            <div class="col-md-2">
-                <div class="input-group mb-3">
-                    <button class="btn btn-success" style="width: 100%;">Yaratish</button>
-                </div>
-            </div>
-        </div>
-    </form>
 
     <table class="table table-light py-4 px-4">
         <thead>
@@ -90,9 +82,9 @@
                     @if($order['document_processes_id'] == 1)
                     <span>Yaratildi</span>
                     @elseif($order['document_processes_id'] == 2)
-                    <span style="color: green">Yuborildi</span>
+                    <span style="color: #000;text-align: center;background-color: #ffd12a;padding: 3px 10px;display: inline-block;font-size: 14px;">Qabul qilish</span>
                     @elseif($order['document_processes_id'] == 3)
-                    <span style="color: green;text-align: center;background-color: #ffd12a;padding: 3px 10px;display: inline-block;font-size: 14px;">Qabul qilindi</span>
+                    <span style="color: green;background-color: cornflowerblue;color: #fff;padding: 4px 9px;">Yuborish</span>
                     @elseif($order['document_processes_id'] == 4)
                     <span style="color: white;background-color: green;padding: 3px 9px;border-radius: 3px;">Yuborildi</span>
                     @endif
@@ -101,9 +93,9 @@
                     @if($order['document_processes_id'] == 1)
                     <i class="far fa-paper-plane" data-produc-id="{{$order['id']}}" data-bs-toggle="modal" data-bs-target="#Modaldelete" style="cursor: pointer; margin-left: 16px; color: deepskyblue"></i>
                     @elseif($order['document_processes_id'] == 2)
-                    <i class="fas fa-check" style="color: #1a61aa;"></i>
+                    <i class="fas fa-envelope" data-bs-toggle="modal" data-doc-id="{{$order['id']}}" data-bs-target="#exampleModalsadd" style="color: #1a61aa; cursor: pointer;"></i>
                     @elseif($order['document_processes_id'] == 3)
-                    <i class="fas fa-check-double"></i>
+                    <i class="fa fa-paper-plane" data-id="{{$order['id']}}" data-bs-toggle="modal" data-bs-target="#Modaldelete" style="color: #6cbaff; cursor: pointer;"></i>
                     @elseif($order['document_processes_id'] == 4)
                     <i class="fas fa-clipboard-check"></i>
                     @endif
@@ -120,18 +112,37 @@
 @section('script')
 <script>
     $(document).ready(function() {
+        $('.fa-envelope').click(function() {
+            doc = $(this).attr('data-doc-id');
+            console.log(doc)
+        });
 
         $('.fa-paper-plane').click(function() {
-            id = $(this).attr('data-produc-id');
-            // console.log(id)
-        })
+            id = $(this).attr('data-id');
+
+        });
+
+        $('.ok').click(function() {
+            var g = doc;
+            $.ajax({
+                method: "GET",
+                url: '/storage/getdoc',
+                data: {
+                    'getid': g,
+                },
+                success: function(data) {
+                    location.reload();
+                }
+            })
+        });
+
         $('#sendpass').click(function() {
             var g = id;
             var pass = $('#passw').val();
             var h = $('#succ');
             $.ajax({
                 method: "GET",
-                url: '/technolog/controlpassword',
+                url: '/storage/controlpassword',
                 data: {
                     'password': pass,
                     'orderid': g,

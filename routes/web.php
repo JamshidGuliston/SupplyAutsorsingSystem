@@ -52,6 +52,9 @@ Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name
 Route::group(['prefix' => 'storage', 'middleware' => ['isStorage', 'auth']], function () {
     Route::get('home', [StorageController::class, 'index'])->name('storage.home');
     Route::get('newday', [StorageController::class, 'index'])->name('storage.newday');
+    Route::get('orders', [StorageController::class, 'orders'])->name('storage.orders');
+    Route::get('getdoc', [StorageController::class, 'getdoc'])->name('storage.getdoc');
+    Route::get('controlpassword', [StorageController::class, 'controlpassword']);
 });
 
 Route::group(['prefix' => 'technolog', 'middleware' => ['isTechnolog', 'auth']], function () {

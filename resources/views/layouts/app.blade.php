@@ -53,8 +53,8 @@
                                 <i class="fas fa-paste me-2"></i> skladga buyurtma
                             </a>
                             @elseif(Auth::user()->id==2)
-                            <a class="nav-link first-text d-flex align-items-center justify-content-between fw-bold" href="/technolog/addproduct" role="button" aria-expanded="false">
-                                <i class="fas fa-envelope fs-3 mr-1" style="margin-right: 5px;"></i> <span>2</span>
+                            <a class="nav-link first-text d-flex align-items-center justify-content-between fw-bold" href="/storage/orders" role="button" aria-expanded="false">
+                                <i class="fas fa-envelope fs-3 mr-1" style="margin-right: 5px;"></i> <span></span>
                             </a>
                             @endif
                         </li>
