@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Support\Facades\Auth;
 use App\Models\Age_range;
 use App\Models\Region;
 use Illuminate\Support\Facades\DB;
@@ -253,21 +254,38 @@ class TechnologController extends Controller
 
     public function addproduct()
     {
-        $orederproduct = order_product::join('kindgardens', 'kindgardens.id', '=', 'order_products.kingar_name_id')->join('days', 'days.id', '=', 'order_products.day_id')
+        $orederproduct = order_product::join('kindgardens', 'kindgardens.id', '=', 'order_products.kingar_name_id')
+            ->join('days', 'days.id', '=', 'order_products.day_id')
+            ->select('order_products.id', 'order_products.order_title', 'order_products.document_processes_id', 'kindgardens.kingar_name') 
+            ->get();
+        $orederitems = order_product_structure::join('products', 'products.id', '=', 'order_product_structures.product_name_id')
             ->get();
         // dd($orederproduct);
         $kingar = Kindgarden::where('hide', 1)->get();
-        return view('technolog.addproduct', ['gardens' => $kingar, 'orders' => $orederproduct]);
+        // foreach($orederproduct as $item){
+        //     foreach($kingar as $ki){
+            // agar bitta bogchaga bir kunda faqat bitta hujjat 
+        //     }
+        // }
+        return view('technolog.addproduct', ['gardens' => $kingar, 'orders' => $orederproduct, 'products'=>$orederitems]);
     }
 
     public function ordername(Request $request)
     {
         $days = Day::orderby('id', 'DESC')->get();
-        $orederproduct = order_product::create([
+        $orderproduct = order_product::create([
             'kingar_name_id' => $request->mtmname,
             'day_id' => $days[1]->id,
             'order_title' => $request->title,
             'document_processes_id' => 1,
+        ]);
+
+        history_process::create([
+            'order_product_id' => $orderproduct->id,
+            'user_name_id' => Auth::user()->id,
+            'order_title' => $request->title,
+            'document_process_id' => 1,
+            'action' => 1
         ]);
 
         return redirect()->route('technolog.addproduct');
@@ -275,13 +293,27 @@ class TechnologController extends Controller
 
     public function orderitem(Request $request, $id)
     {
+        $orederproduct = order_product::where('order_products.id', $id)
+            ->join('kindgardens', 'kindgardens.id', '=', 'order_products.kingar_name_id')
+            ->join('days', 'days.id', '=', 'order_products.day_id')
+            ->first();
+        $days = Day::orderby('id', 'DESC')->get();
+        // agar yangi kun ochilsa hujjat oxiriga yetmagan hisoblanadi
+        if(empty($orederproduct->day_number) or $days[1]->day_number != $orederproduct->day_number or $days[1]->month_id != $orederproduct->month_id){
+            return redirect()->route('technolog.addproduct');
+        }
         // shu joyida hide ishlatishimiz kerak majbur
         $newsproduct = Product::all();
-
-        return view('technolog.orderitem', ['orderid' => $id, 'productall' => $newsproduct]);
+        $items = order_product_structure::where('order_product_name_id', $id)
+            ->join('products', 'products.id', '=', 'order_product_structures.product_name_id')
+            ->select('order_product_structures.id', 'order_product_structures.product_weight', 'products.product_name') 
+            ->get();
+        // dd($items);
+        return view('technolog.orderitem', ['orderid' => $id, 'productall' => $newsproduct, 'items'=>$items, 'ordername'=>$orederproduct]);
     }
-    public function plusproduct(Request $request, $id)
+    public function plusproduct(Request $request)
     {
+        // dd($request->all());
         order_product_structure::create([
             'order_product_name_id' => $request->titleid,
             'product_name_id' => $request->productsid,

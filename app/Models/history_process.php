@@ -12,6 +12,6 @@ class history_process extends Model
         'order_product_id',
         'user_name_id',
         'document_process_id',
-        'action',
+        'action'
     ];
 }

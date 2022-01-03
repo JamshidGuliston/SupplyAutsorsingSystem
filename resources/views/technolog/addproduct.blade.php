@@ -26,7 +26,7 @@
 
             <div class="col-md-2">
                 <div class="input-group mb-3">
-                    <button class="btn btn-success" style="width: 100%;">Yuborish</button>
+                    <button class="btn btn-success" style="width: 100%;">Yaratish</button>
                 </div>
             </div>
         </div>
@@ -44,13 +44,40 @@
             </tr>
         </thead>
         <tbody>
-            @foreach($orders as $oreder)
+            @foreach($orders as $order)
             <tr>
-                <td>{{$oreder['kingar_name']}}</td>
-                <td><a href="/technolog/orderitem/1">{{$oreder['order_title']}}</a></td>
-                <td></td>
-                <td>{{$oreder['document_processes_id']}}</td>
-                <td>yuborish</td>
+                <td>{{$order['kingar_name']}}</td>
+                <td>
+                    @if($order['document_processes_id'] == 1)
+                    <a href="/technolog/orderitem/{{$order['id']}}">{{$order['order_title']}}</a></td>
+                    @else
+                    {{$order['order_title']}}
+                    @endif
+                <td>
+                    @foreach($products as $item)
+                    @if($item->order_product_name_id == $order->id)
+                        {{ $item->product_name."-".$item->product_weight.", " }}
+                    @endif
+                    @endforeach
+                </td>
+                <td>
+                    @if($order['document_processes_id'] == 1)
+                    <span style="color: green">Yaratildi</span>
+                    @else
+                        Yuborildi
+                    @endif
+                </td>
+                <td>
+                    @if($order['document_processes_id'] == 1)
+                    <a href="/technolog/"><i class="far fa-paper-plane"></i></a></td>
+                    @elseif($order['document_processes_id'] == 2)
+                    <i class="fas fa-check" style="color: #1a61aa;"></i>                       
+                    @elseif($order['document_processes_id'] == 3)
+                    <i class="fas fa-check-double"></i>
+                    @elseif($order['document_processes_id'] == 4)
+
+                    @endif
+                </td>
             </tr>
             @endforeach
         </tbody>
