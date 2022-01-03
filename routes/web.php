@@ -31,7 +31,7 @@ Route::get('/', [TestController::class, 'index']);
 
 Route::get('/controller', [TestController::class, 'start']);
 
-Route::get('/newday', [TestController::class, 'menustart']);
+Route::post('/newday', [TestController::class, 'menustart']);
 
 Route::get('/showmenu/{kid}/{did}/{aid}', [TestController::class, 'showmenu']);
 
