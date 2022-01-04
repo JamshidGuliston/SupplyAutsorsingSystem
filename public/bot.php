@@ -96,19 +96,24 @@ class NishonBot
         $user = $this->pdo->prepare("SELECT * FROM people WHERE telegram_id = :user_id");
         $user->execute(['user_id' => $chat_id]);
         
-        $text = "Nishon invest MCHJнинг телеграм ботига ҳуш келибсиз!\nСиз қуйидаги қайси боғча ходимисиз?";
-        $gardens = $this->pdo->query("SELECT * FROM kindgardens");
+        $text = "Nishon invest MCHJнинг телеграм ботига ҳуш келибсиз!";
         
-        while($item = $gardens->fetch()){
-        	$buttons[][] = $this->buildInlineKeyBoardButton($item['kingar_name'], "ClickGarden_".$item['id']."_".$data['message']['chat']['first_name']."_".$data['message']['chat']['last_name']."_".$item['kingar_password']);
-        }
         
         if ($user->rowCount() == 0) {
+        	
+        	$newUser = $this->pdo->prepare("INSERT INTO people SET kingar_id = :kingarid, telegram_id = :user_id, telegram_name = :tl_name, telegram_password = :password, childs_count = :childs_count");
+	        $newUser->execute([
+	        	'kingarid' => 1,
+	            'user_id' => $chat_id,
+	            'tl_name' =>  $data['message']['chat']['first_name'] . ' ' . $data['message']['chat']['last_name'],
+	            'password' => 123,
+	            'childs_count' => '0_0'
+	        ]);
+        	
         	$this->botApiQuery("sendMessage", [
 	           'chat_id' => $chat_id,
 	           'text' => $text,
-	           'parse_mode' => 'html',
-	           'reply_markup' => $this->buildInlineKeyBoard($buttons)
+	           'parse_mode' => 'html'
 	        ]);    
         }
         
@@ -118,14 +123,7 @@ class NishonBot
         $obj = $data['data'];
         $param = explode("_", $obj);
         
-        $newUser = $this->pdo->prepare("INSERT INTO people SET kingar_id = :kingarid, telegram_id = :user_id, telegram_name = :tl_name, telegram_password = :password, childs_count = :childs_count");
-        $newUser->execute([
-        	'kingarid' => $param[1],
-            'user_id' => $chat_id2,
-            'tl_name' =>  $param[2] . ' ' . $param[3],
-            'password' => $param[4],
-            'childs_count' => '0_0'
-        ]);
+        
         
         $this->editMessageText($chat_id2, $mid, "Шу боғча учун паролни киритинг.");
      

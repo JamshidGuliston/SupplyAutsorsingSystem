@@ -136,6 +136,7 @@
     <div class="box-sub" style="
         display: flex;
         justify-content: space-between;">
+    	<a href="/technolog/home">Orqaga</a>
         <p>Bog'chalar soni: {{ count($temps) }}</p>
         <input type="submit" class="btn btn-success text-white mb-2" value="Yuborish">
     </div>
