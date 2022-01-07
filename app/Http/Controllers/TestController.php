@@ -17,10 +17,10 @@ use Dompdf\Dompdf;
 
 class TestController extends Controller
 {
-	public function __construct()
-	{
-		$this->middleware('auth');
-	}
+	// public function __construct()
+	// {
+	// 	$this->middleware('auth');
+	// }
 	function dash(Request $request)
 	{
 		return view('dash');
@@ -70,18 +70,21 @@ class TestController extends Controller
 		$chil_number = Temporary::all();
 
 		foreach ($chil_number as $child) {
+			$workers = Kindgarden::where('id', $child->kingar_name_id)->first();
+			
 			Number_children::create([
 				'kingar_name_id' => $child->kingar_name_id,
 				'day_id' => (int)$days['day_number'],
 				'king_age_name_id' => $child->age_id,
 				'kingar_children_number' => $child->age_number,
+				'workers_count' => $workers->worker_count,
 				'kingar_menu_id' => $request->menus,
 			]);
 			$path = "https://api.telegram.org/bot";
 			$token = "1843436308:AAE9-UuWjEeAuNkz_lwpuEEQSufTL_Yky9Y";
 			$tday = $days['day_number'];
 			$text = "Менюни юклаб олинг.";
-			$buttons = '{"inline_keyboard":[[{"text":"1-Меню","url":"https://cj56359.tmweb.ru/showmenu/' . $child->kingar_name_id . '/' . $tday . '/1"}]]}';
+			$buttons = '{"inline_keyboard":[[{"text":"1-Меню","url":"https://cj56359.tmweb.ru/downloadPDF/' . $child->kingar_name_id . '/' . $tday . '/'.$child->age_id.'"}]]}';
 			$user = Kindgarden::where('id', '=', $child->kingar_name_id)->get();
 			$this->curl_get_contents($path . $token . '/sendmessage?chat_id=' . $user[0]['telegram_user_id'] . '&text=' . $text . '&reply_markup=' . $buttons);
 		}
@@ -109,14 +112,6 @@ class TestController extends Controller
 			->join('products', 'food_compositions.product_name_id', '=', 'products.id')
 			->orderBy('menu_meal_time_id')
 			->get();
-		$child = 1;
-		$days = 4;
-		$path = "https://api.telegram.org/bot";
-		$token = "1843436308:AAE9-UuWjEeAuNkz_lwpuEEQSufTL_Yky9Y";
-		$text = "Менюни юклаб олинг. 1-меню https://cj56359.tmweb.ru/showmenu/" . $child . "/" . (int)$days . "/1";
-		$buttons = '{"inline_keyboard":[[{"text":"1-Меню","url":"https://cj56359.tmweb.ru/showmenu/' . $child . '/' . $days . '/1"}, {"text":"2-Меню","url":"https://cj56359.tmweb.ru/showmenu/2/4/2"}]]}';
-		$user = Kindgarden::where('id', '=', 4)->get();
-		$this->curl_get_contents($path . $token . '/sendmessage?chat_id=' . $user[0]['telegram_user_id'] . '&text=' . $text . '&reply_markup=' . $buttons);
 
 		return view('alltable', ['menu' => $menu, 'menuitem' => $menuitem]);
 	}
@@ -172,22 +167,26 @@ class TestController extends Controller
 
 	public function addchilds(Request $request)
 	{
-		// test qilinmagan
-		$k = Kindgarden::find($_GET['bogcha'])->first();
+		$k = Kindgarden::where('id', $_GET['bogcha'])->first();
 		if($k->hide == 1){
-			$find = Temporary::find($_GET['bogcha']);
-			if($find->age_id == $_GET['yoshi']){
-				$find->delete();
-			}
-			$kind = Kindgarden::find($_GET['bogcha']);
-			foreach($kind->age_range as $age){
-				if($age->id == $_GET['yoshi']){
-					Temporary::create([
-						'kingar_name_id' => $_GET['bogcha'],
-						'age_id' => $_GET['yoshi'],
-						'age_number' => $_GET['soni']
-					]);
+			$finds = Temporary::where('kingar_name_id', $_GET['bogcha'])->get();
+			foreach($finds as $find){
+				if($find->age_id == $_GET['yoshi']){
+					Temporary::where('kingar_name_id', $_GET['bogcha'])
+							->where('age_id', $_GET['yoshi'])
+							->delete();
 				}
+			}
+			$kind = Kindgarden::where('id', $_GET['bogcha'])->with('age_range')->get();
+			// dd($kind[0]->age_range);
+			foreach($kind[0]->age_range as $age){
+			  if($age->id == $_GET['yoshi']){
+					Temporary::create([
+						'kingar_name_id' => $request->bogcha,
+						'age_id' => $request->yoshi,
+						'age_number' => $request->soni
+					]);	  	
+			  }
 			}
 			
 		}

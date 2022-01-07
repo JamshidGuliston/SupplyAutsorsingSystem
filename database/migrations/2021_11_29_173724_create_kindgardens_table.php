@@ -18,7 +18,7 @@ class CreateKindgardensTable extends Migration
             $table->integer('region_id');
             $table->string('kingar_name');
             $table->string('kingar_password');
-            $table->integer('telegram_user_id');
+            $table->biginteger('telegram_user_id');
             $table->integer('worker_count');
             $table->boolean('hide');
             $table->timestamps();

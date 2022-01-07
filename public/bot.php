@@ -262,8 +262,8 @@ class NishonBot
         // $newUser = $this->pdo->prepare("INSERT INTO temporaries SET kingar_name_id = 4, age_id = 2,  age_number = 5");
         // $newUser->execute(['kingarid' => $user['kingar_id'],  'user_id' => 2, 'childs_count' => $param[1]]);
         
-        file_get_contents("https://cj56359.tmweb.ru/gow/?bogcha=".$row['kingar_id']."&yoshi=1&soni=".$param[0]);
-        file_get_contents("https://cj56359.tmweb.ru/gow/?bogcha=".$row['kingar_id']."&yoshi=2&soni=".$param[1]);
+        file_get_contents("https://cj56359.tmweb.ru/gow/?bogcha=".$row['kingar_id']."&yoshi=2&soni=".$param[0]);
+        file_get_contents("https://cj56359.tmweb.ru/gow/?bogcha=".$row['kingar_id']."&yoshi=1&soni=".$param[1]);
         
         $this->editMessageText($chat_id2, $mid, "Болалар сони 3 ёшгача = ".$param[0]." та ва 4-7 ёшгача = ".$param[1]." та. Маълумотлар юборилди, тез орада менюни оласиз!" );
         

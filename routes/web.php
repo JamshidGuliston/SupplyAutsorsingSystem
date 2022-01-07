@@ -75,4 +75,5 @@ Route::group(['prefix' => 'technolog', 'middleware' => ['isTechnolog', 'auth']],
     Route::get('getproduct', [TechnologController::class, 'getproduct']);
     Route::get('editproduct', [TechnologController::class, 'editproduct']);
     Route::get('deleteid', [TechnologController::class, 'deleteid']);
+    Route::post('go', [TechnologController::class, 'go']);
 });
