@@ -2,6 +2,7 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\ApiControllers\TelegramController;
 
 /*
 |--------------------------------------------------------------------------
@@ -18,4 +19,4 @@ use Illuminate\Support\Facades\Route;
 //     return $request->user();
 // });
 
-Route::any('/' . env('TELEGRAM_TOKEN'), 'TelegramController@index')->name('webhook');
+Route::any('telegrambot', [TelegramController::class, 'telegrambot']);

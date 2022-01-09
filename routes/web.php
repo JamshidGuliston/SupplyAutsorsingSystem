@@ -17,12 +17,13 @@ use Illuminate\Support\Facades\Auth;
 |
 */
 
+Route::any('telegrambot', [TelegramController::class, 'telegrambot']);
+
 Route::get('/wel', function () {
     return view('welcome');
 });
 
 Route::get('/hello', [TestController::class, 'tomany']);
-Route::get('/webhook', [TelegramController::class, 'webhook']);
 
 // dashboart test
 Route::get('/dash', [TestController::class, 'dash']);
