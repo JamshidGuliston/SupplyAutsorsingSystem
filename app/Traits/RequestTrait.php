@@ -8,7 +8,8 @@ trait RequestTrait
     {
         $url = 'https://api.telegram.org/bot'.env('TELEGRAM_TOKEN').'/'.$method;
 
-        $ch = curl_init($url);
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, $url);    
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 5);
         curl_setopt($ch, CURLOPT_TIMEOUT, 60);
@@ -19,7 +20,8 @@ trait RequestTrait
             return false;
         }
         curl_close($ch);
-        $response = json_decode($ch, true);
+        $response = json_decode(json_encode($ch), true);
+        dd($response);
         if($response['ok'] == false)
         {
             return false;
