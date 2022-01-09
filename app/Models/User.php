@@ -42,4 +42,8 @@ class User extends \TCG\Voyager\Models\User
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    public function role() {
+		return $this->belongsTo('TCG\Voyager\Models\Role', 'role_id');
+	}	
 }

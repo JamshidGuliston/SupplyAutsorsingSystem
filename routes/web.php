@@ -2,10 +2,9 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\TestController;
-use App\Http\Controllers\Controller;
-
 use App\Http\Controllers\StorageController;
 use App\Http\Controllers\TechnologController;
+use App\Http\Controllers\ApiControllers\TelegramController;
 use Illuminate\Support\Facades\Auth;
 /*
 |--------------------------------------------------------------------------
@@ -23,6 +22,7 @@ Route::get('/wel', function () {
 });
 
 Route::get('/hello', [TestController::class, 'tomany']);
+Route::get('/webhook', [TelegramController::class, 'webhook']);
 
 // dashboart test
 Route::get('/dash', [TestController::class, 'dash']);
@@ -47,7 +47,9 @@ Route::group(['prefix' => 'admin'], function () {
 
 Auth::routes();
 
-Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+$globalroutes =  function () {
+    Route::get('getbotusers', [TechnologController::class, 'getbotusers']);
+};
 
 Route::group(['prefix' => 'storage', 'middleware' => ['isStorage', 'auth']], function () {
     Route::get('home', [StorageController::class, 'index'])->name('storage.home');
@@ -55,6 +57,7 @@ Route::group(['prefix' => 'storage', 'middleware' => ['isStorage', 'auth']], fun
     Route::get('orders', [StorageController::class, 'orders'])->name('storage.orders');
     Route::get('getdoc', [StorageController::class, 'getdoc'])->name('storage.getdoc');
     Route::get('controlpassword', [StorageController::class, 'controlpassword']);
+    Route::get('getbotusers', [TechnologController::class, 'getbotusers']);
 });
 
 Route::group(['prefix' => 'technolog', 'middleware' => ['isTechnolog', 'auth']], function () {
@@ -75,4 +78,7 @@ Route::group(['prefix' => 'technolog', 'middleware' => ['isTechnolog', 'auth']],
     Route::get('getproduct', [TechnologController::class, 'getproduct']);
     Route::get('editproduct', [TechnologController::class, 'editproduct']);
     Route::get('deleteid', [TechnologController::class, 'deleteid']);
+    Route::get('getbotusers', [TechnologController::class, 'getbotusers'])->name('technolog.getbotusers');
+    Route::post('bindgarden', [TechnologController::class, 'bindgarden'])->name('technolog.bindgarden');
+    Route::post('bindshop', [TechnologController::class, 'bindshop'])->name('technolog.bindshop');
 });

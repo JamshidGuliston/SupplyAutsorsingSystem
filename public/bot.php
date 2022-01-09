@@ -100,10 +100,10 @@ class NishonBot
         
         
         if ($user->rowCount() == 0) {
-        	
         	$newUser = $this->pdo->prepare("INSERT INTO people SET kingar_id = :kingarid, telegram_id = :user_id, telegram_name = :tl_name, telegram_password = :password, childs_count = :childs_count");
 	        $newUser->execute([
-	        	'kingarid' => 1,
+	        	'kingarid' => 0,
+                'kingarid' => -1,
 	            'user_id' => $chat_id,
 	            'tl_name' =>  $data['message']['chat']['first_name'] . ' ' . $data['message']['chat']['last_name'],
 	            'password' => 123,
@@ -262,10 +262,10 @@ class NishonBot
         // $newUser = $this->pdo->prepare("INSERT INTO temporaries SET kingar_name_id = 4, age_id = 2,  age_number = 5");
         // $newUser->execute(['kingarid' => $user['kingar_id'],  'user_id' => 2, 'childs_count' => $param[1]]);
         
-        file_get_contents("https://cj56359.tmweb.ru/gow/?bogcha=".$row['kingar_id']."&yoshi=1&soni=".$param[0]);
-        file_get_contents("https://cj56359.tmweb.ru/gow/?bogcha=".$row['kingar_id']."&yoshi=2&soni=".$param[1]);
+        file_get_contents("https://cj56359.tmweb.ru/gow/?bogcha=".$row['kingar_id']."&yoshi=2&soni=".$param[0]);
+        file_get_contents("https://cj56359.tmweb.ru/gow/?bogcha=".$row['kingar_id']."&yoshi=1&soni=".$param[1]);
         
-        $this->editMessageText($chat_id2, $mid, "Болалар сони 3 ёшгача = ".$param[0]." та ва 4-7 ёшгача = ".$param[1]." та. Маълумотлар юборилди, тез орада менюни оласиз!" );
+        $this->editMessageText($chat_id2, $mid, "Болалар сони 3-4 ёшгача = ".$param[0]." та ва 4-7 ёшгача = ".$param[1]." та. Маълумотлар юборилди, тез орада менюни оласиз!" );
         
     }
     //////////////////////////////////

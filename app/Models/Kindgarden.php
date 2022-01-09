@@ -10,6 +10,7 @@ class Kindgarden extends Model
     use HasFactory;
     protected $fillable = [
         'id',
+        'region_id',
         'kingar_name',
         'kingar_password',
         'telegram_user_id',

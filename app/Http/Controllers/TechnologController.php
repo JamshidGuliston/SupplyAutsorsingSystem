@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use App\Traits\MakeComponents;
+use App\Traits\RequestTrait;
 use App\Models\Age_range;
 use App\Models\Region;
 use Illuminate\Support\Facades\DB;
@@ -22,6 +24,7 @@ use App\Models\history_process;
 use App\Models\order_product_structure;
 use App\Models\Product;
 use App\Models\Season;
+use App\Models\Shop;
 use Dompdf\Dompdf;
 
 class TechnologController extends Controller
@@ -354,7 +357,14 @@ class TechnologController extends Controller
         }
         return $result;
     }
-
+    // botga start bosganlarni tashkilotiga bog'lash
+    public function getbotusers(Request $request){
+        $users = Person::with('shop')->with('garden')->orderby('id', 'DESC')->get();
+        $gardens = Kindgarden::all();
+        $shops = Shop::all();
+        // dd($users);
+        return view('technolog.botusers', compact('users', 'gardens', 'shops'));
+    }
     // orderproduct malulotlarini olish 
     public function getproduct(Request $request)
     {
@@ -385,6 +395,34 @@ class TechnologController extends Controller
     public function deleteid(Request $request)
     {
         order_product_structure::where('id', $request->id)->delete();
+    }
+
+    public function bindgarden(Request $request){
+        $per = Person::where('id', $request['personid'])->first();
+        $rr = Kindgarden::where('id', $request['mname'])
+            ->update([
+                'telegram_user_id' => $per->telegram_id
+            ]);
+        Person::where('id', $request['personid'])
+            ->update([
+                'kingar_id' => $request['mname'],
+                'shop_id' => -1
+            ]);
+        return redirect()->route('technolog.getbotusers');
+    }
+
+    public function bindshop(Request $request){
+        $per = Person::where('id', $request['personid'])->first();
+        Shop::where('id', $request['shname'])
+            ->update([
+                'telegram_id' => $per->telegram_id
+            ]);
+        Person::where('id', $request['personid'])
+            ->update([
+                'kingar_id' => 0,
+                'shop_id' => $request['shname']
+            ]);
+        return redirect()->route('technolog.getbotusers');
     }
 
     function curl_get_contents($url)
