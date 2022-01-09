@@ -113,6 +113,7 @@ class TechnologController extends Controller
         date_default_timezone_set('Asia/Tashkent');
         $d = strtotime("+1 day");
         $ages = Age_range::all();
+        // dd($ages);
         if ($day == date("d-F-Y", $d)) {
             $sid = Season::where('hide', 1)->first();
             // dd($sid);
@@ -131,6 +132,7 @@ class TechnologController extends Controller
                 $mass[$loo]['workers'] = $gr[$i]->worker_count;
                 // for($l=0; $l<count($age); $l++){
                 $kages = Kindgarden::find($gr[$i]->id);
+                // dd($kages->age_range);
                 foreach ($kages->age_range as $age) {
                     if ($age->id == $gr[$i]->age_id) {
                         $mass[$loo][$age->id] = $gr[$i]->age_number;
@@ -148,7 +150,8 @@ class TechnologController extends Controller
                     $loo++;
                 }
             }
-            return view('technolog.newday', ['ages' => $ages, 'menus' => $menus, 'temps' => $mass, 'gardens' => $gar]);
+            $activ = Kindgarden::where('hide', 1)->get();
+            return view('technolog.newday', ['ages' => $ages, 'menus' => $menus, 'temps' => $mass, 'gardens' => $gar, 'activ'=>$activ]);
         } else {
             return view('technolog.showdate', ['ages' => $ages]);
         }
@@ -195,6 +198,7 @@ class TechnologController extends Controller
             'age_number' => $qiymati
         ]);
     }
+    
     public function updategarden(Request $request)
     {
         $kind = Kindgarden::find($request->kinname_id);
@@ -424,6 +428,52 @@ class TechnologController extends Controller
             ]);
         return redirect()->route('technolog.getbotusers');
     }
+
+    // Menu saqlash
+	
+	public function go(Request $request)
+	{
+		$days = Day::orderBy('id', 'DESC')->first();
+		$chil_number = Temporary::all();
+		foreach ($chil_number as $child) {
+			$workers = Kindgarden::where('id', $child->kingar_name_id)->first();
+			// dd($workers['worker_count']);
+			$menusi = $request['manuone'];
+			if($child->age_id == 3){
+				$menusi = $request['two'];
+			}
+			Number_children::create([
+				'kingar_name_id' => $child->kingar_name_id,
+				'day_id' => (int)$days['id'],
+				'king_age_name_id' => $child->age_id,
+				'kingar_children_number' => $child->age_number,
+				'workers_count' => $workers['worker_count'],
+				'kingar_menu_id' => $menusi,
+			]);
+			$path = "https://api.telegram.org/bot";
+			$token = "5064211282:AAH8CZUdU5i2Vl-4WB3PF4Kll6KoCzgHk8k";
+			$tday = $days['id'];
+			$yosh = "";
+			if($child->age_id == 1){
+				$yosh = "4-7 yoshli";
+			}
+			if($child->age_id == 2){
+				$yosh = "3-4 yoshli";
+			}
+			if($child->age_id == 3){
+				$yosh = "qisqa gurux";
+			}
+			$urlpdf ='https://cj56359.tmweb.ru/downloadPDF/' . $child->kingar_name_id . '/' . $tday . '/'.$child->age_id;
+			$user = Kindgarden::where('id', '=', $child->kingar_name_id)->first();
+			$this->curl_get_contents($path . $token . '/sendmessage?chat_id=694792808&text=<a href="'.$urlpdf.'">'.$yosh.'</a>&parse_mode=html');
+			// $this->curl_get_contents($path . $token . '/sendmessage?chat_id=' . $user->telegram_user_id . '&text=<a href="'.$urlpdf.'">'.$yosh.'</a>&parse_mode=html');
+		}
+
+		$temp = Temporary::truncate();
+		$gr = Kindgarden::all();
+
+		return redirect()->route('technolog.home');
+	}
 
     function curl_get_contents($url)
     {

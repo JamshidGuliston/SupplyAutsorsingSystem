@@ -63,7 +63,10 @@
                 <div class="table" id="table_with_data">
                 	<?php
 						echo "Боғча номи: <b>".$menu[0]['kingar_name']."</b><br/>";
-                		echo (($menu[0]['king_age_name_id'] == 1)? "3-4 ": "4-7 "). "ёшли болалар сони: <b>" . $menu[0]['kingar_children_number']."</b>";
+                		echo (($menu[0]['king_age_name_id'] == 1)? "4-7 ": "3-4 "). "ёшли болалар сони: <b>" . $menu[0]['kingar_children_number'].";</b>";
+                		if($menu[0]['king_age_name_id'] == 1){
+                			echo "  ходимлар сони: ".$menu[0]['workers_count'];	
+                		}
                 	?>
                     <table style="width:100%; table-layout: fixed;">
                         <thead>
@@ -77,6 +80,7 @@
                           	 $lo = 0;
                           	 $ind = -1;
 							 $onew = [];
+	
                           	 foreach($menuitem as $items){
                           		if(empty($food1[$items->meal_time_name.$items->food_name])){
                           				$ind++;
@@ -97,6 +101,8 @@
                           			// jami miqdorlar uchun
 									$onew[$lo] = 0;
 									$allw[$lo] = 0;
+									$oneworker[$lo]=0;
+									$allworker[$lo]=0;
 									$lo++;
                           			?>
                           			<th class='vrt-header' style="padding: 0px; width: 3%; height: 95px"><?php echo '<span>'.$items->product_name. '</span>';?></th>
@@ -120,6 +126,9 @@
 			                            <?php
 			                            for($t = 0; $t < count($products); $t++){
 			                            	if(!empty($tree[$i][$t])){
+			                            		if($i == 5 and $menu[0]['king_age_name_id'] == 1){
+			                            			$oneworker[$t] += $tree[$i][$t]; 	
+			                            		}
 			                            ?>
 			                            		<td style="padding: 0px;"><?php $onew[$t] += $tree[$i][$t]; echo $tree[$i][$t]; ?></td>
 			                            <?php
@@ -136,8 +145,19 @@
 			                        	<?php
 			                            for($t = 0; $t < count($products); $t++){
 			                            	if(!empty($tree[$i][$t])){
-			                            ?>
-			                            		<td style="padding: 0px;"><?php $allw[$t] += ($menu[0]['kingar_children_number']*$tree[$i][$t])/1000.; echo ($menu[0]['kingar_children_number']*$tree[$i][$t])/1000.; ?></td>
+			                            		if($i == 5 and $menu[0]['king_age_name_id'] == 1){
+			                            			$allworker[$t] += (($menu[0]['workers_count'])*$tree[$i][$t])/1000.;
+			                            			
+			                            		}
+			                            ?>	
+			                                    @if($t == 5)
+			                                    <?php
+			                                    $number = (($menu[0]['kingar_children_number'])*$tree[$i][$t])/1000.;
+			                                    ?>
+			                            		<td style="padding: 0px;"><?php $allw[$t] += (($menu[0]['kingar_children_number'])*$tree[$i][$t])/1000.; echo $number; ?></td>
+			                            		@else
+			                            		<td style="padding: 0px;"><?php $allw[$t] += (($menu[0]['kingar_children_number'])*$tree[$i][$t])/1000.; echo (($menu[0]['kingar_children_number'])*$tree[$i][$t])/1000.; ?></td>
+			                            	    @endif
 			                            <?php
 				                            }
 			                            	else{
@@ -202,7 +222,7 @@
 										<?php
 			                            for($t = 0; $t < count($products); $t++){
 			                            ?>
-			                            	<td style="padding: 0px; font-size: 5px; border-top: 2px solid black">1</td>
+			                            	<td style="padding: 0px; font-size: 5px; border-top: 2px solid black"><?= $oneworker[$t]; ?></td>
 			                            <?php	
                     					}
 			                            ?>
@@ -212,7 +232,7 @@
 										<?php
 			                            for($t = 0; $t < count($products); $t++){
 			                            ?>
-			                            	<td style="padding: 0px; font-size: 5px">0</td>
+			                            	<td style="padding: 0px; font-size: 5px"><?= $allworker[$t] ?></td>
 			                            <?php	
                     					}
 			                            ?>

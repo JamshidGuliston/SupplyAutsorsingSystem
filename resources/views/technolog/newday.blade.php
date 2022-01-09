@@ -133,13 +133,36 @@
 
 <!-- EDD -->
 <div class="py-4 px-4">
-    <div class="box-sub" style="
+	<form action="/technolog/go" method="post">
+		@csrf
+		<div class="box-sub" style="
+        display: flex;
+        justify-content: space-between;">
+		<select name="manuone" required style="width: 32%">
+			<option value=""></option>
+	        @foreach($menus as $menu)
+	        <option value="{{ $menu->id }}">{{ $menu->one_day_menu_name }}</option>
+	        @endforeach
+	    </select>
+	    
+	    <select name="two" required style="width: 50%">
+	    	<option value=""></option>
+            @foreach($menus as $menu)
+            <option value="{{ $menu->id }}">{{ $menu->one_day_menu_name }}</option>
+            @endforeach
+        </select>
+	</div>
+		<br/>
+    	<div class="box-sub" style="
         display: flex;
         justify-content: space-between;">
     	<a href="/technolog/home">Orqaga</a>
         <p>Bog'chalar soni: {{ count($temps) }}</p>
-        <input type="submit" class="btn btn-success text-white mb-2" value="Yuborish">
+        @if(count($temps) == count($activ))
+        <input type="submit"  class="btn btn-success text-white mb-2" value="Yuborish">
+        @endif
     </div>
+    </form>
     <table class="table table-light py-4 px-4">
         <thead>
             <tr>
@@ -147,35 +170,13 @@
                     <input type="checkbox" id="select-all">
                 </th>
                 <th colspan="3">
-                    <select name="manu1" style="width: 32%;
-                                    border: navajowhite;
-                                    padding: 7px 4px;
-                                    background-color: #555;
-                                    color: #fff;
-                                    display: inline-flex;
-                                    border-radius: 3px;
-                                    box-sizing: border-box;">
-                        @foreach($menus as $menu)
-                        <option value="{{ $menu->id }}">{{ $menu->one_day_menu_name }}</option>
-                        @endforeach
-                    </select>
+                    
                 </th>
                 <th></th>
                 <th>
-                    <select name="menu2" style="width: 100%;
-                                    border: navajowhite;
-                                    padding: 7px 4px;
-                                    background-color: #80afc6;
-                                    color: #fff;
-                                    display: inline-flex;
-                                    border-radius: 3px;
-                                    box-sizing: border-box;">
-                        @foreach($menus as $menu)
-                        <option value="{{ $menu->id }}">{{ $menu->one_day_menu_name }}</option>
-                        @endforeach
-                    </select>
+                    
                 </th>
-
+	
                 <th> <button class="btn btn-info p-0" style="
                     padding: 3px 16px !important;" data-bs-toggle="modal" data-bs-target="#exampleModalsadd"> <i class="fas fa-plus-square text-white "></i></button> </th>
             </tr>
@@ -290,10 +291,8 @@
                     })
                 };
 
-
             })
         })
-
 
     });
 </script>
