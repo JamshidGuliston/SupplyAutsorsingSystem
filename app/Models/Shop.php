@@ -11,14 +11,15 @@ class Shop extends Model
     protected $fillable = [
         'id',
         'shop_name',
+        'telegram_id',
         'hide'
     ];
 
     public function product(){
-        return $this->belongsToMany(Product::class);
+        return $this->belongsToMany(Product::class, 'shop_product');
     }
 
     public function kindgarden(){
-        return $this->belongsToMany(Kindgarden::class);
+        return $this->belongsToMany(Kindgarden::class, 'shop_kindgarden');
     }
 }

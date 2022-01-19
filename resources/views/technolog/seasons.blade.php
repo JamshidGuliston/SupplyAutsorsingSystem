@@ -10,37 +10,24 @@
     <a href="/technolog/allproducts" class="list-group-item list-group-item-action bg-transparent second-text fw-bold {{Request::is('technolog/allproducts') ? 'active' : null }}"><i class="fas fa-carrot"></i> Products</a>
     <a href="/technolog/getbotusers" class="list-group-item list-group-item-action bg-transparent second-text fw-bold {{Request::is('technolog/getbotusers') ? 'active' : null }}"><i class="fas fa-comment-dots me-2"></i>Chat bot</a>
     <a href="/technolog/shops" class="list-group-item list-group-item-action bg-transparent second-text fw-bold {{Request::is('technolog/shops') ? 'active' : null }}"><i class="fas fa-store-alt"></i> Shops</a>
-    <!-- <a href="#" class="list-group-item list-group-item-action bg-transparent text-danger fw-bold"><i class="fas fa-power-off me-2"></i>Logout</a> -->
+    <a href="#" class="list-group-item list-group-item-action bg-transparent text-danger fw-bold"><i class="fas fa-power-off me-2"></i>Logout</a>
 </div>
 @endsection
 
 @section('content')
-<div class="py-4 px-4">
-<table class="table table-light py-4 px-4">
-        <thead>
-            <tr>
-                <th scope="col">ID</th>
-                <th scope="col">MTT-nomi</th>
-                @foreach($ages as $age)
-                <th scope="col">{{ $age->age_name }}</th>
-                @endforeach
-                <th style="width: 70px;">Naklad</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <th scope="row"><input type="checkbox" id="bike" name="vehicle" value="gentra"></th>
-                <td>12</td>
-                <td>455</td>
-                <td>364</td>
-                <td><i class="far fa-window-close" style="color: red;"></i></td>
-                <td><i class=" edites far fa-edit text-info" data-bs-toggle="modal" data-bs-target="#exampleModal" data-kinid="" style="cursor: pointer; margin-right: 16px;"> </i></td>
-            </tr>
-        </tbody>
-    </table>
+<div class="container-fluid px-4">
+    <div class="row g-3 my-2">
+        @foreach($seasons as $row)
+        <div class="col-md-2">
+            <div class="p-3 bg-white shadow-sm d-flex flex-column justify-content-around align-items-center rounded">
+                <i class="fas fa-cloud fs-1 primary-text border rounded-full secondary-bg p-2" style="color:chocolate"></i>
+                <div class="text-center">
+                    <p class="fs-4" style="font-size: 18px !important;"><a href="/technolog/menus/{{$row['id']}}">{{$row['season_name']}}</a></p>
+                    <a href="{{ route('foodsettings',  ['id' => $row->id ]) }}" style="color: #959fa3; margin-right: 6px; font-size: 20px;"><i class="fas fa-cog"></i></a>
+                </div>
+            </div>
+        </div>
+        @endforeach
+    </div>
 </div>
-@endsection
-
-@section('script')
-
 @endsection

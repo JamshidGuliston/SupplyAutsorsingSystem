@@ -34,57 +34,19 @@
 
 @section('content')
 <div class="py-5 px-5">
-    <h2>{{ $garden->kingar_name }}</h2>
-    <form method="POST" action="{{route('updategarden')}}">
+    <h2>{{ $product->product_name }}</h2>
+    <form method="POST" action="{{route('updateproduct')}}">
         @csrf
+        <input type="hidden" name="productid" value="{{ $product->id }}" >
         <div class="form-group row">
-            <label class="col-sm-2 col-form-label">Nomi</label>
+            <label for="inputPassword" class="col-sm-2 col-form-label">Сатегория</label>
             <div class="col-sm-10">
-                <input type="text" class="form-control" name="kinname" id="staticEmail" value="{{ $garden->kingar_name }}" required>
-                <input type="hidden" class="form-control" name="kinname_id" id="staticEmail" value="{{ $garden->id }}">
-            </div>
-        </div>
-        <div class="form-group row">
-            <label for="staticEmail" class="col-sm-2 col-form-label">Parol</label>
-            <div class="col-sm-10">
-                <input type="text" name="kinparol" class="form-control" id="staticEmail" value="{{ $garden->kingar_password }}" required>
-            </div>
-        </div>
-        <div class="form-group row">
-            <label for="inputPassword" class="col-sm-2 col-form-label">Xodimlar soni</label>
-            <div class="col-sm-10">
-                <input type="number" name="worker" class="form-control" value="{{ $garden->worker_count }}" required>
-            </div>
-        </div>
-        <div class="form-group row">
-
-            <label for="inputPassword" class="col-sm-2 col-form-label">Bolalar guruhi</label>
-            @foreach($ages as $rows)
-            <?php $i = 1; ?>
-            <div class="col-sm-2">
-                @foreach($garden->age_range as $b)
-                @if($b->id == $rows->id)
-                <?php $i = 0; ?>
-                <input checked class="form-check-input" name="yongchek[]" type="checkbox" id="inlineCheckbox1" value="{{$rows['id']}}">
-                @endif
-                @endforeach
-                @if($i)
-                <input class="form-check-input" name="yongchek[]" type="checkbox" id="inlineCheckbox1" value="{{$rows['id']}}">
-                @endif
-                <label class="form-check-label" for="inlineCheckbox1">{{$rows['age_name']}}</label>
-            </div>
-            @endforeach
-        </div>
-
-        <div class="form-group row">
-            <label for="inputPassword" class="col-sm-2 col-form-label">Tumanlar</label>
-            <div class="col-sm-10">
-                <select class="form-select" name="region" aria-label="Default select example">
-                    @foreach($regions as $region)
-                    @if($garden->region_id == $region->id)
-                    <option selected value="{{$region['id']}}">{{$region['region_name']}}</option>
+                <select class="form-select" name="catid" aria-label="Default select example">
+                    @foreach($categories as $row)
+                    @if($product->category_name_id == $row->id)
+                    <option selected value="{{$row['id']}}">{{$row['pro_cat_name']}}</option>
                     @else
-                    <option value="{{$region['id']}}">{{$region['region_name']}}</option>
+                    <option value="{{$row['id']}}">{{$row['pro_cat_name']}}</option>
                     @endif
 
                     @endforeach
@@ -93,9 +55,39 @@
         </div>
 
         <div class="form-group row">
+            <label for="inputPassword" class="col-sm-2 col-form-label">Ўлчов бирлиги</label>
+            <div class="col-sm-10">
+                <select class="form-select" name="sizeid" aria-label="Default select example">
+                    @foreach($sizes as $row)
+                    @if($product->size_name_id == $row->id)
+                    <option selected value="{{$row['id']}}">{{$row['size_name']}}</option>
+                    @else
+                    <option value="{{$row['id']}}">{{$row['size_name']}}</option>
+                    @endif
+
+                    @endforeach
+                </select>
+            </div>
+        </div>
+
+        <div class="form-group row">
+            <label for="staticEmail" class="col-sm-2 col-form-label">Ўлчов бирлигини ифодаловчи бўлувчи миқдори</label>
+            <div class="col-sm-10">
+                <input type="text" name="div" class="form-control" id="staticEmail" value="{{ $product->div }}" required>
+            </div>
+        </div>
+
+        <div class="form-group row">
+            <label for="staticEmail" class="col-sm-2 col-form-label">Тартиби</label>
+            <div class="col-sm-10">
+                <input type="text" name="sort" class="form-control" id="staticEmail" value="{{ $product->sort }}" required>
+            </div>
+        </div>
+        
+        <div class="form-group row">
             <label for="inputPassword" class="col-sm-2 col-form-label">Ish faoliyati</label>
             <div class="col-sm-10">
-                <input type="number" required name="hide" class="form-control" value="{{ $garden->hide}}">
+                <input type="number" required name="hide" class="form-control" value="{{ $product->hide }}">
             </div>
         </div>
         <div class="form-group row">
@@ -105,6 +97,7 @@
             </div>
         </div>
     </form>
+    <a href="/technolog/allproducts">Orqaga</a>
 </div>
 @endsection
 

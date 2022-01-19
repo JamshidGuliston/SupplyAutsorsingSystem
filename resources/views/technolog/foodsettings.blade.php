@@ -34,70 +34,44 @@
 
 @section('content')
 <div class="py-5 px-5">
-    <h2>{{ $garden->kingar_name }}</h2>
-    <form method="POST" action="{{route('updategarden')}}">
+    <h2>{{ $food->food_name }}</h2>
+    <form method="POST" action="{{route('updatefood')}}">
         @csrf
+        <input type="hidden" name="foodid" value="{{ $food->id }}" >
         <div class="form-group row">
-            <label class="col-sm-2 col-form-label">Nomi</label>
+            <label for="inputPassword" class="col-sm-2 col-form-label">Сатегория</label>
             <div class="col-sm-10">
-                <input type="text" class="form-control" name="kinname" id="staticEmail" value="{{ $garden->kingar_name }}" required>
-                <input type="hidden" class="form-control" name="kinname_id" id="staticEmail" value="{{ $garden->id }}">
-            </div>
-        </div>
-        <div class="form-group row">
-            <label for="staticEmail" class="col-sm-2 col-form-label">Parol</label>
-            <div class="col-sm-10">
-                <input type="text" name="kinparol" class="form-control" id="staticEmail" value="{{ $garden->kingar_password }}" required>
-            </div>
-        </div>
-        <div class="form-group row">
-            <label for="inputPassword" class="col-sm-2 col-form-label">Xodimlar soni</label>
-            <div class="col-sm-10">
-                <input type="number" name="worker" class="form-control" value="{{ $garden->worker_count }}" required>
-            </div>
-        </div>
-        <div class="form-group row">
-
-            <label for="inputPassword" class="col-sm-2 col-form-label">Bolalar guruhi</label>
-            @foreach($ages as $rows)
-            <?php $i = 1; ?>
-            <div class="col-sm-2">
-                @foreach($garden->age_range as $b)
-                @if($b->id == $rows->id)
-                <?php $i = 0; ?>
-                <input checked class="form-check-input" name="yongchek[]" type="checkbox" id="inlineCheckbox1" value="{{$rows['id']}}">
-                @endif
-                @endforeach
-                @if($i)
-                <input class="form-check-input" name="yongchek[]" type="checkbox" id="inlineCheckbox1" value="{{$rows['id']}}">
-                @endif
-                <label class="form-check-label" for="inlineCheckbox1">{{$rows['age_name']}}</label>
-            </div>
-            @endforeach
-        </div>
-
-        <div class="form-group row">
-            <label for="inputPassword" class="col-sm-2 col-form-label">Tumanlar</label>
-            <div class="col-sm-10">
-                <select class="form-select" name="region" aria-label="Default select example">
-                    @foreach($regions as $region)
-                    @if($garden->region_id == $region->id)
-                    <option selected value="{{$region['id']}}">{{$region['region_name']}}</option>
+                <select class="form-select" name="catid" aria-label="Default select example">
+                    @foreach($categories as $row)
+                    @if($food->food_cat_id == $row->id)
+                    <option selected value="{{$row['id']}}">{{$row['food_cat_name']}}</option>
                     @else
-                    <option value="{{$region['id']}}">{{$region['region_name']}}</option>
+                    <option value="{{$row['id']}}">{{$row['food_cat_name']}}</option>
                     @endif
-
                     @endforeach
                 </select>
             </div>
         </div>
 
         <div class="form-group row">
-            <label for="inputPassword" class="col-sm-2 col-form-label">Ish faoliyati</label>
+            <label for="inputPassword" class="col-sm-2 col-form-label">Овқат вақти</label>
             <div class="col-sm-10">
-                <input type="number" required name="hide" class="form-control" value="{{ $garden->hide}}">
+                <select class="form-select" name="timeid" aria-label="Default select example" required>
+                    <option value="" selected>--Tanlang--</option>
+                    @if($food->meal_time_id == 0)
+                    <option selected value="0">Барчасига</option>
+                    @endif
+                    @foreach($times as $row)
+                    @if($food->meal_time_id == $row->id)
+                    <option selected value="{{$row['id']}}">{{$row['meal_time_name']}}</option>
+                    @else
+                    <option value="{{$row['id']}}">{{$row['meal_time_name']}}</option>
+                    @endif
+                    @endforeach
+                </select>
             </div>
         </div>
+    
         <div class="form-group row">
             <label for="inputPassword" class="col-sm-2 col-form-label"></label>
             <div class="col-sm-10">
@@ -105,6 +79,7 @@
             </div>
         </div>
     </form>
+    <a href="/technolog/food">Orqaga</a>
 </div>
 @endsection
 

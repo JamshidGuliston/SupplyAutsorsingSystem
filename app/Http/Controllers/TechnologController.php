@@ -10,6 +10,9 @@ use App\Models\Age_range;
 use App\Models\Region;
 use Illuminate\Support\Facades\DB;
 use App\Models\Day;
+use App\Models\Food;
+use App\Models\Food_category;
+use App\Models\Food_composition;
 use App\Models\Month;
 use Illuminate\Http\Request;
 use App\Models\Person;
@@ -18,14 +21,18 @@ use App\Models\Year;
 use App\Models\Temporary;
 use App\Models\Menu_composition;
 use App\Models\Number_children;
-use App\Models\One_day_menu;
+use App\Models\Titlemenu;
 use App\Models\order_product;
 use App\Models\history_process;
+use App\Models\Meal_time;
 use App\Models\order_product_structure;
 use App\Models\Product;
+use App\Models\Product_category;
 use App\Models\Season;
 use App\Models\Shop;
+use App\Models\Size;
 use Dompdf\Dompdf;
+use TCG\Voyager\Models\Category;
 
 class TechnologController extends Controller
 {
@@ -42,7 +49,7 @@ class TechnologController extends Controller
         $kingar = Kindgarden::all();
         date_default_timezone_set('Asia/Tashkent');
         // date("h:i:sa:M-d-Y");
-        $d = strtotime("+1 day");
+        $d = strtotime("+0 day");
         // dd($days[0]->day_number);
         return view('technolog.home', ['date' => $days, 'tomm' => $d, 'kingardens' => $kingar]);
     }
@@ -54,7 +61,7 @@ class TechnologController extends Controller
         $months = Month::all();
         $year = Year::orderBy('id', 'DESC')->first();
         date_default_timezone_set('Asia/Tashkent');
-        $d = strtotime("+1 day");
+        $d = strtotime("+0 day");
         foreach ($months as $month) {
             if ($month->month_en == date("F", $d)) {
                 Month::where('month_en', $request->daymonth)
@@ -111,13 +118,13 @@ class TechnologController extends Controller
     public function sendmenu($day)
     {
         date_default_timezone_set('Asia/Tashkent');
-        $d = strtotime("+1 day");
+        $d = strtotime("+0 day");
         $ages = Age_range::all();
         // dd($ages);
         if ($day == date("d-F-Y", $d)) {
             $sid = Season::where('hide', 1)->first();
             // dd($sid);
-            $menus = One_day_menu::where('menu_season_id', $sid->id)->get();
+            $menus = Titlemenu::where('menu_season_id', $sid->id)->get();
             $gr = Temporary::join('kindgardens', 'temporaries.kingar_name_id', '=', 'kindgardens.id')
                 ->orderby('kindgardens.id', 'ASC')->get();
 
@@ -474,6 +481,367 @@ class TechnologController extends Controller
 
 		return redirect()->route('technolog.home');
 	}
+
+    public function allproducts(Request $request)
+    {
+        $products = Product::with('shop')->get();
+        // dd($products);
+        return view('technolog.allproducts', compact('products'));
+    }
+
+    public function settingsproduct(Request $request, $id)
+    {
+        $product = Product::where('id', $id)->first();
+        $categories = Product_category::all();
+        $sizes = Size::all(); 
+        // dd($product);
+        return view('technolog.settingsproduct', compact('product', 'categories', 'sizes'));
+    }
+
+    public function updateproduct(Request $request)
+    {
+        // dd($request->all());
+        Product::where('id', $request['productid'])
+            ->update([
+                'size_name_id' => $request['sizeid'],
+                'category_name_id' => $request['catid'],
+                'div' => $request['div'],
+                'sort' => $request['sort'],
+                'hide' => $request['hide']
+            ]);
+        return redirect()->route('technolog.allproducts');
+    }
+
+    public function shops(Request $request)
+    {
+        $shops = Shop::all();
+        // dd($shops);
+        return view('technolog.shops', compact('shops'));
+    }
+
+    public function shopsettings(Request $request, $id)
+    {
+        $shop = Shop::where('id', $id)->with('product')->with('kindgarden')->first();
+        $products = Product::all();
+        $gardens = Kindgarden::all();
+        return view('technolog.shopsettings', compact('shop', 'products', 'gardens'));
+    }
+
+    public function updateshop(Request $request)
+    {
+        $shop = Shop::find($request->shopid);
+        $prd = $request->products;
+        $shop->product()->sync($prd);
+        $grd = $request->gardens;
+        $shop->kindgarden()->sync($grd);
+        $shop->update([
+                'shop_name' => $request->shopname,
+                'hide' => $request->hide
+            ]);
+        return redirect()->route('technolog.shops');
+    }
+
+    public function addshop()
+    {
+        $products = Product::all();
+        $gardens = Kindgarden::all();
+
+        return view('technolog.addshop', compact('products', 'gardens'));
+    }
+
+    public function createshop(Request $request)
+    {
+        $shop = Shop::create([
+            'shop_name' => $request->name,
+            'telegram_id' => 0,
+            'hide' => 1
+        ]);
+        $prd = $request->products;
+        $shop->product()->sync($prd);
+        $grd = $request->gardens;
+        $shop->kindgarden()->sync($grd);
+
+        return redirect()->route('technolog.shops');
+    }
+
+    public function food(Request $request)
+    {
+        $food = Food::all();
+        return view('technolog.food', compact('food'));
+    }
+
+    public function foodsettings(Request $request, $id)
+    {
+        $food = Food::where('id', $id)->first();
+        $categories = Food_category::all();
+        $times = Meal_time::all();
+        return view('technolog.foodsettings', compact('food', 'categories', 'times'));
+    }
+
+    public function updatefood(Request $request)
+    {
+        Food::where('id', $request->foodid)
+            ->update([
+                'food_cat_id' => $request->catid,
+    	        'meal_time_id' => $request->timeid
+            ]);
+        
+        return redirect()->route('food');
+    }
+
+    public function fooditem(Request $request, $id)
+    {
+        $productall = Product::all();
+        $food = Food_composition::where('food_name_id', $id)->join('food', 'food.id', '=', 'food_compositions.food_name_id')
+                        ->join('products', 'products.id', '=', 'food_compositions.product_name_id')
+                        ->get(['food_compositions.id', 'food.food_name','products.product_name']);
+        // dd($food);
+        foreach($food as $item){
+            $t = 0;
+            foreach($productall as $pro){
+                if($item->product_name == $pro->product_name){
+                    $productall[$t]['ok'] = 1;
+                }
+                $t++;
+            }
+        }
+        return view('technolog.fooditem', compact('food', 'productall', 'id'));
+    }
+
+    public function addproductfood(Request $request)
+    {
+        Food_composition::create([
+            'food_name_id' => $request->titleid,
+    	    'product_name_id' => $request->productid
+        ]);
+        return redirect()->route('fooditem', $request->titleid);
+    }
+
+    public function deleteproductfood(Request $request)
+    {
+        Food_composition::where('id', $request->id)->delete();
+    }
+
+    public function editproductfood(Request $request)
+    {
+        Food_composition::where('id', $request->id)
+            ->update([
+    	        'product_name_id' => $request->productid
+            ]);
+        
+        return redirect()->route('fooditem', $request->titleid);
+    }
+
+    public function addfood(Request $request)
+    {
+        $categories = Food_category::all();
+        $times = Meal_time::all();
+        return view('technolog.addfood', compact('categories', 'times'));
+    }
+
+    public function createfood(Request $request)
+    {
+        Food::create([
+            'food_name' => $request->name,
+            'food_cat_id' => $request->catid,
+            'meal_time_id' => $request->timeid,
+            'food_prepar_tech' => '...',
+            'food_image' => 'png.png'
+        ]);
+
+        return redirect()->route('food');
+    }
+
+    public function seasons(Request $request)
+    {
+        $seasons = Season::all();
+        return view('technolog.seasons', compact('seasons'));
+    }
+
+    public function menus(Request $request, $id)
+    {
+        $menus = Titlemenu::where('menu_season_id', $id)->get();
+
+        return view('technolog.menus', compact('menus', 'id'));
+    }
+
+    public function addtitlemenu(Request $request, $id)
+    {
+        $ages = Age_range::all();
+        return view('technolog.addtitlemenu', compact('id', 'ages'));
+    }
+
+    public function createmenu(Request $request)
+    {
+        // dd($request->all());
+        $menu = Titlemenu::create([
+            'menu_name' => $request->name,
+            'menu_season_id' => $request->seasonid
+        ]);
+
+        $age = $request->yongchek;
+        $menu->age_range()->sync($age);
+
+        return redirect()->route('technolog.menus', $request->seasonid);
+    }
+
+    public function menuitem(Request $request, $id)
+    {
+        $times = Meal_time::all();
+        $titlemenu = Titlemenu::where('id', $id)->with('age_range')->first();
+        $menuitem = Menu_composition::where('title_menu_id', $id)
+                ->join('titlemenus', 'titlemenus.id', '=', 'menu_compositions.title_menu_id')
+                ->join('meal_times', 'meal_times.id', '=', 'menu_compositions.menu_meal_time_id')
+                ->join('food', 'food.id', '=', 'menu_compositions.menu_food_id')
+                ->join('products', 'products.id', '=', 'menu_compositions.product_name_id')
+                ->join('age_ranges', 'age_ranges.id', '=', 'menu_compositions.age_range_id')
+                ->orderby('menu_compositions.menu_meal_time_id', 'ASC')
+                ->orderby('menu_compositions.id', 'ASC')
+                ->get([
+                    'titlemenus.menu_name', 
+                    'titlemenus.id as menuid', 
+                    'meal_times.meal_time_name', 
+                    'meal_times.id as meal_timeid', 
+                    'food.food_name', 
+                    'food.id as foodid', 
+                    'products.product_name', 
+                    'products.id as productid', 
+                    'age_ranges.id as ageid', 
+                    'menu_compositions.weight',
+                    'menu_compositions.id'
+                ]); 
+        // dd($menuitem);
+        return view('technolog.menuitem', compact('id', 'times', 'titlemenu', 'menuitem'));
+    }
+
+    // ajax
+
+    public function getfood(Request $request)
+    {
+        $food = Food::where('meal_time_id', $request->id)
+                ->orwhere('meal_time_id', 0)
+                ->get();
+
+        $html = "<select id='foodid' name='foodid' onchange='change()' class='form-select' required aria-label='Default select example'>
+                        <option value=''>--Taomni tanlang--</option>";
+        foreach($food as $row){
+            $html = $html."<option value=".$row->id.">".$row->food_name."</option>";
+        }
+        $html = $html."</select>";
+        return $html;
+    }
+
+    public function getfoodcomposition(Request $request)
+    {
+        $menu = Titlemenu::where('id', $request->menuid)->with('age_range')->first();
+        $foodcom = Food_composition::where('food_name_id', $request->id)
+                ->join('products', 'products.id', '=', 'food_compositions.product_name_id')->get();
+        $html = "<table class='table table-light table-striped table-hover'>
+                <thead>
+                    <tr>
+                        <th scope='col'>...</th>
+                        <th scope='col'>Maxsulot</th>";
+        foreach($menu->age_range as $row){
+            $html = $html."<th scope='col'>".$row['age_name']."</th>";
+        }
+        $html = $html."</tr>
+                </thead>
+                <tbody>";
+        foreach($foodcom as $product){
+            $html = $html."<tr>
+                <td><input type='hidden' name='products[]' value='".$product->id."'></td>
+                <td>".$product->product_name."</td>";
+                foreach($menu->age_range as $row){
+                    $html = $html."<td><input type='number' name='ages".$product->id."[]' required style='width: 100%;'></td>";
+                }
+                
+                $html = $html."</tr>";
+        }
+        $html = $html."</tbody>
+            </table>";
+        
+        return $html;
+    }
+
+    public function createmenucomposition(Request $request)
+    {
+        // dd($request->all());
+        $menu = Titlemenu::where('id', $request->titleid)->with('age_range')->first();
+        foreach($request->products as $product)
+        {
+            $ages = "ages".$product;
+            $t = 0;
+            foreach($menu->age_range as $age)
+            {
+                // echo "menu: ".$request->titleid." mealtime: ".$request->timeid." food: ".$request->foodid." product: ".$product." age: ".$age->id." weight: ".$request[$ages][$t++]." <br/>";
+                Menu_composition::create([
+                    'title_menu_id' => $request->titleid,
+                    'menu_meal_time_id' => $request->timeid,
+                    'menu_food_id' => $request->foodid,
+                    'product_name_id' => $product,
+                    'age_range_id' => $age->id,
+                    'weight' => $request[$ages][$t++]
+                ]);
+            }
+
+        }
+        
+        return redirect()->route('technolog.menuitem', $request->titleid);
+    }
+
+    public function getmenuproduct(Request $request)
+    {
+        $menu = Titlemenu::where('id', $request->menuid)->with('age_range')->first();
+        $foodcom = Menu_composition::where('title_menu_id', $request->menuid)
+                ->where('menu_meal_time_id', $request->timeid)
+                ->where('menu_food_id', $request->foodid)
+                ->where('product_name_id', $request->prodid)
+                ->join('products', 'products.id', '=', 'menu_compositions.product_name_id')
+                ->get(['menu_compositions.id', 'products.product_name', 'age_range_id', 'weight']);
+        // dd($foodcom);
+        $html = "<table class='table table-light table-striped table-hover'>
+                <thead>
+                    <tr>
+                        <th scope='col'>...</th>
+                        <th scope='col'>Maxsulot</th>";
+        foreach($menu->age_range as $row){
+            $html = $html."<th scope='col'>".$row['age_name']."</th>";
+        }
+        $html = $html."</tr>
+                </thead>
+                <tbody>";
+        for($it = 0; $it < count($foodcom); $it++){
+            $html = $html."<tr>
+                <td></td>
+                <td>".$foodcom[$it]['product_name']."</td>";
+                foreach($menu->age_range as $row){
+                    $html = $html."<td><input type='number' name='ages[]' value='".$foodcom[$it]['weight']."' required style='width: 100%;'></td>";
+                    $html = $html."<input type='hidden' name='rows[]' value='".$foodcom[$it]['id']."'>";
+                    $it++;
+                }
+                
+                $html = $html."</tr>";
+        }
+        $html = $html."</tbody>
+            </table>";
+        
+        return $html;
+
+    }
+
+    public function editemenuproduct(Request $request)
+    {
+        dd($request->all());
+        $it = 0;
+        foreach($request->rows as $row){
+            Menu_composition::where('id', $row)
+                    ->update([
+                        'weight' => $request->ages[$it]
+                    ]);
+            $it++;
+        }
+        return redirect()->route('technolog.menuitem', $request->menuid);
+    }
 
     function curl_get_contents($url)
     {

@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateOneDayMenusTable extends Migration
+class RemoveAgeNameIdColumFromFoodCompositions extends Migration
 {
     /**
      * Run the migrations.
@@ -13,11 +13,9 @@ class CreateOneDayMenusTable extends Migration
      */
     public function up()
     {
-        Schema::create('titlemenus', function (Blueprint $table) {
-            $table->increments('id');
-            $table->string('menu_name');
-            $table->integer('menu_season_id')->references('id')->on('seasons');
-            $table->timestamps();
+        Schema::table('food_compositions', function (Blueprint $table) {
+            $table->dropColumn('age_name_id');
+            $table->dropColumn('product_weight');
         });
     }
 
@@ -28,6 +26,8 @@ class CreateOneDayMenusTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('one_day_menus');
+        Schema::table('food_compositions', function (Blueprint $table) {
+            //
+        });
     }
 }

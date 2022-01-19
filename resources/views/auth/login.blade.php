@@ -13,14 +13,14 @@
         <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet"> 
         <style>
             body {
-                background: #222D32;
+                background: #e7fefe;
                 font-family: 'Roboto', sans-serif;
             }
 
             .login-box {
                 margin-top: 75px;
                 height: auto;
-                background: #1A2226;
+                background: white;
                 text-align: center;
                 box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
             }
@@ -41,7 +41,7 @@
                 letter-spacing: 2px;
                 margin-top: 15px;
                 font-weight: bold;
-                color: #ECF0F5;
+                color: #9199a2;
             }
 
             .login-form {
@@ -50,7 +50,7 @@
             }
 
             input[type=email] {
-                background-color: #1A2226;
+                background-color: white;
                 border: none;
                 border-bottom: 2px solid #0DB8DE;
                 border-top: 0px;
@@ -63,7 +63,7 @@
             }
 
             input[type=password] {
-                background-color: #1A2226;
+                background-color: white;
                 border: none;
                 border-bottom: 2px solid #0DB8DE;
                 border-top: 0px;
@@ -86,7 +86,7 @@
                 box-shadow: none;
                 border-bottom: 2px solid #0DB8DE;
                 outline: 0;
-                background-color: #1A2226;
+                background-color: #1889b4;
                 color: #ECF0F5;
             }
 
@@ -100,14 +100,14 @@
             }
 
             .form-control-label {
-                font-size: 10px;
-                color: #6C6C6C;
+                font-size: 16px;
+                color: #a29f9f;
                 font-weight: bold;
                 letter-spacing: 1px;
             }
 
             .btn-outline-primary {
-                border-color: #0DB8DE;
+                border-color: #1889b4;
                 color: #0DB8DE;
                 border-radius: 0px;
                 font-weight: bold;
@@ -116,7 +116,7 @@
             }
 
             .btn-outline-primary:hover {
-                background-color: #0DB8DE;
+                background-color: #1889b4;
                 right: 0px;
             }
 

@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateOneDayMenusTable extends Migration
+class CreateTitlemenuAgeRangesTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,10 +13,10 @@ class CreateOneDayMenusTable extends Migration
      */
     public function up()
     {
-        Schema::create('titlemenus', function (Blueprint $table) {
-            $table->increments('id');
-            $table->string('menu_name');
-            $table->integer('menu_season_id')->references('id')->on('seasons');
+        Schema::create('titlemenu_age_range', function (Blueprint $table) {
+            $table->id();
+            $table->integer('titlemenu_id');
+            $table->integer('age_range_id');
             $table->timestamps();
         });
     }
@@ -28,6 +28,6 @@ class CreateOneDayMenusTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('one_day_menus');
+        Schema::dropIfExists('titlemenu_age_ranges');
     }
 }
