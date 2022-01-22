@@ -94,6 +94,18 @@
                         <input type="hidden" class="form-control" name="daymonth" value="{{ date('F', $tomm) }}" />
                         <input type="hidden" class="form-control" name="dayyear" value="{{ date('Y', $tomm) }}" />
                         {{ date('d', $tomm) ." - ". date("F", $tomm) }}
+                        <select name="today" id="today">
+                            <option disabled selected>Bugungi menyu</option>
+                            @foreach($menus as $menu)
+                                <option value="{{ $menu->id }}">{{ $menu->menu_name }}</option>
+                            @endforeach
+                        </select>
+                        <select name="today" id="today">
+                            <option disabled selected>Ertangi menyu</option>
+                            @foreach($menus as $menu)
+                                <option value="{{ $menu->id }}">{{ $menu->menu_name }}</option>
+                            @endforeach
+                        </select>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
