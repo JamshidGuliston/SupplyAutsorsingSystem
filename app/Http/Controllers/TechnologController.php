@@ -269,6 +269,7 @@ class TechnologController extends Controller
 
     public function addproduct()
     {
+        $months = Month::all();
         $days = Day::orderby('id', 'DESC')->get();
         $orederproduct = order_product::join('kindgardens', 'kindgardens.id', '=', 'order_products.kingar_name_id')
             ->join('days', 'days.id', '=', 'order_products.day_id')
@@ -291,7 +292,7 @@ class TechnologController extends Controller
                 $t++;
             }
         }
-        return view('technolog.addproduct', ['gardens' => $kingar, 'orders' => $orederproduct, 'products'=>$orederitems]);
+        return view('technolog.addproduct', ['gardens' => $kingar, 'orders' => $orederproduct, 'products'=>$orederitems, 'months'=>$months]);
     }
 
     public function ordername(Request $request)
@@ -831,7 +832,7 @@ class TechnologController extends Controller
 
     public function editemenuproduct(Request $request)
     {
-        dd($request->all());
+        // dd($request->all());
         $it = 0;
         foreach($request->rows as $row){
             Menu_composition::where('id', $row)
@@ -840,6 +841,15 @@ class TechnologController extends Controller
                     ]);
             $it++;
         }
+        return redirect()->route('technolog.menuitem', $request->menuid);
+    }
+
+    public function deletemenufood(Request $request)
+    {
+        Menu_composition::where('title_menu_id', $request->menuid)
+                ->where('menu_meal_time_id', $request->timeid)
+                ->where('menu_food_id', $request->foodid)
+                ->delete();
         return redirect()->route('technolog.menuitem', $request->menuid);
     }
 

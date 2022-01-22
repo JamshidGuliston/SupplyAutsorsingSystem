@@ -75,21 +75,47 @@
 <div class="modal fade" id="deleteModalas" tabindex="-1" aria-labelledby="exampleModalLabelss" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
+        <form action="{{route('technolog.deletemenufood')}}" method="POST">
+            @csrf
             <div class="modal-header bg-danger">
                 <h5 class="modal-title text-white" id="exampleModalLabel">O'chirish</h5>
                 <button type="button" class="btn-close " data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <div class="modal-body">
-                Bu mahsulotni o'chirasizmi
+            <div class="modal-body deletefood">
             </div>
             <div class="modal-footer">
                 <!-- <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button> -->
-                <button type="button" class="btn dele btn-danger">O'chirish</button>
+                <button type="submit" class="btn dele btn-danger">O'chirish</button>
             </div>
+        </form>
         </div>
     </div>
 </div>
 <!-- DELET -->
+
+<!-- DELET -->
+<!-- Modal -->
+<div class="modal fade" id="deleteModalfood" tabindex="-1" aria-labelledby="exampleModalLabelss" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+        <form action="{{route('technolog.deletemenufood')}}" method="POST">
+            @csrf
+            <div class="modal-header bg-danger">
+                <h5 class="modal-title text-white" id="exampleModalLabel">Таомни ўчириш</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="deletefood modal-body">
+            </div>
+            <div class="modal-footer">
+                <!-- <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button> -->
+                <button type="submit" class="btn dele btn-danger">O'chirish</button>
+            </div>
+        </form>
+        </div>
+    </div>
+</div>
+<!-- DELET -->
+
 <!-- EDIT -->
 <!-- Modal -->
 <div class="modal editesmodal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -167,7 +193,7 @@
                             }
                         ?>
                         <tr>
-                            <td rowspan="{{ round($fd/count($titlemenu->age_range)) }}" style="text-align: center;">{{ $menuitem[$it]['food_name'] }}</td>
+                            <td rowspan="{{ round($fd/count($titlemenu->age_range)) }}" style="text-align: center;">{{ $menuitem[$it]['food_name'] }} <i class="fas fa-minus-circle fooddel" data-menu-id="{{ $menuitem[$it]['menuid'] }}" data-time-id="{{ $menuitem[$it]['meal_timeid'] }}" data-food-id="{{ $menuitem[$it]['foodid'] }}" data-foodname-id="{{ $menuitem[$it]['food_name'] }}" style="color: #da1313; cursor: pointer;" data-bs-toggle="modal" data-bs-target="#deleteModalfood"></i></td>
                             <td>{{ $menuitem[$it]['product_name'] }}</td>
                             @foreach($titlemenu->age_range as $row)
                             <td style="text-align: end;">{{ $menuitem[$it]['weight']." гр" }}</td>
@@ -176,7 +202,7 @@
                             <?php $it--;?>
                             <td style="text-align: end;">
                                 <i data-menu-id="{{ $menuitem[$it]['menuid'] }}" data-time-id="{{ $menuitem[$it]['meal_timeid'] }}" data-food-id="{{ $menuitem[$it]['foodid'] }}" data-prod-id="{{ $menuitem[$it]['productid'] }}" class="editess far fa-edit text-info" data-bs-toggle="modal" data-bs-target="#exampleModal" data-kinid="" style="cursor: pointer; margin-right: 16px;"> </i>
-                                <i data-menu-id="{{ $menuitem[$it]['menuid'] }}" data-time-id="{{ $menuitem[$it]['meal_timeid'] }}" data-food-id="{{ $menuitem[$it]['foodid'] }}" data-prod-id="{{ $menuitem[$it]['productid'] }}" class="detete  fa fa-trash" aria-hidden="true" data-bs-toggle="modal" style="cursor: pointer;" data-bs-target="#deleteModalas"></i>
+                                <!-- <i data-menu-id="{{ $menuitem[$it]['menuid'] }}" data-time-id="{{ $menuitem[$it]['meal_timeid'] }}" data-food-id="{{ $menuitem[$it]['foodid'] }}" data-prod-id="{{ $menuitem[$it]['productid'] }}" class="detete  fa fa-trash" aria-hidden="true" data-bs-toggle="modal" style="cursor: pointer;" data-bs-target="#deleteModalas"></i> -->
                             </td>
                         </tr>
                     @elseif(empty($mealtime[$menuitem[$it]['meal_timeid']."-".$menuitem[$it]['foodid']]))
@@ -191,7 +217,7 @@
                             }
                         ?>
                         <tr>
-                            <td rowspan="{{ round($fd/count($titlemenu->age_range)) }}" style="text-align: center;">{{ $menuitem[$it]['food_name'] }}</td>
+                            <td rowspan="{{ round($fd/count($titlemenu->age_range)) }}" style="text-align: center;">{{ $menuitem[$it]['food_name'] }} <i class="fas fa-minus-circle fooddel" data-menu-id="{{ $menuitem[$it]['menuid'] }}" data-time-id="{{ $menuitem[$it]['meal_timeid'] }}" data-food-id="{{ $menuitem[$it]['foodid'] }}" data-foodname-id="{{ $menuitem[$it]['food_name'] }}" style="color: #da1313; cursor: pointer;" data-bs-toggle="modal" data-bs-target="#deleteModalfood"></i></td>
                             <td>{{ $menuitem[$it]['product_name'] }}</td>
                             @foreach($titlemenu->age_range as $row)
                             <td style="text-align: end;">{{ $menuitem[$it]['weight']." гр" }}</td>
@@ -200,7 +226,7 @@
                             <?php $it--;?>
                             <td style="text-align: end;">
                                 <i data-menu-id="{{ $menuitem[$it]['menuid'] }}" data-time-id="{{ $menuitem[$it]['meal_timeid'] }}" data-food-id="{{ $menuitem[$it]['foodid'] }}" data-prod-id="{{ $menuitem[$it]['productid'] }}" class="editess far fa-edit text-info" data-bs-toggle="modal" data-bs-target="#exampleModal" data-kinid="" style="cursor: pointer; margin-right: 16px;"> </i>
-                                <i data-menu-id="{{ $menuitem[$it]['menuid'] }}" data-time-id="{{ $menuitem[$it]['meal_timeid'] }}" data-food-id="{{ $menuitem[$it]['foodid'] }}" data-prod-id="{{ $menuitem[$it]['productid'] }}" class="detete  fa fa-trash" aria-hidden="true" data-bs-toggle="modal" style="cursor: pointer;" data-bs-target="#deleteModalas"></i>
+                                <!-- <i data-menu-id="{{ $menuitem[$it]['menuid'] }}" data-time-id="{{ $menuitem[$it]['meal_timeid'] }}" data-food-id="{{ $menuitem[$it]['foodid'] }}" data-prod-id="{{ $menuitem[$it]['productid'] }}" class="detete  fa fa-trash" aria-hidden="true" data-bs-toggle="modal" style="cursor: pointer;" data-bs-target="#deleteModalas"></i> -->
                             </td>
                         </tr>
                     @else
@@ -213,7 +239,7 @@
                             <?php $it--;?>
                             <td style="text-align: end;">
                                 <i data-menu-id="{{ $menuitem[$it]['menuid'] }}" data-time-id="{{ $menuitem[$it]['meal_timeid'] }}" data-food-id="{{ $menuitem[$it]['foodid'] }}" data-prod-id="{{ $menuitem[$it]['productid'] }}" class="editess far fa-edit text-info" data-bs-toggle="modal" data-bs-target="#exampleModal" data-kinid="" style="cursor: pointer; margin-right: 16px;"> </i>
-                                <i data-menu-id="{{ $menuitem[$it]['menuid'] }}" data-time-id="{{ $menuitem[$it]['meal_timeid'] }}" data-food-id="{{ $menuitem[$it]['foodid'] }}" data-prod-id="{{ $menuitem[$it]['productid'] }}" class="detete  fa fa-trash" aria-hidden="true" data-bs-toggle="modal" style="cursor: pointer;" data-bs-target="#deleteModalas"></i>
+                                <!-- <i data-menu-id="{{ $menuitem[$it]['menuid'] }}" data-time-id="{{ $menuitem[$it]['meal_timeid'] }}" data-food-id="{{ $menuitem[$it]['foodid'] }}" data-prod-id="{{ $menuitem[$it]['productid'] }}" class="detete  fa fa-trash" aria-hidden="true" data-bs-toggle="modal" style="cursor: pointer;" data-bs-target="#deleteModalas"></i> -->
                             </td>
                         </tr>
                     @endif
@@ -281,6 +307,17 @@
                 hidden.append("<input type='hidden' name='prodid' value="+prodid+">");
             }
         })
+        });
+        $('.fooddel').click(function(){
+            var menuid = $(this).attr('data-menu-id');
+            var timeid = $(this).attr('data-time-id');
+            var foodid = $(this).attr('data-food-id');
+            var foodname = $(this).attr('data-foodname-id');
+            var div = $('.deletefood');
+            div.append("<input type='hidden' name='menuid' value="+menuid+">");
+            div.append("<input type='hidden' name='timeid' value="+timeid+">");
+            div.append("<input type='hidden' name='foodid' value="+foodid+">");
+            div.append("<p>"+foodname+"ни ўчирмоқчимисиз? </p>");  
         });
     });
     function change(){

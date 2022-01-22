@@ -5,6 +5,7 @@ use App\Http\Controllers\TestController;
 use App\Http\Controllers\StorageController;
 use App\Http\Controllers\TechnologController;
 use App\Http\Controllers\ApiControllers\TelegramController;
+use App\Http\Controllers\HomeController;
 use Illuminate\Support\Facades\Auth;
 /*
 |--------------------------------------------------------------------------
@@ -28,7 +29,7 @@ Route::get('/hello', [TestController::class, 'tomany']);
 // dashboart test
 Route::get('/dash', [TestController::class, 'dash']);
 
-Route::get('/', [TestController::class, 'index']);
+Route::get('/', [HomeController::class, 'index']);
 
 Route::get('/controller', [TestController::class, 'start']);
 
@@ -111,4 +112,5 @@ Route::group(['prefix' => 'technolog', 'middleware' => ['isTechnolog', 'auth']],
     Route::post('createmenucomposition', [TechnologController::class, 'createmenucomposition'])->name('technolog.createmenucomposition');
     Route::get('getmenuproduct', [TechnologController::class, 'getmenuproduct'])->name('technolog.getmenuproduct');
     Route::post('editemenuproduct', [TechnologController::class, 'editemenuproduct'])->name('technolog.editemenuproduct');
+    Route::post('deletemenufood', [TechnologController::class, 'deletemenufood'])->name('technolog.deletemenufood');
 });
