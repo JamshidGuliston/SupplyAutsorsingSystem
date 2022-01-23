@@ -5,6 +5,18 @@
     --second-bg-color: #c1efde;
 }
 
+td:first-child{
+    position: relative;
+}
+
+td:first-child i{
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 15px;
+}
+
 .primary-text {
     color: var(--main-text-color);
 }

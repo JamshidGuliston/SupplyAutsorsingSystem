@@ -47,11 +47,14 @@ class TechnologController extends Controller
             ->select('days.id', 'days.day_number', 'days.month_id', 'months.month_name', 'years.year_name')
             ->orderBy('days.id', 'DESC')->get();
         $kingar = Kindgarden::all();
+        $season = Season::where('hide', 1)->first();
+        $menus = Titlemenu::where('menu_season_id', $season->id)->get();
+        // dd($season);
         date_default_timezone_set('Asia/Tashkent');
         // date("h:i:sa:M-d-Y");
         $d = strtotime("+0 day");
         // dd($days[0]->day_number);
-        return view('technolog.home', ['date' => $days, 'tomm' => $d, 'kingardens' => $kingar]);
+        return view('technolog.home', ['date' => $days, 'tomm' => $d, 'kingardens' => $kingar, 'menus' => $menus]);
     }
 
     // yangi kun ishlari
