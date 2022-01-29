@@ -16,6 +16,7 @@ class CreateTitlemenuFoodsTable extends Migration
         Schema::create('titlemenu_foods', function (Blueprint $table) {
             $table->id();
             $table->integer('day_id');
+            $table->integer('worker_age_id');
             $table->integer('titlemenu_id');
             $table->integer('food_id');
             $table->timestamps();
