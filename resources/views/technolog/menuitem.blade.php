@@ -161,9 +161,11 @@
                     <button class="btn btn-dark" data-bs-toggle="modal" data-bs-target="#addModal">Taom qo'shish</button>
                     <form action="{{route('technolog.copymenuitem')}}" method="POST">
                         @csrf
+                        @if(isset($menuitem[0]['menu_season_id']))
                         <input type="hidden" name="seasonid" value="{{ $menuitem[0]['menu_season_id'] }}" >
                         <input type="hidden" name="menuid" value="{{ $menuitem[0]['menuid'] }}" >
                         <span> <input type="text" name="newmenuname" placeholder="{{ $menuitem[0]['menu_name'] }} nusxasi" required>  <button type="submit"><i style="cursor: pointer;"  class="fas fa-copy"></i></button></span>
+                        @endif
                     </form>
                 </div>
             </div>

@@ -56,7 +56,7 @@ class TechnologController extends Controller
         // dd($season);
         date_default_timezone_set('Asia/Tashkent');
         // date("h:i:sa:M-d-Y");
-        $d = strtotime("+10 hours");
+        $d = strtotime("-10 hours");
         // dd($days[0]->day_number);
         return view('technolog.home', ['date' => $days, 'tomm' => $d, 'kingardens' => $kingar, 'menus' => $menus, 'next' => $nextdaymenu]);
     }
@@ -68,7 +68,7 @@ class TechnologController extends Controller
         $months = Month::all();
         $year = Year::orderBy('id', 'DESC')->first();
         date_default_timezone_set('Asia/Tashkent');
-        $d = strtotime("+0 day");
+        $d = strtotime("-10 hours");
         foreach ($months as $month) {
             if ($month->month_en == date("F", $d)) {
                 Month::where('month_en', $request->daymonth)
@@ -160,7 +160,7 @@ class TechnologController extends Controller
     public function sendmenu($day)
     {
         date_default_timezone_set('Asia/Tashkent');
-        $d = strtotime("+0 day");
+        $d = strtotime("-10 hours");
         $ages = Age_range::all();
         // dd($ages);
         if ($day == date("d-F-Y", $d)) {
@@ -353,7 +353,7 @@ class TechnologController extends Controller
         }
 
         date_default_timezone_set('Asia/Tashkent');
-        $d = strtotime("+0 day");
+        $d = strtotime("-10 hours");
 
         return redirect()->route('technolog.sendmenu', ['day' => date("d-F-Y", $d)]);
     }
