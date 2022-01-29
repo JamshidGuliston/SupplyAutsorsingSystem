@@ -284,6 +284,7 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
+                <h4 class="gardentitle"></h4>
                 <div class="w_countedit">
 
                 </div>
@@ -513,9 +514,10 @@
         var wc = $(this).attr('data-wor-count');
         var kn = $(this).attr('data-king-name');
         var div = $('.w_countedit');
+        var title = $('.gardentitle');
         div.append("<input type='hidden' name='ageid' class='ageid' value="+king+">");
         div.append("<input type='hidden' name='ageid' class='ageid' value="+wc+">");
-        div.append("<input type='hidden' name='ageid' class='ageid' value="+kn+">");
+        title.html("<p>"+kn+"</p>");
     });
 </script>
 @endif

@@ -57,6 +57,7 @@
             <label for="inputPassword" class="col-sm-2 col-form-label">Овқат вақти</label>
             <div class="col-sm-10">
                 <select class="form-select" name="timeid" aria-label="Default select example">
+                    <option value="0">Бошқа</option>
                     @foreach($times as $row)
                     <option value="{{$row['id']}}">{{$row['meal_time_name']}}</option>
                     @endforeach
