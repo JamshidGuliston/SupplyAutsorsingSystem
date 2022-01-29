@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Active_menu;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use App\Traits\MakeComponents;
@@ -25,12 +26,14 @@ use App\Models\Titlemenu;
 use App\Models\order_product;
 use App\Models\history_process;
 use App\Models\Meal_time;
+use App\Models\Nextday_namber;
 use App\Models\order_product_structure;
 use App\Models\Product;
 use App\Models\Product_category;
 use App\Models\Season;
 use App\Models\Shop;
 use App\Models\Size;
+use App\Models\titlemenu_food;
 use Dompdf\Dompdf;
 use TCG\Voyager\Models\Category;
 
@@ -47,14 +50,15 @@ class TechnologController extends Controller
             ->select('days.id', 'days.day_number', 'days.month_id', 'months.month_name', 'years.year_name')
             ->orderBy('days.id', 'DESC')->get();
         $kingar = Kindgarden::all();
+        $nextdaymenu = Nextday_namber::all();
         $season = Season::where('hide', 1)->first();
         $menus = Titlemenu::where('menu_season_id', $season->id)->get();
         // dd($season);
         date_default_timezone_set('Asia/Tashkent');
         // date("h:i:sa:M-d-Y");
-        $d = strtotime("+0 day");
+        $d = strtotime("+10 hours");
         // dd($days[0]->day_number);
-        return view('technolog.home', ['date' => $days, 'tomm' => $d, 'kingardens' => $kingar, 'menus' => $menus]);
+        return view('technolog.home', ['date' => $days, 'tomm' => $d, 'kingardens' => $kingar, 'menus' => $menus, 'next' => $nextdaymenu]);
     }
 
     // yangi kun ishlari
@@ -91,6 +95,7 @@ class TechnologController extends Controller
             ]);
             $year = $rr;
         }
+        
         $newday = Day::where('year_id', $year->id)
             ->where('month_id', $activeID->id)
             ->where('day_number', date("d", $d))->first();
@@ -103,17 +108,51 @@ class TechnologController extends Controller
             ]);
         }
 
-        $users = Kindgarden::where('hide', 1)->get();
-        $path = "https://api.telegram.org/bot";
-        $token = "5064211282:AAH8CZUdU5i2Vl-4WB3PF4Kll6KoCzgHk8k";
-        $text = "Боғчангиз учун эртанги овқатлар менюсига болалар сонини критинг. <b>3-4 ёшгача = ?</b>";
-        $buttons = '{"inline_keyboard":[[{"text":"1","callback_data":"addnumber_1"}, {"text":"2","callback_data":"addnumber_2"}, {"text":"3","callback_data":"addnumber_3"}], [{"text":"4","callback_data":"addnumber_4"}, {"text":"5","callback_data":"addnumber_5"}, {"text":"6","callback_data":"addnumber_6"}], [{"text":"7","callback_data":"addnumber_7"}, {"text":"8","callback_data":"addnumber_8"}, {"text":"9","callback_data":"addnumber_9"}], [{"text":"0","callback_data":"addnumber_0"}, {"text":"<","callback_data":"remove_<"}]]}';
-        // dd($users);
-        foreach ($users as $user) {
-            Person::where('telegram_id', $user->telegram_user_id)->update(array('childs_count' => '0'));
-            $this->curl_get_contents($path . $token . '/sendmessage?chat_id=' . $user->telegram_user_id . '&text=' . $text . '&parse_mode=html&reply_markup=' . $buttons);
+        // vaqtinchalik keyingi kun menyusini bugungi kungi menyu sifatida ishlatishni boshlaydi
+        sleep(4);
+        $nextdays = Nextday_namber::orderBy('kingar_name_id', 'ASC')->get();
+        $endday = Day::orderBy('id', 'DESC')->first();
+        foreach($nextdays as $nextrow){
+            Number_children::create([
+                'kingar_name_id' => $nextrow->kingar_name_id,
+                'day_id' => $endday->id,
+                'king_age_name_id' => $nextrow->king_age_name_id,
+                'kingar_children_number' => $nextrow->kingar_children_number,
+                'workers_count' => $nextrow->workers_count,
+                'kingar_menu_id' => $nextrow->kingar_menu_id,
+            ]);
+            $findmenu = Active_menu::where('day_id', $endday->id)->where('title_menu_id', $nextrow->kingar_menu_id)->get();
+            if($findmenu->count() == 0){
+                $menuitems = Menu_composition::where('title_menu_id', $nextrow->kingar_menu_id)
+                        ->orderby('menu_meal_time_id', 'ASC')
+                        ->orderby('id', 'ASC')
+                        ->get();
+                foreach($menuitems as $row){
+                    Active_menu::create([
+                        'day_id' => $endday->id,
+                        'title_menu_id' => $row->title_menu_id,
+                        'menu_meal_time_id' => $row->menu_meal_time_id,
+                        'menu_food_id' => $row->menu_food_id,
+                        'product_name_id' => $row->product_name_id,
+                        'age_range_id' => $row->age_range_id,
+                        'weight' => $row->weight
+                    ]);
+                }
+            }
         }
+        Nextday_namber::truncate();
+        // bog'chalarga bugungi menyu faollashdi
 
+        // $users = Kindgarden::where('hide', 1)->get();
+        // $path = "https://api.telegram.org/bot";
+        // $token = "5064211282:AAH8CZUdU5i2Vl-4WB3PF4Kll6KoCzgHk8k";
+        // $text = "Боғчангиз учун эртанги овқатлар менюсига болалар сонини критинг. <b>3-4 ёшгача = ?</b>";
+        // $buttons = '{"inline_keyboard":[[{"text":"1","callback_data":"addnumber_1"}, {"text":"2","callback_data":"addnumber_2"}, {"text":"3","callback_data":"addnumber_3"}], [{"text":"4","callback_data":"addnumber_4"}, {"text":"5","callback_data":"addnumber_5"}, {"text":"6","callback_data":"addnumber_6"}], [{"text":"7","callback_data":"addnumber_7"}, {"text":"8","callback_data":"addnumber_8"}, {"text":"9","callback_data":"addnumber_9"}], [{"text":"0","callback_data":"addnumber_0"}, {"text":"<","callback_data":"remove_<"}]]}';
+        // dd($users);
+        // foreach ($users as $user) {
+        //     Person::where('telegram_id', $user->telegram_user_id)->update(array('childs_count' => '0'));
+        //     $this->curl_get_contents($path . $token . '/sendmessage?chat_id=' . $user->telegram_user_id . '&text=' . $text . '&parse_mode=html&reply_markup=' . $buttons);
+        // }    
         return redirect()->route('technolog.sendmenu', ['day' => date("d-F-Y", $d)]);
     }
 
@@ -161,7 +200,49 @@ class TechnologController extends Controller
                 }
             }
             $activ = Kindgarden::where('hide', 1)->get();
-            return view('technolog.newday', ['ages' => $ages, 'menus' => $menus, 'temps' => $mass, 'gardens' => $gar, 'activ'=>$activ]);
+            $nextday = Nextday_namber::join('kindgardens', 'nextday_nambers.kingar_name_id', '=', 'kindgardens.id')
+                            ->leftjoin('temporaries', function($join){
+                                $join->on('nextday_nambers.kingar_name_id', '=', 'temporaries.kingar_name_id');
+                                $join->on('nextday_nambers.king_age_name_id', '=', 'temporaries.age_id');
+                            })
+                            ->orderby('nextday_nambers.kingar_name_id', 'ASC')
+                            ->get([
+                                'nextday_nambers.id',
+                                'nextday_nambers.king_age_name_id', 
+                                'nextday_nambers.kingar_children_number', 
+                                'nextday_nambers.workers_count', 
+                                'nextday_nambers.kingar_menu_id', 
+                                'nextday_nambers.kingar_name_id', 
+                                'nextday_nambers.id', 
+                                'kindgardens.id as kingarid',
+                                'kindgardens.kingar_name',
+                                'temporaries.id as tempid',
+                                'temporaries.age_number'
+                            ]);
+            // dd($nextday);
+            $nextdayitem = array();
+            $loo = 0;
+            for($i = 0; $i < count($nextday); $i++){
+                $nextdayitem[$loo]['id'] = $nextday[$i]->id;
+                $nextdayitem[$loo]['kingar_name_id'] = $nextday[$i]->kingar_name_id;
+                $nextdayitem[$loo]['kingar_name'] = $nextday[$i]->kingar_name;
+                $nextdayitem[$loo][$nextday[$i]->king_age_name_id] = array($nextday[$i]->id, $nextday[$i]->kingar_children_number, $nextday[$i]->age_number);
+                $nextdayitem[$loo]['workers_count'] = $nextday[$i]->workers_count;
+                $nextdayitem[$loo]['kingar_menu_id'] = $nextday[$i]->kingar_menu_id;
+                if ($i + 1 < count($nextday) and $nextday[$i + 1]->kingar_name_id != $nextdayitem[$loo]['kingar_name_id']) {
+                    $loo++;
+                }
+            }
+            // dd($nextdayitem);
+            $endday = Day::orderBy('id', 'DESC')->first();
+            $mf = titlemenu_food::orderBy('day_id', 'DESC')->first();
+            $sendmenu = 0;
+            
+            if($endday->id == $mf->day_id){
+                $sendmenu = 1;
+            }
+            $nextday = 1;
+            return view('technolog.newday', ['sendmenu' => $sendmenu, 'nextdayitem' => $nextdayitem, 'ages' => $ages, 'menus' => $menus, 'temps' => $mass, 'gardens' => $gar, 'activ'=>$activ]);
         } else {
             return view('technolog.showdate', ['ages' => $ages]);
         }
@@ -187,7 +268,7 @@ class TechnologController extends Controller
             // $html = $html + "<input type='text' value='salom'>";
             array_push($html, "<div class='input-group mb-3 mt-3'>
             <span class='input-group-text' id='inputGroup-sizing-default'>" . $rows['age_name'] . "</span>
-            <input type='number' name='ages[]' data-id=" . $rows['id'] . "  class='form-control' aria-label='Sizing example input' aria-describedby='inputGroup-sizing-default'>
+            <input type='number' name='ages[]' data-id=" . $rows['id'] . "  class='ageranges form-control' aria-label='Sizing example input' aria-describedby='inputGroup-sizing-default'>
             </div>");
         }
         return $html;
@@ -221,6 +302,7 @@ class TechnologController extends Controller
                 'region_id' => $request->region,
                 'kingar_password' => $request->kinparol,
                 'worker_count' => $request->worker,
+                'worker_age_id' => $request->worker_age_id,
                 'hide' => $request->hide,
             ]);
         return redirect()->route('technolog.home');
@@ -231,7 +313,7 @@ class TechnologController extends Controller
         $results = Kindgarden::where('id', $bogid)->with('age_range')->get();
         // dd($results[0]->age_range);
         $htmls = [];
-        array_push($htmls, "<h3>" . $results[0]['kingar_name'] . "</h3> <input type='hidden' class='kingarediteid' value=" . $results[0]['id'] . " >");
+        array_push($htmls, "<h3>" . $results[0]['kingar_name'] . "</h3> <input type='hidden' name='kingarediteid' value=" . $results[0]['id'] . " >");
         foreach ($results[0]->age_range as $rows) {
             $edite =  Temporary::where('kingar_name_id', $bogid)->where('age_id', $rows['id'])->first();
             if (empty($edite['age_number'])) {
@@ -241,32 +323,41 @@ class TechnologController extends Controller
             // $html = $html + "<input type='text' value='salom'>";
             array_push($htmls, "  <div class='input-group mb-3 mt-3'>
             <span class='input-group-text' id='inputGroup-sizing-default'>" . $rows['age_name'] . "</span>
-            <input type='number' required name='ages[]' value=" . $edite['age_number'] . " data-id=" . $rows['id'] . "  class='form-control' aria-label='Sizing example input' aria-describedby='inputGroup-sizing-default'>
+            <input type='number' required name='ages[]' value=" . $edite['age_number'] . " data-id=" . $rows['id'] . "  class='age_ranges form-control' aria-label='Sizing example input' aria-describedby='inputGroup-sizing-default'>
+            <input type='hidden' required name='agesid[]' value=" . $rows['id'] . ">
             </div>");
         }
         return $htmls;
     }
 
-    public function editage(Request $request, $bogid, $ageid, $qiymati)
+    public function editage(Request $request)
     {
-        $find = Temporary::where('kingar_name_id', $bogid)->where('age_id', $ageid)->get();
+        // dd($request->all());
+        $ages = $request->ages;
+        $agesid = $request->agesid;
+        for($i=0; $i < count($ages); $i++){
+            $find = Temporary::where('kingar_name_id', $request->kingarediteid)->where('age_id', $agesid[$i])->get();
 
-        // dd($find);
-
-        if (empty($find[0])) {
-            Temporary::create([
-                'kingar_name_id' => $bogid,
-                'age_id' => $ageid,
-                'age_number' => $qiymati
-            ]);
-        } else {
-            Temporary::where('kingar_name_id', $bogid)->where('age_id', $ageid)->update([
-                'kingar_name_id' => $bogid,
-                'age_id' => $ageid,
-                'age_number' => $qiymati
-            ]);
+            if (empty($find[0])) {
+                Temporary::create([
+                    'kingar_name_id' => $request->kingarediteid,
+                    'age_id' => $agesid[$i],
+                    'age_number' => $ages[$i]
+                ]);
+            } else {
+                Temporary::where('kingar_name_id', $request->kingarediteid)->where('age_id', $agesid[$i])->update([
+                    'age_id' => $agesid[$i],
+                    'age_number' => $ages[$i]
+                ]);
+            }
         }
+
+        date_default_timezone_set('Asia/Tashkent');
+        $d = strtotime("+0 day");
+
+        return redirect()->route('technolog.sendmenu', ['day' => date("d-F-Y", $d)]);
     }
+
 
     // mayda skladlarga product buyurtma berish
 
@@ -442,10 +533,20 @@ class TechnologController extends Controller
 
     // Menu saqlash
 	
-	public function go(Request $request)
+	public function todaynextdaymenu(Request $request)
 	{
+        // dd($request->all());
+        $mid = $request->mid;
+        $dmf = $request->dmf;
+        $menuages = [];
+        foreach($mid as $mi){
+            $param = explode("_", $mi);
+            $menuages[$param[0]] = $param[1]; 
+        }
+        // dd($menuages);
 		$days = Day::orderBy('id', 'DESC')->first();
 		$chil_number = Temporary::all();
+        // dd($chil_number);
 		foreach ($chil_number as $child) {
 			$workers = Kindgarden::where('id', $child->kingar_name_id)->first();
 			// dd($workers['worker_count']);
@@ -453,32 +554,25 @@ class TechnologController extends Controller
 			if($child->age_id == 3){
 				$menusi = $request['two'];
 			}
-			Number_children::create([
-				'kingar_name_id' => $child->kingar_name_id,
-				'day_id' => (int)$days['id'],
-				'king_age_name_id' => $child->age_id,
-				'kingar_children_number' => $child->age_number,
-				'workers_count' => $workers['worker_count'],
-				'kingar_menu_id' => $menusi,
-			]);
-			$path = "https://api.telegram.org/bot";
-			$token = "5064211282:AAH8CZUdU5i2Vl-4WB3PF4Kll6KoCzgHk8k";
-			$tday = $days['id'];
-			$yosh = "";
-			if($child->age_id == 1){
-				$yosh = "4-7 yoshli";
-			}
-			if($child->age_id == 2){
-				$yosh = "3-4 yoshli";
-			}
-			if($child->age_id == 3){
-				$yosh = "qisqa gurux";
-			}
-			$urlpdf ='https://cj56359.tmweb.ru/downloadPDF/' . $child->kingar_name_id . '/' . $tday . '/'.$child->age_id;
-			$user = Kindgarden::where('id', '=', $child->kingar_name_id)->first();
-			$this->curl_get_contents($path . $token . '/sendmessage?chat_id=694792808&text=<a href="'.$urlpdf.'">'.$yosh.'</a>&parse_mode=html');
-			// $this->curl_get_contents($path . $token . '/sendmessage?chat_id=' . $user->telegram_user_id . '&text=<a href="'.$urlpdf.'">'.$yosh.'</a>&parse_mode=html');
+            Nextday_namber::create([
+                'kingar_name_id' => $child->kingar_name_id,
+                'king_age_name_id' => $child->age_id,
+                'kingar_children_number' => $child->age_number,
+                'workers_count' => $workers['worker_count'],
+                'kingar_menu_id' => $menuages[$child->age_id],
+            ]);
+
 		}
+
+        foreach($dmf as $dm){
+            $param = explode("_", $dm);
+            titlemenu_food::create([
+                'day_id' => $days->id,
+                'worker_age_id' => $param[0],
+                'titlemenu_id' => $param[1],
+                'food_id' => $param[2]
+            ]);
+        }
 
 		$temp = Temporary::truncate();
 		$gr = Kindgarden::all();
@@ -665,8 +759,16 @@ class TechnologController extends Controller
     public function menus(Request $request, $id)
     {
         $menus = Titlemenu::where('menu_season_id', $id)->get();
-
-        return view('technolog.menus', compact('menus', 'id'));
+        $works = Nextday_namber::all();
+        for($i = 0; $i < count($menus); $i++){
+            $menus[$i]['us'] = 0;
+            foreach($works as $row){
+                if($row->kingar_menu_id == $menus[$i]['id']){
+                    $menus[$i]['us'] = 1;
+                }
+            }
+        }
+        return view('technolog.menus', compact('menus', 'id', 'works'));
     }
 
     public function addtitlemenu(Request $request, $id)
@@ -703,6 +805,7 @@ class TechnologController extends Controller
                 ->orderby('menu_compositions.id', 'ASC')
                 ->get([
                     'titlemenus.menu_name', 
+                    'titlemenus.menu_season_id', 
                     'titlemenus.id as menuid', 
                     'meal_times.meal_time_name', 
                     'meal_times.id as meal_timeid', 
@@ -717,7 +820,37 @@ class TechnologController extends Controller
         // dd($menuitem);
         return view('technolog.menuitem', compact('id', 'times', 'titlemenu', 'menuitem'));
     }
+    //  copy 
+    public function copymenuitem(Request $request){
+        $titlemenu = Titlemenu::where('id', $request->menuid)->with('age_range')->first();
+        $ages = array();
+        $loop = 0;
+        foreach($titlemenu->age_range as $age){
+            $ages[$loop++] = $age->id;
+        }
 
+        $newtitlemenu = Titlemenu::create([
+            'menu_name' => $request->newmenuname,
+            'menu_season_id' => $request->seasonid
+        ]);
+
+        $newtitlemenu->age_range()->sync($ages);
+
+        $menu = Menu_composition::where('title_menu_id', $request->menuid)->get();
+
+        foreach($menu as $row){
+            Menu_composition::create([
+                "title_menu_id" => $newtitlemenu->id,
+                "menu_meal_time_id" => $row->menu_meal_time_id,
+                "menu_food_id" => $row->menu_food_id,
+                "product_name_id" => $row->product_name_id,
+                "age_range_id" => $row->age_range_id,
+                "weight" => $row->weight
+            ]);
+        }
+
+        return redirect()->route('technolog.menuitem', $newtitlemenu->id);
+    }
     // ajax
 
     public function getfood(Request $request)
@@ -854,6 +987,28 @@ class TechnologController extends Controller
                 ->where('menu_food_id', $request->foodid)
                 ->delete();
         return redirect()->route('technolog.menuitem', $request->menuid);
+    }
+
+    public function getfoodnametoday(Request $request){
+        $food = Menu_composition::where('title_menu_id', $request->menuid)
+            ->where('menu_meal_time_id', 3)
+            ->join('food', 'food.id', '=', 'menu_compositions.menu_food_id')
+            ->get(['food.food_name', 'food.id as foodid']);
+
+        $html = "<p>Xodimlar ovqatini tanlang.</p>";
+        $bool = [];
+        foreach($food as $row){
+            if(empty($bool[$row->foodid])){
+                $bool[$row->foodid] = 1;
+                $html = $html."<input type='checkbox' class='checkfood' value=".$row->foodid."> <span id=".'worfood'.$row->foodid.">".$row->food_name."</span> <br>";
+            }
+        }
+        $html = $html."</select>";
+        echo $html;
+    }
+
+    public function sendtoallgarden(Request $request){
+        dd('OK');
     }
 
     function curl_get_contents($url)

@@ -1,40 +1,5 @@
 @extends('layouts.app')
-
-@section('leftmenu')
-<div class="list-group list-group-flush my-3">
-    <a href="/technolog/home" class="list-group-item list-group-item-action bg-transparent second-text"><i class="fas fa-tachometer-alt me-2"></i>Bosh sahifa</a>
-    <a href="#" class="list-group-item list-group-item-action bg-transparent second-text fw-bold"><i class="fas fa-project-diagram me-2"></i>Projects</a>
-    <a href="#" class="list-group-item list-group-item-action bg-transparent second-text fw-bold"><i class="fas fa-chart-line me-2"></i>Analytics</a>
-    <a href="/technolog/seasons" class="list-group-item list-group-item-action bg-transparent second-text fw-bold {{Request::is('technolog/seasons') ? 'active' : null }}"><i class="fas fa-paste"></i> Menyular</a>
-    <a href="/technolog/food" class="list-group-item list-group-item-action bg-transparent second-text fw-bold {{Request::is('technolog/food') ? 'active' : null }}"><i class="fas fa-hamburger"></i> Taomlar</a>
-    <a href="/technolog/allproducts" class="list-group-item list-group-item-action bg-transparent second-text fw-bold {{Request::is('technolog/allproducts') ? 'active' : null }}"><i class="fas fa-carrot"></i> Products</a>
-    <a href="/technolog/getbotusers" class="list-group-item list-group-item-action bg-transparent second-text fw-bold {{Request::is('technolog/getbotusers') ? 'active' : null }}"><i class="fas fa-comment-dots me-2"></i>Chat bot</a>
-    <a href="/technolog/shops" class="list-group-item list-group-item-action bg-transparent second-text fw-bold {{Request::is('technolog/shops') ? 'active' : null }}"><i class="fas fa-store-alt"></i> Shops</a>
-    <!-- <a href="#" class="list-group-item list-group-item-action bg-transparent text-danger fw-bold"><i class="fas fa-power-off me-2"></i>Logout</a> -->
-</div>
-@endsection
-
-@section('content')
-<!-- EDIT -->
-<!-- Modal -->
-<div class="modal editesmodal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header bg-warning">
-                <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                ...
-            </div>
-            <div class="modal-footer">
-                <!-- <button type="button" class="btn btn-warning" data-bs-dismiss="modal">Close</button> -->
-                <button type="button" class="btn editsub btn-warning">Saqlash</button>
-            </div>
-        </div>
-    </div>
-</div>
-<!-- EDIT -->
+@section('css')
 <style>
     .loader-box {
         width: 100%;
@@ -48,7 +13,9 @@
         display: none;
         justify-content: center;
     }
-
+    b{
+        color: #3c7a7c;
+    }
     .loader {
         border: 9px solid #f3f3f3;
         border-radius: 50%;
@@ -62,7 +29,12 @@
         left: 353px;
         top: 153px;
     }
-
+    th, td{
+        text-align: center;
+        vertical-align: middle;
+        border-bottom-color: currentColor;
+        border-right: 1px solid #c2b8b8;
+    }
     /* Safari */
     @-webkit-keyframes spin {
         0% {
@@ -84,6 +56,74 @@
         }
     }
 </style>
+@endsection
+@section('leftmenu')
+<div class="list-group list-group-flush my-3">
+    <a href="/technolog/home" class="list-group-item list-group-item-action bg-transparent second-text"><i class="fas fa-tachometer-alt me-2"></i>Bosh sahifa</a>
+    <a href="#" class="list-group-item list-group-item-action bg-transparent second-text fw-bold"><i class="fas fa-project-diagram me-2"></i>Projects</a>
+    <a href="#" class="list-group-item list-group-item-action bg-transparent second-text fw-bold"><i class="fas fa-chart-line me-2"></i>Analytics</a>
+    <a href="/technolog/seasons" class="list-group-item list-group-item-action bg-transparent second-text fw-bold {{Request::is('technolog/seasons') ? 'active' : null }}"><i class="fas fa-paste"></i> Menyular</a>
+    <a href="/technolog/food" class="list-group-item list-group-item-action bg-transparent second-text fw-bold {{Request::is('technolog/food') ? 'active' : null }}"><i class="fas fa-hamburger"></i> Taomlar</a>
+    <a href="/technolog/allproducts" class="list-group-item list-group-item-action bg-transparent second-text fw-bold {{Request::is('technolog/allproducts') ? 'active' : null }}"><i class="fas fa-carrot"></i> Products</a>
+    <a href="/technolog/getbotusers" class="list-group-item list-group-item-action bg-transparent second-text fw-bold {{Request::is('technolog/getbotusers') ? 'active' : null }}"><i class="fas fa-comment-dots me-2"></i>Chat bot</a>
+    <a href="/technolog/shops" class="list-group-item list-group-item-action bg-transparent second-text fw-bold {{Request::is('technolog/shops') ? 'active' : null }}"><i class="fas fa-store-alt"></i> Shops</a>
+    <!-- <a href="#" class="list-group-item list-group-item-action bg-transparent text-danger fw-bold"><i class="fas fa-power-off me-2"></i>Logout</a> -->
+</div>
+@endsection
+
+@section('content')
+@if($sendmenu == 0)
+<!-- EDIT -->
+<!-- Modal -->
+<div class="modal editesmodal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+        <form action="/technolog/editage" method="post">
+		    @csrf
+            <div class="modal-header bg-warning">
+                <h5 class="modal-title" id="exampleModalLabel">Bolalar sonini o'zgartirish</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                ...
+            </div>
+            <div class="modal-footer">
+                <!-- <button type="button" class="btn btn-warning" data-bs-dismiss="modal">Close</button> -->
+                <button type="submit" class="btn btn-warning">Saqlash</button>
+            </div>
+        </form>
+        </div>
+    </div>
+</div>
+<!-- EDIT -->
+<!-- EDIT -->
+<!-- Modal -->
+<div class="modal editesmodal fade" id="menuModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-warning">
+                <h5 class="modal-title" id="exampleModalLabel">Keyingi kun menyusi</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body editesproduct">
+                <select id="tommenu" class="form-control" required>
+                    <option value="" selected>Bugungi menyu</option>
+                    @foreach($menus as $menu)
+                        <option data-menu-id="{{ $menu->id }}" value="{{ $menu->id }}">{{ $menu->menu_name }}</option>
+                    @endforeach
+                </select>
+                <br>
+                <div class="hiddiv">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="addmenutom btn btn-success" data-bs-dismiss="modal">ok</button>
+                <!-- <button type="submit" class="btn addmenutom btn-warning">Saqlash</button> -->
+            </div>
+        </div>
+    </div>
+</div>
+<!-- EDIT -->
 
 <!-- DELET -->
 <!-- Modal -->
@@ -120,8 +160,6 @@
                     <label for="basic-url" class="form-label">MTM nomi</label>
                     <select class="form-select" id="select-add" aria-label="Default select example">
                         <option selected>--</option>
-
-
                         @foreach($gardens as $gardenall)
                         @if(!isset($gardenall['ok']))
                         <option value="{{$gardenall['id']}}">{{$gardenall['kingar_name']}}</option>
@@ -147,25 +185,23 @@
 
 <!-- EDD -->
 <div class="py-4 px-4">
-	<form action="/technolog/go" method="post">
+	<form action="/technolog/todaynextdaymenu" method="post">
 		@csrf
 		<div class="box-sub" style="
         display: flex;
         justify-content: space-between;">
-		<select name="manuone" required style="width: 32%">
-			<option value=""></option>
-	        @foreach($menus as $menu)
-	        <option value="{{ $menu->id }}">{{ $menu->one_day_menu_name }}</option>
-	        @endforeach
-	    </select>
-	    
-	    <select name="two" required style="width: 50%">
-	    	<option value=""></option>
-            @foreach($menus as $menu)
-            <option value="{{ $menu->id }}">{{ $menu->one_day_menu_name }}</option>
-            @endforeach
-        </select>
-	</div>
+            <div class="col-md-6">
+                <div class="today">
+                </div>
+            </div>
+            <div class="col-md-6">
+                <b>Taxminiy menyu:</b>
+                <div class="tomorrowmenu">
+                </div><br>
+                <div class="tomorrowmenufood">
+                </div>
+            </div>
+        </div>
 		<br/>
     	<div class="box-sub" style="
         display: flex;
@@ -173,7 +209,7 @@
     	<a href="/technolog/home">Orqaga</a>
         <p>Bog'chalar soni: {{ count($temps) }}</p>
         @if(count($temps) == count($activ))
-        <input type="submit"  class="btn btn-success text-white mb-2" value="Yuborish">
+        <input type="submit"  class="yuborish btn btn-success text-white mb-2" value="Yuborish">
         @endif
     </div>
     </form>
@@ -197,9 +233,19 @@
             <tr>
                 <th scope="col">ID</th>
                 <th scope="col">MTT-nomi</th>
-                <th scope="col">Xodimlar</th>
+                <th scope="col">Xodimlar 
+                    <!-- shu joyida ishchilar faqat 1 - idli menyudan ovqatlanadi -->
+                    <input id="hiddenworkerage" type="hidden" name="workerage" value="1">
+                    <!-- <select name="workerege" id="workerege" required>
+                        <option value="">---</option>
+                        @foreach($ages as $age)
+                            <option data-menu-id="{{ $age->id }}" value="{{ $menu->id }}">{{ $age->age_name }}</option>
+                        @endforeach
+                    </select></th> -->
                 @foreach($ages as $age)
-                <th scope="col">{{ $age->age_name }}</th>
+                <th scope="col"> <span class="age_name{{ $age->id }}">{{ $age->age_name }} </span>
+                    <i data-age-id="{{ $age->id }}" data-bs-toggle="modal" data-bs-target="#menuModal" class="addmenu agehide{{ $age->id }} fas fa-file-alt" style="cursor: pointer;"></i>
+                </th>
                 @endforeach
                 <th style="width: 70px;">Edit</th>
             </tr>
@@ -217,18 +263,107 @@
                 <td><i class="far fa-window-close" style="color: red;"></i></td>
                 @endif
                 @endforeach
-                <td><i class=" edites far fa-edit text-info" data-bs-toggle="modal" data-bs-target="#exampleModal" data-kinid="{{$temp['id']}}" style="cursor: pointer; margin-right: 16px;"> </i></td>
+                <td><i class="edites far fa-edit text-info" data-bs-toggle="modal" data-bs-target="#exampleModal" data-kinid="{{$temp['id']}}" style="cursor: pointer; margin-right: 16px;"> </i></td>
             </tr>
             @endforeach
 
         </tbody>
     </table>
 </div>
+@else
+<!-- //////////////////////////////////////////////////////////////Taxminiy menular/////////////////////////////////////////////////////////// -->
+<!-- Worker count edit -->
+<!-- Modal -->
+<div class="modal editesmodal fade" id="wcountModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+        <form action="/technolog/editage" method="post">
+		    @csrf
+            <div class="modal-header bg-warning">
+                <h5 class="modal-title" id="exampleModalLabel">Ishchilar sonini o'zgartirish</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="w_countedit">
 
+                </div>
+            </div>
+            <div class="modal-footer">
+                <!-- <button type="button" class="btn btn-warning" data-bs-dismiss="modal">Close</button> -->
+                <button type="submit" class="btn btn-warning">Saqlash</button>
+            </div>
+        </form>
+        </div>
+    </div>
+</div>
+<!-- EDIT -->
+<div class="py-4 px-4">
+    <div class="row">
+        <div class="col-md-6">
 
+        </div>
+        <div class="col-md-6">
+            <b>Bog'chalarga so'rov yuborish</b>
+            <a href="/technolog/sendtoallgarden">
+                <i class="far fa-paper-plane" style="color: dodgerblue; font-size: 18px;"></i>
+            </a>
+        </div>
+    </div>
+    <hr>
+    <table class="table table-light py-4 px-4">
+        <thead>
+            <tr>
+                <th scope="col" rowspan="2">ID</th>
+                <th scope="col" rowspan="2">MTT-nomi</th>
+                <th scope="col" rowspan="2">Xodimlar 
+                @foreach($ages as $age)
+                <th scope="col" colspan="2"> 
+                    <span class="age_name{{ $age->id }}">{{ $age->age_name }} </span>
+                </th>
+                @endforeach
+                <th style="width: 70px;" rowspan="2">Nakladnoy</th>
+                <th style="width: 70px;" rowspan="2">Send</th>
+            </tr>
+            <tr style="color: #888888;">
+                @foreach($ages as $age)
+                <th><i class="fas fa-users"></i></th>
+                <th><i class="fas fa-book-open"></i></th>
+                @endforeach
+            </tr>
+        </thead>
+        <tbody>
+        <?php $t = 1;  ?>   
+        @foreach($nextdayitem as $row)
+            <tr>
+                <td>{{ $t++ }}</td>
+                <td>{{ $row['kingar_name'] }}</td>
+                <td>{{ $row['workers_count'] }} <i class="w_countedit far fa-edit" data-menu-id="{{ $row['kingar_name_id'] }}" data-wor-count="{{ $row['workers_count'] }}" data-king-name="{{ $row['kingar_name'] }}" data-bs-toggle="modal" data-bs-target="#wcountModal" style="color: #727213; font-size: 14px; cursor: pointer;"></i></td>
+                @foreach($ages as $age)
+                @if(isset($row[$age->id]))
+                    <td>
+                      {{ $row[$age->id][1]."  " }}
+                       @if($row[$age->id][2] != null)
+                        <i class="far fa-envelope" style="color: #c40c0c"></i> 
+                       @endif
+                       <i class="far fa-edit" style="color: #727213; font-size: 14px; cursor: pointer;"></i></td>
+                    <td><a href=""><i class="far fa-file-pdf" style="color: dodgerblue; font-size: 18px;"></i></a>   <i class="far fa-edit" style="color: #727213; font-size: 14px; cursor: pointer; margin-left: 11px;"></i></td>
+                @else
+                    <td>{{ ' ' }}</td>
+                    <td>{{ ' ' }}</td>
+                @endif
+                @endforeach
+                <td><i class="fas fa-shopping-basket"></i></td>
+                <td><a href="#"><i class="far fa-paper-plane" style="color: dodgerblue;"></i></a></td>
+            </tr>
+        @endforeach
+        </tbody>
+    </table>
+</div>
+@endif
 @endsection
 
 @section('script')
+@if($sendmenu == 0)
 <script>
     document.getElementById('select-all').onclick = function() {
         var checkboxes = document.getElementsByName('vehicle');
@@ -237,6 +372,13 @@
         }
     }
     $(document).ready(function() {
+        var menuinp = $('.menucounts');
+        if(menuinp.length == ''){
+            var button = document.getElementsByClassName("yuborish");
+            for(var i = 0; i < button.length; i++){
+                button[i].style.display = "none"; // depending on what you're doing
+            }
+        }
         $('#select-add').change(function() {
             g = $(this).val();
             h = $('.yang-ages');
@@ -253,8 +395,47 @@
             })
         });
 
+        $('.addmenu').click(function() {
+            var k = $(this).attr('data-age-id');
+            var div = $('.hiddiv');
+            div.html("<input type='hidden' name='ageid' class='ageid' value="+k+">");
+        });
+
+        $('.addmenutom').click(function() {
+            var menuid = $("#tommenu").val();
+            document.getElementById('tommenu').getElementsByTagName('option')[0].selected = 'selected';
+            var wage = $('#hiddenworkerage').val();
+            var divtom = $('.tomorrowmenufood');
+            var agename = $('.age_name'+wage).text();
+            var checkedValue = null; 
+            var inputElements = document.getElementsByClassName('checkfood');
+            if(inputElements.length>0){
+                divtom.append("<b>Xodimlar ovqati "+agename+" guruh menusidan: </b>");
+            }
+            for(var i=0; inputElements[i]; ++i){
+                if(inputElements[i].checked){
+                    var fodname = $('#worfood'+inputElements[i].value).text();
+                    divtom.append("<input type='hidden' class='foodcounts' name='dmf[]' value="+wage+"_"+menuid+"_"+inputElements[i].value+"> "+fodname+", ");
+                }
+            }
+            var menuinp = $('.menucounts');
+            var foodinp = $('.foodcounts');
+            if(menuinp.length < 3 || foodinp.length == ''){
+                var button = document.getElementsByClassName("yuborish");
+                for(var i = 0; i < button.length; i++){
+                    button[i].style.display = "none"; // depending on what you're doing
+                }
+            }
+            else{
+                var button = document.getElementsByClassName("yuborish");
+                for(var i = 0; i < button.length; i++){
+                    button[i].style.display = "block"; // depending on what you're doing
+                }
+            }
+        });
+
         $('.add-age').click(function() {
-            var inp = $('.form-control');
+            var inp = $('.ageranges');
             var k = inp.attr('data-id');
             inp.each(function() {
                 var j = $(this).attr('data-id');
@@ -285,29 +466,57 @@
             })
         })
 
-        var editSub = $('.editsub');
-        editSub.click(function() {
-            var inp = $('.form-control');
-            var k = inp.attr('data-id');
-            var b = $('.kingarediteid').val();
-            inp.each(function() {
-                var j = $(this).attr('data-id');
-                if ($(this).val() == "" || $(this).val() == 0) {
-                    alert('Maydonlarni to`ldiring');
-                } else {
-                    var valuess = $(this).val();
-                    $.ajax({
-                        method: 'GET',
-                        url: '/technolog/editage/' + b + '/' + j + '/' + valuess,
-                        success: function(data) {
-                            location.reload();
-                        }
-                    })
-                };
+    });
 
-            })
+    $('#today').change(function() {
+        var menuid = $("#today option:selected").val();
+        var div = $('.today');
+        $.ajax({
+            method: "GET",
+            url: '/technolog/getfoodnametoday',
+            data: {
+                'menuid': menuid,
+            },
+            success: function(data) {
+                div.html(data);
+            }
         })
-
+    });
+    $('#tommenu').change(function() {
+        var menuid = $("#tommenu option:selected").val();
+        var menutext = $("#tommenu option:selected").text();
+        var age = $('.ageid').val();
+        var wage = $('#hiddenworkerage').val();
+        var div = $('.hiddiv');
+        var agename = $('.age_name'+age).text();
+        var divtom = $('.tomorrowmenu');
+        var icon = $(".agehide"+age).hide();
+        $.ajax({
+            method: "GET",
+            url: '/technolog/getfoodnametoday',
+            data: {
+                'menuid': menuid,
+            },
+            success: function(data) {
+                divtom.append("<input type='hidden' class='menucounts' name='mid[]' value="+age+"_"+menuid+"><b>"+agename+":</b> "+menutext+";    ");
+                if(age == wage){
+                    div.append(data);
+                }
+            }
+        })
     });
 </script>
+@else
+<script>
+    $('.w_countedit').click(function() {
+        var king = $(this).attr('data-menu-id');
+        var wc = $(this).attr('data-wor-count');
+        var kn = $(this).attr('data-king-name');
+        var div = $('.w_countedit');
+        div.append("<input type='hidden' name='ageid' class='ageid' value="+king+">");
+        div.append("<input type='hidden' name='ageid' class='ageid' value="+wc+">");
+        div.append("<input type='hidden' name='ageid' class='ageid' value="+kn+">");
+    });
+</script>
+@endif
 @endsection

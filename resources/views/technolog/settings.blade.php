@@ -51,12 +51,6 @@
             </div>
         </div>
         <div class="form-group row">
-            <label for="inputPassword" class="col-sm-2 col-form-label">Xodimlar soni</label>
-            <div class="col-sm-10">
-                <input type="number" name="worker" class="form-control" value="{{ $garden->worker_count }}" required>
-            </div>
-        </div>
-        <div class="form-group row">
 
             <label for="inputPassword" class="col-sm-2 col-form-label">Bolalar guruhi</label>
             @foreach($ages as $rows)
@@ -75,7 +69,27 @@
             </div>
             @endforeach
         </div>
-
+        <div class="form-group row">
+            <label for="inputPassword" class="col-sm-2 col-form-label">Xodimlar soni</label>
+            <div class="col-sm-10">
+                <input type="number" name="worker" class="form-control" value="{{ $garden->worker_count }}" required>
+            </div>
+        </div>
+        <div class="form-group row">
+            <label for="inputPassword" class="col-sm-2 col-form-label">Xodimlar menyusi</label>
+            <div class="col-sm-10">
+            <select class="form-select" name="worker_age_id" aria-label="Default select example">
+                <option selected value="">Tanlang</option>
+                @foreach($ages as $rows)
+                @if($garden->worker_age_id == $rows['id'])
+                    <option selected value="{{$rows['id']}}">{{$rows['age_name']}}</option>
+                @else
+                    <option value="{{$rows['id']}}">{{$rows['age_name']}}</option>
+                @endif
+                @endforeach
+            </select>
+            </div>
+        </div>
         <div class="form-group row">
             <label for="inputPassword" class="col-sm-2 col-form-label">Tumanlar</label>
             <div class="col-sm-10">

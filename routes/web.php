@@ -71,7 +71,7 @@ Route::group(['prefix' => 'technolog', 'middleware' => ['isTechnolog', 'auth']],
     Route::get('ageranges/{id}', [TechnologController::class, 'ageranges']);
     Route::get('addage/{bogid}/{ageid}/{qiymati}', [TechnologController::class, 'addage']);
     Route::get('getage/{bogid}', [TechnologController::class, 'getage']);
-    Route::get('editage/{bogid}/{ageid}/{qiymati}', [TechnologController::class, 'editage']);
+    Route::post('editage', [TechnologController::class, 'editage']);
     Route::get('addproduct', [TechnologController::class, 'addproduct'])->name('technolog.addproduct');
     Route::post('ordername', [TechnologController::class, 'ordername'])->name('technolog.ordername');
     Route::get('orderitem/{id}', [TechnologController::class, 'orderitem'])->name('technolog.orderitem');
@@ -113,4 +113,8 @@ Route::group(['prefix' => 'technolog', 'middleware' => ['isTechnolog', 'auth']],
     Route::get('getmenuproduct', [TechnologController::class, 'getmenuproduct'])->name('technolog.getmenuproduct');
     Route::post('editemenuproduct', [TechnologController::class, 'editemenuproduct'])->name('technolog.editemenuproduct');
     Route::post('deletemenufood', [TechnologController::class, 'deletemenufood'])->name('technolog.deletemenufood');
+    Route::get('getfoodnametoday', [TechnologController::class, 'getfoodnametoday'])->name('technolog.getfoodnametoday');
+    Route::post('todaynextdaymenu', [TechnologController::class, 'todaynextdaymenu'])->name('technolog.todaynextdaymenu');
+    Route::post('copymenuitem', [TechnologController::class, 'copymenuitem'])->name('technolog.copymenuitem');
+    Route::get('sendtoallgarden', [TelegramController::class, 'sendtoallgarden'])->name('technolog.sendtoallgarden');
 });

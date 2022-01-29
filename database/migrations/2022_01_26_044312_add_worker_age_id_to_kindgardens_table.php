@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateTitlemenuFoodsTable extends Migration
+class AddWorkerAgeIdToKindgardensTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,12 +13,8 @@ class CreateTitlemenuFoodsTable extends Migration
      */
     public function up()
     {
-        Schema::create('titlemenu_foods', function (Blueprint $table) {
-            $table->id();
-            $table->integer('day_id');
-            $table->integer('titlemenu_id');
-            $table->integer('food_id');
-            $table->timestamps();
+        Schema::table('kindgardens', function (Blueprint $table) {
+           $table->integer('worker_age_id')->after('worker_count'); 
         });
     }
 
@@ -29,6 +25,8 @@ class CreateTitlemenuFoodsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('titlemenu_foods');
+        Schema::table('kindgardens', function (Blueprint $table) {
+            //
+        });
     }
 }

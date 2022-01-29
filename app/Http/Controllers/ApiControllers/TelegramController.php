@@ -36,6 +36,10 @@ class TelegramController extends Controller
         $send_data['chat_id']=$data['chat']['id'];
         return $this->sendTelegram($method,$send_data);
     }
+
+    public function sendtoallgarden(Request $request){
+        dd('OK');
+    }
     
     private function sendTelegram($method,$data,$headers=[]){
         $handle = curl_init('https://api.telegram.org/bot1249266736:AAHO9TC8CilXjkMpcbTjEk2vBNADRmUeTLM'.'/'.$method);
