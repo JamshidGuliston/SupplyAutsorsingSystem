@@ -238,7 +238,7 @@ class TechnologController extends Controller
             $mf = titlemenu_food::orderBy('day_id', 'DESC')->first();
             $sendmenu = 0;
             
-            if($endday->id == $mf->day_id){
+            if(isset($mf->day_id) and $endday->id == $mf->day_id){
                 $sendmenu = 1;
             }
             $nextday = 1;
