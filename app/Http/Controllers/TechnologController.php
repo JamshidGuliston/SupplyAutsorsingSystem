@@ -56,7 +56,7 @@ class TechnologController extends Controller
         // dd($season);
         date_default_timezone_set('Asia/Tashkent');
         // date("h:i:sa:M-d-Y");
-        $d = strtotime("-10 hours");
+        $d = strtotime("-16 hours");
         // dd($days[0]->day_number);
         return view('technolog.home', ['date' => $days, 'tomm' => $d, 'kingardens' => $kingar, 'menus' => $menus, 'next' => $nextdaymenu]);
     }
@@ -68,7 +68,7 @@ class TechnologController extends Controller
         $months = Month::all();
         $year = Year::orderBy('id', 'DESC')->first();
         date_default_timezone_set('Asia/Tashkent');
-        $d = strtotime("-10 hours");
+        $d = strtotime("-16 hours");
         foreach ($months as $month) {
             if ($month->month_en == date("F", $d)) {
                 Month::where('month_en', $request->daymonth)
@@ -113,6 +113,14 @@ class TechnologController extends Controller
         $nextdays = Nextday_namber::orderBy('kingar_name_id', 'ASC')->get();
         $endday = Day::orderBy('id', 'DESC')->first();
         foreach($nextdays as $nextrow){
+        	$king = Kindgarden::where('id', $nextrow->kingar_name_id)->where('hide', 1)->first();
+        	if(isset($king->id)){
+	        	Temporary::create([
+	        		'kingar_name_id' => $nextrow->kingar_name_id,
+		    		'age_id' => $nextrow->king_age_name_id,
+		    		'age_number' => $nextrow->kingar_children_number
+	        	]);
+        	}
             Number_children::create([
                 'kingar_name_id' => $nextrow->kingar_name_id,
                 'day_id' => $endday->id,
@@ -160,7 +168,7 @@ class TechnologController extends Controller
     public function sendmenu($day)
     {
         date_default_timezone_set('Asia/Tashkent');
-        $d = strtotime("-10 hours");
+        $d = strtotime("-16 hours");
         $ages = Age_range::all();
         // dd($ages);
         if ($day == date("d-F-Y", $d)) {
@@ -170,7 +178,7 @@ class TechnologController extends Controller
             $gr = Temporary::join('kindgardens', 'temporaries.kingar_name_id', '=', 'kindgardens.id')
                 ->orderby('kindgardens.id', 'ASC')->get();
 
-            $gar = Kindgarden::with('age_range')->get();
+            $gar = Kindgarden::where('hide', 1)->with('age_range')->get();
             // unset($gar[0]);
             // dd($gar);
             $mass = array();
@@ -851,7 +859,7 @@ class TechnologController extends Controller
 
         return redirect()->route('technolog.menuitem', $newtitlemenu->id);
     }
-    // ajax
+    
 
     public function getfood(Request $request)
     {

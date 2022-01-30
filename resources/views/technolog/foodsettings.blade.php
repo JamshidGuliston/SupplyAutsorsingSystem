@@ -59,13 +59,15 @@
                 <select class="form-select" name="timeid" aria-label="Default select example" required>
                     <option value="" selected>--Tanlang--</option>
                     @if($food->meal_time_id == 0)
-                    <option selected value="0">Барчасига</option>
+                    	<option selected value="0">Барчасига</option>
+                    @else
+                    	<option value="0">Барчасига</option>
                     @endif
                     @foreach($times as $row)
                     @if($food->meal_time_id == $row->id)
-                    <option selected value="{{$row['id']}}">{{$row['meal_time_name']}}</option>
+                    	<option selected value="{{$row['id']}}">{{$row['meal_time_name']}}</option>
                     @else
-                    <option value="{{$row['id']}}">{{$row['meal_time_name']}}</option>
+                    	<option value="{{$row['id']}}">{{$row['meal_time_name']}}</option>
                     @endif
                     @endforeach
                 </select>

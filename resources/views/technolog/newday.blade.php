@@ -303,9 +303,15 @@
         <div class="col-md-6">
 
         </div>
-        <div class="col-md-6">
+        <div class="col-md-3">
             <b>Bog'chalarga so'rov yuborish</b>
             <a href="/technolog/sendtoallgarden">
+                <i class="far fa-paper-plane" style="color: dodgerblue; font-size: 18px;"></i>
+            </a>
+        </div>
+        <div class="col-md-3">
+            <b>Bog'chalarga menyu yuborish</b>
+            <a href="/technolog/nextsendmenutoallgarden">
                 <i class="far fa-paper-plane" style="color: dodgerblue; font-size: 18px;"></i>
             </a>
         </div>
@@ -316,6 +322,7 @@
             <tr>
                 <th scope="col" rowspan="2">ID</th>
                 <th scope="col" rowspan="2">MTT-nomi</th>
+                <th scope="col" rowspan="2">So'rash</th>
                 <th scope="col" rowspan="2">Xodimlar 
                 @foreach($ages as $age)
                 <th scope="col" colspan="2"> 
@@ -323,7 +330,7 @@
                 </th>
                 @endforeach
                 <th style="width: 70px;" rowspan="2">Nakladnoy</th>
-                <th style="width: 70px;" rowspan="2">Send</th>
+                <th style="width: 70px;" rowspan="2">Menyu</th>
             </tr>
             <tr style="color: #888888;">
                 @foreach($ages as $age)
@@ -338,6 +345,7 @@
             <tr>
                 <td>{{ $t++ }}</td>
                 <td>{{ $row['kingar_name'] }}</td>
+                <td><a href="/technolog/sendtoonegarden/{{ $row['kingar_name_id'] }}"><i class="far fa-paper-plane" style="color: dodgerblue;"></i></a></td>
                 <td>{{ $row['workers_count'] }} <i class="w_countedit far fa-edit" data-menu-id="{{ $row['kingar_name_id'] }}" data-wor-count="{{ $row['workers_count'] }}" data-king-name="{{ $row['kingar_name'] }}" data-bs-toggle="modal" data-bs-target="#wcountModal" style="color: #727213; font-size: 14px; cursor: pointer;"></i></td>
                 @foreach($ages as $age)
                 @if(isset($row[$age->id]))
@@ -354,7 +362,7 @@
                 @endif
                 @endforeach
                 <td><i class="fas fa-shopping-basket"></i></td>
-                <td><a href="#"><i class="far fa-paper-plane" style="color: dodgerblue;"></i></a></td>
+                <td><a href="/technolog/nextsendmenutoonegarden/{{ $row['kingar_name_id'] }}"><i class="far fa-paper-plane" style="color: dodgerblue;"></i></a></td>
             </tr>
         @endforeach
         </tbody>

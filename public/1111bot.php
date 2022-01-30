@@ -102,12 +102,12 @@ class NishonBot
         if ($user->rowCount() == 0) {
         	$newUser = $this->pdo->prepare("INSERT INTO people SET kingar_id = :kingarid, telegram_id = :user_id, telegram_name = :tl_name, telegram_password = :password, childs_count = :childs_count");
 	        $newUser->execute([
-	        	'kingarid' => 0,
-                'kingarid' => -1,
-	            'user_id' => $chat_id,
-	            'tl_name' =>  $data['message']['chat']['first_name'] . ' ' . $data['message']['chat']['last_name'],
-	            'password' => 123,
-	            'childs_count' => '0_0'
+	        	'kingar_id' => 0,
+                'shop_id' => -1,
+	            'telegram_id' => $chat_id,
+	            'telegram_name' =>  $data['message']['chat']['first_name'] . ' ' . $data['message']['chat']['last_name'],
+	            'telegram_password' => 123,
+	            'childs_count' => '0_0_0'
 	        ]);
         	
         	$this->botApiQuery("sendMessage", [

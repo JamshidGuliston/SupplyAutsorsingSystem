@@ -78,8 +78,8 @@
         <div class="form-group row">
             <label for="inputPassword" class="col-sm-2 col-form-label">Xodimlar menyusi</label>
             <div class="col-sm-10">
-            <select class="form-select" name="worker_age_id" aria-label="Default select example">
-                <option selected value="">Tanlang</option>
+            <select class="form-select" name="worker_age_id" aria-label="Default select example" required>
+                <option selected value="" requ>Tanlang</option>
                 @foreach($ages as $rows)
                 @if($garden->worker_age_id == $rows['id'])
                     <option selected value="{{$rows['id']}}">{{$rows['age_name']}}</option>
@@ -93,7 +93,7 @@
         <div class="form-group row">
             <label for="inputPassword" class="col-sm-2 col-form-label">Tumanlar</label>
             <div class="col-sm-10">
-                <select class="form-select" name="region" aria-label="Default select example">
+                <select class="form-select" name="region" aria-label="Default select example" required>
                     @foreach($regions as $region)
                     @if($garden->region_id == $region->id)
                     <option selected value="{{$region['id']}}">{{$region['region_name']}}</option>
