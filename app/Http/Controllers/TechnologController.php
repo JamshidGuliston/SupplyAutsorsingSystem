@@ -56,7 +56,7 @@ class TechnologController extends Controller
         // dd($season);
         date_default_timezone_set('Asia/Tashkent');
         // date("h:i:sa:M-d-Y");
-        $d = strtotime("-16 hours");
+        $d = strtotime("-18 hours");
         // dd($days[0]->day_number);
         return view('technolog.home', ['date' => $days, 'tomm' => $d, 'kingardens' => $kingar, 'menus' => $menus, 'next' => $nextdaymenu]);
     }
@@ -68,7 +68,7 @@ class TechnologController extends Controller
         $months = Month::all();
         $year = Year::orderBy('id', 'DESC')->first();
         date_default_timezone_set('Asia/Tashkent');
-        $d = strtotime("-16 hours");
+        $d = strtotime("-18 hours");
         foreach ($months as $month) {
             if ($month->month_en == date("F", $d)) {
                 Month::where('month_en', $request->daymonth)
@@ -241,11 +241,11 @@ class TechnologController extends Controller
                     $loo++;
                 }
             }
-            // dd($nextdayitem);
+            dd($nextdayitem);
             $endday = Day::orderBy('id', 'DESC')->first();
             $mf = titlemenu_food::orderBy('day_id', 'DESC')->first();
             $sendmenu = 0;
-            
+            dd($mf);
             if(isset($mf->day_id) and $endday->id == $mf->day_id){
                 $sendmenu = 1;
             }
@@ -490,7 +490,7 @@ class TechnologController extends Controller
 
         $htmlproduct = "<div class='input-group mb-3'>
             <span class='input-group-text' id='basic-addon2'>" . $number['product_name'] . " </span>
-            <input  type='number' data-producy=" . $number['id'] . " value=" . $number['product_weight'] . " required class='form-control  product_order'  placeholder='raqam kiriting'></div>";
+            <input  type='text' data-producy=" . $number['id'] . " value=" . $number['product_weight'] . " required class='form-control  product_order'  placeholder='raqam kiriting'></div>";
 
         return $htmlproduct;
     }
@@ -897,7 +897,7 @@ class TechnologController extends Controller
                 <td><input type='hidden' name='products[]' value='".$product->id."'></td>
                 <td>".$product->product_name."</td>";
                 foreach($menu->age_range as $row){
-                    $html = $html."<td><input type='number' name='ages".$product->id."[]' required style='width: 100%;'></td>";
+                    $html = $html."<td><input type='text' name='ages".$product->id."[]' required style='width: 100%;'></td>";
                 }
                 
                 $html = $html."</tr>";
@@ -960,7 +960,7 @@ class TechnologController extends Controller
                 <td></td>
                 <td>".$foodcom[$it]['product_name']."</td>";
                 foreach($menu->age_range as $row){
-                    $html = $html."<td><input type='number' name='ages[]' value='".$foodcom[$it]['weight']."' required style='width: 100%;'></td>";
+                    $html = $html."<td><input type='text' name='ages[]' value='".$foodcom[$it]['weight']."' required style='width: 100%;'></td>";
                     $html = $html."<input type='hidden' name='rows[]' value='".$foodcom[$it]['id']."'>";
                     $it++;
                 }
