@@ -277,21 +277,76 @@
 <div class="modal editesmodal fade" id="wcountModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
-        <form action="/technolog/editage" method="post">
+        <form action="/technolog/editnextworkers" method="post">
 		    @csrf
-            <div class="modal-header bg-warning">
+            <div class="modal-header">
                 <h5 class="modal-title" id="exampleModalLabel">Ishchilar sonini o'zgartirish</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
                 <h4 class="gardentitle"></h4>
-                <div class="w_countedit">
+                <div class="wor_countedit">
 
                 </div>
             </div>
             <div class="modal-footer">
                 <!-- <button type="button" class="btn btn-warning" data-bs-dismiss="modal">Close</button> -->
-                <button type="submit" class="btn btn-warning">Saqlash</button>
+                <button type="submit" class="btn btn-success">Saqlash</button>
+            </div>
+        </form>
+        </div>
+    </div>
+</div>
+<!-- EDIT -->
+<!-- Cheldren count edit -->
+<!-- Modal -->
+<div class="modal editesmodal fade" id="chcountModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+        <form action="/technolog/editnextcheldren" method="post">
+		    @csrf
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Bolalar sonini o'zgartirish</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <h5 class="childrentitle"></h5>
+                <div class="chil_countedit">
+
+                </div>
+                <div class="temp_count">
+
+                </div>
+            </div>
+            <div class="modal-footer">
+                <!-- <button type="button" class="btn btn-warning" data-bs-dismiss="modal">Close</button> -->
+                <button type="submit" class="btn btn-success">Saqlash</button>
+            </div>
+        </form>
+        </div>
+    </div>
+</div>
+<!-- EDIT -->
+<!-- Menu edit -->
+<!-- Modal -->
+<div class="modal editesmodal fade" id="editnextmenuModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+        <form action="/technolog/editnextmenu" method="post">
+		    @csrf
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Menyuni o'zgartirish</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <h5 class="menutitle"></h5>
+                <div class="menu_select">
+
+                </div>
+            </div>
+            <div class="modal-footer">
+                <!-- <button type="button" class="btn btn-warning" data-bs-dismiss="modal">Close</button> -->
+                <button type="submit" class="btn btn-success">Saqlash</button>
             </div>
         </form>
         </div>
@@ -301,7 +356,10 @@
 <div class="py-4 px-4">
     <div class="row">
         <div class="col-md-6">
-
+            <b>Yetkazib beruvchilar</b>
+            <a href="/technolog/delivershops">
+                <i class="fas fa-store-alt" style="color: dodgerblue; font-size: 18px;"></i>
+            </a>
         </div>
         <div class="col-md-3">
             <b>Bog'chalarga so'rov yuborish</b>
@@ -354,8 +412,8 @@
                        @if($row[$age->id][2] != null)
                         <i class="far fa-envelope" style="color: #c40c0c"></i> 
                        @endif
-                       <i class="far fa-edit" style="color: #727213; font-size: 14px; cursor: pointer;"></i></td>
-                    <td><a href=""><i class="far fa-file-pdf" style="color: dodgerblue; font-size: 18px;"></i></a>   <i class="far fa-edit" style="color: #727213; font-size: 14px; cursor: pointer; margin-left: 11px;"></i></td>
+                       <i class="ch_countedit far fa-edit" data-nextrow-id="{{ $row[$age->id][0]; }}" data-child-count="{{ $row[$age->id][1]; }}" data-temprow-id="{{ $row[$age->id][2]; }}" data-tempchild-count="{{ $row[$age->id][3]; }}" data-kinga-name="{{ $row['kingar_name'] }}" data-bs-toggle="modal" data-bs-target="#chcountModal" style="color: #727213; font-size: 14px; cursor: pointer;"></i></td>
+                    <td><a href="/technolog/nextdaymenuPDF/{{ $row['kingar_name_id'] }}/{{ $age->id }}" target="_blank"><i class="far fa-file-pdf" style="color: dodgerblue; font-size: 18px;"></i></a>  <i class="next_menu far fa-edit" data-nextmenu-id="{{ $row[$age->id][4]; }}" data-nextrow-count="{{ $row[$age->id][0]; }}" data-king-name="{{ $row['kingar_name'] }}" data-bs-toggle="modal" data-bs-target="#editnextmenuModal" style="color: #727213; font-size: 14px; cursor: pointer; margin-left: 11px;"></i></td>
                 @else
                     <td>{{ ' ' }}</td>
                     <td>{{ ' ' }}</td>
@@ -367,6 +425,14 @@
         @endforeach
         </tbody>
     </table>
+    <?php $tr = 1 ?>
+    @foreach($shops as $shop)
+        <b>{{ $shop->shop_name }}</b>
+        <a href="/technolog/nextdelivershop/{{ $shop->id }}" target="_blank">
+            <i class="fas fa-store-alt" style="color: dodgerblue; font-size: 18px;"></i>
+        </a>
+        <br>
+    @endforeach
 </div>
 @endif
 @endsection
@@ -521,11 +587,43 @@
         var king = $(this).attr('data-menu-id');
         var wc = $(this).attr('data-wor-count');
         var kn = $(this).attr('data-king-name');
-        var div = $('.w_countedit');
+        var div = $('.wor_countedit');
         var title = $('.gardentitle');
-        div.append("<input type='hidden' name='ageid' class='ageid' value="+king+">");
-        div.append("<input type='hidden' name='ageid' class='ageid' value="+wc+">");
-        title.html("<p>"+kn+"</p>");
+        div.html("<input type='number' name='workers' class='form-control' value="+wc+">");
+        title.html("<p>"+kn+"</p><input type='hidden' name='kingid' class='' value="+king+">");
+    });
+
+    $('.ch_countedit').click(function() {
+        var nextrow = $(this).attr('data-nextrow-id');
+        var chc = $(this).attr('data-child-count');
+        var kn = $(this).attr('data-kinga-name');
+        var temprow = $(this).attr('data-temprow-id');
+        var tempchild = $(this).attr('data-tempchild-count');
+        var div1 = $('.chil_countedit');
+        var div2 = $('.temp_count');
+        var title = $('.childrentitle');
+        title.html("<p>"+kn+"</p><input type='hidden' name='nextrow' class='' value="+nextrow+"><input type='hidden' name='temprow' class='' value="+temprow+">");
+        div1.html("<input type='number' name='agecount' class='form-control' value="+chc+">");
+        div2.html("<br><p style='color: red'>Xabarnoma: <i class='far fa-envelope' style='color: #c40c0c'></i> "+tempchild+"</p>");
+    });
+
+    $('.next_menu').click(function() {
+        var nextmenu = $(this).attr('data-nextmenu-id');
+        var nextrow = $(this).attr('data-nextrow-count');
+        var king = $(this).attr('data-king-name');
+        var div = $('.menutitle');
+        var select = $('.menu_select');
+        div.html("<p>"+king+"</p><input type='hidden' name='nextrow' class='' value="+nextrow+">");
+        $.ajax({
+            method: "GET",
+            url: '/technolog/fornextmenuselect',
+            data: {
+                'menuid': nextmenu,
+            },
+            success: function(data) {
+                select.html(data);
+            }
+        })
     });
 </script>
 @endif

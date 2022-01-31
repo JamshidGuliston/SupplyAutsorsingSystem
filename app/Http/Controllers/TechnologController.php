@@ -56,7 +56,7 @@ class TechnologController extends Controller
         // dd($season);
         date_default_timezone_set('Asia/Tashkent');
         // date("h:i:sa:M-d-Y");
-        $d = strtotime("-18 hours");
+        $d = strtotime("-10 hours");
         // dd($days[0]->day_number);
         return view('technolog.home', ['date' => $days, 'tomm' => $d, 'kingardens' => $kingar, 'menus' => $menus, 'next' => $nextdaymenu]);
     }
@@ -68,7 +68,7 @@ class TechnologController extends Controller
         $months = Month::all();
         $year = Year::orderBy('id', 'DESC')->first();
         date_default_timezone_set('Asia/Tashkent');
-        $d = strtotime("-18 hours");
+        $d = strtotime("-10 hours");
         foreach ($months as $month) {
             if ($month->month_en == date("F", $d)) {
                 Month::where('month_en', $request->daymonth)
@@ -168,7 +168,7 @@ class TechnologController extends Controller
     public function sendmenu($day)
     {
         date_default_timezone_set('Asia/Tashkent');
-        $d = strtotime("-16 hours");
+        $d = strtotime("-10 hours");
         $ages = Age_range::all();
         // dd($ages);
         if ($day == date("d-F-Y", $d)) {
@@ -234,28 +234,164 @@ class TechnologController extends Controller
                 $nextdayitem[$loo]['id'] = $nextday[$i]->id;
                 $nextdayitem[$loo]['kingar_name_id'] = $nextday[$i]->kingar_name_id;
                 $nextdayitem[$loo]['kingar_name'] = $nextday[$i]->kingar_name;
-                $nextdayitem[$loo][$nextday[$i]->king_age_name_id] = array($nextday[$i]->id, $nextday[$i]->kingar_children_number, $nextday[$i]->age_number);
+                $nextdayitem[$loo][$nextday[$i]->king_age_name_id] = array($nextday[$i]->id, $nextday[$i]->kingar_children_number, $nextday[$i]->tempid, $nextday[$i]->age_number, $nextday[$i]->kingar_menu_id);
                 $nextdayitem[$loo]['workers_count'] = $nextday[$i]->workers_count;
-                $nextdayitem[$loo]['kingar_menu_id'] = $nextday[$i]->kingar_menu_id;
                 if ($i + 1 < count($nextday) and $nextday[$i + 1]->kingar_name_id != $nextdayitem[$loo]['kingar_name_id']) {
                     $loo++;
                 }
             }
-            dd($nextdayitem);
+
+            $shops = Shop::where('hide', 1)->with('kindgarden')->with('product')->get();
+
+            // dd($nextdayitem);
             $endday = Day::orderBy('id', 'DESC')->first();
             $mf = titlemenu_food::orderBy('day_id', 'DESC')->first();
             $sendmenu = 0;
-            dd($mf);
+            // dd($mf);
             if(isset($mf->day_id) and $endday->id == $mf->day_id){
                 $sendmenu = 1;
             }
             $nextday = 1;
-            return view('technolog.newday', ['sendmenu' => $sendmenu, 'nextdayitem' => $nextdayitem, 'ages' => $ages, 'menus' => $menus, 'temps' => $mass, 'gardens' => $gar, 'activ'=>$activ]);
+            return view('technolog.newday', ['sendmenu' => $sendmenu, 'nextdayitem' => $nextdayitem, 'shops' => $shops, 'ages' => $ages, 'menus' => $menus, 'temps' => $mass, 'gardens' => $gar, 'activ'=>$activ]);
         } else {
             return view('technolog.showdate', ['ages' => $ages]);
         }
     }
+    // yetkazib beruvchilar
 
+    public function nextdelivershop(Request $request, $id){
+        $shop = Shop::where('id', $id)->with('kindgarden')->with('product')->first();
+        // dd($shop);
+        $nextday = Nextday_namber::all();
+
+        $shopproducts = array();
+        foreach($shop->kindgarden as $row){
+            $shopproducts[$row->id]['name'] = $row->kingar_name;    
+            $day = Day::orderBy('id', 'DESC')->first();
+            foreach($shop->product as $prod){
+                $allsum = 0;
+                $onesum = 0;
+                $workers = 0;
+                foreach($nextday as $next){
+                    if($row->id == $next->kingar_name_id){
+                        $weight =  Menu_composition::where('title_menu_id', $next->kingar_menu_id)->where('product_name_id', $prod->id)->sum('weight');
+                        $allsum += $weight * $next->kingar_children_number;
+                        $onesum += $weight; 
+                        $workers = $next->workers_count;
+                    }
+                }
+                $workeat = titlemenu_food::where('day_id', $day->id)->get();
+
+                foreach($workeat as $wo){
+                        $woe = Menu_composition::where('title_menu_id', $wo->titlemenu_id)
+                                ->where('menu_food_id', $wo->food_id)
+                                ->where('age_range_id', $wo->worker_age_id)
+                                ->where('product_name_id', $prod->id)
+                                ->sum('weight');
+                }
+
+                $prdiv = Product::where('id', $prod->id)->first();
+                
+                $shopproducts[$row->id][$prod->id] = ($allsum + $woe * $workers) / $prdiv->div; 
+            }
+        }
+
+        // dd($shopproducts);
+        return view('technolog.nextdelivershop', compact('shopproducts', 'shop'));
+    }
+
+    public function nextdayshoppdf(Request $request, $id){
+        $shop = Shop::where('id', $id)->with('kindgarden')->with('product')->first();
+        // dd($shop);
+        $nextday = Nextday_namber::all();
+
+        $shopproducts = array();
+        foreach($shop->kindgarden as $row){
+            $shopproducts[$row->id]['name'] = $row->kingar_name;    
+            $day = Day::orderBy('id', 'DESC')->first();
+            foreach($shop->product as $prod){
+                $allsum = 0;
+                $onesum = 0;
+                $workers = 0;
+                foreach($nextday as $next){
+                    if($row->id == $next->kingar_name_id){
+                        $weight =  Menu_composition::where('title_menu_id', $next->kingar_menu_id)->where('product_name_id', $prod->id)->sum('weight');
+                        $allsum += $weight * $next->kingar_children_number;
+                        $onesum += $weight; 
+                        $workers = $next->workers_count;
+                    }
+                }
+                $workeat = titlemenu_food::where('day_id', $day->id)->get();
+
+                foreach($workeat as $wo){
+                        $woe = Menu_composition::where('title_menu_id', $wo->titlemenu_id)
+                                ->where('menu_food_id', $wo->food_id)
+                                ->where('age_range_id', $wo->worker_age_id)
+                                ->where('product_name_id', $prod->id)
+                                ->sum('weight');
+                }
+
+                $prdiv = Product::where('id', $prod->id)->first();
+                
+                $shopproducts[$row->id][$prod->id] = ($allsum + $woe * $workers) / $prdiv->div; 
+            }
+        }
+
+        $dompdf = new Dompdf('UTF-8');
+		$html = mb_convert_encoding(view('technolog.nextdayshoppdf', compact('shopproducts', 'shop')), 'HTML-ENTITIES', 'UTF-8');
+		$dompdf->loadHtml($html);
+
+		// (Optional) Setup the paper size and orientation
+		$dompdf->setPaper('A4');
+		// $customPaper = array(0,0,360,360);
+		// $dompdf->setPaper($customPaper);
+
+		// Render the HTML as PDF
+		$dompdf->render();
+
+		// Output the generated PDF to Browser
+		$dompdf->stream('demo.pdf', ['Attachment' => 0]);
+    }
+
+    // PDF next day //////////////////////////////////////////////////////////
+    public function nextdaymenuPDF(Request $request, $gid, $ageid)
+    {
+        $menu = Nextday_namber::where([
+			['kingar_name_id', '=', $gid],
+			['king_age_name_id', '=', $ageid]
+		])->join('kindgardens', 'nextday_nambers.kingar_name_id', '=', 'kindgardens.id')
+        ->join('age_ranges', 'nextday_nambers.king_age_name_id', '=', 'age_ranges.id')->get();
+		// dd($menu);
+		$menuitem = Menu_composition::where('title_menu_id', $menu[0]['kingar_menu_id'])
+                        ->where('age_range_id', $ageid)
+                        ->join('meal_times', 'menu_compositions.menu_meal_time_id', '=', 'meal_times.id')
+                        ->join('food', 'menu_compositions.menu_food_id', '=', 'food.id')
+                        ->join('products', 'menu_compositions.product_name_id', '=', 'products.id')
+                        ->orderBy('menu_meal_time_id')
+                        ->get();
+        // dd($menuitem);
+        // xodimlar ovqati uchun
+        $day = Day::orderBy('id', 'DESC')->first();
+        $workerfood = titlemenu_food::where('day_id', $day->id)
+                    ->where('worker_age_id', $ageid)
+                    ->where('titlemenu_id', $menu[0]['kingar_menu_id'])
+                    ->get();
+        // dd($workerfood);
+        $dompdf = new Dompdf('UTF-8');
+		$html = mb_convert_encoding(view('alltable', ['menu' => $menu, 'menuitem' => $menuitem, 'workerfood' => $workerfood]), 'HTML-ENTITIES', 'UTF-8');
+		$dompdf->loadHtml($html);
+
+		// (Optional) Setup the paper size and orientation
+		$dompdf->setPaper('A4', 'landscape');
+		// $customPaper = array(0,0,360,360);
+		// $dompdf->setPaper($customPaper);
+
+		// Render the HTML as PDF
+		$dompdf->render();
+
+		// Output the generated PDF to Browser
+		$dompdf->stream('demo.pdf', ['Attachment' => 0]);
+    }
     // bog'chalar sozlanmalari
 
     public function settings(Request $request, $id)
@@ -1017,6 +1153,39 @@ class TechnologController extends Controller
 
     public function sendtoallgarden(Request $request){
         dd('OK');
+    }
+
+    public function editnextworkers(Request $request){
+        // soat
+        Nextday_namber::where('kingar_name_id', $request->kingid)
+                    ->update(['workers_count' => $request->workers]);
+        
+    }
+
+    public function editnextcheldren(Request $request){
+        // soat
+        Nextday_namber::where('id', $request->nextrow)
+                    ->update(['kingar_children_number' => $request->agecount]);
+        Temporary::where('id', $request->temprow)->delete();
+    }
+    public function fornextmenuselect(Request $request){
+        $s = Season::where('hide', 1)->first();
+        $titles = Titlemenu::where('menu_season_id', $s->id)->get();
+        $html = "<select name='menuid' class='form-select' required aria-label='Default select example'>";
+        foreach($titles as $row){
+            if($row->id == $request->menuid)
+                $html = $html."<option value=".$row->id." selected>".$row->menu_name."</option>";
+            else
+                $html = $html."<option value=".$row->id.">".$row->menu_name."</option>";
+        }
+
+        $html = $html."</select>";
+        
+        return $html;
+    }
+
+    public function editnextmenu(Request $request){
+        Nextday_namber::where('id', $request->nextrow)->update(['kingar_menu_id' => $request->menuid]);
     }
 
     function curl_get_contents($url)
