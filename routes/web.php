@@ -24,24 +24,11 @@ Route::get('/wel', function () {
     return view('welcome');
 });
 
-Route::get('/hello', [TestController::class, 'tomany']);
-
-// dashboart test
-Route::get('/dash', [TestController::class, 'dash']);
-
-Route::get('/', [HomeController::class, 'index']);
-
-Route::get('/controller', [TestController::class, 'start']);
-
-Route::post('/newday', [TestController::class, 'menustart']);
-
 Route::get('/showmenu/{kid}/{did}/{aid}', [TestController::class, 'showmenu']);
-
-Route::get('/downloadPDF/{kid}/{did}/{aid}', [TestController::class, 'downloadPDF']);
-
+// bot orqali taxminiy menyuni ko'rish
+Route::get('/downloadPDF/{kid}/{aid}', [TestController::class, 'downloadPDF']);
+Route::get('/nextnakladnoyPDF/{kid}', [TestController::class, 'nextnakladnoyPDF']);
 Route::get('/gow', [TestController::class, 'addchilds']);
-
-Route::get('/cron', [TestController::class, 'tomorrowdate']);
 
 Route::group(['prefix' => 'admin'], function () {
     Voyager::routes();
@@ -121,6 +108,7 @@ Route::group(['prefix' => 'technolog', 'middleware' => ['isTechnolog', 'auth']],
     Route::get('nextsendmenutoonegarden/{id}', [TelegramController::class, 'nextsendmenutoonegarden'])->name('technolog.nextsendmenutoonegarden');
     Route::get('nextsendmenutoallgarden', [TelegramController::class, 'nextsendmenutoallgarden'])->name('technolog.nextsendmenutoallgarden');
     Route::get('sendtoonegarden/{id}', [TelegramController::class, 'sendtoonegarden'])->name('technolog.sendtoonegarden');
+    Route::get('sendordertooneshop', [TelegramController::class, 'sendordertooneshop'])->name('technolog.sendordertooneshop');
     // end telegram
     Route::post('editnextworkers', [TechnologController::class, 'editnextworkers'])->name('technolog.editnextworkers');
     Route::post('editnextcheldren', [TechnologController::class, 'editnextcheldren'])->name('technolog.editnextcheldren');

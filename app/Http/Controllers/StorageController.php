@@ -27,7 +27,7 @@ class StorageController extends Controller
         $days = Day::orderby('id', 'DESC')->get();
         $orederproduct = order_product::join('kindgardens', 'kindgardens.id', '=', 'order_products.kingar_name_id')
             ->join('days', 'days.id', '=', 'order_products.day_id')
-            ->where('day_id', $days[1]->id)
+            // ->where('day_id', $days[1]->id)
             ->select('order_products.id', 'days.day_number', 'order_products.order_title', 'order_products.document_processes_id', 'kindgardens.kingar_name')
             ->orderby('order_products.id', 'DESC')
             ->where('document_processes_id', '>', 1)
@@ -63,6 +63,7 @@ class StorageController extends Controller
             foreach ($product as $row) {
                 plus_multi_storage::create([
                     'day_id' => $day[1]->id,
+                    'shop_id' => 0,
                     'kingarden_name_d' => $order['kingar_name_id'],
                     'order_product_id' => $order['id'],
                     'product_name_id' => $row['product_name_id'],

@@ -85,7 +85,6 @@
 
                           	 foreach($menuitem as $items){
                           		if(empty($food1[$items->meal_time_name.$items->food_name])){
-									  
                           			  $ind++;
                           		}
                           		if(empty($mealtime[$items->meal_time_name])){ 

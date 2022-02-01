@@ -10,6 +10,7 @@ class plus_multi_storage extends Model
     use HasFactory;
     protected $fillable = [
         'day_id',
+        'shop_id',
         'kingarden_name_d',
         'order_product_id',
         'product_name_id',
