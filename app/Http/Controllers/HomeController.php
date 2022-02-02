@@ -93,6 +93,7 @@ class HomeController extends Controller
     // {
     //     $this->middleware('auth');
     // }
+<<<<<<< HEAD
 	public function nextdayshoppdf(Request $request, $id){
         $shop = Shop::where('id', $id)->with('kindgarden')->with('product')->first();
         // dd($shop);
@@ -133,6 +134,8 @@ class HomeController extends Controller
         $dompdf = new Dompdf('UTF-8');
 		$html = mb_convert_encoding(view('technolog.nextdayshoppdf', compact('shopproducts', 'shop')), 'HTML-ENTITIES', 'UTF-8');
 		$dompdf->loadHtml($html);
+=======
+>>>>>>> 45e1bd914ad05289d8a0da2c018f246a98f3abf0
 
 		// (Optional) Setup the paper size and orientation
 		$dompdf->setPaper('A4');

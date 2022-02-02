@@ -384,7 +384,23 @@ class TechnologController extends Controller
                         ->join('products', 'menu_compositions.product_name_id', '=', 'products.id')
                         ->orderBy('menu_meal_time_id')
                         ->get();
-        
+
+        // dd($menuitem);
+        $products = Product::where('hide', 1)->orderby('sort', 'ASC')->get();
+        $nextdaymenuitem = [];
+        $yesproduct = [];
+        foreach($menuitem as $item){
+            $nextdaymenuitem[$item->menu_meal_time_id][0]['mealtime'] = $item->meal_time_name; 
+            $nextdaymenuitem[$item->menu_meal_time_id][$item->menu_food_id][$item->product_name_id] = $item->weight;
+            $nextdaymenuitem[$item->menu_meal_time_id][$item->menu_food_id]['foodname'] = $item->food_name; 
+            for($i = 0; $i<count($products); $i++){
+                if(empty($products[$i]['yes']) and $products[$i]['id'] == $item->product_name_id){
+                    $products[$i]['yes'] = 1;
+                    // array_push($yesproduct, $products[$i]);
+                }
+            }
+        }
+        // dd($nextdaymenuitem);
         // xodimlar ovqati uchun
         $day = Day::orderBy('id', 'DESC')->first();
         $workerfood = titlemenu_food::where('day_id', $day->id)
@@ -393,7 +409,7 @@ class TechnologController extends Controller
                     ->get();
         // dd($workerfood);
         $dompdf = new Dompdf('UTF-8');
-		$html = mb_convert_encoding(view('alltable', ['menu' => $menu, 'menuitem' => $menuitem, 'workerfood' => $workerfood]), 'HTML-ENTITIES', 'UTF-8');
+		$html = mb_convert_encoding(view('alltable', ['menu' => $menu, 'menuitem' => $nextdaymenuitem, 'products' => $products, 'workerfood' => $workerfood]), 'HTML-ENTITIES', 'UTF-8');
 		$dompdf->loadHtml($html);
 
 		// (Optional) Setup the paper size and orientation
