@@ -28,7 +28,7 @@ class TestController extends Controller
 	function index(Request $request)
 	{
 		$gr = Temporary::join('kindgardens', 'temporaries.kingar_name_id', '=', 'kindgardens.id')->get();
-		$menu = One_day_menu::all();
+		// $menu = One_day_menu::all();
 
 		return view('adminhome', ['gardens' => $gr, 'menu' => $menu]);
 	}

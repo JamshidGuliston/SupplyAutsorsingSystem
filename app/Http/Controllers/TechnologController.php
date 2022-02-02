@@ -56,7 +56,7 @@ class TechnologController extends Controller
         // dd($season);
         date_default_timezone_set('Asia/Tashkent');
         // date("h:i:sa:M-d-Y");
-        $d = strtotime("-10 hours");
+        $d = strtotime("-20 hours");
         // dd($days[0]->day_number);
         return view('technolog.home', ['date' => $days, 'tomm' => $d, 'kingardens' => $kingar, 'menus' => $menus, 'next' => $nextdaymenu]);
     }
@@ -68,7 +68,7 @@ class TechnologController extends Controller
         $months = Month::all();
         $year = Year::orderBy('id', 'DESC')->first();
         date_default_timezone_set('Asia/Tashkent');
-        $d = strtotime("-10 hours");
+        $d = strtotime("-20 hours");
         foreach ($months as $month) {
             if ($month->month_en == date("F", $d)) {
                 Month::where('month_en', $request->daymonth)
@@ -168,7 +168,7 @@ class TechnologController extends Controller
     public function sendmenu($day)
     {
         date_default_timezone_set('Asia/Tashkent');
-        $d = strtotime("-10 hours");
+        $d = strtotime("-20 hours");
         $ages = Age_range::all();
         // dd($ages);
         if ($day == date("d-F-Y", $d)) {
@@ -370,13 +370,24 @@ class TechnologController extends Controller
                         ->orderBy('menu_meal_time_id')
                         ->get();
         // dd($menuitem);
+        // xodimlar ovqati uchun
+        $day = Day::orderBy('id', 'DESC')->first();
+        // dd($ageid);
+        $workerfood = titlemenu_food::where('day_id', $day->id)
+                    ->where('worker_age_id', $ageid)
+                    ->where('titlemenu_id', $menu[0]['kingar_menu_id'])
+                    ->get();
+        // dd($workerfood);
         $products = Product::where('hide', 1)->orderby('sort', 'ASC')->get();
         $nextdaymenuitem = [];
-        $yesproduct = [];
+        $workerproducts = [];
+        // kamchilik bor boshlangich qiymat berishda
+        $productallcount = array_fill(1, 500, 0);
         foreach($menuitem as $item){
             $nextdaymenuitem[$item->menu_meal_time_id][0]['mealtime'] = $item->meal_time_name; 
             $nextdaymenuitem[$item->menu_meal_time_id][$item->menu_food_id][$item->product_name_id] = $item->weight;
             $nextdaymenuitem[$item->menu_meal_time_id][$item->menu_food_id]['foodname'] = $item->food_name; 
+            $productallcount[$item->product_name_id] += $item->weight;
             for($i = 0; $i<count($products); $i++){
                 if(empty($products[$i]['yes']) and $products[$i]['id'] == $item->product_name_id){
                     $products[$i]['yes'] = 1;
@@ -384,16 +395,22 @@ class TechnologController extends Controller
                 }
             }
         }
-        // dd($nextdaymenuitem);
-        // xodimlar ovqati uchun
-        $day = Day::orderBy('id', 'DESC')->first();
-        $workerfood = titlemenu_food::where('day_id', $day->id)
-                    ->where('worker_age_id', $ageid)
-                    ->where('titlemenu_id', $menu[0]['kingar_menu_id'])
-                    ->get();
+        // dd($productallcount);
+        // kamchilik bor boshlangich qiymat berishda
+        $workerproducts = array_fill(1, 500, 0);
+        foreach($workerfood as $tr){
+            foreach($nextdaymenuitem[3][$tr->food_id] as $key => $value){
+                if($key != 'foodname'){
+                    $workerproducts[$key] += $value; 
+                }
+                // array_push($workerproducts, $nextdaymenuitem[3][$tr->food_id]);
+            }
+        }
+        // dd($workerproducts);    
+        
         // dd($workerfood);
         $dompdf = new Dompdf('UTF-8');
-		$html = mb_convert_encoding(view('alltable', ['menu' => $menu, 'menuitem' => $nextdaymenuitem, 'products' => $products, 'workerfood' => $workerfood]), 'HTML-ENTITIES', 'UTF-8');
+		$html = mb_convert_encoding(view('alltable', ['productallcount' => $productallcount, 'workerproducts' => $workerproducts,'menu' => $menu, 'menuitem' => $nextdaymenuitem, 'products' => $products, 'workerfood' => $workerfood]), 'HTML-ENTITIES', 'UTF-8');
 		$dompdf->loadHtml($html);
 
 		// (Optional) Setup the paper size and orientation
@@ -512,7 +529,7 @@ class TechnologController extends Controller
         }
 
         date_default_timezone_set('Asia/Tashkent');
-        $d = strtotime("-10 hours");
+        $d = strtotime("-20 hours");
 
         return redirect()->route('technolog.sendmenu', ['day' => date("d-F-Y", $d)]);
     }
