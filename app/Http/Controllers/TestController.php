@@ -40,7 +40,6 @@ use TCG\Voyager\Models\Category;
 class TestController extends Controller
 {
 
-
 	public function downloadPDF(Request $request, $gid, $ageid)
 	{
 		$menu = Nextday_namber::where([
@@ -64,6 +63,81 @@ class TestController extends Controller
                     ->where('titlemenu_id', $menu[0]['kingar_menu_id'])
                     ->get();
         // dd($workerfood);
+        $dompdf = new Dompdf('UTF-8');
+		$html = mb_convert_encoding(view('alltable', ['day' => $day, 'menu' => $menu, 'menuitem' => $menuitem, 'workerfood' => $workerfood]), 'HTML-ENTITIES', 'UTF-8');
+		$dompdf->loadHtml($html);
+
+		// (Optional) Setup the paper size and orientation
+		$dompdf->setPaper('A4', 'landscape');
+		// $customPaper = array(0,0,360,360);
+		// $dompdf->setPaper($customPaper);
+
+		// Render the HTML as PDF
+		$dompdf->render();
+
+		// Output the generated PDF to Browser
+		$dompdf->stream('demo.pdf', ['Attachment' => 0]);
+	}
+
+	public function activmenuPDF(Request $request, $day, $gid, $ageid)
+	{
+		$menu = Number_children::where([
+			['kingar_name_id', '=', $gid],
+			['day_id', '=', $day],
+			['king_age_name_id', '=', $ageid]
+		])->join('kindgardens', 'number_childrens.kingar_name_id', '=', 'kindgardens.id')
+        ->join('age_ranges', 'number_childrens.king_age_name_id', '=', 'age_ranges.id')->get();
+		// dd($menu);  
+		$products = Product::where('hide', 1)
+			->orderBy('sort', 'ASC')->get();
+		
+		$menuitem = Active_menu::where('title_menu_id', $menu[0]['kingar_menu_id'])
+                        ->where('age_range_id', $ageid)
+                        ->join('meal_times', 'active_menus.menu_meal_time_id', '=', 'meal_times.id')
+                        ->join('food', 'active_menus.menu_food_id', '=', 'food.id')
+                        ->join('products', 'active_menus.product_name_id', '=', 'products.id')
+                        ->orderBy('menu_meal_time_id')
+						->orderBy('menu_food_id')
+                        ->get();	
+
+        // dd($menuitem);
+        // xodimlar ovqati uchun
+        $day = Day::join('months', 'months.id', '=', 'days.month_id')->orderBy('days.id', 'DESC')->first(['days.day_number','days.id as id', 'months.month_name']);
+        // dd($day);
+        $workerfood = titlemenu_food::where('day_id', $day-1)
+                    ->where('worker_age_id', $ageid)
+                    ->where('titlemenu_id', $menu[0]['kingar_menu_id'])
+                    ->get();
+        // dd($workerfood);
+        $nextdaymenuitem = [];
+        $workerproducts = [];
+        // kamchilik bor boshlangich qiymat berishda
+        $productallcount = array_fill(1, 500, 0);
+        foreach($menuitem as $item){
+            $nextdaymenuitem[$item->menu_meal_time_id][0]['mealtime'] = $item->meal_time_name; 
+            $nextdaymenuitem[$item->menu_meal_time_id][$item->menu_food_id][$item->product_name_id] = $item->weight;
+            $nextdaymenuitem[$item->menu_meal_time_id][$item->menu_food_id]['foodname'] = $item->food_name; 
+            $productallcount[$item->product_name_id] += $item->weight;
+            for($i = 0; $i<count($products); $i++){
+                if(empty($products[$i]['yes']) and $products[$i]['id'] == $item->product_name_id){
+                    $products[$i]['yes'] = 1;
+                    // array_push($yesproduct, $products[$i]);
+                }
+            }
+        }
+        // dd($productallcount);
+        // kamchilik bor boshlangich qiymat berishda
+        $workerproducts = array_fill(1, 500, 0);
+        foreach($workerfood as $tr){
+            foreach($nextdaymenuitem[3][$tr->food_id] as $key => $value){
+                if($key != 'foodname'){
+                    $workerproducts[$key] += $value; 
+                }
+                // array_push($workerproducts, $nextdaymenuitem[3][$tr->food_id]);
+            }
+        }
+        // dd($menuitem);
+        
         $dompdf = new Dompdf('UTF-8');
 		$html = mb_convert_encoding(view('alltable', ['day' => $day, 'menu' => $menu, 'menuitem' => $menuitem, 'workerfood' => $workerfood]), 'HTML-ENTITIES', 'UTF-8');
 		$dompdf->loadHtml($html);

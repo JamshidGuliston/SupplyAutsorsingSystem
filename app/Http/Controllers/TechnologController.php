@@ -49,6 +49,7 @@ class TechnologController extends Controller
             ->join('years', 'years.id', '=', 'days.year_id')
             ->select('days.id', 'days.day_number', 'days.month_id', 'months.month_name', 'years.year_name')
             ->orderBy('days.id', 'DESC')->get();
+        // dd($days);
         $kingar = Kindgarden::all();
         $nextdaymenu = Nextday_namber::all();
         $season = Season::where('hide', 1)->first();
@@ -167,14 +168,15 @@ class TechnologController extends Controller
 
     public function sendmenu($day)
     {
+        // dd($day);
         date_default_timezone_set('Asia/Tashkent');
         $d = strtotime("-10 hours");
         $ages = Age_range::all();
         // dd($ages);
+        $sid = Season::where('hide', 1)->first();
+        // dd($sid);
+        $menus = Titlemenu::where('menu_season_id', $sid->id)->get();
         if ($day == date("d-F-Y", $d)) {
-            $sid = Season::where('hide', 1)->first();
-            // dd($sid);
-            $menus = Titlemenu::where('menu_season_id', $sid->id)->get();
             $gr = Temporary::join('kindgardens', 'temporaries.kingar_name_id', '=', 'kindgardens.id')
                 ->orderby('kindgardens.id', 'ASC')->get();
 
@@ -208,6 +210,7 @@ class TechnologController extends Controller
                 }
             }
             $activ = Kindgarden::where('hide', 1)->get();
+            // dd($activ);
             $nextday = Nextday_namber::join('kindgardens', 'nextday_nambers.kingar_name_id', '=', 'kindgardens.id')
                             ->leftjoin('temporaries', function($join){
                                 $join->on('nextday_nambers.kingar_name_id', '=', 'temporaries.kingar_name_id');
@@ -254,7 +257,25 @@ class TechnologController extends Controller
             $nextday = 1;
             return view('technolog.newday', ['sendmenu' => $sendmenu, 'nextdayitem' => $nextdayitem, 'shops' => $shops, 'ages' => $ages, 'menus' => $menus, 'temps' => $mass, 'gardens' => $gar, 'activ'=>$activ]);
         } else {
-            return view('technolog.showdate', ['ages' => $ages]);
+
+            $nextday = Number_children::where('day_id', $day)->join('kindgardens', 'number_childrens.kingar_name_id', '=', 'kindgardens.id')
+                            ->orderby('number_childrens.kingar_name_id', 'ASC')
+                            ->get();
+            // dd($nextday);
+            $nextdayitem = array();
+            $loo = 0;
+            for($i = 0; $i < count($nextday); $i++){
+                $nextdayitem[$loo]['kingar_name_id'] = $nextday[$i]->kingar_name_id;
+                $nextdayitem[$loo]['kingar_name'] = $nextday[$i]->kingar_name;
+                $nextdayitem[$loo][$nextday[$i]->king_age_name_id] = array($nextday[$i]->id, $nextday[$i]->kingar_children_number, $nextday[$i]->tempid, $nextday[$i]->age_number, $nextday[$i]->kingar_menu_id);
+                $nextdayitem[$loo]['workers_count'] = $nextday[$i]->workers_count;
+                if ($i + 1 < count($nextday) and $nextday[$i + 1]->kingar_name_id != $nextdayitem[$loo]['kingar_name_id']) {
+                    $loo++;
+                }
+            }
+
+            // dd($nextdayitem);
+            return view('technolog.showdate', ['day' => $day, 'ages' => $ages, 'nextdayitem' => $nextdayitem]);
         }
     }
     // yetkazib beruvchilar
@@ -301,6 +322,8 @@ class TechnologController extends Controller
                         // 	$itempr = $itempr . 
                         // }
                 }
+
+
 
                 $prdiv = Product::where('id', $prod->id)->first();
                 
