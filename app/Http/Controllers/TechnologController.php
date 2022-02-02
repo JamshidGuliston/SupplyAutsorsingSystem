@@ -262,22 +262,31 @@ class TechnologController extends Controller
     public function nextdelivershop(Request $request, $id){
         $shop = Shop::where('id', $id)->with('kindgarden')->with('product')->first();
         // dd($shop);
-        $nextday = Nextday_namber::all();
 
         $shopproducts = array();
         foreach($shop->kindgarden as $row){
             $shopproducts[$row->id]['name'] = $row->kingar_name;    
             $day = Day::orderBy('id', 'DESC')->first();
             foreach($shop->product as $prod){
+            	// echo $prod->id;
+            	$shopproducts[$row->id][$prod->id] = "";
                 $allsum = 0;
                 $onesum = 0;
                 $workers = 0;
+                $weight = 0;
+                $itempr = "";
+        		$nextday = Nextday_namber::orderBy('kingar_name_id', 'ASC')->orderBy('king_age_name_id', 'ASC')->get();
+        		// dd($nextday);
                 foreach($nextday as $next){
                     if($row->id == $next->kingar_name_id){
-                        $weight =  Menu_composition::where('title_menu_id', $next->kingar_menu_id)->where('product_name_id', $prod->id)->sum('weight');
-                        $allsum += $weight * $next->kingar_children_number;
-                        $onesum += $weight; 
-                        $workers = $next->workers_count;
+                        $prlar =  Menu_composition::where('title_menu_id', $next->kingar_menu_id)->where('age_range_id', $next->king_age_name_id)->where('product_name_id', $prod->id)->get();
+                        foreach($prlar as $prw){
+                        	$itempr = $itempr . "+".$prw->weight." * ". $next->kingar_children_number;
+                        	$weight += $prw->weight * $next->kingar_children_number;
+                        }
+                        // $allsum += $weight * $next->kingar_children_number;
+                        // $onesum += $weight; 
+                        // $workers = $next->workers_count;
                     }
                 }
                 $workeat = titlemenu_food::where('day_id', $day->id)->get();
@@ -288,11 +297,14 @@ class TechnologController extends Controller
                                 ->where('age_range_id', $wo->worker_age_id)
                                 ->where('product_name_id', $prod->id)
                                 ->sum('weight');
+                        // if($woe > 0){
+                        // 	$itempr = $itempr . 
+                        // }
                 }
 
                 $prdiv = Product::where('id', $prod->id)->first();
                 
-                $shopproducts[$row->id][$prod->id] = ($allsum + $woe * $workers) / $prdiv->div; 
+                $shopproducts[$row->id][$prod->id] = $itempr . "=" . $weight / $prod->div; 
             }
         }
 
@@ -303,7 +315,7 @@ class TechnologController extends Controller
     public function nextdayshoppdf(Request $request, $id){
         $shop = Shop::where('id', $id)->with('kindgarden')->with('product')->first();
         // dd($shop);
-        $nextday = Nextday_namber::all();
+        $nextday = Nextday_namber::orderBy('kingar_name_id', 'ASC')->get();
 
         $shopproducts = array();
         foreach($shop->kindgarden as $row){
@@ -362,6 +374,9 @@ class TechnologController extends Controller
 		])->join('kindgardens', 'nextday_nambers.kingar_name_id', '=', 'kindgardens.id')
         ->join('age_ranges', 'nextday_nambers.king_age_name_id', '=', 'age_ranges.id')->get();
 		// dd($menu);
+		$products = Product::where('hide', 1)
+			->orderBy('sort')->get();
+			
 		$menuitem = Menu_composition::where('title_menu_id', $menu[0]['kingar_menu_id'])
                         ->where('age_range_id', $ageid)
                         ->join('meal_times', 'menu_compositions.menu_meal_time_id', '=', 'meal_times.id')
@@ -369,6 +384,7 @@ class TechnologController extends Controller
                         ->join('products', 'menu_compositions.product_name_id', '=', 'products.id')
                         ->orderBy('menu_meal_time_id')
                         ->get();
+
         // dd($menuitem);
         // xodimlar ovqati uchun
         $day = Day::orderBy('id', 'DESC')->first();
@@ -543,7 +559,7 @@ class TechnologController extends Controller
         $days = Day::orderby('id', 'DESC')->get();
         $orederproduct = order_product::join('kindgardens', 'kindgardens.id', '=', 'order_products.kingar_name_id')
             ->join('days', 'days.id', '=', 'order_products.day_id')
-            ->where('day_id', $days[1]->id)
+            // ->where('day_id', $days[1]->id)
             ->select('order_products.id', 'days.day_number', 'order_products.order_title', 'order_products.document_processes_id', 'kindgardens.kingar_name') 
             ->orderby('order_products.id', 'DESC')
             ->get();
