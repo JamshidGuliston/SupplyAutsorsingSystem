@@ -387,8 +387,8 @@ class TechnologController extends Controller
 
         // dd($menuitem);
         // xodimlar ovqati uchun
-        $day = Day::orderBy('id', 'DESC')->first();
-        // dd($ageid);
+        $day = Day::join('months', 'months.id', '=', 'days.month_id')->orderBy('days.id', 'DESC')->first(['days.day_number','days.id as id', 'months.month_name']);
+        // dd($day);
         $workerfood = titlemenu_food::where('day_id', $day->id)
                     ->where('worker_age_id', $ageid)
                     ->where('titlemenu_id', $menu[0]['kingar_menu_id'])
@@ -425,7 +425,7 @@ class TechnologController extends Controller
         
         // dd($workerfood);
         $dompdf = new Dompdf('UTF-8');
-		$html = mb_convert_encoding(view('alltable', ['productallcount' => $productallcount, 'workerproducts' => $workerproducts,'menu' => $menu, 'menuitem' => $nextdaymenuitem, 'products' => $products, 'workerfood' => $workerfood]), 'HTML-ENTITIES', 'UTF-8');
+		$html = mb_convert_encoding(view('alltable', ['day' => $day,'productallcount' => $productallcount, 'workerproducts' => $workerproducts,'menu' => $menu, 'menuitem' => $nextdaymenuitem, 'products' => $products, 'workerfood' => $workerfood]), 'HTML-ENTITIES', 'UTF-8');
 		$dompdf->loadHtml($html);
 
 		// (Optional) Setup the paper size and orientation

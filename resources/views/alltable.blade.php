@@ -63,11 +63,11 @@
                 <div class="table" id="table_with_data">
                 	<?php
 						echo "Боғча номи: <b>".$menu[0]['kingar_name']."</b><br/>";
-                		echo  $menu[0]['age_name'] . "ли болалар сони: <b>" . $menu[0]['kingar_children_number'].";</b>";
+                		echo  'sana: <b>'.$day['day_number'].'.'.$day['month_name'].' 2022-й;</b>    <b>' . $menu[0]['age_name'] . "</b>ли болалар сони: <b>" . $menu[0]['kingar_children_number'].";</b>";
                 		if($menu[0]['worker_age_id'] == $menu[0]['king_age_name_id']){
                 			echo "  ходимлар сони: <b>".$menu[0]['worker_count'].";</b>  ";	
                 		}
-						echo "          КЕЙИНГИ ИШ КУНИ УЧУН ТАХМИНИЙ ТАОМНОМА!"
+						echo "          КЕЙИНГИ ИШ КУНИ УЧУН ТАХМИНИЙ ТАОМНОМА!   sana:";
                 	?>
                     <table style="width:100%; table-layout: fixed;">
                         <thead>

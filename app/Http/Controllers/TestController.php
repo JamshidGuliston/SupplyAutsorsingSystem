@@ -65,7 +65,7 @@ class TestController extends Controller
                     ->get();
         // dd($workerfood);
         $dompdf = new Dompdf('UTF-8');
-		$html = mb_convert_encoding(view('alltable', ['menu' => $menu, 'menuitem' => $menuitem, 'workerfood' => $workerfood]), 'HTML-ENTITIES', 'UTF-8');
+		$html = mb_convert_encoding(view('alltable', ['day' => $day, 'menu' => $menu, 'menuitem' => $menuitem, 'workerfood' => $workerfood]), 'HTML-ENTITIES', 'UTF-8');
 		$dompdf->loadHtml($html);
 
 		// (Optional) Setup the paper size and orientation
