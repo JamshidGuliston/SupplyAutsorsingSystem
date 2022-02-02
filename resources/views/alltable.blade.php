@@ -116,7 +116,7 @@
 			                            for($t = 0; $t < count($products); $t++){
 			                            	if(isset($products[$t]['yes']) and isset($item[$products[$t]['id']])){
 			                            ?>	
-			                            		<td style="padding: 0px;"><?php printf("%01.3f", (($menu[0]['kingar_children_number'])*$item[$products[$t]['id']]) / 1000. ); ?></td>
+			                            		<td style="padding: 0px;"><?php printf("%01.3f", (($menu[0]['kingar_children_number'])*$item[$products[$t]['id']]) / $products[$t]['div']); ?></td>
 			                            	
 			                            <?php
 				                            }
@@ -155,7 +155,7 @@
 			                            for($t = 0; $t < count($products); $t++){
 											if(isset($products[$t]['yes']) and isset($productallcount[$products[$t]['id']])){
 			                            ?>
-			                            	<td style="padding: 0px; font-size: 5px"><?php printf("%01.3f", (($menu[0]['kingar_children_number'])*$productallcount[$products[$t]['id']]) / 1000. ); ?></td>
+			                            	<td style="padding: 0px; font-size: 5px"><?php printf("%01.3f", (($menu[0]['kingar_children_number'])*$productallcount[$products[$t]['id']]) / $products[$t]['div'] ); ?></td>
 			                            <?php	
 											}
 											elseif(isset($products[$t]['yes'])){
@@ -215,7 +215,7 @@
 			                            for($t = 0; $t < count($products); $t++){
 											if(isset($products[$t]['yes']) and isset($workerproducts[$products[$t]['id']])){
 			                            ?>
-			                            	<td style="padding: 0px; font-size: 5px"><?php printf("%01.3f", (($menu[0]['kingar_children_number'])*$workerproducts[$products[$t]['id']]) / 1000. ); ?></td>
+			                            	<td style="padding: 0px; font-size: 5px"><?php printf("%01.3f", (($menu[0]['workers_count'])*$workerproducts[$products[$t]['id']]) / $products[$t]['div']); ?></td>
 			                            <?php	
 											}
 											elseif(isset($products[$t]['yes'])){

@@ -373,10 +373,10 @@ class TechnologController extends Controller
 			['king_age_name_id', '=', $ageid]
 		])->join('kindgardens', 'nextday_nambers.kingar_name_id', '=', 'kindgardens.id')
         ->join('age_ranges', 'nextday_nambers.king_age_name_id', '=', 'age_ranges.id')->get();
-		// dd($menu);
+		// dd($menu);  
 		$products = Product::where('hide', 1)
-			->orderBy('sort')->get();
-			
+			->orderBy('sort', 'ASC')->get();
+		
 		$menuitem = Menu_composition::where('title_menu_id', $menu[0]['kingar_menu_id'])
                         ->where('age_range_id', $ageid)
                         ->join('meal_times', 'menu_compositions.menu_meal_time_id', '=', 'meal_times.id')
@@ -394,7 +394,6 @@ class TechnologController extends Controller
                     ->where('titlemenu_id', $menu[0]['kingar_menu_id'])
                     ->get();
         // dd($workerfood);
-        $products = Product::where('hide', 1)->orderby('sort', 'ASC')->get();
         $nextdaymenuitem = [];
         $workerproducts = [];
         // kamchilik bor boshlangich qiymat berishda
