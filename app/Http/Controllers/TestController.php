@@ -79,11 +79,11 @@ class TestController extends Controller
 		$dompdf->stream('demo.pdf', ['Attachment' => 0]);
 	}
 
-	public function activmenuPDF(Request $request, $day, $gid, $ageid)
+	public function activmenuPDF(Request $request, $today, $gid, $ageid)
 	{
 		$menu = Number_children::where([
 			['kingar_name_id', '=', $gid],
-			['day_id', '=', $day],
+			['day_id', '=', $today],
 			['king_age_name_id', '=', $ageid]
 		])->join('kindgardens', 'number_childrens.kingar_name_id', '=', 'kindgardens.id')
         ->join('age_ranges', 'number_childrens.king_age_name_id', '=', 'age_ranges.id')->get();
@@ -91,7 +91,8 @@ class TestController extends Controller
 		$products = Product::where('hide', 1)
 			->orderBy('sort', 'ASC')->get();
 		
-		$menuitem = Active_menu::where('title_menu_id', $menu[0]['kingar_menu_id'])
+		$menuitem = Active_menu::where('day_id', $today)
+						->where('title_menu_id', $menu[0]['kingar_menu_id'])
                         ->where('age_range_id', $ageid)
                         ->join('meal_times', 'active_menus.menu_meal_time_id', '=', 'meal_times.id')
                         ->join('food', 'active_menus.menu_food_id', '=', 'food.id')
@@ -104,7 +105,7 @@ class TestController extends Controller
         // xodimlar ovqati uchun
         $day = Day::join('months', 'months.id', '=', 'days.month_id')->orderBy('days.id', 'DESC')->first(['days.day_number','days.id as id', 'months.month_name']);
         // dd($day);
-        $workerfood = titlemenu_food::where('day_id', $day-1)
+        $workerfood = titlemenu_food::where('day_id', ($today-1))
                     ->where('worker_age_id', $ageid)
                     ->where('titlemenu_id', $menu[0]['kingar_menu_id'])
                     ->get();
@@ -139,7 +140,7 @@ class TestController extends Controller
         // dd($menuitem);
         
         $dompdf = new Dompdf('UTF-8');
-		$html = mb_convert_encoding(view('alltable', ['day' => $day, 'menu' => $menu, 'menuitem' => $menuitem, 'workerfood' => $workerfood]), 'HTML-ENTITIES', 'UTF-8');
+		$html = mb_convert_encoding(view('pdffile.technolog.activmenu', ['day' => $day,'productallcount' => $productallcount, 'workerproducts' => $workerproducts,'menu' => $menu, 'menuitem' => $nextdaymenuitem, 'products' => $products, 'workerfood' => $workerfood]), 'HTML-ENTITIES', 'UTF-8');
 		$dompdf->loadHtml($html);
 
 		// (Optional) Setup the paper size and orientation

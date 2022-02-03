@@ -31,8 +31,8 @@ Route::get('/nextnakladnoyPDF/{kid}', [TestController::class, 'nextnakladnoyPDF'
 Route::get('/gow', [TestController::class, 'addchilds']);
 
 // ommaga ochiq bot orqali haqiqiy menyuni ko'rish
-Route::get('/activmenuPDF/{$day}/{kid}/{aid}', [TestController::class, 'activmenuPDF']);
-Route::get('/activnakladPDF/{$day}/{kid}/{aid}', [TestController::class, 'activnakladPDF']);
+Route::get('/activmenuPDF/{day}/{kid}/{aid}', [TestController::class, 'activmenuPDF']);
+Route::get('/activnakladPDF/{day}/{kid}/{aid}', [TestController::class, 'activnakladPDF']);
 
 Route::group(['prefix' => 'admin'], function () {
     Voyager::routes();
