@@ -387,7 +387,7 @@
                     <span class="age_name{{ $age->id }}">{{ $age->age_name }} </span>
                 </th>
                 @endforeach
-                <th style="width: 70px;" rowspan="2">Nakladnoy</th>
+                <th style="width: 70px;" rowspan="2">Накладной</th>
                 <th style="width: 70px;" rowspan="2">Menyu</th>
             </tr>
             <tr style="color: #888888;">

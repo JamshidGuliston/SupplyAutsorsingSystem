@@ -152,7 +152,7 @@ class TestController extends Controller
 		$dompdf->render();
 
 		// Output the generated PDF to Browser
-		$dompdf->stream('demo.pdf', ['Attachment' => 0]);
+		$dompdf->stream('active.pdf', ['Attachment' => 0]);
 	}
 	
 	// Nakladnoyni ko'rish
@@ -172,7 +172,7 @@ class TestController extends Controller
 		foreach($ages as $row){
 			$agerange[$row->id] = 0;
 		}
-		$productscount = array_fill(1, $join->count(), $agerange);
+		$productscount = array_fill(1, 500, $agerange);
 		// dd($productscount);
 		foreach($join as $row){
 			$productscount[$row->product_name_id][$row->age_range_id] += $row->weight;
@@ -197,7 +197,63 @@ class TestController extends Controller
 		$dompdf->stream('nakladnoy.pdf', ['Attachment' => 0]);
 	}
 
-	public function start(Request $request)
+	public function activnakladPDF(Request $request, $today, $gid)
+	{
+		$king = Kindgarden::where('id', $gid)->first();
+		$join = Number_children::where('number_childrens.day_id', $today)
+				->where('kingar_name_id', $gid)
+				->leftjoin('active_menus', function($join){
+                    // $join->on('day_id', '=', $today);
+                    $join->on('number_childrens.kingar_menu_id', '=', 'active_menus.title_menu_id');
+                    $join->on('number_childrens.king_age_name_id', '=', 'active_menus.age_range_id');
+                })
+				->where('active_menus.day_id', $today)
+                ->join('products', 'active_menus.product_name_id', '=', 'products.id')
+				->get();
+		// dd($join);	
+		$ages = Age_range::all();
+		$agerange = array();
+		foreach($ages as $row){
+			$agerange[$row->id] = 0;
+		}
+		$productscount = array_fill(1, 500, $agerange);
+		$workproduct = array_fill(1, 500, 0);
+		$workerfood = titlemenu_food::where('titlemenu_foods.day_id', ($today-1))->get();
+		// dd($workerfood);
+		foreach($join as $row){
+			if($row->age_range_id == 1 and $row->menu_meal_time_id = 1){
+				foreach($workerfood as $ww){
+					if($row->menu_food_id == $ww->food_id){
+						$workproduct[$row->product_name_id] += $row->weight;
+						$workproduct[$row->product_name_id.'div'] = $row->div;
+						$workproduct[$row->product_name_id.'wcount'] = $row->workers_count;
+					}
+				}
+			}
+			$productscount[$row->product_name_id][$row->age_range_id] += $row->weight;
+			$productscount[$row->product_name_id][$row->age_range_id.'-children'] = $row->kingar_children_number;
+			$productscount[$row->product_name_id][$row->age_range_id.'div'] = $row->div;
+			$productscount[$row->product_name_id]['product_name'] = $row->product_name;
+		}
+		// dd($workproduct);
+		
+		$dompdf = new Dompdf('UTF-8');
+		$html = mb_convert_encoding(view('docnextday.nakladnoy', ['workproduct' => $workproduct, 'productscount' => $productscount, 'king' => $king, 'ages' => $ages]), 'HTML-ENTITIES', 'UTF-8');
+		$dompdf->loadHtml($html);
+
+		// (Optional) Setup the paper size and orientation
+		$dompdf->setPaper('A4', 'landscape');
+		// $customPaper = array(0,0,360,360);
+		// $dompdf->setPaper($customPaper);
+
+		// Render the HTML as PDF
+		$dompdf->render();
+
+		// Output the generated PDF to Browser
+		$dompdf->stream('nakladnoy.pdf', ['Attachment' => 0]);
+	}
+
+	public function jki(Request $request)
 	{
 		dd(1);
 	}

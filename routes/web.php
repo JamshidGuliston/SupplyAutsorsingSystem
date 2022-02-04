@@ -32,7 +32,7 @@ Route::get('/gow', [TestController::class, 'addchilds']);
 
 // ommaga ochiq bot orqali haqiqiy menyuni ko'rish
 Route::get('/activmenuPDF/{day}/{kid}/{aid}', [TestController::class, 'activmenuPDF']);
-Route::get('/activnakladPDF/{day}/{kid}/{aid}', [TestController::class, 'activnakladPDF']);
+Route::get('/activnakladPDF/{day}/{kid}', [TestController::class, 'activnakladPDF']);
 
 Route::group(['prefix' => 'admin'], function () {
     Voyager::routes();
@@ -109,9 +109,11 @@ Route::group(['prefix' => 'technolog', 'middleware' => ['isTechnolog', 'auth']],
     Route::post('copymenuitem', [TechnologController::class, 'copymenuitem'])->name('technolog.copymenuitem');
     // telegram
     Route::get('sendtoallgarden', [TelegramController::class, 'sendtoallgarden'])->name('technolog.sendtoallgarden');
+    Route::get('sendtoonegarden/{id}', [TelegramController::class, 'sendtoonegarden'])->name('technolog.sendtoonegarden');
     Route::get('nextsendmenutoonegarden/{id}', [TelegramController::class, 'nextsendmenutoonegarden'])->name('technolog.nextsendmenutoonegarden');
     Route::get('nextsendmenutoallgarden', [TelegramController::class, 'nextsendmenutoallgarden'])->name('technolog.nextsendmenutoallgarden');
-    Route::get('sendtoonegarden/{id}', [TelegramController::class, 'sendtoonegarden'])->name('technolog.sendtoonegarden');
+    Route::get('activsendmenutoallgardens/{dayid}', [TelegramController::class, 'activsendmenutoallgardens'])->name('technolog.activsendmenutoallgardens');
+    Route::get('activsendmenutoonegarden/{dayid}/{gid}', [TelegramController::class, 'activsendmenutoonegarden'])->name('technolog.activsendmenutoonegarden');
     Route::get('sendordertooneshop', [TelegramController::class, 'sendordertooneshop'])->name('technolog.sendordertooneshop');
     // end telegram
     Route::post('editnextworkers', [TechnologController::class, 'editnextworkers'])->name('technolog.editnextworkers');

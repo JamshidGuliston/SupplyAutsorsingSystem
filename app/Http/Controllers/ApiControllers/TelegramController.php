@@ -12,6 +12,7 @@ use App\Models\Kindgarden;
 use App\Models\Temporary;
 use App\Models\Age_range;
 use App\Models\Nextday_namber;
+use App\Models\Number_children;
 
 class TelegramController extends Controller
 {
@@ -150,7 +151,7 @@ class TelegramController extends Controller
     
     public function sendtoonegarden(Request $request, $id){
     	date_default_timezone_set('Asia/Tashkent');
-        $d = strtotime("-10 hours");
+        $d = strtotime("-35 hours");
         
         $kind = Kindgarden::where('id', $id)->with('age_range')->first();
         
@@ -177,10 +178,10 @@ class TelegramController extends Controller
     }
     
     
-    
+    // <>
     public function nextsendmenutoallgarden(){
     	date_default_timezone_set('Asia/Tashkent');
-        $d = strtotime("-10 hours");
+        $d = strtotime("-35 hours");
         $kind = Nextday_namber::join('kindgardens', 'nextday_nambers.kingar_name_id', '=', 'kindgardens.id')->get();
     	// $kind = Kindgarden::where('hide', 1)->with('age_range')->get();
     	foreach($kind as $row){
@@ -192,7 +193,19 @@ class TelegramController extends Controller
     	
     	return redirect()->route('technolog.sendmenu', ['day' => date("d-F-Y", $d)]);	
     }
-    
+    // activ menular
+    public function activsendmenutoallgardens($dayid){
+        $kind = Kindgarden::where('hide', 1)->with('age_range')->get();
+    	// $kind = Kindgarden::where('hide', 1)->with('age_range')->get();
+    	foreach($kind as $row){
+    		foreach($row->age_range as $ageid){
+    			$this->sendMessage(640892021, "<a href='https://cj56359.tmweb.ru/activmenuPDF/".$dayid."/".$row->id."/".$ageid->id."'>".$ageid->age_name."</a>");          
+    		}
+    	}
+    	
+    	return redirect()->route('technolog.sendmenu', ['day' => $dayid]);	
+    }
+    // <>
     public function nextsendmenutoonegarden(Request $request, $id){
     	date_default_timezone_set('Asia/Tashkent');
         $d = strtotime("-10 hours");
@@ -210,11 +223,27 @@ class TelegramController extends Controller
     	
     	return redirect()->route('technolog.sendmenu', ['day' => date("d-F-Y", $d)]);
     }
+
+    // activ menu
+    public function activsendmenutoonegarden(Request $request, $dayid, $id){
+    	$kingar = Kindgarden::where('id', $id)->where('hide', 1)->with('age_range')->first();
+		foreach($kingar->age_range as $ageid){
+			
+			$data = [
+				'chat_id' => 640892021,
+				'text' => "<a href='https://cj56359.tmweb.ru/activsendmenutoonegarden/".$dayid."/".$kingar->id."/".$ageid->id."'>".$ageid->age_name."</a>",
+				'parse_mode' => 'HTML'
+			];
+			$this->sendTelegram('sendMessage', $data);          
+		}
+    	
+    	return redirect()->route('technolog.sendmenu', ['day' => $dayid]);
+    }
     
     public function sendordertoallshop(){
     	
     }
-    
+    // <>
     public function sendordertooneshop(){
     	$text = "";
     	$kingar = Kindgarden::where('id', 1)->where('hide', 1)->with('age_range')->first();

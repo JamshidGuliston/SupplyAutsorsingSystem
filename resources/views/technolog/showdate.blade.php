@@ -36,7 +36,7 @@
     </div>
     <div class="col-md-3">
         <b>Bog'chalarga menyu yuborish</b>
-        <a href="/technolog/nextsendmenutoallgarden">
+        <a href="/technolog/activsendmenutoallgardens/{{ $day }}">
             <i class="far fa-paper-plane" style="color: dodgerblue; font-size: 18px;"></i>
         </a>
     </div>
@@ -85,7 +85,7 @@
             @endif
             @endforeach
             <td><a href="/activnakladPDF/{{ $day }}/{{ $row['kingar_name_id'] }}" target="_blank"><i class="far fa-file-pdf" style="color: dodgerblue; font-size: 18px;"></i></a></td>
-            <td><a href="/technolog/activsendmenutoonegarden/{{ $row['kingar_name_id'] }}"><i class="far fa-paper-plane" style="color: dodgerblue;"></i></a></td>
+            <td><a href="/technolog/activsendmenutoonegarden/{{ $day }}/{{ $row['kingar_name_id'] }}"><i class="far fa-paper-plane" style="color: dodgerblue;"></i></a></td>
         </tr>
     @endforeach
     </tbody>
