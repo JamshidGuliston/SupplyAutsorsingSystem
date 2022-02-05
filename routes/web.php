@@ -26,7 +26,7 @@ Route::get('/wel', function () {
 
 Route::get('/showmenu/{kid}/{did}/{aid}', [TestController::class, 'showmenu']);
 // ommaga ochiq bot orqali taxminiy menyuni ko'rish
-Route::get('/downloadPDF/{kid}/{aid}', [TestController::class, 'downloadPDF']);
+Route::get('/nextdaymenuPDF/{kid}/{aid}', [TestController::class, 'nextdaymenuPDF']);
 Route::get('/nextnakladnoyPDF/{kid}', [TestController::class, 'nextnakladnoyPDF']);
 Route::get('/gow', [TestController::class, 'addchilds']);
 
@@ -122,5 +122,5 @@ Route::group(['prefix' => 'technolog', 'middleware' => ['isTechnolog', 'auth']],
     Route::get('fornextmenuselect', [TechnologController::class, 'fornextmenuselect'])->name('technolog.fornextmenuselect');
     Route::get('nextdelivershop/{id}', [TechnologController::class, 'nextdelivershop'])->name('technolog.nextdelivershop');
     Route::get('nextdayshoppdf/{id}', [TechnologController::class, 'nextdayshoppdf'])->name('technolog.nextdayshoppdf');
-    Route::get('nextdaymenuPDF/{gid}/{ageid}', [TechnologController::class, 'nextdaymenuPDF'])->name('technolog.nextdaymenuPDF');
+    
 });

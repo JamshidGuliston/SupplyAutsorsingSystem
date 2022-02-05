@@ -61,8 +61,8 @@
         </div>
         @elseif($date[0]->day_number == date("d", $tomm))
         <div class="dot" id="four2">
-            <a href="{{ route('technolog.sendmenu', ['day'=> date('d-F-Y', $tomm)]); }}"><span>{{ date("d", $tomm) }}</span></a>
-            <date>{{ date("F", $tomm) }}</date>
+            <a href="{{ route('technolog.sendmenu', ['day'=> date('d-F-Y', $tomm)]); }}"><span>{{ "T" }}</span></a>
+            <date>{{ "Taxminiy" }}</date>
         </div>
         @endif
         <div class="inside"></div>

@@ -413,13 +413,13 @@
                         <i class="far fa-envelope" style="color: #c40c0c"></i> 
                        @endif
                        <i class="ch_countedit far fa-edit" data-nextrow-id="{{ $row[$age->id][0]; }}" data-child-count="{{ $row[$age->id][1]; }}" data-temprow-id="{{ $row[$age->id][2]; }}" data-tempchild-count="{{ $row[$age->id][3]; }}" data-kinga-name="{{ $row['kingar_name'] }}" data-bs-toggle="modal" data-bs-target="#chcountModal" style="color: #727213; font-size: 14px; cursor: pointer;"></i></td>
-                    <td><a href="/technolog/nextdaymenuPDF/{{ $row['kingar_name_id'] }}/{{ $age->id }}" target="_blank"><i class="far fa-file-pdf" style="color: dodgerblue; font-size: 18px;"></i></a>  <i class="next_menu far fa-edit" data-nextmenu-id="{{ $row[$age->id][4]; }}" data-nextrow-count="{{ $row[$age->id][0]; }}" data-king-name="{{ $row['kingar_name'] }}" data-bs-toggle="modal" data-bs-target="#editnextmenuModal" style="color: #727213; font-size: 14px; cursor: pointer; margin-left: 11px;"></i></td>
+                    <td><a href="/nextdaymenuPDF/{{ $row['kingar_name_id'] }}/{{ $age->id }}" target="_blank"><i class="far fa-file-pdf" style="color: dodgerblue; font-size: 18px;"></i></a>  <i class="next_menu far fa-edit" data-nextmenu-id="{{ $row[$age->id][4]; }}" data-nextrow-count="{{ $row[$age->id][0]; }}" data-king-name="{{ $row['kingar_name'] }}" data-bs-toggle="modal" data-bs-target="#editnextmenuModal" style="color: #727213; font-size: 14px; cursor: pointer; margin-left: 11px;"></i></td>
                 @else
                     <td>{{ ' ' }}</td>
                     <td>{{ ' ' }}</td>
                 @endif
                 @endforeach
-                <td><i class="fas fa-shopping-basket"></i></td>
+                <td><a href="/nextnakladnoyPDF/{{ $row['kingar_name_id'] }}" target="_blank"><i class="far fa-file-pdf" style="color: dodgerblue; font-size: 18px;"></i></a></td>
                 <td><a href="/technolog/nextsendmenutoonegarden/{{ $row['kingar_name_id'] }}"><i class="far fa-paper-plane" style="color: dodgerblue;"></i></a></td>
             </tr>
         @endforeach
