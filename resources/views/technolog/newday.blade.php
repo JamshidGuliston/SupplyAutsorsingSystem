@@ -200,6 +200,8 @@
                 </div><br>
                 <div class="tomorrowmenufood">
                 </div>
+                <br>
+                <input type="submit"  value="Yuborish">
             </div>
         </div>
 		<br/>
@@ -208,9 +210,9 @@
         justify-content: space-between;">
     	<a href="/technolog/home">Orqaga</a>
         <p>Bog'chalar soni: {{ count($temps) }}</p>
-        @if(count($temps) == count($activ))
-        <input type="submit"  class="yuborish btn btn-success text-white mb-2" value="Yuborish">
-        @endif
+        <!--@if(count($temps) == count($activ))-->
+        <!--<input type="submit"  class="yuborish btn btn-success text-white mb-2" value="Yuborish">-->
+        <!--@endif-->
     </div>
     </form>
     <table class="table table-light py-4 px-4">
@@ -356,10 +358,7 @@
 <div class="py-4 px-4">
     <div class="row">
         <div class="col-md-6">
-            <b>Yetkazib beruvchilar</b>
-            <a href="/technolog/delivershops">
-                <i class="fas fa-store-alt" style="color: dodgerblue; font-size: 18px;"></i>
-            </a>
+            <b>Keyingi ish kuni uchun taxminiy menyular</b>
         </div>
         <div class="col-md-3">
             <b>Bog'chalarga so'rov yuborish</b>

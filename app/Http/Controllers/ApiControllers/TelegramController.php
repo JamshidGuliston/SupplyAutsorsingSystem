@@ -19,7 +19,7 @@ class TelegramController extends Controller
     
     public function telegrambot(){
     	date_default_timezone_set('Asia/Tashkent');
-        $d = strtotime("-55 hours");
+        $d = strtotime("-68 hours");
         
         $content = file_get_contents("php://input");
         $data = json_decode($content, true);
@@ -122,7 +122,7 @@ class TelegramController extends Controller
 
     public function sendtoallgarden(){
     	date_default_timezone_set('Asia/Tashkent');
-        $d = strtotime("-55 hours");
+        $d = strtotime("-68 hours");
         
     	Temporary::truncate();
     	$kind = Kindgarden::where('hide', 1)->with('age_range')->get();
@@ -151,7 +151,7 @@ class TelegramController extends Controller
     
     public function sendtoonegarden(Request $request, $id){
     	date_default_timezone_set('Asia/Tashkent');
-        $d = strtotime("-55 hours");
+        $d = strtotime("-68 hours");
         
         $kind = Kindgarden::where('id', $id)->with('age_range')->first();
         
@@ -181,7 +181,7 @@ class TelegramController extends Controller
     // Taxminiy menyularni yuborish hammasiga
     public function nextsendmenutoallgarden(){
     	date_default_timezone_set('Asia/Tashkent');
-        $d = strtotime("-55 hours");
+        $d = strtotime("-68 hours");
         $kind = Kindgarden::where('hide', 1)->with('age_range')->get();
     	// $kind = Kindgarden::where('hide', 1)->with('age_range')->get();
     	foreach($kind as $row){
@@ -211,7 +211,7 @@ class TelegramController extends Controller
     // <>
     public function nextsendmenutoonegarden(Request $request, $id){
     	date_default_timezone_set('Asia/Tashkent');
-        $d = strtotime("-55 hours");
+        $d = strtotime("-68 hours");
         
     	$kingar = Kindgarden::where('id', $id)->where('hide', 1)->with('age_range')->first();
         $this->sendMessage(640892021, "Кейинги иш куни учун боғчангиз менюлари:");          
@@ -229,7 +229,7 @@ class TelegramController extends Controller
         $this->sendMessage(640892021, "Бугунги боғчангиз менюлари:");          
         $this->sendMessage(640892021, "<a href='https://cj56359.tmweb.ru/activnakladPDF/".$dayid."/".$kingar->id."'>Накладной</a>"); 
 		foreach($kingar->age_range as $ageid){
-			$this->sendMessage(640892021, "<a href='https://cj56359.tmweb.ru/activsendmenutoonegarden/".$dayid."/".$kingar->id."/".$ageid->id."'>".$ageid->age_name."</a>");          
+			$this->sendMessage(640892021, "<a href='https://cj56359.tmweb.ru/activmenuPDF/".$dayid."/".$kingar->id."/".$ageid->id."'>".$ageid->age_name."</a>");          
 		}
     	
     	return redirect()->route('technolog.sendmenu', ['day' => $dayid]);
