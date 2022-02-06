@@ -214,10 +214,10 @@ class TelegramController extends Controller
         $d = strtotime("-55 hours");
         
     	$kingar = Kindgarden::where('id', $id)->where('hide', 1)->with('age_range')->first();
-        $this->sendMessage(640892021, "Кейинги иш куни учун боғчангиз менюлари:");          
-        $this->sendMessage(640892021, "<a href='https://cj56359.tmweb.ru/nextnakladnoyPDF/".$kingar->id."'>Тахминий Накладной</a>");          
+        $this->sendMessage($kingar->telegram_user_id, "Кейинги иш куни учун боғчангиз менюлари:");          
+        $this->sendMessage($kingar->telegram_user_id, "<a href='https://cj56359.tmweb.ru/nextnakladnoyPDF/".$kingar->id."'>Тахминий Накладной</a>");          
 		foreach($kingar->age_range as $ageid){
-			$this->sendMessage(640892021, "<a href='https://cj56359.tmweb.ru/nextdaymenuPDF/".$kingar->id."/".$ageid->id."'>Тахминий ".$ageid->age_name." менюси</a>");          
+			$this->sendMessage($kingar->telegram_user_id, "<a href='https://cj56359.tmweb.ru/nextdaymenuPDF/".$kingar->id."/".$ageid->id."'>Тахминий ".$ageid->age_name." менюси</a>");          
 		}
     	
     	return redirect()->route('technolog.sendmenu', ['day' => date("d-F-Y", $d)]);
@@ -226,10 +226,10 @@ class TelegramController extends Controller
     // activ menu
     public function activsendmenutoonegarden(Request $request, $dayid, $id){
     	$kingar = Kindgarden::where('id', $id)->where('hide', 1)->with('age_range')->first();
-        $this->sendMessage(640892021, "Бугунги боғчангиз менюлари:");          
-        $this->sendMessage(640892021, "<a href='https://cj56359.tmweb.ru/activnakladPDF/".$dayid."/".$kingar->id."'>Накладной</a>"); 
+        $this->sendMessage($kingar->telegram_user_id, "Бугунги боғчангиз менюлари:");          
+        $this->sendMessage($kingar->telegram_user_id, "<a href='https://cj56359.tmweb.ru/activnakladPDF/".$dayid."/".$kingar->id."'>Накладной</a>"); 
 		foreach($kingar->age_range as $ageid){
-			$this->sendMessage(640892021, "<a href='https://cj56359.tmweb.ru/activmenuPDF/".$dayid."/".$kingar->id."/".$ageid->id."'>".$ageid->age_name."</a>");          
+			$this->sendMessage($kingar->telegram_user_id, "<a href='https://cj56359.tmweb.ru/activmenuPDF/".$dayid."/".$kingar->id."/".$ageid->id."'>".$ageid->age_name."</a>");          
 		}
     	
     	return redirect()->route('technolog.sendmenu', ['day' => $dayid]);

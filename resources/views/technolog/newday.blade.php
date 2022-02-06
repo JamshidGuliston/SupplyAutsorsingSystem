@@ -201,6 +201,8 @@
                 <div class="tomorrowmenufood">
                 </div>
                 <br>
+                <input type="checkbox" required> Tasdiqlash
+                <br><br>
                 <input type="submit"  value="Yuborish">
             </div>
         </div>
