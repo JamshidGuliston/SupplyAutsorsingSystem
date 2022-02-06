@@ -107,7 +107,7 @@
             </div>
             <div class="col-md-3">
                 <div class="input-group mb-3">
-                    <input type="number" name="sizeproduct" required class="form-control" placeholder="raqam kiriting" aria-label="Recipient's username" aria-describedby="basic-addon2">
+                    <input type="text" name="sizeproduct" required class="form-control" placeholder="raqam kiriting" aria-label="Recipient's username" aria-describedby="basic-addon2">
                     <span class="input-group-text" id="basic-addon2">KG</span>
                 </div>
             </div>
