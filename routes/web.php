@@ -20,8 +20,8 @@ use Illuminate\Support\Facades\Auth;
 
 Route::any('telegrambot', [TelegramController::class, 'telegrambot']);
 
-Route::get('/wel', function () {
-    return view('welcome');
+Route::get('/', function () {
+    return redirect()->route('technolog.home');
 });
 
 Route::get('/showmenu/{kid}/{did}/{aid}', [TestController::class, 'showmenu']);
@@ -122,5 +122,8 @@ Route::group(['prefix' => 'technolog', 'middleware' => ['isTechnolog', 'auth']],
     Route::get('fornextmenuselect', [TechnologController::class, 'fornextmenuselect'])->name('technolog.fornextmenuselect');
     Route::get('nextdelivershop/{id}', [TechnologController::class, 'nextdelivershop'])->name('technolog.nextdelivershop');
     Route::get('nextdayshoppdf/{id}', [TechnologController::class, 'nextdayshoppdf'])->name('technolog.nextdayshoppdf');
+    // sklad
+    Route::get('addshopproduct/{id}', [TechnologController::class, 'addshopproduct'])->name('technolog.addshopproduct');
+    Route::post('productshoptogarden', [TechnologController::class, 'productshoptogarden'])->name('technolog.productshoptogarden');
     
 });

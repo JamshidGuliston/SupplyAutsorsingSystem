@@ -28,6 +28,7 @@ use App\Models\history_process;
 use App\Models\Meal_time;
 use App\Models\Nextday_namber;
 use App\Models\order_product_structure;
+use App\Models\plus_multi_storage;
 use App\Models\Product;
 use App\Models\Product_category;
 use App\Models\Season;
@@ -57,7 +58,7 @@ class TechnologController extends Controller
         // dd($season);
         date_default_timezone_set('Asia/Tashkent');
         // date("h:i:sa:M-d-Y");
-        $d = strtotime("-43 hours");
+        $d = strtotime("-10 hours");
         // dd($days[0]->day_number);
         return view('technolog.home', ['date' => $days, 'tomm' => $d, 'kingardens' => $kingar, 'menus' => $menus, 'next' => $nextdaymenu]);
     }
@@ -69,7 +70,7 @@ class TechnologController extends Controller
         $months = Month::all();
         $year = Year::orderBy('id', 'DESC')->first();
         date_default_timezone_set('Asia/Tashkent');
-        $d = strtotime("-43 hours");
+        $d = strtotime("-10 hours");
         foreach ($months as $month) {
             if ($month->month_en == date("F", $d)) {
                 Month::where('month_en', $request->daymonth)
@@ -170,7 +171,7 @@ class TechnologController extends Controller
     {
         // dd($day);
         date_default_timezone_set('Asia/Tashkent');
-        $d = strtotime("-43 hours");
+        $d = strtotime("-10 hours");
         $ages = Age_range::all();
         // dd($ages);
         $sid = Season::where('hide', 1)->first();
@@ -567,7 +568,7 @@ class TechnologController extends Controller
         }
 
         date_default_timezone_set('Asia/Tashkent');
-        $d = strtotime("-43 hours");
+        $d = strtotime("-10 hours");
 
         return redirect()->route('technolog.sendmenu', ['day' => date("d-F-Y", $d)]);
     }
@@ -1235,7 +1236,7 @@ class TechnologController extends Controller
     public function editnextcheldren(Request $request){
         // soat
         date_default_timezone_set('Asia/Tashkent');
-        $d = strtotime("-43 hours");
+        $d = strtotime("-10 hours");
         Nextday_namber::where('id', $request->nextrow)
                     ->update(['kingar_children_number' => $request->agecount]);
         Temporary::where('id', $request->temprow)->delete();
@@ -1259,9 +1260,72 @@ class TechnologController extends Controller
 
     public function editnextmenu(Request $request){
         date_default_timezone_set('Asia/Tashkent');
-        $d = strtotime("-43 hours");
+        $d = strtotime("-10 hours");
         Nextday_namber::where('id', $request->nextrow)->update(['kingar_menu_id' => $request->menuid]);
         return redirect()->route('technolog.sendmenu', ['day' => date("d-F-Y", $d)]);
+    }
+
+    // sklad
+    public function addshopproduct(Request $request, $dayid=0){
+        $months = Month::all();
+        $activid = 0;
+        foreach($months as $row){
+            if($row->month_active == 1){
+                $activid = $row->id;
+            }
+        }
+        $days = Day::where('month_id', $activid)->get();
+        for($i = 0; $i < count($days); $i++){
+            if($dayid == 0){
+                $days[count($days)-1]['active'] = 1;
+                // $dayid = $days[$i]['id'];
+            }
+            if($days[$i]['id'] == $dayid){
+                $days[$i]['active'] = 1;
+                $dayid = $days[$i]['id'];
+            }
+        }
+        // dd($days);
+        $shops = Shop::where('hide', 1)->get();
+        $products = Product::where('hide', 1)->get();
+        $orederproduct = plus_multi_storage::where('day_id', $dayid)
+            ->join('kindgardens', 'kindgardens.id', '=', 'plus_multi_storages.kingarden_name_d')
+            ->join('shops', 'shops.id', '=', 'plus_multi_storages.shop_id')
+            ->join('products', 'products.id', '=', 'plus_multi_storages.product_name_id')
+            // ->where('day_id', $days[1]->id)
+            // ->select('order_products.id', 'days.day_number', 'order_products.order_title', 'order_products.document_processes_id', 'kindgardens.kingar_name') 
+            ->orderby('plus_multi_storages.id', 'DESC')
+            ->get();
+        
+        // dd($orederproduct);
+        $kingar = Kindgarden::where('hide', 1)->get();
+        
+        // foreach($orederproduct as $item){
+            //     $t = 0;
+            //     foreach($kingar as $ki){
+                //         if($item->kingar_name == $ki->kingar_name)
+                //         {
+                    //             $kingar[$t]['ok'] = 1;
+                    //         }
+                    //         $t++;
+                    //     }
+                    // }
+        // dd($products);
+        return view('technolog.addshopproduct', ['allproducts' => $products, 'shops' => $shops, 'days' => $days, 'gardens' => $kingar, 'orders' => $orederproduct, 'months'=>$months]);   
+    }
+
+    public function productshoptogarden(Request $request){
+        // dd($request->all());
+        plus_multi_storage::create([
+            'day_id' => $request->dayid,
+            'shop_id' => $request->shopname,
+            'kingarden_name_d' => $request->mtmname,
+            'order_product_id' => 0,
+            'product_name_id' => $request->productid,
+            'product_weight' => $request->weight
+        ]);
+
+        return redirect()->route('technolog.addshopproduct', $request->dayid);
     }
 
     function curl_get_contents($url)
