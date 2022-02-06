@@ -19,7 +19,7 @@ class TelegramController extends Controller
     
     public function telegrambot(){
     	date_default_timezone_set('Asia/Tashkent');
-        $d = strtotime("-10 hours");
+        $d = strtotime("-55 hours");
         
         $content = file_get_contents("php://input");
         $data = json_decode($content, true);
@@ -122,7 +122,7 @@ class TelegramController extends Controller
 
     public function sendtoallgarden(){
     	date_default_timezone_set('Asia/Tashkent');
-        $d = strtotime("-10 hours");
+        $d = strtotime("-55 hours");
         
     	Temporary::truncate();
     	$kind = Kindgarden::where('hide', 1)->with('age_range')->get();
@@ -151,7 +151,7 @@ class TelegramController extends Controller
     
     public function sendtoonegarden(Request $request, $id){
     	date_default_timezone_set('Asia/Tashkent');
-        $d = strtotime("-10 hours");
+        $d = strtotime("-55 hours");
         
         $kind = Kindgarden::where('id', $id)->with('age_range')->first();
         
@@ -181,7 +181,7 @@ class TelegramController extends Controller
     // Taxminiy menyularni yuborish hammasiga
     public function nextsendmenutoallgarden(){
     	date_default_timezone_set('Asia/Tashkent');
-        $d = strtotime("-10 hours");
+        $d = strtotime("-55 hours");
         $kind = Kindgarden::where('hide', 1)->with('age_range')->get();
     	// $kind = Kindgarden::where('hide', 1)->with('age_range')->get();
     	foreach($kind as $row){
@@ -211,7 +211,7 @@ class TelegramController extends Controller
     // <>
     public function nextsendmenutoonegarden(Request $request, $id){
     	date_default_timezone_set('Asia/Tashkent');
-        $d = strtotime("-10 hours");
+        $d = strtotime("-55 hours");
         
     	$kingar = Kindgarden::where('id', $id)->where('hide', 1)->with('age_range')->first();
         $this->sendMessage(640892021, "Кейинги иш куни учун боғчангиз менюлари:");          
