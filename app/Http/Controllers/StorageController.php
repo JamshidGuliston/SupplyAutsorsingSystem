@@ -54,9 +54,9 @@ class StorageController extends Controller
         $password = Auth::user()->password;
         if (Hash::check($request->password, $password)) {
             $result = 1;
-            order_product::where('id', $request->orderid)->update([
-                'document_processes_id' => 4
-            ]);
+            // order_product::where('id', $request->orderid)->update([
+            //     'document_processes_id' => 4
+            // ]);
 
             $order = order_product::where('id', $request->orderid)->first();
             $product = order_product_structure::where('order_product_name_id', $request->orderid)->get();
