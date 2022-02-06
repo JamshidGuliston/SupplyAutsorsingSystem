@@ -137,9 +137,9 @@
                     <select class="form-select" name="mtmname" required>
                         <option value="">MTM-nomi</option>
                         @foreach($gardens as $rows)
-                        @if(!isset($rows['ok']))
+                        <!-- @if(!isset($rows['ok'])) -->
                         <option value="{{$rows['id']}}">{{$rows['kingar_name']}}</option>
-                        @endif
+                        <!-- @endif -->
                         @endforeach
                     </select>
                 </div>
