@@ -360,7 +360,10 @@
 <div class="py-4 px-4">
     <div class="row">
         <div class="col-md-6">
-            <b>Keyingi ish kuni uchun taxminiy menyular</b>
+            <b>Taxminiy menyular</b>
+            <a href="/technolog/createnextdaypdf">
+                <i class="far fa-file-pdf" style="color: dodgerblue; font-size: 18px;"></i>
+            </a>
         </div>
         <div class="col-md-3">
             <b>Bog'chalarga so'rov yuborish</b>
@@ -369,7 +372,7 @@
             </a>
         </div>
         <div class="col-md-3">
-            <b>Bog'chalarga menyu yuborish</b>
+            <b>Taxminiy menyu yuborish</b>
             <a href="/technolog/nextsendmenutoallgarden">
                 <i class="far fa-paper-plane" style="color: dodgerblue; font-size: 18px;"></i>
             </a>

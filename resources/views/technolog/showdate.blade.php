@@ -29,7 +29,10 @@
 <div class="py-4 px-4">
 <div class="row">
     <div class="col-md-6">
-        
+        <b>Haqiqiy menyu</b>
+        <a href="/technolog/createnewdaypdf/{{ $day }}">
+            <i class="far fa-file-pdf" style="color: dodgerblue; font-size: 18px;"></i>
+        </a>
     </div>
     <div class="col-md-3">
         

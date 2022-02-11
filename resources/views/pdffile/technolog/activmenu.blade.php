@@ -73,6 +73,7 @@
                           <tr>
                           	 <th style="width:2%;"></th>
                           	 <th style="width:8%;">Махсулотлар номи</th>
+                          	 <th class='vrt-header' style="width:2%;"><?php echo '<span>Таом вазни</span>';?></th>
 							   <?php $col = 0; ?>
 							 @foreach($products as $product)
 							 	@if(isset($product['yes']))
@@ -95,6 +96,7 @@
 												<th scope="row" rowspan="<?php echo 2 * (count($row)-1); ?>" class='vrt-header' style="padding: 0px; height: 60px;"><?php echo '<span>'. $row[0]['mealtime'] .'</span>'; ?></th>
 			                            @endif
 			                            <td scope="row" rowspan="2" class="align-baseline" style="padding: 2px;"><?php echo $item['foodname'] ?></td>
+			                            <td scope="row" rowspan="2" class="align-baseline" style="padding: 0px;"><?php echo '' ?></td>
 			                            <?php
 			                            for($t = 0; $t < count($products); $t++){
 			                            	if(isset($products[$t]['yes']) and isset($item[$products[$t]['id']])){
@@ -133,6 +135,7 @@
 									<tr>
 										<th scope="row" rowspan="5" class='vrt-header' style="padding: 0px; border-top: 2px solid black"><span>Болалар</span></th>
 										<td scope="row" class="align-baseline" style="padding: 0px; border-top: 2px solid black">1 та бола учун гр</td>
+										<td style="padding: 0px; border-top: 2px solid black"></td>
 										<?php
 			                            for($t = 0; $t < count($products); $t++){
 											if(isset($products[$t]['yes']) and isset($productallcount[$products[$t]['id']])){
@@ -150,6 +153,7 @@
 									</tr>
 									<tr>
 										<td scope="row" class="align-baseline" style="padding: 0px;">Жами миқдори</td>
+										<td></td>
 										<?php
 			                            for($t = 0; $t < count($products); $t++){
 											if(isset($products[$t]['yes']) and isset($productallcount[$products[$t]['id']])){
@@ -168,6 +172,7 @@
 									</tr>
 									<tr>
 										<td scope="row" class="align-baseline" style="padding: 0px;">Нархи</td>
+										<td></td>
 										<?php
 			                            for($t = 0; $t < $col; $t++){
 			                            ?>
@@ -178,6 +183,7 @@
 									</tr>
 									<tr>
 										<td scope="row" class="align-baseline" style="padding: 0px;"><b>Сумма жами:</b></td>
+										<td></td>
 										<?php
 			                            for($t = 0; $t < $col; $t++){
 			                            ?>
@@ -188,11 +194,13 @@
 									</tr>
 									<tr>
 										<td scope="row" class="align-baseline" style="padding: 0px;">Жами харажат</td>
+										<td></td>
 			                            <td style="padding: 0px; font-size: 5px" colspan="<?= $col; ?>">0</td>
 									</tr>
 									<tr style="border-top: 2px solid black;">
 										<th scope="row" rowspan="5" class='vrt-header' style="padding: 0px; border-top: 2px solid black"><span>Ходимлар</span></th>
 										<td scope="row" class="align-baseline" style="padding: 0px; border-top: 2px solid black">1 та ходим учун гр</td>
+										<td style="padding: 0px; border-top: 2px solid black"></td>
 										<?php
 			                            for($t = 0; $t < count($products); $t++){
 											if(isset($products[$t]['yes']) and isset($workerproducts[$products[$t]['id']])){
@@ -210,6 +218,7 @@
 									</tr>
 									<tr>
 										<td scope="row" class="align-baseline" style="padding: 0px;">Жами миқдори</td>
+										<td></td>
 										<?php
 			                            for($t = 0; $t < count($products); $t++){
 											if(isset($products[$t]['yes']) and isset($workerproducts[$products[$t]['id']])){
@@ -227,6 +236,7 @@
 									</tr>
 									<tr>
 										<td scope="row" class="align-baseline" style="padding: 0px;">Нархи</td>
+										<td></td>
 										<?php
 			                            for($t = 0; $t < $col; $t++){
 			                            ?>
@@ -237,6 +247,7 @@
 									</tr>
 									<tr>
 										<td scope="row" class="align-baseline" style="padding: 0px;"><b>Сумма жами</b></td>
+										<td></td>
 										<?php
 			                            for($t = 0; $t < $col; $t++){
 			                            ?>
@@ -247,10 +258,12 @@
 									</tr>
 									<tr>
 										<td scope="row" class="align-baseline" style="padding: 0px;">Жами харажат</td>
+										<td></td>
 			                            <td style="padding: 0px; font-size: 5px" colspan="<?= $col; ?>">0</td>
 									</tr>
 									<tr style="border-top: 2px solid black;">
 										<th scope="row" colspan="2" class='vrt-header' style="padding: 0px; border-top: 2px solid black"><b>Жами махсулот оғирлиги</b></th>
+										<td style="padding: 0px; border-top: 2px solid black"></td>
 										<?php
 			                            for($t = 0; $t < $col; $t++){
 			                            ?>
@@ -261,10 +274,12 @@
 									</tr>
 									<tr>
 										<th scope="row" colspan="2" class="align-baseline" style="padding: 0px;">Жами сарфланган маблағ</th>
+										<td></td>
 			                            <td style="padding: 0px; font-size: 5px" colspan="<?= $col; ?>">0</td>
 									</tr>
 									<tr>
 										<th scope="row" colspan="2" class="align-baseline" style="padding: 0px;">1 нафар бола учун</th>
+										<td></td>
 										<?php
 			                            for($t = 0; $t < $col; $t++){
 			                            ?>
@@ -275,6 +290,7 @@
 									</tr>
 									<tr>
 										<th scope="row" colspan="2" class="align-baseline" style="padding: 0px;">1 нафар ходим учун</th>
+										<td></td>
 										<?php
 			                            for($t = 0; $t < $col; $t++){
 			                            ?>

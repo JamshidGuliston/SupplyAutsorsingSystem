@@ -74,6 +74,7 @@
                           <tr>
                           	 <th style="width:2%;"></th>
                           	 <th style="width:8%;">Махсулотлар номи</th>
+                          	 <!--<th style="width:8%;">Таом вазни</th>-->
 							   <?php $col = 0; ?>
 							 @foreach($products as $product)
 							 	@if(isset($product['yes']))
