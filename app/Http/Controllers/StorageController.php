@@ -2,12 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Add_group;
 use App\Models\Add_large_werehouse;
 use App\Models\Day;
 use App\Models\Kindgarden;
 use App\Models\order_product;
 use App\Models\order_product_structure;
 use App\Models\plus_multi_storage;
+use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -19,7 +21,46 @@ class StorageController extends Controller
         $dayes = Day::orderby('id', 'DESC')->get();
         $count = order_product::where('day_id', $dayes[1]->id)->where('document_processes_id', 2)->get();
         $addlarch = Add_large_werehouse::join('products', 'products.id', '=', 'add_large_werehouses.product_id')->get();
-        return view('storage.home', ['count' => count($count), 'praducts' => $addlarch]);
+        $alladd = [];
+        $t = 0;
+        foreach($addlarch as $row){
+            if(!isset($alladd[$row->product_id])){
+                // $alladd[$t++.'id'] = $row->product_id;
+                $alladd[$row->product_id]['weight'] = 0;
+                $alladd[$row->product_id]['p_name'] = $row->product_name;
+            }
+            $alladd[$row->product_id]['weight'] += $row->weight; 
+        }
+        // dd($alladd);
+        return view('storage.home', ['count' => count($count), 'products' => $alladd]);
+    }
+
+    public function addproductform(Request $request){
+        $products = Product::where('hide', 1)->get();
+        return view('storage.addproductform', ['products' => $products]);
+    }
+
+    public function addproducts(Request $request){
+        $products = $request->productsid;
+        $weights = $request->weights;
+        $costs = $request->costs;
+
+        $group = Add_group::create([
+            'day_id' => 19,
+            'group_name' => time()
+        ]);
+
+        for($i = 0; $i < count($products);  $i++){
+            Add_large_werehouse::create([
+                'add_group_id' => $group->id,
+                'shop_id' => 0,
+                'product_id' => $products[$i],
+                'weight' => $weights[$i],
+                'cost' => $costs[$i]
+            ]);
+        }
+
+        return redirect()->route('storage.addproductform');
     }
 
     public function orders()

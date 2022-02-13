@@ -46,7 +46,8 @@ $globalroutes =  function () {
 
 Route::group(['prefix' => 'storage', 'middleware' => ['isStorage', 'auth']], function () {
     Route::get('home', [StorageController::class, 'index'])->name('storage.home');
-    Route::get('newday', [StorageController::class, 'index'])->name('storage.newday');
+    Route::get('addproductform', [StorageController::class, 'addproductform'])->name('storage.addproductform');
+    Route::post('addproducts', [StorageController::class, 'addproducts'])->name('storage.addproducts');
     Route::get('orders', [StorageController::class, 'orders'])->name('storage.orders');
     Route::get('getdoc', [StorageController::class, 'getdoc'])->name('storage.getdoc');
     Route::get('controlpassword', [StorageController::class, 'controlpassword']);
