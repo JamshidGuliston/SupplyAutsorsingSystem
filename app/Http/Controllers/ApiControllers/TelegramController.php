@@ -19,7 +19,7 @@ class TelegramController extends Controller
     
     public function telegrambot(){
     	date_default_timezone_set('Asia/Tashkent');
-        $d = strtotime("-66 hours");
+        $d = strtotime("-50 hours");
         
         $content = file_get_contents("php://input");
         $data = json_decode($content, true);
@@ -122,7 +122,7 @@ class TelegramController extends Controller
 
     public function sendtoallgarden(){
     	date_default_timezone_set('Asia/Tashkent');
-        $d = strtotime("-66 hours");
+        $d = strtotime("-50 hours");
         
     	Temporary::truncate();
     	$kind = Kindgarden::where('hide', 1)->with('age_range')->get();
@@ -151,7 +151,7 @@ class TelegramController extends Controller
     
     public function sendtoonegarden(Request $request, $id){
     	date_default_timezone_set('Asia/Tashkent');
-        $d = strtotime("-66 hours");
+        $d = strtotime("-50 hours");
         
         $kind = Kindgarden::where('id', $id)->with('age_range')->first();
         
@@ -181,7 +181,7 @@ class TelegramController extends Controller
     // Taxminiy menyularni yuborish hammasiga
     public function nextsendmenutoallgarden(){
     	date_default_timezone_set('Asia/Tashkent');
-        $d = strtotime("-66 hours");
+        $d = strtotime("-50 hours");
         $kind = Kindgarden::where('hide', 1)->with('age_range')->get();
     	// $kind = Kindgarden::where('hide', 1)->with('age_range')->get();
     	$endday = Day::orderBy('id', 'DESC')->first();
@@ -210,7 +210,7 @@ class TelegramController extends Controller
     // activ menular
     public function activsendmenutoallgardens($dayid){
     	date_default_timezone_set('Asia/Tashkent');
-        $d = strtotime("-66 hours");
+        $d = strtotime("-50 hours");
         $kind = Kindgarden::where('hide', 1)->with('age_range')->get();
     	// $kind = Kindgarden::where('hide', 1)->with('age_range')->get(); 640892021
     	// dd($kind);
@@ -239,7 +239,7 @@ class TelegramController extends Controller
     // <>
     public function nextsendmenutoonegarden(Request $request, $id){
     	date_default_timezone_set('Asia/Tashkent');
-        $d = strtotime("-66 hours");
+        $d = strtotime("-50 hours");
         $endday = Day::orderBy('id', 'DESC')->first();
     	$kingar = Kindgarden::where('id', $id)->where('hide', 1)->with('age_range')->first();
         $this->sendMessage($kingar->telegram_user_id, "Кейинги иш куни учун боғчангиз менюлари:");          
@@ -266,7 +266,7 @@ class TelegramController extends Controller
     // activ menu $kingar->telegram_user_id
     public function activsendmenutoonegarden(Request $request, $dayid, $id){
     	date_default_timezone_set('Asia/Tashkent');
-        $d = strtotime("-66 hours");
+        $d = strtotime("-50 hours");
     	$kingar = Kindgarden::where('id', $id)->where('hide', 1)->with('age_range')->first();
         $this->sendMessage($kingar->telegram_user_id, "Бугунги боғчангиз менюлари:"); 
         
