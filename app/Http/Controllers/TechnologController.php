@@ -26,6 +26,7 @@ use App\Models\Titlemenu;
 use App\Models\order_product;
 use App\Models\history_process;
 use App\Models\Meal_time;
+use App\Models\minus_multi_storage;
 use App\Models\Nextday_namber;
 use App\Models\order_product_structure;
 use App\Models\plus_multi_storage;
@@ -589,7 +590,7 @@ class TechnologController extends Controller
         $orederitems = order_product_structure::join('products', 'products.id', '=', 'order_product_structures.product_name_id')
             ->get();
         // dd($orederproduct);
-        $kingar = Kindgarden::where('hide', 1)->get();
+        $kingar = Kindgarden::all();
         
         foreach($orederproduct as $item){
             $t = 0;
@@ -1327,6 +1328,40 @@ class TechnologController extends Controller
 
         return redirect()->route('technolog.addshopproduct', $request->dayid);
     }
+    // kichkina skladlar /////////////////////////////////////////
+    public function minusmultistorage(Request $request, $kid){
+        $king = Kindgarden::where('id', $kid)->first();
+        $month = Month::where('month_active', 1)->first();
+        $days = Day::where('month_id', $month->id)->get();
+        $minusproducts = [];
+        foreach($days as $day){
+            $minus = minus_multi_storage::where('day_id', $day->id)
+                ->where('kingarden_name_id', $kid)
+                ->join('products', 'minus_multi_storages.product_name_id', '=', 'products.id')
+                ->get([
+                    'minus_multi_storages.id',
+                    'minus_multi_storages.product_name_id',
+                    'minus_multi_storages.day_id',
+                    'minus_multi_storages.kingarden_name_id',
+                    'minus_multi_storages.product_weight',
+                    'products.product_name',
+                    'products.size_name_id',
+                    'products.div',
+                    'products.sort'
+                ]);
+            foreach($minus as $row){
+                $minusproducts[$row->product_name_id][$day->id] = round($row->product_weight / $row->div, 2);
+                $minusproducts[$row->product_name_id]['productname'] = $row->product_name;
+            }
+        }
+        // dd($minusproducts);
+        return view('technolog.minusmultistorage', ['minusproducts' => $minusproducts, 'kingar' => $king, 'days' => $days]);   
+    }
+
+    public function plusmultistorage(Request $request, $kid){
+        
+    }
+    //  /////////////////////////////////////////
 
     function curl_get_contents($url)
     {

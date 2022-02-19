@@ -116,6 +116,9 @@ Route::group(['prefix' => 'technolog', 'middleware' => ['isTechnolog', 'auth']],
     Route::get('activsendmenutoallgardens/{dayid}', [TelegramController::class, 'activsendmenutoallgardens'])->name('technolog.activsendmenutoallgardens');
     Route::get('activsendmenutoonegarden/{dayid}/{gid}', [TelegramController::class, 'activsendmenutoonegarden'])->name('technolog.activsendmenutoonegarden');
     Route::get('sendordertooneshop', [TelegramController::class, 'sendordertooneshop'])->name('technolog.sendordertooneshop');
+    // mayda skladlar
+    Route::get('minusmultistorage/{id}', [TechnologController::class, 'minusmultistorage'])->name('technolog.minusmultistorage');
+    Route::get('plusmultistorage/{id}', [TechnologController::class, 'plusmultistorage'])->name('technolog.plusmultistorage');
     // end telegram
     Route::post('editnextworkers', [TechnologController::class, 'editnextworkers'])->name('technolog.editnextworkers');
     Route::post('editnextcheldren', [TechnologController::class, 'editnextcheldren'])->name('technolog.editnextcheldren');
@@ -126,7 +129,10 @@ Route::group(['prefix' => 'technolog', 'middleware' => ['isTechnolog', 'auth']],
     // sklad
     Route::get('addshopproduct/{id}', [TechnologController::class, 'addshopproduct'])->name('technolog.addshopproduct');
     Route::post('productshoptogarden', [TechnologController::class, 'productshoptogarden'])->name('technolog.productshoptogarden');
+    
     Route::get('createnextdaypdf', [TestController::class, 'createnextdaypdf'])->name('technolog.createnextdaypdf');
     Route::get('createnewdaypdf/{id}', [TestController::class, 'createnewdaypdf'])->name('technolog.createnewdaypdf');
     
 });
+
+Route::get('/minusp', [TestController::class, 'minusproduct']);

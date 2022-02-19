@@ -153,7 +153,7 @@
             <div class="col-md-2">
                 <div class="add-sklad">
                     <div class="input-group input-group-sm mb-3">
-                        <span class="input-group-text" id="inputGroup-sizing-sm">Izoh</span>
+                        <span class="input-group-text" id="inputGroup-sizing-sm">KG</span>
                         <input name="weight" required style="padding: 8px 6px !important;" type="text" class="form-control">
                     </div>
                 </div>
@@ -161,7 +161,7 @@
 
             <div class="col-md-2">
                 <div class="input-group mb-3">
-                    <button class="btn btn-success" style="width: 100%;">Yaratish</button>
+                    <button class="btn btn-success" style="width: 100%;">Qo'shish</button>
                 </div>
             </div>
         </div>

@@ -26,6 +26,7 @@ use App\Models\Titlemenu;
 use App\Models\order_product;
 use App\Models\history_process;
 use App\Models\Meal_time;
+use App\Models\minus_multi_storage;
 use App\Models\Nextday_namber;
 use App\Models\order_product_structure;
 use App\Models\Product;
@@ -583,6 +584,64 @@ class TestController extends Controller
 		file_put_contents("pdf/".$name, $dompdf->output());
 	}
 
+	// Hozirgi kungacha ishlatilgan maxsulotlarni minus_multi_storajega yozish /////////////////////////////////////////////////////////////////////////////////////////////////
+	public function minusproduct(Request $request){
+		$days = Day::all();
+		foreach($days as $day){
+			$minus = [];
+			$minuworker = [];
+			$join = Number_children::where('number_childrens.day_id', $day->id)
+				->leftjoin('active_menus', function($join){
+                    // $join->on('day_id', '=', $today);
+                    $join->on('number_childrens.kingar_menu_id', '=', 'active_menus.title_menu_id');
+                    $join->on('number_childrens.king_age_name_id', '=', 'active_menus.age_range_id');
+                })
+				->where('active_menus.day_id', $day->id)
+                ->join('products', 'active_menus.product_name_id', '=', 'products.id')
+				->get();
+			if($join->count() == 0){
+				echo $day->id."- kun ishlamagan".'\n';
+			}else{
+				foreach($join as $row){
+					$workerfood = titlemenu_food::where('day_id', $day->id-1)
+						->where('worker_age_id', $row->age_range_id)
+						->where('titlemenu_id', $row->kingar_menu_id)
+						->where('food_id', $row->menu_food_id)
+						->get();
+					if(!isset($minus[$row->kingar_name_id.'-'.$row->product_name_id])){
+						$minus[$row->kingar_name_id.'-'.$row->product_name_id] = 0;
+					}
+					if($workerfood->count() > 0 and !isset($minuworker[$row->kingar_name_id.'u'.$row->product_name_id.'uw'])){
+						// boolen
+						$minuworker[$row->kingar_name_id.'u'.$row->product_name_id.'uw'] = ($row->workers_count*$row->weight)/$row->div;	
+						// uchun
+						$minus[$row->kingar_name_id.'-'.$row->product_name_id] += $row->workers_count*$row->weight;
+					}
+					$minus[$row->kingar_name_id.'-'.$row->product_name_id] += $row->kingar_children_number*$row->weight;
+				}
+
+				foreach($minus as $key => $value){
+					$param = explode("-", $key);
+
+					$minusbool = minus_multi_storage::where('day_id', $day->id)
+						->where('kingarden_name_id', $param[0])
+						->where('product_name_id', $param[1])
+						->get();
+					if($minusbool->count() == 0){
+						minus_multi_storage::create([
+							'day_id' => $day->id,
+							'kingarden_name_id' => $param[0],
+							'kingar_menu_id' => 0,
+							'product_name_id' => $param[1],
+							'product_weight' => $value,
+						]);
+					}
+				}
+			}
+		}
+
+		echo "Yakunlandi";
+	}
 	function curl_get_contents($url)
 	{
 		$ch = curl_init();
