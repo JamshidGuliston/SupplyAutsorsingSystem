@@ -156,7 +156,7 @@
 <div class="py-4 px-4">
     <div class="row">
         <div class="col-md-6">
-            <b>Шу ойда ишлатилган махсулотлар</b>
+            <b>+ Шу ойда qo'shilgan махсулотлар</b>
         </div>
         <div class="col-md-3">
             <!-- <b>Bog'chalarga so'rov yuborish</b>
@@ -191,13 +191,13 @@
             </tr>
         </thead>
         <tbody>
-            @foreach($minusproducts as $row)
+            @foreach($plusproducts as $row)
             <?php $all = 0; ?>
             <tr>
                 <td>{{ $row['productname'] }}</td>
                 @foreach($days as $day)
                     @if(isset($row[$day['id']]))
-                        <td>{{ $row[$day['id']] }}</td>
+                        <td>+{{ $row[$day['id']] }}</td>
                         <?php $all += $row[$day['id']]; ?>
                     @else
                         <td></td>
@@ -210,7 +210,7 @@
                     <?php
                 }
                 ?>
-                <td style="width: 70px;">{{ $all }}</td>
+                <td style="width: 70px;">+{{ $all }}</td>
             </tr>
             @endforeach
         </tbody>

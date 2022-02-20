@@ -1359,7 +1359,32 @@ class TechnologController extends Controller
     }
 
     public function plusmultistorage(Request $request, $kid){
-        
+        $king = Kindgarden::where('id', $kid)->first();
+        $month = Month::where('month_active', 1)->first();
+        $days = Day::where('month_id', $month->id)->get();
+        $plusproducts = [];
+        foreach($days as $day){
+            $plus = plus_multi_storage::where('day_id', $day->id)
+                ->where('kingarden_name_d', $kid)
+                ->join('products', 'plus_multi_storages.product_name_id', '=', 'products.id')
+                ->get([
+                    'plus_multi_storages.id',
+                    'plus_multi_storages.product_name_id',
+                    'plus_multi_storages.day_id',
+                    'plus_multi_storages.kingarden_name_d',
+                    'plus_multi_storages.product_weight',
+                    'products.product_name',
+                    'products.size_name_id',
+                    'products.div',
+                    'products.sort'
+                ]);
+            foreach($plus as $row){
+                $plusproducts[$row->product_name_id][$day->id] = round($row->product_weight / $row->div, 2);
+                $plusproducts[$row->product_name_id]['productname'] = $row->product_name;
+            }
+        }
+        // dd($minusproducts);
+        return view('technolog.plusmultistorage', ['plusproducts' => $plusproducts, 'kingar' => $king, 'days' => $days]); 
     }
     //  /////////////////////////////////////////
 

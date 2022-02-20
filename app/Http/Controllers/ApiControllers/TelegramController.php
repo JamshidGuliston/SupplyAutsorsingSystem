@@ -243,28 +243,34 @@ class TelegramController extends Controller
     // <>
     public function nextsendmenutoonegarden(Request $request, $id){
     	date_default_timezone_set('Asia/Tashkent');
-        $d = strtotime("-10 hours 30 minutes");
+        $d = strtotime("-48 hours 30 minutes");
         $endday = Day::orderBy('id', 'DESC')->first();
+        // $kingar->telegram_user_id
     	$kingar = Kindgarden::where('id', $id)->where('hide', 1)->with('age_range')->first();
-        $this->sendMessage($kingar->telegram_user_id, "Кейинги иш куни учун боғчангиз менюлари:");          
-  
-        $docurl = "http://cj56359.tmweb.ru/pdf/".$endday['id'].'-'.$id."-nextnaklad.pdf";
-        $this->sendTelegram("sendDocument", [
-                   'chat_id' => $kingar->telegram_user_id,
-                   'document' => $docurl,
-                   'caption' => 'Тахминий Накладной'
-                ]);
+        $this->sendMessage(640892021, "Кейинги иш куни учун боғчангиз тахминий менюлари:"); 
+        $url = "https://cj56359.tmweb.ru/nextnakladnoyPDF/".$id;        
+        $buttons[] = [
+            $this->buildInlineKeyBoardButton("Тахминий Накладной", "", $url)
+        ];
+        $fields = [
+            'chat_id' => 640892021,
+            'text' => "Тахминий Накладной (тугмани босинг)",
+            'reply_markup' => $this->buildInlineKeyBoard($buttons),
+            'parse_mode' => 'html',
+        ];
+        // $docurl = "http://cj56359.tmweb.ru/pdf/".$endday['id'].'-'.$id."-nextnaklad.pdf";
+        $this->sendTelegram("sendMessage", $fields);
                 
-		foreach($kingar->age_range as $ageid){
-			$docurl = "http://cj56359.tmweb.ru/pdf/".$endday['id'].'-'.$id.'-'.$ageid->id."-nextmenu.pdf";
-        	$this->sendTelegram("sendDocument", [
-                   'chat_id' => $kingar->telegram_user_id,
-                   'document' => $docurl,
-                   'caption' => "Тахминий ".$ageid->age_name." менюси"
-                ]);
-		}
+		// foreach($kingar->age_range as $ageid){
+		// 	$docurl = "http://cj56359.tmweb.ru/pdf/".$endday['id'].'-'.$id.'-'.$ageid->id."-nextmenu.pdf";
+        // 	$this->sendTelegram("sendDocument", [
+        //            'chat_id' => $kingar->telegram_user_id,
+        //            'document' => $docurl,
+        //            'caption' => "Тахминий ".$ageid->age_name." менюси"
+        //         ]);
+		// }
     	
-    	return redirect()->route('technolog.sendmenu', ['day' => date("d-F-Y", $d)]);
+    	// return redirect()->route('technolog.sendmenu', ['day' => date("d-F-Y", $d)]);
     }
 
     // activ menu $kingar->telegram_user_id
