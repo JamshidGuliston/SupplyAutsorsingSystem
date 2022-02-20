@@ -29,6 +29,7 @@ use App\Models\Meal_time;
 use App\Models\minus_multi_storage;
 use App\Models\Nextday_namber;
 use App\Models\order_product_structure;
+use App\Models\plus_multi_storage;
 use App\Models\Product;
 use App\Models\Product_category;
 use App\Models\Season;
@@ -642,6 +643,61 @@ class TestController extends Controller
 
 		echo "Yakunlandi";
 	}
+	// qoldiqni oldingi oydan shu oyning birinchi kuniga olib o'tish ///////////////////////////
+	public function modproducts(Request $request){
+		$thismonth = Month::where('month_active', 1)->first();
+		$prevmonth = Day::where('month_id', $thismonth->id-1)->get();
+		$minusproduct = [];
+		$modproduct = [];
+		foreach($prevmonth as $day){
+			// bog'chalar o'tgan oyda ishlatgan maxsulotlar
+			$minus = minus_multi_storage::where('day_id', $day->id)->get();
+			foreach($minus as $row){
+				if(!isset($minusproduct[$row->kingarden_name_id][$row->product_name_id])){
+					$minusproduct[$row->kingarden_name_id][$row->product_name_id] = 0;
+				}
+				$minusproduct[$row->kingarden_name_id][$row->product_name_id] += $row->product_weight;
+			}
+		}
+
+		foreach($prevmonth as $day){
+			// bog'chalarga o'tgan oyda yuborilganlar maxsulotlarning qoldiqlarini xisoblash
+			$plus = plus_multi_storage::where('day_id', $day->id)->get();
+			foreach($plus as $row){
+				if(!isset($minusproduct[$row->kingarden_name_d][$row->product_name_id])){
+					$minusproduct[$row->kingarden_name_d][$row->product_name_id] = 0;
+				}
+				if(!isset($modproduct[$row->kingarden_name_d][$row->product_name_id])){
+					$modproduct[$row->kingarden_name_d][$row->product_name_id] = -$minusproduct[$row->kingarden_name_d][$row->product_name_id];
+				}
+				$modproduct[$row->kingarden_name_d][$row->product_name_id] += $row->product_weight;
+			}
+		}
+
+		$firstday = Day::where('month_id', $thismonth->id)->first();
+
+		foreach($modproduct as $kid => $row){
+			foreach($row as $pid => $value){
+				$mod = plus_multi_storage::where('day_id', $firstday->id)
+					->where('kingarden_name_d', $kid)
+					->where('order_product_id', -1)
+					->where('product_name_id', $pid)
+					->get();
+				if($mod->count() == 0 and $value >= 0){
+					plus_multi_storage::create([
+						'day_id' => $firstday->id,
+						'shop_id' => 0,
+						'kingarden_name_d' => $kid,
+						'order_product_id' => -1,
+						'product_name_id' => $pid,
+						'product_weight' => $value,
+					]);
+				}
+			}
+		}
+		dd("OK");
+	}
+
 	function curl_get_contents($url)
 	{
 		$ch = curl_init();

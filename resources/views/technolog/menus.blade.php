@@ -28,7 +28,7 @@
                     <p class="fs-4" style="font-size: 18px !important;">{{$row['menu_name']}}</p>
                     <a href="#" style="color: #959fa3; margin-right: 6px; font-size: 20px;"><i class="fas fa-cog"></i></a>
                     <a href="#" style="color: #959fa3; margin-right: 6px; font-size: 20px;"><i class="fas fa-eye"></i></a>
-                    @if($row->us == 1)
+                    @if($row->us == "1111")
                         <i class="fas fa-bullseye" style="color: #22aa6b; margin-right: 6px; font-size: 20px;"></i>
                     @else
                         <a href="/technolog/menuitem/{{$row['id']}}" style="color: #959fa3; margin-right: 6px; font-size: 20px;"><i class="far fa-edit"></i></a>

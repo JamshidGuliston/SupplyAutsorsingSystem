@@ -136,3 +136,4 @@ Route::group(['prefix' => 'technolog', 'middleware' => ['isTechnolog', 'auth']],
 });
 
 Route::get('/minusp', [TestController::class, 'minusproduct']);
+Route::get('/modproducts', [TestController::class, 'modproducts']);
