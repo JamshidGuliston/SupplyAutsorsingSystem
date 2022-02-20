@@ -103,7 +103,7 @@ class StorageController extends Controller
             $product = order_product_structure::where('order_product_name_id', $request->orderid)->get();
             foreach ($product as $row) {
                 plus_multi_storage::create([
-                    'day_id' => 20,
+                    'day_id' => 24,
                     'shop_id' => 0,
                     'kingarden_name_d' => $order['kingar_name_id'],
                     'order_product_id' => $order['id'],
