@@ -217,28 +217,40 @@ class TelegramController extends Controller
         $kind = Kindgarden::where('hide', 1)->with('age_range')->get();
     	// $kind = Kindgarden::where('hide', 1)->with('age_range')->get(); 640892021
     	// dd($kind); $row->telegram_user_id
+        $buttons = "";
     	foreach($kind as $row){
-    		$docurl = "http://cj56359.tmweb.ru/pdf/".$dayid.'-'.$row->id."-activnaklad.pdf";
-            $this->sendMessage($row->telegram_user_id, "Бугунги боғчангиз менюлари: \nНакладной -> ".$docurl);          
-        	$this->sendTelegram("sendDocument", [
-                   'chat_id' => $row->telegram_user_id,
-                   'document' => $docurl,
-                   'caption' => 'Накладной'
-                ]);
+            $buttons = array( );
+    		// $docurl = "http://cj56359.tmweb.ru/pdf/".$dayid.'-'.$row->id."-activnaklad.pdf";
+            $this->sendMessage(640892021, "Бугунги боғчангиз менюлари:");
+            $url = "https://cj56359.tmweb.ru/activnakladPDF/".$dayid."/".$row->id;
+            $buttons[] = [
+                $this->buildInlineKeyBoardButton("Накладной", "", $url)
+            ];          
+        	
             // $this->sendMessage($row->telegram_user_id, "<a href='https://cj56359.tmweb.ru/activnakladPDF/".$dayid."/".$row->id."'>".$dayid."-Накладной</a>"); 
     		foreach($row->age_range as $ageid){
-    			$docurl = "http://cj56359.tmweb.ru/pdf/".$dayid.'-'.$row->id.'-'.$ageid->id."-activemenu.pdf";
-    			$this->sendMessage($row->telegram_user_id, $ageid->age_name." -> ".$docurl);
-        		$this->sendTelegram("sendDocument", [
-                   'chat_id' => $row->telegram_user_id, 
-                   'document' => $docurl,
-                   'caption' => $ageid->age_name." менюси"
-                ]);
+    			// $docurl = "http://cj56359.tmweb.ru/pdf/".$dayid.'-'.$row->id.'-'.$ageid->id."-activemenu.pdf";
+        		// $this->sendTelegram("sendDocument", [
+                    //    'chat_id' => $row->telegram_user_id, 
+                    //    'document' => $docurl,
+                    //    'caption' => $ageid->age_name." менюси"
+                    // ]);
+                $url = "https://cj56359.tmweb.ru/activmenuPDF/".$dayid.'/'.$row->id.'/'.$ageid->id;
+                $buttons[] = [
+                    $this->buildInlineKeyBoardButton($ageid->age_name." менюси", "", $url)
+                ]; 
     			// $this->sendMessage($row->telegram_user_id, "<a href='https://cj56359.tmweb.ru/activmenuPDF/".$dayid."/".$row->id."/".$ageid->id."'>".$dayid."-".$ageid->age_name."</a>");          
     		}
+            $fields = [
+                'chat_id' => 640892021,
+                'text' => "Бугунги манюлар (тугмани босинг)",
+                'reply_markup' => $this->buildInlineKeyBoard($buttons),
+                'parse_mode' => 'html',
+            ];
+            $this->sendTelegram("sendMessage", $fields);
     	}
     	
-    	return redirect()->route('technolog.sendmenu', ['day' => $dayid]);	
+    	// return redirect()->route('technolog.sendmenu', ['day' => $dayid]);	
     }
     // <>
     public function nextsendmenutoonegarden(Request $request, $id){
