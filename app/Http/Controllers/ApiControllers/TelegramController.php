@@ -261,14 +261,20 @@ class TelegramController extends Controller
         // $docurl = "http://cj56359.tmweb.ru/pdf/".$endday['id'].'-'.$id."-nextnaklad.pdf";
         $this->sendTelegram("sendMessage", $fields);
                 
-		// foreach($kingar->age_range as $ageid){
-		// 	$docurl = "http://cj56359.tmweb.ru/pdf/".$endday['id'].'-'.$id.'-'.$ageid->id."-nextmenu.pdf";
-        // 	$this->sendTelegram("sendDocument", [
-        //            'chat_id' => $kingar->telegram_user_id,
-        //            'document' => $docurl,
-        //            'caption' => "Тахминий ".$ageid->age_name." менюси"
-        //         ]);
-		// }
+		foreach($kingar->age_range as $ageid){
+			// $docurl = "http://cj56359.tmweb.ru/pdf/".$endday['id'].'-'.$id.'-'.$ageid->id."-nextmenu.pdf";
+        	$url = "https://cj56359.tmweb.ru/nextdaymenuPDF/".$id."/".$ageid->id;        
+            $buttons[] = [
+                $this->buildInlineKeyBoardButton("Тахминий ".$ageid->age_name." менюси", "", $url)
+            ];
+            $fields = [
+                'chat_id' => 640892021,
+                'text' => "Тахминий ".$ageid->age_name." менюси (тугмани босинг)",
+                'reply_markup' => $this->buildInlineKeyBoard($buttons),
+                'parse_mode' => 'html',
+            ];
+            $this->sendTelegram("sendMessage", $fields);
+		}
     	
     	// return redirect()->route('technolog.sendmenu', ['day' => date("d-F-Y", $d)]);
     }
