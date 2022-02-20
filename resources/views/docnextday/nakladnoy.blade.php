@@ -99,7 +99,7 @@
                     		@foreach($ages as $age)
                     			@if(isset($row[$age['id'].'-children']))
 								<!-- $row[$age['id']].'*'.$row[$age['id'].'-children'].'='. -->
-                            	<td scope="col">{{ ($row[$age['id']]*$row[$age['id'].'-children']) / $row[$age['id'].'div']  }}</td>
+                            	<td scope="col">{{ $row[$age['id']].'*'.$row[$age['id'].'-children'].'='.($row[$age['id']]*$row[$age['id'].'-children']) / $row[$age['id'].'div']  }}</td>
                             	<?php $summ += ($row[$age['id']]*$row[$age['id'].'-children']) / $row[$age['id'].'div']; ?>
                             	@else
                             	<td></td>
