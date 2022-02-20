@@ -597,7 +597,7 @@ class TechnologController extends Controller
             foreach($kingar as $ki){
                 if($item->kingar_name == $ki->kingar_name)
                 {
-                    $kingar[$t]['ok'] = 1;
+                    // $kingar[$t]['ok'] = 1;
                 }
                 $t++;
             }
