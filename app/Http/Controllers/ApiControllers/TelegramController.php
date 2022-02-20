@@ -247,35 +247,31 @@ class TelegramController extends Controller
         $endday = Day::orderBy('id', 'DESC')->first();
         // $kingar->telegram_user_id
     	$kingar = Kindgarden::where('id', $id)->where('hide', 1)->with('age_range')->first();
-        $this->sendMessage(640892021, "Кейинги иш куни учун боғчангиз тахминий менюлари:"); 
+        $this->sendMessage($kingar->telegram_user_id, "Кейинги иш куни учун боғчангиз тахминий менюлари:"); 
         $url = "https://cj56359.tmweb.ru/nextnakladnoyPDF/".$id;        
-        $buttons = [
+        $buttons[] = [
             $this->buildInlineKeyBoardButton("Тахминий Накладной", "", $url)
         ];
-        $fields = [
-            'chat_id' => 640892021,
-            'text' => "Тахминий Накладной (тугмани босинг)",
-            'reply_markup' => $this->buildInlineKeyBoard($buttons),
-            'parse_mode' => 'html',
-        ];
+        
         // $docurl = "http://cj56359.tmweb.ru/pdf/".$endday['id'].'-'.$id."-nextnaklad.pdf";
-        $this->sendTelegram("sendMessage", $fields);
                 
 		foreach($kingar->age_range as $ageid){
 			// $docurl = "http://cj56359.tmweb.ru/pdf/".$endday['id'].'-'.$id.'-'.$ageid->id."-nextmenu.pdf";
         	$url = "https://cj56359.tmweb.ru/nextdaymenuPDF/".$id."/".$ageid->id;        
-            $buttons = [
+            $buttons[] = [
                 $this->buildInlineKeyBoardButton("Тахминий ".$ageid->age_name." менюси", "", $url)
             ];
-            $fields = [
-                'chat_id' => 640892021,
-                'text' => "Тахминий ".$ageid->age_name." менюси (тугмани босинг)",
-                'reply_markup' => $this->buildInlineKeyBoard($buttons),
-                'parse_mode' => 'html',
-            ];
-            $this->sendTelegram("sendMessage", $fields);
+        
 		}
-    	
+
+    	$fields = [
+            'chat_id' => $kingar->telegram_user_id,
+            'text' => "Тахминий манюлар (тугмани босинг)",
+            'reply_markup' => $this->buildInlineKeyBoard($buttons),
+            'parse_mode' => 'html',
+        ];
+
+        $this->sendTelegram("sendMessage", $fields);
     	// return redirect()->route('technolog.sendmenu', ['day' => date("d-F-Y", $d)]);
     }
 
