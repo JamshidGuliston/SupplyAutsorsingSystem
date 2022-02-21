@@ -59,7 +59,7 @@ class TechnologController extends Controller
         // dd($season);
         date_default_timezone_set('Asia/Tashkent');
         // date("h:i:sa:M-d-Y");
-        $d = strtotime("-48 hours 30 minutes");
+        $d = strtotime("-10 hours 30 minutes");
         // dd($days[0]->day_number);
         return view('technolog.home', ['date' => $days, 'tomm' => $d, 'kingardens' => $kingar, 'menus' => $menus, 'next' => $nextdaymenu]);
     }
@@ -71,7 +71,7 @@ class TechnologController extends Controller
         $months = Month::all();
         $year = Year::orderBy('id', 'DESC')->first();
         date_default_timezone_set('Asia/Tashkent');
-        $d = strtotime("-48 hours 30 minutes");
+        $d = strtotime("-10 hours 30 minutes");
         foreach ($months as $month) {
             if ($month->month_en == date("F", $d)) {
                 Month::where('month_en', $request->daymonth)
@@ -172,7 +172,7 @@ class TechnologController extends Controller
     {
         // dd($day);
         date_default_timezone_set('Asia/Tashkent');
-        $d = strtotime("-48 hours 30 minutes");
+        $d = strtotime("-10 hours 30 minutes");
         $ages = Age_range::all();
         // dd($ages);
         $sid = Season::where('hide', 1)->first();
@@ -328,8 +328,8 @@ class TechnologController extends Controller
 
 
                 $prdiv = Product::where('id', $prod->id)->first();
-                
-                $shopproducts[$row->id][$prod->id] = $itempr . "=" . $weight / $prod->div; 
+                // $itempr . "=" .
+                $shopproducts[$row->id][$prod->id] = $weight / $prod->div; 
             }
         }
 
@@ -370,7 +370,7 @@ class TechnologController extends Controller
 
                 $prdiv = Product::where('id', $prod->id)->first();
                 
-                $shopproducts[$row->id][$prod->id] = ($allsum + $woe * $workers) / $prdiv->div; 
+                $shopproducts[$row->id][$prod->id] = $allsum / $prdiv->div; 
             }
         }
 
@@ -569,7 +569,7 @@ class TechnologController extends Controller
         }
 
         date_default_timezone_set('Asia/Tashkent');
-        $d = strtotime("-48 hours 30 minutes");
+        $d = strtotime("-10 hours 30 minutes");
 
         return redirect()->route('technolog.sendmenu', ['day' => date("d-F-Y", $d)]);
     }
@@ -1237,7 +1237,7 @@ class TechnologController extends Controller
     public function editnextcheldren(Request $request){
         // soat
         date_default_timezone_set('Asia/Tashkent');
-        $d = strtotime("-48 hours 30 minutes");
+        $d = strtotime("-10 hours 30 minutes");
         Nextday_namber::where('id', $request->nextrow)
                     ->update(['kingar_children_number' => $request->agecount]);
         Temporary::where('id', $request->temprow)->delete();
@@ -1261,7 +1261,7 @@ class TechnologController extends Controller
 
     public function editnextmenu(Request $request){
         date_default_timezone_set('Asia/Tashkent');
-    	$d = strtotime("-48 hours 30 minutes");
+    	$d = strtotime("-10 hours 30 minutes");
         Nextday_namber::where('id', $request->nextrow)->update(['kingar_menu_id' => $request->menuid]);
         return redirect()->route('technolog.sendmenu', ['day' => date("d-F-Y", $d)]);
     }
