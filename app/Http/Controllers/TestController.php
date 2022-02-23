@@ -698,6 +698,21 @@ class TestController extends Controller
 		dd("OK");
 	}
 
+	public function deletemod(){
+		$stor = plus_multi_storage::all();
+		foreach($stor as $row){
+			if(isset($yes[$row->day_id][$row->kingarden_name_d][$row->product_name_id][$row->product_weight])){
+				plus_multi_storage::where('id', $row->id)->delete();
+			}
+			else{
+				$yes[$row->day_id][$row->kingarden_name_d][$row->product_name_id][$row->product_weight] = 1;
+			}
+
+		}
+
+		dd("OK");
+	}
+
 	function curl_get_contents($url)
 	{
 		$ch = curl_init();
