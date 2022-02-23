@@ -701,7 +701,7 @@ class TestController extends Controller
 	public function deletemod(){
 		$stor = plus_multi_storage::all();
 		foreach($stor as $row){
-			if(isset($yes[$row->day_id][$row->kingarden_name_d][$row->product_name_id][$row->product_weight])){
+			if($row->day_id == 21 and $row->order_product_id == -1){
 				plus_multi_storage::where('id', $row->id)->delete();
 			}
 			else{
