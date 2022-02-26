@@ -109,7 +109,7 @@ class StorageController extends Controller
             						->get();
             	if($find->count() == 0){
 	                plus_multi_storage::create([
-	                    'day_id' => 37,
+	                    'day_id' => $day[0]->id,
 	                    'shop_id' => 0,
 	                    'kingarden_name_d' => $order['kingar_name_id'],
 	                    'order_product_id' => $order['id'],

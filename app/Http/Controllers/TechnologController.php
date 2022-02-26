@@ -1362,6 +1362,31 @@ class TechnologController extends Controller
         $king = Kindgarden::where('id', $kid)->first();
         $month = Month::where('month_active', 1)->first();
         $days = Day::where('month_id', $month->id)->get();
+        $minusproducts = [];
+        foreach($days as $day){
+            $minus = minus_multi_storage::where('day_id', $day->id)
+                ->where('kingarden_name_id', $kid)
+                ->join('products', 'minus_multi_storages.product_name_id', '=', 'products.id')
+                ->get([
+                    'minus_multi_storages.id',
+                    'minus_multi_storages.product_name_id',
+                    'minus_multi_storages.day_id',
+                    'minus_multi_storages.kingarden_name_id',
+                    'minus_multi_storages.product_weight',
+                    'products.product_name',
+                    'products.size_name_id',
+                    'products.div',
+                    'products.sort'
+                ]);
+            foreach($minus as $row){
+                if(!isset($minusproducts[$row->product_name_id])){
+                    $minusproducts[$row->product_name_id] = 0;
+                }
+                $minusproducts[$row->product_name_id] += round($row->product_weight / $row->div, 2);
+                // $minusproducts[$row->product_name_id]['productname'] = $row->product_name;
+            }
+        }
+        // dd($minusproducts);
         $plusproducts = [];
         foreach($days as $day){
             $plus = plus_multi_storage::where('day_id', $day->id)
@@ -1384,7 +1409,7 @@ class TechnologController extends Controller
             }
         }
         // dd($minusproducts);
-        return view('technolog.plusmultistorage', ['plusproducts' => $plusproducts, 'kingar' => $king, 'days' => $days]); 
+        return view('technolog.plusmultistorage', ['plusproducts' => $plusproducts, 'minusproducts' => $minusproducts, 'kingar' => $king, 'days' => $days]); 
     }
     //  /////////////////////////////////////////
 

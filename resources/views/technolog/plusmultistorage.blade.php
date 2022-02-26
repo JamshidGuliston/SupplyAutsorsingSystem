@@ -188,11 +188,16 @@
                 }
                 ?>
                 <th style="width: 70px;">Жами:</th>
+                <th style="width: 70px;">Қолдиқ:</th>
             </tr>
         </thead>
         <tbody>
-            @foreach($plusproducts as $row)
-            <?php $all = 0; ?>
+            @foreach($plusproducts as $key => $row)
+            @if(is_numeric($key) and isset($minusproducts[$key]))
+            <?php $ke = $key; $allq = $minusproducts[$key];  $all = 0;?>
+            @else
+            <?php $all = 0;  $allq = 0 ?>
+            @endif
             <tr>
                 <td>{{ $row['productname'] }}</td>
                 @foreach($days as $day)
@@ -211,6 +216,8 @@
                 }
                 ?>
                 <td style="width: 70px;">+{{ $all }}</td>
+                
+                <td style="width: 70px;">{{ round($all-$allq, 2) }}</td>
             </tr>
             @endforeach
         </tbody>
