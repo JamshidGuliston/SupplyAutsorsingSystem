@@ -30,6 +30,8 @@
         top: 153px;
     }
     th, td{
+        font-size: 0.8rem;
+        margin: .3rem .3rem;
         text-align: center;
         vertical-align: middle;
         border-bottom-color: currentColor;
