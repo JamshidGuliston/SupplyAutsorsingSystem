@@ -181,7 +181,7 @@
                 <th scope="col">{{ $day->day_number }}</th>
                 @endforeach
                 <?php
-                for($i = 0; $i < 25-count($days); $i++){
+                for($i = 0; $i < 21-count($days); $i++){
                     ?>
                     <th scope="col"></th>
                     <?php
@@ -204,7 +204,7 @@
                     @endif
                 @endforeach
                 <?php
-                for($i = 0; $i < 20-count($days); $i++){
+                for($i = 0; $i < 21-count($days); $i++){
                     ?>
                     <td></td>
                     <?php
