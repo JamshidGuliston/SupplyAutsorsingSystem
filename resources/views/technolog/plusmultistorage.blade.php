@@ -209,7 +209,7 @@
                     @endif
                 @endforeach
                 <?php
-                for($i = 0; $i < 25-count($days); $i++){
+                for($i = 0; $i < 20-count($days); $i++){
                     ?>
                     <td></td>
                     <?php
