@@ -94,12 +94,12 @@
                     	@if(isset($row['product_name']))
                         <tr>
                             <td scope="row">{{ $tr++ }}</td>
-                    		<td>{{ $row['product_name'] }}</td>
+                    		<td><?php printf($row['product_name']) ?></td>
                     		<?php $summ = 0; ?>
                     		@foreach($ages as $age)
                     			@if(isset($row[$age['id'].'-children']))
 								<!-- $row[$age['id']].'*'.$row[$age['id'].'-children'].'='. -->
-                            	<td scope="col">{{ ($row[$age['id']]*$row[$age['id'].'-children']) / $row[$age['id'].'div']  }}</td>
+                            	<td scope="col"><?php printf("%01.3f", ($row[$age['id']]*$row[$age['id'].'-children']) / $row[$age['id'].'div']) ?></td>
                             	<?php $summ += ($row[$age['id']]*$row[$age['id'].'-children']) / $row[$age['id'].'div']; ?>
                             	@else
                             	<td></td>
@@ -108,11 +108,11 @@
 							<td>
 								@if(isset($workproduct[$key.'wcount']))
 									<!-- $workproduct[$key].'*'.$workproduct[$key.'wcount'].'='. -->
-									{{ ($workproduct[$key]*$workproduct[$key.'wcount']) / $workproduct[$key.'div'] }}
+									<?php printf("%01.3f", ($workproduct[$key]*$workproduct[$key.'wcount']) / $workproduct[$key.'div']) ?>
 									<?php $summ += ($workproduct[$key]*$workproduct[$key.'wcount']) / $workproduct[$key.'div']; ?>
 							    @endif
 							</td>
-                            <td>{{ $summ }}</td>
+                            <td><?php printf("%01.3f", $summ) ?></td>
                         </tr>
                         @endif
                         @endforeach

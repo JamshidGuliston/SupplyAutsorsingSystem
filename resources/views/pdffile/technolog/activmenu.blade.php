@@ -6,20 +6,28 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<meta http-equiv="X-UA-Compatible" content="ie=edge">
 	<meta name="Description" content="Enter your description here"/>
-	<!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.6.0/css/bootstrap.min.css"> -->
+	 <!--<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.6.0/css/bootstrap.min.css"> -->
 	<!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"> -->
 	<title>Title</title>
 	<style>
-		@page { margin: 0.2in 0.8in 0in 0.3in; }
+		@page { margin: 0.3in 0.8in 0in 0.3in; }
 		body{
 			font-family: DejaVu Sans;
-			font-size:8px;
+			font-size: 7.5px;
 			background-image: url(images/bg.jpg);
 			background-position: top left;
 			background-repeat: no-repeat;
 			background-size: 100%;
 			/* padding: 300px 100px 10px 100px; */
 			width:100%;
+		}
+		.row{
+			display: flex;
+			flex-wrap: nowrap;
+			justify-content: space-between;
+		}
+		.row > div{
+			margin-left: 50px;
 		}
 		table{
 			border-collapse: collapse;
@@ -78,7 +86,7 @@
 							 @foreach($products as $product)
 							 	@if(isset($product['yes']))
 								 <?php $col++; ?>
-                          	 		<th class='vrt-header' style="padding: 0px; width: 3%; height: 95px"><?php echo '<span>'.$product['product_name']. '</span>';?></th>
+                          	 		<th class='vrt-header' style="padding: 0px; width: 3%; height: 85px"><?php echo '<span>'.$product['product_name']. '</span>';?></th>
 								@endif
 							 @endforeach
                           </tr>
@@ -140,6 +148,7 @@
 			                            for($t = 0; $t < count($products); $t++){
 											if(isset($products[$t]['yes']) and isset($productallcount[$products[$t]['id']])){
 			                            ?>
+			                            <!---->
 			                            	<td style="padding: 0px; font-size: 5px; border-top: 2px solid black"><?= $productallcount[$products[$t]['id']]; ?></td>
 			                            <?php	
 											}
@@ -155,9 +164,17 @@
 										<td scope="row" class="align-baseline" style="padding: 0px;">Жами миқдори</td>
 										<td></td>
 										<?php
+										$narx = [];
+										$narx[1] = 5000; $narx[2] = 8000; $narx[3] = 12000; $narx[4] = 9700; $narx[10] = 57000; $narx[12] = 9500; $narx[14] = 1700; $narx[15] = 0; $narx[16] = 9500; $narx[17] = 2200;
+										$narx[18] = 2500; $narx[21] = 69000; $narx[22] = 25000; $narx[23] = 2400; $narx[24] = 32000; $narx[25] = 0; $narx[26] = 23000; $narx[27] = 6000; $narx[28] = 24500; $narx[29] = 2800;
+										$narx[30] = 1300; $narx[31] = 15000; $narx[32] = 75000; $narx[33] = 8800; $narx[34] = 39000; $narx[35] = 19000; $narx[36] = 21500; $narx[37] = 28000; $narx[38] = 44000; $narx[39] = 17000;
+										$narx[40] = 0; $narx[41] = 16000; $narx[42] = 34500; $narx[43] = 5000; $narx[44] = 4000; $narx[45] = 9000; $narx[46] = 39000; $narx[47] = 49000; $narx[48] = 16000; $narx[49] = 5000;
+										$narx[50] = 29000; $narx[51] = 24000; $narx[52] = 4000; $narx[53] = 9700; $narx[54] = 8000; $narx[55] = 15000; $narx[56] = 8800; $narx[57] = 13000; $narx[58] = 18000; $narx[59] = 29000;
+			                            $narx[60] = 2400; $narx[61] = 0; 
 			                            for($t = 0; $t < count($products); $t++){
 											if(isset($products[$t]['yes']) and isset($productallcount[$products[$t]['id']])){
 			                            ?>
+			                            <!---->
 			                            	<td style="padding: 0px; font-size: 5px"><?php printf("%01.3f", (($menu[0]['kingar_children_number'])*$productallcount[$products[$t]['id']]) / $products[$t]['div'] ); ?></td>
 			                            <?php	
 											}
@@ -174,10 +191,17 @@
 										<td scope="row" class="align-baseline" style="padding: 0px;">Нархи</td>
 										<td></td>
 										<?php
-			                            for($t = 0; $t < $col; $t++){
+										for($t = 0; $t < count($products); $t++){
+											if(isset($products[$t]['yes']) and isset($productallcount[$products[$t]['id']])){
 			                            ?>
-			                            	<td style="padding: 0px; font-size: 5px"></td>
-			                            <?php
+			                            	<td style="padding: 0px; font-size: 5px;"><?php printf("%01.2f", $narx[$products[$t]['id']]); ?></td>
+			                            <?php	
+											}
+											elseif(isset($products[$t]['yes'])){
+											?>
+												<td style="padding: 0px;"></td>
+											<?php	
+											}
                     					}
 			                            ?>
 									</tr>
@@ -185,17 +209,27 @@
 										<td scope="row" class="align-baseline" style="padding: 0px;"><b>Сумма жами:</b></td>
 										<td></td>
 										<?php
-			                            for($t = 0; $t < $col; $t++){
+										$chcost = 0;
+			                            for($t = 0; $t < count($products); $t++){
+											if(isset($products[$t]['yes']) and isset($productallcount[$products[$t]['id']])){
+												$chcost += (($menu[0]['kingar_children_number'])*$productallcount[$products[$t]['id']]) / $products[$t]['div'] * $narx[$products[$t]['id']];
 			                            ?>
-			                            	<td style="padding: 0px; font-size: 5px"></td>
-			                            <?php
+			                            <!---->
+			                            	<td style="padding: 0px; font-size: 5px"><?php printf("%01.2f", (($menu[0]['kingar_children_number'])*$productallcount[$products[$t]['id']]) / $products[$t]['div'] * $narx[$products[$t]['id']]); ?></td>
+			                            <?php	
+											}
+											elseif(isset($products[$t]['yes'])){
+											?>
+												<td style="padding: 0px;"></td>
+											<?php	
+											}
                     					}
 			                            ?>
 									</tr>
 									<tr>
 										<td scope="row" class="align-baseline" style="padding: 0px;">Жами харажат</td>
 										<td></td>
-			                            <td style="padding: 0px; font-size: 5px" colspan="<?= $col; ?>">0</td>
+			                            <td style="padding: 0px; font-size: 5px" colspan="<?= $col; ?>"><?php printf("%01.2f", $chcost); ?></td>
 									</tr>
 									<tr style="border-top: 2px solid black;">
 										<th scope="row" rowspan="5" class='vrt-header' style="padding: 0px; border-top: 2px solid black"><span>Ходимлар</span></th>
@@ -238,10 +272,17 @@
 										<td scope="row" class="align-baseline" style="padding: 0px;">Нархи</td>
 										<td></td>
 										<?php
-			                            for($t = 0; $t < $col; $t++){
+			                            for($t = 0; $t < count($products); $t++){
+											if(isset($products[$t]['yes']) and isset($workerproducts[$products[$t]['id']])){
 			                            ?>
-			                            	<td style="padding: 0px; font-size: 5px"></td>
-			                            <?php
+			                            	<td style="padding: 0px; font-size: 5px;"><?php printf("%01.2f", ($narx[$products[$t]['id']])); ?></td>
+			                            <?php	
+											}
+											elseif(isset($products[$t]['yes'])){
+											?>
+												<td style="padding: 0px;"></td>
+											<?php	
+											}
                     					}
 			                            ?>
 									</tr>
@@ -249,60 +290,59 @@
 										<td scope="row" class="align-baseline" style="padding: 0px;"><b>Сумма жами</b></td>
 										<td></td>
 										<?php
-			                            for($t = 0; $t < $col; $t++){
+										$xcost = 0;
+			                            for($t = 0; $t < count($products); $t++){
+											if(isset($products[$t]['yes']) and isset($workerproducts[$products[$t]['id']])){
+												$xcost += (($menu[0]['workers_count'])*$workerproducts[$products[$t]['id']]) / $products[$t]['div'] * $narx[$products[$t]['id']];
 			                            ?>
-			                            	<td style="padding: 0px; font-size: 5px"></td>
+			                            	<td style="padding: 0px; font-size: 5px"><?php printf("%01.2f", (($menu[0]['workers_count'])*$workerproducts[$products[$t]['id']]) / $products[$t]['div'] * $narx[$products[$t]['id']]); ?></td>
 			                            <?php	
+											}
+											elseif(isset($products[$t]['yes'])){
+											?>
+												<td style="padding: 0px;"></td>
+											<?php	
+											}
                     					}
 			                            ?>
 									</tr>
 									<tr>
 										<td scope="row" class="align-baseline" style="padding: 0px;">Жами харажат</td>
 										<td></td>
-			                            <td style="padding: 0px; font-size: 5px" colspan="<?= $col; ?>">0</td>
+			                            <td style="padding: 0px; font-size: 5px" colspan="<?= $col; ?>"><?php printf("%01.2f",$xcost); ?></td>
 									</tr>
-									<tr style="border-top: 2px solid black;">
-										<th scope="row" colspan="2" class='vrt-header' style="padding: 0px; border-top: 2px solid black"><b>Жами махсулот оғирлиги</b></th>
-										<td style="padding: 0px; border-top: 2px solid black"></td>
-										<?php
-			                            for($t = 0; $t < $col; $t++){
-			                            ?>
-			                            	<td style="padding: 0px; font-size: 5px; border-top: 2px solid black"></td>
-			                            <?php
-                    					}
-			                            ?>
-									</tr>
-									<tr>
-										<th scope="row" colspan="2" class="align-baseline" style="padding: 0px;">Жами сарфланган маблағ</th>
-										<td></td>
-			                            <td style="padding: 0px; font-size: 5px" colspan="<?= $col; ?>">0</td>
-									</tr>
+									<!--<tr style="border-top: 2px solid black;">-->
+									<!--	<th scope="row" colspan="2" class='vrt-header' style="padding: 0px; border-top: 2px solid black"><b>Жами махсулот оғирлиги</b></th>-->
+									<!--	<td style="padding: 0px; border-top: 2px solid black"></td>-->
+										
+									<!--</tr>-->
 									<tr>
 										<th scope="row" colspan="2" class="align-baseline" style="padding: 0px;">1 нафар бола учун</th>
 										<td></td>
-										<?php
-			                            for($t = 0; $t < $col; $t++){
-			                            ?>
-			                            	<td style="padding: 0px; font-size: 5px"></td>
-			                            <?php
-                    					}
-			                            ?>
+										<td style="padding: 0px; font-size: 5px" colspan="<?= $col; ?>"><?php printf("%01.2f", $chcost / $menu[0]['kingar_children_number']); ?></td>
 									</tr>
 									<tr>
 										<th scope="row" colspan="2" class="align-baseline" style="padding: 0px;">1 нафар ходим учун</th>
 										<td></td>
-										<?php
-			                            for($t = 0; $t < $col; $t++){
-			                            ?>
-			                            	<td style="padding: 0px; font-size: 5px"></td>
-			                            <?php
-                    					}
-			                            ?>
+										<td style="padding: 0px; font-size: 5px" colspan="<?= $col; ?>"><?php printf("%01.2f", $xcost / $menu[0]['worker_count']); ?></td>
+									</tr>
+									<tr>
+										<th scope="row" colspan="2" class="align-baseline" style="padding: 0px;">Умумий маблағ</th>
+										<td></td>
+			                            <td style="padding: 0px; font-size: 5px" colspan="<?= $col; ?>"><?php printf("%01.2f", $chcost + $xcost); ?></td>
 									</tr>
                         </tbody>
                       </table>
-                      <div style="text-align: end; width: 100%; ">
-					  	<img src="images/qrmanzil.jpg" alt="QR-code" width="150">
+                      <div class="row">
+                      	<div>
+					  		<img src="images/qrmanzil.jpg" alt="QR-code" width="140">
+					  	</div>
+					  	<div>
+					  		<p style="text-align: center;">Технолог __________________</p>
+					  	</div>
+					  	<div>
+					  		<p style="text-align: right;">Бош ошпаз __________________</p>
+					  	</div>
 					  </div>
                 </div>
             </div>

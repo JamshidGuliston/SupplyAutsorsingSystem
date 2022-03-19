@@ -136,6 +136,13 @@
 										<th scope="row" rowspan="5" class='vrt-header' style="padding: 0px; border-top: 2px solid black"><span>Болалар</span></th>
 										<td scope="row" class="align-baseline" style="padding: 0px; border-top: 2px solid black">1 та бола учун гр</td>
 										<?php
+										$narx = [];
+										$narx[1] = 0; $narx[2] = 8000; $narx[3] = 0; $narx[4] = 9700; $narx[10] = 57000; $narx[12] = 9500; $narx[14] = 1600; $narx[15] = 0; $narx[16] = 9500; $narx[17] = 0;
+										$narx[18] = 0; $narx[21] = 69000; $narx[22] = 25000; $narx[23] = 2400; $narx[24] = 32000; $narx[25] = 0; $narx[26] = 23000; $narx[27] = 6000; $narx[28] = 24500; $narx[29] = 2800;
+										$narx[30] = 1300; $narx[31] = 15000; $narx[32] = 75000; $narx[33] = 8800; $narx[34] = 39000; $narx[35] = 19000; $narx[36] = 21500; $narx[37] = 28000; $narx[38] = 44000; $narx[39] = 17000;
+										$narx[40] = 0; $narx[41] = 16000; $narx[42] = 34500; $narx[43] = 5000; $narx[44] = 4000; $narx[45] = 9000; $narx[46] = 39000; $narx[47] = 49000; $narx[48] = 16000; $narx[49] = 5000;
+										$narx[50] = 29000; $narx[51] = 24000; $narx[52] = 4000; $narx[53] = 9700; $narx[54] = 8000; $narx[55] = 15000; $narx[56] = 8800; $narx[57] = 13000; $narx[58] = 18000; $narx[59] = 29000;
+			                            $narx[60] = 2400; $narx[61] = 0; 
 			                            for($t = 0; $t < count($products); $t++){
 											if(isset($products[$t]['yes']) and isset($productallcount[$products[$t]['id']])){
 			                            ?>
@@ -156,6 +163,7 @@
 			                            for($t = 0; $t < count($products); $t++){
 											if(isset($products[$t]['yes']) and isset($productallcount[$products[$t]['id']])){
 			                            ?>
+			                            <!---->
 			                            	<td style="padding: 0px; font-size: 5px"><?php printf("%01.3f", (($menu[0]['kingar_children_number'])*$productallcount[$products[$t]['id']]) / $products[$t]['div'] ); ?></td>
 			                            <?php	
 											}
@@ -171,20 +179,35 @@
 									<tr>
 										<td scope="row" class="align-baseline" style="padding: 0px;">Нархи</td>
 										<?php
-			                            for($t = 0; $t < $col; $t++){
+										for($t = 0; $t < count($products); $t++){
+											if(isset($products[$t]['yes']) and isset($productallcount[$products[$t]['id']])){
 			                            ?>
-			                            	<td style="padding: 0px; font-size: 5px"></td>
-			                            <?php
+			                            	<td style="padding: 0px; font-size: 5px; border-top: 2px solid black"><?= $narx[$products[$t]['id']]; ?></td>
+			                            <?php	
+											}
+											elseif(isset($products[$t]['yes'])){
+											?>
+												<td style="padding: 0px;"></td>
+											<?php	
+											}
                     					}
 			                            ?>
 									</tr>
 									<tr>
 										<td scope="row" class="align-baseline" style="padding: 0px;"><b>Сумма жами:</b></td>
 										<?php
-			                            for($t = 0; $t < $col; $t++){
+			                            for($t = 0; $t < count($products); $t++){
+											if(isset($products[$t]['yes']) and isset($productallcount[$products[$t]['id']])){
 			                            ?>
-			                            	<td style="padding: 0px; font-size: 5px"></td>
-			                            <?php
+			                            <!---->
+			                            	<td style="padding: 0px; font-size: 5px"><?php printf("%01.3f", (($menu[0]['kingar_children_number'])*$productallcount[$products[$t]['id']]) / $products[$t]['div'] * $narx[$products[$t]['id']]); ?></td>
+			                            <?php	
+											}
+											elseif(isset($products[$t]['yes'])){
+											?>
+												<td style="padding: 0px;"></td>
+											<?php	
+											}
                     					}
 			                            ?>
 									</tr>

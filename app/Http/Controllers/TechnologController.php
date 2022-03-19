@@ -177,7 +177,7 @@ class TechnologController extends Controller
         // dd($ages);
         $sid = Season::where('hide', 1)->first();
         // dd($sid);
-        $menus = Titlemenu::where('menu_season_id', $sid->id)->get();
+        $menus = Titlemenu::all();
         if ($day == date("d-F-Y", $d)) {
             $gr = Temporary::join('kindgardens', 'temporaries.kingar_name_id', '=', 'kindgardens.id')
                 ->orderby('kindgardens.id', 'ASC')->get();
@@ -302,28 +302,35 @@ class TechnologController extends Controller
         		// dd($nextday);
                 foreach($nextday as $next){
                     if($row->id == $next->kingar_name_id){
+                    	$workeat = titlemenu_food::where('day_id', $day->id)->get();
                         $prlar =  Menu_composition::where('title_menu_id', $next->kingar_menu_id)->where('age_range_id', $next->king_age_name_id)->where('product_name_id', $prod->id)->get();
                         foreach($prlar as $prw){
                         	$itempr = $itempr . "+".$prw->weight." * ". $next->kingar_children_number;
                         	$weight += $prw->weight * $next->kingar_children_number;
+                        	if($next->king_age_name_id == 1){
+                        		$workeat = titlemenu_food::where('day_id', $day->id)->where('food_id', $prw->menu_food_id)->get();
+                        		if($workeat->count() > 0){
+                        			$weight += $prw->weight * $next->workers_count;
+                        		}
+                        		
+                        	}
                         }
                         // $allsum += $weight * $next->kingar_children_number;
                         // $onesum += $weight; 
                         // $workers = $next->workers_count;
                     }
                 }
-                $workeat = titlemenu_food::where('day_id', $day->id)->get();
-
-                foreach($workeat as $wo){
-                        $woe = Menu_composition::where('title_menu_id', $wo->titlemenu_id)
-                                ->where('menu_food_id', $wo->food_id)
-                                ->where('age_range_id', $wo->worker_age_id)
-                                ->where('product_name_id', $prod->id)
-                                ->sum('weight');
+                // foreach($workeat as $wo){
+                //         $woe = Menu_composition::where('title_menu_id', $wo->titlemenu_id)
+                //                 ->where('menu_food_id', $wo->food_id)
+                //                 ->where('age_range_id', $wo->worker_age_id)
+                //                 ->where('product_name_id', $prod->id)
+                //                 ->sum('weight');
+                //         dd($woe);
                         // if($woe > 0){
                         // 	$itempr = $itempr . 
                         // }
-                }
+                // }
 
 
 
@@ -340,42 +347,68 @@ class TechnologController extends Controller
     public function nextdayshoppdf(Request $request, $id){
         $shop = Shop::where('id', $id)->with('kindgarden')->with('product')->first();
         // dd($shop);
-        $nextday = Nextday_namber::orderBy('kingar_name_id', 'ASC')->get();
 
         $shopproducts = array();
         foreach($shop->kindgarden as $row){
             $shopproducts[$row->id]['name'] = $row->kingar_name;    
             $day = Day::orderBy('id', 'DESC')->first();
             foreach($shop->product as $prod){
+            	// echo $prod->id;
+            	$shopproducts[$row->id][$prod->id] = "";
                 $allsum = 0;
                 $onesum = 0;
                 $workers = 0;
+                $weight = 0;
+                $itempr = "";
+        		$nextday = Nextday_namber::orderBy('kingar_name_id', 'ASC')->orderBy('king_age_name_id', 'ASC')->get();
+        		// dd($nextday);
                 foreach($nextday as $next){
                     if($row->id == $next->kingar_name_id){
-                        $weight =  Menu_composition::where('title_menu_id', $next->kingar_menu_id)->where('product_name_id', $prod->id)->sum('weight');
-                        $allsum += $weight * $next->kingar_children_number;
-                        $onesum += $weight; 
-                        $workers = $next->workers_count;
+                    	$workeat = titlemenu_food::where('day_id', $day->id)->get();
+                        $prlar =  Menu_composition::where('title_menu_id', $next->kingar_menu_id)->where('age_range_id', $next->king_age_name_id)->where('product_name_id', $prod->id)->get();
+                        foreach($prlar as $prw){
+                        	$itempr = $itempr . "+".$prw->weight." * ". $next->kingar_children_number;
+                        	$weight += $prw->weight * $next->kingar_children_number;
+                        	if($next->king_age_name_id == 1){
+                        		$workeat = titlemenu_food::where('day_id', $day->id)->where('food_id', $prw->menu_food_id)->get();
+                        		if($workeat->count() > 0){
+                        			$weight += $prw->weight * $next->workers_count;
+                        		}
+                        		
+                        	}
+                        }
+                        // $allsum += $weight * $next->kingar_children_number;
+                        // $onesum += $weight; 
+                        // $workers = $next->workers_count;
                     }
                 }
-                $workeat = titlemenu_food::where('day_id', $day->id)->get();
+                // foreach($workeat as $wo){
+                //         $woe = Menu_composition::where('title_menu_id', $wo->titlemenu_id)
+                //                 ->where('menu_food_id', $wo->food_id)
+                //                 ->where('age_range_id', $wo->worker_age_id)
+                //                 ->where('product_name_id', $prod->id)
+                //                 ->sum('weight');
+                //         dd($woe);
+                        // if($woe > 0){
+                        // 	$itempr = $itempr . 
+                        // }
+                // }
 
-                foreach($workeat as $wo){
-                        $woe = Menu_composition::where('title_menu_id', $wo->titlemenu_id)
-                                ->where('menu_food_id', $wo->food_id)
-                                ->where('age_range_id', $wo->worker_age_id)
-                                ->where('product_name_id', $prod->id)
-                                ->sum('weight');
-                }
+
 
                 $prdiv = Product::where('id', $prod->id)->first();
-                
-                $shopproducts[$row->id][$prod->id] = $allsum / $prdiv->div; 
+                // $itempr . "=" .
+                $shopproducts[$row->id][$prod->id] = $weight / $prod->div; 
             }
         }
+        
+        
+        $day = Day::join('months', 'days.month_id', '=', 'months.id')->orderBy('days.id', 'DESC')->first();
+        
+        // dd($day);
 
         $dompdf = new Dompdf('UTF-8');
-		$html = mb_convert_encoding(view('technolog.nextdayshoppdf', compact('shopproducts', 'shop')), 'HTML-ENTITIES', 'UTF-8');
+		$html = mb_convert_encoding(view('technolog.nextdayshoppdf', compact('shopproducts', 'shop', 'day')), 'HTML-ENTITIES', 'UTF-8');
 		$dompdf->loadHtml($html);
 
 		// (Optional) Setup the paper size and orientation
@@ -686,6 +719,11 @@ class TechnologController extends Controller
         $shops = Shop::all();
         // dd($users);
         return view('technolog.botusers', compact('users', 'gardens', 'shops'));
+    }
+    // keraksiz foydalanuvchini o'chirish
+    public function deletepeople(Request $request){
+    	Person::where('id', $request->personid)->delete();
+    	return redirect()->route('technolog.getbotusers');
     }
     // orderproduct malulotlarini olish 
     public function getproduct(Request $request)
@@ -1245,7 +1283,7 @@ class TechnologController extends Controller
     }
     public function fornextmenuselect(Request $request){
         $s = Season::where('hide', 1)->first();
-        $titles = Titlemenu::where('menu_season_id', $s->id)->get();
+        $titles = Titlemenu::all();
         $html = "<select name='menuid' class='form-select' required aria-label='Default select example'>";
         foreach($titles as $row){
             if($row->id == $request->menuid)

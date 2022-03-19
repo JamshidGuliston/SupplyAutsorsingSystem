@@ -13,6 +13,7 @@ use App\Models\Temporary;
 use App\Models\Age_range;
 use App\Models\Nextday_namber;
 use App\Models\Number_children;
+use App\Models\Shop;
 
 class TelegramController extends Controller
 {
@@ -191,14 +192,14 @@ class TelegramController extends Controller
     		$buttons = array( );
             // $docurl = "http://cj56359.tmweb.ru/pdf/'$dayid'-'$kinid'-nextnaklad.pdf";
         	$this->sendMessage($row->telegram_user_id, "Кейинги иш куни учун боғчангиз тахминий менюлари:"); 
-            $url = "https://cj56359.tmweb.ru/nextnakladnoyPDF/'$kinid'";        
+            $url = "https://cj56359.tmweb.ru/nextnakladnoyPDF/".$kinid;        
             $buttons[] = [
                 $this->buildInlineKeyBoardButton("Тахминий Накладной", "", $url)
             ];
             // $this->sendMessage($row->telegram_user_id, "<a href='https://cj56359.tmweb.ru/nextnakladnoyPDF/".$row->id."'>".$d."-Тахминий Накладной</a>"); $row->telegram_user_id
     		foreach($row->age_range as $ageid){
     			$kid = $row->id;
-    			$urlpdf = "https://cj56359.tmweb.ru/nextnakladnoyPDF/'$kid'"."/".$ageid->id;        
+    			$urlpdf = "https://cj56359.tmweb.ru/nextdaymenuPDF/".$kid."/".$ageid->id;        
                 $buttons[] = [
                     $this->buildInlineKeyBoardButton("Тахминий ".$ageid->age_name." менюси", "", $urlpdf)
                 ];
@@ -330,14 +331,28 @@ class TelegramController extends Controller
     public function sendordertoallshop(){
     	
     }
-    // <>
-    public function sendordertooneshop(){
-    	$text = "";
-    	$kingar = Kindgarden::where('id', 1)->where('hide', 1)->with('age_range')->first();
-		foreach($kingar->age_range as $ageid){
-			
-			$this->sendMessage(640892021, "<a href='https://cj56359.tmweb.ru/downloadPDF/1/2'>".$ageid->age_name."/a>");          
-		}
+    // <>https://cj56359.tmweb.ru/technolog/nextdayshoppdf
+    public function sendordertooneshop($id){
+    	date_default_timezone_set('Asia/Tashkent');
+        $d = strtotime("-10 hours 30 minutes");
+        
+        $shop = Shop::where('id', $id)->first();
+		$this->sendMessage($shop->telegram_id, "Бугунги буюртма:");
+        $url = "https://cj56359.tmweb.ru/nextdayshoppdf/".$id;
+        $buttons[] = [
+            $this->buildInlineKeyBoardButton("Рўйхат", "", $url)
+        ];
+        
+        $fields = [
+            'chat_id' => $shop->telegram_id,
+            'text' => "Бугунги буюртма:",
+            'reply_markup' => $this->buildInlineKeyBoard($buttons),
+            'parse_mode' => 'html',
+        ];
+        $this->sendTelegram("sendMessage", $fields);
+		
+		return redirect()->route('technolog.sendmenu', ['day' => date("d-F-Y", $d)]);	
+		// $this->sendMessage(640892021, "");          
     }
     
     private function getType($data)

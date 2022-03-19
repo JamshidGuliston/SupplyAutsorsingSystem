@@ -25,7 +25,7 @@
         </div>
         <div class="col-md-3">
             <b>Telegram orqali yuborish</b>
-            <a href="/technolog/#">
+            <a href="/technolog/sendordertooneshop/{{ $shop['id'] }}">
                 <i class="far fa-paper-plane" style="color: dodgerblue; font-size: 18px;"></i>
             </a>
         </div>
@@ -57,7 +57,7 @@
                 <th scope="row">{{ $tr++ }}</th>
                 <td>{{ $row['name'] }}</td>
                 @foreach($shop->product as $age)
-                    <td scope="col">{{ $row[$age->id] }}</td>
+                    <td scope="col"><?php printf("%01.3f", $row[$age->id]); ?></td>
                 @endforeach
             </tr>
             @endforeach

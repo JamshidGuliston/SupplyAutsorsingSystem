@@ -66,19 +66,11 @@
                     <a href="#">
                         <i class="fas fa-store-alt" style="color: dodgerblue; font-size: 18px;"></i>
                     </a>
-                    <b>{{ $shop['shop_name'] }}</b>
+                    <b>{{ $shop['shop_name']."     sana: ".$day->day_number."-".$day->month_name }}</b>
                 </div>
                 <div class="col-md-3">
-                    <!-- <b>Telegram orqali yuborish</b>
-                    <a href="/technolog/sendtoallgarden">
-                        <i class="far fa-paper-plane" style="color: dodgerblue; font-size: 18px;"></i>
-                    </a> -->
                 </div>
                 <div class="col-md-3" style="text-align: center;">
-                    <!-- <b>PDF </b>
-                    <a href="/technolog/nextdayshopp/{{ $shop['id'] }}" target="_blank">
-                        <i class="far fa-file-pdf" style="color: dodgerblue; font-size: 18px;"></i>
-                    </a> -->
                 </div>
                 </div>
                 <hr>
@@ -96,23 +88,28 @@
                         <?php 
                             $tr =1; 
                             $allm = array();
+                            $counts = [];
                         ?>
                         @foreach($shopproducts as $row)
                         <tr>
                             <th scope="row">{{ $tr++ }}</th>
                             <td>{{ $row['name'] }}</td>
                             @foreach($shop->product as $age)
-                                <td scope="col">{{ $row[$age->id] }}</td>
+                            	@if(!isset($counts[$age->id]))
+                            		<?php $counts[$age->id] = 0; ?>
+                            	@endif
+                                <td scope="col"><?php printf("%01.2f", $row[$age->id]); ?></td>
+                                <?php $counts[$age->id] += $row[$age->id] ?>
                             @endforeach
                         </tr>
                         @endforeach
-                        <!-- <tr>
-                            <th></th>
-                            <td></td>
-                            @foreach($shop->product as $age)
-                                <td scope="col"> <b>Jami:</td>
-                            @endforeach
-                        </tr> -->
+                        <tr>
+                        	<th scope="row"></th>
+                        	<td><b>Жами:</b></td>
+                        	@foreach($shop->product as $age)
+                        		<td><b><?php printf("%01.2f", $counts[$age->id]); ?></b></td>
+                        	@endforeach
+                        </tr>
                     </tbody>
                 </table>
             </div>

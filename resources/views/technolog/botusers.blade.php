@@ -15,6 +15,30 @@
 @endsection
 
 @section('content')
+<!-- DELET -->
+<!-- Modal -->
+<div class="modal fade" id="Modaldelete" tabindex="-1" aria-labelledby="exampleModalLabelss" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+        <form action="{{route('technolog.deletepeople')}}" method="POST">
+            @csrf
+            <div id="deleteuser"></div>
+            <div class="modal-header bg-danger">
+                <h5 class="modal-title text-white" id="exampleModalLabel">O'chirish</h5>
+                <button type="button" class="btn-close " data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+            	Userni o'chirish
+            </div>
+            <div class="modal-footer">
+                <!-- <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button> -->
+                <button type="submit" class="btn dele btn-danger">O'chirish</button>
+            </div>
+        </form>
+        </div>
+    </div>
+</div>
+<!-- DELET -->
 <!-- EDIT Bog'chaga -->
 <!-- Modal -->
 <div class="modal editesmodal fade" id="Modalgarden" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -84,6 +108,7 @@
                 <th scope="col">user name</th>
                 <th style="width: 70px;"><i class="fas fa-hotel"></i></th>
                 <th style="width: 70px;"><i class="fas fa-store-alt"></i></th>
+                <th style="width: 70px;"></th>
             </tr>
         </thead>
         <tbody>
@@ -100,6 +125,7 @@
                 <td>{{ $user->telegram_name }}</td>
                 <td><i class="edites gadenedit far fa-edit text-info" data-garden-id="{{ $user->id }}" data-bs-toggle="modal" data-bs-target="#Modalgarden" data-kinid="" style="cursor: pointer; margin-right: 16px;"> </i></td>
                 <td><i class="edites shopedit far fa-edit text-info" data-shop-id="{{ $user->id }}" data-bs-toggle="modal" data-bs-target="#Modalshop" data-kinid="" style="cursor: pointer; margin-right: 16px;"> </i></td>
+                <td><i class="delete fas fa-minus-circle text-danger" data-user-id="{{ $user->id }}" data-bs-toggle="modal" data-bs-target="#Modaldelete" data-kinid="" style="cursor: pointer; margin-right: 16px;"> </i></td>
             </tr>
         @endforeach
         </tbody>
@@ -119,6 +145,12 @@
         $('.shopedit').click(function() {
             id = $(this).attr('data-shop-id');
             h = $('#shhidden');
+            h.html("<input type='hidden' name='personid' value='"+id+"' >");
+        });
+        
+        $('.delete').click(function() {
+            id = $(this).attr('data-user-id');
+            h = $('#deleteuser');
             h.html("<input type='hidden' name='personid' value='"+id+"' >");
         });
     })
