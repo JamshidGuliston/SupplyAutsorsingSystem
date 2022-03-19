@@ -169,7 +169,7 @@ class TestController extends Controller
         $workerproducts = array_fill(1, 500, 0);
         foreach($workerfood as $tr){
             foreach($nextdaymenuitem[3][$tr->food_id] as $key => $value){
-                if($key != 'foodname'){
+                if($key != 'foodname' and $key != 'foodweight'){
                     $workerproducts[$key] += $value; 
                 }
                 // array_push($workerproducts, $nextdaymenuitem[3][$tr->food_id]);
