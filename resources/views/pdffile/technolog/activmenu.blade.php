@@ -104,7 +104,7 @@
 												<th scope="row" rowspan="<?php echo 2 * (count($row)-1); ?>" class='vrt-header' style="padding: 0px; height: 60px;"><?php echo '<span>'. $row[0]['mealtime'] .'</span>'; ?></th>
 			                            @endif
 			                            <td scope="row" rowspan="2" class="align-baseline" style="padding: 2px;"><?php echo $item['foodname'] ?></td>
-			                            <td scope="row" rowspan="2" class="align-baseline" style="padding: 0px;"><?php echo '' ?></td>
+			                            <td scope="row" rowspan="2" class="align-baseline" style="padding: 0px;"><?php echo $item['foodweight'] ?></td>
 			                            <?php
 			                            for($t = 0; $t < count($products); $t++){
 			                            	if(isset($products[$t]['yes']) and isset($item[$products[$t]['id']])){

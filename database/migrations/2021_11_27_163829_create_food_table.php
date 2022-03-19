@@ -19,6 +19,7 @@ class CreateFoodTable extends Migration
             $table->integer('food_cat_id')->references('id')->on('food_categories');
             $table->text('food_prepar_tech');
             $table->string('food_image');
+            $table->string('food_weight');
             $table->timestamps();
         });
     }

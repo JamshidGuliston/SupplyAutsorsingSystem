@@ -64,7 +64,12 @@
                 </select>
             </div>
         </div>
-    
+        <div class="form-group row">
+            <label for="staticEmail" class="col-sm-2 col-form-label">Вазни: </label>
+            <div class="col-sm-10">
+                <input type="text" name="weight" class="form-control" id="staticEmail" required>
+            </div>
+        </div>
         <div class="form-group row">
             <label for="inputPassword" class="col-sm-2 col-form-label"></label>
             <div class="col-sm-10">

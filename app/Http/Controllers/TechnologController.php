@@ -935,7 +935,8 @@ class TechnologController extends Controller
         Food::where('id', $request->foodid)
             ->update([
                 'food_cat_id' => $request->catid,
-    	        'meal_time_id' => $request->timeid
+    	        'meal_time_id' => $request->timeid,
+    	        'food_weight' => $request->weight
             ]);
         
         return redirect()->route('food');
@@ -998,7 +999,8 @@ class TechnologController extends Controller
             'food_cat_id' => $request->catid,
             'meal_time_id' => $request->timeid,
             'food_prepar_tech' => '...',
-            'food_image' => 'png.png'
+            'food_image' => 'png.png',
+            'food_weight' => $request->weight
         ]);
 
         return redirect()->route('food');

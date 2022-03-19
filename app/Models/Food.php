@@ -14,6 +14,7 @@ class Food extends Model
     	'food_cat_id',
 	    'meal_time_id',
         'food_prepar_tech',
-        'food_image'
+        'food_image',
+        'food_weight'
 	];
 }
