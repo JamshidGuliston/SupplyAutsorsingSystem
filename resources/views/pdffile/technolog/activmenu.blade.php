@@ -80,7 +80,7 @@
                         <thead>
                           <tr>
                           	 <th style="width:2%;"></th>
-                          	 <th style="width:8%;">Махсулотлар номи</th>
+                          	 <th style="width:12%;">Махсулотлар номи</th>
                           	 <th class='vrt-header' style="width:2%;"><?php echo '<span>Таом вазни</span>';?></th>
 							   <?php $col = 0; ?>
 							 @foreach($products as $product)
@@ -324,7 +324,7 @@
 									<tr>
 										<th scope="row" colspan="2" class="align-baseline" style="padding: 0px;">1 нафар ходим учун</th>
 										<td></td>
-										<td style="padding: 0px; font-size: 5px" colspan="<?= $col; ?>"><?php printf("%01.2f", $xcost / $menu[0]['worker_count']); ?></td>
+										<td style="padding: 0px; font-size: 5px" colspan="<?= $col; ?>"><?php if($menu[0]['worker_count'] > 0) printf("%01.2f", $xcost / $menu[0]['worker_count']); else printf("%01.2f", 0);?></td>
 									</tr>
 									<tr>
 										<th scope="row" colspan="2" class="align-baseline" style="padding: 0px;">Умумий маблағ</th>
