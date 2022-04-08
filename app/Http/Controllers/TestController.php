@@ -123,7 +123,7 @@ class TestController extends Controller
 			['day_id', '=', $today],
 			['king_age_name_id', '=', $ageid]
 		])->join('kindgardens', 'number_childrens.kingar_name_id', '=', 'kindgardens.id')
-        ->join('age_ranges', 'number_childrens.king_age_name_id', '=', 'agRequest $request, $today, $gid, $ageide_ranges.id')->get();
+        ->join('age_ranges', 'number_childrens.king_age_name_id', '=', 'age_ranges.id')->get();
 		// dd($menu);  
 		$products = Product::where('hide', 1)
 			->orderBy('sort', 'ASC')->get();
