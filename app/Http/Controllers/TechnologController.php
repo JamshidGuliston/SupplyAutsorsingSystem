@@ -671,7 +671,7 @@ class TechnologController extends Controller
         //     return redirect()->route('technolog.addproduct');
         // }
         // shu joyida hide ishlatishimiz kerak majbur
-        $newsproduct = Product::all();
+        $newsproduct = Product::orderby('sort', 'DESC')->get();
         $items = order_product_structure::where('order_product_name_id', $id)
             ->join('products', 'products.id', '=', 'order_product_structures.product_name_id')
             ->select('order_product_structures.id', 'order_product_structures.product_weight', 'products.product_name')
