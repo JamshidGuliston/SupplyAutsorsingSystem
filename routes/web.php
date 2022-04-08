@@ -27,11 +27,13 @@ Route::get('/', function () {
 Route::get('/showmenu/{kid}/{did}/{aid}', [TestController::class, 'showmenu']);
 // ommaga ochiq bot orqali taxminiy menyuni ko'rish
 Route::get('/nextdaymenuPDF/{kid}/{aid}', [TestController::class, 'nextdaymenuPDF']);
+Route::get('/nextdaysecondmenuPDF/{kid}', [TestController::class, 'nextdaysecondmenuPDF']);
 Route::get('/nextnakladnoyPDF/{kid}', [TestController::class, 'nextnakladnoyPDF']);
 Route::get('/gow', [TestController::class, 'addchilds']);
 
 // ommaga ochiq bot orqali haqiqiy menyuni ko'rish
 Route::get('/activmenuPDF/{day}/{kid}/{aid}', [TestController::class, 'activmenuPDF']);
+Route::get('/activsecondmenuPDF/{day}/{kid}', [TestController::class, 'activsecondmenuPDF']);
 Route::get('/activnakladPDF/{day}/{kid}', [TestController::class, 'activnakladPDF']);
 // ommaga ochiq shoplar uchun
 Route::get('nextdayshoppdf/{id}', [TechnologController::class, 'nextdayshoppdf'])->name('technolog.nextdayshoppdf');

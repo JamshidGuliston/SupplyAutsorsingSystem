@@ -691,11 +691,15 @@ class TechnologController extends Controller
     public function plusproduct(Request $request)
     {
         // dd($request->all());
-        order_product_structure::create([
-            'order_product_name_id' => $request->titleid,
-            'product_name_id' => $request->productsid,
-            'product_weight' => $request->sizeproduct,
-        ]);
+        foreach($request->orders as $key => $value){
+            if($value != null){
+                order_product_structure::create([
+                    'order_product_name_id' => $request->titleid,
+                    'product_name_id' => $key,
+                    'product_weight' => $value,
+                ]);
+            }
+        }
         return redirect()->route('technolog.orderitem', $request->titleid);
     }
     // parolni tasdiqlash

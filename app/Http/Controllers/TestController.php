@@ -123,7 +123,7 @@ class TestController extends Controller
 			['day_id', '=', $today],
 			['king_age_name_id', '=', $ageid]
 		])->join('kindgardens', 'number_childrens.kingar_name_id', '=', 'kindgardens.id')
-        ->join('age_ranges', 'number_childrens.king_age_name_id', '=', 'age_ranges.id')->get();
+        ->join('age_ranges', 'number_childrens.king_age_name_id', '=', 'agRequest $request, $today, $gid, $ageide_ranges.id')->get();
 		// dd($menu);  
 		$products = Product::where('hide', 1)
 			->orderBy('sort', 'ASC')->get();
@@ -584,6 +584,97 @@ class TestController extends Controller
 		$dompdf->render();
 		
 		file_put_contents("pdf/".$name, $dompdf->output());
+	}
+	// TAXMINIY ikkinchi menyu
+	public function nextdaysecondmenuPDF(){
+
+	}
+    // ikkinchi menyu 
+	public function activsecondmenuPDF(Request $request, $today, $gid){ 
+		$products = Product::where('hide', 1)
+			->orderBy('sort', 'ASC')->get();
+		$nextdaymenuitem = [];
+		$workerproducts = [];
+		// kamchilik bor boshlangich qiymat berishda
+		$workerproducts = array_fill(1, 500, 0);
+		$productallcount = array_fill(1, 500, 0);
+		$ages = Age_range::all();
+		foreach($ages as $age){
+			$menu = Number_children::where([
+				['kingar_name_id', '=', $gid],
+				['day_id', '=', $today],
+				['king_age_name_id', '=', $age->id]
+				])
+				->join('kindgardens', 'number_childrens.kingar_name_id', '=', 'kindgardens.id')
+				->join('age_ranges', 'number_childrens.king_age_name_id', '=', 'age_ranges.id')->get();
+			
+			if(count($menu) == 0){
+				continue;
+			}
+
+			$menuitem = Active_menu::where('day_id', $today)
+							->where('title_menu_id', $menu[0]['kingar_menu_id'])
+							->where('age_range_id', $age->id)
+							->join('meal_times', 'active_menus.menu_meal_time_id', '=', 'meal_times.id')
+							->join('food', 'active_menus.menu_food_id', '=', 'food.id')
+							->join('products', 'active_menus.product_name_id', '=', 'products.id')
+							->orderBy('menu_meal_time_id')
+							->orderBy('menu_food_id')
+							->get();	
+
+			// dd($menuitem);
+			// xodimlar ovqati uchun
+			$day = Day::where('days.id', $today)->join('months', 'months.id', '=', 'days.month_id')->orderBy('days.id', 'DESC')->first(['days.day_number','days.id as id', 'months.month_name']);
+			// dd($day);
+			$workerfood = titlemenu_food::where('day_id', ($today-1))
+						->where('worker_age_id', $age->id)
+						->where('titlemenu_id', $menu[0]['kingar_menu_id'])
+						->get();
+			// dd($workerfood);
+			
+			// kamchilik bor boshlangich qiymat berishda
+			foreach($menuitem as $item){
+				$nextdaymenuitem[$item->menu_meal_time_id][0]['mealtime'] = $item->meal_time_name; 
+				// $nextdaymenuitem[$item->menu_meal_time_id][$item->menu_food_id][$item->product_name_id] = $item->weight;
+				$nextdaymenuitem[$item->menu_meal_time_id][$item->menu_food_id][$age->id][$item->product_name_id] = $item->weight;
+				$nextdaymenuitem[$item->menu_meal_time_id][$item->menu_food_id]['foodname'] = $item->food_name; 
+				$nextdaymenuitem[$item->menu_meal_time_id][$item->menu_food_id]['foodweight'] = $item->food_weight; 
+				$productallcount[$item->product_name_id] += $item->weight;
+				for($i = 0; $i<count($products); $i++){
+					if(empty($products[$i]['yes']) and $products[$i]['id'] == $item->product_name_id){
+						$products[$i]['yes'] = 1;
+						// array_push($yesproduct, $products[$i]);
+					}
+				}
+			}
+			// dd($productallcount);
+			if($age->id == 1){
+				foreach($workerfood as $tr){
+					foreach($nextdaymenuitem[3][$tr->food_id] as $key => $value){
+						if($key != 'foodname' and $key != 'foodweight'){
+							$workerproducts[$key] += $value; 
+						}
+						// array_push($workerproducts, $nextdaymenuitem[3][$tr->food_id]);
+					}
+				}
+			}
+		}
+        dd($nextdaymenuitem);
+        
+        $dompdf = new Dompdf('UTF-8');
+		$html = mb_convert_encoding(view('pdffile.technolog.activmenu', ['day' => $day,'productallcount' => $productallcount, 'workerproducts' => $workerproducts,'menu' => $menu, 'menuitem' => $nextdaymenuitem, 'products' => $products, 'workerfood' => $workerfood]), 'HTML-ENTITIES', 'UTF-8');
+		$dompdf->loadHtml($html);
+
+		// (Optional) Setup the paper size and orientation
+		$dompdf->setPaper('A4', 'landscape');
+		// $customPaper = array(0,0,360,360);
+		// $dompdf->setPaper($customPaper);
+		$name = $day['id']."activemenu.pdf";
+		// Render the HTML as PDF
+		$dompdf->render();
+
+		// Output the generated PDF to Browser
+		$dompdf->stream($name, ['Attachment' => 0]);
 	}
 
 	// Hozirgi kungacha ishlatilgan maxsulotlarni minus_multi_storajega yozish /////////////////////////////////////////////////////////////////////////////////////////////////

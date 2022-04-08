@@ -59,21 +59,43 @@
 
 
 <!-- EDD -->
-<div class="modal fade" id="exampleModalsadd" tabindex="-1" aria-labelledby="exampleModalLabelsadd" aria-hidden="true">
+<div class="modal fade" id="Modalsadd" tabindex="-1" aria-labelledby="exampleModalLabelsadd" aria-hidden="true">
     <div class="modal-dialog  modal-lg">
         <div class="modal-content">
             <div class="modal-header bg-info">
-                <h5 class="modal-title text-white" id="exampleModalLabel">Modal title</h5>
+                <h5 class="modal-title text-white" id="exampleModalLabel">Maxsulot buyurtmasi</h5>
                 <button type="button" class="btn-close " data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <div class="modal-body">
-                <div class="yang-ages">
+            <form action="{{route('technolog.plusproduct')}}" method="POST">
+                @csrf
+                <input type="hidden" name="titleid" value="{{$orderid}}">
+                <div class="modal-body">
+                    <table class="table table-light table-striped table-hover">
+                        <thead>
+                            <tr>
+                                <th scope="col">ID</th>
+                                <th scope="col">Maxsulot</th>
+                                <th scope="col">Og'irligi</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php $i = 0; ?>
+                            @foreach($productall as $all)
+                            <tr>
+                                <th scope="row">{{ ++$i }}</th>
+                                <td>{{ $all->product_name }}</td>
+                                <td><input type="text" name="orders[{{ $all->id }}]"></td>
+                            </tr>
+                            @endforeach
+                        
+                        </tbody>
+                    </table>
                 </div>
-            </div>
-            <div class="modal-footer">
-                <!-- <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button> -->
-                <button type="button" class="btn add-age btn-info text-white">Qo'shish</button>
-            </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Yopish</button>
+                    <button type="submit" class="btn add-age btn-info text-white">Qo'shish</button>
+                </div>
+            </form>
         </div>
     </div>
 </div>
@@ -93,7 +115,12 @@
         @csrf
         <input type="hidden" name="titleid" value="{{$orderid}}">
         <div class="row">
-            <div class="col-md-6">
+            <div class="col-md-2">
+                <div class="input-group mb-3">
+                    <span class="input-group-text" id="basic-addon2">Yuborilmagan</span>
+                </div>
+            </div>
+            <div class="col-md-4">
                 <div class="product-select">
                     <select class="form-select" name="productsid" required aria-label="Default select example">
                         <option value="">--Mahsulotlar--</option>
@@ -105,15 +132,9 @@
                     </select>
                 </div>
             </div>
-            <div class="col-md-3">
-                <div class="input-group mb-3">
-                    <input type="text" id="check_char" name="sizeproduct" required class="form-control" placeholder="raqam kiriting" aria-label="Recipient's username" aria-describedby="basic-addon2">
-                    <span class="input-group-text" id="basic-addon2">KG</span>
-                </div>
-            </div>
-            <div class="col-md-3">
+            <div class="col-md-6">
                 <div class="sub" style="display: flex;justify-content: end;">
-                    <button class="btn btn-dark">Qo'shish</button>
+                    <button class="btn btn-info" data-bs-toggle="modal" data-bs-target="#Modalsadd">Tez Qo'shish</button>
                 </div>
             </div>
         </div>
