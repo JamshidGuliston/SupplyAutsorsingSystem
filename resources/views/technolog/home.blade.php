@@ -116,8 +116,6 @@
         @foreach($kingardens as $item)
         <div class="col-md-3">
             <div class="p-3 bg-white shadow-sm d-flex justify-content-around align-items-center rounded">
-                <div>
-
                     <a href="#!" class="list-group-item-action bg-transparent first-text fw-bold" class="fs-5" data-bs-toggle="modal" data-bs-target="#exampleModal" style="color: #6ac3de;">{{$item-> kingar_name}}</a>
 
                     <div class="user-box">
@@ -129,7 +127,6 @@
                         <a href="{{ route('technolog.minusmultistorage',  ['id' => $item->id ]) }}" style="color: #959fa3; margin-right: 6px; font-size: 14px;"><i class="fas fa-minus"></i></a>
                         <a href="{{ route('technolog.settings',  ['id' => $item->id ]) }}" style="color: #959fa3; margin-right: 6px; font-size: 20px;"><i class="fas fa-cog"></i></a>
                     </div>
-                </div>
                 <i class="fas fa-school fs-1 primary-text border rounded-full secondary-bg p-3"></i>
             </div>
         </div>

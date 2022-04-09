@@ -2,13 +2,21 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Kindgarden;
+use App\Models\Temporary;
+use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class ChefController extends Controller
 {
     public function index(Request $request)
     {
         date_default_timezone_set('Asia/Tashkent');
-        return view('chef.home');
+        $user = User::where('id', auth()->user()->id)->with('kindgarden')->first();
+        $kindgarden = Kindgarden::where('id', $user->kindgarden[0]['id'])->with('age_range')->first();
+        $sendchildcount = Temporary::where('kingar_name_id', $user->kindgarden[0]['id'])->get();
+    
+        return view('chef.home', compact('kindgarden', 'sendchildcount'));
     }
 }

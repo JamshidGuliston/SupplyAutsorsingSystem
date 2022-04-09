@@ -7,12 +7,19 @@
 @section('content')
 <div class="container-fluid px-4">
     <div class="row g-3 my-2">
-    @if(intval(date("H")) >= 8)
-        <div class="col-md-3">
-            <div class="p-3 bg-white shadow-sm d-flex justify-content-around align-items-center rounded">
-            SHOW
+    @if(intval(date("H")) >= 1)
+        <p><b>Бугунги болалар сонини юборинг</b></p>
+        @foreach($kindgarden->age_range as $row)
+            <div class="col-md-3">
+                <div class="p-3 bg-white shadow-sm align-items-center rounded">
+                    <p><b>{{ $row->age_name }}</b></p>
+                    <div class="user-box">
+                        <input type="number" name="agecount[{{ $row->id }}][]" placeholder="Болалар сони" class="form-control" required>
+                    </div>
+                </div>
             </div>
-        </div>
+        @endforeach
+        <button type="submit" class="btn btn-success">Yuborish</button>
     @endif
     </div>
 </div>
