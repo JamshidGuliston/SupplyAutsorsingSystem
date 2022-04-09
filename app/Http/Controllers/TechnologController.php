@@ -36,6 +36,8 @@ use App\Models\Season;
 use App\Models\Shop;
 use App\Models\Size;
 use App\Models\titlemenu_food;
+use App\Models\User;
+use Illuminate\Support\Str;
 use Dompdf\Dompdf;
 use TCG\Voyager\Models\Category;
 
@@ -1358,7 +1360,56 @@ class TechnologController extends Controller
         // dd($products);
         return view('technolog.addshopproduct', ['allproducts' => $products, 'shops' => $shops, 'days' => $days, 'gardens' => $kingar, 'orders' => $orederproduct, 'months'=>$months]);   
     }
+    // skladga buyurtma pdf
+    public function orderskladpdf(Request $request, $id){
+        $document = order_product::where('order_products.id', $id)
+            ->join('kindgardens', 'kindgardens.id', '=', 'order_products.kingar_name_id')
+            ->first(['kindgardens.kingar_name', 'order_products.id as docid', 'order_products.order_title']);
+        // dd($document);
+        $items = order_product_structure::where('order_product_name_id', $id)
+            ->join('products', 'products.id', '=', 'order_product_structures.product_name_id')
+            ->join('sizes', 'sizes.id', '=', 'products.size_name_id')
+            // ->select('order_product_structures.id', 'order_product_structures.product_weight', 'products.product_name')
+            ->get();
+        // dd($items);
+        $dompdf = new Dompdf('UTF-8');
+		$html = mb_convert_encoding(view('pdffile.technolog.orderskladpdf', compact('items', 'document')), 'HTML-ENTITIES', 'UTF-8');
+		$dompdf->loadHtml($html);
+		$dompdf->setPaper('A4',  'landscape');
+		$dompdf->render();
+		$dompdf->stream('demo.pdf', ['Attachment' => 0]);
+    }
+    // chef 
+    public function allchefs(){
+        $users = User::where('role_id', 6)->get();
+        return view('technolog.allchefs', compact('users'));
+    }
 
+    public function addchef(){
+        $kindgardens = Kindgarden::with('user')->get();
+        
+        return view('technolog.addchef', compact('kindgardens'));
+    }
+
+    public function createchef(Request $request){
+        // dd($request->all());
+        $user =  User::create([
+            'role_id' => 6,
+            'name' => $request->name,
+            'email' => $request->email,
+            'avatar' => "users/default.png",
+            'email_verified_at' => NULL,
+            'password' => bcrypt($request->password),
+            'remember_token' => Str::random(60),
+            'settings' => NULL,
+        ]);
+
+        $tags = $request->kinid;
+        $user->kindgarden()->sync($tags);
+
+        return redirect()->route('technolog.allchefs');
+    }
+    // end chif
     public function productshoptogarden(Request $request){
         // dd($request->all());
         plus_multi_storage::create([

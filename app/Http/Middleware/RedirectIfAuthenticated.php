@@ -31,6 +31,12 @@ class RedirectIfAuthenticated
             elseif(Auth::guard($guard)->check() and auth()->user()->role_id == 3){
                 return redirect()->route('technolog.home');
             }
+            elseif(Auth::guard($guard)->check() and auth()->user()->role_id == 5){
+                return redirect()->route('accountant.home');
+            }
+            elseif(Auth::guard($guard)->check() and auth()->user()->role_id == 6){
+                return redirect()->route('chef.home');
+            }
 
         }
 

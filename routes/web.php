@@ -4,6 +4,8 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\TestController;
 use App\Http\Controllers\StorageController;
 use App\Http\Controllers\TechnologController;
+use App\Http\Controllers\ChefController;
+use App\Http\Controllers\AccountantController;
 use App\Http\Controllers\ApiControllers\TelegramController;
 use App\Http\Controllers\HomeController;
 use Illuminate\Support\Facades\Auth;
@@ -36,7 +38,7 @@ Route::get('/activmenuPDF/{day}/{kid}/{aid}', [TestController::class, 'activmenu
 Route::get('/activsecondmenuPDF/{day}/{kid}', [TestController::class, 'activsecondmenuPDF']);
 Route::get('/activnakladPDF/{day}/{kid}', [TestController::class, 'activnakladPDF']);
 // ommaga ochiq shoplar uchun
-Route::get('nextdayshoppdf/{id}', [TechnologController::class, 'nextdayshoppdf'])->name('technolog.nextdayshoppdf');
+Route::get('nextdayshoppdf/{id}', [TestController::class, 'nextdayshoppdf'])->name('technolog.nextdayshoppdf');
 
 Route::group(['prefix' => 'admin'], function () {
     Voyager::routes();
@@ -134,11 +136,25 @@ Route::group(['prefix' => 'technolog', 'middleware' => ['isTechnolog', 'auth']],
     // sklad
     Route::get('addshopproduct/{id}', [TechnologController::class, 'addshopproduct'])->name('technolog.addshopproduct');
     Route::post('productshoptogarden', [TechnologController::class, 'productshoptogarden'])->name('technolog.productshoptogarden');
-    
+    Route::get('orderskladpdf/{id}', [TechnologController::class, 'orderskladpdf'])->name('technolog.orderskladpdf');
+    // chef
+    Route::get('allchefs', [Technologcontroller::class, 'allchefs'])->name('technolog.allchefs');
+    Route::get('addchef', [Technologcontroller::class, 'addchef'])->name('technolog.addchef');
+    Route::post('createchef', [Technologcontroller::class, 'createchef'])->name('technolog.createchef');
+    Route::get('chefsettings', [Technologcontroller::class, 'chefsettings'])->name('technolog.chefsettings');
+
     Route::get('createnextdaypdf', [TestController::class, 'createnextdaypdf'])->name('technolog.createnextdaypdf');
     Route::get('createnewdaypdf/{id}', [TestController::class, 'createnewdaypdf'])->name('technolog.createnewdaypdf');
     
     
+});
+
+Route::group(['prefix' => 'chef', 'middleware' => ['isChef', 'auth']], function () {
+    Route::get('home', [ChefController::class, 'index'])->name('chef.home');
+});
+
+Route::group(['prefix' => 'accountant', 'middleware' => ['isAccountant', 'auth']], function () {
+    Route::get('home', [AccountantController::class, 'index'])->name('accountant.home');
 });
 
 Route::get('/minusp', [TestController::class, 'minusproduct']);

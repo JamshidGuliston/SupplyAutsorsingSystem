@@ -46,4 +46,8 @@ class User extends \TCG\Voyager\Models\User
     public function role() {
 		return $this->belongsTo('TCG\Voyager\Models\Role', 'role_id');
 	}	
+
+    public function kindgarden(){
+        return $this->belongsToMany(Kindgarden::class, 'user_kindgardens');
+    }
 }

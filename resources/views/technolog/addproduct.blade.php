@@ -167,6 +167,7 @@
                 <th scope="col">MTM</th>
                 <th scope="col">Sarlavha</th>
                 <th scope="col">Mahsulotlar</th>
+                <th style="width: 40px;">PDF</th>
                 <th style="width: 70px;">Holati</th>
                 <th style="width: 70px;">...</th>
             </tr>
@@ -188,6 +189,9 @@
                     {{ $item->product_name."-".$item->product_weight.", " }}
                     @endif
                     @endforeach
+                </td>
+                <td>
+                    <a href="orderskladpdf/{{ $order->id }}">pdf</a>
                 </td>
                 <td>
                     @if($order['document_processes_id'] == 1)
