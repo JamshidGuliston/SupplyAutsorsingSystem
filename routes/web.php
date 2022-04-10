@@ -40,6 +40,8 @@ Route::get('/activnakladPDF/{day}/{kid}', [TestController::class, 'activnakladPD
 // ommaga ochiq shoplar uchun
 Route::get('nextdayshoppdf/{id}', [TestController::class, 'nextdayshoppdf'])->name('technolog.nextdayshoppdf');
 
+Route::get('tempclear', [TestController::class, 'tempclear']);
+
 Route::group(['prefix' => 'admin'], function () {
     Voyager::routes();
 });
@@ -138,10 +140,10 @@ Route::group(['prefix' => 'technolog', 'middleware' => ['isTechnolog', 'auth']],
     Route::post('productshoptogarden', [TechnologController::class, 'productshoptogarden'])->name('technolog.productshoptogarden');
     Route::get('orderskladpdf/{id}', [TechnologController::class, 'orderskladpdf'])->name('technolog.orderskladpdf');
     // chef
-    Route::get('allchefs', [Technologcontroller::class, 'allchefs'])->name('technolog.allchefs');
-    Route::get('addchef', [Technologcontroller::class, 'addchef'])->name('technolog.addchef');
-    Route::post('createchef', [Technologcontroller::class, 'createchef'])->name('technolog.createchef');
-    Route::get('chefsettings', [Technologcontroller::class, 'chefsettings'])->name('technolog.chefsettings');
+    Route::get('allchefs', [TechnologController::class, 'allchefs'])->name('technolog.allchefs');
+    Route::get('addchef', [TechnologController::class, 'addchef'])->name('technolog.addchef');
+    Route::post('createchef', [TechnologController::class, 'createchef'])->name('technolog.createchef');
+    Route::get('chefsettings', [TechnologController::class, 'chefsettings'])->name('technolog.chefsettings');
 
     Route::get('createnextdaypdf', [TestController::class, 'createnextdaypdf'])->name('technolog.createnextdaypdf');
     Route::get('createnewdaypdf/{id}', [TestController::class, 'createnewdaypdf'])->name('technolog.createnewdaypdf');
@@ -151,6 +153,7 @@ Route::group(['prefix' => 'technolog', 'middleware' => ['isTechnolog', 'auth']],
 
 Route::group(['prefix' => 'chef', 'middleware' => ['isChef', 'auth']], function () {
     Route::get('home', [ChefController::class, 'index'])->name('chef.home');
+    Route::get('sendnumbers', [ChefController::class, 'sendnumbers'])->name('chef.sendnumbers');
 });
 
 Route::group(['prefix' => 'accountant', 'middleware' => ['isAccountant', 'auth']], function () {

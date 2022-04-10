@@ -19,4 +19,9 @@ class ChefController extends Controller
     
         return view('chef.home', compact('kindgarden', 'sendchildcount'));
     }
+
+    public function sendnumbers(Request $request)
+    {
+        dd($request->all());
+    }
 }

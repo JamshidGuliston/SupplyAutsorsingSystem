@@ -668,6 +668,11 @@ class TestController extends Controller
 	public function nextdaysecondmenuPDF(){
 
 	}
+	// temp
+	
+    public function tempclear(){
+        Temporary::truncate();
+    }
     // ikkinchi menyu 
 	public function activsecondmenuPDF(Request $request, $today, $gid){ 
 		$products = Product::where('hide', 1)

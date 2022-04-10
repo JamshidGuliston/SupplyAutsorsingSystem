@@ -7,7 +7,9 @@
 @section('content')
 <div class="container-fluid px-4">
     <div class="row g-3 my-2">
-    @if(intval(date("H")) >= 1)
+    @if(intval(date("H")) >= 1 and date("H")) < 10 and $sendchildcount->count() == 0)
+    <form method="POST" action="{{route('chef.sendnumbers')}}">
+        @csrf
         <p><b>Бугунги болалар сонини юборинг</b></p>
         @foreach($kindgarden->age_range as $row)
             <div class="col-md-3">
@@ -20,6 +22,9 @@
             </div>
         @endforeach
         <button type="submit" class="btn btn-success">Yuborish</button>
+    </form>
+    @else
+        <p><b>Бугунги болалар сони юборилди</b></p>
     @endif
     </div>
 </div>

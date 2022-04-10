@@ -1286,7 +1286,7 @@ class TechnologController extends Controller
         $d = strtotime("-10 hours 30 minutes");
         Nextday_namber::where('id', $request->nextrow)
                     ->update(['kingar_children_number' => $request->agecount]);
-        Temporary::where('id', $request->temprow)->delete();
+        Temporary::where('id', $request->temprow)->update(['age_number' => $request->agecount]);
         return redirect()->route('technolog.sendmenu', ['day' => date("d-F-Y", $d)]);
     }
     public function fornextmenuselect(Request $request){
