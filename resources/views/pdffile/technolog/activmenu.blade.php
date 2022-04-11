@@ -73,7 +73,7 @@
 						echo "Боғча номи: <b>".$menu[0]['kingar_name']."</b><br/>";
                 		echo  'sana: <b>"'.$day['day_number'].'".'.$day['month_name'].' 2022-й;</b>    <b>           ' . $menu[0]['age_name'] . "</b>ли болалар сони: <b>" . $menu[0]['kingar_children_number'].";</b>";
                 		if($menu[0]['worker_age_id'] == $menu[0]['king_age_name_id']){
-                			echo "  ходимлар сони: <b>".$menu[0]['worker_count'].";</b>  ";	
+                			echo "  ходимлар сони: <b>".$menu[0]['workers_count'].";</b>  ";	
                 		}
                 	?>
                     <table style="width:100%; table-layout: fixed;">

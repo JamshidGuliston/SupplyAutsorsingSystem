@@ -7,9 +7,10 @@
 @section('content')
 <div class="container-fluid px-4">
     <div class="row g-3 my-2">
-    @if(intval(date("H")) >= 1 and date("H")) < 10 and $sendchildcount->count() == 0)
+    @if(intval(date("H")) >= 8 and intval(date("H")) < 10 and $sendchildcount->count() == 0)
     <form method="POST" action="{{route('chef.sendnumbers')}}">
         @csrf
+        <input type="hidden" name="kingar_id" value="{{ $kindgarden->id }}"
         <p><b>Бугунги болалар сонини юборинг</b></p>
         @foreach($kindgarden->age_range as $row)
             <div class="col-md-3">

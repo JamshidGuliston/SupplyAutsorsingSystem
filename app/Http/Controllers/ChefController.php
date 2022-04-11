@@ -22,6 +22,16 @@ class ChefController extends Controller
 
     public function sendnumbers(Request $request)
     {
-        dd($request->all());
+        $row = Temporary::where('kingar_name_id', $request->kingar_id)->get();
+        if($row->count() == 0){
+            foreach($request->agecount as  $key => $value){
+                Temporary::create([
+                    'kingar_name_id' => $request->kingar_id,
+                    'age_id' => $key,
+                    'age_number' => $value
+                ]);
+            }
+        }
+        return redirect()->route('chef.home');
     }
 }
