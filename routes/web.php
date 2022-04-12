@@ -154,6 +154,7 @@ Route::group(['prefix' => 'technolog', 'middleware' => ['isTechnolog', 'auth']],
 Route::group(['prefix' => 'chef', 'middleware' => ['isChef', 'auth']], function () {
     Route::get('home', [ChefController::class, 'index'])->name('chef.home');
     Route::get('sendnumbers', [ChefController::class, 'sendnumbers'])->name('chef.sendnumbers');
+    Route::get('minusproducts', [ChefController::class, 'minusproducts'])->name('chef.minusproducts');
 });
 
 Route::group(['prefix' => 'accountant', 'middleware' => ['isAccountant', 'auth']], function () {

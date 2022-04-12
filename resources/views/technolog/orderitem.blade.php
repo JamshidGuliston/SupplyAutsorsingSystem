@@ -58,7 +58,7 @@
 <!-- EDIT -->
 
 
-<!-- EDD -->
+<!-- aDD -->
 <div class="modal fade" id="Modalsadd" tabindex="-1" aria-labelledby="exampleModalLabelsadd" aria-hidden="true">
     <div class="modal-dialog  modal-lg">
         <div class="modal-content">
@@ -100,7 +100,7 @@
     </div>
 </div>
 
-<!-- EDD -->
+<!-- End -->
 
 <div class="box-products py-4 px-4">
     <div class="row mb-3">

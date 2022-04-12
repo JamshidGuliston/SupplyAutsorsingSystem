@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Kindgarden;
+use App\Models\Product;
 use App\Models\Temporary;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -16,8 +17,9 @@ class ChefController extends Controller
         $user = User::where('id', auth()->user()->id)->with('kindgarden')->first();
         $kindgarden = Kindgarden::where('id', $user->kindgarden[0]['id'])->with('age_range')->first();
         $sendchildcount = Temporary::where('kingar_name_id', $user->kindgarden[0]['id'])->get();
-    
-        return view('chef.home', compact('kindgarden', 'sendchildcount'));
+        $productall = Product::join('sizes', 'sizes.id', '=', 'products.size_name_id')->get();
+
+        return view('chef.home', compact('productall', 'kindgarden', 'sendchildcount'));
     }
 
     public function sendnumbers(Request $request)
