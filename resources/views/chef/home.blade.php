@@ -31,7 +31,7 @@
                             <tr>
                                 <th scope="row">{{ ++$i }}</th>
                                 <td>{{ $all->product_name }}</td>
-                                <td><input type="text" name="orders[{{ $all->id }}]" placeholder="{{ $all->size_name }}"></td>
+                                <td style="width: 50px;"><input type="text" name="orders[{{ $all->id }}]" placeholder="{{ $all->size_name }}" required></td>
                             </tr>
                             @endforeach
                         
