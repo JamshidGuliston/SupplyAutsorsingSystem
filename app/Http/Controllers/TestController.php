@@ -730,18 +730,18 @@ class TestController extends Controller
 					$nextdaymenuitem[$item->menu_meal_time_id][$item->menu_food_id] = array($age->id => 1);
 				}
 				if(empty($nextdaymenuitem[$item->menu_meal_time_id][$item->menu_food_id][$item->product_name_id])){
-					$nextdaymenuitem[$item->menu_meal_time_id][$item->menu_food_id][$item->product_name_id] = 0;
+					$nextdaymenuitem[$item->menu_meal_time_id][$item->menu_food_id][$item->product_name_id] = array('allvalue' => 0);
 				}
 				$nextdaymenuitem[$item->menu_meal_time_id][0]['mealtime'] = $item->meal_time_name; 
 				// $nextdaymenuitem[$item->menu_meal_time_id][$item->menu_food_id][$item->product_name_id] = $item->weight;
 				$nextdaymenuitem[$item->menu_meal_time_id][$item->menu_food_id][$age->id] = array($item->product_name_id => $item->weight);
-				$nextdaymenuitem[$item->menu_meal_time_id][$item->menu_food_id][$age->id][$item->product_name_id] = array('allcount' => $item->weight * $menu[0]['kingar_children_number'] / $products[$item->product_name_id]['div']);
+				$nextdaymenuitem[$item->menu_meal_time_id][$item->menu_food_id][$age->id][$item->product_name_id] = array('allcount' => $item->weight * $menu[0]['kingar_children_number']);
 				$nextdaymenuitem[$item->menu_meal_time_id][$item->menu_food_id][$age->id]['age_name'] = $menu[0]['age_name'];
 				$nextdaymenuitem[$item->menu_meal_time_id][$item->menu_food_id]['foodname'] = $item->food_name; 
 				$nextdaymenuitem[$item->menu_meal_time_id][$item->menu_food_id]['foodweight'] = $item->food_weight; 
 				$productallcount[$item->product_name_id] += $item->weight;
-
-				$nextdaymenuitem[$item->menu_meal_time_id][$item->menu_food_id][$item->product_name_id] += $item->weight * $menu[0]['kingar_children_number'] / $products[$item->product_name_id]['div'];
+				
+				// $nextdaymenuitem[$item->menu_meal_time_id][$item->menu_food_id][$item->product_name_id]['allvalue'] += $item->weight * $menu[0]['kingar_children_number'];
 				
 				for($i = 0; $i<count($products); $i++){
 					if(empty($products[$i]['yes']) and $products[$i]['id'] == $item->product_name_id){
