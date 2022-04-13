@@ -754,7 +754,7 @@ class TestController extends Controller
 			if($age->id == 1){
 				foreach($workerfood as $tr){
 					foreach($nextdaymenuitem[3][$tr->food_id][1] as $key => $value){
-						if($key != 'allvalue'){
+						if($key != 'age_name'){
 							$workerproducts[$key] += $value;
 						} 
 						// array_push($workerproducts, $nextdaymenuitem[3][$tr->food_id]);
