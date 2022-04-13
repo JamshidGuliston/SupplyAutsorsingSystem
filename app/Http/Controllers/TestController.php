@@ -727,7 +727,7 @@ class TestController extends Controller
 				}
 				if(empty($nextdaymenuitem[$item->menu_meal_time_id][$item->menu_food_id][$age->id])){
 					$nextdaymenuitem[$item->menu_meal_time_id]['rows'] ++;
-					$nextdaymenuitem[$item->menu_meal_time_id][$item->menu_food_id][$age->id] = 1;
+					$nextdaymenuitem[$item->menu_meal_time_id][$item->menu_food_id] = array($age->id => 1);
 				}
 				if(empty($nextdaymenuitem[$item->menu_meal_time_id][$item->menu_food_id][$item->product_name_id])){
 					$nextdaymenuitem[$item->menu_meal_time_id][$item->menu_food_id][$item->product_name_id] = 0;
