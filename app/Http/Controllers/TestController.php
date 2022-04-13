@@ -719,7 +719,7 @@ class TestController extends Controller
 			// kamchilik bor boshlangich qiymat berishda
 			foreach($menuitem as $item){
 				if(empty($nextdaymenuitem[$item->menu_meal_time_id])){
-					$nextdaymenuitem[$item->menu_meal_time_id] = 0;
+					$nextdaymenuitem[$item->menu_meal_time_id]['rows']  = 0;
 				}
 				if(empty($nextdaymenuitem[$item->menu_meal_time_id][$item->menu_food_id])){
 					$nextdaymenuitem[$item->menu_meal_time_id]['rows'] ++;
