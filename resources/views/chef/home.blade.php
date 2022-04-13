@@ -17,7 +17,7 @@
                 @csrf
                 <input type="hidden" name="titleid" value="{{ $kindgarden->id }}">
                 <div class="modal-body">
-                    <table class="table table-light table-striped table-hover">
+                    <table class="table table-light table-striped table-hover" style="width: calc(100% - 2rem)!important;">
                         <thead>
                             <tr>
                                 <th scope="col">ID</th>
