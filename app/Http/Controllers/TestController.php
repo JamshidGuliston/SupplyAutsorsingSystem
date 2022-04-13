@@ -734,10 +734,8 @@ class TestController extends Controller
 			// dd($productallcount);
 			if($age->id == 1){
 				foreach($workerfood as $tr){
-					foreach($nextdaymenuitem[3][$tr->food_id] as $key => $value){
-						if($key == 1){
+					foreach($nextdaymenuitem[3][$tr->food_id][1] as $key => $value){
 							$workerproducts[$key] += $value; 
-						}
 						// array_push($workerproducts, $nextdaymenuitem[3][$tr->food_id]);
 					}
 				}
