@@ -729,8 +729,8 @@ class TestController extends Controller
 					$nextdaymenuitem[$item->menu_meal_time_id]['rows'] ++;
 					$nextdaymenuitem[$item->menu_meal_time_id][$item->menu_food_id] = array($age->id => 1);
 				}
-				if(empty($nextdaymenuitem[$item->menu_meal_time_id][$item->menu_food_id][$item->product_name_id])){
-					$nextdaymenuitem[$item->menu_meal_time_id][$item->menu_food_id][$item->product_name_id] = array('allvalue' => 0);
+				if(empty($nextdaymenuitem[$item->menu_meal_time_id][$item->menu_food_id]['product'][$item->product_name_id])){
+					$nextdaymenuitem[$item->menu_meal_time_id][$item->menu_food_id]['product'][$item->product_name_id] = 0;
 				}
 				$nextdaymenuitem[$item->menu_meal_time_id][0]['mealtime'] = $item->meal_time_name; 
 				// $nextdaymenuitem[$item->menu_meal_time_id][$item->menu_food_id][$item->product_name_id] = $item->weight;
@@ -741,7 +741,7 @@ class TestController extends Controller
 				$nextdaymenuitem[$item->menu_meal_time_id][$item->menu_food_id]['foodweight'] = $item->food_weight; 
 				$productallcount[$item->product_name_id] += $item->weight;
 				
-				// $nextdaymenuitem[$item->menu_meal_time_id][$item->menu_food_id][$item->product_name_id]['allvalue'] += $item->weight * $menu[0]['kingar_children_number'];
+				$nextdaymenuitem[$item->menu_meal_time_id][$item->menu_food_id]['product'][$item->product_name_id] += $item->weight * $menu[0]['kingar_children_number'];
 				
 				for($i = 0; $i<count($products); $i++){
 					if(empty($products[$i]['yes']) and $products[$i]['id'] == $item->product_name_id){
@@ -755,7 +755,7 @@ class TestController extends Controller
 				foreach($workerfood as $tr){
 					foreach($nextdaymenuitem[3][$tr->food_id][1] as $key => $value){
 						if($key != 'age_name'){
-							$workerproducts[$key] += $value;
+							// $workerproducts[$key] += $value;
 						} 
 						// array_push($workerproducts, $nextdaymenuitem[3][$tr->food_id]);
 					}
