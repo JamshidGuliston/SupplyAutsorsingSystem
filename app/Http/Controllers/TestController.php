@@ -732,7 +732,7 @@ class TestController extends Controller
 				if(empty($nextdaymenuitem[$item->menu_meal_time_id][$item->menu_food_id]['product'][$item->product_name_id])){
 					$nextdaymenuitem[$item->menu_meal_time_id][$item->menu_food_id]['product'][$item->product_name_id] = 0;
 				}
-				$nextdaymenuitem[$item->menu_meal_time_id][0]['mealtime'] = $item->meal_time_name; 
+				$nextdaymenuitem[$item->menu_meal_time_id]['mealtime'] = $item->meal_time_name; 
 				// $nextdaymenuitem[$item->menu_meal_time_id][$item->menu_food_id][$item->product_name_id] = $item->weight;
 				$nextdaymenuitem[$item->menu_meal_time_id][$item->menu_food_id][$age->id] = array($item->product_name_id => $item->weight);
 				$nextdaymenuitem[$item->menu_meal_time_id][$item->menu_food_id][$age->id][$item->product_name_id] = array('allcount' => $item->weight * $menu[0]['kingar_children_number']);
