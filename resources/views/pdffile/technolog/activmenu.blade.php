@@ -146,7 +146,7 @@
 										<td style="padding: 0px; border-top: 2px solid black"></td>
 										<?php
 			                            for($t = 0; $t < count($products); $t++){
-											if(isset($products[$t]['yes']) and isset($productallcount[$products[$t]['id']])){
+											if(isset($products[$t]['yes']) and isset($productallcount[$products[$t]['id']]) and 0){
 			                            ?>
 			                            <!---->
 			                            	<td style="padding: 0px; font-size: 5px; border-top: 2px solid black"><?= $productallcount[$products[$t]['id']]; ?></td>
@@ -237,7 +237,7 @@
 										<td style="padding: 0px; border-top: 2px solid black"></td>
 										<?php
 			                            for($t = 0; $t < count($products); $t++){
-											if(isset($products[$t]['yes']) and isset($workerproducts[$products[$t]['id']])){
+											if(isset($products[$t]['yes']) and isset($workerproducts[$products[$t]['id']]) and 0){
 			                            ?>
 			                            	<td style="padding: 0px; font-size: 5px; border-top: 2px solid black"><?= $workerproducts[$products[$t]['id']]; ?></td>
 			                            <?php	
