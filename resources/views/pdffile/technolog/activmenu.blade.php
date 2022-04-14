@@ -146,7 +146,7 @@
 										<td style="padding: 0px; border-top: 2px solid black"></td>
 										<?php
 			                            for($t = 0; $t < count($products); $t++){
-											if(isset($products[$t]['yes']) and isset($productallcount[$products[$t]['id']]) and 0){
+											if(isset($products[$t]['yes']) and isset($productallcount[$products[$t]['id']])){
 			                            ?>
 			                            <!---->
 			                            	<td style="padding: 0px; font-size: 5px; border-top: 2px solid black"><?= $productallcount[$products[$t]['id']]; ?></td>
@@ -172,7 +172,7 @@
 										$narx[50] = 28000; $narx[51] = 22000; $narx[52] = 4000; $narx[53] = 9000; $narx[54] = 8000; $narx[55] = 18000; $narx[56] = 9000; $narx[57] = 13000; $narx[58] = 17000; $narx[59] = 28000;
 			                            $narx[60] = 2400; $narx[61] = 0; 
 										for($t = 0; $t < count($products); $t++){
-											if(isset($products[$t]['yes']) and isset($productallcount[$products[$t]['id']]) and 0){
+											if(isset($products[$t]['yes']) and isset($productallcount[$products[$t]['id']])){
 			                            ?>
 			                            <!---->
 			                            	<td style="padding: 0px; font-size: 5px"><?php printf("%01.3f", (($menu[0]['kingar_children_number'])*$productallcount[$products[$t]['id']]) / $products[$t]['div'] ); ?></td>
@@ -237,7 +237,7 @@
 										<td style="padding: 0px; border-top: 2px solid black"></td>
 										<?php
 			                            for($t = 0; $t < count($products); $t++){
-											if(isset($products[$t]['yes']) and isset($workerproducts[$products[$t]['id']]) and 0){
+											if(isset($products[$t]['yes']) and isset($workerproducts[$products[$t]['id']])){
 			                            ?>
 			                            	<td style="padding: 0px; font-size: 5px; border-top: 2px solid black"><?= $workerproducts[$products[$t]['id']]; ?></td>
 			                            <?php	
@@ -255,7 +255,7 @@
 										<td></td>
 										<?php
 			                            for($t = 0; $t < count($products); $t++){
-											if(isset($products[$t]['yes']) and isset($workerproducts[$products[$t]['id']]) and 0){
+											if(isset($products[$t]['yes']) and isset($workerproducts[$products[$t]['id']])){
 			                            ?>
 			                            	<td style="padding: 0px; font-size: 5px"><?php printf("%01.3f", (($menu[0]['workers_count'])*$workerproducts[$products[$t]['id']]) / $products[$t]['div']); ?></td>
 			                            <?php	
