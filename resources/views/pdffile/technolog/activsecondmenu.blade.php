@@ -79,7 +79,7 @@
                     <table style="width:100%; table-layout: fixed;">
                         <thead>
                           <tr>
-                          	 <!-- <th style="width:2%;"></th> -->
+                          	 <th style="width:2%;"></th>
                           	 <th style="width:12%;">Махсулотлар номи</th>
                           	 <th class='vrt-header' style="width:2%;"><?php echo '<span>Таом вазни</span>';?></th>
 							   <?php $col = 0; ?>
@@ -93,16 +93,25 @@
                         </thead>
                         <tbody>
 							$boolmeal = [];
-                        	@foreach($menuitem as $foods)
-								@foreach($foods as $fkey => $food)
-									<tr>
-										<td scope="row" class="align-baseline" style="padding: 2px;"><?php echo $food['foodname'] ?></td>
+                        	@foreach($menuitem as $mkey => $mealtime)
+								@if($mkey == "mealtime")
+									@continue;
+								@endif
+								@foreach($mealtime as $fkey => $food)
+									@if($fkey == "rows" or $fkey == "mealtime")
+										@continue;
+									@endif
+									<tr style="background-color: rgb(236, 243, 243)">
+										@if($loop->index == 0)
+										<th scope="row" rowspan="<?php echo $mealtime['rows']; ?>" class='vrt-header' style="padding: 0px; height: 60px;"><?php echo '<span>'. $mealtime['mealtime'] .'</span>'; ?></th>
+										@endif
+										<th class="" style="padding: 2px; text-align:left"><?php echo $food['foodname'] ?></td>
 										<td scope="row" class="align-baseline" style="padding: 0px;"><?php echo $food['foodweight'] ?></td>
 										<?php
 										for($t = 0; $t < count($products); $t++){
-											if(isset($products[$t]['yes'])){
+											if(isset($products[$t]['yes']) and 0){
 										?>
-												<td style="padding: 0px;">{{ '*' }}</td>
+												<td style="padding: 0px;">{{ '.' }}</td>
 										<?php
 											}
 											elseif(isset($products[$t]['yes'])){
@@ -122,8 +131,7 @@
 											for($t = 0; $t < count($products); $t++){
 												if(isset($products[$t]['yes']) and isset($age[$products[$t]['id']])){
 											?>	
-													<td style="padding: 0px;">{{ '1' }}</td>
-												
+													<td style="padding: 0px;">{{ $age[$products[$t]['id']]['one'] }}</td>
 											<?php
 												}
 												elseif(isset($products[$t]['yes'])){
