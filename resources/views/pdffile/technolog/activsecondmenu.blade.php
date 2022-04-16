@@ -67,15 +67,19 @@
 				<table style="border: none !important;">
 					<tbody>
 						<tr>
-							<td style="text-align: left; border: none !important;">
-							<?php
-								echo "Боғча номи: <b>".$menu[0]['kingar_name']."</b><br/>";
-								echo  'sana: <b>"'.$day['day_number'].'".'.$day['month_name'].' 2022-й;</b>    <b>           ' . $menu[0]['age_name'] . "</b>ли болалар сони: <b>" . $menu[0]['kingar_children_number'].";</b>";
-								if($menu[0]['worker_age_id'] == $menu[0]['king_age_name_id']){
-									echo "  ходимлар сони: <b>".$menu[0]['workers_count'].";</b>  ";	
-								}
-							?>
+							@foreach($menu as $row)
+								<td style="text-align: left; border: none !important;">
+								@if($loop->index == 0)
+									Боғча номи: <b>{{ $row[0]['kingar_name']; }}</b><br/>sana: <b>{{ $day['day_number'].'.'.$day['month_name'] }}.2022-й;</b><b>
+								@endif
+								<?php
+									echo  $row[0]['age_name'] . "</b>ли болалар сони: <b>" . $row[0]['kingar_children_number'].";</b>";
+									if($row[0]['worker_age_id'] == $row[0]['king_age_name_id']){
+										echo "  ходимлар сони: <b>".$row[0]['workers_count'].";</b>  ";	
+									}
+								?>
 							</td>
+							@endforeach
 							<td style="text-align: right; border: none !important;">
 								<img src="images/qrmanzil.jpg" alt="QR-code" width="140">
 							</td>
@@ -112,7 +116,7 @@
 										@if($loop->index == 0)
 										<th scope="row" rowspan="<?php echo $mealtime['rows']; ?>" class='vrt-header' style="padding: 0px; height: 60px;"><?php echo '<span>'. $mealtime['mealtime'] .'</span>'; ?></th>
 										@endif
-										<th class="" style="padding: 0px; text-align:left"><?php echo $food['foodname'] ?></td>
+										<th class="" style="padding-left: 4px; text-align:left"><?php echo $food['foodname'] ?></td>
 										<td scope="row" class="align-baseline" style="padding: 0px;"><?php echo $food['foodweight'] ?></td>
 										<?php
 										for($t = 0; $t < count($products); $t++){
