@@ -6,11 +6,11 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<meta http-equiv="X-UA-Compatible" content="ie=edge">
 	<meta name="Description" content="Enter your description here"/>
-	 <!--<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.6.0/css/bootstrap.min.css"> -->
+	 <!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.6.0/css/bootstrap.min.css"> -->
 	<!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"> -->
 	<title>Title</title>
 	<style>
-		@page { margin: 0.3in 0.8in 0in 0.3in; }
+		@page { margin: 0.3in 0.3in 0in 0.3in; }
 		body{
 			font-family: DejaVu Sans;
 			font-size: 7.5px;
@@ -23,11 +23,7 @@
 		}
 		.row{
 			display: flex;
-			flex-wrap: nowrap;
 			justify-content: space-between;
-		}
-		.row > div{
-			margin-left: 50px;
 		}
 		table{
 			border-collapse: collapse;
@@ -68,14 +64,31 @@
     <div class="container-fluid">
         <div class="row mt-5">
             <div class="col-md-12">
+				<div class="row">
+					<div>
+					</div>
+					<div>
+					</div>
+				</div>
+				<table style="border: none !important;">
+					<tbody>
+						<tr>
+							<td style="text-align: left; border: none !important;">
+							<?php
+								echo "Боғча номи: <b>".$menu[0]['kingar_name']."</b><br/>";
+								echo  'sana: <b>"'.$day['day_number'].'".'.$day['month_name'].' 2022-й;</b>    <b>           ' . $menu[0]['age_name'] . "</b>ли болалар сони: <b>" . $menu[0]['kingar_children_number'].";</b>";
+								if($menu[0]['worker_age_id'] == $menu[0]['king_age_name_id']){
+									echo "  ходимлар сони: <b>".$menu[0]['workers_count'].";</b>  ";	
+								}
+							?>
+							</td>
+							<td style="text-align: right; border: none !important;">
+								<img src="images/qrmanzil.jpg" alt="QR-code" width="140">
+							</td>
+						</tr>
+					</tbody>
+				</table>
                 <div class="table" id="table_with_data">
-                	<?php
-						echo "Боғча номи: <b>".$menu[0]['kingar_name']."</b><br/>";
-                		echo  'sana: <b>"'.$day['day_number'].'".'.$day['month_name'].' 2022-й;</b>    <b>           ' . $menu[0]['age_name'] . "</b>ли болалар сони: <b>" . $menu[0]['kingar_children_number'].";</b>";
-                		if($menu[0]['worker_age_id'] == $menu[0]['king_age_name_id']){
-                			echo "  ходимлар сони: <b>".$menu[0]['workers_count'].";</b>  ";	
-                		}
-                	?>
                     <table style="width:100%; table-layout: fixed;">
                         <thead>
                           <tr>
@@ -86,7 +99,7 @@
 							 @foreach($products as $product)
 							 	@if(isset($product['yes']))
 								 <?php $col++; ?>
-                          	 		<th class='vrt-header' style="padding: 0px; width: 3%; height: 85px"><?php echo '<span>'.$product['product_name']. '</span>';?></th>
+                          	 		<th class='vrt-header' style="padding: 0px; width: 3%; height: 75px"><?php echo '<span>'.$product['product_name']. '</span>';?></th>
 								@endif
 							 @endforeach
                           </tr>
@@ -149,17 +162,6 @@
 									
                         </tbody>
                       </table>
-                      <div class="row">
-                      	<div>
-					  		<img src="images/qrmanzil.jpg" alt="QR-code" width="140">
-					  	</div>
-					  	<div>
-					  		<p style="text-align: center;">Технолог __________________</p>
-					  	</div>
-					  	<div>
-					  		<p style="text-align: right;">Бош ошпаз __________________</p>
-					  	</div>
-					  </div>
                 </div>
             </div>
         </div>
