@@ -186,7 +186,6 @@
                     					}
 			                            ?>
 									</tr>
-									</tr>
 									<tr>
 										<td scope="row" class="align-baseline" style="padding: 0px;">Нархи</td>
 										<td></td>
