@@ -695,7 +695,7 @@ class TestController extends Controller
 			if(count($menu) == 0){
 				continue;
 			}
-
+			// echo $age->id;
 			$menuitem = Active_menu::where('day_id', $today)
 							->where('title_menu_id', $menu[0]['kingar_menu_id'])
 							->where('age_range_id', $age->id)
@@ -716,32 +716,31 @@ class TestController extends Controller
 						->get();
 			// dd($workerfood);
 			
-			// kamchilik bor boshlangich qiymat berishda
 			foreach($menuitem as $item){
-				if(empty($nextdaymenuitem[$item->menu_meal_time_id])){
-					$nextdaymenuitem[$item->menu_meal_time_id]['rows']  = 0;
-				}
-				if(empty($nextdaymenuitem[$item->menu_meal_time_id][$item->menu_food_id])){
-					$nextdaymenuitem[$item->menu_meal_time_id]['rows'] ++;
-					$nextdaymenuitem[$item->menu_meal_time_id][$item->menu_food_id] = 1;
-				}
-				if(empty($nextdaymenuitem[$item->menu_meal_time_id][$item->menu_food_id][$age->id])){
-					$nextdaymenuitem[$item->menu_meal_time_id]['rows'] ++;
-					$nextdaymenuitem[$item->menu_meal_time_id][$item->menu_food_id] = array($age->id => 1);
-				}
-				if(empty($nextdaymenuitem[$item->menu_meal_time_id][$item->menu_food_id]['product'][$item->product_name_id])){
-					$nextdaymenuitem[$item->menu_meal_time_id][$item->menu_food_id]['product'][$item->product_name_id] = 0;
-				}
-				$nextdaymenuitem[$item->menu_meal_time_id]['mealtime'] = $item->meal_time_name; 
+				// if(empty($nextdaymenuitem[$item->menu_meal_time_id])){
+				// 	$nextdaymenuitem[$item->menu_meal_time_id]['rows']  = 0;
+				// }
+				// if(empty($nextdaymenuitem[$item->menu_meal_time_id][$item->menu_food_id]['bool'])){
+				// 	$nextdaymenuitem[$item->menu_meal_time_id]['rows'] ++;
+				// 	$nextdaymenuitem[$item->menu_meal_time_id][$item->menu_food_id]['bool'] = 1;
+				// }
+				// if(empty($nextdaymenuitem[$item->menu_meal_time_id][$item->menu_food_id][$age->id]['bool'] )){
+				// 	$nextdaymenuitem[$item->menu_meal_time_id]['rows'] ++;
+				// 	$nextdaymenuitem[$item->menu_meal_time_id][$item->menu_food_id]['bool'] = 1;
+				// }
+				// if(empty($nextdaymenuitem[$item->menu_meal_time_id][$item->menu_food_id]['product'][$item->product_name_id])){
+				// 	$nextdaymenuitem[$item->menu_meal_time_id][$item->menu_food_id]['product'][$item->product_name_id] = 0;
+				// }
+				// $nextdaymenuitem[$item->menu_meal_time_id]['mealtime'] = $item->meal_time_name; 
 				// $nextdaymenuitem[$item->menu_meal_time_id][$item->menu_food_id][$item->product_name_id] = $item->weight;
-				$nextdaymenuitem[$item->menu_meal_time_id][$item->menu_food_id][$age->id] = array($item->product_name_id => $item->weight);
-				$nextdaymenuitem[$item->menu_meal_time_id][$item->menu_food_id][$age->id][$item->product_name_id] = array('allcount' => $item->weight * $menu[0]['kingar_children_number']);
+				$nextdaymenuitem[$item->menu_meal_time_id][$item->menu_food_id][$age->id][$item->product_name_id]['one'] = $item->weight;
+				// $nextdaymenuitem[$item->menu_meal_time_id][$item->menu_food_id][$age->id][$item->product_name_id] = array('allcount' => $item->weight * $menu[0]['kingar_children_number']);
 				$nextdaymenuitem[$item->menu_meal_time_id][$item->menu_food_id][$age->id]['age_name'] = $menu[0]['age_name'];
 				$nextdaymenuitem[$item->menu_meal_time_id][$item->menu_food_id]['foodname'] = $item->food_name; 
 				$nextdaymenuitem[$item->menu_meal_time_id][$item->menu_food_id]['foodweight'] = $item->food_weight; 
 				$productallcount[$item->product_name_id] += $item->weight;
 				
-				$nextdaymenuitem[$item->menu_meal_time_id][$item->menu_food_id]['product'][$item->product_name_id] += $item->weight * $menu[0]['kingar_children_number'];
+				// $nextdaymenuitem[$item->menu_meal_time_id][$item->menu_food_id]['product'][$item->product_name_id] += $item->weight * $menu[0]['kingar_children_number'];
 				
 				for($i = 0; $i<count($products); $i++){
 					if(empty($products[$i]['yes']) and $products[$i]['id'] == $item->product_name_id){
@@ -750,7 +749,7 @@ class TestController extends Controller
 					}
 				}
 			}
-			// dd($productallcount);
+			// dd($nextdaymenuitem[$item->menu_meal_time_id][$item->menu_food_id]);
 			if($age->id == 1){
 				foreach($workerfood as $tr){
 					foreach($nextdaymenuitem[3][$tr->food_id][1] as $key => $value){
@@ -762,10 +761,10 @@ class TestController extends Controller
 				}
 			}
 		}
-        dd($nextdaymenuitem);
+        // dd($nextdaymenuitem[1]);
         
         $dompdf = new Dompdf('UTF-8');
-		$html = mb_convert_encoding(view('pdffile.technolog.activsecondmenu', ['day' => $day,'productallcount' => $productallcount, 'workerproducts' => $workerproducts,'menu' => $menu, 'menuitem' => $nextdaymenuitem, 'products' => $products, 'workerfood' => $workerfood]), 'HTML-ENTITIES', 'UTF-8');
+		$html = mb_convert_encoding(view('pdffile.technolog.activsecondmenu', ['day' => $day, 'productallcount' => $productallcount, 'workerproducts' => $workerproducts,'menu' => $menu, 'menuitem' => $nextdaymenuitem, 'products' => $products, 'workerfood' => $workerfood]), 'HTML-ENTITIES', 'UTF-8');
 		$dompdf->loadHtml($html);
 
 		// (Optional) Setup the paper size and orientation
