@@ -665,8 +665,107 @@ class TestController extends Controller
 		$dompdf->stream('demo.pdf', ['Attachment' => 0]);
     }
 	// TAXMINIY ikkinchi menyu
-	public function nextdaysecondmenuPDF(){
+	public function nextdaysecondmenuPDF(Request $request, $gid){
+		$products = Product::where('hide', 1)
+			->orderBy('sort', 'ASC')->get();
+		$nextdaymenuitem = [];
+		$workerproducts = [];
+		// kamchilik bor boshlangich qiymat berishda
+		$workerproducts = array_fill(1, 500, 0);
+		$productallcount = array_fill(1, 500, 0);
+		$menuage = [];
+		$ages = Age_range::all();
+		foreach($ages as $age){
+			$menu = Nextday_namber::where([
+				['kingar_name_id', '=', $gid],
+				['king_age_name_id', '=', $age->id]
+			])->join('kindgardens', 'nextday_nambers.kingar_name_id', '=', 'kindgardens.id')
+			->join('age_ranges', 'nextday_nambers.king_age_name_id', '=', 'age_ranges.id')->get();
 
+			if($menu->count()>0)
+				array_push($menuage, $menu);
+
+			if(count($menu) == 0){
+				continue;
+			}
+			
+			$menuitem = Menu_composition::where('title_menu_id', $menu[0]['kingar_menu_id'])
+				->where('age_range_id', $age->id)
+				->join('meal_times', 'menu_compositions.menu_meal_time_id', '=', 'meal_times.id')
+				->join('food', 'menu_compositions.menu_food_id', '=', 'food.id')
+				->join('products', 'menu_compositions.product_name_id', '=', 'products.id')
+				->orderBy('menu_meal_time_id')
+				->get();
+
+			// dd($menuitem);
+			// xodimlar ovqati uchun
+			$day = Day::join('months', 'months.id', '=', 'days.month_id')->orderBy('days.id', 'DESC')->first(['days.day_number','days.id as id', 'months.month_name']);
+			// dd($day);
+			$workerfood = titlemenu_food::where('day_id', ($day->id))
+						->where('worker_age_id', $age->id)
+						->where('titlemenu_id', $menu[0]['kingar_menu_id'])
+						->get();
+			// dd($workerfood);
+			
+			foreach($menuitem as $item){
+				if(empty($nextdaymenuitem[$item->menu_meal_time_id][$item->menu_food_id]['product'][$item->product_name_id])){
+					$nextdaymenuitem[$item->menu_meal_time_id][$item->menu_food_id]['product'][$item->product_name_id] = 0;
+				}
+				// $nextdaymenuitem[$item->menu_meal_time_id][$item->menu_food_id][$item->product_name_id] = $item->weight;
+				$nextdaymenuitem[$item->menu_meal_time_id][$item->menu_food_id][$age->id][$item->product_name_id]['one'] = $item->weight;
+				// $nextdaymenuitem[$item->menu_meal_time_id][$item->menu_food_id][$age->id][$item->product_name_id] = array('allcount' => $item->weight * $menu[0]['kingar_children_number']);
+				$nextdaymenuitem[$item->menu_meal_time_id][$item->menu_food_id][$age->id]['age_name'] = $menu[0]['age_name'];
+				$nextdaymenuitem[$item->menu_meal_time_id][$item->menu_food_id]['foodname'] = $item->food_name; 
+				$nextdaymenuitem[$item->menu_meal_time_id][$item->menu_food_id]['foodweight'] = $item->food_weight; 
+				$nextdaymenuitem[$item->menu_meal_time_id]['mealtime'] = $item->meal_time_name; 
+				$productallcount[$item->product_name_id] += ($item->weight * $menu[0]['kingar_children_number']) / $item->div;
+
+				$nextdaymenuitem[$item->menu_meal_time_id][$item->menu_food_id]['product'][$item->product_name_id] += ($item->weight * $menu[0]['kingar_children_number']) / $item->div;
+				
+				for($i = 0; $i<count($products); $i++){
+					if(empty($products[$i]['yes']) and $products[$i]['id'] == $item->product_name_id){
+						$products[$i]['yes'] = 1;
+					}
+				}
+			}
+			// dd($nextdaymenuitem[$item->menu_meal_time_id][$item->menu_food_id]);
+			if($age->id == 1){
+				foreach($workerfood as $tr){
+					foreach($nextdaymenuitem[3][$tr->food_id][1] as $key => $value){
+						if($key != 'age_name'){
+							$workerproducts[$key] += $value['one'];
+						} 
+						// array_push($workerproducts, $nextdaymenuitem[3][$tr->food_id]);
+					}
+				}
+			}
+		}
+
+		foreach($nextdaymenuitem as $key => $item){
+			$nextdaymenuitem[$key]['rows'] = count($item)-1;
+			foreach($item as $rkey => $row){
+				if($rkey == 'mealtime'){
+					continue;
+				}
+				$nextdaymenuitem[$key]['rows'] += count($row)-3;
+			}
+		}
+		// dd($nextdaymenuitem);
+        
+        $dompdf = new Dompdf('UTF-8');
+		$html = mb_convert_encoding(view('pdffile.technolog.nextsecondmenu', ['day' => $day, 'productallcount' => $productallcount, 'workerproducts' => $workerproducts,'menu' => $menuage, 'menuitem' => $nextdaymenuitem, 'products' => $products, 'workerfood' => $workerfood]), 'HTML-ENTITIES', 'UTF-8');
+		$dompdf->loadHtml($html);
+
+		// (Optional) Setup the paper size and orientation
+		$dompdf->setPaper('A4');
+		// $customPaper = array(0,0,360,360);
+		// $dompdf->setPaper($customPaper);
+		$name = $day['id']."activemenu.pdf";
+		// Render the HTML as PDF
+		$dompdf->render();
+
+		// Output the generated PDF to Browser
+		$dompdf->stream($name, ['Attachment' => 0]);
 	}
 	// temp
 	
