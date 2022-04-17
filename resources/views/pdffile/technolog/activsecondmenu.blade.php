@@ -101,7 +101,7 @@
 							 @foreach($products as $product)
 							 	@if(isset($product['yes']))
 								 <?php $col++; ?>
-                          	 		<th class='vrt-header' style="padding: 0px; width: 3%; height: 69px"><?php echo '<span>'.$product['product_name']. '</span>';?></th>
+                          	 		<th class='vrt-header' style="padding: 0px; width: 4%; height: 69px"><?php echo '<span>'.$product['product_name']. '</span>';?></th>
 								@endif
 							 @endforeach
                           </tr>
@@ -176,7 +176,7 @@
 								for($t = 0; $t < count($products); $t++){
 									if(isset($products[$t]['yes']) and isset($productallcount[$products[$t]['id']])){
 								?>
-									<td style="padding: 0px; font-size: 5px; border-top: 2px solid black"><?= $productallcount[$products[$t]['id']]; ?></td>
+									<td style="padding: 0px; font-size: 5px; border-top: 2px solid black"><?= round($productallcount[$products[$t]['id']], 2); ?></td>
 								<?php	
 									}
 									elseif(isset($products[$t]['yes'])){
@@ -214,8 +214,7 @@
 									if(isset($products[$t]['yes']) and isset($productallcount[$products[$t]['id']])){
 										$chcost += $productallcount[$products[$t]['id']] * $narx[$products[$t]['id']];
 								?>
-								<!---->
-									<td style="padding: 0px; font-size: 5px"><?php printf($productallcount[$products[$t]['id']] * $narx[$products[$t]['id']]); ?></td>
+									<td style="padding: 0px; font-size: 5px"><?= round($productallcount[$products[$t]['id']] * $narx[$products[$t]['id']], 2); ?></td>
 								<?php	
 									}
 									elseif(isset($products[$t]['yes'])){
@@ -275,7 +274,7 @@
 								for($t = 0; $t < count($products); $t++){
 									if(isset($products[$t]['yes']) and isset($workerproducts[$products[$t]['id']])){
 								?>
-									<td style="padding: 0px; font-size: 5px;"><?php printf("%01.2f", ($narx[$products[$t]['id']])); ?></td>
+									<td style="padding: 0px; font-size: 5px;"><?php printf($narx[$products[$t]['id']]); ?></td>
 								<?php	
 									}
 									elseif(isset($products[$t]['yes'])){
@@ -295,7 +294,7 @@
 									if(isset($products[$t]['yes']) and isset($workerproducts[$products[$t]['id']])){
 										$xcost += ($workers * $workerproducts[$products[$t]['id']]) / $products[$t]['div'] * $narx[$products[$t]['id']];
 								?>
-									<td style="padding: 0px; font-size: 5px"><?php printf("%01.2f", ($workers * $workerproducts[$products[$t]['id']]) / $products[$t]['div'] * $narx[$products[$t]['id']]); ?></td>
+									<td style="padding: 0px; font-size: 5px"><?php printf(($workers * $workerproducts[$products[$t]['id']]) / $products[$t]['div'] * $narx[$products[$t]['id']]); ?></td>
 								<?php	
 									}
 									elseif(isset($products[$t]['yes'])){
