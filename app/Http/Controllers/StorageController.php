@@ -46,7 +46,7 @@ class StorageController extends Controller
         $costs = $request->costs;
 
         $group = Add_group::create([
-            'day_id' => 19,
+            'day_id' => 61,
             'group_name' => time()
         ]);
 

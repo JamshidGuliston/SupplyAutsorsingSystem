@@ -692,9 +692,10 @@ class TestController extends Controller
 				])
 				->join('kindgardens', 'number_childrens.kingar_name_id', '=', 'kindgardens.id')
 				->join('age_ranges', 'number_childrens.king_age_name_id', '=', 'age_ranges.id')->get();
+			
 			if($menu->count()>0)
-				// dd($menu);
 				array_push($menuage, $menu);
+
 			if(count($menu) == 0){
 				continue;
 			}
@@ -720,6 +721,9 @@ class TestController extends Controller
 			// dd($workerfood);
 			
 			foreach($menuitem as $item){
+				if(empty($nextdaymenuitem[$item->menu_meal_time_id][$item->menu_food_id]['product'][$item->product_name_id])){
+					$nextdaymenuitem[$item->menu_meal_time_id][$item->menu_food_id]['product'][$item->product_name_id] = 0;
+				}
 				// $nextdaymenuitem[$item->menu_meal_time_id][$item->menu_food_id][$item->product_name_id] = $item->weight;
 				$nextdaymenuitem[$item->menu_meal_time_id][$item->menu_food_id][$age->id][$item->product_name_id]['one'] = $item->weight;
 				// $nextdaymenuitem[$item->menu_meal_time_id][$item->menu_food_id][$age->id][$item->product_name_id] = array('allcount' => $item->weight * $menu[0]['kingar_children_number']);
@@ -727,14 +731,13 @@ class TestController extends Controller
 				$nextdaymenuitem[$item->menu_meal_time_id][$item->menu_food_id]['foodname'] = $item->food_name; 
 				$nextdaymenuitem[$item->menu_meal_time_id][$item->menu_food_id]['foodweight'] = $item->food_weight; 
 				$nextdaymenuitem[$item->menu_meal_time_id]['mealtime'] = $item->meal_time_name; 
-				$productallcount[$item->product_name_id] += $item->weight;
-				
-				// $nextdaymenuitem[$item->menu_meal_time_id][$item->menu_food_id]['product'][$item->product_name_id] += $item->weight * $menu[0]['kingar_children_number'];
+				$productallcount[$item->product_name_id] += ($item->weight * $menu[0]['kingar_children_number']) / $item->div;
+
+				$nextdaymenuitem[$item->menu_meal_time_id][$item->menu_food_id]['product'][$item->product_name_id] += ($item->weight * $menu[0]['kingar_children_number']) / $item->div;
 				
 				for($i = 0; $i<count($products); $i++){
 					if(empty($products[$i]['yes']) and $products[$i]['id'] == $item->product_name_id){
 						$products[$i]['yes'] = 1;
-						// array_push($yesproduct, $products[$i]);
 					}
 				}
 			}
@@ -743,7 +746,7 @@ class TestController extends Controller
 				foreach($workerfood as $tr){
 					foreach($nextdaymenuitem[3][$tr->food_id][1] as $key => $value){
 						if($key != 'age_name'){
-							// $workerproducts[$key] += $value;
+							$workerproducts[$key] += $value['one'];
 						} 
 						// array_push($workerproducts, $nextdaymenuitem[3][$tr->food_id]);
 					}
@@ -757,10 +760,10 @@ class TestController extends Controller
 				if($rkey == 'mealtime'){
 					continue;
 				}
-				$nextdaymenuitem[$key]['rows'] += count($row)-2;
+				$nextdaymenuitem[$key]['rows'] += count($row)-3;
 			}
 		}
-	// dd($menuage[0][0]);
+		// dd($nextdaymenuitem);
         
         $dompdf = new Dompdf('UTF-8');
 		$html = mb_convert_encoding(view('pdffile.technolog.activsecondmenu', ['day' => $day, 'productallcount' => $productallcount, 'workerproducts' => $workerproducts,'menu' => $menuage, 'menuitem' => $nextdaymenuitem, 'products' => $products, 'workerfood' => $workerfood]), 'HTML-ENTITIES', 'UTF-8');
