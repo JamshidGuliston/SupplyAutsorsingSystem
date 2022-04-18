@@ -56,10 +56,11 @@ Route::group(['prefix' => 'storage', 'middleware' => ['isStorage', 'auth']], fun
     Route::get('home', [StorageController::class, 'index'])->name('storage.home');
     Route::get('addproductform', [StorageController::class, 'addproductform'])->name('storage.addproductform');
     Route::post('addproducts', [StorageController::class, 'addproducts'])->name('storage.addproducts');
+    Route::get('addedproducts', [StorageController::class, 'addedproducts'])->name('storage.addedproducts');
     Route::get('orders', [StorageController::class, 'orders'])->name('storage.orders');
     Route::get('getdoc', [StorageController::class, 'getdoc'])->name('storage.getdoc');
     Route::get('controlpassword', [StorageController::class, 'controlpassword']);
-    Route::get('getbotusers', [TechnologController::class, 'getbotusers']);
+    Route::get('document/{id}', [StorageController::class, 'document']);
 });
 
 Route::group(['prefix' => 'technolog', 'middleware' => ['isTechnolog', 'auth']], function () {

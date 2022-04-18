@@ -6,6 +6,7 @@ use App\Models\Add_group;
 use App\Models\Add_large_werehouse;
 use App\Models\Day;
 use App\Models\Kindgarden;
+use App\Models\Month;
 use App\Models\order_product;
 use App\Models\order_product_structure;
 use App\Models\plus_multi_storage;
@@ -13,6 +14,7 @@ use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Dompdf\Dompdf;
 
 class StorageController extends Controller
 {
@@ -87,6 +89,32 @@ class StorageController extends Controller
         order_product::where('id', $request->getid)->update([
             'document_processes_id' => 3
         ]);
+    }
+
+    public function addedproducts(Request $request){
+        $months = Month::all();
+        $days = Day::orderby('id', 'DESC')->get();
+        $group = Add_group::join('days', 'days.id', '=', 'add_groups.day_id')
+                ->join('months', 'months.id', '=', 'days.month_id')
+                ->join('years', 'years.id', '=', 'days.year_id')
+                ->get(['add_groups.id', 'add_groups.group_name', 'days.day_number', 'months.month_name', 'years.year_name']);
+        // dd($group);
+        return view('storage.addedproducts', compact('group', 'months'));
+    }
+    
+    public function document(Request $request){
+        $items = "";
+        $document = Add_large_werehouse::where('add_group_id', $request->id)
+        ->join('products', 'products.id', '=', 'add_large_werehouses.product_id')
+        ->join('sizes', 'sizes.id', '=', 'products.size_name_id')->get();
+        
+        // dd($items);
+        $dompdf = new Dompdf('UTF-8');
+		$html = mb_convert_encoding(view('pdffile.storage.orderskladpdf', compact('items', 'document')), 'HTML-ENTITIES', 'UTF-8');
+		$dompdf->loadHtml($html);
+		$dompdf->setPaper('A4',  'landscape');
+		$dompdf->render();
+		$dompdf->stream('demo.pdf', ['Attachment' => 0]);
     }
     // Parolni tekshirib mayda skladlarga yuborish
     public function controlpassword(Request $request)

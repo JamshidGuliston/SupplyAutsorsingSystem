@@ -65,8 +65,7 @@
 						<a href="#">
 							<i class="fas fa-store-alt" style="color: dodgerblue; font-size: 18px;"></i>
 						</a>
-						<b>{{ "№ ".$document->docid." /". $document->kingar_name}}</b>
-						<b>{{ " /".$document->order_title }}</b>
+						<b>{{ "№ ".$document[0]['add_group_id'] }}</b>
 					</div>
                 </div>
                 <hr>
@@ -87,13 +86,13 @@
                             $allm = array();
                             $counts = [];
                         ?>
-                        @foreach($items as $row)
+                        @foreach($document as $row)
                         <tr>
                             <th scope="row">{{ $tr++ }}</th>
                             <td>{{ $row->product_name }}</td>
 							<td>{{ $row->size_name }}</td>
-							<td>{{ $row->product_weight }}</td>
-							<td></td>
+							<td>{{ $row->weight }}</td>
+							<td>{{ $row->cost }}</td>
 							<td></td>
                         </tr>
                         @endforeach
