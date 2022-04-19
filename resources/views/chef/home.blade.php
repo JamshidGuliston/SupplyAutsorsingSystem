@@ -15,7 +15,8 @@
             </div>
             <form action="{{route('chef.minusproducts')}}" method="POST">
                 @csrf
-                <input type="hidden" name="titleid" value="{{ $kindgarden->id }}">
+                <input type="hidden" name="kindgarid" value="{{ $kindgarden->id }}">
+                <input type="hidden" name="dayid" value="{{ $day->id }}">
                 <div class="modal-body">
                     <table class="table table-light table-striped table-hover" style="width: calc(100% - 2rem)!important;">
                         <thead>
@@ -28,11 +29,13 @@
                         <tbody>
                             <?php $i = 0; ?>
                             @foreach($productall as $all)
-                            <tr>
-                                <th scope="row">{{ ++$i }}</th>
-                                <td>{{ $all->product_name }}</td>
-                                <td style="width: 50px;"><input type="text" name="orders[{{ $all->id }}]" placeholder="{{ $all->size_name }}" required></td>
-                            </tr>
+                                @if(isset($all['yes']))
+                                    <tr>
+                                        <th scope="row">{{ ++$i }}</th>
+                                        <td>{{ $all->product_name }}</td>
+                                        <td style="width: 50px;"><input type="text" name="orders[{{ $all->id }}]" onkeypress="return isNumberKey(this, event);" placeholder="{{ $all->size_name }}" required></td>
+                                    </tr>
+                                @endif
                             @endforeach
                         
                         </tbody>
@@ -51,7 +54,7 @@
 
 <div class="container-fluid px-4">
     <div class="row g-3 my-2">
-    @if(intval(date("H")) >= 8 and intval(date("H")) < 10 and $sendchildcount->count() == 0)
+    @if(intval(date("H")) >= 8 and intval(date("H")) < 17 and $sendchildcount->count() == 0)
     <form method="POST" action="{{route('chef.sendnumbers')}}">
         @csrf
         <input type="hidden" name="kingar_id" value="{{ $kindgarden->id }}">
@@ -75,22 +78,25 @@
     <div class="row g-3 my-2">
         <div class="col-md-3">
             <div class="p-3 bg-white shadow-sm align-items-center rounded">
-                <form action="#" method="get">
-                    <p><b>Menyu: </b> sana: 12.04.2022</p>
+                <form action="/activsecondmenuPDF/{{ $day->id }}/{{ $kindgarden->id }}" method="get">
+                    <p><b>Haqiqiy Menyu: </b>sana: {{ $day->day_number.".".$day->month_name.".".$day->year_name }}</p>
+                    <p><i>Eslatma: menyu har kuni soat 10 dan keyin yangilanadi</i></p>
                     <button type="submit" class="btn btn-success" style="width: 100%;">Menyu</button>
                 </form>
-                <form action="#" method="get">
+                @if($bool->count() == 0)
+                <!-- <form action="#" method="get"> -->
                     <br>
                     <p><b>Omborxona: </b>Omborxonadan olingan maxsulot ro'yxatini yuboring. </p>
                     <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#Modalsadd" style="width: 100%;">Maxsulotlar</button>
-                </form>
+                <!-- </form> -->
+                @endif
             </div>
         </div>
     </div>
     <div class="row g-3 my-2">
         <div class="col-md-3">
             <div class="p-3 bg-white shadow-sm align-items-center rounded">
-                <form action="#" method="get">
+                <form action="/nextdaysecondmenuPDF/{{ $kindgarden->id }}" method="get">
                     <p><b>Taxminiy menyu: </b></p>
                     <button type="submit" class="btn btn-success" style="width: 100%;">Menyu</button>
                 </form>
@@ -98,4 +104,25 @@
         </div>
     </div>
 </div>
+@endsection
+
+@section('script')
+<script>
+    function isNumberKey(txt, evt) {
+      var charCode = (evt.which) ? evt.which : evt.keyCode;
+      if (charCode == 46) {
+        //Check if the text already contains the . character
+        if (txt.value.indexOf('.') === -1) {
+          return true;
+        } else {
+          return false;
+        }
+      } else {
+        if (charCode > 31 &&
+          (charCode < 48 || charCode > 57))
+          return false;
+      }
+      return true;
+    }
+</script>
 @endsection

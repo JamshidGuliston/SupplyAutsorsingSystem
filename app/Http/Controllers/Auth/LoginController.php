@@ -37,6 +37,12 @@ class LoginController extends Controller
         elseif(Auth()->user()->role_id == 3){
             return route('technolog.home');
         }
+        elseif(Auth()->user()->role_id == 5){
+            return route('accountant.home');
+        }
+        elseif(Auth()->user()->role_id == 6){
+            return route('chef.home');
+        }
     }
     /**
      * Create a new controller instance.
@@ -61,6 +67,12 @@ class LoginController extends Controller
             }
             elseif(auth()->user()->role_id == 3){
                 return redirect()->route('technolog.home');
+            }
+            elseif(auth()->user()->role_id == 5){
+                return redirect()->route('accountant.home');
+            }
+            elseif(auth()->user()->role_id == 6){
+                return redirect()->route('chef.home');
             }
         }
         else{
