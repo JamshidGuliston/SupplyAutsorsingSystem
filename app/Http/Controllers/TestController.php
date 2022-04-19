@@ -760,12 +760,12 @@ class TestController extends Controller
 		$dompdf->setPaper('A4');
 		// $customPaper = array(0,0,360,360);
 		// $dompdf->setPaper($customPaper);
-		$name = $day['id']."activemenu.pdf";
+		$name = $day['id']."taxminiymenu.pdf";
 		// Render the HTML as PDF
 		$dompdf->render();
 
 		// Output the generated PDF to Browser
-		$dompdf->stream($name, ['Attachment' => 0]);
+		$dompdf->stream($name);
 	}
 	// temp
 	

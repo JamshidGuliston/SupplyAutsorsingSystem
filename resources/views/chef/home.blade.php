@@ -101,7 +101,7 @@
             <div class="p-3 bg-white shadow-sm align-items-center rounded">
                 <!-- <form action="/nextdaysecondmenuPDF/{{ $kindgarden->id }}" method="get" download> -->
                     <p><b>Taxminiy menyu: </b></p>
-                    <a href="https://drive.google.com/viewerng/viewer?embedded=true&url=cj56359.tmweb.ru/nextdaysecondmenuPDF/{{ $kindgarden->id }}" class="btn btn-success" style="width: 100%;" download>Menyu</a>
+                    <a href="/nextdaysecondmenuPDF/{{ $kindgarden->id }}" class="btn btn-success" style="width: 100%;" download>Menyu</a>
                 <!-- </form> -->
             </div>
         </div>
