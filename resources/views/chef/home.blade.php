@@ -53,6 +53,8 @@
 <!-- End -->
 
 <div class="container-fluid px-4">
+    <a href="/chef/home" ><i class="fas fa-tachometer-alt me-3"></i>Qayta yuklash</a>
+    <br>
     <div class="row g-3 my-2">
     @if(intval(date("H")) >= 8 and intval(date("H")) < 17 and $sendchildcount->count() == 0)
     <form method="POST" action="{{route('chef.sendnumbers')}}">
@@ -69,7 +71,8 @@
                 </div>
             </div>
         @endforeach
-        <button type="submit" class="btn btn-success">Yuborish</button>
+        <br>
+        <button type="submit" class="btn btn-success" style="width: 100%;">Yuborish</button>
     </form>
     @else
         <p><b>Бугунги болалар сони юборилди</b></p>
@@ -78,11 +81,11 @@
     <div class="row g-3 my-2">
         <div class="col-md-3">
             <div class="p-3 bg-white shadow-sm align-items-center rounded">
-                <form action="/activsecondmenuPDF/{{ $day->id }}/{{ $kindgarden->id }}" method="get">
+                <!-- <form action="/activsecondmenuPDF/{{ $day->id }}/{{ $kindgarden->id }}" method="get"> -->
                     <p><b>Haqiqiy Menyu: </b>sana: {{ $day->day_number.".".$day->month_name.".".$day->year_name }}</p>
                     <p><i>Eslatma: menyu har kuni soat 10 dan keyin yangilanadi</i></p>
-                    <button type="submit" class="btn btn-success" style="width: 100%;">Menyu</button>
-                </form>
+                    <a href="/activsecondmenuPDF/{{ $day->id }}/{{ $kindgarden->id }}" class="btn btn-success" style="width: 100%;" download>Menyu</a>
+                <!-- </form> -->
                 @if($bool->count() == 0)
                 <!-- <form action="#" method="get"> -->
                     <br>
@@ -96,10 +99,10 @@
     <div class="row g-3 my-2">
         <div class="col-md-3">
             <div class="p-3 bg-white shadow-sm align-items-center rounded">
-                <form action="/nextdaysecondmenuPDF/{{ $kindgarden->id }}" method="get">
+                <!-- <form action="/nextdaysecondmenuPDF/{{ $kindgarden->id }}" method="get" download> -->
                     <p><b>Taxminiy menyu: </b></p>
-                    <button type="submit" class="btn btn-success" style="width: 100%;">Menyu</button>
-                </form>
+                    <a href="/nextdaysecondmenuPDF/{{ $kindgarden->id }}" class="btn btn-success" style="width: 100%;" download>Menyu</a>
+                <!-- </form> -->
             </div>
         </div>
     </div>
