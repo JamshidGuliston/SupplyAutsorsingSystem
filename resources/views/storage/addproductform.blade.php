@@ -284,22 +284,25 @@ button:active{
     <form id="add-form" action="" method="get">
         
         <!-- Description Line -->
-        <span class="input-note">Махсулот:</span>
-        <span class="input-income">Оғирлиги:</span>
-        <span class="input-expense">Келган нархи:</span>
         <br>
-
+		<span class="input-note">Махсулот:</span>
         <select id="input-note-bar" required style="height: 30px;">
             @foreach($products as $row)
                 <option value="{{$row['id']}}">{{$row['product_name']}}</option>
             @endforeach
         </select>
         <!-- Expense -->
+		<br>
+		<span class="input-income">Оғирлиги:</span>
+		<br>
         <input id="input-expense-bar" type="text">
         <!-- Income -->
+		<br>
+		<span class="input-expense">Келган нархи:</span>
+		<br>
         <input id="input-income-bar" type="text">
         <!-- Button -->
-        <input id="add-item" class="button" type="button" value="Submit">
+        <input id="add-item" style="margin-left: 75px;" class="button" type="button" value="Submit">
     </form> 
 	<br>
     <!-- TABLE -->

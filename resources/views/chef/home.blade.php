@@ -56,7 +56,7 @@
     <a href="/chef/home" ><i class="fas fa-tachometer-alt me-3"></i>Qayta yuklash</a>
     <br>
     <div class="row g-3 my-2">
-    @if(intval(date("H")) >= 8 and intval(date("H")) < 17 and $sendchildcount->count() == 0)
+    @if(intval(date("H")) >= 8 and intval(date("H")) < 18 and $sendchildcount->count() == 0)
     <form method="POST" action="{{route('chef.sendnumbers')}}">
         @csrf
         <input type="hidden" name="kingar_id" value="{{ $kindgarden->id }}">
@@ -66,7 +66,7 @@
                 <div class="p-3 bg-white shadow-sm align-items-center rounded">
                     <p><b>{{ $row->age_name }}</b></p>
                     <div class="user-box">
-                        <input type="number" name="agecount[{{ $row->id }}][]" placeholder="Болалар сони" class="form-control" required>
+                        <input type="number" name="agecount[{{ $row->id }}]" placeholder="Болалар сони" class="form-control" required>
                     </div>
                 </div>
             </div>
