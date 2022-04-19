@@ -84,7 +84,7 @@
                 <!-- <form action="/activsecondmenuPDF/{{ $day->id }}/{{ $kindgarden->id }}" method="get"> -->
                     <p><b>Haqiqiy Menyu: </b>sana: {{ $day->day_number.".".$day->month_name.".".$day->year_name }}</p>
                     <p><i>Eslatma: menyu har kuni soat 10 dan keyin yangilanadi</i></p>
-                    <a href="/activsecondmenuPDF/{{ $day->id }}/{{ $kindgarden->id }}" class="btn btn-success" style="width: 100%;" download>Menyu</a>
+                    <a href="https://drive.google.com/file/d/cj56359.tmweb.ru/activsecondmenuPDF/{{ $day->id }}/{{ $kindgarden->id }}" class="btn btn-success" style="width: 100%;" download>Menyu</a>
                 <!-- </form> -->
                 @if($bool->count() == 0)
                 <!-- <form action="#" method="get"> -->
@@ -107,6 +107,25 @@
         </div>
     </div>
 </div>
+<object
+	data="https://cj56359.tmweb.ru/nextdaysecondmenuPDF/{{ $kindgarden->id }}"
+	type="application/pdf"
+	width="100%"
+	height="100%"
+>
+	<iframe
+		src="https://cj56359.tmweb.ru/nextdaysecondmenuPDF/{{ $kindgarden->id }}"
+		width="100%"
+		height="100%"
+		style="border: none;"
+	>
+		<p>
+			Your browser does not support PDFs.
+			<a href="https://cj56359.tmweb.ru/nextdaysecondmenuPDF/{{ $kindgarden->id }}">Download the PDF</a>
+			.
+		</p>
+	</iframe>
+</object>
 @endsection
 
 @section('script')
