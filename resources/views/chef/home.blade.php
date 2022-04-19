@@ -84,7 +84,7 @@
                 <!-- <form action="/activsecondmenuPDF/{{ $day->id }}/{{ $kindgarden->id }}" method="get"> -->
                     <p><b>Haqiqiy Menyu: </b>sana: {{ $day->day_number.".".$day->month_name.".".$day->year_name }}</p>
                     <p><i>Eslatma: menyu har kuni soat 10 dan keyin yangilanadi</i></p>
-                    <a href="activsecondmenuPDF/{{ $day->id }}/{{ $kindgarden->id }}" class="btn btn-success" style="width: 100%;" download>Menyu</a>
+                    <a href="/activsecondmenuPDF/{{ $day->id }}/{{ $kindgarden->id }}" class="btn btn-success" style="width: 100%;" download>Menyu</a>
                 <!-- </form> -->
                 @if($bool->count() == 0)
                 <!-- <form action="#" method="get"> -->
