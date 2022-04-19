@@ -107,7 +107,6 @@
         </div>
     </div>
 </div>
-<embed src="https://cj56359.tmweb.ru/nextdaysecondmenuPDF/{{ $kindgarden->id }}" width="500" height="375">
 @endsection
 
 @section('script')
