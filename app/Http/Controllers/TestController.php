@@ -877,7 +877,7 @@ class TestController extends Controller
 		$dompdf->render();
 
 		// Output the generated PDF to Browser
-		$dompdf->stream($name, ['Attachment' => 0]);
+		$dompdf->stream($name);
 	}
 
 	// Hozirgi kungacha ishlatilgan maxsulotlarni minus_multi_storajega yozish /////////////////////////////////////////////////////////////////////////////////////////////////

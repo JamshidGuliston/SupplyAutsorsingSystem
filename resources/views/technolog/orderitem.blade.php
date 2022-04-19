@@ -84,7 +84,7 @@
                             <tr>
                                 <th scope="row">{{ ++$i }}</th>
                                 <td>{{ $all->product_name }}</td>
-                                <td><input type="text" name="orders[{{ $all->id }}]"></td>
+                                <td><input type="number" name="orders[{{ $all->id }}]"></td>
                             </tr>
                             @endforeach
                         
@@ -118,18 +118,6 @@
             <div class="col-md-2">
                 <div class="input-group mb-3">
                     <span class="input-group-text" id="basic-addon2">Yuborilmagan</span>
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="product-select">
-                    <select class="form-select" name="productsid" required aria-label="Default select example">
-                        <option value="">--Mahsulotlar--</option>
-                        @foreach($productall as $all)
-                        @if(!isset($all['ok']))
-                        <option value="{{$all['id']}}">{{$all['product_name']}}</option>
-                        @endif
-                        @endforeach
-                    </select>
                 </div>
             </div>
             <div class="col-md-6">
