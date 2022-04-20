@@ -33,7 +33,7 @@
                                     <tr>
                                         <th scope="row">{{ ++$i }}</th>
                                         <td>{{ $all->product_name }}</td>
-                                        <td style="width: 50px;"><input type="text" name="orders[{{ $all->id }}]" onkeypress="return isNumberKey(this, event);" placeholder="{{ $all->size_name }}" required></td>
+                                        <td style="width: 50px;"><input type="text" name="orders[{{ $all->id }}]" onkeypress="javascript:return isNumber(event)" placeholder="{{ $all->size_name }}" required></td>
                                     </tr>
                                 @endif
                             @endforeach
@@ -111,6 +111,15 @@
 
 @section('script')
 <script>
+    function isNumber(evt) {
+        let charCode = (evt.which) ? evt.which : event.keyCode;
+        if (charCode > 31 && (charCode < 48 || charCode > 57) && charCode != 46)
+            return false;
+
+        return true;
+    }
+</script>
+<!-- <script>
     function isNumberKey(txt, evt) {
       var charCode = (evt.which) ? evt.which : evt.keyCode;
       if (charCode == 46) {
@@ -127,5 +136,5 @@
       }
       return true;
     }
-</script>
+</script> -->
 @endsection
