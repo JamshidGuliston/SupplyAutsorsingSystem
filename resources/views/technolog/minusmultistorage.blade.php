@@ -199,7 +199,7 @@
                 <td>{{ $row['productname'] }}</td>
                 @foreach($days as $day)
                     @if(isset($row[$day['id']]))
-                        <td>-{{ $row[$day['id']] }}</td>
+                        <td>{{ $row[$day['id']] }}</td>
                         <?php $all += $row[$day['id']]; ?>
                     @else
                         <td></td>
