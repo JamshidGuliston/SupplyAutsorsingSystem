@@ -84,7 +84,7 @@
                             <tr>
                                 <th scope="row">{{ ++$i }}</th>
                                 <td>{{ $all->product_name }}</td>
-                                <td><input type="number" name="orders[{{ $all->id }}]"></td>
+                                <td><input type="text" onkeypress="javascript:return isNumber(event)" name="orders[{{ $all->id }}]"></td>
                             </tr>
                             @endforeach
                         
@@ -159,6 +159,13 @@
 
 @section('script')
 <script>
+    function isNumber(evt) {
+        let charCode = (evt.which) ? evt.which : event.keyCode;
+        if (charCode > 31 && (charCode < 48 || charCode > 57) && charCode != 46)
+            return false;
+
+        return true;
+    }
     $(document).ready(function() {
         $('#check_char').keypress(function(event){
             var str = $('#check_char').val(); 
