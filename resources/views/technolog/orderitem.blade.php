@@ -109,10 +109,7 @@
                 <h3 class="documentnumber">{{ $orderid." - ҳужжат, " }} {{ $ordername->kingar_name.", " }} {{ $ordername->order_title }}</h3>
             </div>
         </div>
-    </div>
-
-    <form action="{{route('technolog.plusproduct')}}" method="POST">
-        @csrf
+    </div>    
         <input type="hidden" name="titleid" value="{{$orderid}}">
         <div class="row">
             <div class="col-md-2">
@@ -126,7 +123,6 @@
                 </div>
             </div>
         </div>
-    </form>
 </div>
 
 <div class="row py-1 px-4">

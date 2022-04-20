@@ -42,8 +42,8 @@
                     </table>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Yopish</button>
-                    <button type="submit" class="btn add-age btn-info text-white">Qo'shish</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">x</button>
+                    <button type="submit" class="btn add-age btn-primary text-white">Tasdiqlash</button>
                 </div>
             </form>
         </div>
@@ -56,7 +56,7 @@
     <a href="/chef/home" ><i class="fas fa-tachometer-alt me-3"></i>Qayta yuklash</a>
     <br>
     <div class="row g-3 my-2">
-    @if(intval(date("H")) >= 8 and intval(date("H")) < 18 and $sendchildcount->count() == 0)
+    @if(intval(date("H")) >= 8 and intval(date("H")) < 10 and $sendchildcount->count() == 0)
     <form method="POST" action="{{route('chef.sendnumbers')}}">
         @csrf
         <input type="hidden" name="kingar_id" value="{{ $kindgarden->id }}">
