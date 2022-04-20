@@ -212,7 +212,7 @@
                     <?php
                 }
                 ?>
-                <td style="width: 70px;">-{{ $all }}</td>
+                <td style="width: 70px;">{{ $all }}</td>
             </tr>
             @endforeach
         </tbody>
