@@ -1445,7 +1445,7 @@ class TechnologController extends Controller
                     'products.sort'
                 ]);
             foreach($minus as $row){
-                $minusproducts[$row->product_name_id][$day->id] = round($row->product_weight / $row->div, 2);
+                $minusproducts[$row->product_name_id][$day->id] = round($row->product_weight, 3);
                 $minusproducts[$row->product_name_id]['productname'] = $row->product_name;
             }
         }
