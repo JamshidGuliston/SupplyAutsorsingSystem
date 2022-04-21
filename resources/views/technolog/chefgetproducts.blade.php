@@ -193,7 +193,7 @@
                     <th class='vrt-header' style="padding: 0px; width: 3%; height: 85px"><span>{{ $row->product_name }}</span></th>
                 @endif
                 @endforeach
-                <th style="width: 70px;">Жами:</th>
+                <th>Тўлиқлиги</th>
             </tr>
         </thead>
         <tbody>
@@ -204,12 +204,16 @@
                 @foreach($products as $value)
                     @if(isset($value->yes) and isset($kind[$value->id]))
                         <td>{{ $kind[$value->id] }}</td>
-                        <?php $allcount += $kind[$value->id]; ?>
+                        <?php $allcount ++; ?>
                     @else
                         <td></td>
                     @endif
                 @endforeach
-                <td style="width: 70px;">{{ $allcount }}</td>
+                @if($allcount == count($products))
+                    <td>{{ "тўлиқ" }}</td>
+                @else
+                    <td>{{ "тўлиқ эмас" }}</td>
+                @endif
             </tr>
             @endforeach
         </tbody>
