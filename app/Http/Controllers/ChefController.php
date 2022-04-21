@@ -71,6 +71,9 @@ class ChefController extends Controller
                         $val = $val . $value[$i];
                     }
                 }
+                if($val == ""){
+                    $val = 0;
+                }
                 minus_multi_storage::create([
                     'day_id' => $request->dayid,
                     'kingarden_name_id' => $request->kindgarid,

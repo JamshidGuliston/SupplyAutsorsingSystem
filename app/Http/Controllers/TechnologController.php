@@ -1426,6 +1426,7 @@ class TechnologController extends Controller
         foreach($all as $row){
             $arr[$row->kingarden_name_id]['name'] = $row->kingar_name;
             $arr[$row->kingarden_name_id][$row->product_name_id] = $row->product_weight;
+            // $arr[$row->kingarden_name_id]['row'] = $row->id;
             $r = Product::where('id', $row->product_name_id)->first();
             $r['yes'] = 'ok';
             if(!isset($pbool[$row->product_name_id]))
@@ -1434,6 +1435,15 @@ class TechnologController extends Controller
         }
         // dd($products);
         return view('technolog.chefgetproducts', ['kindgardens' => $kindgardens, 'day' => $day, 'all' => $arr, 'products' => $products]);   
+    }
+
+    public function chefeditproductw(Request $request)
+    {
+        // dd($request->all());
+        minus_multi_storage::where('day_id', $request->dayid)->where('kingarden_name_id', $request->kingid)->where('product_name_id', $request->prodid)
+                            ->update(['product_weight' => $request->kg]);
+        
+        return redirect()->route('technolog.chefgetproducts');
     }
     // end chif
     public function productshoptogarden(Request $request){

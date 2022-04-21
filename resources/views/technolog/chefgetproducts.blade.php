@@ -85,17 +85,18 @@
 @section('content')
 <!-- Worker count edit -->
 <!-- Modal -->
-<div class="modal editesmodal fade" id="wcountModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<div class="modal editesmodal fade" id="editModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
-        <form action="" method="post">
+        <form action="{{route('technolog.chefeditproductw')}}" method="post">
 		    @csrf
+            <input type="hidden" name="dayid" value="{{ $day->id }}">
             <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">Ishchilar sonini o'zgartirish</h5>
+                <h5 class="modal-title" id="exampleModalLabel">Maxsulot qiymatini o'zgartirish</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <h4 class="gardentitle"></h4>
+                <h4 class="prodtitle"></h4>
                 <div class="wor_countedit">
 
                 </div>
@@ -170,17 +171,9 @@
             <b>- Шу кунда ишлатилган махсулотлар</b>
         </div>
         <div class="col-md-3">
-            <!-- <b>Bog'chalarga so'rov yuborish</b>
-            <a href="">
-                <i class="far fa-paper-plane" style="color: dodgerblue; font-size: 18px;"></i>
-            </a> -->
         </div>
         <div class="col-md-3">
             <b>Сана: {{ $day->day_number.".".$day->month_name.".".$day->year_name }}</b>
-            <!-- <b>Taxminiy menyu yuborish</b>
-            <a href="">
-                <i class="far fa-paper-plane" style="color: dodgerblue; font-size: 18px;"></i>
-            </a> -->
         </div>
     </div>
     <hr>
@@ -197,13 +190,13 @@
             </tr>
         </thead>
         <tbody>
-            @foreach($all as $kind)
+            @foreach($all as $key => $kind)
             <?php $allcount = 0; ?>
             <tr>
                 <td>{{ $kind['name'] }}</td>
                 @foreach($products as $value)
                     @if(isset($value->yes) and isset($kind[$value->id]))
-                        <td>{{ $kind[$value->id] }}</td>
+                        <td>{{ $kind[$value->id] }}<br><i data-edites-id="{{ $kind[$value->id] }}" data-product-name="{{ $value->product_name }}" data-product-id="{{ $value->id }}" data-kind-id="{{ $key }}" class="editess far fa-edit text-info" data-bs-toggle="modal" data-bs-target="#editModal" data-kinid="" style="cursor: pointer; margin-right: 16px;"> </i></td>
                         <?php $allcount ++; ?>
                     @else
                         <td></td>
@@ -224,14 +217,15 @@
 
 @section('script')
 <script>
-    $('.w_countedit').click(function() {
-        var king = $(this).attr('data-menu-id');
-        var wc = $(this).attr('data-wor-count');
-        var kn = $(this).attr('data-king-name');
+    $('.editess').click(function() {
+        var kindid = $(this).attr('data-kind-id');
+        var productname = $(this).attr('data-product-name');
+        var productid = $(this).attr('data-product-id');
+        var change = $(this).attr('data-edites-id');
         var div = $('.wor_countedit');
-        var title = $('.gardentitle');
-        div.html("<input type='number' name='workers' class='form-control' value="+wc+">");
-        title.html("<p>"+kn+"</p><input type='hidden' name='kingid' class='' value="+king+">");
+        var title = $('.prodtitle');
+        div.html("<input type='text' name='kg' class='form-control' value="+change+">");
+        title.html("<p>"+productname+"</p><input type='hidden' name='kingid' class='' value="+kindid+"><input type='hidden' name='prodid' class='' value="+productid+">");
     });
 
     $('.ch_countedit').click(function() {

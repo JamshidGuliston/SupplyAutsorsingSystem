@@ -127,6 +127,7 @@ td:first-child i{
     #page-content-wrapper {
         min-width: 0;
         width: 100%;
+        overflow-x: scroll;
     }
 
     #wrapper.toggled #sidebar-wrapper {

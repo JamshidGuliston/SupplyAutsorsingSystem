@@ -146,6 +146,7 @@ Route::group(['prefix' => 'technolog', 'middleware' => ['isTechnolog', 'auth']],
     Route::post('createchef', [TechnologController::class, 'createchef'])->name('technolog.createchef');
     Route::get('chefsettings', [TechnologController::class, 'chefsettings'])->name('technolog.chefsettings');
     Route::get('chefgetproducts', [TechnologController::class, 'chefgetproducts'])->name('technolog.chefgetproducts');
+    Route::post('chefeditproductw', [TechnologController::class, 'chefeditproductw'])->name('technolog.chefeditproductw');
     
     Route::get('createnextdaypdf', [TestController::class, 'createnextdaypdf'])->name('technolog.createnextdaypdf');
     Route::get('createnewdaypdf/{id}', [TestController::class, 'createnewdaypdf'])->name('technolog.createnewdaypdf');
