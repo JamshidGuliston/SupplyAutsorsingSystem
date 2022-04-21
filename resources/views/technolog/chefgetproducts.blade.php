@@ -202,7 +202,7 @@
             <tr>
                 <td>{{ $kind['name'] }}</td>
                 @foreach($products as $value)
-                    @if(isset($value->yes))
+                    @if(isset($value->yes) and isset($kind[$value->id]))
                         <td>{{ $kind[$value->id] }}</td>
                         <?php $allcount += $kind[$value->id]; ?>
                     @else
