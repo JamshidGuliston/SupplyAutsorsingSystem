@@ -1428,7 +1428,9 @@ class TechnologController extends Controller
             $arr[$row->kingarden_name_id][$row->product_name_id] = $row->product_weight;
             $r = Product::where('id', $row->product_name_id)->first();
             $r['yes'] = 'ok';
-            $products[] = $r;
+            if(!isset($pbool[$row->product_name_id]))
+                $products[] = $r;
+            $pbool[$row->product_name_id] = 1;
         }
         // dd($products);
         return view('technolog.chefgetproducts', ['kindgardens' => $kindgardens, 'day' => $day, 'all' => $arr, 'products' => $products]);   
