@@ -33,7 +33,7 @@
                                     <tr>
                                         <th scope="row">{{ ++$i }}</th>
                                         <td>{{ $all->product_name }}</td>
-                                        <td style="width: 50px;"><input type="text" name="orders[{{ $all->id }}]" onkeypress="javascript:return isNumber(event)" placeholder="{{ $all->size_name }}" required></td>
+                                        <td style="width: 50px;"><input type="text" name="orders[{{ $all->id }}]"  placeholder="{{ $all->size_name }}" required></td>
                                     </tr>
                                 @endif
                             @endforeach
@@ -75,7 +75,7 @@
         <button type="submit" class="btn btn-success" style="width: 100%;">Yuborish</button>
     </form>
     @else
-        <p><b>Бугунги болалар сони юборилди</b></p>
+        <p><b>Бугунги болалар сони қабул қилинди</b></p>
     @endif
     </div>
     <div class="row g-3 my-2">

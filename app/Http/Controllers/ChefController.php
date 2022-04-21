@@ -60,12 +60,23 @@ class ChefController extends Controller
         $bool = minus_multi_storage::where('day_id', $request->dayid)->where('kingarden_name_id', $request->kindgarid)->get();
         if($bool->count() == 0){
             foreach($request->orders as $key => $value){
+                $val = "";
+                $bool = 1;
+                for($i = 0; $i < strlen($value); $i++){
+                    if (($value[$i] == ',' or $value[$i] == '.') and $bool){
+                        $val = $val . '.';
+                        $bool = 0;
+                    }
+                    elseif(is_numeric($value[$i])){
+                        $val = $val . $value[$i];
+                    }
+                }
                 minus_multi_storage::create([
                     'day_id' => $request->dayid,
                     'kingarden_name_id' => $request->kindgarid,
                     'kingar_menu_id' => 0,
                     'product_name_id' => $key,
-                    'product_weight' => $value,
+                    'product_weight' => $val,
                 ]);
             }
         }

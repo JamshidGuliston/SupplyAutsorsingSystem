@@ -1409,6 +1409,30 @@ class TechnologController extends Controller
 
         return redirect()->route('technolog.allchefs');
     }
+
+    public function chefgetproducts(Request $request){
+        $day = Day::join('months', 'months.id', '=', 'days.month_id')
+        ->join('years', 'years.id', '=', 'days.year_id')
+        ->orderBy('id', 'DESC')->first(['days.id', 'days.day_number', 'months.month_name', 'years.year_name']);
+
+        $all = minus_multi_storage::where('day_id', $day->id)
+                    ->join('kindgardens', 'kindgardens.id', '=', 'minus_multi_storages.kingarden_name_id')
+                    ->orderBy('kingarden_name_id', 'DESC')
+                    ->get(['minus_multi_storages.id', 'kindgardens.kingar_name', 'minus_multi_storages.product_name_id', 'minus_multi_storages.product_weight', 'minus_multi_storages.kingarden_name_id']);
+        $arr = [];
+        // dd($arr);
+        $products = [];
+        $kindgardens = Kindgarden::where('hide', 1)->get();
+        foreach($all as $row){
+            $arr[$row->kingarden_name_id]['name'] = $row->kingar_name;
+            $arr[$row->kingarden_name_id][$row->product_name_id] = $row->product_weight;
+            $r = Product::where('id', $row->product_name_id)->first();
+            $r['yes'] = 'ok';
+            $products[] = $r;
+        }
+        // dd($products);
+        return view('technolog.chefgetproducts', ['kindgardens' => $kindgardens, 'day' => $day, 'all' => $arr, 'products' => $products]);   
+    }
     // end chif
     public function productshoptogarden(Request $request){
         // dd($request->all());
