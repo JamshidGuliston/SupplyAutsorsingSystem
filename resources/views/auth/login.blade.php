@@ -186,7 +186,7 @@
                                     <!-- Error Message -->
                                 </div>
                                 <div class="col-lg-6 login-btm login-button">
-                                    <button type="submit" class="btn btn-outline-primary">{{ __('Login') }}</button>
+                                    <button type="submit" class="btn btn-outline-primary">{{ __('Kirish') }}</button>
                                 </div>
                             </div>
                         </form>
