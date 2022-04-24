@@ -8,11 +8,15 @@ use App\Models\Day;
 use App\Models\Kindgarden;
 use App\Models\minus_multi_storage;
 use App\Models\Number_children;
+use App\Models\order_product;
+use App\Models\order_product_structure;
+use App\Models\plus_multi_storage;
 use App\Models\Product;
 use App\Models\Temporary;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 
 class ChefController extends Controller
 {
@@ -100,5 +104,40 @@ class ChefController extends Controller
             }
         }
         return redirect()->route('chef.home');
+    }
+
+    public function controlpassword(Request $request)
+    {
+        $day = Day::orderby('id', 'DESC')->get();
+        $password = Auth::user()->password;
+        if (Hash::check($request->password, $password)) {
+            $result = 1;
+            order_product::where('id', $request->orderid)->update([
+                'document_processes_id' => 4
+            ]);
+
+            $order = order_product::where('id', $request->orderid)->first();
+            $product = order_product_structure::where('order_product_name_id', $request->orderid)->get();
+            foreach ($product as $row) {
+            	$find = plus_multi_storage::where('kingarden_name_d', $order['kingar_name_id'])
+            						->where('order_product_id', $order['id'])
+            						->where('product_name_id', $row['product_name_id'])
+            						->where('product_weight', $row['product_weight'])
+            						->get();
+            	if($find->count() == 0){
+	                plus_multi_storage::create([
+	                    'day_id' => $day[0]->id,
+	                    'shop_id' => 0,
+	                    'kingarden_name_d' => $order['kingar_name_id'],
+	                    'order_product_id' => $order['id'],
+	                    'product_name_id' => $row['product_name_id'],
+	                    'product_weight' => $row['product_weight'],
+	                ]);
+            	}
+            }
+        } else {
+            $result = 0;
+        }
+        return $result;
     }
 }

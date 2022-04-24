@@ -61,6 +61,16 @@ Route::group(['prefix' => 'storage', 'middleware' => ['isStorage', 'auth']], fun
     Route::get('getdoc', [StorageController::class, 'getdoc'])->name('storage.getdoc');
     Route::get('controlpassword', [StorageController::class, 'controlpassword']);
     Route::get('document/{id}', [StorageController::class, 'document']);
+
+    Route::get('addmultisklad', [StorageController::class, 'addmultisklad'])->name('storage.addmultisklad');
+    Route::post('newordersklad', [StorageController::class, 'newordersklad'])->name('storage.newordersklad');
+    Route::get('onedaymulti/{id}', [StorageController::class, 'onedaymulti'])->name('storage.onedaymulti');
+    Route::get('orderskladpdf/{id}', [TechnologController::class, 'orderskladpdf'])->name('technolog.orderskladpdf');
+    Route::get('orderitem/{id}', [StorageController::class, 'orderitem'])->name('storage.orderitem');
+    Route::get('getproduct', [StorageController::class, 'getproduct']);
+    Route::get('editproduct', [StorageController::class, 'editproduct']);
+    Route::get('deleteid', [StorageController::class, 'deleteid']);
+
 });
 
 Route::group(['prefix' => 'technolog', 'middleware' => ['isTechnolog', 'auth']], function () {
@@ -129,6 +139,7 @@ Route::group(['prefix' => 'technolog', 'middleware' => ['isTechnolog', 'auth']],
     // mayda skladlar
     Route::get('minusmultistorage/{id}', [TechnologController::class, 'minusmultistorage'])->name('technolog.minusmultistorage');
     Route::get('plusmultistorage/{id}', [TechnologController::class, 'plusmultistorage'])->name('technolog.plusmultistorage');
+    Route::get('getmodproduct/{id}', [TechnologController::class, 'getmodproduct'])->name('technolog.getmodproduct');
     // end telegram
     Route::post('editnextworkers', [TechnologController::class, 'editnextworkers'])->name('technolog.editnextworkers');
     Route::post('editnextcheldren', [TechnologController::class, 'editnextcheldren'])->name('technolog.editnextcheldren');

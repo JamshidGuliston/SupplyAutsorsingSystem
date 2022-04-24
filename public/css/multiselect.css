@@ -46,8 +46,8 @@
 	}
 
 .multiselect-wrapper .multiselect-list {
+	width: 100%;
 	padding: 5px;
-	min-width: 800px;
 }
 
 .multiselect-wrapper ul {
