@@ -1,5 +1,7 @@
 @extends('layouts.app')
-
+@section('leftmenu')
+    @include('storage.sidemenu'); 
+@endsection
 @section('content')
 <!-- edite -->
 <div class="modal fade" id="exampleModalsadd" tabindex="-1" aria-labelledby="exampleModalLabelsadd" aria-hidden="true">

@@ -731,6 +731,12 @@ class TechnologController extends Controller
     	Person::where('id', $request->personid)->delete();
     	return redirect()->route('technolog.getbotusers');
     }
+
+    public function deletetitlemenuid(Request $request){
+        // dd($request->all());
+        Titlemenu::where('id', $request->menuid)->delete();
+        return redirect()->route('technolog.seasons');
+    }
     // orderproduct malulotlarini olish 
     public function getproduct(Request $request)
     {

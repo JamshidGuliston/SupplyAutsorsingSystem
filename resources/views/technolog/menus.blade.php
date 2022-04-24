@@ -1,20 +1,33 @@
 @extends('layouts.app')
 
 @section('leftmenu')
-<div class="list-group list-group-flush my-3">
-    <a href="/technolog/home" class="list-group-item list-group-item-action bg-transparent second-text"><i class="fas fa-tachometer-alt me-2"></i>Bosh sahifa</a>
-    <a href="#" class="list-group-item list-group-item-action bg-transparent second-text fw-bold"><i class="fas fa-project-diagram me-2"></i>Projects</a>
-    <a href="#" class="list-group-item list-group-item-action bg-transparent second-text fw-bold"><i class="fas fa-chart-line me-2"></i>Analytics</a>
-    <a href="/technolog/seasons" class="list-group-item list-group-item-action bg-transparent second-text fw-bold {{Request::is('technolog/seasons') ? 'active' : null }}"><i class="fas fa-paste"></i> Menyular</a>
-    <a href="/technolog/food" class="list-group-item list-group-item-action bg-transparent second-text fw-bold {{Request::is('technolog/food') ? 'active' : null }}"><i class="fas fa-hamburger"></i> Taomlar</a>
-    <a href="/technolog/allproducts" class="list-group-item list-group-item-action bg-transparent second-text fw-bold {{Request::is('technolog/allproducts') ? 'active' : null }}"><i class="fas fa-carrot"></i> Products</a>
-    <a href="/technolog/getbotusers" class="list-group-item list-group-item-action bg-transparent second-text fw-bold {{Request::is('technolog/getbotusers') ? 'active' : null }}"><i class="fas fa-comment-dots me-2"></i>Chat bot</a>
-    <a href="/technolog/shops" class="list-group-item list-group-item-action bg-transparent second-text fw-bold {{Request::is('technolog/shops') ? 'active' : null }}"><i class="fas fa-store-alt"></i> Shops</a>
-    <!-- <a href="#" class="list-group-item list-group-item-action bg-transparent text-danger fw-bold"><i class="fas fa-power-off me-2"></i>Logout</a> -->
-</div>
+@include('technolog.sidemenu'); 
 @endsection
 
+
 @section('content')
+<!-- DELET -->
+<!-- Modal -->
+<div class="modal fade" id="deleteModalas" tabindex="-1" aria-labelledby="exampleModalLabelss" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+        <form action="{{route('technolog.deletetitlemenuid')}}" method="POST">
+            @csrf
+            <div class="modal-header bg-danger">
+                <h5 class="modal-title text-white" id="exampleModalLabel">O'chirish</h5>
+                <button type="button" class="btn-close " data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body deletefood">
+            </div>
+            <div class="modal-footer">
+                <!-- <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button> -->
+                <button type="submit" class="btn dele btn-danger">O'chirish</button>
+            </div>
+        </form>
+        </div>
+    </div>
+</div>
+<!-- DELET -->
 <div class="container-fluid px-4">
     <div style="text-align: end;">
         <a href="/technolog/addtitlemenu/{{ $id }}">+ qo'shish</a>
@@ -26,13 +39,14 @@
                 <i class="fas fa-utensils fs-1 primary-text border rounded-full secondary-bg p-2" style="color:chocolate"></i>
                 <div class="text-center">
                     <p class="fs-4" style="font-size: 18px !important;">{{$row['menu_name']}}</p>
-                    <a href="#" style="color: #959fa3; margin-right: 6px; font-size: 20px;"><i class="fas fa-cog"></i></a>
-                    <a href="#" style="color: #959fa3; margin-right: 6px; font-size: 20px;"><i class="fas fa-eye"></i></a>
                     @if($row->us == "1111")
                         <i class="fas fa-bullseye" style="color: #22aa6b; margin-right: 6px; font-size: 20px;"></i>
                     @else
                         <a href="/technolog/menuitem/{{$row['id']}}" style="color: #959fa3; margin-right: 6px; font-size: 20px;"><i class="far fa-edit"></i></a>
                     @endif
+                    <a href="#" style="color: #959fa3; margin-right: 6px; font-size: 20px;"><i class="fas fa-cog"></i></a>
+                    <a href="#" style="color: #959fa3; margin-right: 6px; font-size: 20px;"><i class="fas fa-eye"></i></a>
+                    <a href="#" style="color: #959fa3; margin-right: 6px; font-size: 20px;"><i class="fas fa-minus-circle menudel" data-menu-id="{{ $row['id'] }}" data-menuname-id = "{{ $row['menu_name']}} " style="color: #da1313; cursor: pointer;" data-bs-toggle="modal" data-bs-target="#deleteModalas"></i></a>
                 </div>
             </div>
         </div>
@@ -40,4 +54,15 @@
     </div>
     <a href="/technolog/seasons">Orqaga</a>
 </div>
+@endsection
+
+@section('script')
+<script>
+    $('.menudel').click(function(){
+            var menuid = $(this).attr('data-menu-id');
+            var menuname = $(this).attr('data-menuname-id');
+            var div = $('.deletefood');
+            div.html("<input type='hidden' name='menuid' value="+menuid+"><p>"+menuname+"ни ўчирмоқчимисиз? </p>");  
+        });
+</script>
 @endsection

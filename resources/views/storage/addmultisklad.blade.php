@@ -4,6 +4,9 @@
 <link href="/css/multiselect.css" rel="stylesheet"/>
 <script src="/js/multiselect.min.js"></script>
 <style>
+    .modal-header{
+        background-color: ghostwhite;
+    }
     .year {
         text-align: center;
     }
@@ -78,33 +81,8 @@
             <div id="hiddenid">
             </div>
             <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">Продукт хисоби</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                Боғчаларни танлаш
-                <select id='testSelect2' name="gardens[]" class="form-select" aria-label="Default select example" multiple required>
-                    @foreach($gardens as $row)
-                        <option value='{{ $row->id }}'>{{ $row->kingar_name }}</option>
-                    @endforeach
-                </select>
-                <hr>
-                <div class="table">
-                    <table style="width:100%">
-                        <thead style="background-color: floralwhite;">
-                            <tr>
-                                <th scope="col">...</th>
-                                <th scope="col" style="text-align: center;">3-4; 4-7 ёш</th>
-                                <th scope="col" style="text-align: center;">Қисқа гурух</th>
-                            </tr>
-                        </thead>
-                        <tbody class="addfood">    
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-            <div class="modal-body foodcomposition"> 
-                <hr>
+                <!-- <h5 class="modal-title" id="exampleModalLabel">Продукт хисоби</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button> -->
                 <div class="row">
                     <div class="col-md-5">
                         <div class="product-select">
@@ -131,7 +109,32 @@
                             <i class="fas fa-plus me-2" style="color:#23b242; cursor: pointer; padding-top: 10px"></i>
                         </div>
                     </div>
-                </div>   
+                </div>  
+            </div>
+            <div class="modal-body">
+                 
+                <div class="table">
+                    <table style="width:100%">
+                        <thead style="background-color: floralwhite;">
+                            <tr>
+                                <th scope="col">...</th>
+                                <th scope="col" style="text-align: center;">3-4; 4-7 ёш</th>
+                                <th scope="col" style="text-align: center;">Қисқа гурух</th>
+                            </tr>
+                        </thead>
+                        <tbody class="addfood">    
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="modal-body foodcomposition"> 
+                <input type="number" name="maxday" class="form-select" placeholder="Сифати тез бузиладиганлар муддати" required>
+                <!-- Боғчаларни танлаш -->
+                <select id='testSelect2' name="gardens[]" class="form-select" aria-label="Default select example" multiple required>
+                    @foreach($gardens as $row)
+                        <option value='{{ $row->id }}'>{{ $row->kingar_name }}</option>
+                    @endforeach
+                </select>
             </div>
             <div class="modal-footer">
                 <!-- <button type="button" class="btn btn-warning" data-bs-dismiss="modal">Close</button> -->

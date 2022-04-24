@@ -78,7 +78,7 @@ class StorageController extends Controller
         $season = Season::where('hide', 1)->first();
         $menus = Titlemenu::where('menu_season_id', $season->id)->get();
         $gardens = Kindgarden::where('hide', 1)->get();
-        $orders = order_product::all();
+        $orders = order_product::orderby('id', 'DESC')->get();
         // dd($menus);
         return view('storage.addmultisklad', compact('orders','gardens', 'months', 'menus'));
     }
@@ -234,11 +234,16 @@ class StorageController extends Controller
         return $mods;
     }
 
-    public function menuproduct($menuid, $ageid, $child_count, $kindproducts){
+    public function menuproduct($stop, $menuid, $ageid, $child_count, $kindproducts){
         $menuitem = Menu_composition::where('title_menu_id', $menuid)->where('age_range_id', $ageid)->get();
         foreach($menuitem as $row){
             if(!isset($kindproducts[$row['product_name_id']])){
                 $kindproducts[$row['product_name_id']] = 0;
+            }
+            $product = Product::where('id', $row['product_name_id'])->first();
+            if($product->category_name_id == 0 and $stop == 1){
+                // dd($product, $stop, $child_count);
+                continue;
             }
             $kindproducts[$row['product_name_id']] += $row['weight'] * $child_count;
         }
@@ -256,13 +261,17 @@ class StorageController extends Controller
         foreach($request->gardens as $garden){
             $kindproducts[$garden]['k'] = '*';
             $kind = Kindgarden::where('id', $garden)->with('age_range')->first();
-            foreach($request->onemenu as $day){
+            $stop = 0;
+            foreach($request->onemenu as $tr => $day){
+                if($tr > $request->maxday){
+                    $stop = 1;
+                }
                 foreach($kind->age_range as $age){
                     $ch = Number_children::where('kingar_name_id', $garden)->where('king_age_name_id', $age->id)->orderby('day_id', 'DESC')->first();
-                    $kindproducts[$garden] = $this->menuproduct($day[$ch['king_age_name_id']], $ch['king_age_name_id'], $ch['kingar_children_number'], $kindproducts[$garden]);
+                    $kindproducts[$garden] = $this->menuproduct($stop, $day[$ch['king_age_name_id']], $ch['king_age_name_id'], $ch['kingar_children_number'], $kindproducts[$garden]);
                 }
             }
-
+            // dd($kindproducts[$garden]);
             $mods = $this->productsmod($garden);
             
             $order = order_product::create([
@@ -279,11 +288,13 @@ class StorageController extends Controller
                     if(!isset($mods[$key])){
                         $mods[$key] = 0;
                     }
-                    order_product_structure::create([
-                        'order_product_name_id' => $order->id,
-                        'product_name_id' => $key,
-                        'product_weight' => ($val / $prod->div) - $mods[$key],
-                    ]);
+                    if(($val / $prod->div) - $mods[$key] > 0){
+                        order_product_structure::create([
+                            'order_product_name_id' => $order->id,
+                            'product_name_id' => $key,
+                            'product_weight' => ($val / $prod->div) - $mods[$key],
+                        ]);
+                    }
                 }
             }
 
@@ -345,6 +356,41 @@ class StorageController extends Controller
     }
     // Parolni tekshirib mayda skladlarga yuborish
     public function controlpassword(Request $request)
+    {
+        $day = Day::orderby('id', 'DESC')->get();
+        $password = Auth::user()->password;
+        if (Hash::check($request->password, $password)) {
+            $result = 1;
+            order_product::where('id', $request->orderid)->update([
+                'document_processes_id' => 4
+            ]);
+
+            $order = order_product::where('id', $request->orderid)->first();
+            $product = order_product_structure::where('order_product_name_id', $request->orderid)->get();
+            foreach ($product as $row) {
+            	$find = plus_multi_storage::where('kingarden_name_d', $order['kingar_name_id'])
+            						->where('order_product_id', $order['id'])
+            						->where('product_name_id', $row['product_name_id'])
+            						->where('product_weight', $row['product_weight'])
+            						->get();
+            	if($find->count() == 0){
+	                plus_multi_storage::create([
+	                    'day_id' => $day[0]->id,
+	                    'shop_id' => 0,
+	                    'kingarden_name_d' => $order['kingar_name_id'],
+	                    'order_product_id' => $order['id'],
+	                    'product_name_id' => $row['product_name_id'],
+	                    'product_weight' => $row['product_weight'],
+	                ]);
+            	}
+            }
+        } else {
+            $result = 0;
+        }
+        return $result;
+    }
+    
+    public function dostcontrolpassword(Request $request)
     {
         $password = Auth::user()->password;
         if (Hash::check($request->password, $password)) {

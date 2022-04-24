@@ -127,6 +127,7 @@ Route::group(['prefix' => 'technolog', 'middleware' => ['isTechnolog', 'auth']],
     Route::get('getfoodnametoday', [TechnologController::class, 'getfoodnametoday'])->name('technolog.getfoodnametoday');
     Route::post('todaynextdaymenu', [TechnologController::class, 'todaynextdaymenu'])->name('technolog.todaynextdaymenu');
     Route::post('copymenuitem', [TechnologController::class, 'copymenuitem'])->name('technolog.copymenuitem');
+    Route::post('deletetitlemenuid', [TechnologController::class, 'deletetitlemenuid'])->name('technolog.deletetitlemenuid');
     // telegram
     Route::get('sendtoallgarden', [TelegramController::class, 'sendtoallgarden'])->name('technolog.sendtoallgarden');
     Route::post('deletepeople', [TechnologController::class, 'deletepeople'])->name('technolog.deletepeople');
