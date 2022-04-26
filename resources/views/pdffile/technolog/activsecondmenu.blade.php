@@ -328,6 +328,14 @@
                         </tbody>
                       </table>
                 </div>
+				<div class="row" style="margin-top: 25px;">
+					<div>
+						<p style="text-align: center;"><strong>Технолог</strong> __________________</p>
+					</div>
+					<div>
+						<p style="text-align: right;"><strong>Бош ошпаз</strong> __________________</p>
+					</div>
+				</div>
             </div>
         </div>
     </div>
