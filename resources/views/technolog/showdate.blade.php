@@ -26,6 +26,26 @@
 @endsection
 
 @section('content')
+<div class="modal editesmodal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+        <form action="/technolog/editage" method="post">
+		    @csrf
+            <div class="modal-header bg-blue">
+                <h5 class="modal-title" id="exampleModalLabel">Bolalar sonini o'zgartirish</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                ...
+            </div>
+            <div class="modal-footer">
+                <!-- <button type="button" class="btn btn-warning" data-bs-dismiss="modal">Close</button> -->
+                <button type="submit" class="btn btn-success">Saqlash</button>
+            </div>
+        </form>
+        </div>
+    </div>
+</div>
 <div class="py-4 px-4">
 <div class="row">
     <div class="col-md-6">
@@ -79,6 +99,7 @@
             @if(isset($row[$age->id]))
                 <td>
                     {{ $row[$age->id][1]."  " }}
+                    <i class="edites far fa-edit text-info" data-bs-toggle="modal" data-bs-target="#exampleModal" data-kinid="" style="cursor: pointer; margin-right: 16px;"> </i>
                     @if($row[$age->id][2] != null)
                     <i class="far fa-envelope" style="color: #c40c0c"></i> 
                     @endif

@@ -180,6 +180,7 @@
     <table class="table table-light py-4 px-4">
         <thead>
             <tr>
+                <th>T/R</th>
                 <th style="width: 30px;">Боғчалар</th>
                 @foreach($products as $row)
                 @if(isset($row->yes))
@@ -193,6 +194,7 @@
             @foreach($all as $key => $kind)
             <?php $allcount = 0; ?>
             <tr>
+                <td>{{ $loop->index + 1 }}</td>
                 <td>{{ $kind['name'] }}</td>
                 @foreach($products as $value)
                     @if(isset($value->yes) and isset($kind[$value->id]))

@@ -328,7 +328,7 @@
                         </tbody>
                       </table>
                 </div>
-				<div class="row" style="margin-top: 25px;">
+				<div class="row" style="margin-top: 5px;">
 					<div>
 						<p style="text-align: center;"><strong>Технолог</strong> __________________</p>
 					</div>
