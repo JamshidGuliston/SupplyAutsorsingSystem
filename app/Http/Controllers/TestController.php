@@ -876,8 +876,13 @@ class TestController extends Controller
 		// Render the HTML as PDF
 		$dompdf->render();
 
-		// Output the generated PDF to Browser
-		$dompdf->stream($name);
+		// Output the generated PDF to Browser ['Attachment' => 0]
+		if (auth()->user()->id < 6){
+			$dompdf->stream($name, ['Attachment' => 0]);
+		}
+		else{
+			$dompdf->stream($name);	
+		}
 	}
 
 	// Hozirgi kungacha ishlatilgan maxsulotlarni minus_multi_storajega yozish /////////////////////////////////////////////////////////////////////////////////////////////////

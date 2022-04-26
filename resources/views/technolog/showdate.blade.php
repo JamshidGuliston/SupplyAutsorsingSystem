@@ -50,7 +50,8 @@
         <tr>
             <th scope="col" rowspan="2">ID</th>
             <th scope="col" rowspan="2">MTT-nomi</th>
-            <th scope="col" rowspan="2">Xodimlar 
+            <th scope="col" rowspan="2">Xodimlar</th> 
+            <th scope="col" rowspan="2">Yangi Menyu</th> 
             @foreach($ages as $age)
             <th scope="col" colspan="2"> 
                 <span class="age_name{{ $age->id }}">{{ $age->age_name }} </span>
@@ -73,6 +74,7 @@
             <td>{{ $t++ }}</td>
             <td>{{ $row['kingar_name'] }}</td>
             <td>{{ $row['workers_count'] }} </td>
+            <td><a href="/activsecondmenuPDF/{{ $day }}/{{ $row['kingar_name_id'] }}" target="_blank"><i class="far fa-file-pdf" style="color: dodgerblue; font-size: 18px;"></i></a></td>
             @foreach($ages as $age)
             @if(isset($row[$age->id]))
                 <td>
