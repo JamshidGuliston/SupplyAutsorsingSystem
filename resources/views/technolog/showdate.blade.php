@@ -36,7 +36,9 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                ...
+                <div class="editesmodal">
+
+                </div>
             </div>
             <div class="modal-footer">
                 <!-- <button type="button" class="btn btn-warning" data-bs-dismiss="modal">Close</button> -->
@@ -99,7 +101,7 @@
             @if(isset($row[$age->id]))
                 <td>
                     {{ $row[$age->id][1]."  " }}
-                    <i class="edites far fa-edit text-info" data-bs-toggle="modal" data-bs-target="#exampleModal" data-kinid="" style="cursor: pointer; margin-right: 16px;"> </i>
+                    <i class="edites far fa-edit text-info" data-bs-toggle="modal" data-bs-target="#exampleModal" data-agecount="{{ $row[$age->id][1] }}" data-dayid="{{ $day }}" data-ageid="{{ $age->id }}" data-kinid="{{ $row['kingar_name_id'] }}" style="cursor: pointer; margin-right: 16px;"> </i>
                     @if($row[$age->id][2] != null)
                     <i class="far fa-envelope" style="color: #c40c0c"></i> 
                     @endif
@@ -120,5 +122,16 @@
 @endsection
 
 @section('script')
-
+<script>
+    $(document).ready(function() {
+        edite.click(function() {
+            var kinid = $(this).attr('data-kinid');
+            var dayid = $(this).attr('data-dayid');
+            var ageid = $(this).attr('data-ageid');
+            var agecount = $(this).attr('data-agecount');
+            var modaledite = $('.editesmodal');
+            modaledite.html("<input type='hidden' name='dayid' value="+dayid+"><input type='hidden' name='kinid' value="+kinid+"><input type='hidden' name='ageid' value="+ageid+"><input type='text' name='agecount' value="+agecount+">");
+        });
+    }
+</script>
 @endsection

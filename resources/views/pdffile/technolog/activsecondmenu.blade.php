@@ -84,9 +84,9 @@
 								?>
 							</td>
 							@endforeach
-							<td style="text-align: right; border: none !important;">
+							<!-- <td style="text-align: right; border: none !important;">
 								<img src="images/qrmanzil.jpg" alt="QR-code" width="140">
-							</td>
+							</td> -->
 						</tr>
 					</tbody>
 				</table>
@@ -329,8 +329,11 @@
                       </table>
                 </div>
 				<div class="row" style="margin-top: 5px;">
+				    <div>
+						<img src="images/qrmanzil.jpg" alt="QR-code" width="140">
+					</div>
 					<div>
-						<p style="text-align: center;"><strong>ДМТТ рахбари</strong> __________________</p>
+						<!-- <p style="text-align: center;"><strong>ДМТТ рахбари</strong> __________________</p> -->
 					</div>
 					<div>
 						<p style="text-align: right;"><strong>Бош ошпаз</strong> __________________</p>
