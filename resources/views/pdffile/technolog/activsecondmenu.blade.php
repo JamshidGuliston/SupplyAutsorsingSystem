@@ -330,7 +330,7 @@
                 </div>
 				<div class="row" style="margin-top: 5px;">
 					<div>
-						<p style="text-align: center;"><strong>Технолог</strong> __________________</p>
+						<p style="text-align: center;"><strong>ДМТТ рахбари</strong> __________________</p>
 					</div>
 					<div>
 						<p style="text-align: right;"><strong>Бош ошпаз</strong> __________________</p>
