@@ -121,7 +121,7 @@
 										<th scope="row" rowspan="<?php echo $mealtime['rows']; ?>" class='vrt-header' style="padding: 0px; height: 60px;"><?php echo '<span>'. $mealtime['mealtime'] .'</span>'; ?></th>
 										@endif
 										<th class="" style="padding-left: 4px; text-align:left"><?php echo $food['foodname'] ?></td>
-										<td scope="row" class="align-baseline" style="padding: 0px;"><?php echo $food['foodweight'] ?></td>
+										<th class='vrt-header' style="padding: 0px; font-family: 8px"><?php echo '<span>'.$food['foodweight'].'</span>'; ?></td>
 										<?php
 										for($t = 0; $t < count($products); $t++){
 											if(isset($products[$t]['yes']) and isset($food['product'][$products[$t]['id']])){
