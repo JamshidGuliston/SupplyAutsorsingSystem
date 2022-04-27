@@ -287,7 +287,33 @@ class TestController extends Controller
 			$productscount[$row->product_name_id]['product_name'] = $row->product_name;
 		}
 		// dd($workproduct);
-		
+		$bool = minus_multi_storage::where('day_id', $today)->where('kingarden_name_id', $gid)->get();
+		// dd($bool);
+        if($bool->count() == 0){
+			// dd(1);
+			foreach($productscount as $key => $row){
+				if(isset($row['product_name'])){
+					$summ = 0;
+					foreach($ages as $age){
+						if(isset($row[$age['id'].'-children'])){
+							$summ += ($row[$age['id']]*$row[$age['id'].'-children']) / $row[$age['id'].'div'];
+						}
+					}
+					if(isset($workproduct[$key.'wcount'])){
+						$summ += ($workproduct[$key]*$workproduct[$key.'wcount']) / $workproduct[$key.'div'];
+					}
+					// dd($key, $summ);
+					minus_multi_storage::create([
+						'day_id' => $today,
+						'kingarden_name_id' => $gid,
+						'kingar_menu_id' => 0,
+						'product_name_id' => $key,
+						'product_weight' => $summ,
+					]);
+					
+				}
+			}
+		}
 		$dompdf = new Dompdf('UTF-8');
 		$html = mb_convert_encoding(view('docnextday.nakladnoy', ['workproduct' => $workproduct, 'productscount' => $productscount, 'king' => $king, 'ages' => $ages]), 'HTML-ENTITIES', 'UTF-8');
 		$dompdf->loadHtml($html);
