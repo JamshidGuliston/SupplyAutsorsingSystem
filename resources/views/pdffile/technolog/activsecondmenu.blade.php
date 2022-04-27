@@ -121,7 +121,7 @@
 										<th scope="row" rowspan="<?php echo $mealtime['rows']; ?>" class='vrt-header' style="padding: 0px; height: 60px;"><?php echo '<span>'. $mealtime['mealtime'] .'</span>'; ?></th>
 										@endif
 										<th class="" style="padding-left: 4px; text-align:left"><?php echo $food['foodname'] ?></td>
-										<th class='vrt-header' style="padding: 0px; font-family: 8px"><?php echo '<span>'.$food['foodweight'].'</span>'; ?></td>
+										<th class='vrt-header' rowspan="{{ count($food)-2 }}" style="padding: 0px; font-family: 8px"><?php echo '<span>'.$food['foodweight'].'</span>'; ?></td>
 										<?php
 										for($t = 0; $t < count($products); $t++){
 											if(isset($products[$t]['yes']) and isset($food['product'][$products[$t]['id']])){
@@ -141,7 +141,7 @@
 										@if (is_numeric($akey)){
 										<tr>
 											<td scope="row" class="align-baseline" style="padding: 0px;"><?php echo $age['age_name'] ?></td>
-											<td scope="row" class="align-baseline" style="padding: 0px;"></td>
+											<!-- <td scope="row" class="align-baseline" style="padding: 0px;"></td> -->
 											<?php
 											for($t = 0; $t < count($products); $t++){
 												if(isset($products[$t]['yes']) and isset($age[$products[$t]['id']])){
