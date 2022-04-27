@@ -303,13 +303,13 @@ class TestController extends Controller
 						$summ += ($workproduct[$key]*$workproduct[$key.'wcount']) / $workproduct[$key.'div'];
 					}
 					// dd($key, $summ);
-					minus_multi_storage::create([
-						'day_id' => $today,
-						'kingarden_name_id' => $gid,
-						'kingar_menu_id' => 0,
-						'product_name_id' => $key,
-						'product_weight' => $summ,
-					]);
+					// minus_multi_storage::create([
+					// 	'day_id' => $today,
+					// 	'kingarden_name_id' => $gid,
+					// 	'kingar_menu_id' => 0,
+					// 	'product_name_id' => $key,
+					// 	'product_weight' => $summ,
+					// ]);
 					
 				}
 			}
