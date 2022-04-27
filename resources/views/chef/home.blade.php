@@ -78,6 +78,7 @@
         <p><b>Бугунги болалар сони қабул қилинди</b></p>
     @endif
     </div>
+    @if(intval(date("H")) >= 10)
     <div class="row g-3 my-2">
         <div class="col-md-3">
             <div class="p-3 bg-white shadow-sm align-items-center rounded">
@@ -96,6 +97,7 @@
             </div>
         </div>
     </div>
+    @endif
     <div class="row g-3 my-2">
         <div class="col-md-3">
             <div class="p-3 bg-white shadow-sm align-items-center rounded">
