@@ -29,20 +29,20 @@
 <div class="modal editesmodal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
-        <form action="/technolog/editage" method="post">
+        <form action="/technolog/activagecountedit" method="post">
 		    @csrf
             <div class="modal-header bg-blue">
                 <h5 class="modal-title" id="exampleModalLabel">Bolalar sonini o'zgartirish</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <div class="editesmodal">
+                <div class="edites_modal">
 
                 </div>
             </div>
             <div class="modal-footer">
                 <!-- <button type="button" class="btn btn-warning" data-bs-dismiss="modal">Close</button> -->
-                <button type="submit" class="btn btn-success">Saqlash</button>
+                <button type="submit" class="btn btn-success">O'zgartirish</button>
             </div>
         </form>
         </div>
@@ -124,14 +124,15 @@
 @section('script')
 <script>
     $(document).ready(function() {
-        edite.click(function() {
+        $('.edites').click(function() {
+            // alert(1);    
             var kinid = $(this).attr('data-kinid');
             var dayid = $(this).attr('data-dayid');
             var ageid = $(this).attr('data-ageid');
             var agecount = $(this).attr('data-agecount');
-            var modaledite = $('.editesmodal');
-            modaledite.html("<input type='hidden' name='dayid' value="+dayid+"><input type='hidden' name='kinid' value="+kinid+"><input type='hidden' name='ageid' value="+ageid+"><input type='text' name='agecount' value="+agecount+">");
+            var modaledite = $('.edites_modal');
+            modaledite.html("<input type='hidden' name='dayid' value="+dayid+"><input type='hidden' name='kinid' value="+kinid+"><input type='hidden' name='ageid' value="+ageid+"><input type='text' class='form-control' name='agecount' value="+agecount+">");
         });
-    }
+    });
 </script>
 @endsection

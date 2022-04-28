@@ -609,6 +609,13 @@ class TechnologController extends Controller
         return redirect()->route('technolog.sendmenu', ['day' => date("d-F-Y", $d)]);
     }
 
+    public function activagecountedit(Request $request){
+        // dd($request->all());
+        Number_children::where('day_id', $request->dayid)->where('kingar_name_id', $request->kinid)->where('king_age_name_id', $request->ageid)
+                    ->update(['kingar_children_number' => $request->agecount]);
+        
+        return redirect()->route('technolog.sendmenu', $request->dayid);
+    }
 
     // mayda skladlarga product buyurtma berish
 

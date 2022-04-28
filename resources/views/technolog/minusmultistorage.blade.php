@@ -76,13 +76,13 @@
 @section('content')
 <!-- Worker count edit -->
 <!-- Modal -->
-<div class="modal editesmodal fade" id="wcountModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<div class="modal editesmodal fade" id="pcountModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
         <form action="" method="post">
 		    @csrf
             <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">Ishchilar sonini o'zgartirish</h5>
+                <h5 class="modal-title" id="exampleModalLabel">Maxsulot og'irligini o'zgartirish</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
@@ -93,7 +93,7 @@
             </div>
             <div class="modal-footer">
                 <!-- <button type="button" class="btn btn-warning" data-bs-dismiss="modal">Close</button> -->
-                <button type="submit" class="btn btn-success">Saqlash</button>
+                <button type="submit" class="btn btn-success">O'zgartirish</button>
             </div>
         </form>
         </div>
@@ -193,13 +193,16 @@
             </tr>
         </thead>
         <tbody>
-            @foreach($minusproducts as $row)
+            @foreach($minusproducts as $key => $row)
             <?php $all = 0; ?>
             <tr>
                 <td>{{ $row['productname'] }}</td>
                 @foreach($days as $day)
                     @if(isset($row[$day['id']]))
-                        <td>{{ $row[$day['id']] }}</td>
+                        <td>
+                            {{ $row[$day['id']] }}
+                            <i class="edites far fa-edit text-info" data-bs-toggle="modal" data-bs-target="#pcountModal" data-dayid="{{ $day }}" data-weight="{{ $row[$day['id']] }}" data-kinid="{{ $kingar->id }}" style="cursor: pointer; margin-right: 16px;"> </i>
+                        </td>
                         <?php $all += $row[$day['id']]; ?>
                     @else
                         <td></td>
@@ -223,14 +226,13 @@
 
 @section('script')
 <script>
-    $('.w_countedit').click(function() {
-        var king = $(this).attr('data-menu-id');
-        var wc = $(this).attr('data-wor-count');
-        var kn = $(this).attr('data-king-name');
+    $('.edites').click(function() {
+        var kinid = $(this).attr('data-kinid');
+        var dayid = $(this).attr('data-dayid');
+        var kg = $(this).attr('data-weight');
         var div = $('.wor_countedit');
-        var title = $('.gardentitle');
-        div.html("<input type='number' name='workers' class='form-control' value="+wc+">");
-        title.html("<p>"+kn+"</p><input type='hidden' name='kingid' class='' value="+king+">");
+        div.html("<input type='hidden' name='kinid' class='form-control' value="+kinid+"><input type='hidden' name='dayid' class='form-control' value="+dayid+"><input type='text' name='kg' class='form-control' value="+kg+">");
+        // title.html("<p>"+kn+"</p><input type='hidden' name='kingid' class='' value="+king+">");
     });
 
     $('.ch_countedit').click(function() {
