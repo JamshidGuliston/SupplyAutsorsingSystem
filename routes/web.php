@@ -176,6 +176,7 @@ Route::group(['prefix' => 'chef', 'middleware' => ['isChef', 'auth']], function 
 Route::group(['prefix' => 'accountant', 'middleware' => ['isAccountant', 'auth']], function () {
     Route::get('home', [AccountantController::class, 'index'])->name('accountant.home');
     Route::get('costs', [AccountantController::class, 'costs'])->name('accountant.costs');
+    Route::get('bycosts/{id}', [AccountantController::class, 'bycosts'])->name('accountant.bycosts');
 });
 
 Route::get('/minusp', [TestController::class, 'minusproduct']);

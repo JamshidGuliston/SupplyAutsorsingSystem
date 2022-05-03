@@ -51,6 +51,7 @@ class StorageController extends Controller
     }
 
     public function addproducts(Request $request){
+        dd($request->all());
         $products = $request->productsid;
         $weights = $request->weights;
         $costs = $request->costs;

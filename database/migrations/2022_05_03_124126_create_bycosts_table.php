@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class AddPricesTable extends Migration
+class CreateBycostsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,7 +13,7 @@ class AddPricesTable extends Migration
      */
     public function up()
     {
-        Schema::table('prices', function (Blueprint $table) {
+        Schema::create('bycosts', function (Blueprint $table) {
             $table->id();
             $table->integer('day_id');
             $table->integer('region_name_id');
@@ -32,8 +32,6 @@ class AddPricesTable extends Migration
      */
     public function down()
     {
-        Schema::table('prices', function (Blueprint $table) {
-            //
-        });
+        Schema::dropIfExists('bycosts');
     }
 }
