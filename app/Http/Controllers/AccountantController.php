@@ -8,7 +8,10 @@ class AccountantController extends Controller
 {
     public function index(Request $request)
     {
-
         return view('accountant.home');
+    }
+
+    public function costs(Request $request){
+            
     }
 }

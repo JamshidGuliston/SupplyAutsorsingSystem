@@ -56,7 +56,7 @@ class StorageController extends Controller
         $costs = $request->costs;
 
         $group = Add_group::create([
-            'day_id' => 61,
+            'day_id' => 81,
             'group_name' => time()
         ]);
 
@@ -375,7 +375,7 @@ class StorageController extends Controller
             						->get();
             	if($find->count() == 0){
 	                plus_multi_storage::create([
-	                    'day_id' => 75,
+	                    'day_id' => 81,
 	                    'shop_id' => 0,
 	                    'kingarden_name_d' => $order['kingar_name_id'],
 	                    'order_product_id' => $order['id'],
