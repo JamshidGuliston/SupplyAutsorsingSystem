@@ -33,7 +33,7 @@ class AccountantController extends Controller
                 ->where('region_name_id', $id)
                 ->join('products', 'bycosts.praduct_name_id', '=', 'products.id')
                 ->get();
-        // $minusproducts = [];
+        $minusproducts = [];
         foreach($costs as $row){
             $days->where('id', $row->day_id)->first()->yes = "yes";
             $minusproducts[$row->praduct_name_id][$row->day_id] = $row->price_cost;
