@@ -199,7 +199,7 @@
 <div class="py-4 px-4">
     <div class="row">
         <div class="col-md-6">
-            <b>- Narx</b>
+            <b>- {{ $region->region_name }}</b>
         </div>
         <div class="col-md-3">
             <!-- <b>Bog'chalarga so'rov yuborish</b>
@@ -244,6 +244,12 @@
             @endforeach
         </tbody>
     </table>
+    <div class="form-group row">
+        <label for="inputPassword" class="col-sm-2 col-form-label"><a href="/accountant/costs">Orqaga</a></label>
+        <div class="col-sm-6">
+        <!-- <button type="submit" class="btn btn-success">Saqlash</button> -->
+        </div>
+    </div>
     
 </div>
 @endsection

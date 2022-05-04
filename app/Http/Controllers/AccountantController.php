@@ -23,6 +23,7 @@ class AccountantController extends Controller
     }
 
     public function bycosts(Request $request, $id){
+        $region = Region::where('id', $id)->first();
         $year = Year::orderBy('id', 'DESC')->first();
         // $days = Day::where('year_id', $year->id)->get();
         $days = Day::where('year_id', $year->id)
@@ -43,7 +44,7 @@ class AccountantController extends Controller
         $productall = Product::join('sizes', 'sizes.id', '=', 'products.size_name_id')
                     ->get(['products.id', 'products.product_name', 'sizes.size_name']);
         
-        return view('accountant.bycosts', compact('minusproducts', 'costs', 'productall', 'id', 'days'));
+        return view('accountant.bycosts', compact('region', 'minusproducts', 'costs', 'productall', 'id', 'days'));
     }
 
     public function pluscosts(Request $request){
