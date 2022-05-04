@@ -120,10 +120,10 @@
 <div class="modal editesmodal fade" id="pcountModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
-        <form action="" method="post">
+        <form action="{{route('accountant.editcost')}}" method="post">
 		    @csrf
             <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">Maxsulot og'irligini o'zgartirish</h5>
+                <h5 class="modal-title" id="exampleModalLabel">Maxsulot narxini o'zgartirish</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
@@ -209,7 +209,7 @@
         </div>
         <div class="col-md-3">
             <b>Yangi narx:</b>
-            <i class="fas fa-plus-circle" data-menu-id="" data-menuname-id = "" style="color: #3c7a7c; cursor: pointer;" data-bs-toggle="modal" data-bs-target="#Modalsadd"></i>
+            <i class="fas fa-plus-circle" style="color: #3c7a7c; cursor: pointer;" data-bs-toggle="modal" data-bs-target="#Modalsadd"></i>
         </div>
     </div>
     <hr>
@@ -231,7 +231,7 @@
                     @if(isset($row[$day['id']]))
                         <td>
                             {{ $row[$day['id']] }}
-                            <i class="edites far fa-edit text-info" data-bs-toggle="modal" data-bs-target="#pcountModal" data-dayid="" data-weight="{{ $row[$day['id']] }}" data-kinid="" style="cursor: pointer; margin-right: 16px;"> </i>
+                            <i class="edites far fa-edit text-info" data-bs-toggle="modal" data-bs-target="#pcountModal" data-regionid="{{ $id }}" data-dayid="{{ $day['id'] }}" data-prodid="{{ $key }}" data-weight="{{ $row[$day['id']] }}" style="cursor: pointer; margin-right: 16px;"> </i>
                         </td>
                     @else
                         <td>
@@ -257,11 +257,12 @@
 @section('script')
 <script>
     $('.edites').click(function() {
-        var kinid = $(this).attr('data-kinid');
+        var regid = $(this).attr('data-regionid');
         var dayid = $(this).attr('data-dayid');
+        var prodid = $(this).attr('data-prodid');
         var kg = $(this).attr('data-weight');
         var div = $('.wor_countedit');
-        div.html("<input type='hidden' name='kinid' class='form-control' value="+kinid+"><input type='hidden' name='dayid' class='form-control' value="+dayid+"><input type='text' name='kg' class='form-control' value="+kg+">");
+        div.html("<input type='hidden' name='prodid' class='form-control' value="+prodid+"><input type='hidden' name='regid' class='form-control' value="+regid+"><input type='hidden' name='dayid' class='form-control' value="+dayid+"><input type='text' name='kg' class='form-control' value="+kg+">");
         // title.html("<p>"+kn+"</p><input type='hidden' name='kingid' class='' value="+king+">");
     });
 

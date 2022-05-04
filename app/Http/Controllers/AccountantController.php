@@ -33,12 +33,14 @@ class AccountantController extends Controller
         $costs = bycosts::where('day_id', '>', $days[0]['id'])
                 ->where('region_name_id', $id)
                 ->join('products', 'bycosts.praduct_name_id', '=', 'products.id')
-                ->get();
+                ->get(['bycosts.id', 'bycosts.praduct_name_id', 'bycosts.day_id', 'bycosts.price_cost', 'products.product_name']);
+        
         $minusproducts = [];
         foreach($costs as $row){
             $days->where('id', $row->day_id)->first()->yes = "yes";
             $minusproducts[$row->praduct_name_id][$row->day_id] = $row->price_cost;
             $minusproducts[$row->praduct_name_id]['productname'] = $row->product_name;
+            // $minusproducts[$row->praduct_name_id]['rowid'] = $row->id;
         }
         // dd($minusproducts);
         $productall = Product::join('sizes', 'sizes.id', '=', 'products.size_name_id')
@@ -67,5 +69,14 @@ class AccountantController extends Controller
         }
 
         return redirect()->route('accountant.bycosts', $request->regionid);
+    }
+
+    public function editcost(Request $request){
+        // dd($request->all());
+        bycosts::where('day_id', $request->dayid)
+                ->where('region_name_id', $request->regid)
+                ->where('praduct_name_id', $request->prodid)
+                ->update(['price_cost' => $request->kg]);
+        return redirect()->route('accountant.bycosts', $request->regid);
     }
 }

@@ -292,7 +292,7 @@ button:active{
 		<br>
 		<span class="input-income">Оғирлиги:</span>
 		<br>
-        <input id="input-expense-bar" type="number">
+        <input id="input-expense-bar" type="text" onkeypress="javascript:return isNumber(event)">
 		<br>
 		<span class="input-expense">Келган нархи:</span>
 		<br>
@@ -322,6 +322,13 @@ button:active{
 
 @section('script')
 <script>
+	function isNumber(evt) {
+        let charCode = (evt.which) ? evt.which : event.keyCode;
+        if (charCode > 31 && (charCode < 48 || charCode > 57) && charCode != 46)
+            return false;
+
+        return true;
+    }
 // All this is based on the concept of not manipulating the HTML. 
 
 // container for balance, income, expenses

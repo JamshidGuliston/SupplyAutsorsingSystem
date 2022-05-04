@@ -178,6 +178,7 @@ Route::group(['prefix' => 'accountant', 'middleware' => ['isAccountant', 'auth']
     Route::get('costs', [AccountantController::class, 'costs'])->name('accountant.costs');
     Route::get('bycosts/{id}', [AccountantController::class, 'bycosts'])->name('accountant.bycosts');
     Route::post('pluscosts', [AccountantController::class, 'pluscosts'])->name('accountant.pluscosts');
+    Route::post('editcost', [AccountantController::class, 'editcost'])->name('accountant.editcost');
 });
 
 Route::get('/minusp', [TestController::class, 'minusproduct']);
