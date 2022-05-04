@@ -1,6 +1,9 @@
 @extends('layouts.app')
 @section('css')
 <style>
+    .table{
+        width: auto;
+    }
     .loader-box {
         width: 100%;
         background-color: #80afc68a;
@@ -68,20 +71,28 @@
     <div class="modal-dialog  modal-lg">
         <div class="modal-content">
             <div class="modal-header bg-info">
-                <h5 class="modal-title text-white" id="exampleModalLabel">Menyu bo'yicha kerakli maxsulotlar</h5>
+                <h5 class="modal-title text-white" id="exampleModalLabel">Maxsulot narxlarini yangilash</h5>
                 <button type="button" class="btn-close " data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <form action="{{route('chef.minusproducts')}}" method="POST">
+            <form action="{{route('accountant.pluscosts')}}" method="POST">
                 @csrf
-                <input type="hidden" name="kindgarid" value="{{ $kindgarden->id }}">
-                <input type="hidden" name="dayid" value="{{ $day->id }}">
+                <input type="hidden" name="regionid" value="{{ $id }}">
                 <div class="modal-body">
+                    <div class="col-sm-12">
+                        <select class="form-select" name="dayid" aria-label="Default select example" required>
+                            <option value="">Sana tanlang</option>
+                            @foreach($days as $row)
+                                <option value="{{$row['id']}}">{{ $row['day_number'].'.'.$row['month_name'].' '.$row['year_name'] }}</option>
+                            @endforeach
+                        </select>
+                    </div> 
+                    <hr> 
                     <table class="table table-light table-striped table-hover" style="width: calc(100% - 2rem)!important;">
                         <thead>
                             <tr>
                                 <th scope="col">ID</th>
                                 <th scope="col">Maxsulot</th>
-                                <th scope="col">Og'irligi</th>
+                                <th scope="col">Narxi</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -90,14 +101,13 @@
                                 <tr>
                                     <th scope="row">{{ ++$i }}</th>
                                     <td>{{ $all->product_name }}</td>
-                                    <td style="width: 50px;"><input type="text" name="orders[{{ $all->id }}]"  placeholder="{{ $all->size_name }}" required></td>
+                                    <td style="width: 50px;"><input type="text" name="orders[{{ $all->id }}]"  placeholder="{{ '1 '.$all->size_name.' '.$all->product_name.' narxi' }}" value="0"></td>
                                 </tr>
                             @endforeach
                         </tbody>
                     </table>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">x</button>
                     <button type="submit" class="btn add-age btn-primary text-white">Tasdiqlash</button>
                 </div>
             </form>
@@ -199,14 +209,39 @@
         </div>
         <div class="col-md-3">
             <b>Yangi narx:</b>
-            <i class="fas fa-plus-circle" data-menu-id="" data-menuname-id = "" style="color: #da1313; cursor: pointer;" data-bs-toggle="modal" data-bs-target="#Modalsadd"></i>
+            <i class="fas fa-plus-circle" data-menu-id="" data-menuname-id = "" style="color: #3c7a7c; cursor: pointer;" data-bs-toggle="modal" data-bs-target="#Modalsadd"></i>
         </div>
     </div>
     <hr>
     <table class="table table-light py-4 px-4">
         <thead>
+            <th style="width: 30px;">Махсулотлар</th>
+            @foreach($days as $day)
+                @if(isset($day->yes))
+                    <th scope="col">{{ $day->day_number.'.'.$day->month_name.'.'.$day->year_name }}</th>
+                @endif
+            @endforeach
         </thead>
         <tbody>
+            @foreach($minusproducts as $key => $row)
+            <tr>
+                <td>{{ $row['productname'] }}</td>
+                @foreach($days as $day)
+                @if(isset($day->yes))
+                    @if(isset($row[$day['id']]))
+                        <td>
+                            {{ $row[$day['id']] }}
+                            <i class="edites far fa-edit text-info" data-bs-toggle="modal" data-bs-target="#pcountModal" data-dayid="" data-weight="{{ $row[$day['id']] }}" data-kinid="" style="cursor: pointer; margin-right: 16px;"> </i>
+                        </td>
+                    @else
+                        <td>
+                            {{ '' }}
+                        </td>
+                    @endif
+                @endif
+                @endforeach
+            </tr>
+            @endforeach
         </tbody>
     </table>
     

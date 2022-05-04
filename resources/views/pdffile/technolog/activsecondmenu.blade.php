@@ -166,13 +166,13 @@
 								<td scope="row" class="align-baseline" style="padding: 0px; border-top: 2px solid black">Жами миқдор</td>
 								<td style="padding: 0px; border-top: 2px solid black"></td>
 								<?php
-								$narx = [];
-								$narx[1] = 0; $narx[2] = 12000; $narx[3] = 0; $narx[4] = 14000; $narx[10] = 60000; $narx[12] = 11000; $narx[13] = 0; $narx[14] = 2000; $narx[15] = 0; $narx[16] = 9000; $narx[17] = 0;
-								$narx[18] = 0; $narx[19] = 0; $narx[21] = 69000; $narx[22] = 20000; $narx[23] = 2400; $narx[24] = 50000; $narx[25] = 0; $narx[26] = 23000; $narx[27] = 6000; $narx[28] = 30000; $narx[29] = 5000;
-								$narx[30] = 1300; $narx[31] = 15000; $narx[32] = 60000; $narx[33] = 9000; $narx[34] = 100000; $narx[35] = 19000; $narx[36] = 25000; $narx[37] = 18000; $narx[38] = 44000; $narx[39] = 17000;
-								$narx[40] = 22000; $narx[41] = 13000; $narx[42] = 28000; $narx[43] = 5000; $narx[44] = 5000; $narx[45] = 12000; $narx[46] = 70000; $narx[47] = 55000; $narx[48] = 13000; $narx[49] = 5000;
-								$narx[50] = 20000; $narx[51] = 22000; $narx[52] = 5000; $narx[53] = 8000; $narx[54] = 8000; $narx[55] = 19000; $narx[56] = 9000; $narx[57] = 14000; $narx[58] = 15000; $narx[59] = 20000;
-								$narx[60] = 2400; $narx[61] = 0; 
+								// $narx = [];
+								// $narx[1] = 0; $narx[2] = 12000; $narx[3] = 0; $narx[4] = 14000; $narx[10] = 60000; $narx[12] = 11000; $narx[13] = 0; $narx[14] = 2000; $narx[15] = 0; $narx[16] = 9000; $narx[17] = 0;
+								// $narx[18] = 0; $narx[19] = 0; $narx[21] = 69000; $narx[22] = 20000; $narx[23] = 2400; $narx[24] = 50000; $narx[25] = 0; $narx[26] = 23000; $narx[27] = 6000; $narx[28] = 30000; $narx[29] = 5000;
+								// $narx[30] = 1300; $narx[31] = 15000; $narx[32] = 60000; $narx[33] = 9000; $narx[34] = 100000; $narx[35] = 19000; $narx[36] = 25000; $narx[37] = 18000; $narx[38] = 44000; $narx[39] = 17000;
+								// $narx[40] = 22000; $narx[41] = 13000; $narx[42] = 28000; $narx[43] = 5000; $narx[44] = 5000; $narx[45] = 12000; $narx[46] = 70000; $narx[47] = 55000; $narx[48] = 13000; $narx[49] = 5000;
+								// $narx[50] = 20000; $narx[51] = 22000; $narx[52] = 5000; $narx[53] = 8000; $narx[54] = 8000; $narx[55] = 19000; $narx[56] = 9000; $narx[57] = 14000; $narx[58] = 15000; $narx[59] = 20000;
+								// $narx[60] = 2400; $narx[61] = 0; 
 								for($t = 0; $t < count($products); $t++){
 									if(isset($products[$t]['yes']) and isset($productallcount[$products[$t]['id']])){
 								?>

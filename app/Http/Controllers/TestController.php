@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Hash;
 use App\Traits\MakeComponents;
 use App\Traits\RequestTrait;
 use App\Models\Age_range;
+use App\Models\bycosts;
 use App\Models\Region;
 use Illuminate\Support\Facades\DB;
 use App\Models\Day;
@@ -37,6 +38,7 @@ use App\Models\Shop;
 use App\Models\Size;
 use App\Models\titlemenu_food;
 use Dompdf\Dompdf;
+use PhpParser\Node\Stmt\Foreach_;
 use TCG\Voyager\Models\Category;
 
 class TestController extends Controller
@@ -800,8 +802,7 @@ class TestController extends Controller
     }
     // ikkinchi menyu 
 	public function activsecondmenuPDF(Request $request, $today, $gid){ 
-		$products = Product::where('hide', 1)
-			->orderBy('sort', 'ASC')->get();
+		$products = Product::orderBy('sort', 'ASC')->get();
 		$nextdaymenuitem = [];
 		$workerproducts = [];
 		// kamchilik bor boshlangich qiymat berishda
@@ -835,7 +836,13 @@ class TestController extends Controller
 							->orderBy('menu_food_id')
 							->get();	
 
-			// dd($menuitem);
+			$costs = bycosts::where('day_id', '<=', $today)->where('region_name_id', Kindgarden::where('id', $gid)->first()->region_id)->orderBy('day_id', 'DESC')->limit($products->count())->get();
+			$narx = [];
+			foreach($costs as $row){
+				if(!isset($narx[$row->praduct_name_id])){
+					$narx[$row->praduct_name_id] = $row->price_cost;
+				}
+			}
 			// xodimlar ovqati uchun
 			$day = Day::where('days.id', $today)->join('months', 'months.id', '=', 'days.month_id')->orderBy('days.id', 'DESC')->first(['days.day_number','days.id as id', 'months.month_name']);
 			// dd($day);
@@ -891,7 +898,7 @@ class TestController extends Controller
 		// dd($nextdaymenuitem);
         
         $dompdf = new Dompdf('UTF-8');
-		$html = mb_convert_encoding(view('pdffile.technolog.activsecondmenu', ['day' => $day, 'productallcount' => $productallcount, 'workerproducts' => $workerproducts,'menu' => $menuage, 'menuitem' => $nextdaymenuitem, 'products' => $products, 'workerfood' => $workerfood]), 'HTML-ENTITIES', 'UTF-8');
+		$html = mb_convert_encoding(view('pdffile.technolog.activsecondmenu', ['narx' => $narx,'day' => $day, 'productallcount' => $productallcount, 'workerproducts' => $workerproducts,'menu' => $menuage, 'menuitem' => $nextdaymenuitem, 'products' => $products, 'workerfood' => $workerfood]), 'HTML-ENTITIES', 'UTF-8');
 		$dompdf->loadHtml($html);
 
 		// (Optional) Setup the paper size and orientation

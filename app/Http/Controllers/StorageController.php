@@ -51,11 +51,11 @@ class StorageController extends Controller
     }
 
     public function addproducts(Request $request){
-        dd($request->all());
+
         $products = $request->productsid;
         $weights = $request->weights;
         $costs = $request->costs;
-
+        // if(Add_group::where('day_id')->get()->count() == 0){
         $group = Add_group::create([
             'day_id' => 81,
             'group_name' => time()
@@ -70,7 +70,7 @@ class StorageController extends Controller
                 'cost' => $costs[$i]
             ]);
         }
-
+        // }
         return redirect()->route('storage.addproductform');
     }
 

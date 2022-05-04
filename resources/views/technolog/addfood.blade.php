@@ -59,7 +59,7 @@
                 <select class="form-select" name="timeid" aria-label="Default select example">
                     <option value="0">Бошқа</option>
                     @foreach($times as $row)
-                    <option value="{{$row['id']}}">{{$row['meal_time_name']}}</option>
+                        <option value="{{$row['id']}}">{{$row['meal_time_name']}}</option>
                     @endforeach
                 </select>
             </div>
