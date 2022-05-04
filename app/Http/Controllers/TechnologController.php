@@ -28,6 +28,7 @@ use App\Models\history_process;
 use App\Models\Meal_time;
 use App\Models\minus_multi_storage;
 use App\Models\Nextday_namber;
+use App\Models\Norm_category;
 use App\Models\order_product_structure;
 use App\Models\plus_multi_storage;
 use App\Models\Product;
@@ -322,24 +323,25 @@ class TechnologController extends Controller
                         // $workers = $next->workers_count;
                     }
                 }
-                // foreach($workeat as $wo){
-                //         $woe = Menu_composition::where('title_menu_id', $wo->titlemenu_id)
-                //                 ->where('menu_food_id', $wo->food_id)
-                //                 ->where('age_range_id', $wo->worker_age_id)
-                //                 ->where('product_name_id', $prod->id)
-                //                 ->sum('weight');
-                //         dd($woe);
-                        // if($woe > 0){
-                        // 	$itempr = $itempr . 
-                        // }
-                // }
-
-
 
                 $prdiv = Product::where('id', $prod->id)->first();
                 // $itempr . "=" .
-                $shopproducts[$row->id][$prod->id] = $weight / $prod->div; 
+                $shopproducts[$row->id][$prod->id] = $weight / $prod->div;
+                
+                $bool = plus_multi_storage::where('day_id', 81)->where('kingarden_name_d', $row->id)->where('product_name_id', $prod->id)->get();
+                
+                if($bool->count() == 0 and $weight != 0){
+                    plus_multi_storage::create([
+                        'day_id' => 81,
+                        'shop_id' => $id,
+                        'kingarden_name_d' => $row->id,
+                        'order_product_id' => 0,
+                        'product_name_id' => $prod->id,
+                        'product_weight' => $weight / $prod->div,
+                    ]);
+                }
             }
+
         }
 
         // dd($shopproducts);
@@ -864,9 +866,10 @@ class TechnologController extends Controller
     {
         $product = Product::where('id', $id)->first();
         $categories = Product_category::all();
+        $norms = Norm_category::all();
         $sizes = Size::all(); 
         // dd($product);
-        return view('technolog.settingsproduct', compact('product', 'categories', 'sizes'));
+        return view('technolog.settingsproduct', compact('norms', 'product', 'categories', 'sizes'));
     }
 
     public function updateproduct(Request $request)
@@ -876,11 +879,12 @@ class TechnologController extends Controller
             ->update([
                 'size_name_id' => $request['sizeid'],
                 'category_name_id' => $request['catid'],
+                'norm_cat_id' => $request['normid'],
                 'div' => $request['div'],
                 'sort' => $request['sort'],
                 'hide' => $request['hide']
             ]);
-        return redirect()->route('technolog.allproducts');
+        return redirect()->route('technolog.settingsproduct', $request['productid']);
     }
 
     public function shops(Request $request)

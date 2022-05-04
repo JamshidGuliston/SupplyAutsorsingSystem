@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateProductsTable extends Migration
+class CreateNormsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,13 +13,12 @@ class CreateProductsTable extends Migration
      */
     public function up()
     {
-        Schema::create('products', function (Blueprint $table) {
-            $table->increments('id');
-            $table->string('product_name');
-            $table->integer('size_name_id')->references('id')->on('sizes');
-            $table->integer('category_name_id')->references('id')->on('product_categories');
+        Schema::create('norms', function (Blueprint $table) {
+            $table->id();
             $table->integer('norm_cat_id');
-            $table->string('product_image');
+            $table->integer('norm_age_id');
+            $table->integer('noyuk_id');
+            $table->double('norm_weight', 8, 3);
             $table->timestamps();
         });
     }
@@ -31,6 +30,6 @@ class CreateProductsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('products');
+        Schema::dropIfExists('norms');
     }
 }

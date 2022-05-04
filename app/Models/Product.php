@@ -14,6 +14,7 @@ class Product extends Model
         'size_name_id',
         'category_name_id',
         'product_image',
+        'norm_cat_id',
         'div'
     ];
 
