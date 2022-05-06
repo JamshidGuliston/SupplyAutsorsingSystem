@@ -305,7 +305,7 @@ class TechnologController extends Controller
                 $plus = plus_multi_storage::where('day_id', '>=', $days->id)->where('kingarden_name_d', $row->id)->where('product_name_id', $prod->id)->sum('product_weight');
                 // echo $row->kingar_name.' '.$prod->product_name.' '.$plus.'-'.$minus.'='.$plus-$minus.'<br>';
                 // dd($plus);
-                
+                $weight = 0;
                 $itempr = "";
         		$nextday = Nextday_namber::orderBy('kingar_name_id', 'ASC')->orderBy('king_age_name_id', 'ASC')->get();
         		// dd($nextday);
