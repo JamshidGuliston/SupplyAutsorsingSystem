@@ -338,7 +338,7 @@ class TechnologController extends Controller
                 else{
                     $modweight = $plus-$minus;
                 }
-                $shopproducts[$row->id][$prod->id] = $weight / $prod->div - $modweight;
+                $shopproducts[$row->id][$prod->id] = $weight / $prod->div;
                 
                 // taminotchilar 
                 // $bool = plus_multi_storage::where('day_id', 82)->where('kingarden_name_d', $row->id)->where('product_name_id', $prod->id)->get();
