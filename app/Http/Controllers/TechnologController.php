@@ -305,12 +305,7 @@ class TechnologController extends Controller
                 $plus = plus_multi_storage::where('day_id', '>=', $days->id)->where('kingarden_name_d', $row->id)->where('product_name_id', $prod->id)->sum('product_weight');
                 // echo $row->kingar_name.' '.$prod->product_name.' '.$plus.'-'.$minus.'='.$plus-$minus.'<br>';
                 // dd($plus);
-                if($plus-$minus < 0){
-                    $weight = 0;
-                }
-                else{
-                    $weight = -1 * ($plus-$minus);
-                }
+                
                 $itempr = "";
         		$nextday = Nextday_namber::orderBy('kingar_name_id', 'ASC')->orderBy('king_age_name_id', 'ASC')->get();
         		// dd($nextday);
@@ -337,7 +332,13 @@ class TechnologController extends Controller
 
                 $prdiv = Product::where('id', $prod->id)->first();
                 // $itempr . "=" .
-                $shopproducts[$row->id][$prod->id] = $weight / $prod->div;
+                if($plus-$minus < 0){
+                    $modweight = 0;
+                }
+                else{
+                    $modweight = $plus-$minus;
+                }
+                $shopproducts[$row->id][$prod->id] = $weight / $prod->div - $modweight;
                 
                 // taminotchilar 
                 // $bool = plus_multi_storage::where('day_id', 81)->where('kingarden_name_d', $row->id)->where('product_name_id', $prod->id)->get();
