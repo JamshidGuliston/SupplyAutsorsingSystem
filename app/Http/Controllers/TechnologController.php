@@ -299,6 +299,13 @@ class TechnologController extends Controller
                 $allsum = 0;
                 $onesum = 0;
                 $workers = 0;
+                $month = Month::where('hide', 1)->first();
+                $days = Day::where('month_id', $month->id)->where('year_id', Year::where('year_active', 1)->first()->id)->first();
+                $minus = minus_multi_storage::where('day_id', '>=', $days->id)->where('kingarden_name_id', $row->id)->where('product_name_id', $prod->id)->sum('product_weight');
+                $plus = plus_multi_storage::where('day_id', '>=', $days->id)->where('kingarden_name_d', $row->id)->where('product_name_id', $prod->id)->sum('product_weight');
+                dd($days);
+                dd($minus);
+                dd($plus);
                 $weight = 0;
                 $itempr = "";
         		$nextday = Nextday_namber::orderBy('kingar_name_id', 'ASC')->orderBy('king_age_name_id', 'ASC')->get();
@@ -328,18 +335,18 @@ class TechnologController extends Controller
                 // $itempr . "=" .
                 $shopproducts[$row->id][$prod->id] = $weight / $prod->div;
                 
-                $bool = plus_multi_storage::where('day_id', 81)->where('kingarden_name_d', $row->id)->where('product_name_id', $prod->id)->get();
-                
-                if($bool->count() == 0 and $weight != 0){
-                    plus_multi_storage::create([
-                        'day_id' => 81,
-                        'shop_id' => $id,
-                        'kingarden_name_d' => $row->id,
-                        'order_product_id' => 0,
-                        'product_name_id' => $prod->id,
-                        'product_weight' => $weight / $prod->div,
-                    ]);
-                }
+                // taminotchilar 
+                // $bool = plus_multi_storage::where('day_id', 81)->where('kingarden_name_d', $row->id)->where('product_name_id', $prod->id)->get();
+                // if($bool->count() == 0 and $weight != 0){
+                //     plus_multi_storage::create([
+                //         'day_id' => 81,
+                //         'shop_id' => $id,
+                //         'kingarden_name_d' => $row->id,
+                //         'order_product_id' => 0,
+                //         'product_name_id' => $prod->id,
+                //         'product_weight' => $weight / $prod->div,
+                //     ]);
+                // }
             }
 
         }
