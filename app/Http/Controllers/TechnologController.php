@@ -299,7 +299,7 @@ class TechnologController extends Controller
                 $allsum = 0;
                 $onesum = 0;
                 $workers = 0;
-                $month = Month::where('hide', 1)->first();
+                $month = Month::where('month_active', 1)->first();
                 $days = Day::where('month_id', $month->id)->where('year_id', Year::where('year_active', 1)->first()->id)->first();
                 $minus = minus_multi_storage::where('day_id', '>=', $days->id)->where('kingarden_name_id', $row->id)->where('product_name_id', $prod->id)->sum('product_weight');
                 $plus = plus_multi_storage::where('day_id', '>=', $days->id)->where('kingarden_name_d', $row->id)->where('product_name_id', $prod->id)->sum('product_weight');
