@@ -341,8 +341,8 @@ class TechnologController extends Controller
                 $shopproducts[$row->id][$prod->id] = $weight / $prod->div - $modweight;
                 
                 // taminotchilar 
-                $bool = plus_multi_storage::where('day_id', 81)->where('kingarden_name_d', $row->id)->where('product_name_id', $prod->id)->get();
-                if($bool->count() == 0 and $weight != 0){
+                // $bool = plus_multi_storage::where('day_id', 81)->where('kingarden_name_d', $row->id)->where('product_name_id', $prod->id)->get();
+                // if($bool->count() == 0 and $weight != 0){
                     plus_multi_storage::create([
                         'day_id' => 81,
                         'shop_id' => $id,
@@ -351,7 +351,7 @@ class TechnologController extends Controller
                         'product_name_id' => $prod->id,
                         'product_weight' => $weight / $prod->div,
                     ]);
-                }
+                // }
             }
 
         }
