@@ -303,10 +303,14 @@ class TechnologController extends Controller
                 $days = Day::where('month_id', $month->id)->where('year_id', Year::where('year_active', 1)->first()->id)->first();
                 $minus = minus_multi_storage::where('day_id', '>=', $days->id)->where('kingarden_name_id', $row->id)->where('product_name_id', $prod->id)->sum('product_weight');
                 $plus = plus_multi_storage::where('day_id', '>=', $days->id)->where('kingarden_name_d', $row->id)->where('product_name_id', $prod->id)->sum('product_weight');
-                // dd($days);
-                echo $row->kingar_name.' '.$prod->product_name.' '.$plus.'-'.$minus.'='.$plus-$minus.'<br>';
+                // echo $row->kingar_name.' '.$prod->product_name.' '.$plus.'-'.$minus.'='.$plus-$minus.'<br>';
                 // dd($plus);
-                $weight = 0;
+                if($plus-$minus < 0){
+                    $weight = 0;
+                }
+                else{
+                    $weight = -1 * ($plus-$minus);
+                }
                 $itempr = "";
         		$nextday = Nextday_namber::orderBy('kingar_name_id', 'ASC')->orderBy('king_age_name_id', 'ASC')->get();
         		// dd($nextday);
