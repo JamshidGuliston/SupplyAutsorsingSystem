@@ -329,16 +329,13 @@
                       </table>
                 </div>
 				<div class="row" style="margin-top: 8px;">
-				    <div class="col-md-3">
+				    <div>
 						<img src="images/qrmanzil.jpg" alt="QR-code" width="140">
 					</div>
-					<div class="col-md-3">
-						<p style="text-align: center;"><strong>Технолог</strong> __________________</p>
+					<div>
+						<p style="text-align: center;"><strong>Технолог</strong> ________________  <strong>Бош ошпаз</strong> __________________</p>
 					</div>
-					<div class="col-md-3">
-						<p style="text-align: center;"><strong>Бош ошпаз</strong> __________________</p>
-					</div>
-					<div class="col-md-3">
+					<div>
 						<p style="text-align: left;"><strong>Танишдим<br/>ДМТТ рахбари</strong> __________________</p>
 					</div>
 				</div>
