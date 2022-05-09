@@ -155,7 +155,7 @@ class AccountantController extends Controller
                     }
                     $childs = Number_children::where('day_id', $day->id)
                                     ->where('kingar_name_id', $id)
-                                    ->sum('kingar_children_number');
+                                    ->sum('kingar_children_number');    
                     $nakproducts[0][$day->id] = $childs;
                     $nakproducts[0]['product_name'] = "Болалар сони";
                     $nakproducts[$key][$day->id] = $summ;
