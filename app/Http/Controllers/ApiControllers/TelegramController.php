@@ -199,10 +199,10 @@ class TelegramController extends Controller
             // $this->sendMessage($row->telegram_user_id, "<a href='https://cj56359.tmweb.ru/nextnakladnoyPDF/".$row->id."'>".$d."-Тахминий Накладной</a>"); $row->telegram_user_id
     		foreach($row->age_range as $ageid){
     			$kid = $row->id;
-    			$urlpdf = "https://cj56359.tmweb.ru/nextdaymenuPDF/".$kid."/".$ageid->id;        
-                $buttons[] = [
-                    $this->buildInlineKeyBoardButton("Тахминий ".$ageid->age_name." менюси", "", $urlpdf)
-                ];
+    			// $urlpdf = "https://cj56359.tmweb.ru/nextdaymenuPDF/".$kid."/".$ageid->id;        
+                // $buttons[] = [
+                //     $this->buildInlineKeyBoardButton("Тахминий ".$ageid->age_name." менюси", "", $urlpdf)
+                // ];
     			// $this->sendMessage($row->telegram_user_id, "<a href='https://cj56359.tmweb.ru/nextdaymenuPDF/".$row->id."/".$ageid->id."'>".$d."-Тахминий ".$ageid->age_name."  менюси</a>");          
     		}
 
@@ -230,10 +230,10 @@ class TelegramController extends Controller
             $buttons = array( );
     		// $docurl = "http://cj56359.tmweb.ru/pdf/".$dayid.'-'.$row->id."-activnaklad.pdf";
             $this->sendMessage($row->telegram_user_id, "Бугунги боғчангиз менюлари:");
-            $url = "https://cj56359.tmweb.ru/activnakladPDF/".$dayid."/".$row->id;
-            $buttons[] = [
-                $this->buildInlineKeyBoardButton("Накладной", "", $url)
-            ];          
+            // $url = "https://cj56359.tmweb.ru/activnakladPDF/".$dayid."/".$row->id;
+            // $buttons[] = [
+            //     $this->buildInlineKeyBoardButton("Накладной", "", $url)
+            // ];          
         	
             // $this->sendMessage($row->telegram_user_id, "<a href='https://cj56359.tmweb.ru/activnakladPDF/".$dayid."/".$row->id."'>".$dayid."-Накладной</a>"); 
     		foreach($row->age_range as $ageid){
