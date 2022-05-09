@@ -889,12 +889,7 @@ class TechnologController extends Controller
         // dd($request->all());
         Product::where('id', $request['productid'])
             ->update([
-                'size_name_id' => $request['sizeid'],
-                'category_name_id' => $request['catid'],
-                'norm_cat_id' => $request['normid'],
-                'div' => $request['div'],
-                'sort' => $request['sort'],
-                'hide' => $request['hide']
+                'norm_cat_id' => $request['normid']
             ]);
         return redirect()->route('technolog.settingsproduct', $request['productid']);
     }
