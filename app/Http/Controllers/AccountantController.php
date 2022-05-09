@@ -145,17 +145,17 @@ class AccountantController extends Controller
             foreach($productscount as $key => $row){
                 if(isset($row['product_name'])){
                     $summ = 0;
-                    $childs = 0;
                     foreach($ages as $age){
                         if(isset($row[$age['id'].'-children'])){
                             $summ += ($row[$age['id']]*$row[$age['id'].'-children']) / $row[$age['id'].'div'];
-                            $childs += $row[$age['id'].'-children'];
                         }
                     }
                     if(isset($workproduct[$key.'wcount'])){
                         // $summ += ($workproduct[$key]*$workproduct[$key.'wcount']) / $workproduct[$key.'div'];
                     }
-                    
+                    $childs = Number_children::where('day_id', $day->id)
+                                    ->where('kingar_name_id', $id)
+                                    ->sum('kingar_children_number');
                     $nakproducts[0][$day->id] = $childs;
                     $nakproducts[0]['product_name'] = "Болалар сони";
                     $nakproducts[$key][$day->id] = $summ;

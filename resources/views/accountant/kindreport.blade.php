@@ -195,7 +195,7 @@
                         </td>
                     @else
                         <td>
-                            {{ '' }}
+                            {{ '0' }}
                         </td>
                     @endif
                 @endforeach
