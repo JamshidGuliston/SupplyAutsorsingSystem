@@ -185,29 +185,26 @@
             @endforeach
         </thead>
         <tbody>
-            @foreach($minusproducts as $key => $row)
+            @foreach($nakproducts as $key => $row)
             <tr>
-                <td>{{ $row['productname'] }}</td>
+                <td>{{ $row['product_name'] }}</td>
                 @foreach($days as $day)
-                @if(isset($day->yes))
                     @if(isset($row[$day['id']]))
                         <td>
                             {{ $row[$day['id']] }}
-                            <i class="edites far fa-edit text-info" data-bs-toggle="modal" data-bs-target="#pcountModal" data-regionid="{{ $id }}" data-dayid="{{ $day['id'] }}" data-prodid="{{ $key }}" data-weight="{{ $row[$day['id']] }}" style="cursor: pointer; margin-right: 16px;"> </i>
                         </td>
                     @else
                         <td>
                             {{ '' }}
                         </td>
                     @endif
-                @endif
                 @endforeach
             </tr>
             @endforeach
         </tbody>
     </table>
     <div class="form-group row">
-        <label for="inputPassword" class="col-sm-2 col-form-label"><a href="/accountant/costs">Orqaga</a></label>
+        <label for="inputPassword" class="col-sm-2 col-form-label"><a href="/accountant/reports">Orqaga</a></label>
         <div class="col-sm-6">
         <!-- <button type="submit" class="btn btn-success">Saqlash</button> -->
         </div>
