@@ -184,16 +184,23 @@
             @foreach($days as $day)
                 <th scope="col">{{ $day->day_number; }}</th>
             @endforeach
+            <th>Жами</th>
         </thead>
         <tbody>
             @foreach($nakproducts as $key => $row)
             <tr>
                 <td>{{ $row['product_name'] }}</td>
                 <td>{{ $row[0] }}</td>
+                <?php 
+                    $summ = 0;
+                ?>
                 @foreach($days as $day)
                     @if(isset($row[$day['id']]))
                         <td>
-                        <?php  printf("%01.2f", $row[$day['id']]); ?>
+                        <?php  
+                            printf("%01.2f", $row[$day['id']]); 
+                            $summ += $row[$day['id']];
+                        ?>
                         </td>
                     @else
                         <td>
@@ -201,6 +208,7 @@
                         </td>
                     @endif
                 @endforeach
+                <td>$summ</td>
             </tr>
             @endforeach
         </tbody>
