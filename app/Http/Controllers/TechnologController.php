@@ -1518,6 +1518,16 @@ class TechnologController extends Controller
         return view('technolog.minusmultistorage', ['minusproducts' => $minusproducts, 'kingar' => $king, 'days' => $days]);   
     }
 
+    public function editminusproduct(Request $request){
+        // dd($request->dayid);
+        minus_multi_storage::where('day_id', $request->dayid)->where('kingarden_name_id', $request->kinid)->where('product_name_id', $request->prodid)
+        ->update([
+            'product_weight' => $request->kg
+        ]);
+        
+        return redirect()->route('technolog.minusmultistorage', $request->kinid);
+    }
+
     public function plusmultistorage(Request $request, $kid){
         $king = Kindgarden::where('id', $kid)->first();
         $month = Month::where('month_active', 1)->first();

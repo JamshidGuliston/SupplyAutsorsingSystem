@@ -71,7 +71,7 @@
 <div class="modal editesmodal fade" id="pcountModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
-        <form action="" method="post">
+        <form action="{{route('technolog.editminusproduct')}}" method="POST">
 		    @csrf
             <div class="modal-header">
                 <h5 class="modal-title" id="exampleModalLabel">Maxsulot og'irligini o'zgartirish</h5>
@@ -193,7 +193,7 @@
                     @if(isset($row[$day['id']]))
                         <td>
                             {{ $row[$day['id']] }}
-                            <i class="edites far fa-edit text-info" data-bs-toggle="modal" data-bs-target="#pcountModal" data-dayid="{{ $day }}" data-weight="{{ $row[$day['id']] }}" data-kinid="{{ $kingar->id }}" style="cursor: pointer; margin-right: 16px;"> </i>
+                            <i class="edites far fa-edit text-info" data-bs-toggle="modal" data-bs-target="#pcountModal" data-dayid="{{ $day->id }}" data-prodid="{{ $key }}" data-weight="{{ $row[$day['id']] }}" data-kinid="{{ $kingar->id }}" style="cursor: pointer; margin-right: 16px;"> </i>
                         </td>
                         <?php $all += $row[$day['id']]; ?>
                     @else
@@ -222,8 +222,9 @@
         var kinid = $(this).attr('data-kinid');
         var dayid = $(this).attr('data-dayid');
         var kg = $(this).attr('data-weight');
+        var prodid = $(this).attr('data-prodid');
         var div = $('.wor_countedit');
-        div.html("<input type='hidden' name='kinid' class='form-control' value="+kinid+"><input type='hidden' name='dayid' class='form-control' value="+dayid+"><input type='text' name='kg' class='form-control' value="+kg+">");
+        div.html("<input type='hidden' name='kinid' class='form-control' value="+kinid+"><input type='hidden' name='dayid' class='form-control' value="+dayid+"><input type='hidden' name='prodid' class='form-control' value="+prodid+"><input type='text' name='kg' class='form-control' value="+kg+">");
         // title.html("<p>"+kn+"</p><input type='hidden' name='kingid' class='' value="+king+">");
     });
 
