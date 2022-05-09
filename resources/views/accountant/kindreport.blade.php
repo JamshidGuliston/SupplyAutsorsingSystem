@@ -163,7 +163,7 @@
 <div class="py-4 px-4">
     <div class="row">
         <div class="col-md-6">
-            <b>- </b>
+            <b>- {{ $days[0]['month_name']; }}</b>
         </div>
         <div class="col-md-3">
             <!-- <b>Bog'chalarga so'rov yuborish</b>
@@ -172,8 +172,8 @@
             </a> -->
         </div>
         <div class="col-md-3">
-            <b>Yangi narx:</b>
-            <i class="fas fa-plus-circle" style="color: #3c7a7c; cursor: pointer;" data-bs-toggle="modal" data-bs-target="#Modalsadd"></i>
+            <b></b>
+            <!-- <i class="fas fa-plus-circle" style="color: #3c7a7c; cursor: pointer;" data-bs-toggle="modal" data-bs-target="#Modalsadd"></i> -->
         </div>
     </div>
     <hr>
