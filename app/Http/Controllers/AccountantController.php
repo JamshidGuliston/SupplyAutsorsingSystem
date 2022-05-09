@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\bycosts;
 use App\Models\Day;
+use App\Models\Kindgarden;
+use App\Models\Month;
 use App\Models\Product;
 use App\Models\Region;
 use App\Models\Year;
@@ -11,6 +13,15 @@ use Illuminate\Http\Request;
 
 class AccountantController extends Controller
 {
+    public function activmonth(){
+        $year = Year::orderBy('id', 'DESC')->first();
+        $month = Month::where('month_active', 1)->first();
+        $days = Day::where('month_id', $month->id)->where('year_id', $year->id)
+                ->join('months', 'months.id', '=', 'days.month_id')
+                ->join('years', 'years.id', '=', 'days.year_id')
+                ->get(['days.id', 'days.day_number', 'months.month_name', 'years.year_name']);
+        return $days;
+    }
     public function index(Request $request)
     {
         return view('accountant.home');
@@ -25,6 +36,7 @@ class AccountantController extends Controller
     public function bycosts(Request $request, $id){
         $region = Region::where('id', $id)->first();
         $year = Year::orderBy('id', 'DESC')->first();
+        $thismonth = 
         // $days = Day::where('year_id', $year->id)->get();
         $days = Day::where('year_id', $year->id)
             ->join('months', 'months.id', '=', 'days.month_id')
@@ -78,5 +90,18 @@ class AccountantController extends Controller
                 ->where('praduct_name_id', $request->prodid)
                 ->update(['price_cost' => $request->kg]);
         return redirect()->route('accountant.bycosts', $request->regid);
+    }
+
+    public function reports(Request $request){
+        $kinds = Kindgarden::all();
+
+        return view('accountant.reports', compact('kinds'));
+    }
+
+    public function kindreport(Request $request, $id){
+        $days = $this->activmonth();
+        
+        // dd($days);
+        return view('accountant.kindreport', compact('days'));
     }
 }

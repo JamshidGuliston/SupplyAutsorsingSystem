@@ -177,6 +177,8 @@ Route::group(['prefix' => 'chef', 'middleware' => ['isChef', 'auth']], function 
 Route::group(['prefix' => 'accountant', 'middleware' => ['isAccountant', 'auth']], function () {
     Route::get('home', [AccountantController::class, 'index'])->name('accountant.home');
     Route::get('costs', [AccountantController::class, 'costs'])->name('accountant.costs');
+    Route::get('reports', [AccountantController::class, 'reports'])->name('accountant.reports');
+    Route::get('kindreport/{id}', [AccountantController::class, 'kindreport'])->name('accountant.kindreport');
     Route::get('bycosts/{id}', [AccountantController::class, 'bycosts'])->name('accountant.bycosts');
     Route::post('pluscosts', [AccountantController::class, 'pluscosts'])->name('accountant.pluscosts');
     Route::post('editcost', [AccountantController::class, 'editcost'])->name('accountant.editcost');
