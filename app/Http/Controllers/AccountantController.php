@@ -169,7 +169,7 @@ class AccountantController extends Controller
                     ->orderBy('day_id', 'DESC')->limit(Product::all()->count())->get();
             
             foreach($costs as $cost){
-                $nakproducts[0][0] = '';
+                $nakproducts[0][0] = 0;
                 if(isset($nakproducts[$cost->praduct_name_id]['product_name'])){
                     $nakproducts[$cost->praduct_name_id][0] = $cost->price_cost;
                 }

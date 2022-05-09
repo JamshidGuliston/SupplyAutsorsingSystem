@@ -185,6 +185,7 @@
                 <th scope="col">{{ $day->day_number; }}</th>
             @endforeach
             <th>Жами</th>
+            <th>Сумма</th>
         </thead>
         <tbody>
             @foreach($nakproducts as $key => $row)
@@ -208,7 +209,8 @@
                         </td>
                     @endif
                 @endforeach
-                <td>$summ</td>
+                <td>{{ $summ }}</td>
+                <td>{{ $summ*$row[0] }}</td>
             </tr>
             @endforeach
         </tbody>
