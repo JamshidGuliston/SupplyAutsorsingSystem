@@ -191,7 +191,7 @@
                 @foreach($days as $day)
                     @if(isset($row[$day['id']]))
                         <td>
-                            printf("%01.2f", $row[$day['id']]);
+                        <?php  printf("%01.2f", $row[$day['id']]); ?>
                         </td>
                     @else
                         <td>
