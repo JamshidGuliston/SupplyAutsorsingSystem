@@ -179,9 +179,9 @@
     <hr>
     <table class="table table-light py-4 px-4">
         <thead>
-            <th style="width: 30px;">Махсулотлар</th>
+            <th style="width: 30px;">Махсулотлар/{{ $days[0]['month_name']; }}</th>
             @foreach($days as $day)
-                <th scope="col">{{ $day->day_number.'.'.$day->month_name.'.'.$day->year_name }}</th>
+                <th scope="col">{{ $day->day_number; }}</th>
             @endforeach
         </thead>
         <tbody>
