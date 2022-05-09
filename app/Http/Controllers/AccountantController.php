@@ -105,7 +105,9 @@ class AccountantController extends Controller
     public function kindreport(Request $request, $id){
         $days = $this->activmonth();
         $nakproducts = [];
+        $first = 0;
         foreach($days as $day){
+            $first = $day->id;
             $join = Number_children::where('number_childrens.day_id', $day->id)
                     ->where('kingar_name_id', $id)
                     ->leftjoin('active_menus', function($join){
@@ -162,6 +164,19 @@ class AccountantController extends Controller
                     $nakproducts[$key]['product_name'] = $row['product_name'];
                 }
             }
+
+            $costs = bycosts::where('day_id', '<=', $first)->where('region_name_id', Kindgarden::where('id', $id)->first()->region_id)
+                    ->orderBy('day_id', 'DESC')->limit(Product::all()->count())->get();
+            
+            foreach($costs as $cost){
+                $nakproducts[0][0] = '';
+                if(isset($nakproducts[$cost->praduct_name_id]['product_name'])){
+                    $nakproducts[$cost->praduct_name_id][0] = $cost->price_cost;
+                }
+            }
+
+            // dd($nakproducts);
+            
 
         }
         // dd($days);

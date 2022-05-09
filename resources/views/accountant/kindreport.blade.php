@@ -180,6 +180,7 @@
     <table class="table table-light py-4 px-4">
         <thead>
             <th style="width: 30px;">Махсулотлар/{{ $days[0]['month_name']; }}</th>
+            <th style="width: 30px;">Нарх</th>
             @foreach($days as $day)
                 <th scope="col">{{ $day->day_number; }}</th>
             @endforeach
@@ -188,6 +189,7 @@
             @foreach($nakproducts as $key => $row)
             <tr>
                 <td>{{ $row['product_name'] }}</td>
+                <td>{{ $row[0] }}</td>
                 @foreach($days as $day)
                     @if(isset($row[$day['id']]))
                         <td>
