@@ -209,8 +209,8 @@
                         </td>
                     @endif
                 @endforeach
-                <td>{{ $summ }}</td>
-                <td>{{ $summ*$row[0] }}</td>
+                <td><?php printf("%01.2f", $summ) ?></td>
+                <td><?php printf("%01.2f", $summ*$row[0]) ?></td>
             </tr>
             @endforeach
         </tbody>
