@@ -304,13 +304,13 @@ class TelegramController extends Controller
     	$kingar = Kindgarden::where('id', $id)->where('hide', 1)->with('age_range')->first();
         
         $this->sendMessage($kingar->telegram_user_id, "Бугунги боғчангиз менюлари:");
-        $url = "https://cj56359.tmweb.ru/activnakladPDF/".$dayid."/".$id;
-        $buttons[] = [
-            $this->buildInlineKeyBoardButton("Накладной", "", $url)
-        ];    
+        // $url = "https://cj56359.tmweb.ru/activnakladPDF/".$dayid."/".$id;
+        // $buttons[] = [
+        //     $this->buildInlineKeyBoardButton("Накладной", "", $url)
+        // ];    
     	// $kingar->telegram_user_id
 		foreach($kingar->age_range as $ageid){
-			// $docurl = "http://cj56359.tmweb.ru/pdf/".$dayid.'-'.$id.'-'.$ageid->id."-activemenu.pdf";
+			$docurl = "http://cj56359.tmweb.ru/pdf/".$dayid.'-'.$id.'-'.$ageid->id."-activemenu.pdf";
 			$url = "https://cj56359.tmweb.ru/activmenuPDF/".$dayid.'/'.$id.'/'.$ageid->id;
             $buttons[] = [
                 $this->buildInlineKeyBoardButton($ageid->age_name." менюси", "", $url)
