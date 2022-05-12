@@ -333,7 +333,7 @@
 						<img src="images/qrmanzil.jpg" alt="QR-code" width="140">
 					</div>
 					<div>
-						<p style="text-align: center;"><strong>Технолог:</strong> ________________;   <strong> Бош ошпаз:</strong> __________________;</p>
+						<p style="text-align: center;"><strong> Бош ошпаз:</strong> __________________;</p>
 					</div>
 					<div>
 						<p style="text-align: right;"><strong>Танишдим ДМТТ рахбари: </strong> __________________;</p>
