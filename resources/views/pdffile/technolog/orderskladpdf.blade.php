@@ -13,7 +13,7 @@
 	 @page { margin: 0.2in 0.8in 0in 0.3in; }
 	body{
 		font-family: DejaVu Sans;
-		font-size:12px;
+		font-size:14px;
 		/* background-image: url(images/bg.jpg); */
 		background-position: top left;
 		background-repeat: no-repeat;
@@ -62,10 +62,14 @@
             <div class="col-md-6">
                 <div class="table" id="table_with_data">
 					<div class="col-md-6">
+						<a href="#">
+							<i class="fas fa-store-alt" style="color: dodgerblue; font-size: 18px;"></i>
+						</a>
 						<b>{{ "№ ".$document->docid." /". $document->kingar_name}}</b>
 						<b>{{ " /".$document->order_title }}</b>
 					</div>
                 </div>
+                <hr>
                 <table style="width:100%; table-layout: fixed;">
                     <thead>
                         <tr style="width: 15%;">
