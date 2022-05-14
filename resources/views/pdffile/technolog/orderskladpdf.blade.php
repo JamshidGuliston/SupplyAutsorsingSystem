@@ -13,7 +13,7 @@
 	 @page { margin: 0.2in 0.8in 0in 0.3in; }
 	body{
 		font-family: DejaVu Sans;
-		font-size:14px;
+		font-size:12px;
 		/* background-image: url(images/bg.jpg); */
 		background-position: top left;
 		background-repeat: no-repeat;
@@ -65,7 +65,8 @@
 						<a href="#">
 							<i class="fas fa-store-alt" style="color: dodgerblue; font-size: 18px;"></i>
 						</a>
-						<b>{{ "№ ".$document->docid." /". $document->kingar_name}}</b>
+
+						<b>{{ "№ "."____"." /". $document->kingar_name}}</b>
 						<b>{{ " /".$document->order_title }}</b>
 					</div>
                 </div>
