@@ -278,7 +278,7 @@ class StorageController extends Controller
             $order = order_product::create([
                 'kingar_name_id' => $garden,
                 'day_id' => $today->id,
-                'order_title' => $today->id.'.'.$today->month_name.'.'.$today->year_name,
+                'order_title' => $today->day_number.'.'.$today->month_name.'.'.$today->year_name,
                 'document_processes_id' => 3,
             ]);
             
