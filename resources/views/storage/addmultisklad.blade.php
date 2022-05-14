@@ -230,7 +230,7 @@
     function changeFunc() {
         var selectBox = document.getElementById("onemenu");
         var selectedValue = selectBox.options[selectBox.selectedIndex].value;
-        alert(selectedValue);
+        // alert(selectedValue);
     }
     $(document).ready(function() {
         var tr = 0;
