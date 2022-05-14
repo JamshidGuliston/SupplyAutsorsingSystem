@@ -286,7 +286,7 @@ class StorageController extends Controller
                 if($key == 'k') continue;
                 $prod = Product::where('id', $key)->with('shop')->first();
                 if($prod->shop->count() == 0){
-                    if(!isset($mods[$key]) or $mods[$key] <= 0s){
+                    if(!isset($mods[$key]) or $mods[$key] <= 0){
                         $mods[$key] = 0;
                     }
                     if(($val / $prod->div) - $mods[$key] > 0){
