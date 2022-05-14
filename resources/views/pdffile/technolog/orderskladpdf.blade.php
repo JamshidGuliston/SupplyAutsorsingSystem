@@ -65,7 +65,7 @@
 						<a href="#">
 							<i class="fas fa-store-alt" style="color: dodgerblue; font-size: 18px;"></i>
 						</a>
-						<b>{{ "№ "____" /". $document->kingar_name}}</b>
+						<b>{{ "№ ____"." /". $document->kingar_name}}</b>
 						<b>{{ " /".$document->order_title }}</b>
 					</div>
                 </div>
