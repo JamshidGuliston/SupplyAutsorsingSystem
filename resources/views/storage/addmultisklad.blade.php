@@ -86,7 +86,7 @@
                 <div class="row">
                     <div class="col-md-5">
                         <div class="product-select">
-                            <select id="onemenu" class="form-select" aria-label="Default select example">
+                            <select id="onemenu" class="form-select" onchange="changeFunc();" aria-label="Default select example">
                                 <option value="">4-7, 3-4 ёш меню</option>
                                 @foreach($menus as $row)
                                 <option value="{{$row['id']}}">{{$row['menu_name']}}</option>
@@ -227,6 +227,11 @@
 
 @section('script')
 <script>
+    function changeFunc() {
+        var selectBox = document.getElementById("onemenu");
+        var selectedValue = selectBox.options[selectBox.selectedIndex].value;
+        alert(selectedValue);
+    }
     $(document).ready(function() {
         var tr = 0;
         $('.fa-plus').click(function() {
