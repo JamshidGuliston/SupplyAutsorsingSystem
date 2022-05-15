@@ -18,6 +18,7 @@ use App\Models\Product;
 use App\Models\Season;
 use App\Models\Shop_product;
 use App\Models\Titlemenu;
+use App\Models\Year;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -274,11 +275,11 @@ class StorageController extends Controller
             }
             // dd($kindproducts[$garden]);
             $mods = $this->productsmod($garden);
-            
+            date_default_timezone_set('Asia/Tashkent');
             $order = order_product::create([
                 'kingar_name_id' => $garden,
                 'day_id' => $today->id,
-                'order_title' => $today->day_number.'.'.$today->month_name.'.'.$today->year_name,
+                'order_title' => date("d-m-Y"),
                 'document_processes_id' => 3,
             ]);
             
@@ -357,8 +358,9 @@ class StorageController extends Controller
     }
     // Parolni tekshirib mayda skladlarga yuborish
     public function controlpassword(Request $request)
-    {
-        $day = Day::orderby('id', 'DESC')->get();
+    {   
+        $day = Day::where('year_id', Year::where('year_active', 1)->first()->id)->where('month_id', Month::where('month_active', 1)->first()->id)->orderby('id', 'DESC')->first();
+    
         $password = Auth::user()->password;
         if (Hash::check($request->password, $password)) {
             $result = 1;
@@ -376,7 +378,7 @@ class StorageController extends Controller
             						->get();
             	if($find->count() == 0){
 	                plus_multi_storage::create([
-	                    'day_id' => 81,
+	                    'day_id' => $day->id,
 	                    'shop_id' => 0,
 	                    'kingarden_name_d' => $order['kingar_name_id'],
 	                    'order_product_id' => $order['id'],
