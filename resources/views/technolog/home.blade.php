@@ -74,12 +74,15 @@
                     <h5 class="modal-title" id="exampleModalLabel">Omborxona</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <div class="modal-body">
-                    <div class="divmodproduct">
+                <form method='post' action='/technolog/plusmultimodadd'>
+                    @csrf
+                    <div class="modal-body" style="text-align: center;">
+                        <div class="divmodproduct">
+                        </div>
+                        <button type="submit"  class="btn btn-success" >Saqlash</button>
                     </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-success" data-bs-dismiss="modal">Close</button>
+                </form>
+                <div class="modal-footer" >
 
                 </div>
             </div>
@@ -142,6 +145,18 @@
 @endsection
 @section('script')
 <script>
+    $('.fa-school').click(function() {
+        var gardenid = $(this).attr('data-garden-id');
+        $.ajax({
+            method: "GET",
+            url: '/technolog/getmodproduct/'+gardenid,
+            success: function(data) {
+                div.html(data);
+            }
+
+        })
+    });
+
     $('.list-group-item-action').click(function() {
         var gardenid = $(this).attr('data-garden-id');
         // alert(gardenid);
@@ -155,6 +170,7 @@
 
         })
     });
+    
     $('#today').change(function() {
         var menuid = $("#today option:selected").val();
         var div = $('.today');
@@ -186,6 +202,7 @@
     window.addEventListener('load', MyFunc, true);
     var i = 0;
     var j = 0;
+    
     // document.multiselect('#testSelect1')
 	// 	.setCheckBoxClick("checkboxAll", function(target, args) {
 	// 		console.log("Checkbox 'Select All' was clicked and got value ", args.checked);
@@ -212,5 +229,7 @@
     function MyFunc() {
         setInterval(divchange, 1000);
     }
+
+    
 </script>
 @endsection
