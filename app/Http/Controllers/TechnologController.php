@@ -1486,8 +1486,7 @@ class TechnologController extends Controller
     // kichkina skladlar /////////////////////////////////////////
     public function minusmultistorage(Request $request, $kid){
         $king = Kindgarden::where('id', $kid)->first();
-        $month = Month::where('month_active', 1)->first();
-        $days = Day::where('month_id', $month->id)->get();
+        $days = Day::where('year_id', Year::where('year_active', 1)->first()->id)->where('month_id', Month::where('month_active', 1)->first()->id)->get();
         $minusproducts = [];
         foreach($days as $day){
             $minus = minus_multi_storage::where('day_id', $day->id)
@@ -1579,8 +1578,7 @@ class TechnologController extends Controller
 
     public function getmodproduct(Request $request, $kid){
         $king = Kindgarden::where('id', $kid)->first();
-        $month = Month::where('month_active', 1)->first();
-        $days = Day::where('month_id', $month->id)->get();
+        $days = Day::where('year_id', Year::where('year_active', 1)->first()->id)->where('month_id', Month::where('month_active', 1)->first()->id)->get();
         // dd($days);
         $minusproducts = [];
         foreach($days as $day){
@@ -1667,7 +1665,7 @@ class TechnologController extends Controller
                                 $countout = 0;
                             $html = $html.$countout." + <input type='text' style='width: 50px; font-size: 12px' name='prodminus[". $product->id ."]'>
                             </td>
-                            <td>". sprintf('%0.3f', $countin - $countout) .' '.$product->size_name."</td>
+                            <td>". sprintf('%0.1f', $countin - $countout) .' '.$product->size_name."</td>
                         </tr>";
                     }
                 }

@@ -65,9 +65,8 @@
 						<a href="#">
 							<i class="fas fa-store-alt" style="color: dodgerblue; font-size: 18px;"></i>
 						</a>
-
-						<b>{{ "№ "."____"." /". $document->kingar_name}}</b>
-						<b>{{ " /".$document->order_title }}</b>
+						<b>{{ "№ "."______"." / ". $document->kingar_name}}</b>
+						<b>{{ " / Cана: ".$document->order_title }}</b>
 					</div>
                 </div>
                 <hr>
@@ -93,7 +92,7 @@
                             <th scope="row">{{ $tr++ }}</th>
                             <td>{{ $row->product_name }}</td>
 							<td>{{ $row->size_name }}</td>
-							<td>{{ $row->product_weight }}</td>
+							<td><?php printf("%01.1f", $row->product_weight); ?></td>
 							<td></td>
 							<td></td>
                         </tr>
