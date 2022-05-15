@@ -1663,7 +1663,7 @@ class TechnologController extends Controller
                             else
                                 $countout = 0;
                             $html = $html.$countout."</td>
-                            <td>". $countin - $countout .' '.$product->size_name."</td>
+                            <td>". sprintf('%0.2f', $countin - $countout) .' '.$product->size_name."</td>
                         </tr>";
                     }
                 }
