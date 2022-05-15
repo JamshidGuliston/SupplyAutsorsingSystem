@@ -1636,6 +1636,8 @@ class TechnologController extends Controller
                 ->get(['products.id', 'products.product_name', 'sizes.size_name']);
         
         $html = "<table class='table table-light table-striped table-hover'>
+                <input type='hidden' name='kingarid' value='". $kid ."'>
+                <input type='hidden' name='dayid' value='". $days[0]->id ."'>
                 <thead>
                     <tr>
                         <th scope='col'>Maxsulot</th>
@@ -1655,22 +1657,55 @@ class TechnologController extends Controller
                             }
                             else
                                 $countin = 0;
-                            $html = $html.$countin."</td>
+                                $html = $html.$countin." + <input type='text' style='width: 50px; font-size: 12px' name='prodadd[". $product->id ."]'>
+                            </td>
                             <td>";
                             if(isset($minusproducts[$product->id])){ 
                                 $countout = $minusproducts[$product->id];
                             }
                             else
                                 $countout = 0;
-                            $html = $html.$countout."</td>
-                            <td>". sprintf('%0.2f', $countin - $countout) .' '.$product->size_name."</td>
+                            $html = $html.$countout." + <input type='text' style='width: 50px; font-size: 12px' name='prodminus[". $product->id ."]'>
+                            </td>
+                            <td>". sprintf('%0.3f', $countin - $countout) .' '.$product->size_name."</td>
                         </tr>";
                     }
                 }
         $html = $html."</tbody>
-            </table>";
+            </table>
+            ";
         
         return $html;
+    }
+
+    public function plusmultimodadd(Request $request){
+        // dd($request->all());
+        foreach($request->prodadd as $key => $value){
+            if($value != null){
+                plus_multi_storage::create([
+                    'day_id' => $request->dayid,
+                    'shop_id' => -1,
+                    'kingarden_name_d' => $request->kingarid,
+                    'order_product_id' => 0,
+                    'product_name_id' => $key,
+                    'product_weight' => $value,
+                ]);
+            }
+        }
+
+        foreach($request->prodminus as $key => $value){
+            if($value != null){
+                minus_multi_storage::create([
+                    'day_id' => $request->dayid,
+                    'kingarden_name_id' => $request->kingarid,
+                    'kingar_menu_id' => -1,
+                    'product_name_id' => $key,
+                    'product_weight' => $value,
+                ]);
+            }
+        }
+
+        return redirect()->route('technolog.home');
     }
     //  /////////////////////////////////////////
 
