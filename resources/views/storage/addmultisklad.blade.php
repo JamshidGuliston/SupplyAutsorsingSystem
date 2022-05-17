@@ -109,6 +109,8 @@
                             <i class="fas fa-plus me-2" style="color:#23b242; cursor: pointer; padding-top: 10px"></i>
                         </div>
                     </div>
+                    <div class="afternoon col-md-12">
+                    </div>
                 </div>  
             </div>
             <div class="modal-body">
@@ -119,6 +121,7 @@
                             <tr>
                                 <th scope="col">...</th>
                                 <th scope="col" style="text-align: center;">3-4; 4-7 ёш</th>
+                                <th scope="col" style="text-align: center;">Ходимлар</th>
                                 <th scope="col" style="text-align: center;">Қисқа гурух</th>
                             </tr>
                         </thead>
@@ -128,7 +131,7 @@
                 </div>
             </div>
             <div class="modal-body foodcomposition"> 
-                <input type="number" name="maxday" class="form-select" placeholder="Сифати тез бузиладиганлар муддати" required>
+                <input type="number" name="maxday" class="form-control" placeholder="Сифати тез бузиладиганлар муддати" required>
                 <!-- Боғчаларни танлаш -->
                 <select id='testSelect2' name="gardens[]" class="form-select" aria-label="Default select example" multiple required>
                     @foreach($gardens as $row)
@@ -229,8 +232,18 @@
 <script>
     function changeFunc() {
         var selectBox = document.getElementById("onemenu");
-        var selectedValue = selectBox.options[selectBox.selectedIndex].value;
-        // alert(selectedValue);
+        var menuid = selectBox.options[selectBox.selectedIndex].value;
+        var div = $('.afternoon');
+        $.ajax({
+            method: "GET",
+            url: '/storage/getworkerfoods',
+            data: {
+                'menuid': menuid,
+            },
+            success: function(data) {
+                div.html(data);
+            }
+        })
     }
     $(document).ready(function() {
         var tr = 0;
@@ -240,13 +253,20 @@
             var div = $('.addfood');
             var twomenuid = $('#twomenu').val();
             var twomenutext = $('#twomenu option:selected').text();
+            var chkArray = [];
             if(onemenuid == "" || twomenuid == "")
             {
                 alert("Menyu tanlang!");
             }
             else{
                 tr++;
-                div.append("<tr><td>"+tr+"-кун</td><td><input type='hidden' name='onemenu["+tr+"][1]' value="+onemenuid+"><input type='hidden' name='onemenu["+tr+"][2]' value="+onemenuid+">"+onemenutext+"</td><td><input type='hidden' name='onemenu["+tr+"][3]' value="+twomenuid+">"+twomenutext+"</td></tr>");
+                var bb = 0;
+                $("input:checkbox[id=vehicle]:checked").each(function(){
+                    bb = 1;
+                    div.append("<input type='hidden' name='workerfoods["+tr+"]["+$(this).val()+"]' value="+onemenuid+">");
+                });
+                
+                div.append("<tr><td>"+tr+"-кун</td><td><input type='hidden' name='onemenu["+tr+"][1]' value="+onemenuid+"><input type='hidden' name='onemenu["+tr+"][2]' value="+onemenuid+">"+onemenutext+"</td><td>"+(bb ? "+":"-")+"</td><td><input type='hidden' name='onemenu["+tr+"][3]' value="+twomenuid+">"+twomenutext+"</td></tr>");
             }
             
         });

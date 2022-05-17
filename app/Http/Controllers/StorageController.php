@@ -253,15 +253,52 @@ class StorageController extends Controller
         return $kindproducts;
     }
 
+    public function workermenuproduct($stop, $menuid, $foodid, $worker_count, $kindproducts){
+        $menuitem = Menu_composition::where('title_menu_id', $menuid)->where('menu_meal_time_id', 3)->where('menu_food_id', $foodid)->where('age_range_id', 1)->get();
+        foreach($menuitem as $row){
+            if(!isset($kindproducts[$row['product_name_id']])){
+                $kindproducts[$row['product_name_id']] = 0;
+            }
+            $product = Product::where('id', $row['product_name_id'])->first();
+            if($product->category_name_id == 0 and $stop == 1){
+                // dd($product, $stop, $child_count);
+                continue;
+            }
+            $kindproducts[$row['product_name_id']] += $row['weight'] * $worker_count;
+        }
+        // dd($kindproducts);
+        return $kindproducts;
+    }
+
+    public function getworkerfoods(Request $request){
+        $foods = Menu_composition::where('title_menu_id', $request->menuid)->where('menu_meal_time_id', 3)
+                ->join('food', 'food.id', '=', 'menu_compositions.menu_food_id')->get();
+        $html = "<br><div class='col-md-5'>
+                    <div class='product-select'>
+                    <p>Xodimlar uchun:</p>";
+        foreach($foods as $row){
+            if(empty($bool[$row->menu_food_id])){
+                $bool[$row->menu_food_id] = "OK";
+                $html .= "<input type='checkbox' id='vehicle' name='".$request->menuid."' value='".$row->menu_food_id."' >
+                <label for='vehicle'>".$row->food_name."</label><br>";
+            }
+        }            
+        $html .= "</div>
+        </div>";
+        
+        return $html;
+    }
+
     public function newordersklad(Request $request){
         // dd($request->all());
-        
         $today = Day::join('months', 'months.id', '=', 'days.month_id')
                 ->join('years', 'years.id', '=', 'days.year_id')
                 ->orderBy('id', 'DESC')->first(['days.id', 'days.day_number', 'months.month_name', 'years.year_name']);
         $kindproducts = [];
+        $kindworkerproducts = [];
         foreach($request->gardens as $garden){
             $kindproducts[$garden]['k'] = '*';
+            $kindworkerproducts[$garden]['k'] = '*';
             $kind = Kindgarden::where('id', $garden)->with('age_range')->first();
             $stop = 0;
             foreach($request->onemenu as $tr => $day){
@@ -271,6 +308,9 @@ class StorageController extends Controller
                 foreach($kind->age_range as $age){
                     $ch = Number_children::where('kingar_name_id', $garden)->where('king_age_name_id', $age->id)->orderby('day_id', 'DESC')->first();
                     $kindproducts[$garden] = $this->menuproduct($stop, $day[$ch['king_age_name_id']], $ch['king_age_name_id'], $ch['kingar_children_number'], $kindproducts[$garden]);
+                }
+                foreach($request->workerfoods[$tr] as $key => $val){
+                    $kindworkerproducts[$garden] = $this->workermenuproduct($stop, $val, $key, $kind->worker_count, $kindworkerproducts[$garden]);
                 }
             }
             // dd($kindproducts[$garden]);
@@ -289,6 +329,9 @@ class StorageController extends Controller
                 if($prod->shop->count() == 0){
                     if(!isset($mods[$key]) or $mods[$key] <= 0){
                         $mods[$key] = 0;
+                    }
+                    if(isset($kindworkerproducts[$garden][$key])){
+                        $val = $val + $kindworkerproducts[$garden][$key];
                     }
                     if(($val / $prod->div) - $mods[$key] > 0){
                         order_product_structure::create([

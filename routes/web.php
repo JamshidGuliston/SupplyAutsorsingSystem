@@ -70,6 +70,7 @@ Route::group(['prefix' => 'storage', 'middleware' => ['isStorage', 'auth']], fun
     Route::get('getproduct', [StorageController::class, 'getproduct']);
     Route::get('editproduct', [StorageController::class, 'editproduct']);
     Route::get('deleteid', [StorageController::class, 'deleteid']);
+    Route::get('getworkerfoods', [StorageController::class, 'getworkerfoods'])->name('technolog.getworkerfoods');
 
 });
 
