@@ -26,6 +26,17 @@ class AccountantController extends Controller
                 ->get(['days.id', 'days.day_number', 'months.month_name', 'years.year_name']);
         return $days;
     }
+
+    public function activyear(){
+        $year = Year::orderBy('id', 'DESC')->first();
+        $month = Month::where('month_active', 1)->first();
+        $days = Day::where('year_id', $year->id)
+                ->join('months', 'months.id', '=', 'days.month_id')
+                ->join('years', 'years.id', '=', 'days.year_id')
+                ->get(['days.id', 'days.day_number', 'months.month_name', 'years.year_name']);
+        return $days;
+    }
+
     public function index(Request $request)
     {
         return view('accountant.home');
@@ -40,7 +51,6 @@ class AccountantController extends Controller
     public function bycosts(Request $request, $id){
         $region = Region::where('id', $id)->first();
         $year = Year::orderBy('id', 'DESC')->first();
-        $thismonth = 
         // $days = Day::where('year_id', $year->id)->get();
         $days = Day::where('year_id', $year->id)
             ->join('months', 'months.id', '=', 'days.month_id')
@@ -104,6 +114,8 @@ class AccountantController extends Controller
 
     public function kindreport(Request $request, $id){
         $days = $this->activmonth();
+        $yeardays = $this->activyear();
+        $kindgar = Kindgarden::where('id', $id)->first();
         $nakproducts = [];
         $first = 0;
         foreach($days as $day){
@@ -175,11 +187,116 @@ class AccountantController extends Controller
                 }
             }
 
-            // dd($nakproducts);
-            
-
+            $costsdays = bycosts::where('region_name_id', Kindgarden::where('id', $id)->first()->region_id)
+                        ->join('days', 'bycosts.day_id', '=', 'days.id')
+                        ->join('years', 'days.year_id', '=', 'years.id')
+                        ->orderBy('day_id', 'DESC')
+                        ->get(['bycosts.day_id', 'days.day_number', 'days.month_id', 'years.year_name']);
+            $costs = [];
+            $bool = [];
+            foreach($costsdays as $row){
+                if(!isset($bool[$row->day_id])){
+                    array_push($costs, $row);
+                    $bool[$row->day_id] = 1;
+                }
+            }
         }
+
         // dd($days);
-        return view('accountant.kindreport', compact('days', 'nakproducts'));
+        return view('accountant.kindreport', compact('days', 'nakproducts', 'yeardays', 'costsdays', 'costs', 'ages', 'kindgar'));
     }
+
+    public function nakapit(Request $request, $id, $ageid, $start, $end, $costid){
+        $kindgar = Kindgarden::where('id', $id)->first();
+        $nakproducts = [];
+        $first = 0;
+        $days = Day::where('id', '>=', $start)->where('id', '<=', $end)->get();
+        foreach($days as $day){
+            $first = $day->id;
+            $join = Number_children::where('number_childrens.day_id', $day->id)
+                    ->where('kingar_name_id', $id)
+                    ->where('king_age_name_id', $ageid)
+                    ->leftjoin('active_menus', function($join){
+                        $join->on('number_childrens.kingar_menu_id', '=', 'active_menus.title_menu_id');
+                        $join->on('number_childrens.king_age_name_id', '=', 'active_menus.age_range_id');
+                    })
+                    ->where('active_menus.day_id', $day->id)
+                    ->join('products', 'active_menus.product_name_id', '=', 'products.id')
+                    ->get();
+            // dd($join);	
+            // $ages = Age_range::all();
+            $agerange = array();
+            foreach($ages as $row){
+                $agerange[$row->id] = 0;
+            }
+            $productscount = array_fill(1, 500, $agerange);
+            foreach($join as $row){
+                $productscount[$row->product_name_id][$ageid] += $row->weight;
+                $productscount[$row->product_name_id][$ageid.'-children'] = $row->kingar_children_number;
+                $productscount[$row->product_name_id][$ageid.'div'] = $row->div;
+                $productscount[$row->product_name_id]['product_name'] = $row->product_name;
+            }
+            
+            foreach($productscount as $key => $row){
+                if(isset($row['product_name'])){
+                    $childs = Number_children::where('day_id', $day->id)
+                                    ->where('kingar_name_id', $id)
+                                    ->where('king_age_name_id', $ageid)
+                                    ->sum('kingar_children_number');    
+                    $nakproducts[0][$day->id] = $childs;
+                    $nakproducts[0]['product_name'] = "Болалар сони";
+                    $nakproducts[$key][$day->id] = ($row[$ageid]*$row[$ageid.'-children']) / $row[$ageid.'div'];;
+                    $nakproducts[$key]['product_name'] = $row['product_name'];
+                }
+            }
+
+            $costs = bycosts::where('day_id', '<=', $first)->where('region_name_id', Kindgarden::where('id', $id)->first()->region_id)
+                    ->orderBy('day_id', 'DESC')->limit(Product::all()->count())->get();
+            
+            foreach($costs as $cost){
+                $nakproducts[0][0] = 0;
+                if(isset($nakproducts[$cost->praduct_name_id]['product_name'])){
+                    $nakproducts[$cost->praduct_name_id][0] = $cost->price_cost;
+                }
+            }
+
+            $costsdays = bycosts::where('region_name_id', Kindgarden::where('id', $id)->first()->region_id)
+                        ->join('days', 'bycosts.day_id', '=', 'days.id')
+                        ->join('years', 'days.year_id', '=', 'years.id')
+                        ->orderBy('day_id', 'DESC')
+                        ->get(['bycosts.day_id', 'days.day_number', 'days.month_id', 'years.year_name']);
+            $costs = [];
+            $bool = [];
+            foreach($costsdays as $row){
+                if(!isset($bool[$row->day_id])){
+                    array_push($costs, $row);
+                    $bool[$row->day_id] = 1;
+                }
+            }
+        }
+
+        return view('accountant.nakapit', compact('days', 'nakproducts', 'yeardays', 'costsdays', 'costs', 'ages', 'kindgar'));
+    }
+
+    public function nakapitexcel(Request $request, $id, $ageid, $start, $end, $costid){
+        
+    }
+
+    public function schotfaktur(Request $request, $id, $ageid, $start, $end, $costid){
+        
+    }
+
+    public function schotfakturexcel(Request $request, $id, $ageid, $start, $end, $costid){
+        
+    }
+
+    public function norm(Request $request, $id, $ageid, $start, $end, $costid){
+        
+    }
+
+    public function normexcel(Request $request, $id, $ageid, $start, $end, $costid){
+        
+    }
+
+
 }
