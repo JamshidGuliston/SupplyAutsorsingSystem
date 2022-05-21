@@ -13,7 +13,7 @@
 	 @page { margin: 0.2in 0.8in 0in 0.3in; }
 	body{
 		font-family: DejaVu Sans;
-		font-size:12px;
+		font-size:10px;
 		/* background-image: url(images/bg.jpg); */
 		background-position: top left;
 		background-repeat: no-repeat;
@@ -40,7 +40,7 @@
 		padding: 0px;
 	}
 	td{
-		border-right: 1px dashed black;
+		border-right: 1px solid black;
 		border-bottom: 1px solid black;
 		padding: 0px;
 	}
@@ -77,7 +77,7 @@
 								<th scope="col">{{ $day->day_number; }}</th>
 							@endforeach
 							<th>Жами</th>
-							<th style="width: 15%;">Сумма</th>
+							<th style="width: 8%;">Сумма</th>
                         </tr>
                     </thead>
                     <tbody>
