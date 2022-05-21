@@ -77,7 +77,7 @@
 								<th scope="col">{{ $day->day_number; }}</th>
 							@endforeach
 							<th>Жами</th>
-							<th style="width: 60px;">Сумма</th>
+							<th style="width: 15%;">Сумма</th>
                         </tr>
                     </thead>
                     <tbody>
