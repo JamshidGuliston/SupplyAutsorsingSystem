@@ -210,11 +210,10 @@ class AccountantController extends Controller
     public function nakapit(Request $request, $id, $ageid, $start, $end, $costid){
         $kindgar = Kindgarden::where('id', $id)->first();
         $nakproducts = [];
-        $first = 0;
+        $age = Age_range::where('id', $ageid)->first();
         $days = Day::where('id', '>=', $start)->where('id', '<=', $end)->get();
         
         foreach($days as $day){
-            $first = $day->id;
             $join = Number_children::where('number_childrens.day_id', $day->id)
                     ->where('kingar_name_id', $id)
                     ->where('king_age_name_id', $ageid)
@@ -278,7 +277,7 @@ class AccountantController extends Controller
         }
 
         $dompdf = new Dompdf('UTF-8');
-		$html = mb_convert_encoding(view('pdffile.accountant.nakapit', compact('days', 'nakproducts', 'costsdays', 'costs', 'kindgar')), 'HTML-ENTITIES', 'UTF-8');
+		$html = mb_convert_encoding(view('pdffile.accountant.nakapit', compact('age', 'days', 'nakproducts', 'costsdays', 'costs', 'kindgar')), 'HTML-ENTITIES', 'UTF-8');
 		$dompdf->loadHtml($html);
 
 		// (Optional) Setup the paper size and orientation

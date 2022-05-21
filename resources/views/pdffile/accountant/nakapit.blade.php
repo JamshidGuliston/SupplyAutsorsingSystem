@@ -65,7 +65,7 @@
 						<a href="#">
 							<i class="fas fa-store-alt" style="color: dodgerblue; font-size: 18px;"></i>
 						</a>
-						<b>{{ $kindgar->kingar_name  }}</b>
+						<b>{{ $kindgar->kingar_name." / ".$age->age_name }}</b>
 					</div>
                 </div>
                 <table style="width:100%; table-layout: fixed;">
@@ -77,7 +77,7 @@
 								<th scope="col">{{ $day->day_number; }}</th>
 							@endforeach
 							<th>Жами</th>
-							<th>Сумма</th>
+							<th style="width: 30px;">Сумма</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -87,14 +87,22 @@
 						<td>{{ $row[0] }}</td>
 						<?php 
 							$summ = 0;
+							$t = 0;
 						?>
 						@foreach($days as $day)
 							@if(isset($row[$day['id']]))
 								<td>
+								@if($row['product_name'] == "Болалар сони")
+									<strong>{{ $row[$day['id']]; }}</strong>
 								<?php  
-									printf("%01.2f", $row[$day['id']]); 
 									$summ += $row[$day['id']];
 								?>
+								@else
+								<?php  
+									printf("%01.1f", $row[$day['id']]); 
+									$summ += $row[$day['id']];
+								?>
+								@endif
 								</td>
 							@else
 								<td>
@@ -102,8 +110,8 @@
 								</td>
 							@endif
 						@endforeach
-						<td><?php printf("%01.2f", $summ) ?></td>
-						<td><?php printf("%01.2f", $summ*$row[0]) ?></td>
+						<td><?php printf("%01.1f", $summ) ?></td>
+						<td><?php printf("%01.1f", $summ*$row[0]) ?></td>
 					</tr>
 					@endforeach
                     </tbody>
