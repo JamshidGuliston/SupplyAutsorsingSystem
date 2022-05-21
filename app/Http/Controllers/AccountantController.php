@@ -12,6 +12,7 @@ use App\Models\Product;
 use App\Models\Region;
 use App\Models\titlemenu_food;
 use App\Models\Year;
+use Dompdf\Dompdf;
 use Illuminate\Http\Request;
 use PhpParser\Node\Stmt\Foreach_;
 
@@ -211,6 +212,7 @@ class AccountantController extends Controller
         $nakproducts = [];
         $first = 0;
         $days = Day::where('id', '>=', $start)->where('id', '<=', $end)->get();
+        
         foreach($days as $day){
             $first = $day->id;
             $join = Number_children::where('number_childrens.day_id', $day->id)
@@ -223,14 +225,14 @@ class AccountantController extends Controller
                     ->where('active_menus.day_id', $day->id)
                     ->join('products', 'active_menus.product_name_id', '=', 'products.id')
                     ->get();
-            // dd($join);	
-            // $ages = Age_range::all();
-            $agerange = array();
-            foreach($ages as $row){
-                $agerange[$row->id] = 0;
-            }
-            $productscount = array_fill(1, 500, $agerange);
+            // dd($join);
+            // $agerange = array();
+            $productscount = [];
+            // $productscount = array_fill(1, 500, $agerange);
             foreach($join as $row){
+                if(!isset($productscount[$row->product_name_id][$ageid])){
+                    $productscount[$row->product_name_id][$ageid] = 0;
+                }
                 $productscount[$row->product_name_id][$ageid] += $row->weight;
                 $productscount[$row->product_name_id][$ageid.'-children'] = $row->kingar_children_number;
                 $productscount[$row->product_name_id][$ageid.'div'] = $row->div;
@@ -249,8 +251,8 @@ class AccountantController extends Controller
                     $nakproducts[$key]['product_name'] = $row['product_name'];
                 }
             }
-
-            $costs = bycosts::where('day_id', '<=', $first)->where('region_name_id', Kindgarden::where('id', $id)->first()->region_id)
+            // dd($nakproducts);
+            $costs = bycosts::where('day_id', $costid)->where('region_name_id', Kindgarden::where('id', $id)->first()->region_id)
                     ->orderBy('day_id', 'DESC')->limit(Product::all()->count())->get();
             
             foreach($costs as $cost){
@@ -275,7 +277,20 @@ class AccountantController extends Controller
             }
         }
 
-        return view('accountant.nakapit', compact('days', 'nakproducts', 'yeardays', 'costsdays', 'costs', 'ages', 'kindgar'));
+        $dompdf = new Dompdf('UTF-8');
+		$html = mb_convert_encoding(view('pdffile.accountant.nakapit', compact('days', 'nakproducts', 'costsdays', 'costs', 'kindgar')), 'HTML-ENTITIES', 'UTF-8');
+		$dompdf->loadHtml($html);
+
+		// (Optional) Setup the paper size and orientation
+		$dompdf->setPaper('A4', 'landscape');
+		// $customPaper = array(0,0,360,360);
+		// $dompdf->setPaper($customPaper);
+		$name = $start.$end.$id.$ageid."nakapit.pdf";
+		// Render the HTML as PDF
+		$dompdf->render();
+
+		// Output the generated PDF to Browser
+		$dompdf->stream($name, ['Attachment' => 0]);
     }
 
     public function nakapitexcel(Request $request, $id, $ageid, $start, $end, $costid){
