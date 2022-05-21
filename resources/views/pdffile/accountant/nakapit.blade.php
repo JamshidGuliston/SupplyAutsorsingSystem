@@ -77,7 +77,7 @@
 								<th scope="col">{{ $day->day_number; }}</th>
 							@endforeach
 							<th>Жами</th>
-							<th style="width: 30px;">Сумма</th>
+							<th style="width: 60px;">Сумма</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -111,7 +111,7 @@
 							@endif
 						@endforeach
 						<td><?php printf("%01.1f", $summ) ?></td>
-						<td><?php printf("%01.1f", $summ*$row[0]) ?></td>
+						<td ><?php printf("%01.1f", $summ*$row[0]) ?></td>
 					</tr>
 					@endforeach
                     </tbody>
