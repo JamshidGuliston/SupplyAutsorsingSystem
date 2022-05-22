@@ -47,7 +47,7 @@
 
     <div class="row g-3 my-2">
         <div class="col-md-12">
-            <button>OK</button>
+
         </div>
         @foreach($kinds as $item)
         <div class="col-md-3">

@@ -63,7 +63,7 @@
 </style>
 @endsection
 @section('leftmenu')
-@include('accountant.sidemenu'); 
+@include(' accountant.sidemenu'); 
 @endsection
 @section('content')
 <!-- EDD -->

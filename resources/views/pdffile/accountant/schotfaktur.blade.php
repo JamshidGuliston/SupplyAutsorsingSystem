@@ -61,7 +61,7 @@
 </head>
 <body>
     <div class="container-fluid">
-        <div class="row mt-5">
+        <div class="page-break row mt-5">
             <div class="col-md-12">
                 <div class="table" id="table_with_data">
 					<div class="col-md-3">
@@ -75,7 +75,6 @@
                     <thead>
                         <tr style="width: 15%;">
                             <th scope="col" style="width: 10%;">Махсулотлар</th>
-                            <th style="width: 15px;">...</th>
                             <th style="width: 30px;"><bold>Нарх</bold></th>
                             @foreach($days as $day)
 								<th scope="col">{{ $day->day_number; }}</th>
@@ -88,10 +87,10 @@
 					@foreach($nakproducts as $key => $row)
 					<tr>
 						<td>{{ $row['product_name'] }}</td>
-						<td>{{ $row['size_name'] }}</td>
 						<td>{{ $row[0] }}</td>
 						<?php 
 							$summ = 0;
+							$t = 0;
 						?>
 						@foreach($days as $day)
 							@if(isset($row[$day['id']]))
@@ -120,8 +119,6 @@
 					@endforeach
                     </tbody>
                 </table>
-				<br>
-				<span>МЧЖ "НИШОН ИНВЕСТ" директори Қ.Нишонов.  Ташкилот рахбари____________________          Бош. Хисобчи ____________________	</span>
             </div>
         </div>
     </div>
