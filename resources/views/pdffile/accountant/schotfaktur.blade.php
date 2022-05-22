@@ -13,7 +13,7 @@
 	 @page { margin: 0.2in 0.8in 0in 0.3in; }
 	body{
 		font-family: DejaVu Sans;
-		font-size:10px;
+		font-size:12px;
 		/* background-image: url(images/bg.jpg); */
 		background-position: top left;
 		background-repeat: no-repeat;
@@ -30,7 +30,7 @@
 		border: 2px solid black;
 	}
 	td {
-		text-align: center;
+		text-align: left;
 		width: auto;
 		overflow: hidden;
 		word-wrap: break-word;
@@ -42,7 +42,7 @@
 	td{
 		border-right: 1px solid black;
 		border-bottom: 1px solid black;
-		padding: 0px;
+		padding-left: 5px;
 	}
 	.vrt-header span{
 		display: inline-block;
@@ -61,66 +61,79 @@
 </head>
 <body>
     <div class="container-fluid">
-        <div class="page-break row mt-5">
+        <div class="row mt-5">
             <div class="col-md-12">
                 <div class="table" id="table_with_data">
-					<div class="col-md-3">
-						<a href="#">
-							<i class="fas fa-store-alt" style="color: dodgerblue; font-size: 18px;"></i>
-						</a>
-						<b>{{ $kindgar->kingar_name." / ".$age->age_name }}</b>
+					<div class="col-md-12">
+                        <center>НАКЛАДНАЯ-СЧЁТ ФАКТУРА № ______</center>
+                        <center>от " ____ " _________________ 2022г</center>
+                        <center>К товарно-отгрузчным документом №____ от" ____ " ____________ 2022 года</center><br>
+						<center>Поставщик:МЧЖ Нишон Инвест / {{ $kindgar->kingar_name." / ".$age->age_name }}</center>
 					</div>
                 </div>
                 <table style="width:100%; table-layout: fixed;">
                     <thead>
-                        <tr style="width: 15%;">
-                            <th scope="col" style="width: 10%;">Махсулотлар</th>
-                            <th style="width: 30px;"><bold>Нарх</bold></th>
-                            @foreach($days as $day)
-								<th scope="col">{{ $day->day_number; }}</th>
-							@endforeach
-							<th>Жами</th>
-							<th style="width: 8%;">Сумма</th>
+                        <tr>
+                            <th scope="col" style="width: 25%;">Махсулот номи</th>
+                            <th style="width: 7px;">Ед.м</th>
+                            <th style="width: 30px;">калич</th>
+							<th style="width: 8%;">цена</th>
+							<th>Стоимость паставка</th>
+							<th>НДС ставка сумма</th>
+							<th>С тоимость поставка с учетом НДС</th>
                         </tr>
                     </thead>
                     <tbody>
+                    <?php
+                        $ww = 0;
+                    ?>
 					@foreach($nakproducts as $key => $row)
 					<tr>
 						<td>{{ $row['product_name'] }}</td>
-						<td>{{ $row[0] }}</td>
+						<td>{{ $row['size_name'] }}</td>
 						<?php 
 							$summ = 0;
-							$t = 0;
 						?>
 						@foreach($days as $day)
 							@if(isset($row[$day['id']]))
-								<td>
-								@if($row['product_name'] == "Болалар сони")
-									<strong>{{ $row[$day['id']]; }}</strong>
 								<?php  
 									$summ += $row[$day['id']];
 								?>
-								@else
-								<?php  
-									printf("%01.1f", $row[$day['id']]); 
-									$summ += $row[$day['id']];
-								?>
-								@endif
-								</td>
-							@else
-								<td>
-									{{ '0' }}
-								</td>
 							@endif
 						@endforeach
 						<td><?php printf("%01.1f", $summ) ?></td>
+                        <td>{{ $row[0] }}</td>
 						<td ><?php printf("%01.1f", $summ*$row[0]) ?></td>
+                        <?php
+                            $ww += $summ*$row[0];
+                        ?>
+						<td><?php printf("%01.1f", ($summ*$row[0]/100)*15) ?></td>
+						<td><?php printf("%01.1f", $summ*$row[0] + ($summ*$row[0]/100)*15) ?></td>
 					</tr>
 					@endforeach
+                    <tr>
+                        <th scope="col" style="width: 25%;">Жами</th>
+                        <th style="width: 7px;"></th>
+                        <th style="width: 30px;"></th>
+                        <th style="width: 8%;"></th>
+                        <th><?php printf("%01.1f", $ww) ?></th>
+                        <th><?php printf("%01.1f", $ww/100*15) ?></th>
+                        <th><?php printf("%01.1f", $ww + $ww/100*15) ?></th>
+                    </tr>
+                    <tr>
+                        <td>Всего к оплата</td>
+                        <td colspan="6"></td>
+                    </tr>
                     </tbody>
                 </table>
+                <div class="col-md-6">
+                    <p>Руководитель________________________    Получил________________</p>
+                    <p>Главный бухгалтер___________________</p>
+                    <p>М.П.</p>
+                    <p>Товар отпустил _________________</p>
+                </div>
             </div>
         </div>
     </div>
 </bod>
-<html>
+<html>  

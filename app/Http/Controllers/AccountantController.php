@@ -316,6 +316,7 @@ class AccountantController extends Controller
                     })
                     ->where('active_menus.day_id', $day->id)
                     ->join('products', 'active_menus.product_name_id', '=', 'products.id')
+                    ->join('sizes', 'products.size_name_id', '=', 'sizes.id')
                     ->get();
             // dd($join);
             // $agerange = array();
@@ -329,18 +330,15 @@ class AccountantController extends Controller
                 $productscount[$row->product_name_id][$ageid.'-children'] = $row->kingar_children_number;
                 $productscount[$row->product_name_id][$ageid.'div'] = $row->div;
                 $productscount[$row->product_name_id]['product_name'] = $row->product_name;
+                $productscount[$row->product_name_id]['size_name'] = $row->size_name;
             }
             
             foreach($productscount as $key => $row){
                 if(isset($row['product_name'])){
-                    $childs = Number_children::where('day_id', $day->id)
-                                    ->where('kingar_name_id', $id)
-                                    ->where('king_age_name_id', $ageid)
-                                    ->sum('kingar_children_number');    
-                    $nakproducts[0][$day->id] = $childs;
-                    $nakproducts[0]['product_name'] = "Болалар сони";
+                    
                     $nakproducts[$key][$day->id] = ($row[$ageid]*$row[$ageid.'-children']) / $row[$ageid.'div'];;
                     $nakproducts[$key]['product_name'] = $row['product_name'];
+                    $nakproducts[$key]['size_name'] = $row['size_name'];
                 }
             }
             // dd($nakproducts);
@@ -348,7 +346,6 @@ class AccountantController extends Controller
                     ->orderBy('day_id', 'DESC')->limit(Product::all()->count())->get();
             
             foreach($costs as $cost){
-                $nakproducts[0][0] = 0;
                 if(isset($nakproducts[$cost->praduct_name_id]['product_name'])){
                     $nakproducts[$cost->praduct_name_id][0] = $cost->price_cost;
                 }

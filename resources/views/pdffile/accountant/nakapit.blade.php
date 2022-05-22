@@ -75,7 +75,7 @@
                     <thead>
                         <tr style="width: 15%;">
                             <th scope="col" style="width: 10%;">Махсулотлар</th>
-                            <th style="width: 15px;">...</th>
+                            <th style="width: 10px;">...</th>
                             <th style="width: 30px;"><bold>Нарх</bold></th>
                             @foreach($days as $day)
 								<th scope="col">{{ $day->day_number; }}</th>
