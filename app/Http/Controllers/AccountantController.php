@@ -387,7 +387,71 @@ class AccountantController extends Controller
     }
 
     public function norm(Request $request, $id, $ageid, $start, $end, $costid){
+        $kindgar = Kindgarden::where('id', $id)->first();
+        $nakproducts = [];
+        $age = Age_range::where('id', $ageid)->first();
+        $days = Day::where('id', '>=', $start)->where('id', '<=', $end)->get();
         
+        foreach($days as $day){
+            $join = Number_children::where('number_childrens.day_id', $day->id)
+                    ->where('kingar_name_id', $id)
+                    ->where('king_age_name_id', $ageid)
+                    ->leftjoin('active_menus', function($join){
+                        $join->on('number_childrens.kingar_menu_id', '=', 'active_menus.title_menu_id');
+                        $join->on('number_childrens.king_age_name_id', '=', 'active_menus.age_range_id');
+                    })
+                    ->where('active_menus.day_id', $day->id)
+                    ->join('products', 'active_menus.product_name_id', '=', 'products.id')
+                    ->join('norm_categories', 'products.norm_cat_id', '=', 'norm_categories.id')
+                    ->join('norms', 'products.norm_cat_id', '=', 'norms.norm_cat_id')
+                    ->where('norms.norm_age_id', $ageid)
+                    ->where('norms.noyuk_id', 1)
+                    ->get();
+            // dd($join);
+            // $agerange = array();
+            $productscount = [];
+            foreach($join as $row){
+                if(!isset($productscount[$row->norm_cat_id][$ageid])){
+                    $productscount[$row->norm_cat_id][$ageid] = 0;
+                    // $productscount[$row->norm_cat_id][$ageid.'-children'] = 0;
+                }
+                $productscount[$row->norm_cat_id][$ageid] += $row->weight;
+                $productscount[$row->norm_cat_id][$ageid.'-children'] = $row->kingar_children_number;
+                $productscount[$row->norm_cat_id][$ageid.'div'] = $row->div;
+                $productscount[$row->norm_cat_id]['product_name'] = $row->norm_name;
+                $productscount[$row->norm_cat_id]['norm_weight'] = $row->norm_weight;
+            }
+            
+            foreach($productscount as $key => $row){
+                if(isset($row['product_name'])){
+                    if(!isset($nakproducts[$key]['children'])){
+                        $nakproducts[$key]['children'] = 0;
+                    }
+                    $nakproducts[$key][$day->id] = ($row[$ageid]*$row[$ageid.'-children']) / $row[$ageid.'div'];;
+                    $nakproducts[$key]['product_name'] = $row['product_name'];
+                    $nakproducts[$key]['norm_weight'] = $row['norm_weight'];
+                    $nakproducts[$key]['children'] += $row[$ageid.'-children'];
+                    $nakproducts[$key]['div'] = $row[$ageid.'div'];
+                }
+            }
+            
+        }
+        // dd($nakproducts);
+
+        $dompdf = new Dompdf('UTF-8');
+		$html = mb_convert_encoding(view('pdffile.accountant.norm', compact('age', 'days', 'nakproducts', 'kindgar')), 'HTML-ENTITIES', 'UTF-8');
+		$dompdf->loadHtml($html);
+
+		// (Optional) Setup the paper size and orientation
+		$dompdf->setPaper('A4');
+		// $customPaper = array(0,0,360,360);
+		// $dompdf->setPaper($customPaper);
+		$name = $start.$end.$id.$ageid."schotfaktur.pdf";
+		// Render the HTML as PDF
+		$dompdf->render();
+
+		// Output the generated PDF to Browser
+		$dompdf->stream($name, ['Attachment' => 0]);    
     }
 
     public function normexcel(Request $request, $id, $ageid, $start, $end, $costid){
