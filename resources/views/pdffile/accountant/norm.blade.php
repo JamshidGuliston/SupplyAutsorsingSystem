@@ -90,7 +90,7 @@
                     ?>
 					@foreach($nakproducts as $key => $row)
 					<tr>
-						<td>{{ $row['product_name'] }}</td>
+						<td>{{ mb_strimwidth($row['product_name'], 0, 35) . '...' }}</td>
 						<td>{{ $row['norm_weight'] }}</td>
 						<td><?php printf("%01.1f", ($row['norm_weight'] * $row['children']) / $row['div']) ?></td>
 						<?php 
