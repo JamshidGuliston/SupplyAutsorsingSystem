@@ -30,8 +30,7 @@
 		border: 2px solid black;
 	}
 	td {
-		text-align: center;
-		width: auto;
+		/* text-align: center; */
 		overflow: hidden;
 		word-wrap: break-word;
 	}
@@ -42,7 +41,7 @@
 	td{
 		border-right: 1px solid black;
 		border-bottom: 1px solid black;
-		padding: 0px;
+		padding-left: 2px;
 	}
 	.vrt-header span{
 		display: inline-block;
@@ -75,10 +74,10 @@
                     <thead>
                         <tr>
                             <th scope="col">Махсулотлар</th>
-                            <th>...</th>
-                            <th style="width: 30px;"><bold>Нарх</bold></th>
+                            <th>Ўлчов</th>
+                            <th><bold>Нарх</bold></th>
                             @foreach($kindgardens as $day)
-								<th scope="col">{{ $day->kingar_name; }}</th>
+								<th scope="col" colspan="2">{{ $day->kingar_name; }}</th>
 							@endforeach
 							<th>КГ</th>
 							<th>Сумма</th>
@@ -90,7 +89,11 @@
                     </thead>
                     <tbody>
 					@foreach($nakproducts as $key => $row)
-					<tr>
+					@if($loop->index % 2 == 0)
+						<tr style="background-color: #dfe4e3;">
+					@else
+						<tr>
+					@endif
 						<td>{{ $row['product_name'] }}</td>
 						<td>{{ $row['size_name'] }}</td>
 						<td>{{ $row[0] }}</td>
@@ -112,7 +115,15 @@
 								?>
 								@endif
 								</td>
+								<td>
+									<?php  
+										printf("%01.1f", $row[$day['id']] * $row[0]);
+									?>
+								</td>
 							@else
+								<td>
+									{{ '0' }}
+								</td>
 								<td>
 									{{ '0' }}
 								</td>
