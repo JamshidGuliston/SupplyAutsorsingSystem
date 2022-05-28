@@ -32,6 +32,7 @@
 	td {
 		/* text-align: center; */
 		overflow: hidden;
+		word-wrap: break-word;
 	}
 	th{
 		border: 1px solid black;
