@@ -191,6 +191,7 @@ Route::group(['prefix' => 'accountant', 'middleware' => ['isAccountant', 'auth']
     Route::get('schotfakturexcel/{id}/{ageid}/{start}/{end}/{costid}', [AccountantController::class, 'schotfakturexcel'])->name('accountant.schotfakturexcel');
     Route::get('norm/{id}/{ageid}/{start}/{end}/{costid}', [AccountantController::class, 'norm'])->name('accountant.norm');
     Route::get('normexcel/{id}/{ageid}/{start}/{end}/{costid}', [AccountantController::class, 'normexcel'])->name('accountant.normexcel');
+    Route::get('svod', [AccountantController::class, 'svod'])->name('accountant.svod');
 
 });
 

@@ -84,32 +84,21 @@ class TestController extends Controller
             for($i = 0; $i<count($products); $i++){
                 if(empty($products[$i]['yes']) and $products[$i]['id'] == $item->product_name_id){
                     $products[$i]['yes'] = 1;
-                    // array_push($yesproduct, $products[$i]);
                 }
             }
         }
-        // dd($productallcount);
-        // kamchilik bor boshlangich qiymat berishda
         $workerproducts = array_fill(1, 500, 0);
         foreach($workerfood as $tr){
             foreach($nextdaymenuitem[3][$tr->food_id] as $key => $value){
                 if($key != 'foodname'){
                     $workerproducts[$key] += $value; 
                 }
-                // array_push($workerproducts, $nextdaymenuitem[3][$tr->food_id]);
             }
         }
-        // dd($workerproducts);    
-        
-        // dd($workerfood);
         $dompdf = new Dompdf('UTF-8');
 		$html = mb_convert_encoding(view('pdffile.technolog.alltable', ['day' => $day,'productallcount' => $productallcount, 'workerproducts' => $workerproducts,'menu' => $menu, 'menuitem' => $nextdaymenuitem, 'products' => $products, 'workerfood' => $workerfood]), 'HTML-ENTITIES', 'UTF-8');
 		$dompdf->loadHtml($html);
-
-		// (Optional) Setup the paper size and orientation
 		$dompdf->setPaper('A4', 'landscape');
-		// $customPaper = array(0,0,360,360);
-		// $dompdf->setPaper($customPaper);
 		$name = $day['id'].'-'.$gid.'-'.$ageid."nextmenu.pdf";
 		// Render the HTML as PDF
 		$dompdf->render();
@@ -139,19 +128,14 @@ class TestController extends Controller
                         ->orderBy('menu_meal_time_id')
 						->orderBy('menu_food_id')
                         ->get();	
-
-        // dd($menuitem);
-        // xodimlar ovqati uchun
         $day = Day::where('days.id', $today)->join('months', 'months.id', '=', 'days.month_id')->orderBy('days.id', 'DESC')->first(['days.day_number','days.id as id', 'months.month_name']);
         // dd($day);
         $workerfood = titlemenu_food::where('day_id', ($today-1))
                     ->where('worker_age_id', $ageid)
                     ->where('titlemenu_id', $menu[0]['kingar_menu_id'])
                     ->get();
-        // dd($workerfood);
         $nextdaymenuitem = [];
         $workerproducts = [];
-        // kamchilik bor boshlangich qiymat berishda
         $productallcount = array_fill(1, 500, 0);
         foreach($menuitem as $item){
             $nextdaymenuitem[$item->menu_meal_time_id][0]['mealtime'] = $item->meal_time_name; 
@@ -162,41 +146,25 @@ class TestController extends Controller
             for($i = 0; $i<count($products); $i++){
                 if(empty($products[$i]['yes']) and $products[$i]['id'] == $item->product_name_id){
                     $products[$i]['yes'] = 1;
-                    // array_push($yesproduct, $products[$i]);
                 }
             }
         }
-        // dd($productallcount);
-        // kamchilik bor boshlangich qiymat berishda
         $workerproducts = array_fill(1, 500, 0);
         foreach($workerfood as $tr){
             foreach($nextdaymenuitem[3][$tr->food_id] as $key => $value){
                 if($key != 'foodname' and $key != 'foodweight'){
                     $workerproducts[$key] += $value; 
                 }
-                // array_push($workerproducts, $nextdaymenuitem[3][$tr->food_id]);
             }
         }
-        // dd($menuitem);
-        
         $dompdf = new Dompdf('UTF-8');
 		$html = mb_convert_encoding(view('pdffile.technolog.activmenu', ['day' => $day,'productallcount' => $productallcount, 'workerproducts' => $workerproducts,'menu' => $menu, 'menuitem' => $nextdaymenuitem, 'products' => $products, 'workerfood' => $workerfood]), 'HTML-ENTITIES', 'UTF-8');
 		$dompdf->loadHtml($html);
-
-		// (Optional) Setup the paper size and orientation
 		$dompdf->setPaper('A4', 'landscape');
-		// $customPaper = array(0,0,360,360);
-		// $dompdf->setPaper($customPaper);
 		$name = $day['id'].$ageid."activemenu.pdf";
-		// Render the HTML as PDF
 		$dompdf->render();
-
-		// Output the generated PDF to Browser
 		$dompdf->stream($name, ['Attachment' => 0]);
 	}
-	
-	// Nakladnoyni ko'rish
-	
 	public function nextnakladnoyPDF($kid){
 		$king = Kindgarden::where('id', $kid)->first();
 		$join = Nextday_namber::where('kingar_name_id', $kid)
