@@ -13,7 +13,7 @@
 	 @page { margin: 0.2in 0.2in 0in 0.3in; }
 	body{
 		font-family: DejaVu Sans;
-		font-size:9px;
+		font-size:6px;
 		/* background-image: url(images/bg.jpg); */
 		background-position: top left;
 		background-repeat: no-repeat;
