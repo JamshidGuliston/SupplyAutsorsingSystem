@@ -13,7 +13,7 @@
 	 @page { margin: 0.2in 0.2in 0in 0.3in; }
 	body{
 		font-family: DejaVu Sans;
-		font-size:6px;
+		font-size:7px;
 		/* background-image: url(images/bg.jpg); */
 		background-position: top left;
 		background-repeat: no-repeat;
@@ -32,7 +32,6 @@
 	td {
 		/* text-align: center; */
 		overflow: hidden;
-		word-wrap: break-word;
 	}
 	th{
 		border: 1px solid black;
@@ -115,7 +114,7 @@
 								?>
 								@endif
 								</td>
-								<td>
+								<td style="width: 50px;">
 									<?php  
 										printf("%01.1f", $row[$day['id']] * $row[0]);
 									?>
