@@ -130,11 +130,11 @@
 							@endif
 						@endforeach
 						<td><?php printf("%01.1f", $summ) ?></td>
-						<td>0</td>
-						<td>0</td>
-						<td>0</td>
-						<td>0</td>
-						<td ><?php printf("%01.1f", $summ*$row[0]) ?></td>
+						<td><?php printf("%01.1f", $summ * $row[0]) ?></td>
+						<td><?php printf("%01.1f", ($summ * $row[0])/100 * 20) ?></td>
+						<td><?php printf("%01.1f", ($summ * $row[0] + $summ * $row[0])/100 * 20) ?></td>
+						<td><?php printf("%01.1f", (($summ * $row[0] + $summ * $row[0])/100 * 20) / 100 * 15) ?></td>
+						<td><?php printf("%01.1f", ($summ * $row[0] + $summ * $row[0])/100 * 20 + (($summ * $row[0] + $summ * $row[0])/100 * 20) / 100 * 15) ?></td>
 					</tr>
 					@endforeach
                     </tbody>
