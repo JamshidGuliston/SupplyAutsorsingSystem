@@ -73,9 +73,9 @@
                 </div>
                 <table style="table-layout: fixed;">
                     <thead>
-                        <tr style="width: 15%;">
-                            <th scope="col" style="width: 10%;">Махсулотлар</th>
-                            <th style="width: 10px;">...</th>
+                        <tr>
+                            <th scope="col">Махсулотлар</th>
+                            <th>...</th>
                             <th style="width: 30px;"><bold>Нарх</bold></th>
                             @foreach($kindgardens as $day)
 								<th scope="col">{{ $day->kingar_name; }}</th>
@@ -85,7 +85,7 @@
 							<th>Устама 20%</th>
 							<th>Жами сумма</th>
 							<th>НДС 15%</th>
-							<th style="width: 8%;">Сумма</th>
+							<th>Сумма</th>
                         </tr>
                     </thead>
                     <tbody>
