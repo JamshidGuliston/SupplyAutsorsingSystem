@@ -84,7 +84,7 @@
 							<th>Устама 20%</th>
 							<th>Жами сумма</th>
 							<th>НДС 15%</th>
-							<th>Сумма</th>
+							<th>Хаммаси жами</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -102,7 +102,7 @@
 						?>
 						@foreach($kindgardens as $day)
 							@if(isset($row[$day['id']]))
-								<td>
+								<td style="width: 40px;">
 								@if($row['product_name'] == "Болалар сони")
 									<strong>{{ $row[$day['id']]; }}</strong>
 								<?php  
@@ -115,7 +115,7 @@
 								?>
 								@endif
 								</td>
-								<td>
+								<td style="font-size: 5px;">
 									<?php  
 										printf("%01.1f", $row[$day['id']] * $row[0]);
 									?>
