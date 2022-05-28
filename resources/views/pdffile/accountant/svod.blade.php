@@ -115,7 +115,7 @@
 								?>
 								@endif
 								</td>
-								<td style="font-size: 6px;">
+								<td style="font-size: 5px;">
 									<?php  
 										printf("%01.1f", $row[$day['id']] * $row[0]);
 									?>
