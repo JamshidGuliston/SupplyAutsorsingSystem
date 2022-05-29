@@ -94,7 +94,7 @@
 						<td>{{ mb_strimwidth($row['product_name'], 0, 35) . '...' }}</td>
 						<td>{{ $row['norm_weight'] }}</td>
 						<td><?php
-							if($row['product_name'][0] == 'Т' and $row['product_name'][1] == 'у' and $row['product_name'][2] == 'х')
+							if(mb_strimwidth($row['product_name'], 0, 3) == 'Тух')
 								 printf("%01.1f", ($row['norm_weight'] * $nakproducts[1]["children"]));
 							else
 								printf("%01.1f", ($row['norm_weight'] * $nakproducts[1]["children"]) / $row['div']);
@@ -110,17 +110,22 @@
 							@endif
 						@endforeach
 						<td><?php printf("%01.1f", $summ) ?></td>
-						<td><?php printf("%01.1f", (($row['norm_weight'] * $nakproducts[1]["children"]) / $row['div']) - $summ) ?></td>
+						<td><?php
+							if(mb_strimwidth($row['product_name'], 0, 3) == 'Тух')
+								printf("%01.1f", $summ -$row['norm_weight'] * $nakproducts[1]["children"]);
+							else
+								printf("%01.1f", $summ - ($row['norm_weight'] * $nakproducts[1]["children"]) / $row['div']);
+						?></td>
                         <?php
-							if($row['product_name'][0] == 'Т' and $row['product_name'][1] == 'у' and $row['product_name'][2] == 'х')
+							if(mb_strimwidth($row['product_name'], 0, 3) == 'Тух')
                             	$ww += ($row['norm_weight'] * $nakproducts[1]["children"]);
 							else
 								$ww += ($row['norm_weight'] * $nakproducts[1]["children"]) / $row['div'];
 							$www += $summ;
-							$wwww += (($row['norm_weight'] * $nakproducts[1]["children"]) / $row['div']) - $summ;
+							$wwww += $summ - (($row['norm_weight'] * $nakproducts[1]["children"]) / $row['div']);
                         ?>
 						<td><?php 
-							if($row['product_name'][0] == 'Т' and $row['product_name'][1] == 'у' and $row['product_name'][2] == 'х')
+							if(mb_strimwidth($row['product_name'], 0, 3) == 'Тух')
 								printf("%01.1f", $summ / (($row['norm_weight'] * $nakproducts[1]["children"]) / $row['div']) * 100);
 							else
 								printf("%01.1f", $summ / (($row['norm_weight'] * $nakproducts[1]["children"])) * 100);
