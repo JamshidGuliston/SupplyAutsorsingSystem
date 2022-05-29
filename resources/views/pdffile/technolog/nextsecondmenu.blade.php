@@ -172,7 +172,7 @@
 								$narx[30] = 1300; $narx[31] = 15000; $narx[32] = 45000; $narx[33] = 9000; $narx[34] = 39000; $narx[35] = 18000; $narx[36] = 22000; $narx[37] = 27000; $narx[38] = 44000; $narx[39] = 17000;
 								$narx[40] = 0; $narx[41] = 13000; $narx[42] = 28000; $narx[43] = 3000; $narx[44] = 4000; $narx[45] = 12000; $narx[46] = 39000; $narx[47] = 49000; $narx[48] = 13000; $narx[49] = 3000;
 								$narx[50] = 28000; $narx[51] = 22000; $narx[52] = 4000; $narx[53] = 9000; $narx[54] = 8000; $narx[55] = 18000; $narx[56] = 9000; $narx[57] = 13000; $narx[58] = 17000; $narx[59] = 28000;
-								$narx[60] = 2400; $narx[61] = 0; 
+								$narx[60] = 2400; $narx[61] = 0; $narx[62] = 0; $narx[63] = 0;  
 								for($t = 0; $t < count($products); $t++){
 									if(isset($products[$t]['yes']) and isset($productallcount[$products[$t]['id']])){
 								?>
