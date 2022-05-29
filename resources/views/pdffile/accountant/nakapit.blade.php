@@ -76,7 +76,7 @@
                         <tr style="width: 15%;">
                             <th scope="col" style="width: 10%;">Махсулотлар</th>
                             <th style="width: 10px;">...</th>
-                            <th style="width: 30px;"><bold>Нарх</bold></th>
+                            <th style="width: 30px;"><bold>Нарх ҚҚС билан</bold></th>
                             @foreach($days as $day)
 								<th scope="col">{{ $day->day_number; }}</th>
 							@endforeach
@@ -103,7 +103,7 @@
 								?>
 								@else
 								<?php  
-									printf("%01.1f", $row[$day['id']]); 
+									printf("%01.2f", $row[$day['id']]); 
 									$summ += $row[$day['id']];
 								?>
 								@endif
@@ -114,7 +114,7 @@
 								</td>
 							@endif
 						@endforeach
-						<td><?php printf("%01.1f", $summ) ?></td>
+						<td><?php printf("%01.3f", $summ) ?></td>
 						<td ><?php printf("%01.1f", $summ*$row[0]) ?></td>
 					</tr>
 					@endforeach
