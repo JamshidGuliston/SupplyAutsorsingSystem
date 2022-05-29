@@ -110,14 +110,14 @@
 								?>
 								@else
 								<?php  
-									printf("%01.1f", $row[$day['id']]); 
+									printf("%01.2f", $row[$day['id']]); 
 									$summ += $row[$day['id']];
 								?>
 								@endif
 								</td>
-								<td style="font-size: 5px;">
+								<td style="font-size: 6px;">
 									<?php  
-										printf("%01.1f", $row[$day['id']] * $row[0]);
+										printf("%01.0f", $row[$day['id']] * $row[0]);
 									?>
 								</td>
 							@else
@@ -130,11 +130,11 @@
 							@endif
 						@endforeach
 						<td><?php printf("%01.1f", $summ) ?></td>
-						<td style="font-size: 5px;"><?php printf("%01.1f", $summ * $row[0]) ?></td>
-						<td style="font-size: 5px;"><?php printf("%01.1f", ($summ * $row[0])/100 * 20) ?></td>
-						<td style="font-size: 5px;"><?php printf("%01.1f", ($summ * $row[0] + $summ * $row[0])/100 * 20) ?></td>
-						<td style="font-size: 5px;"><?php printf("%01.1f", (($summ * $row[0] + $summ * $row[0])/100 * 20) / 100 * 15) ?></td>
-						<td style="font-size: 5px;"><?php printf("%01.1f", ($summ * $row[0] + $summ * $row[0])/100 * 20 + (($summ * $row[0] + $summ * $row[0])/100 * 20) / 100 * 15) ?></td>
+						<td style="font-size: 6px;"><?php printf("%01.1f", $summ * $row[0]) ?></td>
+						<td style="font-size: 6px;"><?php printf("%01.1f", ($summ * $row[0])/100 * 20) ?></td>
+						<td style="font-size: 6px;"><?php printf("%01.1f", ($summ * $row[0] + $summ * $row[0])/100 * 20) ?></td>
+						<td style="font-size: 6px;"><?php printf("%01.1f", (($summ * $row[0] + $summ * $row[0])/100 * 20) / 100 * 15) ?></td>
+						<td style="font-size: 6px;"><?php printf("%01.1f", ($summ * $row[0] + $summ * $row[0])/100 * 20 + (($summ * $row[0] + $summ * $row[0])/100 * 20) / 100 * 15) ?></td>
 					</tr>
 					@endforeach
                     </tbody>
