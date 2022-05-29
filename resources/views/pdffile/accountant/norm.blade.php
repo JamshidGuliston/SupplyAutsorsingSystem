@@ -126,9 +126,9 @@
                         ?>
 						<td><?php 
 							if(mb_strimwidth($row['product_name'], 0, 3) == 'Тух')
-								printf("%01.1f", $summ / (($row['norm_weight'] * $nakproducts[1]["children"]) / $row['div']) * 100);
+								printf("%01.1f", $summ / ($row['norm_weight'] * $nakproducts[1]["children"]) * 100);
 							else
-								printf("%01.1f", $summ / (($row['norm_weight'] * $nakproducts[1]["children"])) * 100);
+								printf("%01.1f", $summ / (($row['norm_weight'] * $nakproducts[1]["children"]) / $row['div']) * 100);
 						?></td>
 					</tr>
 					@endforeach
