@@ -114,7 +114,7 @@
 								</td>
 							@endif
 						@endforeach
-						<td style="width: 30%;"><?php printf("%01.3f", $summ) ?></td>
+						<td style="width: 8%;"><?php printf("%01.3f", $summ) ?></td>
 						<td ><?php printf("%01.1f", $summ*$row[0]) ?></td>
 					</tr>
 					@endforeach
