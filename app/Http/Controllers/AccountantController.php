@@ -344,7 +344,7 @@ class AccountantController extends Controller
             }
             // dd($nakproducts);
             $costs = bycosts::where('day_id', $costid)->where('region_name_id', Kindgarden::where('id', $id)->first()->region_id)
-                    ->orderBy('day_id', 'DESC')->limit(Product::all()->count())->get();
+                    ->orderBy('day_id', 'DESC')->get();
             
             foreach($costs as $cost){
                 if(isset($nakproducts[$cost->praduct_name_id]['product_name'])){
