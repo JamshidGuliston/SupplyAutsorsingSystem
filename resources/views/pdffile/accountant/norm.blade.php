@@ -93,7 +93,12 @@
 					<tr>
 						<td>{{ mb_strimwidth($row['product_name'], 0, 35) . '...' }}</td>
 						<td>{{ $row['norm_weight'] }}</td>
-						<td><?php printf("%01.1f", ($row['norm_weight'] * $nakproducts[1]["children"]) / $row['div']) ?></td>
+						<td><?php
+							if($row['product_name'][0] == 'Т' and $row['product_name'][1] == 'у' and $row['product_name'][2] == 'х')
+								 printf("%01.1f", ($row['norm_weight'] * $nakproducts[1]["children"]));
+							else
+								printf("%01.1f", ($row['norm_weight'] * $nakproducts[1]["children"]) / $row['div']);
+						?></td>
 						<?php 
 							$summ = 0;
 						?>
@@ -107,11 +112,19 @@
 						<td><?php printf("%01.1f", $summ) ?></td>
 						<td><?php printf("%01.1f", (($row['norm_weight'] * $nakproducts[1]["children"]) / $row['div']) - $summ) ?></td>
                         <?php
-                            $ww += ($row['norm_weight'] * $nakproducts[1]["children"]) / $row['div'];
+							if($row['product_name'][0] == 'Т' and $row['product_name'][1] == 'у' and $row['product_name'][2] == 'х')
+                            	$ww += ($row['norm_weight'] * $nakproducts[1]["children"]);
+							else
+								$ww += ($row['norm_weight'] * $nakproducts[1]["children"]) / $row['div'];
 							$www += $summ;
 							$wwww += (($row['norm_weight'] * $nakproducts[1]["children"]) / $row['div']) - $summ;
                         ?>
-						<td><?php printf("%01.1f", $summ / (($row['norm_weight'] * $nakproducts[1]["children"]) / $row['div']) * 100); ?></td>
+						<td><?php 
+							if($row['product_name'][0] == 'Т' and $row['product_name'][1] == 'у' and $row['product_name'][2] == 'х')
+								printf("%01.1f", $summ / (($row['norm_weight'] * $nakproducts[1]["children"]) / $row['div']) * 100);
+							else
+								printf("%01.1f", $summ / (($row['norm_weight'] * $nakproducts[1]["children"])) * 100);
+						?></td>
 					</tr>
 					@endforeach
                     <tr>
