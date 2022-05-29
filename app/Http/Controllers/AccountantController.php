@@ -408,7 +408,7 @@ class AccountantController extends Controller
                     ->where('norms.norm_age_id', $ageid)
                     ->where('norms.noyuk_id', 1)
                     ->get();
-            dd($join);
+            // dd($join);
             // $agerange = array();
             $productscount = [];
             foreach($join as $row){
