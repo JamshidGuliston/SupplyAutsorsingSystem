@@ -105,13 +105,13 @@
 							@endif
 						@endforeach
 						<td><?php printf("%01.1f", $summ) ?></td>
-						<td><?php printf("%01.1f", (($row['norm_weight'] * $row['children']) / $row['div']) - $summ) ?></td>
+						<td><?php printf("%01.1f", (($row['norm_weight'] * $nakproducts[1]["children"]) / $row['div']) - $summ) ?></td>
                         <?php
-                            $ww += ($row['norm_weight'] * $row['children']) / $row['div'];
+                            $ww += ($row['norm_weight'] * $nakproducts[1]["children"]) / $row['div'];
 							$www += $summ;
-							$wwww += (($row['norm_weight'] * $row['children']) / $row['div']) - $summ;
+							$wwww += (($row['norm_weight'] * $nakproducts[1]["children"]) / $row['div']) - $summ;
                         ?>
-						<td><?php printf("%01.1f", $summ / (($row['norm_weight'] * $row['children']) / $row['div']) * 100); ?></td>
+						<td><?php printf("%01.1f", $summ / (($row['norm_weight'] * $nakproducts[1]["children"]) / $row['div']) * 100); ?></td>
 					</tr>
 					@endforeach
                     <tr>
