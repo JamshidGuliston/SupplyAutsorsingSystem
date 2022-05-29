@@ -93,7 +93,7 @@
 					<tr>
 						<td>{{ mb_strimwidth($row['product_name'], 0, 35) . '...' }}</td>
 						<td>{{ $row['norm_weight'] }}</td>
-						<td><?php printf("%01.1f", ($row['norm_weight'] * $row['children']) / $row['div']) ?></td>
+						<td><?php printf($row['norm_weight'] .'*'. $row['children'] .'/'. $row['div']) ?></td>
 						<?php 
 							$summ = 0;
 						?>
