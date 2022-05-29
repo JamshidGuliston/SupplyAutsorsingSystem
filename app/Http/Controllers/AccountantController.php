@@ -179,8 +179,8 @@ class AccountantController extends Controller
                 }
             }
 
-            $costs = bycosts::where('day_id', '<=', $first)->where('region_name_id', Kindgarden::where('id', $id)->first()->region_id)
-                    ->orderBy('day_id', 'DESC')->limit(Product::all()->count())->get();
+            $costs = bycosts::where('day_id', bycosts::where('day_id', '<=', $first)->where('region_name_id', Kindgarden::where('id', $id)->first()->region_id)->first()->day_id)->where('region_name_id', Kindgarden::where('id', $id)->first()->region_id)
+                    ->orderBy('day_id', 'DESC')->get();
             
             foreach($costs as $cost){
                 $nakproducts[0][0] = 0;
