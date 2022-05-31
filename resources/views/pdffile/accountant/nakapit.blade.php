@@ -125,8 +125,8 @@
 					<tr>
 						<td colspan="3">Жами:</td>
 						<td colspan="{{ count($days) }}"></td>
-						<td>{{ $kgsumm }}</td>
-						<td>{{ $costsumm }}</td>
+						<td><?php printf("%01.3f", $kgsumm); ?></td>
+						<td><?php printf("%01.3f", $costsumm); ?></td>
 					</tr>
                     </tbody>
                 </table>
