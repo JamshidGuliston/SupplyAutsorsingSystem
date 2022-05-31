@@ -85,6 +85,10 @@
                         </tr>
                     </thead>
                     <tbody>
+					<?php 
+						$kgsumm = 0;
+						$costsumm = 0;
+					?>
 					@foreach($nakproducts as $key => $row)
 					<tr>
 						<td>{{ $row['product_name'] }}</td>
@@ -114,10 +118,16 @@
 								</td>
 							@endif
 						@endforeach
-						<td style="width: 6%;"><?php printf("%01.3f", $summ) ?></td>
-						<td ><?php printf("%01.1f", $summ*$row[0]) ?></td>
+						<td style="width: 6%;"><?php $kgsumm += $summ; printf("%01.3f", $summ) ?></td>
+						<td ><?php $costsumm += $summ*$row[0]; printf("%01.1f", $summ*$row[0]) ?></td>
 					</tr>
 					@endforeach
+					<tr>
+						<td colspan="3">Жами:</td>
+						<td colspan="{{ count($days) }}"></td>
+						<td>$kgsumm </td>
+						<td>$costsumm</td>
+					</tr>
                     </tbody>
                 </table>
 				<br>
