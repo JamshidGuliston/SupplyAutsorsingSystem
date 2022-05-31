@@ -101,14 +101,14 @@
 								?>
 							@endif
 						@endforeach
-						<td><?php printf("%01.2f", $summ) ?></td>
+						<td><?php printf("%01.4f", $summ) ?></td>
                         <td>{{ $row[0] }}</td>
-						<td ><?php printf("%01.1f", $summ*$row[0]) ?></td>
+						<td ><?php printf("%01.2f", $summ*$row[0]) ?></td>
                         <?php
                             $ww += $summ*$row[0];
                         ?>
-						<td><?php printf("%01.1f", ($summ*$row[0]/100)*15) ?></td>
-						<td><?php printf("%01.1f", $summ*$row[0] + ($summ*$row[0]/100)*15) ?></td>
+						<td><?php printf("%01.2f", ($summ*$row[0]/100)*15) ?></td>
+						<td><?php printf("%01.2f", $summ*$row[0] + ($summ*$row[0]/100)*15) ?></td>
 					</tr>
 					@endforeach
                     <tr>
@@ -127,11 +127,14 @@
                     </tbody>
                 </table>
                 <div class="col-md-6">
-                    <p>Руководитель________________________    Получил________________</p>
+                    <p>Руководитель________________________</p>
                     <p>Главный бухгалтер___________________</p>
                     <p>М.П.</p>
                     <p>Товар отпустил _________________</p>
                 </div>
+				<div class="col-md-6">
+					<p>Получил________________</p>
+				</div>
             </div>
         </div>
     </div>
