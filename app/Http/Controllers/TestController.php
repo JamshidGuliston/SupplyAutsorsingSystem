@@ -274,13 +274,13 @@ class TestController extends Controller
 					}
 					// dd($key, $summ);
 					
-					minus_multi_storage::create([
-						'day_id' => $today,
-						'kingarden_name_id' => $gid,
-						'kingar_menu_id' => 0,
-						'product_name_id' => $key,
-						'product_weight' => $summ,
-					]);
+					// minus_multi_storage::create([
+					// 	'day_id' => $today,
+					// 	'kingarden_name_id' => $gid,
+					// 	'kingar_menu_id' => 0,
+					// 	'product_name_id' => $key,
+					// 	'product_weight' => $summ,
+					// ]);
 					
 				}
 			}
@@ -988,7 +988,7 @@ class TestController extends Controller
 				if($mod->count() == 0 and $value >= 0){
 					plus_multi_storage::create([
 						'day_id' => $firstday->id,
-						'shop_id' => 0,
+						'shop_id' => -1,
 						'kingarden_name_d' => $kid,
 						'order_product_id' => -1,
 						'product_name_id' => $pid,
