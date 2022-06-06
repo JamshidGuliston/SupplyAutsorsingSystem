@@ -273,7 +273,6 @@ class TestController extends Controller
 						$summ += ($workproduct[$key]*$workproduct[$key.'wcount']) / $workproduct[$key.'div'];
 					}
 					// dd($key, $summ);
-					
 					minus_multi_storage::create([
 						'day_id' => $today,
 						'kingarden_name_id' => $gid,
@@ -281,7 +280,6 @@ class TestController extends Controller
 						'product_name_id' => $key,
 						'product_weight' => $summ,
 					]);
-					
 				}
 			}
 		}
