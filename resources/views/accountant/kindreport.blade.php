@@ -213,7 +213,7 @@
             @foreach($nakproducts as $key => $row)
             <tr>
                 <td>{{ $row['product_name'] }}</td>
-                <td>{{ $row[0] }}</td>
+                <td>{{ "1" }}</td>
                 <?php 
                     $summ = 0;
                 ?>
@@ -232,7 +232,7 @@
                     @endif
                 @endforeach
                 <td><?php printf("%01.2f", $summ) ?></td>
-                <td><?php printf("%01.2f", $summ*$row[0]) ?></td>
+                <td><?php printf("%01.2f", $summ*1) ?></td>
             </tr>
             @endforeach
         </tbody>
