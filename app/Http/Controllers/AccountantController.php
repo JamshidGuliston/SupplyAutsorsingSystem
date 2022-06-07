@@ -391,7 +391,7 @@ class AccountantController extends Controller
         $kindgar = Kindgarden::where('id', $id)->first();
         $nakproducts = [];
         $age = Age_range::where('id', $ageid)->first();
-        $days = Day::where('id', '>=', 81)->where('id', '<=', 98)->get();
+        $days = Day::where('id', '>=', $start)->where('id', '<=', $end)->get();
         
         foreach($days as $day){
             $join = Number_children::where('number_childrens.day_id', $day->id)
@@ -461,7 +461,7 @@ class AccountantController extends Controller
 
     public function svod(Request $request){
         // dd($request->all());
-        $days = $this->activmonth();
+        $days = Day::where('id', '>=', 81)->where('id', '<=', 98)->get();
         $yeardays = $this->activyear();
         $nakproducts = [];
         $first = $days[0]['id'];
