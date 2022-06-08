@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Exports\NakapitelExport;
+use App\Exports\FakturaExport;
 use App\Models\Age_range;
 use App\Models\bycosts;
 use App\Models\Day;
@@ -390,7 +391,7 @@ class AccountantController extends Controller
     }
 
     public function schotfakturexcel(Request $request, $id, $ageid, $start, $end, $costid){
-        
+        return Excel::download(new FakturaExport($request, $id, $ageid, $start, $end, $costid), 'Fakturaexcellist.xlsx');
     }
 
     public function norm(Request $request, $id, $ageid, $start, $end, $costid){
