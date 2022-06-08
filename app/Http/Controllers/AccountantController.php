@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\NakapitelExport;
 use App\Models\Age_range;
 use App\Models\bycosts;
 use App\Models\Day;
@@ -16,6 +17,7 @@ use App\Exports\UsersExport;
 use App\Models\Year;
 use Dompdf\Dompdf;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use PhpParser\Node\Stmt\Foreach_;
 
 class AccountantController extends Controller
@@ -286,7 +288,7 @@ class AccountantController extends Controller
         $dompdf = new Dompdf('UTF-8');
 		$html = mb_convert_encoding(view('pdffile.accountant.nakapit', compact('age', 'days', 'nakproducts', 'costsdays', 'costs', 'kindgar')), 'HTML-ENTITIES', 'UTF-8');
 		$dompdf->loadHtml($html);
-
+        
 		// (Optional) Setup the paper size and orientation
 		$dompdf->setPaper('A4', 'landscape');
 		// $customPaper = array(0,0,360,360);
@@ -300,8 +302,9 @@ class AccountantController extends Controller
     }
 
     public function nakapitexcel(Request $request, $id, $ageid, $start, $end, $costid){
-
-        return Excel::download(new UsersExport, 'excellist.xlsx');
+        Excel::store(new NakapitelExport($request, $id, $ageid, $start, $end, $costid), "nakapitel.xlsx");
+        // return Excel::download(new NakapitelExport($request, $id, $ageid, $start, $end, $costid), 'excellist.xlsx');
+        return response(Storage::get('nakapitel.xlsx'))->header('Content-Type', Storage::mimeType('nakapitel.xlsx'));
     }
 
     public function schotfaktur(Request $request, $id, $ageid, $start, $end, $costid){
