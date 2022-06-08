@@ -11,6 +11,8 @@ use App\Models\Number_children;
 use App\Models\Product;
 use App\Models\Region;
 use App\Models\titlemenu_food;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Exports\UsersExport;
 use App\Models\Year;
 use Dompdf\Dompdf;
 use Illuminate\Http\Request;
@@ -298,7 +300,8 @@ class AccountantController extends Controller
     }
 
     public function nakapitexcel(Request $request, $id, $ageid, $start, $end, $costid){
-        
+
+        return Excel::download(new UsersExport, 'excellist.xlsx');
     }
 
     public function schotfaktur(Request $request, $id, $ageid, $start, $end, $costid){
