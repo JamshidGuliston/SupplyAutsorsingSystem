@@ -302,9 +302,9 @@ class AccountantController extends Controller
     }
 
     public function nakapitexcel(Request $request, $id, $ageid, $start, $end, $costid){
-        Excel::store(new NakapitelExport($request, $id, $ageid, $start, $end, $costid), "nakapitel.xlsx");
-        // return Excel::download(new NakapitelExport($request, $id, $ageid, $start, $end, $costid), 'excellist.xlsx');
-        return response(Storage::get('nakapitel.xlsx'))->header('Content-Type', Storage::mimeType('nakapitel.xlsx'));
+        // Excel::store(new NakapitelExport($request, $id, $ageid, $start, $end, $costid), "nakapitel.xlsx");
+        return Excel::download(new NakapitelExport($request, $id, $ageid, $start, $end, $costid), 'excellist.xlsx');
+        // return response(Storage::get('nakapitel.xlsx'))->header('Content-Type', Storage::mimeType('nakapitel.xlsx'));
     }
 
     public function schotfaktur(Request $request, $id, $ageid, $start, $end, $costid){
