@@ -399,6 +399,32 @@ class StorageController extends Controller
 		$dompdf->render();
 		$dompdf->stream('demo.pdf', ['Attachment' => 0]);
     }
+    // svod sklad
+    public function ordersvodpdf(Request $request, $id){
+        $document = order_product::where('order_products.day_id', $id)->get();
+        // dd($document);
+        $items = [];
+        foreach($document as $row){
+            $item = order_product_structure::where('order_product_name_id', $row->id)
+                ->join('products', 'products.id', '=', 'order_product_structures.product_name_id')
+                ->join('sizes', 'sizes.id', '=', 'products.size_name_id')
+                ->get();
+            foreach($item as $in){
+                if(!isset($items[$in->id])){
+                    $items[$in->id]['product_weight'] = 0;
+                    $items[$in->id]['product_name'] = $in->product_name;
+                    $items[$in->id]['size_name'] = $in->size_name;
+                }
+                $items[$in->id]['product_weight'] += $in->product_weight;
+            }  
+        }
+        $dompdf = new Dompdf('UTF-8');
+		$html = mb_convert_encoding(view('pdffile.storage.ordersvodpdf', compact('items', 'document')), 'HTML-ENTITIES', 'UTF-8');
+		$dompdf->loadHtml($html);
+		$dompdf->setPaper('A4');
+		$dompdf->render();
+		$dompdf->stream('demo.pdf', ['Attachment' => 0]);
+    }
     // Parolni tekshirib mayda skladlarga yuborish
     public function controlpassword(Request $request)
     {   

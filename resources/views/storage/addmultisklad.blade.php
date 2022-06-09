@@ -217,7 +217,7 @@
                         <td>{{ $row->id }}</td>
                         <td><a href="/storage/onedaymulti/{{ $row->day_id }}">{{ $row->order_title }}</a></td>
                         <td>{{ $row->day_id }}</td>
-                        <td>___</td>
+                        <td><a href="/storage/onedaysvod/{{ $row->day_id }}">PDF</a></td>
                     </tr>
                 @endif
             @endforeach

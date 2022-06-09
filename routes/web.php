@@ -71,6 +71,7 @@ Route::group(['prefix' => 'storage', 'middleware' => ['isStorage', 'auth']], fun
     Route::get('editproduct', [StorageController::class, 'editproduct']);
     Route::get('deleteid', [StorageController::class, 'deleteid']);
     Route::get('getworkerfoods', [StorageController::class, 'getworkerfoods'])->name('technolog.getworkerfoods');
+    Route::get('onedaysvod/{id}', [StorageController::class, 'ordersvodpdf'])->name('technolog.onedaysvod');
 
 });
 
