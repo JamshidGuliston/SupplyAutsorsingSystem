@@ -203,7 +203,7 @@
                 <th scope="col">ID</th>
                 <th scope="col">Title</th>
                 <th scope="col">Date</th>
-                <th style="width: 40px;">PDF</th>
+                <th style="width: 40px;">Svod</th>
             </tr>
         </thead>
         <tbody>
