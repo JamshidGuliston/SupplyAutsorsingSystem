@@ -410,12 +410,12 @@ class StorageController extends Controller
                 ->join('sizes', 'sizes.id', '=', 'products.size_name_id')
                 ->get();
             foreach($item as $in){
-                if(!isset($items[$in->id])){
-                    $items[$in->id]['product_weight'] = 0;
-                    $items[$in->id]['product_name'] = $in->product_name;
-                    $items[$in->id]['size_name'] = $in->size_name;
+                if(!isset($items[$in->product_name_id])){
+                    $items[$in->product_name_id]['product_weight'] = 0;
+                    $items[$in->product_name_id]['product_name'] = $in->product_name;
+                    $items[$in->product_name_id]['size_name'] = $in->size_name;
                 }
-                $items[$in->id]['product_weight'] += $in->product_weight;
+                $items[$in->product_name_id]['product_weight'] += $in->product_weight;
             }  
         }
         $dompdf = new Dompdf('UTF-8');
