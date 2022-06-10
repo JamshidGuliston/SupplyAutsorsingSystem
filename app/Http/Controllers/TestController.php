@@ -803,7 +803,7 @@ class TestController extends Controller
 							->orderBy('menu_food_id')
 							->get();	
 
-			$costs = bycosts::where('day_id', bycosts::where('day_id', '<=', $today)->where('region_name_id', Kindgarden::where('id', $gid)->orderBy('day_id', 'DESC')->first()->region_id)->first()->day_id)->where('region_name_id', Kindgarden::where('id', $gid)->first()->region_id)->orderBy('day_id', 'DESC')->get();
+			$costs = bycosts::where('day_id', bycosts::where('day_id', '<=', $today)->where('region_name_id', Kindgarden::where('id', $gid)->first()->region_id)->orderBy('day_id', 'DESC')->first()->day_id)->where('region_name_id', Kindgarden::where('id', $gid)->first()->region_id)->orderBy('day_id', 'DESC')->get();
 			$narx = [];
 			foreach($costs as $row){
 				if(!isset($narx[$row->praduct_name_id])){
