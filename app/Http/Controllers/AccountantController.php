@@ -35,7 +35,6 @@ class AccountantController extends Controller
 
     public function activyear(){
         $year = Year::orderBy('id', 'DESC')->first();
-        $month = Month::where('month_active', 1)->first();
         $days = Day::where('year_id', $year->id)
                 ->join('months', 'months.id', '=', 'days.month_id')
                 ->join('years', 'years.id', '=', 'days.year_id')
@@ -115,8 +114,9 @@ class AccountantController extends Controller
     public function reports(Request $request){
         $kinds = Kindgarden::all();
         $regions = Region::all();
+        $days = $this->activyear();
         // dd($regions);
-        return view('accountant.reports', compact('kinds', 'regions'));
+        return view('accountant.reports', compact('days', 'kinds', 'regions'));
     }
 
     public function kindreport(Request $request, $id){
@@ -468,8 +468,7 @@ class AccountantController extends Controller
 
     public function svod(Request $request){
         // dd($request->all());
-        $days = Day::where('id', '>=', 81)->where('id', '<=', 98)->get();
-        $yeardays = $this->activyear();
+        $days = Day::where('id', '>=', $request->start)->where('id', '<=', $request->end)->get();
         $nakproducts = [];
         $first = $days[0]['id'];
         $kindgardens = [];
