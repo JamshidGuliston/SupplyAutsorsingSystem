@@ -181,7 +181,7 @@ class TechnologController extends Controller
         $sid = Season::where('hide', 1)->first();
         // dd($sid);
         $menus = Titlemenu::all();
-        if ($day == date("d-F-Y", $d) and 0) {
+        if ($day == date("d-F-Y", $d)) {
             $gr = Temporary::join('kindgardens', 'temporaries.kingar_name_id', '=', 'kindgardens.id')
                 ->orderby('kindgardens.id', 'ASC')->get();
 

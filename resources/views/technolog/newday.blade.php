@@ -62,7 +62,7 @@
 @endsection
 
 @section('content')
-@if($sendmenu == 0)
+@if($sendmenu == 1)
 <!-- EDIT -->
 <!-- Modal -->
 <div class="modal editesmodal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
