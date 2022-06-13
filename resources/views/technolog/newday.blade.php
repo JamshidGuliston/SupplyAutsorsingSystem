@@ -432,7 +432,7 @@
 @endsection
 
 @section('script')
-@if($sendmenu == 0)
+@if($sendmenu == 1)
 <script>
     document.getElementById('select-all').onclick = function() {
         var checkboxes = document.getElementsByName('vehicle');
