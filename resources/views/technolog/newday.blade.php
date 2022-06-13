@@ -62,7 +62,7 @@
 @endsection
 
 @section('content')
-@if($sendmenu == 1)
+@if($sendmenu == 0)
 <!-- EDIT -->
 <!-- Modal -->
 <div class="modal editesmodal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -432,7 +432,7 @@
 @endsection
 
 @section('script')
-@if($sendmenu == 1)
+@if($sendmenu == 0)
 <script>
     document.getElementById('select-all').onclick = function() {
         var checkboxes = document.getElementsByName('vehicle');
