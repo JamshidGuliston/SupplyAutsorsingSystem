@@ -889,9 +889,15 @@ class TechnologController extends Controller
         // dd($request->all());
         Product::where('id', $request['productid'])
             ->update([
-                'norm_cat_id' => $request['normid']
+                'product_name' => $request['product_name'],
+                'size_name_id' => $request['sizeid'],
+                'category_name_id' => $request['catid'],
+                'norm_cat_id' => $request['normid'],
+                'div' => $request['div'],
+                'sort' => $request['sort'],
+                'hide' => $request['hide']
             ]);
-        return redirect()->route('technolog.settingsproduct', $request['productid']);
+        return redirect()->route('technolog.settingsproduct', $request['productid'])->with('status', "Malumotlar saqlandi!");
     }
 
     public function shops(Request $request)

@@ -30,6 +30,13 @@
         @csrf
         <input type="hidden" name="productid" value="{{ $product->id }}" >
         <div class="form-group row">
+            <label for="inputPassword" class="col-sm-2 col-form-label">Продукт номи</label>
+            <div class="col-sm-10">
+                <input type="text" name="product_name" class="form-control" id="staticEmail" value="{{ $product->product_name }}" required>
+            </div>
+        </div>
+
+        <div class="form-group row">
             <label for="inputPassword" class="col-sm-2 col-form-label">Сатегория</label>
             <div class="col-sm-10">
                 <select class="form-select" name="catid" aria-label="Default select example">
@@ -109,8 +116,16 @@
 </div>
 @endsection
 
-
 @section('script')
-
-
+@if(session('status'))
+<script> 
+    // alert('{{ session("status") }}');
+    swal({
+        title: "Ajoyib!",
+        text: "{{ session('status') }}",
+        icon: "success",
+        button: "ok",
+    });
+</script>
+@endif
 @endsection

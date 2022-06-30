@@ -15,7 +15,9 @@ class Product extends Model
         'category_name_id',
         'product_image',
         'norm_cat_id',
-        'div'
+        'div',
+        'sort',
+        'hide'
     ];
 
     public function shop(){
