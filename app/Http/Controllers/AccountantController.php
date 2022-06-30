@@ -329,7 +329,7 @@ class AccountantController extends Controller
                     ->join('products', 'active_menus.product_name_id', '=', 'products.id')
                     ->join('sizes', 'products.size_name_id', '=', 'sizes.id')
                     ->get();
-            $join->sortBy('sort');
+            $join = $join->sortBy('sort');
             // dd($join);
             // $agerange = array();
             $productscount = [];
