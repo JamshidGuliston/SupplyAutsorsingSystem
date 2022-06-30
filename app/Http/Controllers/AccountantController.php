@@ -309,6 +309,9 @@ class AccountantController extends Controller
     }
 
     public function schotfaktur(Request $request, $id, $ageid, $start, $end, $costid){
+        function arr_sort($a, $b){
+            return $a['sort'] <=> $b['sort'];
+        }
         $kindgar = Kindgarden::where('id', $id)->first();
         $nakproducts = [];
         $age = Age_range::where('id', $ageid)->first();
@@ -325,8 +328,8 @@ class AccountantController extends Controller
                     ->where('active_menus.day_id', $day->id)
                     ->join('products', 'active_menus.product_name_id', '=', 'products.id')
                     ->join('sizes', 'products.size_name_id', '=', 'sizes.id')
-                    ->orderby('products.sort', 'ASC')
                     ->get();
+            $join->sortBy('sort');
             // dd($join);
             // $agerange = array();
             $productscount = [];
