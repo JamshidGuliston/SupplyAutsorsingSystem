@@ -330,7 +330,7 @@ class AccountantController extends Controller
                     ->join('sizes', 'products.size_name_id', '=', 'sizes.id')
                     ->get();
             $join = $join->sortBy('sort');
-            // dd($join);
+            dd($join);
             // $agerange = array();
             $productscount = [];
             // $productscount = array_fill(1, 500, $agerange);
