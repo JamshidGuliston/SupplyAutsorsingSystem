@@ -325,7 +325,7 @@ class AccountantController extends Controller
                     ->where('active_menus.day_id', $day->id)
                     ->join('products', 'active_menus.product_name_id', '=', 'products.id')
                     ->join('sizes', 'products.size_name_id', '=', 'sizes.id')
-                    ->orderby('products.sort', 'DESC')
+                    ->orderby('products.sort', 'ASC')
                     ->get();
             // dd($join);
             // $agerange = array();
