@@ -330,7 +330,7 @@ class AccountantController extends Controller
                     ->join('sizes', 'products.size_name_id', '=', 'sizes.id')
                     ->get();
             $join = $join->sortBy('sort');
-            dd($join);
+            
             // $agerange = array();
             $productscount = [];
             // $productscount = array_fill(1, 500, $agerange);
@@ -377,7 +377,8 @@ class AccountantController extends Controller
                 }
             }
         }
-
+      
+        
         $dompdf = new Dompdf('UTF-8');
 		$html = mb_convert_encoding(view('pdffile.accountant.schotfaktur', compact('age', 'days', 'nakproducts', 'costsdays', 'costs', 'kindgar')), 'HTML-ENTITIES', 'UTF-8');
 		$dompdf->loadHtml($html);
@@ -393,7 +394,7 @@ class AccountantController extends Controller
 		// Output the generated PDF to Browser
 		$dompdf->stream($name, ['Attachment' => 0]);
     }
-
+  
     public function schotfakturexcel(Request $request, $id, $ageid, $start, $end, $costid){
         return Excel::download(new FakturaExport($request, $id, $ageid, $start, $end, $costid), 'Fakturaexcellist.xlsx');
     }
