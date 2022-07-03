@@ -329,8 +329,7 @@ class AccountantController extends Controller
                     ->join('products', 'active_menus.product_name_id', '=', 'products.id')
                     ->join('sizes', 'products.size_name_id', '=', 'sizes.id')
                     ->get();
-            $join = $join->sortBy('sort');
-            
+            // dd($join);
             // $agerange = array();
             $productscount = [];
             // $productscount = array_fill(1, 500, $agerange);
@@ -341,6 +340,7 @@ class AccountantController extends Controller
                 $productscount[$row->product_name_id][$ageid] += $row->weight;
                 $productscount[$row->product_name_id][$ageid.'-children'] = $row->kingar_children_number;
                 $productscount[$row->product_name_id][$ageid.'div'] = $row->div;
+                $productscount[$row->product_name_id][$ageid.'sort'] = $row->sort;
                 $productscount[$row->product_name_id]['product_name'] = $row->product_name;
                 $productscount[$row->product_name_id]['size_name'] = $row->size_name;
             }
@@ -351,6 +351,7 @@ class AccountantController extends Controller
                     $nakproducts[$key][$day->id] = ($row[$ageid]*$row[$ageid.'-children']) / $row[$ageid.'div'];;
                     $nakproducts[$key]['product_name'] = $row['product_name'];
                     $nakproducts[$key]['size_name'] = $row['size_name'];
+                    $nakproducts[$key]['sort'] = $row[$ageid.'sort'];
                 }
             }
             // dd($nakproducts);
@@ -377,8 +378,8 @@ class AccountantController extends Controller
                 }
             }
         }
-      
-        
+
+
         $dompdf = new Dompdf('UTF-8');
 		$html = mb_convert_encoding(view('pdffile.accountant.schotfaktur', compact('age', 'days', 'nakproducts', 'costsdays', 'costs', 'kindgar')), 'HTML-ENTITIES', 'UTF-8');
 		$dompdf->loadHtml($html);
