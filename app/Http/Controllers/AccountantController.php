@@ -292,12 +292,10 @@ class AccountantController extends Controller
                 }
             }
 
-            function cmp($a, $b)
-            {
+            usort($nakproducts, function ($a, $b){
                 return strcmp($a["product_name"], $b["product_name"]);
-            }
-
-            usort($nakproducts, "cmp");
+            });
+            
             dd($nakproducts);
             $costsdays = bycosts::where('region_name_id', Kindgarden::where('id', $id)->first()->region_id)
                         ->join('days', 'bycosts.day_id', '=', 'days.id')
