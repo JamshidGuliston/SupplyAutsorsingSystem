@@ -219,7 +219,7 @@ class AccountantController extends Controller
         $age = Age_range::where('id', $ageid)->first();
         $days = Day::where('id', '>=', $start)->where('id', '<=', $end)->get();
         $allproducts = [];
-        
+
         foreach($days as $day){
             $join = Number_children::where('number_childrens.day_id', $day->id)
                     ->where('kingar_name_id', $id)
@@ -387,6 +387,11 @@ class AccountantController extends Controller
             }
         }
 
+        usort($nakproducts, function ($a, $b){
+            if(isset($a["sort"]) and isset($b["sort"])){
+                return $a["sort"] > $b["sort"];
+            }
+        });
 
         $dompdf = new Dompdf('UTF-8');
 		$html = mb_convert_encoding(view('pdffile.accountant.schotfaktur', compact('age', 'days', 'nakproducts', 'costsdays', 'costs', 'kindgar')), 'HTML-ENTITIES', 'UTF-8');
@@ -429,7 +434,7 @@ class AccountantController extends Controller
                     ->where('norms.norm_age_id', $ageid)
                     ->where('norms.noyuk_id', 1)
                     ->get();
-            // dd($join);
+            dd($join);
             // $agerange = array();
             $productscount = [];
             foreach($join as $row){
