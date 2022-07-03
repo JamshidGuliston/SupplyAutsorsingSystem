@@ -293,13 +293,7 @@ class AccountantController extends Controller
                     $nakproducts[$cost->praduct_name_id][0] = $cost->price_cost;
                 }
             }
-            usort($nakproducts, function ($a, $b){
-                if(isset($a["sort"]) and isset($b["sort"])){
-                    return $a["sort"] > $b["sort"];
-                }
-            });
 
-            // dd($nakproducts);
             $costsdays = bycosts::where('region_name_id', Kindgarden::where('id', $id)->first()->region_id)
                         ->join('days', 'bycosts.day_id', '=', 'days.id')
                         ->join('years', 'days.year_id', '=', 'years.id')
@@ -314,7 +308,13 @@ class AccountantController extends Controller
                 }
             }
         }
-        // dd($nakproducts);
+
+        usort($nakproducts, function ($a, $b){
+            if(isset($a["sort"]) and isset($b["sort"])){
+                return $a["sort"] > $b["sort"];
+            }
+        });
+        dd($nakproducts);
         $dompdf = new Dompdf('UTF-8');
 		$html = mb_convert_encoding(view('pdffile.accountant.nakapit', compact('age', 'days', 'nakproducts', 'costsdays', 'costs', 'kindgar')), 'HTML-ENTITIES', 'UTF-8');
 		$dompdf->loadHtml($html);
