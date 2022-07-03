@@ -96,7 +96,7 @@
 							$str = substr($row['product_name'], 0, 13);
 					?>
 					<tr>
-						<td>{{ $str }}</td>
+						<td>{{ $row['product_name'] }}</td>
 						<td>{{ $row['size_name'] }}</td>
 						<td>{{ $row[0] }}</td>
 						<?php 
