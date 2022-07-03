@@ -91,7 +91,9 @@
 					?>
 					@foreach($nakproducts as $key => $row)
 					<?php 
-						$str = substr($row['product_name'], 0, 14);
+						$str = $row['product_name'];
+						if (strlen($str) > 15)
+							$str = substr($row['product_name'], 0, 13);
 					?>
 					<tr>
 						<td>{{ $str }}</td>
