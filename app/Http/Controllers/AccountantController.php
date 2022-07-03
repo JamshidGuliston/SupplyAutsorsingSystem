@@ -293,7 +293,7 @@ class AccountantController extends Controller
                     $nakproducts[$cost->praduct_name_id][0] = $cost->price_cost;
                 }
             }
-
+            dd($nakproducts);
             usort($nakproducts, function ($a, $b){
                 return $a["sort"] > $b["sort"];
             });
