@@ -434,7 +434,6 @@ class AccountantController extends Controller
                     ->where('norms.norm_age_id', $ageid)
                     ->where('norms.noyuk_id', 1)
                     ->get();
-            dd($join);
             // $agerange = array();
             $productscount = [];
             foreach($join as $row){
@@ -446,6 +445,7 @@ class AccountantController extends Controller
                 $productscount[$row->norm_cat_id][$ageid.'-children'] = $row->kingar_children_number;
                 $productscount[$row->norm_cat_id][$ageid.'div'] = $row->div;
                 $productscount[$row->norm_cat_id]['product_name'] = $row->norm_name;
+                $productscount[$row->norm_cat_id][$ageid.'sort'] = $row->sort;
                 $productscount[$row->norm_cat_id]['norm_weight'] = $row->norm_weight;
             }
             
@@ -458,13 +458,18 @@ class AccountantController extends Controller
                     $nakproducts[$key]['product_name'] = $row['product_name'];
                     $nakproducts[$key]['norm_weight'] = $row['norm_weight'];
                     $nakproducts[$key]['children'] += $row[$ageid.'-children'];
+                    $nakproducts[$key]['sort'] = $row[$ageid.'sort'];
                     $nakproducts[$key]['div'] = $row[$ageid.'div'];
                 }
             }
             
         }
         // dd($nakproducts);
-
+        usort($nakproducts, function ($a, $b){
+            if(isset($a["sort"]) and isset($b["sort"])){
+                return $a["sort"] > $b["sort"];
+            }
+        });
         $dompdf = new Dompdf('UTF-8');
 		$html = mb_convert_encoding(view('pdffile.accountant.norm', compact('age', 'days', 'nakproducts', 'kindgar')), 'HTML-ENTITIES', 'UTF-8');
 		$dompdf->loadHtml($html);
