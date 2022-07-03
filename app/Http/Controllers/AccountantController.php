@@ -295,7 +295,9 @@ class AccountantController extends Controller
             }
             dd($nakproducts);
             usort($nakproducts, function ($a, $b){
-                return $a["sort"] > $b["sort"];
+                if(isset($a["sort"]) and isset($b["sort"])){
+                    return $a["sort"] > $b["sort"];
+                }
             });
 
             dd($nakproducts);
