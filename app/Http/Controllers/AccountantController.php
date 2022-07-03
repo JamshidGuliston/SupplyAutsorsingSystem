@@ -240,7 +240,7 @@ class AccountantController extends Controller
                 break;
             }
         }
-        dd($allproducts);
+        // dd($allproducts);
         foreach($days as $day){
             $join = Number_children::where('number_childrens.day_id', $day->id)
                     ->where('kingar_name_id', $id)
@@ -267,7 +267,7 @@ class AccountantController extends Controller
                 $productscount[$row->product_name_id]['product_name'] = $row->product_name;
                 $productscount[$row->product_name_id]['size_name'] = $row->size_name;
             }
-            
+            dd($productscount);
             foreach($productscount as $key => $row){
                 if(isset($row['product_name'])){
                     $childs = Number_children::where('day_id', $day->id)
