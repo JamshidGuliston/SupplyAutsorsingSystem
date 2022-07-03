@@ -219,7 +219,9 @@ class AccountantController extends Controller
         $age = Age_range::where('id', $ageid)->first();
         $days = Day::where('id', '>=', $start)->where('id', '<=', $end)->get();
         $allproducts = [];
+        $t = 0;
         foreach($days as $day){
+            $t++;
             $join = Number_children::where('number_childrens.day_id', $day->id)
                     ->where('kingar_name_id', $id)
                     ->where('king_age_name_id', $ageid)
@@ -233,6 +235,9 @@ class AccountantController extends Controller
                     ->get();
             foreach($join as $row){
                 array_push($allproducts, $row);
+            }
+            if($t == 40){
+                break;
             }
         }
         dd($allproducts);
