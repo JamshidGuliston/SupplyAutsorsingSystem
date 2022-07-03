@@ -138,9 +138,10 @@
 					<tr>
 						<td><bold>Jami:</bold></td>
 						<td></td>
+						<td></td>
 						@foreach($kindgardens as $day)
 							<td></td>
-							<td>{{ $regionsumm[$day['id']] }}</td>
+							<td><?php printf("%01.1f", $regionsumm[$day['id']]) ?></td>
 						@endforeach
 						<td><?php printf("%01.1f", $summ) ?></td>
 						<td style="font-size: 6px;"><?php printf("%01.1f", 0) ?></td>
