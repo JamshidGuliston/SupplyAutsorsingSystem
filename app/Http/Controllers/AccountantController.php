@@ -267,7 +267,6 @@ class AccountantController extends Controller
                 $productscount[$row->product_name_id]['product_name'] = $row->product_name;
                 $productscount[$row->product_name_id]['size_name'] = $row->size_name;
             }
-            dd($productscount);
             foreach($productscount as $key => $row){
                 if(isset($row['product_name'])){
                     $childs = Number_children::where('day_id', $day->id)
@@ -293,6 +292,13 @@ class AccountantController extends Controller
                 }
             }
 
+            function cmp($a, $b)
+            {
+                return strcmp($a["product_name"], $b["product_name"]);
+            }
+
+            usort($nakproducts, "cmp");
+            dd($nakproducts);
             $costsdays = bycosts::where('region_name_id', Kindgarden::where('id', $id)->first()->region_id)
                         ->join('days', 'bycosts.day_id', '=', 'days.id')
                         ->join('years', 'days.year_id', '=', 'years.id')
