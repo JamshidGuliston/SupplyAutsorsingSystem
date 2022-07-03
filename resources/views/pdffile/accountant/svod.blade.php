@@ -88,6 +88,7 @@
                         </tr>
                     </thead>
                     <tbody>
+					<?php $regionsumm = [] ?>
 					@foreach($nakproducts as $key => $row)
 					@if($loop->index % 2 == 0)
 						<tr style="background-color: #dfe4e3;">
@@ -101,23 +102,20 @@
 							$summ = 0;
 						?>
 						@foreach($kindgardens as $day)
+							@if(!isset($regionsumm[$day['id']]))
+								<?php $regionsumm[$day['id']] = 0; ?>
+							@endif
 							@if(isset($row[$day['id']]))
 								<td style="width: 40px;">
-								@if($row['product_name'] == "Болалар сони")
-									<strong>{{ $row[$day['id']]; }}</strong>
-								<?php  
-									$summ += $row[$day['id']];
-								?>
-								@else
 								<?php  
 									printf("%01.2f", $row[$day['id']]); 
 									$summ += $row[$day['id']];
 								?>
-								@endif
 								</td>
 								<td style="font-size: 6px;">
 									<?php  
 										printf("%01.0f", $row[$day['id']] * $row[0]);
+										$regionsumm[$day['id']] += $row[$day['id']] * $row[0];
 									?>
 								</td>
 							@else
@@ -137,6 +135,20 @@
 						<td style="font-size: 6px;"><?php printf("%01.1f", ($summ * $row[0] + $summ * $row[0])/100 * 20 + (($summ * $row[0] + $summ * $row[0])/100 * 20) / 100 * 15) ?></td>
 					</tr>
 					@endforeach
+					<tr>
+						<td><bold>Jami:</bold></td>
+						<td></td>
+						@foreach($kindgardens as $day)
+							<td></td>
+							<td>{{ $regionsumm[$day['id']] }}</td>
+						@endforeach
+						<td><?php printf("%01.1f", $summ) ?></td>
+						<td style="font-size: 6px;"><?php printf("%01.1f", 0) ?></td>
+						<td style="font-size: 6px;"><?php printf("%01.1f", 0) ?></td>
+						<td style="font-size: 6px;"><?php printf("%01.1f", 0) ?></td>
+						<td style="font-size: 6px;"><?php printf("%01.1f", 0) ?></td>
+						<td style="font-size: 6px;"><?php printf("%01.1f", 0) ?></td>
+					</tr>
                     </tbody>
                 </table>
 				<br>
