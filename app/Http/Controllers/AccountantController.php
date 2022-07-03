@@ -314,7 +314,7 @@ class AccountantController extends Controller
                 return $a["sort"] > $b["sort"];
             }
         });
-        dd($nakproducts);
+        // dd($nakproducts);
         $dompdf = new Dompdf('UTF-8');
 		$html = mb_convert_encoding(view('pdffile.accountant.nakapit', compact('age', 'days', 'nakproducts', 'costsdays', 'costs', 'kindgar')), 'HTML-ENTITIES', 'UTF-8');
 		$dompdf->loadHtml($html);
