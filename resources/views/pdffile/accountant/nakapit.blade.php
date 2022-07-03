@@ -90,8 +90,11 @@
 						$costsumm = 0;
 					?>
 					@foreach($nakproducts as $key => $row)
+					<?php 
+						$str = substr($row['product_name'], 0, 14);
+					?>
 					<tr>
-						<td>{{ $row['product_name'] }}</td>
+						<td>{{ $str }}</td>
 						<td>{{ $row['size_name'] }}</td>
 						<td>{{ $row[0] }}</td>
 						<?php 
