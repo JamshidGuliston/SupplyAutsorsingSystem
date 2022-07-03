@@ -521,6 +521,7 @@ class AccountantController extends Controller
                         $productscount[$row->product_name_id][$row->age_range_id.'-children'] = $row->kingar_children_number;
                         $productscount[$row->product_name_id][$row->age_range_id.'div'] = $row->div;
                         $productscount[$row->product_name_id]['product_name'] = $row->product_name;
+                        $productscount[$row->product_name_id][$row->age_range_id.'sort'] = $row->sort;
                         $productscount[$row->product_name_id]['size_name'] = $row->size_name;
                     }
                     
@@ -530,6 +531,7 @@ class AccountantController extends Controller
                         }
                         $nakproducts[$key][$row_id] += ($row[$age->id]*$row[$age->id.'-children']) / $row[$age->id.'div'];
                         $nakproducts[$key]['product_name'] = $row['product_name'];
+                        $nakproducts[$key]['sort'] = $row[$age->id.'sort'];
                         $nakproducts[$key]['size_name'] = $row['size_name'];
                     }
     
@@ -547,6 +549,12 @@ class AccountantController extends Controller
                 $nakproducts[$cost->praduct_name_id][0] = $cost->price_cost;
             }
         }
+
+        usort($nakproducts, function ($a, $b){
+            if(isset($a["sort"]) and isset($b["sort"])){
+                return $a["sort"] > $b["sort"];
+            }
+        });
         // dd($nakproducts);
         $dompdf = new Dompdf('UTF-8');
 		$html = mb_convert_encoding(view('pdffile.accountant.svod', compact('age', 'nakproducts', 'kindgardens')), 'HTML-ENTITIES', 'UTF-8');
