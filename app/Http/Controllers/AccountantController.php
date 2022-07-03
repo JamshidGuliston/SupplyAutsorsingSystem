@@ -278,6 +278,7 @@ class AccountantController extends Controller
                     $nakproducts[0]['size_name'] = "";
                     $nakproducts[$key][$day->id] = ($row[$ageid]*$row[$ageid.'-children']) / $row[$ageid.'div'];;
                     $nakproducts[$key]['product_name'] = $row['product_name'];
+                    $nakproducts[$key]['sort'] = $row['sort'];
                     $nakproducts[$key]['size_name'] = $row['size_name'];
                 }
             }
@@ -293,9 +294,9 @@ class AccountantController extends Controller
             }
 
             usort($nakproducts, function ($a, $b){
-                return strcmp($a["product_name"], $b["product_name"]);
+                return $a["sort"] > $b["sort"];
             });
-            
+
             dd($nakproducts);
             $costsdays = bycosts::where('region_name_id', Kindgarden::where('id', $id)->first()->region_id)
                         ->join('days', 'bycosts.day_id', '=', 'days.id')
