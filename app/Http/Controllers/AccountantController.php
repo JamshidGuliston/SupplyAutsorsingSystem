@@ -231,7 +231,9 @@ class AccountantController extends Controller
                     ->join('products', 'active_menus.product_name_id', '=', 'products.id')
                     ->join('sizes', 'products.size_name_id', '=', 'sizes.id')
                     ->get();
-            array_push($allproducts, $join);
+            foreach($join as $row){
+                array_push($allproducts, $row);
+            }
         }
         dd($allproducts);
         foreach($days as $day){
