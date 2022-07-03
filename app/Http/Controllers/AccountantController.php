@@ -265,6 +265,7 @@ class AccountantController extends Controller
                 $productscount[$row->product_name_id][$ageid.'-children'] = $row->kingar_children_number;
                 $productscount[$row->product_name_id][$ageid.'div'] = $row->div;
                 $productscount[$row->product_name_id]['product_name'] = $row->product_name;
+                $productscount[$row->product_name_id]['sort'] = $row->sort;
                 $productscount[$row->product_name_id]['size_name'] = $row->size_name;
             }
             foreach($productscount as $key => $row){
