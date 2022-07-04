@@ -447,7 +447,7 @@ class AccountantController extends Controller
                 $productscount[$row->norm_cat_id][$ageid] += $row->weight;
                 $productscount[$row->norm_cat_id][$ageid.'-children'] = $row->kingar_children_number;
                 $productscount[$row->norm_cat_id][$ageid.'div'] = $row->div;
-                $productscount[$row->norm_cat_id]['product_name'] = $row->norm_name;
+                $productscount[$row->norm_cat_id]['product_name'] = $row->norm_name_short;
                 $productscount[$row->norm_cat_id][$ageid.'sort'] = $row->sort;
                 $productscount[$row->norm_cat_id]['norm_weight'] = $row->norm_weight;
             }

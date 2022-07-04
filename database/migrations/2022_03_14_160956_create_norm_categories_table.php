@@ -16,6 +16,7 @@ class CreateNormCategoriesTable extends Migration
         Schema::create('norm_categories', function (Blueprint $table) {
             $table->id();
             $table->string('norm_name');
+            $table->string('norm_name_short');
             $table->timestamps();
         });
     }
