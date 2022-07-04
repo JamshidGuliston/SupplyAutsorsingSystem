@@ -91,7 +91,7 @@
                     ?>
 					@foreach($nakproducts as $key => $row)
 					<tr>
-						<td>{{ mb_strimwidth($row['product_name'], 0, 35) . '...' }}</td>
+						<td>{{ mb_strimwidth($row['product_name'], 0, 35) }}</td>
 						<td>{{ $row['norm_weight'] }}</td>
 						<td><?php
 							if(mb_strimwidth($row['product_name'], 0, 3) == 'Тух')
