@@ -66,8 +66,8 @@
                 <div class="table" id="table_with_data">
 					<div class="col-md-12">
                         <center>НАКЛАДНАЯ-СЧЁТ ФАКТУРА № ______</center>
-                        <center>от " ____ {{ $days[0]->month_id }}"<?php printf('%02d', $days[0]->month_id) ?>. 2022г</center>
-                        <center>К товарно-отгрузчным документом №____ от" ____ " ____________ 2022 года</center><br>
+                        <center>от " ____".<?php printf('%02d', $days[0]->month_id) ?>. 2022г</center>
+                        <center>К товарно-отгрузчным документом №____ от" ____ ".<?php printf('%02d', $days[0]->month_id) ?>. 2022 года</center><br>
 						<center>Поставщик:МЧЖ Нишон Инвест / {{ $kindgar->kingar_name." / ".$age->age_name }}</center>
 					</div>
                 </div>
