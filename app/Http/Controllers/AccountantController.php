@@ -497,7 +497,7 @@ class AccountantController extends Controller
 		$dompdf->setPaper('A4');
 		// $customPaper = array(0,0,360,360);
 		// $dompdf->setPaper($customPaper);
-		$name = $start.$end.$id.$ageid."schotfaktur.pdf";
+		$name = $start.$end.$id."allschotfaktur.pdf";
 		// Render the HTML as PDF
 		$dompdf->render();
 
