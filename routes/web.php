@@ -189,6 +189,7 @@ Route::group(['prefix' => 'accountant', 'middleware' => ['isAccountant', 'auth']
     Route::get('nakapit/{id}/{ageid}/{start}/{end}/{costid}', [AccountantController::class, 'nakapit'])->name('accountant.nakapit');
     Route::get('nakapitexcel/{id}/{ageid}/{start}/{end}/{costid}', [AccountantController::class, 'nakapitexcel'])->name('accountant.nakapitexcel');
     Route::get('schotfaktur/{id}/{ageid}/{start}/{end}/{costid}', [AccountantController::class, 'schotfaktur'])->name('accountant.schotfaktur');
+    Route::get('allschotfaktur/{id}/{start}/{end}/{costid}', [AccountantController::class, 'allschotfaktur'])->name('accountant.allschotfaktur');
     Route::get('schotfakturexcel/{id}/{ageid}/{start}/{end}/{costid}', [AccountantController::class, 'schotfakturexcel'])->name('accountant.schotfakturexcel');
     Route::get('norm/{id}/{ageid}/{start}/{end}/{costid}', [AccountantController::class, 'norm'])->name('accountant.norm');
     Route::get('normexcel/{id}/{ageid}/{start}/{end}/{costid}', [AccountantController::class, 'normexcel'])->name('accountant.normexcel');
