@@ -327,7 +327,7 @@ class AccountantController extends Controller
                 // ->join('months', 'months.id', '=', 'days.month_id')
                 // ->join('years', 'years.id', '=', 'days.year_id')
                 // ->get(['days.id', 'days.day_number', 'months.month_name', 'years.year_name']);
-        dd($days);
+        // dd($days);
         foreach($days as $day){
             $join = Number_children::where('number_childrens.day_id', $day->id)
                     ->where('kingar_name_id', $id)
