@@ -423,6 +423,7 @@ class AccountantController extends Controller
                 // ->get(['days.id', 'days.day_number', 'months.month_name', 'years.year_name']);
         // dd($days);
         foreach($days as $day){
+            $productscount = [];
             foreach($ages as $age){ 
                 $join = Number_children::where('number_childrens.day_id', $day->id)
                         ->where('kingar_name_id', $id)
@@ -435,7 +436,7 @@ class AccountantController extends Controller
                         ->join('products', 'active_menus.product_name_id', '=', 'products.id')
                         ->join('sizes', 'products.size_name_id', '=', 'sizes.id')
                         ->get();
-                $productscount = [];
+                
                 foreach($join as $row){
                     if(!isset($productscount[$row->product_name_id][$age->id])){
                         $productscount[$row->product_name_id][$age->id] = 0;
@@ -447,38 +448,38 @@ class AccountantController extends Controller
                     $productscount[$row->product_name_id]['product_name'] = $row->product_name;
                     $productscount[$row->product_name_id]['size_name'] = $row->size_name;
                 }
+            }
                 
-                foreach($productscount as $key => $row){
-                    if(isset($row['product_name'])){
-                        
-                        $nakproducts[$key][$day->id] = ($row[$age->id]*$row[$age->id.'-children']) / $row[$age->id.'div'];;
-                        $nakproducts[$key]['product_name'] = $row['product_name'];
-                        $nakproducts[$key]['size_name'] = $row['size_name'];
-                        $nakproducts[$key]['sort'] = $row[$age->id.'sort'];
-                    }
+            foreach($productscount as $key => $row){
+                if(isset($row['product_name'])){
+                    
+                    $nakproducts[$key][$day->id] = ($row[$age->id]*$row[$age->id.'-children']) / $row[$age->id.'div'];;
+                    $nakproducts[$key]['product_name'] = $row['product_name'];
+                    $nakproducts[$key]['size_name'] = $row['size_name'];
+                    $nakproducts[$key]['sort'] = $row[$age->id.'sort'];
                 }
-                // dd($nakproducts);
-                $costs = bycosts::where('day_id', $costid)->where('region_name_id', Kindgarden::where('id', $id)->first()->region_id)
-                        ->orderBy('day_id', 'DESC')->get();
-                
-                foreach($costs as $cost){
-                    if(isset($nakproducts[$cost->praduct_name_id]['product_name'])){
-                        $nakproducts[$cost->praduct_name_id][0] = $cost->price_cost;
-                    }
+            }
+            // dd($nakproducts);
+            $costs = bycosts::where('day_id', $costid)->where('region_name_id', Kindgarden::where('id', $id)->first()->region_id)
+                    ->orderBy('day_id', 'DESC')->get();
+            
+            foreach($costs as $cost){
+                if(isset($nakproducts[$cost->praduct_name_id]['product_name'])){
+                    $nakproducts[$cost->praduct_name_id][0] = $cost->price_cost;
                 }
+            }
 
-                $costsdays = bycosts::where('region_name_id', Kindgarden::where('id', $id)->first()->region_id)
-                            ->join('days', 'bycosts.day_id', '=', 'days.id')
-                            ->join('years', 'days.year_id', '=', 'years.id')
-                            ->orderBy('day_id', 'DESC')
-                            ->get(['bycosts.day_id', 'days.day_number', 'days.month_id', 'years.year_name']);
-                $costs = [];
-                $bool = [];
-                foreach($costsdays as $row){
-                    if(!isset($bool[$row->day_id])){
-                        array_push($costs, $row);
-                        $bool[$row->day_id] = 1;
-                    }
+            $costsdays = bycosts::where('region_name_id', Kindgarden::where('id', $id)->first()->region_id)
+                        ->join('days', 'bycosts.day_id', '=', 'days.id')
+                        ->join('years', 'days.year_id', '=', 'years.id')
+                        ->orderBy('day_id', 'DESC')
+                        ->get(['bycosts.day_id', 'days.day_number', 'days.month_id', 'years.year_name']);
+            $costs = [];
+            $bool = [];
+            foreach($costsdays as $row){
+                if(!isset($bool[$row->day_id])){
+                    array_push($costs, $row);
+                    $bool[$row->day_id] = 1;
                 }
             }
         }
