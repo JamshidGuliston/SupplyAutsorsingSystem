@@ -68,7 +68,7 @@
                         <center>НАКЛАДНАЯ-СЧЁТ ФАКТУРА № ______</center>
                         <center>от " ____".<?php printf('%02d', $days[0]->month_id) ?>. 2022г</center>
                         <center>К товарно-отгрузчным документом №____ от" ____ ".<?php printf('%02d', $days[0]->month_id) ?>. 2022 года</center><br>
-						<center>Поставщик:МЧЖ Нишон Инвест / {{ $kindgar->kingar_name." / ".$ages[0]->age_name. }}</center>
+						<center>Поставщик:МЧЖ Нишон Инвест / {{ $kindgar->kingar_name." / " }}</center>
 					</div>
                 </div>
                 <table style="width:100%; table-layout: fixed;">
