@@ -1918,70 +1918,70 @@ class NormTableSeeder extends Seeder
             // 23.cat
             // 4-7 yosh
             Norm::create([
-                'norm_cat_id' => 10,
+                'norm_cat_id' => 23,
                 'norm_age_id' => 1,
                 'noyuk_id' => 1,
                 'norm_weight' => 5,
             ]);
 
             Norm::create([
-                'norm_cat_id' => 10,
+                'norm_cat_id' => 23,
                 'norm_age_id' => 1,
                 'noyuk_id' => 2,
                 'norm_weight' => 0,
             ]);
 
             Norm::create([
-                'norm_cat_id' => 10,
+                'norm_cat_id' => 23,
                 'norm_age_id' => 1,
                 'noyuk_id' => 3,
                 'norm_weight' => 0,
             ]);
 
             Norm::create([
-                'norm_cat_id' => 10,
+                'norm_cat_id' => 23,
                 'norm_age_id' => 1,
                 'noyuk_id' => 4,
                 'norm_weight' => 0,
             ]);
 
             Norm::create([
-                'norm_cat_id' => 10,
+                'norm_cat_id' => 23,
                 'norm_age_id' => 1,
                 'noyuk_id' => 5,
                 'norm_weight' => 0,
             ]);
             // 3-4 yosh
             Norm::create([
-                'norm_cat_id' => 10,
+                'norm_cat_id' => 23,
                 'norm_age_id' => 2,
                 'noyuk_id' => 1,
                 'norm_weight' => 4,
             ]);
 
             Norm::create([
-                'norm_cat_id' => 10,
+                'norm_cat_id' => 23,
                 'norm_age_id' => 2,
                 'noyuk_id' => 2,
                 'norm_weight' => 0,
             ]);
 
             Norm::create([
-                'norm_cat_id' => 10,
+                'norm_cat_id' => 23,
                 'norm_age_id' => 2,
                 'noyuk_id' => 3,
                 'norm_weight' => 0,
             ]);
 
             Norm::create([
-                'norm_cat_id' => 10,
+                'norm_cat_id' => 23,
                 'norm_age_id' => 2,
                 'noyuk_id' => 4,
                 'norm_weight' => 0,
             ]);
 
             Norm::create([
-                'norm_cat_id' => 10,
+                'norm_cat_id' => 23,
                 'norm_age_id' => 2,
                 'noyuk_id' => 5,
                 'norm_weight' => 0,
