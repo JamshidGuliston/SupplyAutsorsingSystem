@@ -1,6 +1,6 @@
 <table>
   <tr>
-	  <td colspan="4"><b>Sana: "___".<?php printf('%02d', $days[0]->month_id) ?>. 2022г / {{ $kindgar->kingar_name." / ".$age->age_name }}</b></td>
+	  <td colspan="4"><b>Sana: "___".<?php printf('%02d', $days[0]->month_id) ?>. 2022 / {{ $kindgar->kingar_name." / ".$age->age_name }}</b></td>
   </tr>
   <tr>
 	<th><b>Махсулотлар</b></th>
