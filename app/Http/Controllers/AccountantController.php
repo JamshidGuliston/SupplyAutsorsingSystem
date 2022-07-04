@@ -449,7 +449,7 @@ class AccountantController extends Controller
                     $productscount[$row->product_name_id]['size_name'] = $row->size_name;
                 }
             }
-                
+            dd($productscount);
             foreach($productscount as $key => $row){
                 if(isset($row['product_name'])){
                     
