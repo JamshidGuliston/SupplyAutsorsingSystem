@@ -323,10 +323,10 @@ class AccountantController extends Controller
         $kindgar = Kindgarden::where('id', $id)->first();
         $nakproducts = [];
         $age = Age_range::where('id', $ageid)->first();
-        $days = Day::where('id', '>=', $start)->where('id', '<=', $end)
-                ->join('months', 'months.id', '=', 'days.month_id')
-                ->join('years', 'years.id', '=', 'days.year_id')
-                ->get(['days.id', 'days.day_number', 'months.month_name', 'years.year_name']);
+        $days = Day::where('id', '>=', $start)->where('id', '<=', $end)->get();
+                // ->join('months', 'months.id', '=', 'days.month_id')
+                // ->join('years', 'years.id', '=', 'days.year_id')
+                // ->get(['days.id', 'days.day_number', 'months.month_name', 'years.year_name']);
         dd($days);
         foreach($days as $day){
             $join = Number_children::where('number_childrens.day_id', $day->id)
