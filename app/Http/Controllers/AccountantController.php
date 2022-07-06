@@ -355,7 +355,6 @@ class AccountantController extends Controller
             
             foreach($productscount as $key => $row){
                 if(isset($row['product_name'])){
-                    
                     $nakproducts[$key][$day->id] = ($row[$ageid]*$row[$ageid.'-children']) / $row[$ageid.'div'];;
                     $nakproducts[$key]['product_name'] = $row['product_name'];
                     $nakproducts[$key]['size_name'] = $row['size_name'];
