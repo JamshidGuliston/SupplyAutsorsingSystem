@@ -421,8 +421,8 @@ class AccountantController extends Controller
                 // ->join('years', 'years.id', '=', 'days.year_id')
                 // ->get(['days.id', 'days.day_number', 'months.month_name', 'years.year_name']);
         // dd($days);
-        $productscount = [];
         foreach($days as $day){
+            $productscount = [];
             foreach($ages as $age){ 
                 $join = Number_children::where('number_childrens.day_id', $day->id)
                         ->where('kingar_name_id', $id)
@@ -447,21 +447,25 @@ class AccountantController extends Controller
                     $productscount[$row->product_name_id]['product_name'] = $row->product_name;
                     $productscount[$row->product_name_id]['size_name'] = $row->size_name;
                 }
-                dd($productscount);
+                // dd($productscount);
             }
-            
-        }
-        foreach($productscount as $key => $row){
-            foreach($ages as $age){ 
-                if(isset($row['product_name']) and isset($row[$age->id])){
-                    $nakproducts[$key][$day->id] = ($row[$age->id]*$row[$age->id.'-children']) / $row[$age->id.'div'];;
-                    $nakproducts[$key]['product_name'] = $row['product_name'];
-                    $nakproducts[$key]['size_name'] = $row['size_name'];
-                    $nakproducts[$key]['sort'] = $row[$age->id.'sort'];
+        
+            foreach($productscount as $key => $row){
+                foreach($ages as $age){ 
+                    if(isset($row['product_name']) and isset($row[$age->id])){
+                        if(!isset($nakproducts[$key][$day->id])){
+                            $nakproducts[$key][$day->id] = 0;
+                        }
+                        $nakproducts[$key][$day->id] += ($row[$age->id]*$row[$age->id.'-children']) / $row[$age->id.'div'];;
+                        $nakproducts[$key]['product_name'] = $row['product_name'];
+                        $nakproducts[$key]['size_name'] = $row['size_name'];
+                        $nakproducts[$key]['sort'] = $row[$age->id.'sort'];
+                    }
                 }
             }
+            dd($nakproducts);
         }
-        // dd($nakproducts);
+        
         $costs = bycosts::where('day_id', $costid)->where('region_name_id', Kindgarden::where('id', $id)->first()->region_id)
                 ->orderBy('day_id', 'DESC')->get();
         
