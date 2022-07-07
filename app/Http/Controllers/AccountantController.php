@@ -450,7 +450,7 @@ class AccountantController extends Controller
             }
             
         }
-
+        dd($productscount);
         foreach($productscount as $key => $row){
             foreach($ages as $age){ 
                 if(isset($row['product_name']) and isset($row[$age->id])){
