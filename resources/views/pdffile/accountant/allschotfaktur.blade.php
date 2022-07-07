@@ -96,9 +96,9 @@
 						?>
 						@foreach($days as $day)
 							@if(isset($row[$day['id']]))
-								<?php  
-									$summ += $row[$day['id']];
-								?>
+							<?php  
+								$summ += $row[$day['id']];
+							?>
 							@endif
 						@endforeach
 						<td><?php printf("%01.4f", $summ) ?></td>
