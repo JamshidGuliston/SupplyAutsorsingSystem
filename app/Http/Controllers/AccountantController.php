@@ -463,8 +463,8 @@ class AccountantController extends Controller
                     }
                 }
             }
-            dd($nakproducts);
         }
+        dd($nakproducts);
         
         $costs = bycosts::where('day_id', $costid)->where('region_name_id', Kindgarden::where('id', $id)->first()->region_id)
                 ->orderBy('day_id', 'DESC')->get();
