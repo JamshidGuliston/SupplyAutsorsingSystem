@@ -80,7 +80,7 @@
                     </div>
                     <div class="col-sm-4">
                         Yuklab olish
-                        <button type="submit" class="btn btn-info form-control"><i class="fas fa-download" aria-hidden="true"></i></button>
+                        <button type="submit" class="btn btn-info form-control">PDF <i class="fas fa-download" aria-hidden="true"></i></button>
                     </div>
                     <br/>
                 </div>
