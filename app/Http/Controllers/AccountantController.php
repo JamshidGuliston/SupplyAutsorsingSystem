@@ -142,7 +142,7 @@ class AccountantController extends Controller
                     $day = $row['day_number'];
                     $month = $row['month_id'];
                     $year = $row['year_name'];
-                    $html +=  "<option value='1'>PP</option>";
+                    $html +=  "<option>PP</option>";
                 }
         $html += "</select>";
 
