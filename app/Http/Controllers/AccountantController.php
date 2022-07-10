@@ -668,7 +668,7 @@ class AccountantController extends Controller
             }
         }
 
-        $costs = bycosts::where('day_id', bycosts::where('day_id', '<=', $first)->where('region_name_id', $request->region_id)->orderBy('day_id', 'DESC')->first()->day_id)
+        $costs = bycosts::where('day_id', $request->cost_id)
                 ->where('region_name_id', $request->region_id)
                 ->orderBy('day_id', 'DESC')->get();
 
