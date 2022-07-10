@@ -70,6 +70,7 @@
                             @endforeach
                         </select>
                     </div>
+                    <br/>
                     <div class="col-sm-4">
                         <input type="text" name="over" class="form-control" required>
                     </div>
@@ -79,6 +80,7 @@
                     <div class="col-sm-4">
                         <button type="submit" class="btn btn-info">PDF</button>
                     </div>
+                    <br/>
                 </div>
                 </form>
                 <div class="modal-footer">
