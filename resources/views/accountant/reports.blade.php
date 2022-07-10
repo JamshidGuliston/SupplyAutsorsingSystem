@@ -36,7 +36,7 @@
                 <form action="{{route('accountant.svod')}}" method="GET">
                 <div class="row modal-body">
                     @csrf
-                    <div class="col-sm-4">
+                    <div class="col-sm-2">
                         <select id='testSelect1' name="kindgardens[]" class="form-select" aria-label="Default select example" multiple required>
                             @foreach($kinds as $row)
                                 <option value='{{ $row->id }}'>{{ $row->kingar_name }}</option>
