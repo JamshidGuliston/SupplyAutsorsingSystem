@@ -30,7 +30,7 @@
         <div class="modal-dialog modal-xl">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">Svodniy</h5>
+                    <h5 class="modal-title" id="exampleModalLabel">Umumiy Hisobot</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <form action="{{route('accountant.svod')}}" method="GET">
@@ -70,7 +70,13 @@
                             @endforeach
                         </select>
                     </div>
-                    <div class="col-sm-2">
+                    <div class="col-sm-1">
+                        <input type="text" name="over" required>
+                    </div>
+                    <div class="col-sm-1">
+                        <input type="text" name="nds" required>
+                    </div>
+                    <div class="col-sm-12">
                     <button type="submit" class="btn btn-info" >PDF</button>
                     </div>
                 </div>
