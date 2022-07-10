@@ -620,6 +620,8 @@ class AccountantController extends Controller
 
     public function svod(Request $request){
         // dd($request->all());
+        $over = $request->over;
+        $nds = $request->nds;
         $days = Day::where('id', '>=', $request->start)->where('id', '<=', $request->end)->get();
         $nakproducts = [];
         $first = $days[0]['id'];
@@ -685,7 +687,7 @@ class AccountantController extends Controller
         });
         // dd($nakproducts);
         $dompdf = new Dompdf('UTF-8');
-		$html = mb_convert_encoding(view('pdffile.accountant.svod', compact('age', 'nakproducts', 'kindgardens')), 'HTML-ENTITIES', 'UTF-8');
+		$html = mb_convert_encoding(view('pdffile.accountant.svod', compact('age', 'nakproducts', 'kindgardens', 'over', 'nds')), 'HTML-ENTITIES', 'UTF-8');
 		$dompdf->loadHtml($html);
 
 		$dompdf->setPaper('A3',  'landscape');

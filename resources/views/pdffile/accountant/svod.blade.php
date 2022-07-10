@@ -81,9 +81,9 @@
 							@endforeach
 							<th>КГ</th>
 							<th>Сумма</th>
-							<th>Устама 20%</th>
+							<th>Устама {{ $over }}%</th>
 							<th>Жами сумма</th>
-							<th>НДС 15%</th>
+							<th>НДС {{ $nds }}%</th>
 							<th>Хаммаси жами</th>
                         </tr>
                     </thead>
@@ -129,10 +129,10 @@
 						@endforeach
 						<td><?php printf("%01.1f", $summ) ?></td>
 						<td style="font-size: 6px;"><?php printf("%01.1f", $summ * $row[0]) ?></td>
-						<td style="font-size: 6px;"><?php printf("%01.1f", ($summ * $row[0])/100 * 20) ?></td>
-						<td style="font-size: 6px;"><?php printf("%01.1f", ($summ * $row[0] + $summ * $row[0])/100 * 20) ?></td>
-						<td style="font-size: 6px;"><?php printf("%01.1f", (($summ * $row[0] + $summ * $row[0])/100 * 20) / 100 * 15) ?></td>
-						<td style="font-size: 6px;"><?php printf("%01.1f", ($summ * $row[0] + $summ * $row[0])/100 * 20 + (($summ * $row[0] + $summ * $row[0])/100 * 20) / 100 * 15) ?></td>
+						<td style="font-size: 6px;"><?php printf("%01.1f", ($summ * $row[0])/100 * $over) ?></td>
+						<td style="font-size: 6px;"><?php printf("%01.1f", ($summ * $row[0] + $summ * $row[0])/100 * $over) ?></td>
+						<td style="font-size: 6px;"><?php printf("%01.1f", (($summ * $row[0] + $summ * $row[0])/100 * $over) / 100 * $nds) ?></td>
+						<td style="font-size: 6px;"><?php printf("%01.1f", ($summ * $row[0] + $summ * $row[0])/100 * $over + (($summ * $row[0] + $summ * $row[0])/100 * $over) / 100 * $nds) ?></td>
 					</tr>
 					@endforeach
 					<tr>

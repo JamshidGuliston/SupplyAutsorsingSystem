@@ -72,11 +72,11 @@
                     </div>
                     <div class="col-sm-4">
                         Ustama % da
-                        <input type="text" name="over" class="form-control" required>
+                        <input type="number" name="over" class="form-control" required>
                     </div>
                     <div class="col-sm-4">
                         NDS % da
-                        <input type="text" name="nds" class="form-control" required>
+                        <input type="number" name="nds" class="form-control" required>
                     </div>
                     <div class="col-sm-4">
                         Yuklab olish
@@ -86,7 +86,7 @@
                 </div>
                 </form>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-success" data-bs-dismiss="modal">Close</button>
+                    <!-- <button type="button" class="btn btn-success" data-bs-dismiss="modal">Close</button> -->
                 </div>
             </div>
         </div>
