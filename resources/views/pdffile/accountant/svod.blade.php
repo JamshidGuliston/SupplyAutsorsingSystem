@@ -88,7 +88,14 @@
                         </tr>
                     </thead>
                     <tbody>
-					<?php $regionsumm = [] ?>
+					<?php 
+						$regionsumm = [];
+						$summa = 0;
+						$ustsumma = 0;
+						$allsumma = 0;
+						$ndssumma = 0;
+						$jamisumma = 0;
+					?>
 					@foreach($nakproducts as $key => $row)
 					@if($loop->index % 2 == 0)
 						<tr style="background-color: #dfe4e3;">
@@ -128,11 +135,11 @@
 							@endif
 						@endforeach
 						<td><?php printf("%01.1f", $summ) ?></td>
-						<td style="font-size: 6px;"><?php printf("%01.1f", $summ * $row[0]) ?></td>
-						<td style="font-size: 6px;"><?php printf("%01.1f", ($summ * $row[0])/100 * $over) ?></td>
-						<td style="font-size: 6px;"><?php printf("%01.1f", ($summ * $row[0] + $summ * $row[0])/100 * $over) ?></td>
-						<td style="font-size: 6px;"><?php printf("%01.1f", (($summ * $row[0] + $summ * $row[0])/100 * $over) / 100 * $nds) ?></td>
-						<td style="font-size: 6px;"><?php printf("%01.1f", ($summ * $row[0] + $summ * $row[0])/100 * $over + (($summ * $row[0] + $summ * $row[0])/100 * $over) / 100 * $nds) ?></td>
+						<td style="font-size: 6px;"><?php $summa += $summ * $row[0]; printf("%01.1f", $summ * $row[0]) ?></td>
+						<td style="font-size: 6px;"><?php $ustsumma += ($summ * $row[0])/100 * $over; printf("%01.1f", ($summ * $row[0])/100 * $over) ?></td>
+						<td style="font-size: 6px;"><?php $allsumma += ($summ * $row[0] + $summ * $row[0])/100 * $over; printf("%01.1f", ($summ * $row[0] + $summ * $row[0])/100 * $over) ?></td>
+						<td style="font-size: 6px;"><?php $ndssumma += (($summ * $row[0] + $summ * $row[0])/100 * $over) / 100 * $nds; printf("%01.1f", (($summ * $row[0] + $summ * $row[0])/100 * $over) / 100 * $nds) ?></td>
+						<td style="font-size: 6px;"><?php $jamisumma += ($summ * $row[0] + $summ * $row[0])/100 * $over + (($summ * $row[0] + $summ * $row[0])/100 * $over) / 100 * $nds; printf("%01.1f", ($summ * $row[0] + $summ * $row[0])/100 * $over + (($summ * $row[0] + $summ * $row[0])/100 * $over) / 100 * $nds) ?></td>
 					</tr>
 					@endforeach
 					<tr>
@@ -143,12 +150,12 @@
 							<td></td>
 							<td><?php printf("%01.1f", $regionsumm[$day['id']]) ?></td>
 						@endforeach
-						<td><?php printf("%01.1f", $summ) ?></td>
-						<td style="font-size: 6px;"><?php printf("%01.1f", 0) ?></td>
-						<td style="font-size: 6px;"><?php printf("%01.1f", 0) ?></td>
-						<td style="font-size: 6px;"><?php printf("%01.1f", 0) ?></td>
-						<td style="font-size: 6px;"><?php printf("%01.1f", 0) ?></td>
-						<td style="font-size: 6px;"><?php printf("%01.1f", 0) ?></td>
+						<td><?php printf("%01.1f", 0) ?></td>
+						<td style="font-size: 6px;"><?php printf("%01.1f", $summa) ?></td>
+						<td style="font-size: 6px;"><?php printf("%01.1f", $ustsumma) ?></td>
+						<td style="font-size: 6px;"><?php printf("%01.1f", $allsumma) ?></td>
+						<td style="font-size: 6px;"><?php printf("%01.1f", $ndssumma) ?></td>
+						<td style="font-size: 6px;"><?php printf("%01.1f", $jamisumma) ?></td>
 					</tr>
                     </tbody>
                 </table>
