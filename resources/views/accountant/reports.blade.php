@@ -70,7 +70,7 @@
                             @endforeach
                         </select>
                     </div>
-                    <br/>
+                    <hr>
                     <div class="col-sm-4">
                         <input type="text" name="over" class="form-control" required>
                     </div>
