@@ -138,7 +138,11 @@ class AccountantController extends Controller
         $html = "<select class='form-select' name='cost_id' aria-label='Default select example' required>
                     <option>-Narx-</option>";
                 foreach($costs as $row){
-                    $html +=  "<option value=".$row['id'].">".$row['day_number'].".".$row['month_id'].".".$row['year_name']."</option>";
+                    $id = $row['id'];
+                    $day = $row['day_number'];
+                    $month = $row['month_id'];
+                    $year = $row['year_name'];
+                    $html +=  "<option value=".$id.">".$day.".".$month.".".$year."</option>";
                 }
         $html += "</select>";
 
