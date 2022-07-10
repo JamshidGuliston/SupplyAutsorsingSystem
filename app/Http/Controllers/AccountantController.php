@@ -446,18 +446,13 @@ class AccountantController extends Controller
                     $productscount[$row->product_name_id]['product_name'] = $row->product_name;
                     $productscount[$row->product_name_id]['size_name'] = $row->size_name;
                 }
-                // dd($productscount);
+                
                 foreach($productscount as $key => $row){
-                    foreach($ages as $age){ 
-                        if(isset($row['product_name']) and isset($row[$age->id])){
-                            if(!isset($nakproducts[$key][$day->id])){
-                                $nakproducts[$key][$day->id] = 0;
-                            }
-                            $nakproducts[$key][$day->id] += ($row[$age->id]*$row[$age->id.'-children']) / $row[$age->id.'div'];;
-                            $nakproducts[$key]['product_name'] = $row['product_name'];
-                            $nakproducts[$key]['size_name'] = $row['size_name'];
-                            $nakproducts[$key]['sort'] = $row[$age->id.'sort'];
-                        }
+                    if(isset($row['product_name'])){
+                        $nakproducts[$key][$day->id] = ($row[$age->id]*$row[$age->id.'-children']) / $row[$age->id.'div'];;
+                        $nakproducts[$key]['product_name'] = $row['product_name'];
+                        $nakproducts[$key]['size_name'] = $row['size_name'];
+                        $nakproducts[$key]['sort'] = $row[$age->id.'sort'];
                     }
                 }
             }
