@@ -33,7 +33,7 @@
                     <h5 class="modal-title" id="exampleModalLabel">Umumiy Hisobot</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <form action="{{route('accountant.svod')}}" method="GET">
+                <form action="{{route('accountant.svod')}}" method="GET" target="_blank">
                 <div class="row modal-body">
                     @csrf
                     <div class="col-sm-4">
@@ -73,13 +73,13 @@
                 </div>
                 <div class="row">
                     <div class="col-sm-4">
-                        <input type="text" name="over" required>
+                        <input type="text" name="over" class="form-input" required>
                     </div>
                     <div class="col-sm-4">
-                        <input type="text" name="nds" required>
+                        <input type="text" name="nds" class="form-input" required>
                     </div>
                     <div class="col-sm-4">
-                        <button type="submit" class="btn btn-info" >PDF</button>
+                        <button type="submit" class="btn btn-info">PDF</button>
                     </div>
                 </div>
                 </form>
