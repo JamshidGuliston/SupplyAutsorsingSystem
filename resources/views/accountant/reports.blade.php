@@ -71,14 +71,15 @@
                         </select>
                     </div>
                     <div class="col-sm-4">
-                        Ustama
+                        Ustama % da
                         <input type="text" name="over" class="form-control" required>
                     </div>
                     <div class="col-sm-4">
-                        NDS
+                        NDS % da
                         <input type="text" name="nds" class="form-control" required>
                     </div>
                     <div class="col-sm-4">
+                        Yuklab olish
                         <button type="submit" class="btn btn-info">PDF</button>
                     </div>
                     <br/>
