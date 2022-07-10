@@ -422,7 +422,6 @@ class AccountantController extends Controller
                 // ->get(['days.id', 'days.day_number', 'months.month_name', 'years.year_name']);
         // dd($days);
         foreach($ages as $age){     
-            $productscount = [];
             foreach($days as $day){
                 $join = Number_children::where('number_childrens.day_id', $day->id)
                         ->where('kingar_name_id', $id)
@@ -435,7 +434,7 @@ class AccountantController extends Controller
                         ->join('products', 'active_menus.product_name_id', '=', 'products.id')
                         ->join('sizes', 'products.size_name_id', '=', 'sizes.id')
                         ->get();
-                
+                $productscount = [];
                 foreach($join as $row){
                     if(!isset($productscount[$row->product_name_id][$age->id])){
                         $productscount[$row->product_name_id][$age->id] = 0;
