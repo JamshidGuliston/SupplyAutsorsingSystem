@@ -73,10 +73,10 @@
                 </div>
                 <div class="row">
                     <div class="col-sm-4">
-                        <input type="text" name="over" class="form-input" required>
+                        <input type="text" name="over" class="form-control" required>
                     </div>
                     <div class="col-sm-4">
-                        <input type="text" name="nds" class="form-input" required>
+                        <input type="text" name="nds" class="form-control" required>
                     </div>
                     <div class="col-sm-4">
                         <button type="submit" class="btn btn-info">PDF</button>
