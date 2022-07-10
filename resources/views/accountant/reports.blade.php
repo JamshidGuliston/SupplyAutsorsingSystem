@@ -44,7 +44,7 @@
                         </select>
                     </div>
                     <div class="col-sm-2">
-                        <select class="form-select" id="enddayid" name="region_id" aria-label="Default select example" required>
+                        <select id="RegionSelect" class="form-select" id="enddayid" name="region_id" aria-label="Default select example" required>
                             <option value="">-Narx-</option>
                             @foreach($regions as $row)
                                 <option value="{{$row['id']}}">{{ $row['region_name']; }}</option>
@@ -52,12 +52,7 @@
                         </select>
                     </div>
                     <div class="col-sm-2">
-                        <select class="form-select" id="enddayid" name="region_id" aria-label="Default select example" required>
-                            <option value="">-Narx-</option>
-                            @foreach($regions as $row)
-                                <option value="{{$row['id']}}">{{ $row['region_name']; }}</option>
-                            @endforeach
-                        </select>
+                        <div class="region_narx"></div>
                     </div>
                     <div class="col-sm-2">
                         <select class="form-select" id="enddayid" name="start" aria-label="Default select example" required>
@@ -121,6 +116,14 @@
 @endsection
 @section('script')
 <script>
+    $('#RegionSelect').change(function(){
+        var regionid = $("#RegionSelect option:selected").val();
+        var regiontext = $("#RegionSelect option:selected").text();
+        alert(regionid, regiontext);
+        var div = $('.region_narx');
+        
+    });
+
     $('.list-group-item-action').click(function() {
         var gardenid = $(this).attr('data-garden-id');
         // alert(gardenid);
