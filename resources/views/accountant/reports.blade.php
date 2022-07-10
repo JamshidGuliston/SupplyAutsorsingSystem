@@ -119,9 +119,14 @@
     $('#RegionSelect').change(function(){
         var regionid = $("#RegionSelect option:selected").val();
         var regiontext = $("#RegionSelect option:selected").text();
-        alert(regionid, regiontext);
         var div = $('.region_narx');
-        
+        $.ajax({
+            method: "GET",
+            url: '/accountant/narxselect/'+regionid,
+            success: function(data) {
+                div.html(data);
+            }
+        })
     });
 
     $('.list-group-item-action').click(function() {

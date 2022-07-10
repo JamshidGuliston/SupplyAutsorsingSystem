@@ -119,6 +119,32 @@ class AccountantController extends Controller
         return view('accountant.reports', compact('days', 'kinds', 'regions'));
     }
 
+    public function narxselect(Request $request, $region_id){
+
+        $costsdays = bycosts::where('region_name_id', $region_id)
+                        ->join('days', 'bycosts.day_id', '=', 'days.id')
+                        ->join('years', 'days.year_id', '=', 'years.id')
+                        ->orderBy('day_id', 'DESC')
+                        ->get(['bycosts.day_id', 'days.day_number', 'days.month_id', 'years.year_name']);
+        $costs = [];
+        $bool = [];
+        foreach($costsdays as $row){
+            if(!isset($bool[$row->day_id])){
+                array_push($costs, $row);
+                $bool[$row->day_id] = 1;
+            }
+        }
+
+        $html = "<select class='form-select' name='cost_id' aria-label='Default select example' required>
+                    <option>-Narx-</option>";
+                foreach($costs as $row){
+                    $html +=  "<option value=".$row['id'].">".$row['day_number'].".".$row['month_id'].".".$row['year_name']."</option>";
+                }
+        $html += "</select>";
+
+        return $html;
+    }
+
     public function kindreport(Request $request, $id){
         $days = $this->activmonth();
         $yeardays = $this->activyear();
