@@ -449,15 +449,18 @@ class AccountantController extends Controller
                 
                 foreach($productscount as $key => $row){
                     if(isset($row['product_name'])){
-                        $nakproducts[$key][$day->id] = ($row[$age->id]*$row[$age->id.'-children']) / $row[$age->id.'div'];;
+                        if(!isset($nakproducts[$key][$day->id])){
+                            $nakproducts[$key][$day->id] = 0;
+                        }
+                        $nakproducts[$key][$day->id] += ($row[$age->id]*$row[$age->id.'-children']) / $row[$age->id.'div'];
                         $nakproducts[$key]['product_name'] = $row['product_name'];
                         $nakproducts[$key]['size_name'] = $row['size_name'];
                         $nakproducts[$key]['sort'] = $row[$age->id.'sort'];
                     }
                 }
             }
-            dd($nakproducts);
         }
+        dd($nakproducts);
         
         $costs = bycosts::where('day_id', $costid)->where('region_name_id', Kindgarden::where('id', $id)->first()->region_id)
                 ->orderBy('day_id', 'DESC')->get();
