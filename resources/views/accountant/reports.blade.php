@@ -70,11 +70,12 @@
                             @endforeach
                         </select>
                     </div>
-                    <hr>
                     <div class="col-sm-4">
+                        Ustama
                         <input type="text" name="over" class="form-control" required>
                     </div>
                     <div class="col-sm-4">
+                        NDS
                         <input type="text" name="nds" class="form-control" required>
                     </div>
                     <div class="col-sm-4">
@@ -85,7 +86,6 @@
                 </form>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-success" data-bs-dismiss="modal">Close</button>
-
                 </div>
             </div>
         </div>
