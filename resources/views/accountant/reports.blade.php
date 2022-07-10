@@ -52,6 +52,14 @@
                         </select>
                     </div>
                     <div class="col-sm-2">
+                        <select class="form-select" id="enddayid" name="region_id" aria-label="Default select example" required>
+                            <option value="">-Narx-</option>
+                            @foreach($regions as $row)
+                                <option value="{{$row['id']}}">{{ $row['region_name']; }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="col-sm-2">
                         <select class="form-select" id="enddayid" name="start" aria-label="Default select example" required>
                             <option value="">-Sanadan-</option>
                             @foreach($days as $row)
