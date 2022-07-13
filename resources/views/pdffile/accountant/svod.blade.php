@@ -67,7 +67,7 @@
 						<a href="#">
 							<i class="fas fa-store-alt" style="color: dodgerblue; font-size: 18px;"></i>
 						</a>
-						<b>{{ "Text" }}</b>
+						<!-- <b>{{ "Text" }}</b> -->
 					</div>
                 </div>
                 <table style="table-layout: fixed;">
