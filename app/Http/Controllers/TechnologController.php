@@ -1401,7 +1401,7 @@ class TechnologController extends Controller
             ->join('sizes', 'sizes.id', '=', 'products.size_name_id')
             // ->select('order_product_structures.id', 'order_product_structures.product_weight', 'products.product_name')
             ->get();
-        dd($items);
+        // dd($items);
         $dompdf = new Dompdf('UTF-8');
 		$html = mb_convert_encoding(view('pdffile.technolog.orderskladpdf', compact('items', 'document')), 'HTML-ENTITIES', 'UTF-8');
 		$dompdf->loadHtml($html);
