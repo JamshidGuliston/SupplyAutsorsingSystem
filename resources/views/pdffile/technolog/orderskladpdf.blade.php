@@ -88,7 +88,7 @@
                             $counts = [];
                         ?>
                         @foreach($items as $row)
-						@if($row->product_weight >= 0.1)
+						@if($row->product_weight >= 0.1 or $row->product_name_id == 38)
                         <tr>
                             <th scope="row">{{ $tr++ }}</th>
                             <td>{{ $row->product_name }}</td>
