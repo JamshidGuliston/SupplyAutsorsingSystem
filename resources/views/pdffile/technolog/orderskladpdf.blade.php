@@ -93,7 +93,7 @@
                             <th scope="row">{{ $tr++ }}</th>
                             <td>{{ $row->product_name }}</td>
 							<td>{{ $row->size_name }}</td>
-							<td><?php printf("%01.1f", $row->product_weight); ?></td>
+							<td><?php printf("%01.2f", $row->product_weight); ?></td>
 							<td></td>
 							<td></td>
                         </tr>

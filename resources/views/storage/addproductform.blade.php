@@ -398,7 +398,7 @@ product.iterate();
 product.add_product = $('#add-item');
 
 product.add_product.click(function(i, el) {
-  
+	
  // if(fields_validate()) {
     add_product();
     product.iterate();

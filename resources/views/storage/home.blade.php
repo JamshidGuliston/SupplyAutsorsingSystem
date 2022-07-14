@@ -20,6 +20,6 @@
         </div>
         @endforeach
     </div>
-
+    {{ $month_id }}
 </div>
 @endsection

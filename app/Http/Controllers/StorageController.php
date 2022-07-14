@@ -27,6 +27,26 @@ use TCG\Voyager\Models\MenuItem;
 
 class StorageController extends Controller
 {
+    public function activmonth($month_id){
+        $year = Year::where('year_active', 1)->first();
+        $month = Month::where('id', $month_id)->first();
+        $days = Day::where('month_id', $month->id)->where('year_id', $year->id)
+                ->join('months', 'months.id', '=', 'days.month_id')
+                ->join('years', 'years.id', '=', 'days.year_id')
+                ->get(['days.id', 'days.day_number', 'months.month_name', 'years.year_name']);
+        return $days;
+    }
+
+    public function activyear($menuid){
+        $year = Year::where('year_active', 1)->first();
+        $days = Day::where('year_id', $year->id)->where('month_id', $menuid)
+                ->join('months', 'months.id', '=', 'days.month_id')
+                ->join('years', 'years.id', '=', 'days.year_id')
+                ->orderby('days.id', 'DESC')
+                ->get(['days.id', 'days.day_number', 'months.month_name', 'years.year_name']);
+        return $days;
+    }
+
     public function index(Request $request)
     {
         $dayes = Day::orderby('id', 'DESC')->get();
@@ -42,8 +62,9 @@ class StorageController extends Controller
             }
             $alladd[$row->product_id]['weight'] += $row->weight; 
         }
+        $month_id = Month::where('month_active', 1)->first()->id;
         // dd($alladd);
-        return view('storage.home', ['count' => count($count), 'products' => $alladd]);
+        return view('storage.home', ['count' => count($count), 'products' => $alladd, 'month_id' => $month_id]);
     }
 
     public function addproductform(Request $request){
@@ -52,14 +73,18 @@ class StorageController extends Controller
     }
 
     public function addproducts(Request $request){
-
+        // dd($request->all());
+        $id = $request->month_id;
+        if($id == 0){
+            $id = Month::where('month_active', 1)->first()->id;
+        }
         $products = $request->productsid;
         $weights = $request->weights;
         $costs = $request->costs;
         // if(Add_group::where('day_id')->get()->count() == 0){
         $group = Add_group::create([
-            'day_id' => 81,
-            'group_name' => time()
+            'day_id' => $request->date_id,
+            'group_name' => $request->title
         ]);
 
         for($i = 0; $i < count($products);  $i++){
@@ -71,8 +96,8 @@ class StorageController extends Controller
                 'cost' => $costs[$i]
             ]);
         }
-        // }
-        return redirect()->route('storage.addproductform');
+    
+        return redirect()->route('storage.addedproducts', $id);
     }
 
     public function addmultisklad(Request $request){
@@ -374,15 +399,23 @@ class StorageController extends Controller
         ]);
     }
 
-    public function addedproducts(Request $request){
+    public function addedproducts(Request $request, $id){
         $months = Month::all();
-        $days = Day::orderby('id', 'DESC')->get();
-        $group = Add_group::join('days', 'days.id', '=', 'add_groups.day_id')
+        $il = $id;
+        if($id == 0){
+            $il = Month::where('month_active', 1)->first()->id;
+        }
+        $start = $this->activmonth($il);
+        $days = $this->activyear($id);
+        $group = Add_group::where('day_id', '>=', $start->first()->id)->where('day_id', '<=', $start->last()->id)
+                ->join('days', 'days.id', '=', 'add_groups.day_id')
                 ->join('months', 'months.id', '=', 'days.month_id')
                 ->join('years', 'years.id', '=', 'days.year_id')
+                ->orderby('add_groups.id', 'DESC')
                 ->get(['add_groups.id', 'add_groups.group_name', 'days.day_number', 'months.month_name', 'years.year_name']);
-        // dd($group);
-        return view('storage.addedproducts', compact('group', 'months'));
+        // dd($days);
+        $products = Product::all();
+        return view('storage.addedproducts', compact('group', 'months', 'id', 'days', 'products'));
     }
     
     public function document(Request $request){
@@ -424,6 +457,49 @@ class StorageController extends Controller
 		$dompdf->setPaper('A4');
 		$dompdf->render();
 		$dompdf->stream('demo.pdf', ['Attachment' => 0]);
+    }
+
+    public function ingroup(Request $request, $id){
+        $products = Product::all();
+        $productall = Add_large_werehouse::where('add_group_id', $id)
+                    ->join('products', 'products.id', '=', 'add_large_werehouses.product_id')
+                    ->join('sizes', 'sizes.id', '=', 'products.size_name_id')
+                    ->join('add_groups', 'add_groups.id', '=', 'add_large_werehouses.add_group_id')
+                    ->get(['add_large_werehouses.id', 'products.product_name', 'sizes.size_name', 'add_large_werehouses.weight','add_large_werehouses.cost', 'add_groups.created_at']);
+        foreach($productall as $item){
+            $t = 0;
+            foreach($products as $pro){
+                if($item->product_name == $pro->product_name){
+                    $products[$t]['ok'] = 1;
+                }
+                $t++;
+            }
+        }
+
+        $group = Add_group::where('add_groups.id', $id)
+                ->join('days', 'days.id', '=', 'add_groups.day_id')
+                ->join('months', 'months.id', '=', 'days.month_id')
+                ->join('years', 'years.id', '=', 'days.year_id')
+                ->first(['add_groups.id', 'months.id as month_id', 'add_groups.group_name', 'days.day_number', 'months.month_name', 'years.year_name']);
+        // dd($group);
+        return view('storage.ingroup', compact('products', 'productall', 'group', 'id'));
+    }
+
+    public function addproduct(Request $request){
+        // dd($request->all());
+        Add_large_werehouse::create([
+            'add_group_id' => $request->titleid,
+            'shop_id' => 0,
+            'product_id' => $request->productid,
+            'weight' => $request->weight,
+            'cost' => $request->cost
+        ]);
+
+        return redirect()->route('storage.ingroup', $request->titleid);
+    }
+
+    public function deleteproduct(Request $request){
+        Add_large_werehouse::where('id', $request->id)->delete(); 
     }
     // Parolni tekshirib mayda skladlarga yuborish
     public function controlpassword(Request $request)

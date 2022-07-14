@@ -56,7 +56,8 @@ Route::group(['prefix' => 'storage', 'middleware' => ['isStorage', 'auth']], fun
     Route::get('home', [StorageController::class, 'index'])->name('storage.home');
     Route::get('addproductform', [StorageController::class, 'addproductform'])->name('storage.addproductform');
     Route::post('addproducts', [StorageController::class, 'addproducts'])->name('storage.addproducts');
-    Route::get('addedproducts', [StorageController::class, 'addedproducts'])->name('storage.addedproducts');
+    Route::post('addproduct', [StorageController::class, 'addproduct'])->name('storage.addproduct');
+    Route::get('addedproducts/{id}', [StorageController::class, 'addedproducts'])->name('storage.addedproducts');
     Route::get('orders', [StorageController::class, 'orders'])->name('storage.orders');
     Route::get('getdoc', [StorageController::class, 'getdoc'])->name('storage.getdoc');
     Route::get('controlpassword', [StorageController::class, 'controlpassword']);
@@ -70,8 +71,10 @@ Route::group(['prefix' => 'storage', 'middleware' => ['isStorage', 'auth']], fun
     Route::get('getproduct', [StorageController::class, 'getproduct']);
     Route::get('editproduct', [StorageController::class, 'editproduct']);
     Route::get('deleteid', [StorageController::class, 'deleteid']);
-    Route::get('getworkerfoods', [StorageController::class, 'getworkerfoods'])->name('technolog.getworkerfoods');
-    Route::get('onedaysvod/{id}', [StorageController::class, 'ordersvodpdf'])->name('technolog.onedaysvod');
+    Route::get('getworkerfoods', [StorageController::class, 'getworkerfoods'])->name('storage.getworkerfoods');
+    Route::get('onedaysvod/{id}', [StorageController::class, 'ordersvodpdf'])->name('storage.onedaysvod');
+    Route::get('ingroup/{id}', [StorageController::class, 'ingroup'])->name('storage.ingroup');
+    Route::get('deleteproduct', [StorageController::class, 'deleteproduct'])->name('storage.deleteproduct');
 
 });
 
