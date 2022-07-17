@@ -13,7 +13,7 @@
 	 @page { margin: 0.2in 0.2in 0in 0.2in; }
 	body{
 		font-family: DejaVu Sans;
-		font-size:9px;
+		font-size:8px;
 		/* background-image: url(images/bg.jpg); */
 		background-position: top left;
 		background-repeat: no-repeat;
@@ -57,6 +57,20 @@
 	.page-break {
 		page-break-after: always;
 	}
+  	
+  	/* Create two equal columns that floats next to each other */
+  .column {
+    float: left;
+    text-align: center;
+    width: 50%;
+  }
+
+  /* Clear floats after the columns */
+  .row:after {
+    content: "";
+    display: table;
+    clear: both;
+  }
 </style>
 </head>
 <body>
@@ -81,7 +95,7 @@
 								<th scope="col">{{ $day->day_number; }}</th>
 							@endforeach
 							<th>Жами</th>
-							<th style="width: 8%;">Сумма</th>
+							<th style="width: 7%;">Сумма</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -111,10 +125,17 @@
 									$summ += $row[$day['id']];
 								?>
 								@else
-								<?php  
-									printf("%01.2f", $row[$day['id']]); 
-									$summ += $row[$day['id']];
-								?>
+                                	@if($row['size_name'] == "дона")
+                                  		<?php  
+                                            echo round($row[$day['id']], 0); 
+                                            $summ += round($row[$day['id']], 0);
+                                        ?>
+                                	@else
+                                		<?php  
+                                            echo round($row[$day['id']], 3); 
+                                            $summ += round($row[$day['id']], 3);
+                                        ?>
+                                  	@endif
 								@endif
 								</td>
 							@else
@@ -123,8 +144,11 @@
 								</td>
 							@endif
 						@endforeach
-						<td style="width: 6%;"><?php $kgsumm += $summ; printf("%01.3f", $summ) ?></td>
-						<td ><?php $costsumm += $summ*$row[0]; printf("%01.1f", $summ*$row[0]) ?></td>
+                        @if($row['product_name'] != "Болалар сони")
+                      		<?php $kgsumm += $summ; ?>
+                        @endif
+						<td style="width: 6%;"><?php printf("%01.3f", $summ) ?></td>
+						<td ><?php $costsumm += $summ*$row[0]; printf("%01.2f", $summ*$row[0]) ?></td>
 					</tr>
 					@endforeach
 					<tr>
@@ -135,8 +159,14 @@
 					</tr>
                     </tbody>
                 </table>
-				<br>
-				<span>МЧЖ "НИШОН ИНВЕСТ" директори Қ.Нишонов.  Ташкилот рахбари____________________          Бош. Хисобчи ____________________	</span>
+				<div class="row">
+                  <div class="column">
+                    <h4>МЧЖ "НИШОН ИНВЕСТ" директори ___________________________</h4>
+                  </div>
+                  <div class="column">
+                    <h4>Бош. Хисобчи ____________________</h4>
+                  </div>
+                </div>
             </div>
         </div>
     </div>

@@ -23,9 +23,15 @@
 		?>
 		@foreach($days as $day)
 			@if(isset($row[$day['id']]))
-				<?php  
-					$summ += $row[$day['id']];
-				?>
+				@if($row['size_name'] == "дона")
+                  <?php  
+                  	$summ += round($row[$day['id']], 0);
+                  ?>
+                @else
+                  <?php  
+                  	$summ += $row[$day['id']];
+                  ?>
+                @endif
 			@endif
 		@endforeach
 		<td><?php printf("%01.4f", $summ) ?></td>

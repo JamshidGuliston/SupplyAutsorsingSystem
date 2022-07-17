@@ -57,6 +57,19 @@
 	.page-break {
 		page-break-after: always;
 	}
+  /* Create two equal columns that floats next to each other */
+  .column {
+    float: left;
+    text-align: center;
+    width: 50%;
+  }
+
+  /* Clear floats after the columns */
+  .row:after {
+    content: "";
+    display: table;
+    clear: both;
+  }
 </style>
 </head>
 <body>
@@ -96,12 +109,18 @@
 						?>
 						@foreach($days as $day)
 							@if(isset($row[$day['id']]))
-								<?php  
-									$summ += $row[$day['id']];
-								?>
+                      			@if($row['size_name'] == "дона")
+                      				<?php  
+                                        $summ += round($row[$day['id']], 0);
+                                    ?>
+                      			@else
+                      				<?php  
+                                        $summ += $row[$day['id']];
+                                    ?>
+                      			@endif
 							@endif
 						@endforeach
-						<td><?php printf("%01.4f", $summ) ?></td>
+						<td><?php printf("%01.3f", $summ) ?></td>
                         <td>{{ $row[0] }}</td>
 						<td ><?php printf("%01.2f", $summ*$row[0]) ?></td>
                         <?php
@@ -126,11 +145,14 @@
                     </tr>
                     </tbody>
                 </table>
-                <div class="col-md-6">
-                    <p>Руководитель________________________    Получил________________</p>
-                    <p>Главный бухгалтер___________________</p>
-                    <p>М.П.</p>
-                    <p>Товар отпустил _________________</p>
+              	<div class="row">
+                  <div class="column">
+                    <h4>Руководитель________________________   </h4>
+                    <h4>Главный бухгалтер___________________</h4>
+                  </div>
+                  <div class="column">
+                    <h4>Получил________________</h4>
+                  </div>
                 </div>
             </div>
         </div>

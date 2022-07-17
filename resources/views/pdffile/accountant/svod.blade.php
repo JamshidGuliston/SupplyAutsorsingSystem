@@ -56,6 +56,19 @@
 	.page-break {
 		page-break-after: always;
 	}
+    /* Create two equal columns that floats next to each other */
+    .column {
+      float: left;
+      text-align: center;
+      width: 50%;
+    }
+
+    /* Clear floats after the columns */
+    .row:after {
+      content: "";
+      display: table;
+      clear: both;
+    }
 </style>
 </head>
 <body>
@@ -113,18 +126,34 @@
 								<?php $regionsumm[$day['id']] = 0; ?>
 							@endif
 							@if(isset($row[$day['id']]))
-								<td style="width: 40px;">
-								<?php  
-									printf("%01.2f", $row[$day['id']]); 
-									$summ += $row[$day['id']];
-								?>
-								</td>
-								<td style="font-size: 6px;">
-									<?php  
-										printf("%01.0f", $row[$day['id']] * $row[0]);
-										$regionsumm[$day['id']] += $row[$day['id']] * $row[0];
-									?>
-								</td>
+                          		@if($row['size_name'] == "дона")
+                                  <td style="width: 40px;">
+                                  <?php  
+                                      echo round($row[$day['id']], 0); 
+                                      $summ += round($row[$day['id']], 0);
+                                  ?>
+                                  </td>
+                                  <td style="font-size: 6px;">
+                                      <?php  
+                                          echo round(round($row[$day['id']], 3) * $row[0], 2);
+                                          $regionsumm[$day['id']] += round(round($row[$day['id']], 3) * $row[0], 2);
+                                      ?>
+                                  </td>
+                                @else
+                                	<td style="width: 40px;">
+                                    <?php  
+                                        echo round($row[$day['id']], 3); 
+                                        $summ += round($row[$day['id']], 3);
+                                    ?>
+                                    </td>
+                                    <td style="font-size: 6px;">
+                                        <?php  
+                                            echo round(round($row[$day['id']], 3) * $row[0], 2);
+                                            $regionsumm[$day['id']] += round(round($row[$day['id']], 3) * $row[0], 2);
+                                        ?>
+                                    </td>
+                                @endif
+								
 							@else
 								<td>
 									{{ '0' }}
@@ -134,12 +163,12 @@
 								</td>
 							@endif
 						@endforeach
-						<td><?php printf("%01.1f", $summ) ?></td>
-						<td style="font-size: 6px;"><?php $summa += $summ * $row[0]; printf("%01.1f", $summ * $row[0]) ?></td>
-						<td style="font-size: 6px;"><?php $ustsumma += ($summ * $row[0])/100 * $over; printf("%01.1f", ($summ * $row[0])/100 * $over) ?></td>
-						<td style="font-size: 6px;"><?php $allsumma += ($summ * $row[0] + $summ * $row[0])/100 * $over; printf("%01.1f", ($summ * $row[0] + $summ * $row[0])/100 * $over) ?></td>
-						<td style="font-size: 6px;"><?php $ndssumma += (($summ * $row[0] + $summ * $row[0])/100 * $over) / 100 * $nds; printf("%01.1f", (($summ * $row[0] + $summ * $row[0])/100 * $over) / 100 * $nds) ?></td>
-						<td style="font-size: 6px;"><?php $jamisumma += ($summ * $row[0] + $summ * $row[0])/100 * $over + (($summ * $row[0] + $summ * $row[0])/100 * $over) / 100 * $nds; printf("%01.1f", ($summ * $row[0] + $summ * $row[0])/100 * $over + (($summ * $row[0] + $summ * $row[0])/100 * $over) / 100 * $nds) ?></td>
+						<td><?php echo round($summ, 3) ?></td>
+						<td style="font-size: 6px;"><?php $summa += round($summ * $row[0], 3); echo round($summ * $row[0], 3); ?></td>
+						<td style="font-size: 6px;"><?php $ustsumma += round(($summ * $row[0])/100 * $over, 3); echo round(($summ * $row[0])/100 * $over, 3) ?></td>
+						<td style="font-size: 6px;"><?php $allsumma += round((round($summ * $row[0], 3) + round($summ * $row[0], 3))/100 * $over, 3); echo round((round($summ * $row[0], 3) + round($summ * $row[0], 3))/100 * $over, 3) ?></td>
+						<td style="font-size: 6px;"><?php $ndssumma += round(round((round($summ * $row[0], 3) + round($summ * $row[0], 3))/100 * $over, 3) / 100 * $nds, 3); echo round(round((round($summ * $row[0], 3) + round($summ * $row[0], 3))/100 * $over, 3) / 100 * $nds, 3) ?></td>
+						<td style="font-size: 6px;"><?php $jamisumma += round(round((round($summ * $row[0], 3) + round($summ * $row[0], 3))/100 * $over, 3) + (round((round($summ * $row[0], 3) + round($summ * $row[0], 3))/100 * $over, 3)) / 100 * $nds, 3); echo round(round((round($summ * $row[0], 3) + round($summ * $row[0], 3))/100 * $over, 3) + (round((round($summ * $row[0], 3) + round($summ * $row[0], 3))/100 * $over, 3)) / 100 * $nds, 3) ?></td>
 					</tr>
 					@endforeach
 					<tr>
@@ -159,8 +188,16 @@
 					</tr>
                     </tbody>
                 </table>
-				<br>
-				<span>МЧЖ "НИШОН ИНВЕСТ" директори Қ.Нишонов.  Ташкилот рахбари____________________          Бош. Хисобчи ____________________	</span>
+                <div class="row">
+                  <div class="column">
+                    <h4>МЧЖ "НИШОН ИНВЕСТ" директори:  _________________    _________________________ </h4>
+                    <h4>Бош. Хисобчи: _________________   ___________________________</h4>
+                  </div>
+                  <div class="column">
+                    <h4>Ташкилот рахбари: ______________    ________________________</h4>
+                    <h4>Бош. Хисобчи: _________________  __________________________</h4>
+                  </div>
+                </div>
             </div>
         </div>
     </div>
