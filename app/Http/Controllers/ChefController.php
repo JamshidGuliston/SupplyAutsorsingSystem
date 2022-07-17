@@ -55,9 +55,20 @@ class ChefController extends Controller
                 }
             }
         }
-            
+
+        $oder = order_product::where('day_id', $day->id)
+                    ->where('kingar_name_id', $kindgarden->id)
+                    ->where('document_processes_id', 4)
+                    ->first();
+        $inproducts = [];
+        if(isset($oder->day_id) > 0){
+            $inproducts = order_product_structure::where('order_product_name_id', $oder->id)
+                    ->join('products', 'products.id', '=', 'order_product_structures.product_name_id')
+                    ->join('sizes', 'sizes.id', '=', 'products.size_name_id')
+                    ->get();
+        }
         // dd($productall);
-        return view('chef.home', compact('productall', 'kindgarden', 'sendchildcount', 'day', 'bool'));
+        return view('chef.home', compact('productall', 'kindgarden', 'sendchildcount', 'day', 'bool', 'inproducts'));
     }
     public function minusproducts(Request $request){
         // dd($request->all());
@@ -106,38 +117,33 @@ class ChefController extends Controller
         return redirect()->route('chef.home');
     }
 
-    public function controlpassword(Request $request)
+    public function right(Request $request)
     {
         $day = Day::orderby('id', 'DESC')->get();
-        $password = Auth::user()->password;
-        if (Hash::check($request->password, $password)) {
-            $result = 1;
-            order_product::where('id', $request->orderid)->update([
-                'document_processes_id' => 4
-            ]);
+        order_product::where('id', $request->orderid)->update([
+            'document_processes_id' => 5
+        ]);
 
-            $order = order_product::where('id', $request->orderid)->first();
-            $product = order_product_structure::where('order_product_name_id', $request->orderid)->get();
-            foreach ($product as $row) {
-            	$find = plus_multi_storage::where('kingarden_name_d', $order['kingar_name_id'])
-            						->where('order_product_id', $order['id'])
-            						->where('product_name_id', $row['product_name_id'])
-            						->where('product_weight', $row['product_weight'])
-            						->get();
-            	if($find->count() == 0){
-	                plus_multi_storage::create([
-	                    'day_id' => $day[0]->id,
-	                    'shop_id' => 0,
-	                    'kingarden_name_d' => $order['kingar_name_id'],
-	                    'order_product_id' => $order['id'],
-	                    'product_name_id' => $row['product_name_id'],
-	                    'product_weight' => $row['product_weight'],
-	                ]);
-            	}
+        $order = order_product::where('id', $request->orderid)->first();
+        $product = order_product_structure::where('order_product_name_id', $request->orderid)->get();
+        foreach ($product as $row) {
+            $find = plus_multi_storage::where('kingarden_name_d', $order['kingar_name_id'])
+                                ->where('order_product_id', $order['id'])
+                                ->where('product_name_id', $row['product_name_id'])
+                                ->where('product_weight', $row['product_weight'])
+                                ->get();
+            if($find->count() == 0){
+                plus_multi_storage::create([
+                    'day_id' => $day[0]->id,
+                    'shop_id' => 0,
+                    'kingarden_name_d' => $order['kingar_name_id'],
+                    'order_product_id' => $order['id'],
+                    'product_name_id' => $row['product_name_id'],
+                    'product_weight' => $row['product_weight'],
+                ]);
             }
-        } else {
-            $result = 0;
         }
-        return $result;
+
+        return redirect()->route('chef.home')->with('status', "Maxsulotlar qabul qilindi!");
     }
 }

@@ -6,6 +6,47 @@
 
 @section('content')
 <!-- EDD -->
+<div class="modal fade" id="productsshowModal" tabindex="-1" aria-labelledby="exampleModalLabelsadd" aria-hidden="true">
+    <div class="modal-dialog  modal-lg">
+        <div class="modal-content">
+            <div class="modal-header bg-info">
+                <h5 class="modal-title text-white" id="exampleModalLabel">Kelgan maxsulotlar</h5>
+                <button type="button" class="btn-close " data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form action="{{route('chef.right')}}" method="POST">
+                @csrf
+                <input type="hidden" name="orderid" value="{{ isset($inproducts[0]->order_product_name_id) ? $inproducts[0]->order_product_name_id : '' }}">
+                <div class="modal-body">
+                    <table class="table table-light table-striped table-hover" style="width: calc(100% - 2rem)!important;">
+                        <thead>
+                            <tr>
+                                <th scope="col">ID</th>
+                                <th scope="col">Maxsulot</th>
+                                <th scope="col">Miqdori</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php $i = 0; ?>
+                            @foreach($inproducts as $all)
+                                <tr>
+                                    <th scope="row">{{ ++$i }}</th>
+                                    <td>{{ $all->product_name }}</td>
+                                    <td>{{ $all->product_weight." ".$all->size_name }}</td>
+                                </tr>
+                            @endforeach
+                        
+                        </tbody>
+                    </table>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn add-age btn-primary text-white">Qabul qilish</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- End -->
 <div class="modal fade" id="Modalsadd" tabindex="-1" aria-labelledby="exampleModalLabelsadd" aria-hidden="true">
     <div class="modal-dialog  modal-lg">
         <div class="modal-content">
@@ -49,9 +90,7 @@
         </div>
     </div>
 </div>
-
-<!-- End -->
-
+<!-- end -->
 <div class="container-fluid px-4">
     <a href="/chef/home" ><i class="fas fa-tachometer-alt me-3"></i>Qayta yuklash</a>
     <br>
@@ -78,6 +117,18 @@
         <p><b>Бугунги болалар сони қабул қилинди</b></p>
     @endif
     </div>
+    @if(isset($inproducts[0]))
+    <div class="row g-3 my-2">
+        <div class="col-md-3">
+            <div class="p-3 bg-white shadow-sm align-items-center rounded">
+                <!-- <form action="/nextdaysecondmenuPDF/{{ $kindgarden->id }}" method="get" download> -->
+                    <p><b>Maxsulotlarni qabul qilish</b></p>
+                    <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#productsshowModal" style="width: 100%;">Maxsulotlar</button>
+                <!-- </form> -->
+            </div>
+        </div>
+    </div>
+    @endif
     @if(intval(date("H")) >= 10)
     <div class="row g-3 my-2">
         <div class="col-md-3">
@@ -121,4 +172,15 @@
         return true;
     }
 </script>
+@if(session('status'))
+<script> 
+    // alert('{{ session("status") }}');
+    swal({
+        title: "Ajoyib!",
+        text: "{{ session('status') }}",
+        icon: "success",
+        button: "ok",
+    });
+</script>
+@endif
 @endsection

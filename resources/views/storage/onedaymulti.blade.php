@@ -159,7 +159,9 @@
                     @elseif($order['document_processes_id'] == 3)
                     <span style="color: green;text-align: center;background-color: #ffd12a;padding: 3px 10px;display: inline-block;font-size: 14px;">Qabul qilindi</span>
                     @elseif($order['document_processes_id'] == 4)
-                    <span style="color: white;background-color: green;padding: 3px 9px;border-radius: 3px;">Yuborildi</span>
+                    <span style="color: white;background-color: blue;padding: 3px 9px;border-radius: 3px;">Yuborildi</span>
+                    @elseif($order['document_processes_id'] == 5)
+                    <span style="color: white;background-color: green;padding: 3px 9px;border-radius: 3px;">Tasdiqlandi</span>
                     @endif
                 </td>
                 <td>
@@ -196,7 +198,7 @@
             var h = $('#succ');
             $.ajax({
                 method: "GET",
-                url: '/storage/controlpassword',
+                url: '/storage/dostcontrolpassword',
                 data: {
                     'password': pass,
                     'orderid': g,

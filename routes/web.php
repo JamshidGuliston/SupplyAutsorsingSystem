@@ -60,7 +60,7 @@ Route::group(['prefix' => 'storage', 'middleware' => ['isStorage', 'auth']], fun
     Route::get('addedproducts/{id}', [StorageController::class, 'addedproducts'])->name('storage.addedproducts');
     Route::get('orders', [StorageController::class, 'orders'])->name('storage.orders');
     Route::get('getdoc', [StorageController::class, 'getdoc'])->name('storage.getdoc');
-    Route::get('controlpassword', [StorageController::class, 'controlpassword']);
+    Route::get('dostcontrolpassword', [StorageController::class, 'dostcontrolpassword']);
     Route::get('document/{id}', [StorageController::class, 'document']);
 
     Route::get('addmultisklad', [StorageController::class, 'addmultisklad'])->name('storage.addmultisklad');
@@ -178,6 +178,7 @@ Route::group(['prefix' => 'chef', 'middleware' => ['isChef', 'auth']], function 
     Route::get('home', [ChefController::class, 'index'])->name('chef.home');
     Route::post('sendnumbers', [ChefController::class, 'sendnumbers'])->name('chef.sendnumbers');
     Route::post('minusproducts', [ChefController::class, 'minusproducts'])->name('chef.minusproducts');
+    Route::post('right', [ChefController::class, 'right'])->name('chef.right');
 });
 
 Route::group(['prefix' => 'accountant', 'middleware' => ['isAccountant', 'auth']], function () {
