@@ -57,6 +57,19 @@
 	.page-break {
 		page-break-after: always;
 	}
+	/* Create two equal columns that floats next to each other */
+	.column {
+		float: left;
+		text-align: center;
+		width: 50%;
+	}
+
+	/* Clear floats after the columns */
+	.row:after {
+		content: "";
+		display: table;
+		clear: both;
+	}
 </style>
 </head>
 <body>
@@ -68,7 +81,7 @@
                         <center>НАКЛАДНАЯ-СЧЁТ ФАКТУРА № ______</center>
                         <center>от " ____".<?php printf('%02d', $days[0]->month_id) ?>. 2022г</center>
                         <center>К товарно-отгрузчным документом №____ от" ____ ".<?php printf('%02d', $days[0]->month_id) ?>. 2022 года</center><br>
-						<center>Поставщик:МЧЖ Нишон Инвест / {{ $kindgar->kingar_name." / " }}</center>
+						<center>{{ $kindgar->kingar_name." / " }}</center>
 					</div>
                 </div>
                 <table style="width:100%; table-layout: fixed;">
@@ -103,12 +116,12 @@
 						@endforeach
 						<td><?php printf("%01.4f", $summ) ?></td>
                         <td>{{ $row[0] }}</td>
-						<td ><?php printf("%01.2f", $summ*$row[0]) ?></td>
+						<td ><?php printf("%01.3f", $summ*$row[0]) ?></td>
                         <?php
                             $ww += $summ*$row[0];
                         ?>
-						<td><?php printf("%01.2f", ($summ*$row[0]/100)*15) ?></td>
-						<td><?php printf("%01.2f", $summ*$row[0] + ($summ*$row[0]/100)*15) ?></td>
+						<td><?php printf("%01.3f", ($summ*$row[0]/100)*15) ?></td>
+						<td><?php printf("%01.3f", $summ*$row[0] + ($summ*$row[0]/100)*15) ?></td>
 					</tr>
 					@endforeach
                     <tr>
@@ -116,9 +129,9 @@
                         <th style="width: 7px;"></th>
                         <th style="width: 30px;"></th>
                         <th style="width: 8%;"></th>
-                        <th><?php printf("%01.1f", $ww) ?></th>
-                        <th><?php printf("%01.1f", $ww/100*15) ?></th>
-                        <th><?php printf("%01.1f", $ww + $ww/100*15) ?></th>
+                        <th><?php printf("%01.3f", $ww) ?></th>
+                        <th><?php printf("%01.3f", $ww/100*15) ?></th>
+                        <th><?php printf("%01.3f", $ww + $ww/100*15) ?></th>
                     </tr>
                     <tr>
                         <td>Всего к оплата</td>
@@ -126,11 +139,14 @@
                     </tr>
                     </tbody>
                 </table>
-                <div class="col-md-6">
-                    <p>Руководитель________________________    Получил________________</p>
-                    <p>Главный бухгалтер___________________</p>
-                    <p>М.П.</p>
-                    <p>Товар отпустил _________________</p>
+                <div class="row">
+                  <div class="column">
+                    <h4>Руководитель________________________   </h4>
+                    <h4>Главный бухгалтер___________________</h4>
+                  </div>
+                  <div class="column">
+                    <h4>Получил________________</h4>
+                  </div>
                 </div>
             </div>
         </div>

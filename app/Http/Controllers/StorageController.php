@@ -52,6 +52,11 @@ class StorageController extends Controller
         $dayes = Day::orderby('id', 'DESC')->get();
         $count = order_product::where('day_id', $dayes[1]->id)->where('document_processes_id', 2)->get();
         $addlarch = Add_large_werehouse::join('products', 'products.id', '=', 'add_large_werehouses.product_id')->get();
+        $month_id = Month::where('month_active', 1)->first()->id;
+        $month_days = $this->activmonth($month_id);
+        foreach($month_days as $day){
+            
+        }
         $alladd = [];
         $t = 0;
         foreach($addlarch as $row){
@@ -62,7 +67,6 @@ class StorageController extends Controller
             }
             $alladd[$row->product_id]['weight'] += $row->weight; 
         }
-        $month_id = Month::where('month_active', 1)->first()->id;
         // dd($alladd);
         return view('storage.home', ['count' => count($count), 'products' => $alladd, 'month_id' => $month_id]);
     }
