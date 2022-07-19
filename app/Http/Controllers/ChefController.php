@@ -56,9 +56,9 @@ class ChefController extends Controller
             }
         }
 
-        $oder = order_product::where('day_id', $day->id)
-                    ->where('kingar_name_id', $kindgarden->id)
+        $oder = order_product::where('kingar_name_id', $kindgarden->id)
                     ->where('document_processes_id', 4)
+                    ->orderBy('id', 'DESC')
                     ->first();
         $inproducts = [];
         if(isset($oder->day_id) > 0){
