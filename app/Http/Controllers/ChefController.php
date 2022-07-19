@@ -61,7 +61,7 @@ class ChefController extends Controller
                     ->orderBy('id', 'DESC')
                     ->first();
         $inproducts = [];
-        if(isset($oder->day_id) > 0){
+        if(isset($oder->day_id) > 0 and $oder->day_id-$day->id <= 3){
             $inproducts = order_product_structure::where('order_product_name_id', $oder->id)
                     ->join('products', 'products.id', '=', 'order_product_structures.product_name_id')
                     ->join('sizes', 'sizes.id', '=', 'products.size_name_id')
