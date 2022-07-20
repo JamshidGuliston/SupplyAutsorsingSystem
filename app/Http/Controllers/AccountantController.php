@@ -728,11 +728,13 @@ class AccountantController extends Controller
                 // $alladd[$t++.'id'] = $row->product_id;
                 $incomes[$product->product_id]['weight'] = 0;
                 $incomes[$product->product_id]['p_cost'] = 0;
+                $incomes[$product->product_id]['count'] = 0;
                 $incomes[$product->product_id]['p_name'] = $product->product_name;
                 $incomes[$product->product_id]['p_sort'] = $product->sort;
             }
             $incomes[$product->product_id]['weight'] += $product->weight;
-            $incomes[$product->product_id]['p_cost'] +=  $product->weight * $product->cost;
+            $incomes[$product->product_id]['p_cost'] += $product->cost;
+            $incomes[$product->product_id]['count'] += 1;
         }
         $regions = Region::all();
         $kindgardens = Kindgarden::all();
