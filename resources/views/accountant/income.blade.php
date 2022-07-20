@@ -136,7 +136,54 @@
 <div class="py-4 px-4">
     
     <table class="table table-light py-4 px-4">
-        
+        <thead>
+            <th style="width: 30px;">Махсулотлар</th>
+            <th>KG</th>
+            <th>Jami summa</th>
+            @foreach($regions as $region)
+                <th>{{ $region->region_name }}</th>
+                <th>O'tkazish</th>
+                <th>Summa</th>
+            @endforeach
+            <th>Sotilgan</th>
+            <th>Qoldiq</th>
+            <th>Summa jami</th>
+            <th>Daromad</th>
+            <th>Marja %</th>
+        </thead>
+        <tbody>
+            <?php 
+                $pay = 0; 
+                $allsum = 0
+            ?>
+            @foreach($incomes as $key => $value)
+            <tr>
+                <td>{{ $value["p_name"] }}</td>
+                <td>{{ $value["weight"] }}</td>
+                <td>{{ $value["p_cost"] }}</td>
+                @foreach($regions as $region)
+                @if(isset($inregions[$region->id][$key."kg"]))
+                    <?php 
+                        $pay += $inregions[$region->id][$key."kg"];
+                        $allsum += $inregions[$region->id][$key."kg"] * $inregions[$region->id][$key."cost"];
+                    ?>
+                    <td>{{ $inregions[$region->id][$key."kg"] }}</td>
+                    <td>{{ $inregions[$region->id][$key."cost"] }}</td>
+                    <td>{{ $inregions[$region->id][$key."kg"] * $inregions[$region->id][$key."cost"]  }}</td>
+                @else
+                    <td>0</td>
+                    <td>0</td>
+                    <td>0</td>
+                @endif
+                @endforeach
+                <td>{{ $pay }}</td>
+                <td>{{ $value["weight"] - $pay }}</td>
+                <td>{{ $allsum }}</td>
+                <td>{{ $allsum - $value["p_cost"] }}</td>
+                <td>{{ $allsum ? round(($allsum - $value["p_cost"]) / $allsum * 100, 1) : "0" }}</td>
+            </tr>
+            @endforeach
+        </tbody>
     </table>
     <div class="form-group row">
         <label for="inputPassword" class="col-sm-2 col-form-label"><a href="/accountant/income/">Orqaga</a></label>

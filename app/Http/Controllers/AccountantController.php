@@ -738,7 +738,6 @@ class AccountantController extends Controller
         $kindgardens = Kindgarden::all();
         $inregions = [];
         $allproducts = [];
-        $costs = [];
         foreach($kindgardens as $kindgar){
             foreach($daysofmonth as $day){
                 foreach(Age_range::all() as $age){
@@ -777,11 +776,11 @@ class AccountantController extends Controller
                 }
             }
         }
-        dd($inregions);
+        // dd($inregions);
         // $start = $this->activmonth($il);
         // $days = $this->activyear($id);
 
-        return view('accountant.income', compact('months', 'id'));
+        return view('accountant.income', compact('incomes', 'inregions', 'months', 'id', 'regions'));
     }
 
 }
