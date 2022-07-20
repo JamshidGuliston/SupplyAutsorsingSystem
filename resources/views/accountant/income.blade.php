@@ -154,7 +154,9 @@
         <tbody>
             <?php 
                 $pay = 0; 
-                $allsum = 0
+                $allsum = 0;
+                $allsums = 0;
+                $plus = 0;
             ?>
             @foreach($incomes as $key => $value)
             <tr>
@@ -176,11 +178,21 @@
                     <td>0</td>
                 @endif
                 @endforeach
+                <?php 
+                    $allsums += round($allsum, 1);
+                    $plus += round($allsum - $value["p_cost"], 1);
+                ?>
                 <td>{{ round($pay, 1) }}</td>
                 <td>{{ round($value["weight"] - $pay, 1) }}</td>
                 <td>{{ round($allsum, 1) }}</td>
                 <td>{{ round($allsum - $value["p_cost"], 1) }}</td>
                 <td>{{ $allsum ? round(($allsum - $value["p_cost"]) / $allsum * 100, 1) : "0" }}</td>
+            </tr>
+            <tr>
+                <td><b>JAMI:</b></td>
+                <td colspan="{{ count($regions)*3 + 4 }}"></td>
+                <td>{{ round($allsums) }}</td>
+                <td>{{ round($plus) }}</td>
             </tr>
             @endforeach
         </tbody>
