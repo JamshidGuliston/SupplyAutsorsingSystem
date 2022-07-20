@@ -764,7 +764,7 @@ class AccountantController extends Controller
             foreach($allproducts as $day){
                 foreach($day as $product){
                     if($product->region_id == $region->id){
-                        if(!isset($inregions[$region->id][$product->product_name_id])){
+                        if(!isset($inregions[$region->id][$product->product_name_id."kg"])){
                             $inregions[$region->id][$product->product_name_id."kg"] = 0;
                             $cost = bycosts::where('day_id', bycosts::where('day_id', '<', $daysofmonth->last()->id)->where('region_name_id', $region->id)->orderBy('day_id', 'DESC')->first()->day_id)
                                     ->where('region_name_id', $region->id)
