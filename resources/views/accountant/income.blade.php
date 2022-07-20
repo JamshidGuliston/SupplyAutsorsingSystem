@@ -164,22 +164,22 @@
                 @foreach($regions as $region)
                 @if(isset($inregions[$region->id][$key."kg"]))
                     <?php 
-                        $pay += $inregions[$region->id][$key."kg"];
-                        $allsum += $inregions[$region->id][$key."kg"] * $inregions[$region->id][$key."cost"];
+                        $pay += round($inregions[$region->id][$key."kg"], 1);
+                        $allsum += round($inregions[$region->id][$key."kg"] * $inregions[$region->id][$key."cost"], 1);
                     ?>
-                    <td>{{ $inregions[$region->id][$key."kg"] }}</td>
-                    <td>{{ $inregions[$region->id][$key."cost"] }}</td>
-                    <td>{{ $inregions[$region->id][$key."kg"] * $inregions[$region->id][$key."cost"]  }}</td>
+                    <td>{{ round($inregions[$region->id][$key."kg"], 1) }}</td>
+                    <td>{{ round($inregions[$region->id][$key."cost"], 1) }}</td>
+                    <td>{{ round($inregions[$region->id][$key."kg"] * $inregions[$region->id][$key."cost"], 1)  }}</td>
                 @else
                     <td>0</td>
                     <td>0</td>
                     <td>0</td>
                 @endif
                 @endforeach
-                <td>{{ $pay }}</td>
-                <td>{{ $value["weight"] - $pay }}</td>
-                <td>{{ $allsum }}</td>
-                <td>{{ $allsum - $value["p_cost"] }}</td>
+                <td>{{ round($pay, 1) }}</td>
+                <td>{{ round($value["weight"] - $pay, 1) }}</td>
+                <td>{{ round($allsum, 1) }}</td>
+                <td>{{ round($allsum - $value["p_cost"], 1) }}</td>
                 <td>{{ $allsum ? round(($allsum - $value["p_cost"]) / $allsum * 100, 1) : "0" }}</td>
             </tr>
             @endforeach
