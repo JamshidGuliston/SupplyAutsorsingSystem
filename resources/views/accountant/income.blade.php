@@ -188,13 +188,14 @@
                 <td>{{ round($allsum - $value["p_cost"], 1) }}</td>
                 <td>{{ $allsum ? round(($allsum - $value["p_cost"]) / $allsum * 100, 1) : "0" }}</td>
             </tr>
+            @endforeach
             <tr>
                 <td><b>JAMI:</b></td>
                 <td colspan="{{ count($regions)*3 + 4 }}"></td>
                 <td>{{ round($allsums) }}</td>
                 <td>{{ round($plus) }}</td>
+                <td>{{ round(round($plus) / round($allsums) * 100, 1) }}</td>
             </tr>
-            @endforeach
         </tbody>
     </table>
     <div class="form-group row">
