@@ -738,6 +738,7 @@ class AccountantController extends Controller
         $kindgardens = Kindgarden::all();
         $inregions = [];
         $allproducts = [];
+        $costs = [];
         foreach($kindgardens as $kindgar){
             foreach($daysofmonth as $day){
                 foreach(Age_range::all() as $age){
@@ -764,9 +765,14 @@ class AccountantController extends Controller
                 foreach($day as $product){
                     if($product->region_id == $region->id){
                         if(!isset($inregions[$region->id][$product->product_name_id])){
-                            $inregions[$region->id][$product->product_name_id] = 0;
+                            $inregions[$region->id][$product->product_name_id."kg"] = 0;
+                            $cost = bycosts::where('day_id', bycosts::where('day_id', '<', $daysofmonth->last()->id)->where('region_name_id', $region->id)->orderBy('day_id', 'DESC')->first()->day_id)
+                                    ->where('region_name_id', $region->id)
+                                    ->where('praduct_name_id', $product->product_name_id)
+                                    ->first()->price_cost;
+                            $inregions[$region->id][$product->product_name_id."cost"] = $cost;
                         }
-                        $inregions[$region->id][$product->product_name_id] += $product->weight/$product->div * $product->kingar_children_number;
+                        $inregions[$region->id][$product->product_name_id."kg"] += $product->weight/$product->div * $product->kingar_children_number;
                     }
                 }
             }
