@@ -55,7 +55,7 @@ class StorageController extends Controller
         $month_id = Month::where('month_active', 1)->first()->id;
         $month_days = $this->activmonth($month_id);
         foreach($month_days as $day){
-            
+
         }
         $alladd = [];
         $t = 0;

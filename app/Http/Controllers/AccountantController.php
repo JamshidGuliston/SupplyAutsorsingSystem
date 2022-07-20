@@ -15,6 +15,7 @@ use App\Models\Region;
 use App\Models\titlemenu_food;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Exports\UsersExport;
+use App\Models\Add_large_werehouse;
 use App\Models\Year;
 use Dompdf\Dompdf;
 use Illuminate\Http\Request;
@@ -26,6 +27,16 @@ class AccountantController extends Controller
     public function activmonth(){
         $year = Year::where('year_active', 1)->first();
         $month = Month::where('month_active', 1)->first();
+        $days = Day::where('month_id', $month->id)->where('year_id', $year->id)
+                ->join('months', 'months.id', '=', 'days.month_id')
+                ->join('years', 'years.id', '=', 'days.year_id')
+                ->get(['days.id', 'days.day_number', 'months.month_name', 'years.year_name']);
+        return $days;
+    }
+
+    public function daysofmonth($id){
+        $year = Year::where('year_active', 1)->first();
+        $month = Month::where('id', $id)->first();
         $days = Day::where('month_id', $month->id)->where('year_id', $year->id)
                 ->join('months', 'months.id', '=', 'days.month_id')
                 ->join('years', 'years.id', '=', 'days.year_id')
@@ -696,5 +707,75 @@ class AccountantController extends Controller
 		$dompdf->stream($name, ['Attachment' => 0]); 
     }
 
+    // Daromad
+
+    public function income(Request $request, $id){
+        $months = Month::all();
+        $il = $id;
+        if($id == 0){
+            $il = Month::where('month_active', 1)->first()->id;
+        }
+        $daysofmonth = $this->daysofmonth($il);
+        $addlarch = Add_large_werehouse::where('add_groups.day_id', '>=', $daysofmonth->first()->id)
+            ->where('add_groups.day_id', '<=', $daysofmonth->last()->id)
+            ->join('products', 'products.id', '=', 'add_large_werehouses.product_id')
+            ->join('add_groups', 'add_groups.id', '=', 'add_large_werehouses.add_group_id')
+            ->get();
+        
+        $incomes = [];
+        foreach($addlarch as $product){
+            if(!isset($incomes[$product->product_id])){
+                // $alladd[$t++.'id'] = $row->product_id;
+                $incomes[$product->product_id]['weight'] = 0;
+                $incomes[$product->product_id]['p_cost'] = 0;
+                $incomes[$product->product_id]['p_name'] = $product->product_name;
+                $incomes[$product->product_id]['p_sort'] = $product->sort;
+            }
+            $incomes[$product->product_id]['weight'] += $product->weight;
+            $incomes[$product->product_id]['p_cost'] +=  $product->weight * $product->cost;
+        }
+        $regions = Region::all();
+        $kindgardens = Kindgarden::all();
+        $inregions = [];
+        $allproducts = [];
+        foreach($kindgardens as $kindgar){
+            foreach($daysofmonth as $day){
+                foreach(Age_range::all() as $age){
+                    $join = Number_children::where('number_childrens.day_id', $day->id)
+                        ->where('number_childrens.kingar_name_id', $kindgar->id)
+                        ->where('number_childrens.king_age_name_id', $age->id)
+                        ->join('kindgardens', 'kindgardens.id', '=', 'number_childrens.kingar_name_id')
+                        ->leftjoin('active_menus', function($join){
+                            $join->on('number_childrens.day_id', '=', 'active_menus.day_id');
+                            $join->on('number_childrens.kingar_menu_id', '=', 'active_menus.title_menu_id');
+                            $join->on('number_childrens.king_age_name_id', '=', 'active_menus.age_range_id');
+                        })
+                        ->join('products', 'active_menus.product_name_id', '=', 'products.id')
+                        ->join('sizes', 'products.size_name_id', '=', 'sizes.id')
+                        ->get();
+                    array_push($allproducts, $join);
+                }
+            }
+        }
+
+        foreach($regions as $region){
+            $inregions[$region->id] = [];
+            foreach($allproducts as $day){
+                foreach($day as $product){
+                    if($product->region_id == $region->id){
+                        if(!isset($inregions[$region->id][$product->product_name_id])){
+                            $inregions[$region->id][$product->product_name_id] = 0;
+                        }
+                        $inregions[$region->id][$product->product_name_id] += $product->weight/$product->div * $product->kingar_children_number;
+                    }
+                }
+            }
+        }
+        dd($inregions);
+        // $start = $this->activmonth($il);
+        // $days = $this->activyear($id);
+
+        return view('accountant.income', compact('months', 'id'));
+    }
 
 }
