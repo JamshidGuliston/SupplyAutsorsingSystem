@@ -144,7 +144,7 @@ Route::group(['prefix' => 'technolog', 'middleware' => ['isTechnolog', 'auth']],
     Route::get('activsendmenutoonegarden/{dayid}/{gid}', [TelegramController::class, 'activsendmenutoonegarden'])->name('technolog.activsendmenutoonegarden');
     Route::get('sendordertooneshop/{id}', [TelegramController::class, 'sendordertooneshop'])->name('technolog.sendordertooneshop');
     // mayda skladlar
-    Route::get('minusmultistorage/{id}', [TechnologController::class, 'minusmultistorage'])->name('technolog.minusmultistorage');
+    Route::get('minusmultistorage/{id}/{monthid}', [TechnologController::class, 'minusmultistorage'])->name('technolog.minusmultistorage');
     Route::post('editminusproduct', [TechnologController::class, 'editminusproduct'])->name('technolog.editminusproduct');
     Route::post('plusmultimodadd', [TechnologController::class, 'plusmultimodadd'])->name('technolog.plusmultimodadd');
     Route::get('plusmultistorage/{id}', [TechnologController::class, 'plusmultistorage'])->name('technolog.plusmultistorage');
