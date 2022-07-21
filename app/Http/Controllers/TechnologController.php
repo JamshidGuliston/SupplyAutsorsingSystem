@@ -1492,6 +1492,7 @@ class TechnologController extends Controller
     // kichkina skladlar /////////////////////////////////////////
     public function minusmultistorage(Request $request, $kid, $monthid){
         $king = Kindgarden::where('id', $kid)->first();
+        $ill = $monthid;
         if($monthid == 0){
             $monthid = Month::where('month_active', 1)->first()->id;
         }
@@ -1519,7 +1520,7 @@ class TechnologController extends Controller
             }
         }
         // dd($minusproducts);
-        return view('technolog.minusmultistorage', ['minusproducts' => $minusproducts, 'kingar' => $king, 'days' => $days, 'months' => $months, 'monthid' => $monthid]);   
+        return view('technolog.minusmultistorage', ['minusproducts' => $minusproducts, 'kingar' => $king, 'days' => $days, 'months' => $months, 'monthid' => $ill]);   
     }
 
     public function editminusproduct(Request $request){
@@ -1534,6 +1535,7 @@ class TechnologController extends Controller
 
     public function plusmultistorage(Request $request, $kid, $monthid){
         $king = Kindgarden::where('id', $kid)->first();
+        $ill = $monthid;
         if($monthid == 0){
             $monthid = Month::where('month_active', 1)->first()->id;
         }
@@ -1586,7 +1588,7 @@ class TechnologController extends Controller
             }
         }
         // dd($minusproducts);
-        return view('technolog.plusmultistorage', ['plusproducts' => $plusproducts, 'minusproducts' => $minusproducts, 'kingar' => $king, 'days' => $days, 'months' => $months, 'monthid' => $monthid]); 
+        return view('technolog.plusmultistorage', ['plusproducts' => $plusproducts, 'minusproducts' => $minusproducts, 'kingar' => $king, 'days' => $days, 'months' => $months, 'monthid' => $ill]); 
     }
 
     public function getmodproduct(Request $request, $kid){
