@@ -57,6 +57,52 @@
             transform: rotate(360deg);
         }
     }
+    .year {
+        text-align: center;
+    }
+    .month,
+    .day {
+        margin: 10px 20px;
+        display: flex;
+        justify-content: left;
+    }
+
+    .month__item{
+        width: calc(100% / 12);
+        text-align: center;
+        border-bottom: 1px solid #000;
+    }
+
+    .month__item + .month__item {
+        /* border-left: 1px solid #000; */
+    }
+    .day__item{
+        background-color: #ecf6f1;
+        text-align: center;
+        vertical-align: middle;
+        min-width: 34px;
+        padding: 5px;
+        margin-left: 5px;
+        border-radius: 50%;
+    }
+
+    .month__item, .day__item{
+        color: black;
+        cursor: context-menu;
+        /* border: 1px solid #87706a; */
+        text-decoration: none;
+    }
+    .active{
+        background-color: #23b242;
+        color: #fff;
+    }
+    .month__item:hover,
+    .day__item:hover{
+        background-color: #23b242;
+        color: #fff;
+        transition: all .5s;
+        cursor: pointer;
+    }
 </style>
 @endsection
 @section('leftmenu')
@@ -145,6 +191,13 @@
     </div>
 </div>
 <!-- EDIT -->
+<div class="date">
+    <div class="month">
+        @foreach($months as $month)
+            <a href="{{ route('technolog.plusmultistorage',  ['id' => $kingar->id, 'monthid' => $month->id ]) }}" class="month__item {{ (Request::is('technolog/plusmultistorage/'.$kingar->id.'/'.$month->id) or ($month->month_active == 1 and $monthid == 0)) ? 'active' : null }}">{{ $month->month_name }}</a>
+        @endforeach
+    </div>
+</div>
 <div class="py-4 px-4">
     <div class="row">
         <div class="col-md-6">

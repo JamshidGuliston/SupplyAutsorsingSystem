@@ -196,7 +196,7 @@
 <div class="date">
     <div class="month">
         @foreach($months as $month)
-            <a href="{{ route('technolog.minusmultistorage',  ['id' => $kingar->id, 'monthid' => $month->id ]) }}" class="month__item {{ (Request::is('technolog/minusmultistorage/'.$kingar->id.'/'.$month->id) or ($month->month_active == 1 and $month->id == 0)) ? 'active' : null }}">{{ $month->month_name }}</a>
+            <a href="{{ route('technolog.minusmultistorage',  ['id' => $kingar->id, 'monthid' => $month->id ]) }}" class="month__item {{ (Request::is('technolog/minusmultistorage/'.$kingar->id.'/'.$month->id) or ($month->month_active == 1 and $monthid == 0)) ? 'active' : null }}">{{ $month->month_name }}</a>
         @endforeach
     </div>
 </div>

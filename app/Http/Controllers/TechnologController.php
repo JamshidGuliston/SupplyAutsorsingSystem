@@ -1519,7 +1519,7 @@ class TechnologController extends Controller
             }
         }
         // dd($minusproducts);
-        return view('technolog.minusmultistorage', ['minusproducts' => $minusproducts, 'kingar' => $king, 'days' => $days, 'months' => $months]);   
+        return view('technolog.minusmultistorage', ['minusproducts' => $minusproducts, 'kingar' => $king, 'days' => $days, 'months' => $months, 'monthid' => $monthid]);   
     }
 
     public function editminusproduct(Request $request){
@@ -1532,10 +1532,13 @@ class TechnologController extends Controller
         return redirect()->route('technolog.minusmultistorage', $request->kinid);
     }
 
-    public function plusmultistorage(Request $request, $kid){
+    public function plusmultistorage(Request $request, $kid, $monthid){
         $king = Kindgarden::where('id', $kid)->first();
-        $month = Month::where('month_active', 1)->first();
-        $days = Day::where('month_id', $month->id)->get();
+        if($monthid == 0){
+            $monthid = Month::where('month_active', 1)->first()->id;
+        }
+        $months = Month::all();
+        $days = Day::where('year_id', Year::where('year_active', 1)->first()->id)->where('month_id', Month::where('id', $monthid)->first()->id)->get();
         $minusproducts = [];
         foreach($days as $day){
             $minus = minus_multi_storage::where('day_id', $day->id)
@@ -1583,7 +1586,7 @@ class TechnologController extends Controller
             }
         }
         // dd($minusproducts);
-        return view('technolog.plusmultistorage', ['plusproducts' => $plusproducts, 'minusproducts' => $minusproducts, 'kingar' => $king, 'days' => $days]); 
+        return view('technolog.plusmultistorage', ['plusproducts' => $plusproducts, 'minusproducts' => $minusproducts, 'kingar' => $king, 'days' => $days, 'months' => $months, 'monthid' => $monthid]); 
     }
 
     public function getmodproduct(Request $request, $kid){
