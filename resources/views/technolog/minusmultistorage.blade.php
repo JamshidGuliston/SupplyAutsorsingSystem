@@ -239,13 +239,13 @@
         </thead>
         <tbody>
             @foreach($minusproducts as $key => $row)
-            <?php $all = 0; ?>
+            <?php $all = 0; dd($minusproducts) ?>
             <tr>
                 <td>{{ $row['productname'] }}</td>
                 @foreach($days as $day)
                     @if(isset($row[$day['id']]))
                         <td>
-                            {{ $row[$day['id'."+"]].'/'.$row[$day['id'."-"]] }}
+                            {{ $row[$day['id']."+"].'/'.$row[$day['id']."-"] }}
                             <i class="edites far fa-edit text-info" data-bs-toggle="modal" data-bs-target="#pcountModal" data-dayid="{{ $day->id }}" data-prodid="{{ $key }}" data-weight="{{ $row[$day['id'].'+'] }}" data-kinid="{{ $kingar->id }}" style="cursor: pointer; margin-right: 16px;"> </i>
                         </td>
                         <?php $all += $row[$day['id']."+"] + $row[$day['id']."-"]; ?>
