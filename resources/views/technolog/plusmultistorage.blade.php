@@ -233,7 +233,7 @@
                 }
                 ?>
                 <th style="width: 70px;">Жами:</th>
-                <th style="width: 70px;">Қолдиқ:</th>
+                <!-- <th style="width: 70px;">Қолдиқ:</th> -->
             </tr>
         </thead>
         <tbody>
@@ -247,7 +247,7 @@
                 <td>{{ $row['productname'] }}</td>
                 @foreach($days as $day)
                     @if(isset($row[$day['id']]))
-                        <td>+{{ $row[$day['id']] }}</td>
+                        <td>{{ $row[$day['id']] }}</td>
                         <?php $all += $row[$day['id']]; ?>
                     @else
                         <td></td>
@@ -261,8 +261,7 @@
                 }
                 ?>
                 <td style="width: 70px;">+{{ $all }}</td>
-                
-                <td style="width: 70px;">{{ round($all-$allq, 2) }}</td>
+                <!-- <td style="width: 70px;">{{ round($all-$allq, 2) }}</td> -->
             </tr>
             @endforeach
         </tbody>

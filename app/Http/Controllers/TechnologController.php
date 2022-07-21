@@ -1508,6 +1508,7 @@ class TechnologController extends Controller
                     'minus_multi_storages.product_name_id',
                     'minus_multi_storages.day_id',
                     'minus_multi_storages.kingarden_name_id',
+                    'minus_multi_storages.kingar_menu_id',
                     'minus_multi_storages.product_weight',
                     'products.product_name',
                     'products.size_name_id',
@@ -1515,7 +1516,16 @@ class TechnologController extends Controller
                     'products.sort'
                 ]);
             foreach($minus as $row){
-                $minusproducts[$row->product_name_id][$day->id] = round($row->product_weight, 3);
+                if(!isset($minusproducts[$row->product_name_id][$day->id])){
+                    $minusproducts[$row->product_name_id][$day->id."+"] = 0;
+                    $minusproducts[$row->product_name_id][$day->id.'-'] = 0;
+                }
+                if($row->kingar_menu_id == -1){
+                    $minusproducts[$row->product_name_id][$day->id."-"] = round($row->product_weight, 3);
+                }
+                else{
+                    $minusproducts[$row->product_name_id][$day->id."+"] = round($row->product_weight, 3);
+                }
                 $minusproducts[$row->product_name_id]['productname'] = $row->product_name;
             }
         }
