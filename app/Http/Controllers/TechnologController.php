@@ -1667,9 +1667,10 @@ class TechnologController extends Controller
                 if(!isset($plusproducts[$row->product_name_id])){
                     $plusproducts[$row->product_name_id] = 0;
                 }
-                $plusproducts[$row->product_name_id] += $row->product_weight;
+                $plusproducts[$row->product_name_id] = $plusproducts[$row->product_name_id] . $day->id . ' |' . $row->product_weight;
             }
         }
+        dd($plusproducts);
 
         $products = Product::join('sizes', 'sizes.id', '=', 'products.size_name_id')
                 ->get(['products.id', 'products.product_name', 'sizes.size_name']);
