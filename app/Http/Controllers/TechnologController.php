@@ -1524,12 +1524,12 @@ class TechnologController extends Controller
                     $minusproducts[$row->product_name_id][$day->id."-"] += round($row->product_weight, 3);
                 }
                 else{
-                    $minusproducts[$row->product_name_id][$day->id."+"] += round($row->product_weight, 3);
+                    $minusproducts[$row->product_name_id][$day->id."+"] = $minusproducts[$row->product_name_id][$day->id."+"] .' | '. round($row->product_weight, 3);
                 }
                 $minusproducts[$row->product_name_id]['productname'] = $row->product_name;
             }
         }
-        // dd($minusproducts);
+        dd($minusproducts);
         return view('technolog.minusmultistorage', ['minusproducts' => $minusproducts, 'kingar' => $king, 'days' => $days, 'months' => $months, 'monthid' => $ill]);   
     }
 
