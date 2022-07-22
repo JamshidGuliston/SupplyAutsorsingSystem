@@ -1595,8 +1595,20 @@ class TechnologController extends Controller
                     'products.div',
                     'products.sort'
                 ]);
+
             foreach($plus as $row){
-                $plusproducts[$row->product_name_id][$row->day_id] = $row->product_weight;
+                if(!isset($plusproducts[$row->product_name_id][$day->id])){
+                    $plusproducts[$row->product_name_id][$day->id."+"] = 0;
+                    $plusproducts[$row->product_name_id][$day->id] = 0;
+                    $plusproducts[$row->product_name_id][$day->id.'-'] = 0;
+                }
+                if($row->kingar_menu_id == -1){
+                    $plusproducts[$row->product_name_id][$day->id."-"] += round($row->product_weight, 3);
+                }
+                else{
+                    $plusproducts[$row->product_name_id][$day->id."+"] +=  round($row->product_weight, 3);
+                }
+                $plusproducts[$row->product_name_id][$day->id] = $plusproducts[$row->product_name_id][$day->id."-"] + $plusproducts[$row->product_name_id][$day->id."+"];
                 $plusproducts[$row->product_name_id]['productname'] = $row->product_name;
             }
         }

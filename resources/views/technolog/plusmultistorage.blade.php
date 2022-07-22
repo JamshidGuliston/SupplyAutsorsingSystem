@@ -246,9 +246,15 @@
             <tr>
                 <td>{{ $row['productname'] }}</td>
                 @foreach($days as $day)
-                    @if(isset($row[$day['id']]))
-                        <td>{{ $row[$day['id']] }}</td>
-                        <?php $all += $row[$day['id']]; ?>
+                    @if(isset($row[$day['id']."+"]) or isset($row[$day['id']."-"]))
+                        <td>
+                        {{ $row[$day['id']."+"] }}
+                        @if($row[$day['id']."-"] != 0)
+                            <hr>
+                            {{ $row[$day['id']."-"] }}
+                        @endif
+                        </td>
+                        <?php $all += $row[$day['id']."+"] + $row[$day['id']."-"]; ?>
                     @else
                         <td></td>
                     @endif
