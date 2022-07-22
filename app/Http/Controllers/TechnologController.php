@@ -1515,6 +1515,7 @@ class TechnologController extends Controller
                     'products.div',
                     'products.sort'
                 ]);
+            dd($minus);
             foreach($minus as $row){
                 if(!isset($minusproducts[$row->product_name_id][$day->id])){
                     $minusproducts[$row->product_name_id][$day->id."+"] = 0;
