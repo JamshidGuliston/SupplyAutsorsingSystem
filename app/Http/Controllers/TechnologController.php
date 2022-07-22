@@ -1588,6 +1588,7 @@ class TechnologController extends Controller
                     'plus_multi_storages.id',
                     'plus_multi_storages.product_name_id',
                     'plus_multi_storages.day_id',
+                    'plus_multi_storages.shop_id',
                     'plus_multi_storages.kingarden_name_d',
                     'plus_multi_storages.product_weight',
                     'products.product_name',
@@ -1602,7 +1603,7 @@ class TechnologController extends Controller
                     $plusproducts[$row->product_name_id][$day->id] = 0;
                     $plusproducts[$row->product_name_id][$day->id.'-'] = 0;
                 }
-                if($row->kingar_menu_id == -1){
+                if($row->shop_id == -1){
                     $plusproducts[$row->product_name_id][$day->id."-"] += round($row->product_weight, 3);
                 }
                 else{
