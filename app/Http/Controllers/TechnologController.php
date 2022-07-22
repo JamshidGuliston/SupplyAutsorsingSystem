@@ -1521,8 +1521,12 @@ class TechnologController extends Controller
                     $minusproducts[$row->product_name_id][$day->id."+"] = 0;
                     $minusproducts[$row->product_name_id][$day->id.'-'] = 0;
                 }
-                
-                $minusproducts[$row->product_name_id][$day->id."+"] = $minusproducts[$row->product_name_id][$day->id."+"] .' | '. round($row->product_weight, 3);
+                if($row->kingar_menu_id == -1){
+                    $minusproducts[$row->product_name_id][$day->id."-"] += round($row->product_weight, 3);
+                }
+                else{
+                    $minusproducts[$row->product_name_id][$day->id."+"] = $minusproducts[$row->product_name_id][$day->id."+"] .' | '. round($row->product_weight, 3);
+                }
                 $minusproducts[$row->product_name_id]['productname'] = $row->product_name;
                 dd($minusproducts);
             }
