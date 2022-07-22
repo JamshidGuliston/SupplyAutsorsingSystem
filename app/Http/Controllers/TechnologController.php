@@ -1630,7 +1630,7 @@ class TechnologController extends Controller
                 // $minusproducts[$row->product_name_id]['productname'] = $row->product_name;
             }
         }
-        dd($minusproducts);
+        // dd($minusproducts);
         $plusproducts = [];
         foreach($days as $day){
             $plus = plus_multi_storage::where('day_id', $day->id)
