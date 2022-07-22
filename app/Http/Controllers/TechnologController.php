@@ -1540,7 +1540,7 @@ class TechnologController extends Controller
             'product_weight' => $request->kg
         ]);
         
-        return redirect()->route('technolog.minusmultistorage', $request->kinid, $request->monthid);
+        return redirect()->route('technolog.minusmultistorage', ['id' => $request->kinid, 'monthid' => $request->monthid]);
     }
 
     public function plusmultistorage(Request $request, $kid, $monthid){
