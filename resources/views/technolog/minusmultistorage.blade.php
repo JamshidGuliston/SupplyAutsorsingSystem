@@ -119,6 +119,7 @@
         <div class="modal-content">
         <form action="{{route('technolog.editminusproduct')}}" method="POST">
 		    @csrf
+            <input type="hidden" name="monthid" value="{{ $monthid }}"
             <div class="modal-header">
                 <h5 class="modal-title" id="exampleModalLabel">Maxsulot og'irligini o'zgartirish</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
