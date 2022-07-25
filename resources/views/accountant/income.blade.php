@@ -195,7 +195,7 @@
             @endforeach
             <tr>
                 <td><b>JAMI:</b></td>
-                <td colspan="{{ count($regions)*3 + 4 }}"></td>
+                <td colspan="{{ count($regions)*3 + 5 }}"></td>
                 <td>{{ round($allsums) }}</td>
                 <td>{{ round($plus) }}</td>
                 <td>{{ round(round($plus) / round($allsums) * 100, 1) }}</td>
