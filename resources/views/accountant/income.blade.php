@@ -153,13 +153,15 @@
             <th>Marja %</th>
         </thead>
         <tbody>
-            <?php 
-                $pay = 0; 
-                $allsum = 0;
+            <?php
                 $allsums = 0;
                 $plus = 0;
             ?>
             @foreach($incomes as $key => $value)
+            <?php
+                $pay = 0;
+                $allsum = 0;
+            ?>
             <tr>
                 <td>{{ $value["p_name"] }}</td>
                 <td>{{ $value["weight"] }}</td>
@@ -187,7 +189,7 @@
                 <td>{{ round($pay, 1) }}</td>
                 <td>{{ round($value["weight"] - $pay, 1) }}</td>
                 <td>{{ round($allsum, 1) }}</td>
-                <td>{{ round($allsum - $pay * $value["p_cost"] / $value["count"], 1) }}</td>
+                <td>{{ round($allsum - $value["p_sum"], 1) }}</td>
                 <td>{{ $allsum ? round(($allsum - $value["p_cost"]) / $allsum * 100, 1) : "0" }}</td>
             </tr>
             @endforeach
