@@ -140,6 +140,7 @@
             <th style="width: 30px;">Махсулотлар</th>
             <th>KG</th>
             <th>Jami summa</th>
+            <th>O'rtacha narx</th>
             @foreach($regions as $region)
                 <th>{{ $region->region_name }}</th>
                 <th>O'tkazish</th>
@@ -162,6 +163,7 @@
             <tr>
                 <td>{{ $value["p_name"] }}</td>
                 <td>{{ $value["weight"] }}</td>
+                <td>{{ $value["p_sum"] }}</td>
                 <td>{{ round($value["p_cost"] / $value["count"], 1) }}</td>
                 @foreach($regions as $region)
                 @if(isset($inregions[$region->id][$key."kg"]))
