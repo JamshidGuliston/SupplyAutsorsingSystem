@@ -780,9 +780,12 @@ class AccountantController extends Controller
                 }
             }
         }
-        // dd($inregions);
-        // $start = $this->activmonth($il);
-        // $days = $this->activyear($id);
+        
+        usort($incomes, function ($a, $b){
+            if(isset($a["p_sort"]) and isset($b["p_sort"])){
+                return $a["p_sort"] > $b["p_sort"];
+            }
+        });
 
         return view('accountant.income', compact('incomes', 'inregions', 'months', 'id', 'regions'));
     }
