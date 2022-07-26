@@ -790,9 +790,6 @@ class AccountantController extends Controller
             }
         });
 
-        
-        dd($incomes);
-
         return view('accountant.income', compact('incomes', 'inregions', 'months', 'id', 'regions'));
     }
 
