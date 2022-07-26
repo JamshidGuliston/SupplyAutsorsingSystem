@@ -728,6 +728,7 @@ class AccountantController extends Controller
                 // $alladd[$t++.'id'] = $row->product_id;
                 $incomes[$product->product_id]['weight'] = 0;
                 $incomes[$product->product_id]['p_cost'] = 0;
+                $incomes[$product->product_id]['p_id'] = $product->product_id;
                 $incomes[$product->product_id]['p_sum'] = 0;
                 $incomes[$product->product_id]['count'] = 0;
                 $incomes[$product->product_id]['p_name'] = $product->product_name;
@@ -738,6 +739,9 @@ class AccountantController extends Controller
             $incomes[$product->product_id]['p_cost'] += $product->cost;
             $incomes[$product->product_id]['count'] += 1;
         }
+
+        dd($incomes);
+
         $regions = Region::all();
         $kindgardens = Kindgarden::all();
         $inregions = [];
