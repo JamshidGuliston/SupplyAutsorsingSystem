@@ -740,7 +740,6 @@ class AccountantController extends Controller
             $incomes[$product->product_id]['count'] += 1;
         }
 
-        dd($incomes);
 
         $regions = Region::all();
         $kindgardens = Kindgarden::all();
@@ -790,6 +789,9 @@ class AccountantController extends Controller
                 return $a["p_sort"] > $b["p_sort"];
             }
         });
+
+        
+        dd($incomes);
 
         return view('accountant.income', compact('incomes', 'inregions', 'months', 'id', 'regions'));
     }
