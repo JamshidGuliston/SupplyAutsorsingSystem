@@ -66,6 +66,7 @@ class StorageController extends Controller
                 // $alladd[$t++.'id'] = $row->product_id;
                 $alladd[$row->product_id]['weight'] = 0;
                 $alladd[$row->product_id]['p_name'] = $row->product_name;
+                $alladd[$row->product_id]['size_name'] = $row->size_name_id;
             }
             $alladd[$row->product_id]['weight'] += $row->weight; 
         }
