@@ -114,7 +114,7 @@
 							?>
 							@endif
 						@endforeach
-						<td><?php printf("%01.4f", $summ) ?></td>
+						<td><?php printf("%01.3f", $summ) ?></td>
                         <td>{{ $row[0] }}</td>
 						<td ><?php printf("%01.3f", $summ*$row[0]) ?></td>
                         <?php
