@@ -50,8 +50,12 @@ class StorageController extends Controller
     public function index(Request $request)
     {
         $dayes = Day::orderby('id', 'DESC')->get();
-        $count = order_product::where('day_id', $dayes[1]->id)->where('document_processes_id', 2)->get();
-        $addlarch = Add_large_werehouse::join('products', 'products.id', '=', 'add_large_werehouses.product_id')->get();
+        $addlarch = Add_large_werehouse::where('add_groups.day_id', '>=', 100)
+                    ->where('add_groups.day_id', '<=', 129)
+                    ->join('add_groups', 'add_groups.id', '=', 'add_large_werehouses.add_group_id')
+                    ->join('products', 'products.id', '=', 'add_large_werehouses.product_id')
+                    ->get();
+        dd($addlarch);
         $month_id = Month::where('month_active', 1)->first()->id;
         $month_days = $this->activmonth($month_id);
         foreach($month_days as $day){
@@ -68,7 +72,7 @@ class StorageController extends Controller
             $alladd[$row->product_id]['weight'] += $row->weight; 
         }
         // dd($alladd);
-        return view('storage.home', ['count' => count($count), 'products' => $alladd, 'month_id' => $month_id]);
+        return view('storage.home', ['products' => $alladd, 'month_id' => $month_id]);
     }
 
     public function addproductform(Request $request){
