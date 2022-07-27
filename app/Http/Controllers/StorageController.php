@@ -50,17 +50,14 @@ class StorageController extends Controller
     public function index(Request $request)
     {
         $dayes = Day::orderby('id', 'DESC')->get();
-        $addlarch = Add_large_werehouse::where('add_groups.day_id', '>=', 100)
-                    ->where('add_groups.day_id', '<=', 105)
+        $month_id = Month::where('month_active', 1)->first()->id;
+        $month_days = $this->activmonth($month_id);
+        $addlarch = Add_large_werehouse::where('add_groups.day_id', '>=', $month_days->first()->id)
+                    ->where('add_groups.day_id', '<=', $month_days->last()->id)
                     ->join('add_groups', 'add_groups.id', '=', 'add_large_werehouses.add_group_id')
                     ->join('products', 'products.id', '=', 'add_large_werehouses.product_id')
                     ->get();
-        dd($addlarch);
-        $month_id = Month::where('month_active', 1)->first()->id;
-        $month_days = $this->activmonth($month_id);
-        foreach($month_days as $day){
-
-        }
+        
         $alladd = [];
         $t = 0;
         foreach($addlarch as $row){
