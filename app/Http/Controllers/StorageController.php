@@ -56,6 +56,7 @@ class StorageController extends Controller
                     ->where('add_groups.day_id', '<=', $month_days->last()->id)
                     ->join('add_groups', 'add_groups.id', '=', 'add_large_werehouses.add_group_id')
                     ->join('products', 'products.id', '=', 'add_large_werehouses.product_id')
+                    ->join('sizes', 'sizes.id', '=', 'products.size_name_id')
                     ->get();
         
         $alladd = [];
