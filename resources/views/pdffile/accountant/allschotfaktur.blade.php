@@ -114,14 +114,14 @@
 							?>
 							@endif
 						@endforeach
-						<td><?php round($summ, 3) ?></td>
+						<td><?php echo round("%01.3f", $summ) ?></td>
                         <td>{{ $row[0] }}</td>
 						<td ><?php printf("%01.3f", $summ*$row[0]) ?></td>
                         <?php
-                            $ww += round($summ, 3)*$row[0];
+                            $ww += $summ*$row[0];
                         ?>
-						<td><?php printf("%01.3f", (round($summ, 3)*$row[0]/100)*15) ?></td>
-						<td><?php printf("%01.3f", round($summ, 3)*$row[0] + (round($summ, 3)*$row[0]/100)*15) ?></td>
+						<td><?php printf("%01.3f", ($summ*$row[0]/100)*15) ?></td>
+						<td><?php printf("%01.3f", $summ*$row[0] + ($summ*$row[0]/100)*15) ?></td>
 					</tr>
 					@endforeach
                     <tr>
