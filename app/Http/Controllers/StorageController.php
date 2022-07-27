@@ -67,10 +67,17 @@ class StorageController extends Controller
                 $alladd[$row->product_id]['weight'] = 0;
                 $alladd[$row->product_id]['p_name'] = $row->product_name;
                 $alladd[$row->product_id]['size_name'] = $row->size_name;
+                $alladd[$row->product_id]['p_sort'] = $row->sort;
             }
             $alladd[$row->product_id]['weight'] += $row->weight; 
         }
-        // dd($alladd);
+        
+        usort($incomes, function ($a, $b){
+            if(isset($a["p_sort"]) and isset($b["p_sort"])){
+                return $a["p_sort"] > $b["p_sort"];
+            }
+        });
+
         return view('storage.home', ['products' => $alladd, 'month_id' => $month_id]);
     }
 
