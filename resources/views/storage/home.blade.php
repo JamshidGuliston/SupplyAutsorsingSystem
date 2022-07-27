@@ -14,6 +14,7 @@
                 <i class="fas fa-seedling fs-1 primary-text border rounded-full secondary-bg p-2"></i>
                 <div class="text-center">
                     <h5 class="fs-3 mb-0 mt-1">{{ $row['weight'].' '.$row['size_name']; }}</h5>
+                    <h5 class="fs-3 mb-0 mt-1">{{ $row['minusweight'].' '.$row['size_name']; }}</h5>
                     <p class="fs-4" style="font-size: 18px !important;">{{ $row['p_name']; }}</p>
                 </div>
             </div>
