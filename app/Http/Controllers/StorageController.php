@@ -79,6 +79,9 @@ class StorageController extends Controller
                     ->join('order_products', 'order_products.id', '=', 'order_product_structures.order_product_name_id')
                     ->get();
         foreach($minuslarch as $row){
+            if(!isset($alladd[$row->product_id])){
+                dd($row);
+            }
             $alladd[$row->product_id]['minusweight'] += $row->weight;
         }
 
