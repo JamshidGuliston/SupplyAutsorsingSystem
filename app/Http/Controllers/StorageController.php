@@ -51,7 +51,7 @@ class StorageController extends Controller
     {
         $dayes = Day::orderby('id', 'DESC')->get();
         $addlarch = Add_large_werehouse::where('add_groups.day_id', '>=', 100)
-                    ->where('add_groups.day_id', '<=', 129)
+                    ->where('add_groups.day_id', '<=', 105)
                     ->join('add_groups', 'add_groups.id', '=', 'add_large_werehouses.add_group_id')
                     ->join('products', 'products.id', '=', 'add_large_werehouses.product_id')
                     ->get();
