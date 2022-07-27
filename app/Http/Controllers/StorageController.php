@@ -72,7 +72,7 @@ class StorageController extends Controller
             $alladd[$row->product_id]['weight'] += $row->weight; 
         }
         
-        usort($incomes, function ($a, $b){
+        usort($alladd, function ($a, $b){
             if(isset($a["p_sort"]) and isset($b["p_sort"])){
                 return $a["p_sort"] > $b["p_sort"];
             }
