@@ -202,6 +202,7 @@ Route::group(['prefix' => 'accountant', 'middleware' => ['isAccountant', 'auth']
     // Daromad
     Route::get('income/{id}', [AccountantController::class, 'income'])->name('accountant.income');
     Route::get('bigbase', [StorageController::class, 'index']);
+    Route::get('multibase', [TechnologController::class, 'index']);
 
 });
 
