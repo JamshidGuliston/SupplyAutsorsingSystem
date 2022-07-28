@@ -19,8 +19,11 @@
                     <h5 class="modal-title" id="exampleModalLabel">Omborxona</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
+                <div class="modal-body" style="text-align: center;">
+                    <div class="divmodproduct">
+                    </div>
+                </div>
                 <div class="modal-footer" >
-
                 </div>
             </div>
         </div>
