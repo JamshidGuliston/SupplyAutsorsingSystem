@@ -469,7 +469,7 @@ class StorageController extends Controller
                 return $a->sort > $b->sort;
             }
         });
-        dd($document);
+        // dd($document);
         $dompdf = new Dompdf('UTF-8');
 		$html = mb_convert_encoding(view('pdffile.storage.orderskladpdf', compact('items', 'document')), 'HTML-ENTITIES', 'UTF-8');
 		$dompdf->loadHtml($html);
