@@ -457,8 +457,8 @@ class StorageController extends Controller
                 ->join('products', 'products.id', '=', 'add_large_werehouses.product_id')
                 ->join('sizes', 'sizes.id', '=', 'products.size_name_id')->get();
         
+        dd($document);
         usort($document, function ($a, $b){
-            dd($a);
             if(isset($a["sort"]) and isset($b["sort"])){
                 return $a["sort"] > $b["sort"];
             }
