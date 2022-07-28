@@ -16,6 +16,7 @@ use App\Models\titlemenu_food;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Exports\UsersExport;
 use App\Models\Add_large_werehouse;
+use App\Models\order_product_structure;
 use App\Models\Year;
 use Dompdf\Dompdf;
 use Illuminate\Http\Request;
@@ -791,6 +792,58 @@ class AccountantController extends Controller
         });
 
         return view('accountant.income', compact('incomes', 'inregions', 'months', 'id', 'regions'));
+    }
+
+    public function bigbase(Request $request)
+    {
+        $dayes = Day::orderby('id', 'DESC')->get();
+        $month_days = $this->activmonth();
+        $addlarch = Add_large_werehouse::where('add_groups.day_id', '>=', $month_days->first()->id)
+                    ->where('add_groups.day_id', '<=', $month_days->last()->id)
+                    ->join('add_groups', 'add_groups.id', '=', 'add_large_werehouses.add_group_id')
+                    ->join('products', 'products.id', '=', 'add_large_werehouses.product_id')
+                    ->join('sizes', 'sizes.id', '=', 'products.size_name_id')
+                    ->get();
+        
+        $alladd = [];
+        $t = 0;
+        foreach($addlarch as $row){
+            if(!isset($alladd[$row->product_id])){
+                // $alladd[$t++.'id'] = $row->product_id;
+                $alladd[$row->product_id]['weight'] = 0;
+                $alladd[$row->product_id]['minusweight'] = 0;
+                $alladd[$row->product_id]['p_name'] = $row->product_name;
+                $alladd[$row->product_id]['size_name'] = $row->size_name;
+                $alladd[$row->product_id]['p_sort'] = $row->sort;
+            }
+            $alladd[$row->product_id]['weight'] += $row->weight; 
+        }
+
+
+        $minuslarch = order_product_structure::where('order_products.day_id', '>=', $month_days->first()->id)
+                    ->where('order_products.day_id', '<=', $month_days->last()->id)
+                    ->join('order_products', 'order_products.id', '=', 'order_product_structures.order_product_name_id')
+                    ->join('products', 'products.id', '=', 'order_product_structures.product_name_id')
+                    ->join('sizes', 'sizes.id', '=', 'products.size_name_id')
+                    ->get();
+
+        foreach($minuslarch as $row){
+            if(!isset($alladd[$row->product_name_id])){
+                $alladd[$row->product_name_id]['weight'] = 0;
+                $alladd[$row->product_name_id]['minusweight'] = 0;
+                $alladd[$row->product_name_id]['p_name'] = $row->product_name;
+                $alladd[$row->product_name_id]['size_name'] = $row->size_name;
+                $alladd[$row->product_name_id]['p_sort'] = $row->sort;
+            }
+            $alladd[$row->product_name_id]['minusweight'] += $row->product_weight;
+        }
+
+        usort($alladd, function ($a, $b){
+            if(isset($a["p_sort"]) and isset($b["p_sort"])){
+                return $a["p_sort"] > $b["p_sort"];
+            }
+        });
+        return view('accountant.bigbase', ['products' => $alladd]);
     }
 
 }
