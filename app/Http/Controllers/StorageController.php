@@ -457,12 +457,12 @@ class StorageController extends Controller
                 ->join('products', 'products.id', '=', 'add_large_werehouses.product_id')
                 ->join('sizes', 'sizes.id', '=', 'products.size_name_id')->get();
         
-        dd($document);
         usort($document, function ($a, $b){
-            if(isset($a["sort"]) and isset($b["sort"])){
-                return $a["sort"] > $b["sort"];
+            if(isset($a->sort) and isset($b->sort)){
+                return $a->sort > $b->sort;
             }
         });
+        dd($document);
         $dompdf = new Dompdf('UTF-8');
 		$html = mb_convert_encoding(view('pdffile.storage.orderskladpdf', compact('items', 'document')), 'HTML-ENTITIES', 'UTF-8');
 		$dompdf->loadHtml($html);
