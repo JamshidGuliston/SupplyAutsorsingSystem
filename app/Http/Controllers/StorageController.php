@@ -77,10 +77,16 @@ class StorageController extends Controller
         $minuslarch = order_product_structure::where('order_products.day_id', '>=', $month_days->first()->id)
                     ->where('order_products.day_id', '<=', $month_days->last()->id)
                     ->join('order_products', 'order_products.id', '=', 'order_product_structures.order_product_name_id')
+                    ->join('products', 'products.id', '=', 'order_product_structures.product_name_id')
+                    ->join('sizes', 'sizes.id', '=', 'products.size_name_id')
                     ->get();
         foreach($minuslarch as $row){
             if(!isset($alladd[$row->product_id])){
-                dd($row);
+                $alladd[$row->product_id]['weight'] = 0;
+                $alladd[$row->product_id]['minusweight'] = 0;
+                $alladd[$row->product_id]['p_name'] = $row->product_name;
+                $alladd[$row->product_id]['size_name'] = $row->size_name;
+                $alladd[$row->product_id]['p_sort'] = $row->sort;
             }
             $alladd[$row->product_id]['minusweight'] += $row->weight;
         }
