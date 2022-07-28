@@ -203,7 +203,7 @@ Route::group(['prefix' => 'accountant', 'middleware' => ['isAccountant', 'auth']
     Route::get('income/{id}', [AccountantController::class, 'income'])->name('accountant.income');
     Route::get('bigbase', [AccountantController::class, 'bigbase']);
     Route::get('multibase', [AccountantController::class, 'multibase']);
-    Route::get('getmodproduct', [AccountantController::class, 'getmodproduct']);
+    Route::get('getmodproduct/{id}', [AccountantController::class, 'getmodproduct']);
 
 });
 
