@@ -454,10 +454,14 @@ class StorageController extends Controller
     public function document(Request $request){
         $items = "";
         $document = Add_large_werehouse::where('add_group_id', $request->id)
-        ->join('products', 'products.id', '=', 'add_large_werehouses.product_id')
-        ->join('sizes', 'sizes.id', '=', 'products.size_name_id')->get();
+                ->join('products', 'products.id', '=', 'add_large_werehouses.product_id')
+                ->join('sizes', 'sizes.id', '=', 'products.size_name_id')->get();
         
-        // dd($items);
+        usort($document, function ($a, $b){
+            if(isset($a["sort"]) and isset($b["sort"])){
+                return $a["sort"] > $b["sort"];
+            }
+        });
         $dompdf = new Dompdf('UTF-8');
 		$html = mb_convert_encoding(view('pdffile.storage.orderskladpdf', compact('items', 'document')), 'HTML-ENTITIES', 'UTF-8');
 		$dompdf->loadHtml($html);
