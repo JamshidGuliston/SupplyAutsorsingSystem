@@ -65,7 +65,7 @@
 						<a href="#">
 							<i class="fas fa-store-alt" style="color: dodgerblue; font-size: 18px;"></i>
 						</a>
-						<b>{{ "№ ".$document[1]['add_group_id'] }}</b>
+						<b>{{ "№ ".$document[0]['add_group_id'] }}</b>
 					</div>
                 </div>
                 <hr>

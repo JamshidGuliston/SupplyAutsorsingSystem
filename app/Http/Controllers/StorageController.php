@@ -461,12 +461,13 @@ class StorageController extends Controller
             $document[$row->product_id]['add_group_id'] = $row->add_group_id;
             $document[$row->product_id]['product_name'] = $row->product_name;
             $document[$row->product_id]['size_name'] = $row->size_name;
+            $document[$row->product_id]['sort'] = $row->sort;
             $document[$row->product_id]['weight'] = $row->weight;
             $document[$row->product_id]['cost'] = $row->cost;
         }
         usort($document, function ($a, $b){
-            if(isset($a->sort) and isset($b->sort)){
-                return $a->sort > $b->sort;
+            if(isset($a["sort"]) and isset($b["sort"])){
+                return $a["sort"] > $b["sort"];
             }
         });
         // dd($document);
