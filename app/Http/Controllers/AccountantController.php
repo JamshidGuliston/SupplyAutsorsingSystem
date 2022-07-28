@@ -17,6 +17,8 @@ use Maatwebsite\Excel\Facades\Excel;
 use App\Exports\UsersExport;
 use App\Models\Add_large_werehouse;
 use App\Models\order_product_structure;
+use App\Models\Season;
+use App\Models\Titlemenu;
 use App\Models\Year;
 use Dompdf\Dompdf;
 use Illuminate\Http\Request;
@@ -796,7 +798,6 @@ class AccountantController extends Controller
 
     public function bigbase(Request $request)
     {
-        $dayes = Day::orderby('id', 'DESC')->get();
         $month_days = $this->activmonth();
         $addlarch = Add_large_werehouse::where('add_groups.day_id', '>=', $month_days->first()->id)
                     ->where('add_groups.day_id', '<=', $month_days->last()->id)
@@ -844,6 +845,12 @@ class AccountantController extends Controller
             }
         });
         return view('accountant.bigbase', ['products' => $alladd]);
+    }
+
+    public function multibase(Request $request)
+    {
+        $kingar = Kindgarden::all();
+        return view('accountant.multibase', ['kingardens' => $kingar]);
     }
 
 }
