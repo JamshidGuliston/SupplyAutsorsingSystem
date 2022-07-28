@@ -80,6 +80,7 @@ class StorageController extends Controller
                     ->join('products', 'products.id', '=', 'order_product_structures.product_name_id')
                     ->join('sizes', 'sizes.id', '=', 'products.size_name_id')
                     ->get();
+        dd($minuslarch);
         foreach($minuslarch as $row){
             if(!isset($alladd[$row->product_id])){
                 $alladd[$row->product_id]['weight'] = 0;
