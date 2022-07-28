@@ -89,10 +89,10 @@
                         @foreach($document as $row)
                         <tr>
                             <th scope="row">{{ $tr++ }}</th>
-                            <td>{{ $row->product_name }}</td>
-							<td>{{ $row->size_name }}</td>
-							<td>{{ $row->weight }}</td>
-							<td>{{ $row->cost }}</td>
+                            <td>{{ $row["product_name"] }}</td>
+							<td>{{ $row["size_name"] }}</td>
+							<td>{{ $row["weight"] }}</td>
+							<td>{{ $row["cost"] }}</td>
 							<td></td>
                         </tr>
                         @endforeach
