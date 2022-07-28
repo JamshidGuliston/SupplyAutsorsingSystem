@@ -19,14 +19,6 @@
                     <h5 class="modal-title" id="exampleModalLabel">Omborxona</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <form method='post' action='/technolog/plusmultimodadd'>
-                    @csrf
-                    <div class="modal-body" style="text-align: center;">
-                        <div class="divmodproduct">
-                        </div>
-                        <button type="submit"  class="btn btn-success" >Saqlash</button>
-                    </div>
-                </form>
                 <div class="modal-footer" >
 
                 </div>
@@ -56,82 +48,22 @@
         </div>
         @endforeach
     </div>
-
-    
-
 </div>
 @endsection
 @section('script')
 <script>
-    $('.fa-school').click(function() {
-        var gardenid = $(this).attr('data-garden-id');
-        $.ajax({
-            method: "GET",
-            url: '/technolog/getmodproduct/'+gardenid,
-            success: function(data) {
-                div.html(data);
-            }
-
-        })
-    });
-
     $('.list-group-item-action').click(function() {
         var gardenid = $(this).attr('data-garden-id');
         // alert(gardenid);
         var div = $('.divmodproduct');
         $.ajax({
             method: "GET",
-            url: '/technolog/getmodproduct/'+gardenid,
-            success: function(data) {
-                div.html(data);
-            }
-
-        })
-    });
-    
-    $('#today').change(function() {
-        var menuid = $("#today option:selected").val();
-        var div = $('.today');
-        $.ajax({
-            method: "GET",
-            url: '/technolog/getfoodnametoday',
-            data: {
-                'menuid': menuid,
-            },
+            url: '/accountant/getmodproduct/'+gardenid,
             success: function(data) {
                 div.html(data);
             }
         })
     });
-    $('#tomorrow').change(function() {
-        var menuid = $("#tomorrow option:selected").val();
-        var div = $('.tomorrow');
-        $.ajax({
-            method: "GET",
-            url: '/technolog/getfoodnametomorrow',
-            data: {
-                'menuid': menuid,
-            },
-            success: function(data) {
-                div.html(data);
-            }
-        })
-    });
-    window.addEventListener('load', MyFunc, true);
-    var i = 0;
-    var j = 0;
-      
-    function divchange() {
-        var divtag = document.getElementById("four");
-        var bgcolor = ["#d2f8e9", "#ee928e"];
-        divtag.style.backgroundColor = bgcolor[i];
-        i = (i + 1) % bgcolor.length;
-    }
-
-    function MyFunc() {
-        setInterval(divchange, 1000);
-    }
-
     
 </script>
 @endsection

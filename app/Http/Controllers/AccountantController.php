@@ -16,7 +16,9 @@ use App\Models\titlemenu_food;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Exports\UsersExport;
 use App\Models\Add_large_werehouse;
+use App\Models\minus_multi_storage;
 use App\Models\order_product_structure;
+use App\Models\plus_multi_storage;
 use App\Models\Season;
 use App\Models\Titlemenu;
 use App\Models\Year;
@@ -851,6 +853,104 @@ class AccountantController extends Controller
     {
         $kingar = Kindgarden::all();
         return view('accountant.multibase', ['kingardens' => $kingar]);
+    }
+
+    public function getmodproduct(Request $request, $kid){
+        $king = Kindgarden::where('id', $kid)->first();
+        $days = $this->activmonth();
+        // dd($days);
+        $minusproducts = [];
+        foreach($days as $day){
+            $minus = minus_multi_storage::where('day_id', $day->id)
+                ->where('kingarden_name_id', $kid)
+                ->join('products', 'minus_multi_storages.product_name_id', '=', 'products.id')
+                ->get([
+                    'minus_multi_storages.id',
+                    'minus_multi_storages.product_name_id',
+                    'minus_multi_storages.day_id',
+                    'minus_multi_storages.kingarden_name_id',
+                    'minus_multi_storages.product_weight',
+                    'products.product_name',
+                    'products.size_name_id',
+                    'products.div',
+                    'products.sort'
+                ]);
+            // echo $minus->count()." ";
+            foreach($minus as $row){
+                if(!isset($minusproducts[$row->product_name_id])){
+                    $minusproducts[$row->product_name_id] = 0;
+                }
+                $minusproducts[$row->product_name_id] += $row->product_weight;
+                // $minusproducts[$row->product_name_id]['productname'] = $row->product_name;
+            }
+        }
+        // dd($minusproducts);
+        $plusproducts = [];
+        foreach($days as $day){
+            $plus = plus_multi_storage::where('day_id', $day->id)
+                ->where('kingarden_name_d', $kid)
+                ->join('products', 'plus_multi_storages.product_name_id', '=', 'products.id')
+                ->get([
+                    'plus_multi_storages.id',
+                    'plus_multi_storages.product_name_id',
+                    'plus_multi_storages.day_id',
+                    'plus_multi_storages.kingarden_name_d',
+                    'plus_multi_storages.product_weight',
+                    'products.product_name',
+                    'products.size_name_id',
+                    'products.div',
+                    'products.sort'
+                ]);
+            foreach($plus as $row){
+                if(!isset($plusproducts[$row->product_name_id])){
+                    $plusproducts[$row->product_name_id] = 0;
+                }
+                $plusproducts[$row->product_name_id] += $row->product_weight;
+            }
+        }
+
+        $products = Product::join('sizes', 'sizes.id', '=', 'products.size_name_id')
+                ->get(['products.id', 'products.product_name', 'sizes.size_name']);
+        
+        $html = "<table class='table table-light table-striped table-hover'>
+                <thead>
+                    <tr>
+                        <th scope='col'>Maxsulot</th>
+                        <th scope='col'>Кирим</th>
+                        <th scope='col'>Чиқим</th>
+                        <th scope='col'>Қолдиқ</th>
+                    </tr>
+                </thead>
+                <tbody>";
+                foreach($products as $product){
+                    if(isset($minusproducts[$product->id]) or isset($plusproducts[$product->id])){
+                        $html = $html."<tr>
+                            <td>". $product->product_name ."</td>
+                            <td>";
+                            if(isset($plusproducts[$product->id])){ 
+                                $countin = $plusproducts[$product->id];
+                            }
+                            else
+                                $countin = 0;
+                                $html = $html.$countin."
+                            </td>
+                            <td>";
+                            if(isset($minusproducts[$product->id])){ 
+                                $countout = $minusproducts[$product->id];
+                            }
+                            else
+                                $countout = 0;
+                            $html = $html.$countout."
+                            </td>
+                            <td>". sprintf('%0.1f', $countin - $countout) .' '.$product->size_name."</td>
+                        </tr>";
+                    }
+                }
+        $html = $html."</tbody>
+            </table>
+            ";
+        
+        return $html;
     }
 
 }
