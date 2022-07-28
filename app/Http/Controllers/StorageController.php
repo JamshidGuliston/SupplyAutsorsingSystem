@@ -80,16 +80,16 @@ class StorageController extends Controller
                     ->join('products', 'products.id', '=', 'order_product_structures.product_name_id')
                     ->join('sizes', 'sizes.id', '=', 'products.size_name_id')
                     ->get();
-        dd($minuslarch);
+       
         foreach($minuslarch as $row){
-            if(!isset($alladd[$row->product_id])){
-                $alladd[$row->product_id]['weight'] = 0;
-                $alladd[$row->product_id]['minusweight'] = 0;
-                $alladd[$row->product_id]['p_name'] = $row->product_name;
-                $alladd[$row->product_id]['size_name'] = $row->size_name;
-                $alladd[$row->product_id]['p_sort'] = $row->sort;
+            if(!isset($alladd[$row->product_name_id])){
+                $alladd[$row->product_name_id]['weight'] = 0;
+                $alladd[$row->product_name_id]['minusweight'] = 0;
+                $alladd[$row->product_name_id]['p_name'] = $row->product_name;
+                $alladd[$row->product_name_id]['size_name'] = $row->size_name;
+                $alladd[$row->product_name_id]['p_sort'] = $row->sort;
             }
-            $alladd[$row->product_id]['minusweight'] += $row->weight;
+            $alladd[$row->product_name_id]['minusweight'] += $row->weight;
         }
 
         usort($alladd, function ($a, $b){
