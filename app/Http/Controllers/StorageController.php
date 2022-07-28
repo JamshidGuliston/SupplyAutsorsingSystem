@@ -456,7 +456,7 @@ class StorageController extends Controller
         $products = Add_large_werehouse::where('add_group_id', $request->id)
                 ->join('products', 'products.id', '=', 'add_large_werehouses.product_id')
                 ->join('sizes', 'sizes.id', '=', 'products.size_name_id')->get();
-        
+        dd($products);
         $document = []; 
         foreach($products as $row){
             $document[$row->product_id]['add_group_id'] = $row->add_group_id;
