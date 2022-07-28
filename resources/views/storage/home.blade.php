@@ -9,7 +9,7 @@
     <!-- end date -->
     <div class="row g-3 my-2">
         @foreach($products as $row)
-        <div class="col-md-2">
+        <div class="col-md-3">
             <div class="p-3 bg-white shadow-sm d-flex flex-column justify-content-around align-items-center rounded">
                 <!-- <i class="fas fa-seedling fs-1 primary-text border rounded-full secondary-bg p-2"></i> -->
                 <div class="text-center">
