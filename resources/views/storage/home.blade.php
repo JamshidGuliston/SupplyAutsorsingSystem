@@ -14,11 +14,11 @@
                 <i class="fas fa-seedling fs-1 primary-text border rounded-full secondary-bg p-2"></i>
                 <div class="text-center">
                     <p class="fs-4" style="font-size: 18px !important;">{{ $row['p_name']; }}</p>
-                    <h4>
-                    <i class="fas fa-long-arrow-down"></i>{{ $row['weight'].' '.$row['size_name']; }}
-                    <i class="fas fa-long-arrow-up"></i>{{ $row['minusweight'].' '.$row['size_name']; }}
+                <h4>
+                    <i class="fas fa-arrow-down" style="color: green; width: 20%"></i>{{ $row['weight'].' '.$row['size_name']; }}
+                    <i class="fas fa-arrow-up" style="color: red; width: 20%"></i>{{ round($row['minusweight'], 1).' '.$row['size_name']; }}
                 </h4>
-                    <h5 class="fs-3 mb-0 mt-1">{{ $row['minusweight'].' '.$row['size_name']; }}</h5>
+                <h4 class="fs-3 mb-0 mt-1">{{ round($row['weight'] - $row['minusweight'], 1).' '.$row['size_name']; }}</h4>
                 </div>
             </div>
         </div>
