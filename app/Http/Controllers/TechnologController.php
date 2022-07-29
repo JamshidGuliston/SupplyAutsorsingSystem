@@ -1760,7 +1760,7 @@ class TechnologController extends Controller
                             ->where('product_name_id',  $product->id)
                             ->get();
                     if($find->count() > 1){
-                        dd($find);
+                        echo $find;
                     }
                 }
             }
