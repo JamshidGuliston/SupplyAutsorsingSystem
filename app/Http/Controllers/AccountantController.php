@@ -753,9 +753,9 @@ class AccountantController extends Controller
                     ->join('sizes', 'sizes.id', '=', 'products.size_name_id')
                     ->get();
 
-        foreach($minuslarch as $row){
-            $incomes[$row->product_name_id]['minusweight'] += $row->product_weight;
-        }
+        // foreach($minuslarch as $row){
+        //     $incomes[$row->product_name_id]['minusweight'] += $row->product_weight;
+        // }
 
         $regions = Region::all();
         $kindgardens = Kindgarden::all();
