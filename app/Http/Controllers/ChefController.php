@@ -130,7 +130,6 @@ class ChefController extends Controller
             $find = plus_multi_storage::where('kingarden_name_d', $order['kingar_name_id'])
                                 ->where('order_product_id', $order['id'])
                                 ->where('product_name_id', $row['product_name_id'])
-                                ->where('product_weight', $row['product_weight'])
                                 ->get();
             if($find->count() == 0){
                 plus_multi_storage::create([

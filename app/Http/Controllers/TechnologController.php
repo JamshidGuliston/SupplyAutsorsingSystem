@@ -1757,8 +1757,16 @@ class TechnologController extends Controller
                     $find = plus_multi_storage::where('kingarden_name_d', $kind->id)
                             ->where('day_id', $day)
                             ->where('shop_id', 0)
-                            ->where('product_name_id',  $product->id)
+                            ->where('product_name_id',  99)
                             ->get();
+                    dd($find->count());
+                    $t = 0;
+                    foreach($find as $ff){
+                        if($t != 0){
+                            $ff->delete();
+                        }
+                        $t++;
+                    }
                     
                     if($find->count() > 1){
                         array_push($errors, $find);
