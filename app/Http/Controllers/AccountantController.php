@@ -1036,7 +1036,7 @@ class AccountantController extends Controller
             }
         }
 
-        dd($mods);
+        dd($plusproducts);
     }
 
 }
