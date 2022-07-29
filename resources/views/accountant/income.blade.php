@@ -136,21 +136,21 @@
 <div class="py-4 px-4">
     
     <table class="table table-light py-4 px-4">
-        <thead style="background-color: cadetblue;">
-            <th style="width: 30px;">Махсулотлар</th>
-            <th>KG</th>
-            <th>Jami summa</th>
-            <th>O'rtacha narx</th>
+        <thead>
+            <th style="background-color: cadetblue; width: 30px;">Махсулотлар</th>
+            <th style="background-color: cadetblue;">KG</th>
+            <th style="background-color: cadetblue;">Jami summa</th>
+            <th style="background-color: cadetblue;">O'rtacha narx</th>
             @foreach($regions as $region)
-                <th>{{ $region->region_name }}</th>
-                <th>O'tkazish</th>
-                <th>Summa</th>
+                <th style="background-color: cadetblue;">{{ $region->region_name }}</th>
+                <th style="background-color: cadetblue;">O'tkazish</th>
+                <th style="background-color: cadetblue;">Summa</th>
             @endforeach
-            <th>Sotilgan</th>
-            <th colspan="3">Qoldiq</th>
-            <th>Summa jami</th>
-            <th>Daromad</th>
-            <th>Marja %</th>
+            <th style="background-color: cadetblue;">Sotilgan</th>
+            <th style="background-color: cadetblue;">Summa jami</th>
+            <th colspan="3" style="background-color: cadetblue;">Qoldiq</th>
+            <th style="background-color: cadetblue;">Daromad</th>
+            <th style="background-color: cadetblue;">Marja %</th>
         </thead>
         <tbody>
             <?php
@@ -164,9 +164,9 @@
             ?>
             <tr>
                 <td style="background-color: #5cef5c;">{{ $value["p_name"] }}</td>
-                <td style="background-color: yellow;">{{ $value["weight"] }}</td>
-                <td style="background-color: yellow;">{{ $value["p_sum"] }}</td>
-                <td style="background-color: yellow;">{{ $value["count"] ? round($value["p_cost"] / $value["count"], 1) : 0 }}</td>
+                <td style="background-color: darkseagreen;">{{ $value["weight"] }}</td>
+                <td style="background-color: darkseagreen;">{{ $value["p_sum"] }}</td>
+                <td style="background-color: darkseagreen;">{{ $value["count"] ? round($value["p_cost"] / $value["count"], 1) : 0 }}</td>
                 @foreach($regions as $region)
                 @if(isset($inregions[$region->id][$value["p_id"]."kg"]))
                     <?php 
@@ -186,13 +186,13 @@
                     $allsums += round($allsum, 1);
                     $plus += round($allsum - $value["p_cost"], 1);
                 ?>
-                <td>{{ round($pay, 1) }}</td>
-                <td>{{ round($value["weight"] - $value["minusweight"], 1) }}</td>
-                <td>{{ round($mods[$value["p_id"]], 1) }}</td>
-                <td>{{ round(1, 1) }}</td>
-                <td>{{ round($allsum, 1) }}</td>
-                <td>{{ round($allsum - $value["p_sum"], 1) }}</td>
-                <td>{{ $allsum ? round(($allsum - $value["p_cost"]) / $allsum * 100, 1) : "0" }}</td>
+                <td style="background-color: cornflowerblue;">{{ round($pay, 1) }}</td>
+                <td style="background-color: cornflowerblue;">{{ round($allsum, 1) }}</td>
+                <td style="background-color: yellow;">{{ round($value["weight"] - $value["minusweight"], 1) }}</td>
+                <td style="background-color: yellow;">{{ round($mods[$value["p_id"]], 1) }}</td>
+                <td style="background-color: yellow;">{{ round(1, 1) }}</td>
+                <td style="background-color: darkseagreen;">{{ round($allsum - $value["p_sum"], 1) }}</td>
+                <td style="background-color: darkseagreen;">{{ $allsum ? round(($allsum - $value["p_cost"]) / $allsum * 100, 1) : "0" }}</td>
             </tr>
             @endforeach
             <tr>
