@@ -136,7 +136,7 @@
 <div class="py-4 px-4">
     
     <table class="table table-light py-4 px-4">
-        <thead>
+        <thead style="background-color: pig;">
             <th style="width: 30px;">Махсулотлар</th>
             <th>KG</th>
             <th>Jami summa</th>
@@ -163,23 +163,23 @@
                 $allsum = 0;
             ?>
             <tr>
-                <td>{{ $value["p_name"] }}</td>
-                <td>{{ $value["weight"] }}</td>
-                <td>{{ $value["p_sum"] }}</td>
-                <td>{{ $value["count"] ? round($value["p_cost"] / $value["count"], 1) : 0 }}</td>
+                <td style="background-color: green;">{{ $value["p_name"] }}</td>
+                <td style="background-color: yellow;">{{ $value["weight"] }}</td>
+                <td style="background-color: yellow;">{{ $value["p_sum"] }}</td>
+                <td style="background-color: yellow;">{{ $value["count"] ? round($value["p_cost"] / $value["count"], 1) : 0 }}</td>
                 @foreach($regions as $region)
                 @if(isset($inregions[$region->id][$value["p_id"]."kg"]))
                     <?php 
                         $pay += round($inregions[$region->id][$value["p_id"]."kg"], 1);
                         $allsum += round($inregions[$region->id][$value["p_id"]."kg"] * $inregions[$region->id][$value["p_id"]."cost"], 1);
                     ?>
-                    <td>{{ round($inregions[$region->id][$value["p_id"]."kg"], 1) }}</td>
-                    <td>{{ round($inregions[$region->id][$value["p_id"]."cost"], 1) }}</td>
-                    <td>{{ round($inregions[$region->id][$value["p_id"]."kg"] * $inregions[$region->id][$value["p_id"]."cost"], 1)  }}</td>
+                    <td style="background-color: blue;">{{ round($inregions[$region->id][$value["p_id"]."kg"], 1) }}</td>
+                    <td style="background-color: blue;">{{ round($inregions[$region->id][$value["p_id"]."cost"], 1) }}</td>
+                    <td style="background-color: blue;">{{ round($inregions[$region->id][$value["p_id"]."kg"] * $inregions[$region->id][$value["p_id"]."cost"], 1)  }}</td>
                 @else
-                    <td>0</td>
-                    <td>0</td>
-                    <td>0</td>
+                    <td style="background-color: blue;">0</td>
+                    <td style="background-color: blue;">0</td>
+                    <td style="background-color: blue;">0</td>
                 @endif
                 @endforeach
                 <?php 
