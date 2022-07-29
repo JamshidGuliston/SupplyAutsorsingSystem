@@ -732,6 +732,7 @@ class AccountantController extends Controller
             if(!isset($incomes[$product->product_id])){
                 // $alladd[$t++.'id'] = $row->product_id;
                 $incomes[$product->product_id]['weight'] = 0;
+                $incomes[$product->product_id]['minusweight'] = 0;
                 $incomes[$product->product_id]['p_cost'] = 0;
                 $incomes[$product->product_id]['p_id'] = $product->product_id;
                 $incomes[$product->product_id]['p_sum'] = 0;
@@ -745,6 +746,16 @@ class AccountantController extends Controller
             $incomes[$product->product_id]['count'] += 1;
         }
 
+        $minuslarch = order_product_structure::where('order_products.day_id', '>=', $daysofmonth->first()->id)
+                    ->where('order_products.day_id', '<=', $daysofmonth->last()->id)
+                    ->join('order_products', 'order_products.id', '=', 'order_product_structures.order_product_name_id')
+                    ->join('products', 'products.id', '=', 'order_product_structures.product_name_id')
+                    ->join('sizes', 'sizes.id', '=', 'products.size_name_id')
+                    ->get();
+
+        foreach($minuslarch as $row){
+            $incomes[$row->product_name_id]['minusweight'] += $row->product_weight;
+        }
 
         $regions = Region::all();
         $kindgardens = Kindgarden::all();

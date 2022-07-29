@@ -147,7 +147,7 @@
                 <th>Summa</th>
             @endforeach
             <th>Sotilgan</th>
-            <th>Qoldiq</th>
+            <th colspan="3">Qoldiq</th>
             <th>Summa jami</th>
             <th>Daromad</th>
             <th>Marja %</th>
@@ -187,7 +187,9 @@
                     $plus += round($allsum - $value["p_cost"], 1);
                 ?>
                 <td>{{ round($pay, 1) }}</td>
-                <td>{{ round($value["weight"] - $pay, 1) }}</td>
+                <td>{{ round($value["weight"] - $value["minusweight"], 1) }}</td>
+                <td>{{ round(0, 1) }}</td>
+                <td>{{ round(1, 1) }}</td>
                 <td>{{ round($allsum, 1) }}</td>
                 <td>{{ round($allsum - $value["p_sum"], 1) }}</td>
                 <td>{{ $allsum ? round(($allsum - $value["p_cost"]) / $allsum * 100, 1) : "0" }}</td>
