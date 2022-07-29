@@ -1765,7 +1765,7 @@ class TechnologController extends Controller
             }
         }
         foreach($errors as $row){
-            echo $row->day_id." | ".$row->kingarden_name_d." | ".$row->order_product_id." | ".$row->product_name_id."<br>";
+            echo $row->kingarden_name_d." | ".$row->order_product_id." | ".$row->product_name_id."<br>";
         }
         dd($errors);
         dd("OK");
