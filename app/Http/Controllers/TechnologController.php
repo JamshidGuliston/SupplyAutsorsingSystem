@@ -1747,23 +1747,21 @@ class TechnologController extends Controller
         return redirect()->route('technolog.home');
     }
 
-    public function finding(){
-        $days = Day::where('id', '>=', 122)->orderBy('id', 'DESC')->get();
+    public function finding($day){
+        // $days = Day::where('id', '>=', 122)->orderBy('id', 'DESC')->get();
         $kinds = Kindgarden::all();
         $products = Product::all();
         $errors = [];
         foreach($kinds as $kind){
-            foreach($days as $day){
                 foreach($products as $product){
                     $find = plus_multi_storage::where('kingarden_name_d', $kind->id)
-                            ->where('day_id', $day->id)
+                            ->where('day_id', $day)
                             ->where('shop_id', 0)
                             ->where('product_name_id',  $product->id)
                             ->get();
                     if($find->count() > 1){
                         array_push($errors, $find);
                     }
-                }
             }
         }
         foreach($errors as $row){
