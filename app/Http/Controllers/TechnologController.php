@@ -1767,7 +1767,7 @@ class TechnologController extends Controller
                         $t++;
                     }
 
-                    if($find->count() > 0){
+                    if($find->count() > 1){
                         array_push($errors, $find);
                     }
             }
