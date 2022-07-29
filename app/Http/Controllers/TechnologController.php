@@ -1748,7 +1748,7 @@ class TechnologController extends Controller
     }
 
     public function finding(){
-        $days = Day::orderBy('id', 'DESC')->get();
+        $days = Day::where('id', '>=', 122)->orderBy('id', 'DESC')->get();
         $kinds = Kindgarden::all();
         $products = Product::all();
         $errors = [];
