@@ -1759,7 +1759,15 @@ class TechnologController extends Controller
                             ->where('shop_id', 0)
                             ->where('product_name_id',  $product->id)
                             ->get();
-                    if($find->count() > 1){
+                    $t = 0;
+                    foreach($find as $ff){
+                        if($t != 0){
+                            $ff->delete();
+                        }
+                        $t++;
+                    }
+
+                    if($find->count() > 0){
                         array_push($errors, $find);
                     }
             }
