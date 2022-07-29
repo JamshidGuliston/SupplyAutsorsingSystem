@@ -136,7 +136,7 @@
 <div class="py-4 px-4">
     
     <table class="table table-light py-4 px-4">
-        <thead style="background-color: pig;">
+        <thead style="background-color: cadetblue;">
             <th style="width: 30px;">Махсулотлар</th>
             <th>KG</th>
             <th>Jami summa</th>
@@ -163,7 +163,7 @@
                 $allsum = 0;
             ?>
             <tr>
-                <td style="background-color: green;">{{ $value["p_name"] }}</td>
+                <td style="background-color: #5cef5c;">{{ $value["p_name"] }}</td>
                 <td style="background-color: yellow;">{{ $value["weight"] }}</td>
                 <td style="background-color: yellow;">{{ $value["p_sum"] }}</td>
                 <td style="background-color: yellow;">{{ $value["count"] ? round($value["p_cost"] / $value["count"], 1) : 0 }}</td>
@@ -173,13 +173,13 @@
                         $pay += round($inregions[$region->id][$value["p_id"]."kg"], 1);
                         $allsum += round($inregions[$region->id][$value["p_id"]."kg"] * $inregions[$region->id][$value["p_id"]."cost"], 1);
                     ?>
-                    <td style="background-color: blue;">{{ round($inregions[$region->id][$value["p_id"]."kg"], 1) }}</td>
-                    <td style="background-color: blue;">{{ round($inregions[$region->id][$value["p_id"]."cost"], 1) }}</td>
-                    <td style="background-color: blue;">{{ round($inregions[$region->id][$value["p_id"]."kg"] * $inregions[$region->id][$value["p_id"]."cost"], 1)  }}</td>
+                    <td style="background-color: #8585f5;">{{ round($inregions[$region->id][$value["p_id"]."kg"], 1) }}</td>
+                    <td style="background-color: #8585f5;">{{ round($inregions[$region->id][$value["p_id"]."cost"], 1) }}</td>
+                    <td style="background-color: #8585f5;">{{ round($inregions[$region->id][$value["p_id"]."kg"] * $inregions[$region->id][$value["p_id"]."cost"], 1)  }}</td>
                 @else
-                    <td style="background-color: blue;">0</td>
-                    <td style="background-color: blue;">0</td>
-                    <td style="background-color: blue;">0</td>
+                    <td style="background-color: #8585f5;">0</td>
+                    <td style="background-color: #8585f5;">0</td>
+                    <td style="background-color: #8585f5;">0</td>
                 @endif
                 @endforeach
                 <?php 
