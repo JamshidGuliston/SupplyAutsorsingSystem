@@ -127,8 +127,8 @@ class ChefController extends Controller
         $order = order_product::where('id', $request->orderid)->first();
         $product = order_product_structure::where('order_product_name_id', $request->orderid)->get();
         foreach ($product as $row) {
-            $find = plus_multi_storage::where('kingarden_name_d', $order['kingar_name_id'])
-                                ->where('order_product_id', $order['id'])
+            $find = plus_multi_storage::where('order_product_id', $order['id'])
+                                ->where('kingarden_name_d', $order['kingar_name_id'])
                                 ->where('product_name_id', $row['product_name_id'])
                                 ->get();
             if($find->count() == 0){
