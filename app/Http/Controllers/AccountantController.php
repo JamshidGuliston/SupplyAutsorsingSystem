@@ -910,6 +910,7 @@ class AccountantController extends Controller
         }
 
         $products = Product::join('sizes', 'sizes.id', '=', 'products.size_name_id')
+                ->orderBy('products.sort', 'DESC')
                 ->get(['products.id', 'products.product_name', 'sizes.size_name']);
         
         $html = "<table class='table table-light table-striped table-hover'>
