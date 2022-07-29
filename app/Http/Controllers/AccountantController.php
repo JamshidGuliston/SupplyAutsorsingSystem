@@ -754,15 +754,15 @@ class AccountantController extends Controller
                     ->get();
 
         foreach($minuslarch as $row){
-            if(!isset($incomes[$row->product_id])){
-                $incomes[$row->product_id]['weight'] = 0;
-                $incomes[$row->product_id]['minusweight'] = 0;
-                $incomes[$row->product_id]['p_cost'] = 0;
-                $incomes[$row->product_id]['p_id'] = $row->product_name_id;
-                $incomes[$row->product_id]['p_sum'] = 0;
-                $incomes[$row->product_id]['count'] = 0;
-                $incomes[$row->product_id]['p_name'] = $row->product_name;
-                $incomes[$row->product_id]['p_sort'] = $row->sort;
+            if(!isset($incomes[$row->product_name_id])){
+                $incomes[$row->product_name_id]['weight'] = 0;
+                $incomes[$row->product_name_id]['minusweight'] = 0;
+                $incomes[$row->product_name_id]['p_cost'] = 0;
+                $incomes[$row->product_name_id]['p_id'] = $row->product_name_id;
+                $incomes[$row->product_name_id]['p_sum'] = 0;
+                $incomes[$row->product_name_id]['count'] = 0;
+                $incomes[$row->product_name_id]['p_name'] = $row->product_name;
+                $incomes[$row->product_name_id]['p_sort'] = $row->sort;
             }
             $incomes[$row->product_name_id]['minusweight'] += $row->product_weight;
         }
