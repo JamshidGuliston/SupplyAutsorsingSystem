@@ -163,36 +163,36 @@
                 $allsum = 0;
             ?>
             <tr>
-                <td style="background-color: #5cef5c;">{{ $value["p_name"] }}</td>
-                <td style="background-color: darkseagreen;">{{ $value["weight"] }}</td>
-                <td style="background-color: darkseagreen;">{{ $value["p_sum"] }}</td>
-                <td style="background-color: darkseagreen;">{{ $value["count"] ? round($value["p_cost"] / $value["count"], 1) : 0 }}</td>
+                <td style="background-color: #a7e9a7;">{{ $value["p_name"] }}</td>
+                <td style="background-color: #aed3ae;">{{ $value["weight"] }}</td>
+                <td style="background-color: #aed3ae;">{{ $value["p_sum"] }}</td>
+                <td style="background-color: #aed3ae;">{{ $value["count"] ? round($value["p_cost"] / $value["count"], 1) : 0 }}</td>
                 @foreach($regions as $region)
                 @if(isset($inregions[$region->id][$value["p_id"]."kg"]))
                     <?php 
                         $pay += round($inregions[$region->id][$value["p_id"]."kg"], 1);
                         $allsum += round($inregions[$region->id][$value["p_id"]."kg"] * $inregions[$region->id][$value["p_id"]."cost"], 1);
                     ?>
-                    <td style="background-color: #8585f5;">{{ round($inregions[$region->id][$value["p_id"]."kg"], 1) }}</td>
-                    <td style="background-color: #8585f5;">{{ round($inregions[$region->id][$value["p_id"]."cost"], 1) }}</td>
-                    <td style="background-color: #8585f5;">{{ round($inregions[$region->id][$value["p_id"]."kg"] * $inregions[$region->id][$value["p_id"]."cost"], 1)  }}</td>
+                    <td style="background-color: #aebfd9;">{{ round($inregions[$region->id][$value["p_id"]."kg"], 1) }}</td>
+                    <td style="background-color: #aebfd9;">{{ round($inregions[$region->id][$value["p_id"]."cost"], 1) }}</td>
+                    <td style="background-color: #aebfd9;">{{ round($inregions[$region->id][$value["p_id"]."kg"] * $inregions[$region->id][$value["p_id"]."cost"], 1)  }}</td>
                 @else
-                    <td style="background-color: #8585f5;">0</td>
-                    <td style="background-color: #8585f5;">0</td>
-                    <td style="background-color: #8585f5;">0</td>
+                    <td style="background-color: #aebfd9;">0</td>
+                    <td style="background-color: #aebfd9;">0</td>
+                    <td style="background-color: #aebfd9;">0</td>
                 @endif
                 @endforeach
                 <?php 
                     $allsums += round($allsum, 1);
                     $plus += round($allsum - $value["p_cost"], 1);
                 ?>
-                <td style="background-color: cornflowerblue;">{{ round($pay, 1) }}</td>
-                <td style="background-color: cornflowerblue;">{{ round($allsum, 1) }}</td>
-                <td style="background-color: yellow;">{{ round($value["weight"] - $value["minusweight"], 1) }}</td>
-                <td style="background-color: yellow;">{{ round($mods[$value["p_id"]], 1) }}</td>
-                <td style="background-color: yellow;">{{ round(1, 1) }}</td>
-                <td style="background-color: darkseagreen;">{{ round($allsum - $value["p_sum"], 1) }}</td>
-                <td style="background-color: darkseagreen;">{{ $allsum ? round(($allsum - $value["p_cost"]) / $allsum * 100, 1) : "0" }}</td>
+                <td style="background-color: #86a3d9;">{{ round($pay, 1) }}</td>
+                <td style="background-color: #86a3d9;">{{ round($allsum, 1) }}</td>
+                <td style="background-color: #ffff8e;">{{ round($value["weight"] - $value["minusweight"], 1) }}</td>
+                <td style="background-color: #ffff8e;">{{ round($mods[$value["p_id"]], 1) }}</td>
+                <td style="background-color: #ffff8e;">{{ round($value["weight"] - $value["minusweight"] + $mods[$value["p_id"]], 1) }}</td>
+                <td style="background-color: #aed3ae;">{{ round($allsum - $value["p_sum"], 1) }}</td>
+                <td style="background-color: #aed3ae;">{{ $allsum ? round(($allsum - $value["p_cost"]) / $allsum * 100, 1) : "0" }}</td>
             </tr>
             @endforeach
             <tr>
