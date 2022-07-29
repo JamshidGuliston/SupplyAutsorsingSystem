@@ -1748,7 +1748,28 @@ class TechnologController extends Controller
     }
 
     public function finding(){
-        
+        $days = Day::orderBy('id', 'DESC')->get();
+        $kinds = Kindgarden::all();
+        $products = Product::all();
+        $errors = [];
+        foreach($kinds as $kind){
+            foreach($days as $day){
+                foreach($products as $product){
+                    $find = plus_multi_storage::where('kingarden_name_d', $kind->id)
+                            ->where('day_id', $day->id)
+                            ->where('shop_id', 0)
+                            ->where('product_name_id',  $product->id)
+                            ->get();
+                    if($find->count() > 1){
+                        array_push($errors, $find);
+                    }
+                }
+            }
+        }
+        foreach($errors as $row){
+            echo $row->day_id." | ".$row->kingarden_name_d." | ".$row->order_product_id." | ".$row->product_name_id."<br>";
+        }
+        dd($errors);
         dd("OK");
     }
     //  /////////////////////////////////////////
