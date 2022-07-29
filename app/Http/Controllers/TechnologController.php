@@ -1751,6 +1751,7 @@ class TechnologController extends Controller
         $days = Day::orderBy('id', 'DESC')->get();
         $kinds = Kindgarden::all();
         $products = Product::all();
+        $errors = [];
         foreach($kinds as $kind){
             foreach($days as $day){
                 foreach($products as $product){
@@ -1760,12 +1761,12 @@ class TechnologController extends Controller
                             ->where('product_name_id',  $product->id)
                             ->get();
                     if($find->count() > 1){
-                        echo $find;
+                        array_push($errors, $find);
                     }
                 }
             }
         }
-
+        dd($errors);
         dd("OK");
     }
     //  /////////////////////////////////////////
