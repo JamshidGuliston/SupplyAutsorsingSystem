@@ -753,9 +753,19 @@ class AccountantController extends Controller
                     ->join('sizes', 'sizes.id', '=', 'products.size_name_id')
                     ->get();
 
-        // foreach($minuslarch as $row){
-        //     $incomes[$row->product_name_id]['minusweight'] += $row->product_weight;
-        // }
+        foreach($minuslarch as $row){
+            if(!isset($incomes[$product->product_id])){
+                $incomes[$product->product_id]['weight'] = 0;
+                $incomes[$product->product_id]['minusweight'] = 0;
+                $incomes[$product->product_id]['p_cost'] = 0;
+                $incomes[$product->product_id]['p_id'] = $product->product_id;
+                $incomes[$product->product_id]['p_sum'] = 0;
+                $incomes[$product->product_id]['count'] = 0;
+                $incomes[$product->product_id]['p_name'] = $product->product_name;
+                $incomes[$product->product_id]['p_sort'] = $product->sort;
+            }
+            $incomes[$row->product_name_id]['minusweight'] += $row->product_weight;
+        }
 
         $regions = Region::all();
         $kindgardens = Kindgarden::all();
