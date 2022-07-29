@@ -809,14 +809,14 @@ class AccountantController extends Controller
                 }
             }
         }
-        $this->multimods();
+        $mods = $this->multimods();
         usort($incomes, function ($a, $b){
             if(isset($a["p_sort"]) and isset($b["p_sort"])){
                 return $a["p_sort"] > $b["p_sort"];
             }
         });
 
-        return view('accountant.income', compact('incomes', 'inregions', 'months', 'id', 'regions'));
+        return view('accountant.income', compact('incomes', 'inregions', 'months', 'id', 'regions', 'mods'));
     }
 
     public function bigbase(Request $request)
@@ -1036,7 +1036,7 @@ class AccountantController extends Controller
             }
         }
 
-        dd($plusproducts);
+        return $mods;
     }
 
 }

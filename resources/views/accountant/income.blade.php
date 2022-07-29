@@ -188,7 +188,7 @@
                 ?>
                 <td>{{ round($pay, 1) }}</td>
                 <td>{{ round($value["weight"] - $value["minusweight"], 1) }}</td>
-                <td>{{ round(0, 1) }}</td>
+                <td>{{ round($mods[$value["p_id"]], 1) }}</td>
                 <td>{{ round(1, 1) }}</td>
                 <td>{{ round($allsum, 1) }}</td>
                 <td>{{ round($allsum - $value["p_sum"], 1) }}</td>
