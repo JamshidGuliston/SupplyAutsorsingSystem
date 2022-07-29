@@ -166,7 +166,7 @@
                 <td>{{ $value["p_name"] }}</td>
                 <td>{{ $value["weight"] }}</td>
                 <td>{{ $value["p_sum"] }}</td>
-                <td>{{ round($value["p_cost"] / $value["count"], 1) }}</td>
+                <td>{{ $value["count"] ? round($value["p_cost"] / $value["count"], 1) : 0 }}</td>
                 @foreach($regions as $region)
                 @if(isset($inregions[$region->id][$value["p_id"]."kg"]))
                     <?php 
