@@ -809,7 +809,7 @@ class AccountantController extends Controller
                 }
             }
         }
-        
+        $this->multimods();
         usort($incomes, function ($a, $b){
             if(isset($a["p_sort"]) and isset($b["p_sort"])){
                 return $a["p_sort"] > $b["p_sort"];
@@ -973,6 +973,70 @@ class AccountantController extends Controller
             ";
         
         return $html;
+    }
+
+    public function multimods(){
+        $kinds = Kindgarden::all();
+        $mods = [];
+        $days = $this->activmonth();
+        $plusproducts = [];
+        $minusproducts = [];
+        foreach($kinds as $kind){
+            foreach($days as $day){
+                $plus = plus_multi_storage::where('day_id', $day->id)
+                    ->where('kingarden_name_d', $kind->id)
+                    ->join('products', 'plus_multi_storages.product_name_id', '=', 'products.id')
+                    ->get([
+                        'plus_multi_storages.id',
+                        'plus_multi_storages.product_name_id',
+                        'plus_multi_storages.day_id',
+                        'plus_multi_storages.kingarden_name_d',
+                        'plus_multi_storages.product_weight',
+                        'products.product_name',
+                        'products.size_name_id',
+                        'products.div',
+                        'products.sort'
+                    ]);
+                foreach($plus as $row){
+                    if(!isset($plusproducts[$row->product_name_id])){
+                        $plusproducts[$row->product_name_id] = 0;
+                    }
+                    $plusproducts[$row->product_name_id] += $row->product_weight;
+                }
+
+                $minus = minus_multi_storage::where('day_id', $day->id)
+                    ->where('kingarden_name_id', $kind->id)
+                    ->join('products', 'minus_multi_storages.product_name_id', '=', 'products.id')
+                    ->get([
+                        'minus_multi_storages.id',
+                        'minus_multi_storages.product_name_id',
+                        'minus_multi_storages.day_id',
+                        'minus_multi_storages.kingarden_name_id',
+                        'minus_multi_storages.product_weight',
+                        'products.product_name',
+                        'products.size_name_id',
+                        'products.div',
+                        'products.sort'
+                    ]);
+                foreach($minus as $row){
+                    if(!isset($minusproducts[$row->product_name_id])){
+                        $minusproducts[$row->product_name_id] = 0;
+                    }
+                    $minusproducts[$row->product_name_id] += $row->product_weight;
+                }
+            }
+        }
+
+        foreach($minusproducts as $key => $value){
+            if(!isset($plusproducts[$key])){
+                $mods[$key] = 0;
+            }
+            else{
+                $mods[$key] = $plusproducts[$key] - $value;
+            }
+        }
+
+        dd($mods);
     }
 
 }
