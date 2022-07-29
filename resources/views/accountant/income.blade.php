@@ -137,20 +137,20 @@
     
     <table class="table table-light py-4 px-4">
         <thead>
-            <th style="background-color: cadetblue; width: 30px;">Махсулотлар</th>
-            <th style="background-color: cadetblue;">KG</th>
-            <th style="background-color: cadetblue;">Jami summa</th>
-            <th style="background-color: cadetblue;">O'rtacha narx</th>
+            <th style="background-color: #92e1e1; width: 30px;">Махсулотлар</th>
+            <th style="background-color: #92e1e1;">KG</th>
+            <th style="background-color: #92e1e1;">Jami summa</th>
+            <th style="background-color: #92e1e1;">O'rtacha narx</th>
             @foreach($regions as $region)
-                <th style="background-color: cadetblue;">{{ $region->region_name }}</th>
-                <th style="background-color: cadetblue;">O'tkazish</th>
-                <th style="background-color: cadetblue;">Summa</th>
+                <th style="background-color: #92e1e1;">{{ $region->region_name }}</th>
+                <th style="background-color: #92e1e1;">O'tkazish</th>
+                <th style="background-color: #92e1e1;">Summa</th>
             @endforeach
-            <th style="background-color: cadetblue;">Sotilgan</th>
-            <th style="background-color: cadetblue;">Summa jami</th>
-            <th colspan="3" style="background-color: cadetblue;">Qoldiq</th>
-            <th style="background-color: cadetblue;">Daromad</th>
-            <th style="background-color: cadetblue;">Marja %</th>
+            <th style="background-color: #92e1e1;">Sotilgan</th>
+            <th style="background-color: #92e1e1;">Summa jami</th>
+            <th colspan="3" style="background-color: #92e1e1;">Qoldiq</th>
+            <th style="background-color: #92e1e1;">Daromad</th>
+            <th style="background-color: #92e1e1;">Marja %</th>
         </thead>
         <tbody>
             <?php
@@ -191,13 +191,13 @@
                 <td style="background-color: #ffff8e;">{{ round($value["weight"] - $value["minusweight"], 1) }}</td>
                 <td style="background-color: #ffff8e;">{{ round($mods[$value["p_id"]], 1) }}</td>
                 <td style="background-color: #ffff8e;">{{ round($value["weight"] - $value["minusweight"] + $mods[$value["p_id"]], 1) }}</td>
-                <td style="background-color: #aed3ae;">{{ round($allsum - $value["p_sum"], 1) }}</td>
-                <td style="background-color: #aed3ae;">{{ $allsum ? round(($allsum - $value["p_cost"]) / $allsum * 100, 1) : "0" }}</td>
+                <td style="background-color: #f5c390;">{{ round($allsum - $value["p_sum"], 1) }}</td>
+                <td style="background-color: #f5c390;">{{ $allsum ? round(($allsum - $value["p_cost"]) / $allsum * 100, 1) : "0" }}</td>
             </tr>
             @endforeach
             <tr>
                 <td><b>JAMI:</b></td>
-                <td colspan="{{ count($regions)*3 + 5 }}"></td>
+                <td colspan="{{ count($regions)*3 + 7 }}"></td>
                 <td>{{ round($allsums) }}</td>
                 <td>{{ round($plus) }}</td>
                 <td>{{ round(round($plus) / round($allsums) * 100, 1) }}</td>
