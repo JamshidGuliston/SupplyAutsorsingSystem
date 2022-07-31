@@ -82,7 +82,7 @@
 						<a href="#">
 							<i class="fas fa-store-alt" style="color: dodgerblue; font-size: 18px;"></i>
 						</a>
-						<b>Sana: "_____".<?php printf('%02d', $days[0]->month_id) ?>. 2022 / {{ $kindgar->kingar_name }}</b>
+						<b>Sana: "_____".<?php printf('%02d', $days[0]->month_id) ?>. 2022 / {{ $kindgar->kingar_name." / Ходимлар" }}</b>
 					</div>
                 </div>
                 <table style="width:100%; table-layout: fixed;">

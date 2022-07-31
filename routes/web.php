@@ -204,6 +204,7 @@ Route::group(['prefix' => 'accountant', 'middleware' => ['isAccountant', 'auth']
     Route::get('reportsworker', [AccountantController::class, 'reportsworker'])->name('accountant.reportsworker');
     Route::get('kindreportworker/{id}', [AccountantController::class, 'kindreportworker'])->name('accountant.kindreportworker');
     Route::get('nakapitworker/{id}/{ageid}/{start}/{end}/{costid}', [AccountantController::class, 'nakapitworker'])->name('accountant.nakapitworker');
+    Route::get('schotfakturworker/{id}/{ageid}/{start}/{end}/{costid}', [AccountantController::class, 'schotfakturworker'])->name('accountant.schotfakturworker');
 
     Route::get('svodworkers', [AccountantController::class, 'svodworkers'])->name('accountant.svodworkers');
     // Daromad
