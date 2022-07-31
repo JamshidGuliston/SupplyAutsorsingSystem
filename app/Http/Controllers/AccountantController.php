@@ -135,6 +135,13 @@ class AccountantController extends Controller
         return view('accountant.reports', compact('days', 'kinds', 'regions'));
     }
 
+    public function reportsworker(Request $request){
+        $kinds = Kindgarden::all();
+        $regions = Region::all();
+        $days = $this->activyear();
+        return view('accountant.reportsworker', compact('days', 'kinds', 'regions'));
+    }
+
     public function narxselect(Request $request, $region_id){
 
         $costsdays = bycosts::where('region_name_id', $region_id)
