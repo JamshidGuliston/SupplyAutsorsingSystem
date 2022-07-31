@@ -741,7 +741,7 @@ class AccountantController extends Controller
                 $incomes[$product->product_id]['p_sort'] = $product->sort;
             }
             $incomes[$product->product_id]['weight'] += $product->weight;
-            $incomes[$product->product_id]['p_sum'] = $product->cost * $product->weight;
+            $incomes[$product->product_id]['p_sum'] += $product->cost * $product->weight;
             $incomes[$product->product_id]['p_cost'] += $product->cost;
             $incomes[$product->product_id]['count'] += 1;
         }
