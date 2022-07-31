@@ -190,55 +190,11 @@
         var kindid = document.getElementById("kind").value; 
         var div = $('.urlpdf');
         if(start != "" && end != "" && cost != ""){
-            var html = "4-7 ёшли<br><p>Накапител: <a href='/accountant/nakapit/"+kindid+"/"+1+"/"+start+"/"+end+"/"+cost+"' target='_blank' ><i class='far fa-file-pdf text-info' style='cursor: pointer; margin-right: 16px;'></i></a> <a href='/accountant/nakapitexcel/"+kindid+"/"+1+"/"+start+"/"+end+"/"+cost+"' target='_blank' ><i class='far fa-file-excel text-info' style='cursor: pointer; margin-right: 16px;'></i></a> Cчёт фактура: <a href='/accountant/schotfaktur/"+kindid+"/"+1+"/"+start+"/"+end+"/"+cost+"' target='_blank' ><i class='far fa-file-pdf text-info' style='cursor: pointer; margin-right: 16px;'></i></a> <a href='/accountant/schotfakturexcel/"+kindid+"/"+1+"/"+start+"/"+end+"/"+cost+"' target='_blank' ><i class='far fa-file-excel text-info' style='cursor: pointer; margin-right: 16px;'></i></a> Меёр: <a href='/accountant/norm/"+kindid+"/"+1+"/"+start+"/"+end+"/"+cost+"' target='_blank' ><i class='far fa-file-pdf text-info' style='cursor: pointer; margin-right: 16px;'></i></a> <a href='/accountant/normexcel/"+kindid+"/"+1+"/"+start+"/"+end+"/"+cost+"' target='_blank' ><i class='far fa-file-excel text-info' style='cursor: pointer; margin-right: 16px;'></i></a></p>";
-            html += "3-4 ёшли <br><p>Накапител: <a href='/accountant/nakapit/"+kindid+"/"+2+"/"+start+"/"+end+"/"+cost+"' target='_blank' ><i class='far fa-file-pdf text-info' style='cursor: pointer; margin-right: 16px;'></i></a> <a href='/accountant/nakapitexcel/"+kindid+"/"+2+"/"+start+"/"+end+"/"+cost+"' target='_blank' ><i class='far fa-file-excel text-info' style='cursor: pointer; margin-right: 16px;'></i></a> Cчёт фактура: <a href='/accountant/schotfaktur/"+kindid+"/"+2+"/"+start+"/"+end+"/"+cost+"' target='_blank' ><i class='far fa-file-pdf text-info' style='cursor: pointer; margin-right: 16px;'></i></a> <a href='/accountant/schotfakturexcel/"+kindid+"/"+2+"/"+start+"/"+end+"/"+cost+"' target='_blank' ><i class='far fa-file-excel text-info' style='cursor: pointer; margin-right: 16px;'></i></a> Меёр: <a href='/accountant/norm/"+kindid+"/"+2+"/"+start+"/"+end+"/"+cost+"' target='_blank' ><i class='far fa-file-pdf text-info' style='cursor: pointer; margin-right: 16px;'></i></a> <a href='/accountant/normexcel/"+kindid+"/"+2+"/"+start+"/"+end+"/"+cost+"' target='_blank' ><i class='far fa-file-excel text-info' style='cursor: pointer; margin-right: 16px;'></i></a></p>";
-            html += "Қисқа гурух<br><p> Накапител: <a href='/accountant/nakapit/"+kindid+"/"+3+"/"+start+"/"+end+"/"+cost+"' target='_blank' ><i class='far fa-file-pdf text-info' style='cursor: pointer; margin-right: 16px;'></i></a> <a href='/accountant/nakapitexcel/"+kindid+"/"+3+"/"+start+"/"+end+"/"+cost+"' target='_blank' ><i class='far fa-file-excel text-info' style='cursor: pointer; margin-right: 16px;'></i></a> Cчёт фактура: <a href='/accountant/schotfaktur/"+kindid+"/"+3+"/"+start+"/"+end+"/"+cost+"' target='_blank' ><i class='far fa-file-pdf text-info' style='cursor: pointer; margin-right: 16px;'></i></a> <a href='/accountant/schotfakturexcel/"+kindid+"/"+3+"/"+start+"/"+end+"/"+cost+"' target='_blank' ><i class='far fa-file-excel text-info' style='cursor: pointer; margin-right: 16px;'></i></a> Меёр: <a href='/accountant/norm/"+kindid+"/"+3+"/"+start+"/"+end+"/"+cost+"' target='_blank' ><i class='far fa-file-pdf text-info' style='cursor: pointer; margin-right: 16px;'></i></a> <a href='/accountant/normexcel/"+kindid+"/"+3+"/"+start+"/"+end+"/"+cost+"' target='_blank' ><i class='far fa-file-excel text-info' style='cursor: pointer; margin-right: 16px;'></i></a></p>";
-            html += "Умумий фактура<br><p> Cчёт фактура: <a href='/accountant/allschotfaktur/"+kindid+"/"+start+"/"+end+"/"+cost+"' target='_blank' ><i class='far fa-file-pdf text-info' style='cursor: pointer; margin-right: 16px;'></i></a> <a href='/accountant/allschotfakturexcel/"+kindid+"/"+start+"/"+end+"/"+cost+"' target='_blank' ><i class='far fa-file-excel text-info' style='cursor: pointer; margin-right: 16px;'></i></a>";
+            var html = "Ходимлар <br><p>Накапител: <a href='/accountant/nakapit/"+kindid+"/"+1+"/"+start+"/"+end+"/"+cost+"' target='_blank' ><i class='far fa-file-pdf text-info' style='cursor: pointer; margin-right: 16px;'></i></a> <a href='/accountant/nakapitexcel/"+kindid+"/"+1+"/"+start+"/"+end+"/"+cost+"' target='_blank' ><i class='far fa-file-excel text-info' style='cursor: pointer; margin-right: 16px;'></i></a> Cчёт фактура: <a href='/accountant/schotfaktur/"+kindid+"/"+1+"/"+start+"/"+end+"/"+cost+"' target='_blank' ><i class='far fa-file-pdf text-info' style='cursor: pointer; margin-right: 16px;'></i></a> <a href='/accountant/schotfakturexcel/"+kindid+"/"+1+"/"+start+"/"+end+"/"+cost+"' target='_blank' ><i class='far fa-file-excel text-info' style='cursor: pointer; margin-right: 16px;'></i></a>";
 
             div.html(html);
         }
     }
-    $('.edites').click(function() {
-        var regid = $(this).attr('data-regionid');
-        var dayid = $(this).attr('data-dayid');
-        var prodid = $(this).attr('data-prodid');
-        var kg = $(this).attr('data-weight');
-        var div = $('.wor_countedit');
-        div.html("<input type='hidden' name='prodid' class='form-control' value="+prodid+"><input type='hidden' name='regid' class='form-control' value="+regid+"><input type='hidden' name='dayid' class='form-control' value="+dayid+"><input type='text' name='kg' class='form-control' value="+kg+">");
-        // title.html("<p>"+kn+"</p><input type='hidden' name='kingid' class='' value="+king+">");
-    });
 
-    $('.ch_countedit').click(function() {
-        var nextrow = $(this).attr('data-nextrow-id');
-        var chc = $(this).attr('data-child-count');
-        var kn = $(this).attr('data-kinga-name');
-        var temprow = $(this).attr('data-temprow-id');
-        var tempchild = $(this).attr('data-tempchild-count');
-        var div1 = $('.chil_countedit');
-        var div2 = $('.temp_count');
-        var title = $('.childrentitle');
-        title.html("<p>"+kn+"</p><input type='hidden' name='nextrow' class='' value="+nextrow+"><input type='hidden' name='temprow' class='' value="+temprow+">");
-        div1.html("<input type='number' name='agecount' class='form-control' value="+chc+">");
-        div2.html("<br><p style='color: red'>Xabarnoma: <i class='far fa-envelope' style='color: #c40c0c'></i> "+tempchild+"</p>");
-    });
-
-    $('.next_menu').click(function() {
-        var nextmenu = $(this).attr('data-nextmenu-id');
-        var nextrow = $(this).attr('data-nextrow-count');
-        var king = $(this).attr('data-king-name');
-        var div = $('.menutitle');
-        var select = $('.menu_select');
-        div.html("<p>"+king+"</p><input type='hidden' name='nextrow' class='' value="+nextrow+">");
-        $.ajax({
-            method: "GET",
-            url: '/technolog/fornextmenuselect',
-            data: {
-                'menuid': nextmenu,
-            },
-            success: function(data) {
-                select.html(data);
-            }
-        })
-    });
 </script>
 @endsection
