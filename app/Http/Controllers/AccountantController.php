@@ -690,6 +690,11 @@ class AccountantController extends Controller
         $costs = bycosts::where('day_id', $costid)->where('region_name_id', Kindgarden::where('id', $id)->first()->region_id)
                 ->orderBy('day_id', 'DESC')->get();
         
+        foreach($costs as $cost){
+            if(isset($nakproducts[$cost->praduct_name_id]['product_name'])){
+                $nakproducts[$cost->praduct_name_id][0] = $cost->price_cost;
+            }
+        }
         
         $costsdays = bycosts::where('region_name_id', Kindgarden::where('id', $id)->first()->region_id)
                     ->join('days', 'bycosts.day_id', '=', 'days.id')
