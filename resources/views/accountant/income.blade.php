@@ -148,6 +148,7 @@
             @endforeach
             <th style="background-color: #92e1e1;">Sotilgan</th>
             <th style="background-color: #92e1e1;">Summa jami</th>
+            <th style="background-color: #92e1e1;">Farqi</th>
             <th colspan="3" style="background-color: #92e1e1;">Qoldiq</th>
             <th style="background-color: #92e1e1;">Summa</th>
             <th style="background-color: #92e1e1;">Daromad</th>
@@ -189,11 +190,12 @@
                 ?>
                 <td style="background-color: #86a3d9;">{{ round($pay, 1) }}</td>
                 <td style="background-color: #86a3d9;">{{ round($allsum, 1) }}</td>
+                <td style="background-color: #86a3d9;">{{ round($allsum - $value["p_sum"], 1) }}</td>
                 <td style="background-color: #ffff8e;">{{ round($value["weight"] - $value["minusweight"], 1) }}</td>
                 <td style="background-color: #ffff8e;">{{ round($mods[$value["p_id"]], 1) }}</td>
                 <td style="background-color: #ffff8e;">{{ round($value["weight"] - $value["minusweight"] + $mods[$value["p_id"]], 1) }}</td>
                 <td style="background-color: #ffff8e;">{{ round(($value["weight"] - $value["minusweight"] + $mods[$value["p_id"]]) * ($value["count"] ? round($value["p_cost"] / $value["count"], 1) : 0), 1) }}</td>
-                <td style="background-color: #f5c390;">{{ round($allsum - $value["p_sum"], 1) }}</td>
+                <td style="background-color: #f5c390;">{{ round(($allsum - $value["p_sum"]) + ($value["weight"] - $value["minusweight"] + $mods[$value["p_id"]]) * ($value["count"] ? round($value["p_cost"] / $value["count"], 1) : 0), 1) }}</td>
                 <td style="background-color: #f5c390;">{{ $allsum ? round(($allsum - $value["p_cost"]) / $allsum * 100, 1) : "0" }}</td>
             </tr>
             @endforeach
