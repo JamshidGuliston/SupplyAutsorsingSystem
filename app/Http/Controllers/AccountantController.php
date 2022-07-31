@@ -732,14 +732,14 @@ class AccountantController extends Controller
                 $foods = titlemenu_food::where('day_id', $day->id-1)->get();
                 foreach($foods as $food){
                     $join = Number_children::where('number_childrens.day_id', $day->id)
-                        ->where('kingar_name_id', $row_id)
-                        ->where('king_age_name_id', $food->worker_age_id)
+                        ->where('number_childrens.kingar_name_id', $row_id)
+                        ->where('number_childrens.king_age_name_id', $food->worker_age_id)
                         ->leftjoin('active_menus', function($join){
                             $join->on('number_childrens.kingar_menu_id', '=', 'active_menus.title_menu_id');
                         })
                         ->where('active_menus.day_id', $day->id)
-                        ->where('active_menus.	age_range_id', $day->id)
-                        ->where('active_menus.menu_food_id', $food->worker_age_id)
+                        ->where('active_menus.age_range_id', $food->worker_age_id)
+                        ->where('active_menus.menu_food_id', $food->food_id)
                         ->join('products', 'active_menus.product_name_id', '=', 'products.id')
                         ->join('sizes', 'products.size_name_id', '=', 'sizes.id')
                         ->get();
