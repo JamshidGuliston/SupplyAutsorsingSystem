@@ -203,6 +203,7 @@ Route::group(['prefix' => 'accountant', 'middleware' => ['isAccountant', 'auth']
     // hisobot ishchi xodimlar 
     Route::get('reportsworker', [AccountantController::class, 'reportsworker'])->name('accountant.reportsworker');
     Route::get('kindreportworker/{id}', [AccountantController::class, 'kindreportworker'])->name('accountant.kindreportworker');
+    Route::get('nakapitworker/{id}/{ageid}/{start}/{end}/{costid}', [AccountantController::class, 'nakapitworker'])->name('accountant.nakapitworker');
 
     Route::get('svodworkers', [AccountantController::class, 'svodworkers'])->name('accountant.svodworkers');
     // Daromad
