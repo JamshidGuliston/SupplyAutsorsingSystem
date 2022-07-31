@@ -96,13 +96,13 @@
         <div class="col-md-9">
         </div>
         <div class="col-md-3">
-            <button class="btn btn-info" data-bs-toggle="modal" data-bs-target="#modalsettings">Svod</button>
+            <button class="btn btn-info" data-bs-toggle="modal" data-bs-target="#modalsettings">Umumiy Svod</button>
         </div>
         @foreach($kinds as $item)
         <div class="col-md-3">
             <div class="p-3 bg-white shadow-sm d-flex justify-content-around align-items-center rounded">
                 <div>
-                    <a href="kindreport/{{ $item->id }}" class="list-group-item-action bg-transparent first-text fw-bold" class="fs-5" data-garden-id="{{ $item->id }}" style="color: #6ac3de;">{{$item->kingar_name}}</a>
+                    <a href="kindreportworker/{{ $item->id }}" class="list-group-item-action bg-transparent first-text fw-bold" class="fs-5" data-garden-id="{{ $item->id }}" style="color: #6ac3de;">{{$item->kingar_name}}</a>
                     <div class="user-box">
                     </div>
                 </div>
