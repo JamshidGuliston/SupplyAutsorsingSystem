@@ -439,7 +439,7 @@ class StorageController extends Controller
             $il = Month::where('month_active', 1)->first()->id;
         }
         $start = $this->activmonth($il);
-        $days = $this->activyear($id);
+        $days = $this->activyear($il);
         $group = Add_group::where('day_id', '>=', $start->first()->id)->where('day_id', '<=', $start->last()->id)
                 ->join('days', 'days.id', '=', 'add_groups.day_id')
                 ->join('months', 'months.id', '=', 'days.month_id')
