@@ -696,7 +696,7 @@ class AccountantController extends Controller
                 $nakproducts[$cost->praduct_name_id][0] = $cost->price_cost;
             }
         }
-
+        dd($nakproducts);
         $costsdays = bycosts::where('region_name_id', Kindgarden::where('id', $id)->first()->region_id)
                     ->join('days', 'bycosts.day_id', '=', 'days.id')
                     ->join('years', 'days.year_id', '=', 'years.id')
