@@ -736,10 +736,10 @@ class AccountantController extends Controller
                         ->where('king_age_name_id', $food->worker_age_id)
                         ->leftjoin('active_menus', function($join){
                             $join->on('number_childrens.kingar_menu_id', '=', 'active_menus.title_menu_id');
-                            $join->on('number_childrens.king_age_name_id', '=', '1');
                         })
                         ->where('active_menus.day_id', $day->id)
-                        ->where('active_menus.menu_food_id', $food->food_id)
+                        ->where('active_menus.	age_range_id', $day->id)
+                        ->where('active_menus.menu_food_id', $food->worker_age_id)
                         ->join('products', 'active_menus.product_name_id', '=', 'products.id')
                         ->join('sizes', 'products.size_name_id', '=', 'sizes.id')
                         ->get();
