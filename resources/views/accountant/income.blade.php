@@ -190,7 +190,7 @@
                 ?>
                 <td style="background-color: #86a3d9;">{{ round($pay, 1) }}</td>
                 <td style="background-color: #86a3d9;">{{ round($allsum, 1) }}</td>
-                <td style="background-color: #86a3d9;">{{ round($allsum - $value["p_sum"], 1) }}</td>
+                <td style="background-color: #7bc264;">{{ round($allsum - $value["p_sum"], 1) }}</td>
                 <td style="background-color: #ffff8e;">{{ round($value["weight"] - $value["minusweight"], 1) }}</td>
                 <td style="background-color: #ffff8e;">{{ round($mods[$value["p_id"]], 1) }}</td>
                 <td style="background-color: #ffff8e;">{{ round($value["weight"] - $value["minusweight"] + $mods[$value["p_id"]], 1) }}</td>
