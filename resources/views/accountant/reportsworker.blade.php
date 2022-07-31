@@ -93,9 +93,9 @@
     </div>
 
     <div class="row g-3 my-2">
-        <div class="col-md-6">
+        <div class="col-md-9">
         </div>
-        <div class="col-md-6">
+        <div class="col-md-3">
             <button class="btn btn-info" data-bs-toggle="modal" data-bs-target="#modalsettings">Svod</button>
         </div>
         @foreach($kinds as $item)
