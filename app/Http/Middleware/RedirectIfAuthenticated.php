@@ -26,7 +26,7 @@ class RedirectIfAuthenticated
             //     return redirect(RouteServiceProvider::HOME);
             // }
             if(Auth::guard($guard)->check() and auth()->user()->role_id == 4){
-                return redirect()->route('storage.home');
+                return redirect()->route('storage.home', ['id' => 0]);
             }
             elseif(Auth::guard($guard)->check() and auth()->user()->role_id == 3){
                 return redirect()->route('technolog.home');
