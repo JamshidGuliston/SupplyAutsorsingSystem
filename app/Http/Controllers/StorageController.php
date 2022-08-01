@@ -99,7 +99,7 @@ class StorageController extends Controller
         });
 
         $months = Month::all();
-        return view('storage.home', ['products' => $alladd, 'month_id' => $month_id]);
+        return view('storage.home', ['months' => $months, 'products' => $alladd, 'month_id' => $month_id]);
     }
 
     public function addproductform(Request $request){
