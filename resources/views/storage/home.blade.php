@@ -58,7 +58,7 @@
     <div class="year">2022</div>
     <div class="month">
         @foreach($months as $month)
-            <a href="/storage/addedproducts/{{ $month->id }}" class="month__item {{ (Request::is('storage/addedproducts/'.$month->id) or ($month->month_active == 1 and $id == 0)) ? 'active' : null }}">{{ $month->month_name }}</a>
+            <a href="/storage/home/{{ $month->id }}" class="month__item {{ (Request::is('storage/home/'.$month->id) or ($month->month_active == 1 and $id == 0)) ? 'active' : null }}">{{ $month->month_name }}</a>
         @endforeach
     </div>
 </div>
