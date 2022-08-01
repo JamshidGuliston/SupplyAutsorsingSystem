@@ -97,6 +97,8 @@ class StorageController extends Controller
                 return $a["p_sort"] > $b["p_sort"];
             }
         });
+
+        $months = Month::all();
         return view('storage.home', ['products' => $alladd, 'month_id' => $month_id]);
     }
 
