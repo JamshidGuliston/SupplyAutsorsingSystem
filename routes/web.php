@@ -53,7 +53,7 @@ $globalroutes =  function () {
 };
 
 Route::group(['prefix' => 'storage', 'middleware' => ['isStorage', 'auth']], function () {
-    Route::get('home/{id}', [StorageController::class, 'index'])->name('storage.home');
+    Route::get('home/{id = 0}', [StorageController::class, 'index'])->name('storage.home');
     Route::get('addproductform', [StorageController::class, 'addproductform'])->name('storage.addproductform');
     Route::post('addproducts', [StorageController::class, 'addproducts'])->name('storage.addproducts');
     Route::post('addproduct', [StorageController::class, 'addproduct'])->name('storage.addproduct');
