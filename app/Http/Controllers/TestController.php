@@ -984,14 +984,14 @@ class TestController extends Controller
 					->where('product_name_id', $pid)
 					->get();
 				if($mod->count() == 0 and $value >= 0){
-					plus_multi_storage::create([
-						'day_id' => $firstday->id,
-						'shop_id' => -1,
-						'kingarden_name_d' => $kid,
-						'order_product_id' => -1,
-						'product_name_id' => $pid,
-						'product_weight' => $value,
-					]);
+					// plus_multi_storage::create([
+					// 	'day_id' => $firstday->id,
+					// 	'shop_id' => -1,
+					// 	'kingarden_name_d' => $kid,
+					// 	'order_product_id' => -1,
+					// 	'product_name_id' => $pid,
+					// 	'product_weight' => $value,
+					// ]);
 				}
 			}
 		}
@@ -1002,7 +1002,7 @@ class TestController extends Controller
 		$stor = plus_multi_storage::all();
 		foreach($stor as $row){
 			if($row->day_id == 21 and $row->order_product_id == -1){
-				plus_multi_storage::where('id', $row->id)->delete();
+				// plus_multi_storage::where('id', $row->id)->delete();
 			}
 			else{
 				$yes[$row->day_id][$row->kingarden_name_d][$row->product_name_id][$row->product_weight] = 1;

@@ -1478,14 +1478,14 @@ class TechnologController extends Controller
     // end chif
     public function productshoptogarden(Request $request){
         // dd($request->all());
-        plus_multi_storage::create([
-            'day_id' => $request->dayid,
-            'shop_id' => $request->shopname,
-            'kingarden_name_d' => $request->mtmname,
-            'order_product_id' => 0,
-            'product_name_id' => $request->productid,
-            'product_weight' => $request->weight
-        ]);
+        // plus_multi_storage::create([
+        //     'day_id' => $request->dayid,
+        //     'shop_id' => $request->shopname,
+        //     'kingarden_name_d' => $request->mtmname,
+        //     'order_product_id' => 0,
+        //     'product_name_id' => $request->productid,
+        //     'product_weight' => $request->weight
+        // ]);
 
         return redirect()->route('technolog.addshopproduct', $request->dayid);
     }
