@@ -209,6 +209,9 @@
             id = $(this).attr('data-produc-id');
             // console.log(id)
         })
+        $('.fa-undo').click(function() {
+            id = $(this).attr('data-produc-id');
+        })
         $('#sendpass').click(function() {
             var g = id;
             var pass = $('#passw').val();
@@ -232,7 +235,7 @@
         });
 
         $('#backpass').click(function() {
-            var g = $(this).attr('fa-undo');
+            var g = id;
             var pass = $('#bpassword').val();
             var h = $('#bsucc');
             $.ajax({
