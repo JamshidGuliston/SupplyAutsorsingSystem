@@ -136,11 +136,11 @@
                 <td>{{$order['kingar_name']}}</td>
                 <td>
                     @if($order['document_processes_id'] == 3)
-                    <a href="/storage/orderitem/{{$order['id']}}">{{$order['order_title']}}</a>
+                        <a href="/storage/orderitem/{{$order['id']}}">{{$order['order_title']}}</a>
+                    @else
+                    {{$order['order_title']}}
+                    @endif
                 </td>
-                @else
-                {{$order['order_title']}}
-                @endif
                 <td>
                     @foreach($products as $item)
                     @if($item->order_product_name_id == $order->id)
@@ -172,7 +172,7 @@
                     @elseif($order['document_processes_id'] == 3)
                         <i class="far fa-paper-plane" data-produc-id="{{$order['id']}}" data-bs-toggle="modal" data-bs-target="#Modaldelete" style="cursor: pointer; margin-left: 16px; color: deepskyblue"></i>
                     @elseif($order['document_processes_id'] == 4)
-                    <i class="fas fa-clipboard-check"></i>
+                        <i class="far fa-undo" data-produc-id="{{$order['id']}}" data-bs-toggle="modal" data-bs-target="#Modaldelete" style="cursor: pointer; margin-left: 16px; color: deepskyblue"></i>
                     @endif
                 </td>
             </tr>

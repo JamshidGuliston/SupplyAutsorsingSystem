@@ -55,7 +55,7 @@
 @endsection
 @section('content')
 <div class="date">
-    <div class="year">2022</div>
+    <!-- <div class="year">2022</div> -->
     <div class="month">
         @foreach($months as $month)
             <a href="/storage/home/{{ $month->id }}" class="month__item {{ (Request::is('storage/home/'.$month->id) or ($month->month_active == 1 and $id == 0)) ? 'active' : null }}">{{ $month->month_name }}</a>
