@@ -610,4 +610,17 @@ class StorageController extends Controller
         }
         return $result;
     }
+
+    public function backcontrolpassword(Request $request){
+        $password = Auth::user()->password;
+        if (Hash::check($request->password, $password)) {
+            $result = 1;
+            order_product::where('id', $request->orderid)->update([
+                'document_processes_id' => 3
+            ]);
+        } else {
+            $result = 0;
+        }
+        return $result;
+    }
 }

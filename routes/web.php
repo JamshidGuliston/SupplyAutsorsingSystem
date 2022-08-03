@@ -62,6 +62,7 @@ Route::group(['prefix' => 'storage', 'middleware' => ['isStorage', 'auth']], fun
     Route::get('getdoc', [StorageController::class, 'getdoc'])->name('storage.getdoc');
     Route::get('dostcontrolpassword', [StorageController::class, 'dostcontrolpassword']);
     Route::get('document/{id}', [StorageController::class, 'document']);
+    Route::get('backcontrolpassword', [StorageController::class, 'backcontrolpassword']);
 
     Route::get('addmultisklad', [StorageController::class, 'addmultisklad'])->name('storage.addmultisklad');
     Route::post('newordersklad', [StorageController::class, 'newordersklad'])->name('storage.newordersklad');

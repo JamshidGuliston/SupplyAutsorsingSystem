@@ -54,6 +54,22 @@
     @include('storage.sidemenu'); 
 @endsection
 @section('content')
+<div class="modal fade" id="Modalback" tabindex="-1" aria-labelledby="exampleModalLabels" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Maxsulotlarni qaytarib olish</h5>
+                <button type="button" class="btn-close " data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <input type="password" class='form-control' id="bpassword" name="password" placeholder="password" required>
+            </div>
+            <div class="modal-footer">
+                <button type="button" id="backpass" class="btn bg-success" style="color: white">Tasdiqlash</button>
+            </div>
+        </div>
+    </div>
+</div>
 <!-- DELET -->
 <!-- Modal -->
 <div class="modal fade" id="Modaldelete" tabindex="-1" aria-labelledby="exampleModalLabels" aria-hidden="true">
@@ -67,7 +83,6 @@
                 <input type="password" class='form-control' id="passw" name="password" placeholder="password" required>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn" id="succ"></button>
                 <button type="button" id="sendpass" class="btn bg-success" style="color: white">Tasdiqlash</button>
             </div>
         </div>
@@ -195,10 +210,30 @@
         $('#sendpass').click(function() {
             var g = id;
             var pass = $('#passw').val();
-            var h = $('#succ');
             $.ajax({
                 method: "GET",
                 url: '/storage/dostcontrolpassword',
+                data: {
+                    'password': pass,
+                    'orderid': g,
+                },
+                success: function(data) {
+                    if (data == 1) {
+                        h.html("<i class='fas fa-check' style='color: seagreen;'></i>");
+                        location.reload();
+                    } else {
+                        h.html("<i class='fas fa-exclamation-triangle' style='color: red;'></i>");
+                    }
+                }
+            })
+        });
+
+        $('#backpass').click(function() {
+            var g = $(this).attr('fa-undo');
+            var pass = $('#bpassword').val();
+            $.ajax({
+                method: "GET",
+                url: '/storage/backcontrolpassword',
                 data: {
                     'password': pass,
                     'orderid': g,
