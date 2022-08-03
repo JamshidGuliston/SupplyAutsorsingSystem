@@ -223,7 +223,7 @@ class StorageController extends Controller
     public function productsmod($kid){
         $king = Kindgarden::where('id', $kid)->first();
         $month = Month::where('month_active', 1)->first();
-        $days = Day::where('month_id', $month->id)->get();
+        $days = $this->activmonth($month->id);
         // dd($days);
         $minusproducts = [];
         foreach($days as $day){

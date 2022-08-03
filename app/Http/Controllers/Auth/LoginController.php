@@ -32,7 +32,7 @@ class LoginController extends Controller
 
     protected function redirectTo(){
         if(Auth()->user()->role_id == 4){
-            return route('storage.home');
+            return route('storage.home', ['id' => 0]);
         }
         elseif(Auth()->user()->role_id == 3){
             return route('technolog.home');
@@ -63,7 +63,7 @@ class LoginController extends Controller
 
         if(auth()->attempt(array('email'=>$input['email'], 'password'=>$input['password']))){
             if(auth()->user()->role_id == 4){
-                return redirect()->route('storage.home');
+                return redirect()->route('storage.home', ['id' => 0]);
             }
             elseif(auth()->user()->role_id == 3){
                 return redirect()->route('technolog.home');
