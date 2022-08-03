@@ -1,5 +1,5 @@
 <div class="list-group list-group-flush my-3">
-    <a href="/storage/home" class="list-group-item list-group-item-action bg-transparent second-text"><i class="fas fa-tachometer-alt me-2"></i>Bosh sahifa</a>
+    <a href="/storage/home/0" class="list-group-item list-group-item-action bg-transparent second-text {{Request::is('storage/home/0') ? 'active' : null }}"><i class="fas fa-tachometer-alt me-2"></i>Bosh sahifa</a>
     <!-- <a href="/storage/addproductform" class="list-group-item list-group-item-action bg-transparent second-text fw-bold {{Request::is('storage/addproductform') ? 'active' : null }}"><i class="fas fa-plus"></i> Maxsulot qo'shish</a> -->
     <a href="/storage/addedproducts/0" class="list-group-item list-group-item-action bg-transparent second-text fw-bold {{Request::is('storage/addedproducts/0') ? 'active' : null }}"><i class="fas fa-plus"></i> Maxsulot qo'shish</a>
     <a href="/storage/addmultisklad" class="list-group-item list-group-item-action bg-transparent second-text fw-bold {{Request::is('storage/addmultisklad') ? 'active' : null }}"><i class="fas fa-minus me-2"></i>Bog'cha sklad</a>
