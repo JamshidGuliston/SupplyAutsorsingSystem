@@ -65,6 +65,7 @@
                 <input type="password" class='form-control' id="bpassword" name="password" placeholder="password" required>
             </div>
             <div class="modal-footer">
+            <button type="button" class="btn" id="bsucc"></button>
                 <button type="button" id="backpass" class="btn bg-success" style="color: white">Tasdiqlash</button>
             </div>
         </div>
@@ -83,6 +84,7 @@
                 <input type="password" class='form-control' id="passw" name="password" placeholder="password" required>
             </div>
             <div class="modal-footer">
+                <button type="button" class="btn" id="succ"></button>
                 <button type="button" id="sendpass" class="btn bg-success" style="color: white">Tasdiqlash</button>
             </div>
         </div>
@@ -210,6 +212,7 @@
         $('#sendpass').click(function() {
             var g = id;
             var pass = $('#passw').val();
+            var h = $('#succ');
             $.ajax({
                 method: "GET",
                 url: '/storage/dostcontrolpassword',
@@ -231,6 +234,7 @@
         $('#backpass').click(function() {
             var g = $(this).attr('fa-undo');
             var pass = $('#bpassword').val();
+            var h = $('#bsucc');
             $.ajax({
                 method: "GET",
                 url: '/storage/backcontrolpassword',
