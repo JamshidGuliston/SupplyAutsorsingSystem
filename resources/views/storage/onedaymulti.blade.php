@@ -187,7 +187,7 @@
                     @elseif($order['document_processes_id'] == 3)
                         <i class="far fa-paper-plane" data-produc-id="{{$order['id']}}" data-bs-toggle="modal" data-bs-target="#Modaldelete" style="cursor: pointer; margin-left: 16px; color: deepskyblue"></i>
                     @elseif($order['document_processes_id'] == 4)
-                        <i class="fas fa-undo" data-produc-id="{{$order['id']}}" data-bs-toggle="modal" data-bs-target="#Modaldelete" style="cursor: pointer; margin-left: 16px; color: deepskyblue"></i>
+                        <i class="fas fa-undo" data-produc-id="{{$order['id']}}" data-bs-toggle="modal" data-bs-target="#Modalback" style="cursor: pointer; margin-left: 16px; color: deepskyblue"></i>
                     @endif
                 </td>
             </tr>
