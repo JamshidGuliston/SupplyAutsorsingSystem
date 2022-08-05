@@ -54,6 +54,25 @@
 </style>
 @endsection
 @section('content')
+<!-- Modal -->
+<div class="modal fade" id="delModal" tabindex="-1" aria-labelledby="exampleModalLabelss" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title text-white" id="exampleModalLabel">O'chirish</h5>
+                <button type="button" class="btn-close " data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                Bu mahsulotni o'chirasizmi
+            </div>
+            <div class="modal-footer">
+                <!-- <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button> -->
+                <button type="button" class="btn dele btn-danger">O'chirish</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- DELET -->
 <div class="date">
     <!-- <div class="year">2022</div> -->
     <div class="month">
@@ -70,11 +89,11 @@
             <div class="p-3 bg-white shadow-sm d-flex flex-column justify-content-around align-items-center rounded">
                 <!-- <i class="fas fa-seedling fs-1 primary-text border rounded-full secondary-bg p-2"></i> -->
                 <div class="text-center" style="width: 100%">
-                    <p class="fs-4" style="font-size: 22px !important;">{{ $row['p_name']; }}</p>
+                    <p class="fs-4" style="font-size: 22px !important;">{{ $row['p_name']; }} <i class='fas fa-minus' style='color: red; cursor: pointer' data-delet-id='{{$item->id}}' data-bs-toggle='modal' data-bs-target='#delModal'></i></p>
                 <p>
                     <i class='fas fa-arrow-down' style='color: green; width: 5%'></i><?php echo $row['weight'].' '.$row['size_name'] ?> <i class='fas fa-arrow-up' style='color: red; width: 5%'></i><?php echo round($row['minusweight'], 1).' '.$row['size_name'] ?>
                 </p>
-                <h4 class="fs-3 mb-0 mt-1">{{ round($row['weight'] - $row['minusweight'], 1).' '.$row['size_name']; }} </h4> <i class='fas fa-minus' style='color: red; cursor: pointer'></i>
+                <h4 class="fs-3 mb-0 mt-1">{{ round($row['weight'] - $row['minusweight'], 1).' '.$row['size_name']; }} </h4> 
                 </div>
             </div>
         </div>
