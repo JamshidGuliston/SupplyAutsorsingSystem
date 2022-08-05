@@ -212,7 +212,7 @@
         <tbody>
             @foreach($nakproducts as $key => $row)
             <tr>
-                <td>{{ $row['product_name'] }}</td>
+                <td>{{ isset($row['product_name']) ? $row['product_name'] : '...' }}</td>
                 <td>{{ "1" }}</td>
                 <?php 
                     $summ = 0;
