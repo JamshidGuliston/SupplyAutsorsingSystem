@@ -87,14 +87,7 @@ class TestController extends Controller
                 }
             }
         }
-        $workerproducts = array_fill(1, 500, 0);
-        foreach($workerfood as $tr){
-            foreach($nextdaymenuitem[3][$tr->food_id] as $key => $value){
-                if($key != 'foodname'){
-                    $workerproducts[$key] += $value; 
-                }
-            }
-        }
+        
         $dompdf = new Dompdf('UTF-8');
 		$html = mb_convert_encoding(view('pdffile.technolog.alltable', ['day' => $day,'productallcount' => $productallcount, 'workerproducts' => $workerproducts,'menu' => $menu, 'menuitem' => $nextdaymenuitem, 'products' => $products, 'workerfood' => $workerfood]), 'HTML-ENTITIES', 'UTF-8');
 		$dompdf->loadHtml($html);
