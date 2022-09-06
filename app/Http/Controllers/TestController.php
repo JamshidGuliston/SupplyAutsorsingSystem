@@ -977,14 +977,14 @@ class TestController extends Controller
 					->where('product_name_id', $pid)
 					->get();
 				if($mod->count() == 0 and $value >= 0){
-					// plus_multi_storage::create([
-					// 	'day_id' => $firstday->id,
-					// 	'shop_id' => -1,
-					// 	'kingarden_name_d' => $kid,
-					// 	'order_product_id' => -1,
-					// 	'product_name_id' => $pid,
-					// 	'product_weight' => $value,
-					// ]);
+					plus_multi_storage::create([
+						'day_id' => $firstday->id,
+						'shop_id' => -1,
+						'kingarden_name_d' => $kid,
+						'order_product_id' => -1,
+						'product_name_id' => $pid,
+						'product_weight' => $value,
+					]);
 				}
 			}
 		}
