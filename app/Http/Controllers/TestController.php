@@ -834,16 +834,16 @@ class TestController extends Controller
 				}
 			}
 			// dd($nextdaymenuitem[$item->menu_meal_time_id][$item->menu_food_id]);
-			// if($age->id == 1){
-			// 	foreach($workerfood as $tr){
-			// 		foreach($nextdaymenuitem[3][$tr->food_id][1] as $key => $value){
-			// 			if($key != 'age_name'){
-			// 				$workerproducts[$key] += $value['one'];
-			// 			} 
-			// 			// array_push($workerproducts, $nextdaymenuitem[3][$tr->food_id]);
-			// 		}
-			// 	}
-			// }
+			if($age->id == 1){
+				foreach($workerfood as $tr){
+					foreach($nextdaymenuitem[3][$tr->food_id][1] as $key => $value){
+						if($key != 'age_name'){
+							$workerproducts[$key] += $value['one'];
+						} 
+						// array_push($workerproducts, $nextdaymenuitem[3][$tr->food_id]);
+					}
+				}
+			}
 		}
 
 		foreach($nextdaymenuitem as $key => $item){
