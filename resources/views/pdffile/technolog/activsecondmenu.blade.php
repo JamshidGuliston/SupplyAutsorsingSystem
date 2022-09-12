@@ -21,10 +21,23 @@
 			/* padding: 300px 100px 10px 100px; */
 			width:100%;
 		}
-		.row{
+		/* Create two equal columns that floats next to each other */
+		.column {
+			float: left;
+			text-align: center;
+			width: 33%;
+		}
+
+		/* Clear floats after the columns */
+		.row:after {
+			content: "";
+			display: table;
+			clear: both;
+		}
+		/* .row{
 			display: flex;
 			justify-content: space-between;
-		}
+		} */
 		table{
 			border-collapse: collapse;
 			border: 1px solid black;
@@ -329,13 +342,13 @@
                       </table>
                 </div>
 				<div class="row" style="margin-top: 15px;">
-				    <div>
+				    <div class="column">
 						<img src="images/qrmanzil.jpg" alt="QR-code" width="140">
 					</div>
-					<div>
+					<div class="column">
 						<p style="text-align: center;"><strong> Бош ошпаз:</strong> __________________;</p>
 					</div>
-					<div>
+					<div class="column">
 						<p style="text-align: right;"><strong>Танишдим ДМТТ рахбари: </strong> __________________;</p>
 					</div>
 				</div>
