@@ -135,8 +135,8 @@
                                   </td>
                                   <td style="font-size: 6px;">
                                       <?php  
-                                          echo round(round($row[$day['id']], 3) * $row[0], 2);
-                                          $regionsumm[$day['id']] += round(round($row[$day['id']], 3) * $row[0], 2);
+                                          echo round(round($row[$day['id']], 0) * $row[0], 2);
+                                          $regionsumm[$day['id']] += round(round($row[$day['id']], 0) * $row[0], 2);
                                       ?>
                                   </td>
                                 @else
