@@ -161,6 +161,9 @@
             ?>
             @foreach($incomes as $value)
             <?php
+                if(!isset($mods[$value["p_id"]])){
+                    $mods[$value["p_id"]] = 0;
+                }
                 $pay = 0;
                 $allsum = 0;
             ?>

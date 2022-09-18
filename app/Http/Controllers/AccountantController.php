@@ -1160,7 +1160,7 @@ class AccountantController extends Controller
             }
         }
         $mods = $this->multimods();
-        dd($mods);
+        // dd($mods);
         usort($incomes, function ($a, $b){
             if(isset($a["p_sort"]) and isset($b["p_sort"])){
                 return $a["p_sort"] > $b["p_sort"];
