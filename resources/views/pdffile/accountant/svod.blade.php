@@ -167,7 +167,7 @@
 						<td style="font-size: 6px;"><?php $summa += round($summ * $row[0], 3); echo round($summ * $row[0], 3); ?></td>
 						<td style="font-size: 6px;"><?php $ustsumma += round(($summ * $row[0])/100 * $over, 3); echo round(($summ * $row[0])/100 * $over, 3) ?></td>
 						<td style="font-size: 6px;"><?php $allsumma += round($summ * $row[0] + ($summ * $row[0])/100 * $over, 3); echo round($summ * $row[0] + ($summ * $row[0])/100 * $over, 3) ?></td>
-						<td style="font-size: 6px;"><?php $ndssumma += round(round($summ * $row[0] + ($summ * $row[0])/100 * $over, 3) / 100 * $nds, 3); echo round(round($summ * $row[0] + ($summ * $row[0])/100 * $over, 3) / 100 * $nds, 3) ?></td>
+						<td style="font-size: 6px;"><?php $ndssumma += round(round($summ * $row[0] + ($summ * $row[0])/100 * $over, 3) * $nds / (100 + $nds), 3); echo round(round($summ * $row[0] + ($summ * $row[0])/100 * $over, 3) * $nds / (100 + $nds), 3) ?></td>
 						<td style="font-size: 6px;"><?php $jamisumma += round($summ * $row[0] + ($summ * $row[0])/100 * $over, 3) + round(round($summ * $row[0] + ($summ * $row[0])/100 * $over, 3) / 100 * $nds, 3); echo round(round($summ * $row[0] + ($summ * $row[0])/100 * $over, 3) + round(round($summ * $row[0] + ($summ * $row[0])/100 * $over, 3) / 100 * $nds, 3), 3) ?></td>
 					</tr>
 					@endforeach
