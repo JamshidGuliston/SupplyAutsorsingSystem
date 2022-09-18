@@ -180,11 +180,11 @@
 							<td><?php printf("%01.1f", $regionsumm[$day['id']]) ?></td>
 						@endforeach
 						<td><?php printf("%01.1f", 0) ?></td>
-						<td style="font-size: 6px;"><?php printf("%01.1f", $summa) ?></td>
-						<td style="font-size: 6px;"><?php printf("%01.1f", $ustsumma) ?></td>
-						<td style="font-size: 6px;"><?php printf("%01.1f", $allsumma) ?></td>
-						<td style="font-size: 6px;"><?php printf("%01.1f", $ndssumma) ?></td>
-						<td style="font-size: 6px;"><?php printf("%01.1f", $jamisumma) ?></td>
+						<td style="font-size: 6px;"><?php printf("%01.2f", $summa) ?></td>
+						<td style="font-size: 6px;"><?php printf("%01.2f", $ustsumma) ?></td>
+						<td style="font-size: 6px;"><?php printf("%01.2f", $allsumma) ?></td>
+						<td style="font-size: 6px;"><?php printf("%01.2f", $ndssumma) ?></td>
+						<td style="font-size: 6px;"><?php printf("%01.2f", $jamisumma) ?></td>
 					</tr>
                     </tbody>
                 </table>
