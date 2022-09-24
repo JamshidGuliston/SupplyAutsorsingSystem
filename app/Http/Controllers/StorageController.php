@@ -370,6 +370,9 @@ class StorageController extends Controller
                 }
                 foreach($kind->age_range as $age){
                     $ch = Number_children::where('kingar_name_id', $garden)->where('king_age_name_id', $age->id)->orderby('day_id', 'DESC')->first();
+                    if(empty($ch)){
+                        $ch = Nextday_namber::where('kingar_name_id', $garden)->where('king_age_name_id', $age->id)->first();
+                    }
                     $kindproducts[$garden] = $this->menuproduct($stop, $day[$ch['king_age_name_id']], $ch['king_age_name_id'], $ch['kingar_children_number'], $kindproducts[$garden]);
                 }
                 foreach($request->workerfoods[$tr] as $key => $val){
