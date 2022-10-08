@@ -83,7 +83,7 @@
                     </table>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">x</button>
+                    <!-- <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">x</button> -->
                     <button type="submit" class="btn add-age btn-primary text-white">Tasdiqlash</button>
                 </div>
             </form>
@@ -138,13 +138,6 @@
                     <p><i>Eslatma: menyu har kuni soat 10 dan keyin yangilanadi</i></p>
                     <a href="/activsecondmenuPDF/{{ $day->id }}/{{ $kindgarden->id }}" class="btn btn-success" style="width: 100%;" download>Menyu</a>
                 <!-- </form> -->
-                @if($bool->count() == 0)
-                <!-- <form action="#" method="get"> -->
-                    <br>
-                    <p><b>Omborxona: </b>Omborxonadan olingan maxsulot ro'yxatini yuboring. </p>
-                    <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#Modalsadd" style="width: 100%;">Maxsulotlar</button>
-                <!-- </form> -->
-                @endif
             </div>
         </div>
     </div>
@@ -156,6 +149,13 @@
                     <p><b>Taxminiy menyu: </b></p>
                     <a href="/nextdaysecondmenuPDF/{{ $kindgarden->id }}" class="btn btn-success" style="width: 100%;" download>Menyu</a>
                 <!-- </form> -->
+                @if($bool->count() == 0)
+                <!-- <form action="#" method="get"> -->
+                    <br>
+                    <p><b>Omborxona: </b>Omborxonadan olingan maxsulot ro'yxatini yuboring. </p>
+                    <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#Modalsadd" style="width: 100%;">Maxsulotlar</button>
+                <!-- </form> -->
+                @endif
             </div>
         </div>
     </div>

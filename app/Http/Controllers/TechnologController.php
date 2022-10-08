@@ -1445,7 +1445,7 @@ class TechnologController extends Controller
         ->join('years', 'years.id', '=', 'days.year_id')
         ->orderBy('id', 'DESC')->first(['days.id', 'days.day_number', 'months.month_name', 'years.year_name']);
 
-        $all = minus_multi_storage::where('day_id', $day->id)
+        $all = minus_multi_storage::where('day_id', $day->id + 1)
                     ->join('kindgardens', 'kindgardens.id', '=', 'minus_multi_storages.kingarden_name_id')
                     ->orderBy('kingarden_name_id', 'DESC')
                     ->get(['minus_multi_storages.id', 'kindgardens.kingar_name', 'minus_multi_storages.product_name_id', 'minus_multi_storages.product_weight', 'minus_multi_storages.kingarden_name_id']);

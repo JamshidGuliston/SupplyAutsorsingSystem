@@ -6,7 +6,9 @@ use App\Models\Active_menu;
 use App\Models\Age_range;
 use App\Models\Day;
 use App\Models\Kindgarden;
+use App\Models\Menu_composition;
 use App\Models\minus_multi_storage;
+use App\Models\Nextday_namber;
 use App\Models\Number_children;
 use App\Models\order_product;
 use App\Models\order_product_structure;
@@ -32,20 +34,18 @@ class ChefController extends Controller
                 ->join('years', 'years.id', '=', 'days.year_id')
                 ->orderBy('id', 'DESC')->first(['days.id', 'days.day_number', 'months.month_name', 'years.year_name']);
         // dd($day);
-        $bool = minus_multi_storage::where('day_id', $day->id)->where('kingarden_name_id', $kindgarden->id)->get();
+        $bool = minus_multi_storage::where('day_id', $day->id + 1)->where('kingarden_name_id', $kindgarden->id)->get();
         $ages = Age_range::all();
 		foreach($ages as $age){
-            $menu = Number_children::where([
+            $menu = Nextday_namber::where([
                 ['kingar_name_id', '=', $kindgarden->id],
-                ['day_id', '=', $day->id],
                 ['king_age_name_id', '=', $age->id]
             ])->get();	
             if(count($menu) == 0){
                 continue;
             }
             for($i = 0; $i<count($productall); $i++){
-                $menuitem = Active_menu::where('day_id', $day->id)
-                    ->where('title_menu_id', $menu[0]['kingar_menu_id'])
+                $menuitem = Menu_composition::where('title_menu_id', $menu[0]['kingar_menu_id'])
                     ->where('age_range_id', $age->id)
                     ->where('product_name_id', $productall[$i]['id'])
                     ->get();
@@ -71,8 +71,7 @@ class ChefController extends Controller
         return view('chef.home', compact('productall', 'kindgarden', 'sendchildcount', 'day', 'bool', 'inproducts'));
     }
     public function minusproducts(Request $request){
-        // dd($request->all());
-        $bool = minus_multi_storage::where('day_id', $request->dayid)->where('kingarden_name_id', $request->kindgarid)->get();
+        $bool = minus_multi_storage::where('day_id', $request->dayid + 1)->where('kingarden_name_id', $request->kindgarid)->get();
         if($bool->count() == 0){
             foreach($request->orders as $key => $value){
                 $val = "";
@@ -90,7 +89,7 @@ class ChefController extends Controller
                     $val = 0;
                 }
                 minus_multi_storage::create([
-                    'day_id' => $request->dayid,
+                    'day_id' => $request->dayid + 1,
                     'kingarden_name_id' => $request->kindgarid,
                     'kingar_menu_id' => 0,
                     'product_name_id' => $key,
