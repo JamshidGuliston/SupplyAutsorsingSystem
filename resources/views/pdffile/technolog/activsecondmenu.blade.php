@@ -115,7 +115,7 @@
 							 	@if(isset($product['yes']))
 								 <?php 
 								 	$col++;
-									$shortname=substr($product['product_name'],0,19);
+									$shortname=substr($product['product_name'],0,21);
 								?>
                           	 		<th class='vrt-header' style="padding: 0px; width: 4%; height: 69px"><?php echo '<span>'.$shortname. '</span>';?></th>
 								@endif
