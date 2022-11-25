@@ -59,7 +59,7 @@
     </div>
     <!-- /#page-content-wrapper -->
     </div>
-    <script src="https://data.guldu.uz/templates/default/jquery/jquery-2.2.4.min.js"></script>
+    <script src="/js/jquery-2.2.4.min.js"></script>
     <script src="/js/sweetalert.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.bundle.min.js"></script>
     <script>

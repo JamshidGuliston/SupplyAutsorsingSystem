@@ -4,9 +4,11 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Providers\RouteServiceProvider;
+use Illuminate\Contracts\Session\Session;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Redirect;
 
 class LoginController extends Controller
 {
@@ -58,7 +60,19 @@ class LoginController extends Controller
         $input = $request->all();
         $this->validate($request, [
             'email'=>'required|email',
-            'password'=>'required'
+            'password'=>'required',
+            'g-recaptcha-response' => function($attribute, $value, $fail){
+                $secretKey = '6LfD7ScjAAAAAKDFipaiJ4WMPB7gJeoLYNCmFbCw';   
+                $response = $value;
+                $userIP = $_SERVER['REMOTE_ADDR'];
+                $url = "https://www.google.com/recaptcha/api/siteverify?secret=$secretKey&response=$response&remoteip=$userIP";
+                $response = \file_get_contents($url);
+                $response = json_decode($response);
+                if(!$response->success){
+                    redirect()->route('login')->with('messages', 'Iltimos reCaptchani cherting');
+                    $fail($attribute.'google reCatpcha failed');
+                }
+            }
         ]);
 
         if(auth()->attempt(array('email'=>$input['email'], 'password'=>$input['password']))){

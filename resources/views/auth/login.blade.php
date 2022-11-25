@@ -11,9 +11,10 @@
         <!-- Font Awesome -->
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.5.0/css/font-awesome.min.css">
         <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet"> 
+        <script src="https://www.google.com/recaptcha/api.js" async defer></script>
         <style>
             body {
-                background: #e7fefe;
+                background: #eafbfc;
                 font-family: 'Roboto', sans-serif;
             }
 
@@ -25,15 +26,6 @@
                 box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
             }
 
-            .login-key {
-                height: 100px;
-                font-size: 80px;
-                line-height: 100px;
-                background: -webkit-linear-gradient(#27EF9F, #0DB8DE);
-                -webkit-background-clip: text;
-                -webkit-text-fill-color: transparent;
-            }
-
             .login-title {
                 margin-top: 15px;
                 text-align: center;
@@ -41,7 +33,7 @@
                 letter-spacing: 2px;
                 margin-top: 15px;
                 font-weight: bold;
-                color: #9199a2;
+                color: #216cc1;
             }
 
             .login-form {
@@ -52,27 +44,27 @@
             input[type=email] {
                 background-color: white;
                 border: none;
-                border-bottom: 2px solid #0DB8DE;
+                border-bottom: 2px solid #a2a2a2;
                 border-top: 0px;
                 border-radius: 0px;
                 font-weight: bold;
                 outline: 0;
                 margin-bottom: 20px;
                 padding-left: 0px;
-                color: #ECF0F5;
+                color: black;
             }
 
             input[type=password] {
                 background-color: white;
                 border: none;
-                border-bottom: 2px solid #0DB8DE;
+                border-bottom: 2px solid #a2a2a2;
                 border-top: 0px;
                 border-radius: 0px;
                 font-weight: bold;
                 outline: 0;
                 padding-left: 0px;
                 margin-bottom: 20px;
-                color: #ECF0F5;
+                color: black;
             }
 
             .form-group {
@@ -84,10 +76,10 @@
                 border-color: inherit;
                 -webkit-box-shadow: none;
                 box-shadow: none;
-                border-bottom: 2px solid #0DB8DE;
+                border-bottom: 2px solid #a2a2a2;
                 outline: 0;
-                background-color: #1889b4;
-                color: #ECF0F5;
+                
+                color: black;
             }
 
             input:focus {
@@ -101,14 +93,15 @@
 
             .form-control-label {
                 font-size: 16px;
-                color: #a29f9f;
+                color: #216cc1;
                 font-weight: bold;
                 letter-spacing: 1px;
             }
 
             .btn-outline-primary {
-                border-color: #1889b4;
-                color: #0DB8DE;
+                border-color: #efefef;
+                background-color: #efefef;
+                color: #216cc1;
                 border-radius: 0px;
                 font-weight: bold;
                 letter-spacing: 1px;
@@ -116,18 +109,21 @@
             }
 
             .btn-outline-primary:hover {
-                background-color: #1889b4;
+                background-color: #efefef;
                 right: 0px;
+                color: #000;
             }
 
             .login-btm {
+                padding-top: 30px;
                 float: left;
             }
 
             .login-button {
-                padding-right: 0px;
-                text-align: right;
+                width: 100%;
+                text-align: center;
                 margin-bottom: 25px;
+                cursor: pointer;
             }
 
             .error{
@@ -137,7 +133,7 @@
             .login-text {
                 text-align: left;
                 padding-left: 0px;
-                color: #A2A4A4;
+                color: black;
             }
 
             .loginbttm {
@@ -151,9 +147,6 @@
         <div class="row">
             <div class="col-lg-3 col-md-2"></div>
             <div class="col-lg-6 col-md-8 login-box">
-                <div class="col-lg-12 login-key">
-                    <i class="fa fa-key" aria-hidden="true"></i>
-                </div>
                 <div class="col-lg-12 login-title">
                     {{ __('Login') }}
                 </div>
@@ -182,13 +175,18 @@
                             </div>
 
                             <div class="col-lg-12 loginbttm">
-                                <div class="col-lg-6 login-btm login-text">
-                                    <!-- Error Message -->
-                                </div>
-                                <div class="col-lg-6 login-btm login-button">
-                                    <button type="submit" class="btn btn-outline-primary">{{ __('Kirish') }}</button>
-                                </div>
+                                <div class="g-recaptcha" data-sitekey="6LfD7ScjAAAAACSAMyR8hhDpviT55YzQU9TRru9q"></div>
+                                @if (isset($messages))
+                                    <div class="alert">{!! $messages !!}</div>
+                                @endif
+                                <br/>
                             </div>
+                            
+                            <div class="col-lg-12 login-btm">
+                                <button type="submit" class="btn btn-outline-primary login-button">{{ __('Kirish') }}</button>
+                            </div>
+                            </div>
+                            
                         </form>
                     </div>
                 </div>
@@ -269,3 +267,4 @@
     </div>
 </div>
 @endsection
+
