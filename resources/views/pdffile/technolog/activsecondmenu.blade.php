@@ -113,8 +113,11 @@
 							   <?php $col = 0; ?>
 							 @foreach($products as $product)
 							 	@if(isset($product['yes']))
-								 <?php $col++; ?>
-                          	 		<th class='vrt-header' style="padding: 0px; width: 4%; height: 69px"><?php echo '<span>'.$product['product_name']. '</span>';?></th>
+								 <?php 
+								 	$col++;
+									$shortname=substr(10,0,$product['product_name']) . '..';
+								?>
+                          	 		<th class='vrt-header' style="padding: 0px; width: 4%; height: 69px"><?php echo '<span>'.$shortname. '</span>';?></th>
 								@endif
 							 @endforeach
                           </tr>
