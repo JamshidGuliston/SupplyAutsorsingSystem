@@ -426,6 +426,14 @@ class TestController extends Controller
         $workerproducts = [];
         // kamchilik bor boshlangich qiymat berishda
         $productallcount = array_fill(1, 500, 0);
+
+		$costs = bycosts::where('day_id', bycosts::where('day_id', '<=', $today)->where('region_name_id', Kindgarden::where('id', $gid)->first()->region_id)->orderBy('day_id', 'DESC')->first()->day_id)->where('region_name_id', Kindgarden::where('id', $gid)->first()->region_id)->orderBy('day_id', 'DESC')->get();
+		$narx = [];
+		foreach($costs as $row){
+			if(!isset($narx[$row->praduct_name_id])){
+				$narx[$row->praduct_name_id] = $row->price_cost;
+			}
+		}
         foreach($menuitem as $item){
             $nextdaymenuitem[$item->menu_meal_time_id][0]['mealtime'] = $item->meal_time_name; 
             $nextdaymenuitem[$item->menu_meal_time_id][$item->menu_food_id][$item->product_name_id] = $item->weight;
@@ -452,7 +460,7 @@ class TestController extends Controller
         // dd($menuitem);
         
         $dompdf = new Dompdf('UTF-8');
-		$html = mb_convert_encoding(view('pdffile.technolog.activmenu', ['day' => $day,'productallcount' => $productallcount, 'workerproducts' => $workerproducts,'menu' => $menu, 'menuitem' => $nextdaymenuitem, 'products' => $products, 'workerfood' => $workerfood]), 'HTML-ENTITIES', 'UTF-8');
+		$html = mb_convert_encoding(view('pdffile.technolog.activmenu', ['narx' => $narx, 'day' => $day,'productallcount' => $productallcount, 'workerproducts' => $workerproducts,'menu' => $menu, 'menuitem' => $nextdaymenuitem, 'products' => $products, 'workerfood' => $workerfood]), 'HTML-ENTITIES', 'UTF-8');
 		$dompdf->loadHtml($html);
 
 		// (Optional) Setup the paper size and orientation
@@ -855,7 +863,7 @@ class TestController extends Controller
 				$nextdaymenuitem[$key]['rows'] += count($row)-3;
 			}
 		}
-		dd($nextdaymenuitem);
+		// dd($nextdaymenuitem);
         
         $dompdf = new Dompdf('UTF-8');
 		$html = mb_convert_encoding(view('pdffile.technolog.activsecondmenu', ['narx' => $narx,'day' => $day, 'productallcount' => $productallcount, 'workerproducts' => $workerproducts,'menu' => $menuage, 'menuitem' => $nextdaymenuitem, 'products' => $products, 'workerfood' => $workerfood]), 'HTML-ENTITIES', 'UTF-8');
