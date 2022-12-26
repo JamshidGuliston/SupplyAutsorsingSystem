@@ -328,7 +328,7 @@
 							</tr>
 							@foreach($agesumm as $row)
 								<tr>
-									<th scope="row" colspan="2" class="align-baseline" style="padding: 0px;">{{ 0 }}</th>
+									<th scope="row" colspan="2" class="align-baseline" style="padding: 0px;">{{ count($row) }}</th>
 									<td></td>
 									<?php
 										$all = 0;
