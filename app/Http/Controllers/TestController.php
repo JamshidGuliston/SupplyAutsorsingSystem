@@ -852,7 +852,7 @@ class TestController extends Controller
 				$nextdaymenuitem[$item->menu_meal_time_id][$item->menu_food_id]['foodweight'] = $item->food_weight; 
 				$nextdaymenuitem[$item->menu_meal_time_id]['mealtime'] = $item->meal_time_name; 
 				$productallcount[$item->product_name_id] += ($item->weight * $menu[0]['kingar_children_number']) / $item->div;
-				$allproductagesumm[$age->id][$item->product_name_id] += ($item->weight * $menu[0]['kingar_children_number']) / $item->div;
+				$allproductagesumm[$age->id][$item->product_name_id] += ($item->weight * $menu[0]['kingar_children_number']) / $item->div * $narx[$item->product_name_id];
 				$nextdaymenuitem[$item->menu_meal_time_id][$item->menu_food_id]['product'][$item->product_name_id] += ($item->weight * $menu[0]['kingar_children_number']) / $item->div;
 				
 				for($i = 0; $i<count($products); $i++){
