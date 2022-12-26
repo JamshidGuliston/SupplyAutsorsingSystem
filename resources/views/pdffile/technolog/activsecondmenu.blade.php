@@ -350,12 +350,12 @@
 								</tr>	
 							@endforeach
 							<tr>
-								<th scope="row" colspan="2" class="align-baseline" style="padding: 0px;">1 та бола учун</th>
+								<th scope="row" colspan="2" class="align-baseline" style="padding: 0px;">Болалар учун</th>
 								<td></td>
 								<td style="padding: 0px; font-size: 5px" colspan="<?= $col; ?>"><?php printf("%01.2f", $chcost / 1); ?></td>
 							</tr>
 							<tr>
-								<th scope="row" colspan="2" class="align-baseline" style="padding: 0px;">1 та ходим учун</th>
+								<th scope="row" colspan="2" class="align-baseline" style="padding: 0px;">Ходимлар учун</th>
 								<td></td>
 								<td style="padding: 0px; font-size: 5px" colspan="<?= $col; ?>"><?php if($workers > 0) printf("%01.2f", $xcost / $workers); else printf("%01.2f", 0);?></td>
 							</tr>
