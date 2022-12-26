@@ -798,7 +798,9 @@ class TestController extends Controller
 		}
 		$workerproducts = array_fill(1, 500, 0);
 		$productallcount = array_fill(1, 500, 0);
-		$allproductagesumm = [];
+		$allproductagesumm[1] = array_fill(1, 500, 0);
+		$allproductagesumm[2] = array_fill(1, 500, 0);
+		$allproductagesumm[3] = array_fill(1, 500, 0);
 		$menuage = [];
 		$ages = Age_range::all();
 		foreach($ages as $age){
@@ -840,7 +842,7 @@ class TestController extends Controller
 			foreach($menuitem as $item){
 				if(empty($nextdaymenuitem[$item->menu_meal_time_id][$item->menu_food_id]['product'][$item->product_name_id])){
 					$nextdaymenuitem[$item->menu_meal_time_id][$item->menu_food_id]['product'][$item->product_name_id] = 0;
-					$allproductagesumm[$age->id][$item->product_name_id]['value'] = 0;
+					// $allproductagesumm[$age->id][$item->product_name_id]['value'] = 0;
 				}
 				// $nextdaymenuitem[$item->menu_meal_time_id][$item->menu_food_id][$item->product_name_id] = $item->weight;
 				$nextdaymenuitem[$item->menu_meal_time_id][$item->menu_food_id][$age->id][$item->product_name_id]['one'] = $item->weight;
@@ -850,7 +852,7 @@ class TestController extends Controller
 				$nextdaymenuitem[$item->menu_meal_time_id][$item->menu_food_id]['foodweight'] = $item->food_weight; 
 				$nextdaymenuitem[$item->menu_meal_time_id]['mealtime'] = $item->meal_time_name; 
 				$productallcount[$item->product_name_id] += ($item->weight * $menu[0]['kingar_children_number']) / $item->div;
-				$allproductagesumm[$age->id][$item->product_name_id]['value'] += ($item->weight * $menu[0]['kingar_children_number']) / $item->div;
+				$allproductagesumm[$age->id][$item->product_name_id] += ($item->weight * $menu[0]['kingar_children_number']) / $item->div;
 				$nextdaymenuitem[$item->menu_meal_time_id][$item->menu_food_id]['product'][$item->product_name_id] += ($item->weight * $menu[0]['kingar_children_number']) / $item->div;
 				
 				for($i = 0; $i<count($products); $i++){
