@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateAddGroupsTable extends Migration
+class CreateTakeSmallBasesTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,11 +13,13 @@ class CreateAddGroupsTable extends Migration
      */
     public function up()
     {
-        Schema::create('add_groups', function (Blueprint $table) {
+        Schema::create('take_small_bases', function (Blueprint $table) {
             $table->id();
-            $table->integer('day_id');
-            $table->string('group_name');
-            $table->boolean('residual');
+            $table->integer("kindgarden_id");
+            $table->integer("outside_id");
+            $table->integer("takegroup_id");
+            $table->integer("product_id");
+            $table->double('weight', 8,3);
             $table->timestamps();
         });
     }
@@ -29,6 +31,6 @@ class CreateAddGroupsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('add_groups');
+        Schema::dropIfExists('take_small_bases');
     }
 }

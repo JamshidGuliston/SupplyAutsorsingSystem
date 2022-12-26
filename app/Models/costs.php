@@ -5,13 +5,13 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Add_group extends Model
+class costs extends Model
 {
     use HasFactory;
     protected $fillable = [
         'id',
-        'day_id',
-        'group_name',
-        'residual',
+        'cost_name',
+        'cost_img',
+        'cost_hide',
     ];
 }

@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateAddGroupsTable extends Migration
+class CreateCostsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,11 +13,11 @@ class CreateAddGroupsTable extends Migration
      */
     public function up()
     {
-        Schema::create('add_groups', function (Blueprint $table) {
+        Schema::create('costs', function (Blueprint $table) {
             $table->id();
-            $table->integer('day_id');
-            $table->string('group_name');
-            $table->boolean('residual');
+            $table->string('cost_name');
+            $table->string('cost_img');
+            $table->boolean('cost_hide');
             $table->timestamps();
         });
     }
@@ -29,6 +29,6 @@ class CreateAddGroupsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('add_groups');
+        Schema::dropIfExists('costs');
     }
 }

@@ -76,7 +76,11 @@ Route::group(['prefix' => 'storage', 'middleware' => ['isStorage', 'auth']], fun
     Route::get('onedaysvod/{id}', [StorageController::class, 'ordersvodpdf'])->name('storage.onedaysvod');
     Route::get('ingroup/{id}', [StorageController::class, 'ingroup'])->name('storage.ingroup');
     Route::get('deleteproduct', [StorageController::class, 'deleteproduct'])->name('storage.deleteproduct');
-
+    Route::get('takecategories', [StorageController::class, 'takecategories'])->name('storage.takecategories');
+    Route::post('add_takecategory', [StorageController::class, 'add_takecategory'])->name('storage.add_takecategory');
+    Route::post('update_takecategory', [StorageController::class, 'update_takecategory'])->name('storage.update_takecategory');
+    Route::post('delete_takecategory', [StorageController::class, 'delete_takecategory'])->name('storage.delete_takecategory');
+    
 });
 
 Route::group(['prefix' => 'technolog', 'middleware' => ['isTechnolog', 'auth']], function () {

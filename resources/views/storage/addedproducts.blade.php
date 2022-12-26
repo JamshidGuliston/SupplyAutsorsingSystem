@@ -285,11 +285,19 @@
             <div class="modal-body addfood">  
                 <form id="add-form" action="" method="get">
                     <div class="row">
-                        <div class="col-md-3">
+                        <div class="col-md-6">
                             <span class="input-note">Махсулот:</span>
                             <select id="input-note-bar" class="form-select" required>
                                 @foreach($products as $row)
                                     <option value="{{$row['id']}}">{{$row['product_name']}}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <span class="input-note">Do'kon:</span>
+                            <select id="get_shop_select" class="form-select" required>
+                                @foreach($shops as $row)
+                                    <option value="{{$row['id']}}">{{$row['shop_name']}}</option>
                                 @endforeach
                             </select>
                         </div>
@@ -304,7 +312,13 @@
                             <input id="input-income-bar" class="form-control" type="number">
                         </div>
                         <div class="col-md-3">
-                            <input id="add-item" style="margin-top: 35px;" class="button" type="button" value="+">
+                            <span class="input-expense">Berilgan summa:</span>
+                            <br>
+                            <input id="input-summa-bar" class="form-control" type="number">
+                        </div>
+                        <div class="col-md-3">
+                            <i id="add-item" class="icon fas fa-plus" aria-hidden="false"></i>
+                            <!-- <input  style="margin-top: 35px;" class="button" type="button" value="+"> -->
                         </div>
                     </div>
                 </form> 
@@ -316,9 +330,11 @@
                     <table id="test1">
                         <thead>
                             <tr>
-                                <th id="note">Маҳсулот</th>
-                                <th id="expense">Оғирлиги</th>
-                                <th id="income">Нархи</th>
+                                <th id="note">Mahsulot</th>
+                                <th id="expense">Og'irlik</th>
+                                <th id="income">Narxi</th>
+                                <th id="shop">Do'kon</th>
+                                <th id="pay">To'landi</th>
                                 <th>O'chirish</th>
                             </tr>
                         </thead>
@@ -344,8 +360,12 @@
                     </div>
                     <br>
                     <div class="row">
-                        <div class="col-md-4"></div>
                         <div class="col-md-4">
+                        </div>
+                        <div class="col-md-4">
+                            <input type="checkbox" id="residual" name="residual" value="True">
+                            <label for="residual"> Qoldiq</label>
+                            <br>
                             <button type="submit" class="form-control">Qo'shish</button>
                         </div>
                         <div class="col-md-4"></div>
@@ -546,11 +566,28 @@
         .append($('<td>').html(get_expense_input() + "<input type='hidden' name='weights[]' value="+get_expense_input()+">"))
         // add income 
         .append($('<td>').html(get_income_input() + "<input type='hidden' name='costs[]' value="+get_income_input()+">"))
+        .append($('<td>').html($('#get_shop_select').find('option:selected').text() + "<input type='hidden' name='shops[]' value="+get_shop_select()+">"))
+        .append($('<td>').html(get_summa_input() + "<input type='hidden' name='costs[]' value="+get_summa_input()+">"))
         // .append($('<td>').html(get_date_input()))
         // add delete button
         .append($('<td>').html('<input type="button" style="background: red; border: none" value="Delete">'));
 
-        row.appendTo('#tablebody');
+        var find = 0;
+        $('#tablebody').find("td").each(function() {
+            if ( $(this).text() == $('#input-note-bar').find('option:selected').text() ){
+                find = 1;
+            }
+        });
+        if(get_expense_input() == ""){
+            find = 1;
+        }
+        if(get_income_input() == ""){
+            find = 1;
+        }
+
+        if(find == 0){
+            row.prependTo('#tablebody');
+        }
     }
 
 
@@ -573,6 +610,25 @@
         }
     }
 
+    function get_summa_input() {
+        if($('#input-summa-bar').val() != "") {
+            return $('#input-summa-bar').val();
+        } else {
+            return 0;
+        }
+    }
+
+    function get_shop_select() {
+        if($('#get_shop_select').val() != "") {
+            return $('#get_shop_select').val();
+        } else {
+            return 0;
+        }
+    }
+
+    $("#input-summa-bar").click(function(){
+        $("#input-summa-bar").val(get_expense_input() * get_income_input());
+    });
     // Get input value for the date check and see if one is provided.
     function get_date_input(){
         var date_value = $('#input-date-bar').val() != "" ? $('#input-date-bar').val() : get_date();

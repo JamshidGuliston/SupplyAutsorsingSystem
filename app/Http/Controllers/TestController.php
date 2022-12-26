@@ -855,7 +855,7 @@ class TestController extends Controller
 				$nextdaymenuitem[$key]['rows'] += count($row)-3;
 			}
 		}
-		// dd($nextdaymenuitem);
+		dd($nextdaymenuitem);
         
         $dompdf = new Dompdf('UTF-8');
 		$html = mb_convert_encoding(view('pdffile.technolog.activsecondmenu', ['narx' => $narx,'day' => $day, 'productallcount' => $productallcount, 'workerproducts' => $workerproducts,'menu' => $menuage, 'menuitem' => $nextdaymenuitem, 'products' => $products, 'workerfood' => $workerfood]), 'HTML-ENTITIES', 'UTF-8');

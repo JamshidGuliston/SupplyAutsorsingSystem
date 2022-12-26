@@ -5,13 +5,14 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Add_group extends Model
+class Take_group extends Model
 {
     use HasFactory;
     protected $fillable = [
-        'id',
+        'contur_id',
         'day_id',
-        'group_name',
-        'residual',
+        'taker_id',
+        'title',
+        'description',
     ];
 }

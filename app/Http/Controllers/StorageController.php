@@ -13,10 +13,13 @@ use App\Models\Nextday_namber;
 use App\Models\Number_children;
 use App\Models\order_product;
 use App\Models\order_product_structure;
+use App\Models\Outside_product;
 use App\Models\plus_multi_storage;
 use App\Models\Product;
 use App\Models\Season;
+use App\Models\Shop;
 use App\Models\Shop_product;
+use App\Models\Take_group;
 use App\Models\Titlemenu;
 use App\Models\Year;
 use Illuminate\Http\Request;
@@ -122,7 +125,8 @@ class StorageController extends Controller
         // if(Add_group::where('day_id')->get()->count() == 0){
         $group = Add_group::create([
             'day_id' => $request->date_id,
-            'group_name' => $request->title
+            'group_name' => $request->title,
+            'residual' => 0,
         ]);
 
         for($i = 0; $i < count($products);  $i++){
@@ -456,7 +460,8 @@ class StorageController extends Controller
                 ->get(['add_groups.id', 'add_groups.group_name', 'days.day_number', 'months.month_name', 'years.year_name']);
         // dd($days);
         $products = Product::all();
-        return view('storage.addedproducts', compact('group', 'months', 'id', 'days', 'products'));
+        $shops = Shop::where('hide', 1)->get();
+        return view('storage.addedproducts', compact('shops', 'group', 'months', 'id', 'days', 'products'));
     }
     
     public function document(Request $request){
@@ -626,4 +631,29 @@ class StorageController extends Controller
         }
         return $result;
     }
+
+    public function takecategories(Request $request){
+        $categories = Outside_product::where('hide', 1)->get();
+        return view('storage.takecategories', compact('categories'));
+    }
+    public function add_takecategory(Request $request){
+        Outside_product::create([
+            'outside_name' => $request->title,
+            'hide' => 1
+        ]);
+        return redirect()->route('storage.takecategories');
+    }
+    public function update_takecategory(Request $request){
+        Outside_product::where('id', $request->nameid)->update([
+            'outside_name' => $request->title
+        ]);
+        return redirect()->route('storage.takecategories');
+    }
+    public function delete_takecategory(Request $request){
+        Outside_product::where('id', $request->nameid)->update([
+            'hide' => 0
+        ]);
+        return redirect()->route('storage.takecategories');
+    }
+    
 }
