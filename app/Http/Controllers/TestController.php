@@ -72,6 +72,13 @@ class TestController extends Controller
                     ->where('titlemenu_id', $menu[0]['kingar_menu_id'])
                     ->get();
         // dd($workerfood);
+		$costs = bycosts::where('day_id', bycosts::where('region_name_id', Kindgarden::where('id', $gid)->first()->region_id)->orderBy('day_id', 'DESC')->first()->day_id)->where('region_name_id', Kindgarden::where('id', $gid)->first()->region_id)->orderBy('day_id', 'DESC')->get();
+		$narx = [];
+		foreach($costs as $row){
+			if(!isset($narx[$row->praduct_name_id])){
+				$narx[$row->praduct_name_id] = $row->price_cost;
+			}
+		}
         $nextdaymenuitem = [];
         $workerproducts = [];
         // kamchilik bor boshlangich qiymat berishda
@@ -89,7 +96,7 @@ class TestController extends Controller
         }
         
         $dompdf = new Dompdf('UTF-8');
-		$html = mb_convert_encoding(view('pdffile.technolog.alltable', ['day' => $day,'productallcount' => $productallcount, 'workerproducts' => $workerproducts,'menu' => $menu, 'menuitem' => $nextdaymenuitem, 'products' => $products, 'workerfood' => $workerfood]), 'HTML-ENTITIES', 'UTF-8');
+		$html = mb_convert_encoding(view('pdffile.technolog.alltable', ['narx' => $narx,'day' => $day,'productallcount' => $productallcount, 'workerproducts' => $workerproducts,'menu' => $menu, 'menuitem' => $nextdaymenuitem, 'products' => $products, 'workerfood' => $workerfood]), 'HTML-ENTITIES', 'UTF-8');
 		$dompdf->loadHtml($html);
 		$dompdf->setPaper('A4', 'landscape');
 		$name = $day['id'].'-'.$gid.'-'.$ageid."nextmenu.pdf";
@@ -782,8 +789,16 @@ class TestController extends Controller
 		$nextdaymenuitem = [];
 		$workerproducts = [];
 		// kamchilik bor boshlangich qiymat berishda
+		$costs = bycosts::where('day_id', bycosts::where('day_id', '<=', $today)->where('region_name_id', Kindgarden::where('id', $gid)->first()->region_id)->orderBy('day_id', 'DESC')->first()->day_id)->where('region_name_id', Kindgarden::where('id', $gid)->first()->region_id)->orderBy('day_id', 'DESC')->get();
+		$narx = [];
+		foreach($costs as $row){
+			if(!isset($narx[$row->praduct_name_id])){
+				$narx[$row->praduct_name_id] = $row->price_cost;
+			}
+		}
 		$workerproducts = array_fill(1, 500, 0);
 		$productallcount = array_fill(1, 500, 0);
+		$allproductagesumm = array_fill(1, 500, 0);
 		$menuage = [];
 		$ages = Age_range::all();
 		foreach($ages as $age){
@@ -812,13 +827,7 @@ class TestController extends Controller
 							->orderBy('menu_food_id')
 							->get();	
 
-			$costs = bycosts::where('day_id', bycosts::where('day_id', '<=', $today)->where('region_name_id', Kindgarden::where('id', $gid)->first()->region_id)->orderBy('day_id', 'DESC')->first()->day_id)->where('region_name_id', Kindgarden::where('id', $gid)->first()->region_id)->orderBy('day_id', 'DESC')->get();
-			$narx = [];
-			foreach($costs as $row){
-				if(!isset($narx[$row->praduct_name_id])){
-					$narx[$row->praduct_name_id] = $row->price_cost;
-				}
-			}
+			
 			// xodimlar ovqati uchun
 			$day = Day::where('days.id', $today)->join('months', 'months.id', '=', 'days.month_id')->orderBy('days.id', 'DESC')->first(['days.day_number','days.id as id', 'months.month_name']);
 			// dd($day);
@@ -831,6 +840,7 @@ class TestController extends Controller
 			foreach($menuitem as $item){
 				if(empty($nextdaymenuitem[$item->menu_meal_time_id][$item->menu_food_id]['product'][$item->product_name_id])){
 					$nextdaymenuitem[$item->menu_meal_time_id][$item->menu_food_id]['product'][$item->product_name_id] = 0;
+					$allproductagesumm[$age->id][$item->product_name_id] = 0;
 				}
 				// $nextdaymenuitem[$item->menu_meal_time_id][$item->menu_food_id][$item->product_name_id] = $item->weight;
 				$nextdaymenuitem[$item->menu_meal_time_id][$item->menu_food_id][$age->id][$item->product_name_id]['one'] = $item->weight;
@@ -840,7 +850,7 @@ class TestController extends Controller
 				$nextdaymenuitem[$item->menu_meal_time_id][$item->menu_food_id]['foodweight'] = $item->food_weight; 
 				$nextdaymenuitem[$item->menu_meal_time_id]['mealtime'] = $item->meal_time_name; 
 				$productallcount[$item->product_name_id] += ($item->weight * $menu[0]['kingar_children_number']) / $item->div;
-
+				$allproductagesumm[$age->id][$item->product_name_id] += ($item->weight * $menu[0]['kingar_children_number']) / $item->div;
 				$nextdaymenuitem[$item->menu_meal_time_id][$item->menu_food_id]['product'][$item->product_name_id] += ($item->weight * $menu[0]['kingar_children_number']) / $item->div;
 				
 				for($i = 0; $i<count($products); $i++){
@@ -871,7 +881,7 @@ class TestController extends Controller
 				$nextdaymenuitem[$key]['rows'] += count($row)-3;
 			}
 		}
-		// dd($nextdaymenuitem);
+		dd($allproductagesumm);
         
         $dompdf = new Dompdf('UTF-8');
 		$html = mb_convert_encoding(view('pdffile.technolog.activsecondmenu', ['narx' => $narx,'day' => $day, 'productallcount' => $productallcount, 'workerproducts' => $workerproducts,'menu' => $menuage, 'menuitem' => $nextdaymenuitem, 'products' => $products, 'workerfood' => $workerfood]), 'HTML-ENTITIES', 'UTF-8');
