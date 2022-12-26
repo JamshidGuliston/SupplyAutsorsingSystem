@@ -334,7 +334,7 @@
 										$all = 0;
 									?>
 									@foreach($row as $m)
-										$all += $m;
+										<?php $all += $m; ?>
 									@endforeach
 									<td style="padding: 0px; font-size: 5px" colspan="<?= $col; ?>"><?php printf("%01.2f", $all / 1); ?></td>
 								</tr>	
