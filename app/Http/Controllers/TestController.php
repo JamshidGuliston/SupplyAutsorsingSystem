@@ -798,7 +798,7 @@ class TestController extends Controller
 		}
 		$workerproducts = array_fill(1, 500, 0);
 		$productallcount = array_fill(1, 500, 0);
-		$allproductagesumm = array_fill(1, 500, 0);
+		$allproductagesumm = [];
 		$menuage = [];
 		$ages = Age_range::all();
 		foreach($ages as $age){
