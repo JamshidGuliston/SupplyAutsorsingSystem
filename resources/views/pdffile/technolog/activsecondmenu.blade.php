@@ -326,6 +326,19 @@
 								<td></td>
 								<td style="padding: 0px; font-size: 5px" colspan="<?= $col; ?>"><?php printf("%01.2f",$xcost); ?></td>
 							</tr>
+							@foreach($agesumm as $key => $row)
+								<tr>
+									<th scope="row" colspan="2" class="align-baseline" style="padding: 0px;">{{ $key }}</th>
+									<td></td>
+									<?php
+										$all = 0;
+									?>
+									@foreach($row as $m)
+										$all += $m;
+									@endforeach
+									<td style="padding: 0px; font-size: 5px" colspan="<?= $col; ?>"><?php printf("%01.2f", $all / 1); ?></td>
+								</tr>	
+							@endforeach
 							<tr>
 								<th scope="row" colspan="2" class="align-baseline" style="padding: 0px;">1 та бола учун</th>
 								<td></td>
