@@ -326,13 +326,23 @@
 								<td></td>
 								<td style="padding: 0px; font-size: 5px" colspan="<?= $col; ?>"><?php printf("%01.2f",$xcost); ?></td>
 							</tr>
-							@foreach($agesumm as $row)
+							@foreach($agesumm as $key => $row)
 								<tr>
-									<th scope="row" colspan="2" class="align-baseline" style="padding: 0px;">{{ count($row) }}</th>
-									<td></td>
 									<?php
 										$all = 0;
+										$tit = '';
+										if($key == 1){
+											$tit = "4-7 ёш";
+										}
+										if($key == 2){
+											$tit = "3-4 ёш";
+										}
+										if($key == 3){
+											$tit = "Қисқа гурух";
+										}
 									?>
+									<th scope="row" colspan="2" class="align-baseline" style="padding: 0px;">{{ $tit }}</th>
+									<td></td>
 									@foreach($row as $m)
 										<?php $all += $m; ?>
 									@endforeach
