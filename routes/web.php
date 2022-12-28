@@ -91,6 +91,7 @@ Route::group(['prefix' => 'technolog', 'middleware' => ['isTechnolog', 'auth']],
     Route::post('updategarden', [TechnologController::class, 'updategarden'])->name('updategarden');
     Route::get('ageranges/{id}', [TechnologController::class, 'ageranges']);
     Route::get('addage/{bogid}/{ageid}/{qiymati}', [TechnologController::class, 'addage']);
+    Route::post('nextdayaddgarden', [TechnologController::class, 'nextdayaddgarden']);
     Route::get('getage/{bogid}', [TechnologController::class, 'getage']);
     Route::post('editage', [TechnologController::class, 'editage']);
     Route::post('activagecountedit', [TechnologController::class, 'activagecountedit']);

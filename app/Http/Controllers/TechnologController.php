@@ -528,13 +528,20 @@ class TechnologController extends Controller
     {
         $results = Kindgarden::where('id', $id)->with('age_range')->get();
         // dd($results[0]->age_range);
+        $menus = Titlemenu::orderby('id', 'DESC')->get();
         $html = [];
         foreach ($results[0]->age_range as $rows) {
+            $option="<select id='tommenu' class='form-control' name='menuids[". $rows['id'] ."]' required>
+            <option value=''>-----</option>";
+            foreach($menus as $menu){
+                $option = $option . "<option value=".$menu->id.">".$menu->menu_name."</option>";
+            }
+            $option = $option . "</select>";
             // $html = $html + "<input type='text' value='salom'>";
             array_push($html, "<div class='input-group mb-3 mt-3'>
             <span class='input-group-text' id='inputGroup-sizing-default'>" . $rows['age_name'] . "</span>
-            <input type='number' name='ages[]' data-id=" . $rows['id'] . "  class='ageranges form-control' aria-label='Sizing example input' aria-describedby='inputGroup-sizing-default'>
-            </div>");
+            <input type='number' name='ages[". $rows['id'] ."]' class='form-control' aria-label='Sizing example input' aria-describedby='inputGroup-sizing-default' required>
+            </div><span>Menusi</span>".$option);
         }
         return $html;
     }
@@ -553,6 +560,25 @@ class TechnologController extends Controller
             'age_id' => $ageid,
             'age_number' => $qiymati
         ]);
+    }
+
+    public function nextdayaddgarden(Request $request){
+        date_default_timezone_set('Asia/Tashkent');
+    	$d = strtotime("-10 hours 30 minutes");
+        $find = Nextday_namber::where('kingar_name_id', $request->kgarden)->get();
+        if($find->count() == 0){
+            foreach($request->ages as $key => $value){
+                Nextday_namber::create([
+                    'kingar_name_id' => $request->kgarden,
+                    'king_age_name_id' => $key,
+                    'kingar_children_number' => $value,
+                    'workers_count' => $request->workers,
+                    'kingar_menu_id' => $request->menuids[$key]
+                ]);
+            }
+        }
+        
+        return redirect()->route('technolog.sendmenu', ['day' => date("d-F-Y", $d)]);    
     }
     
     public function updategarden(Request $request)

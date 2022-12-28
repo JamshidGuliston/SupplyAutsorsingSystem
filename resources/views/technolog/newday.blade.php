@@ -62,7 +62,7 @@
 @endsection
 
 @section('content')
-@if($sendmenu == 1)
+@if($sendmenu == 0)
 <!-- EDIT -->
 <!-- Modal -->
 <div class="modal editesmodal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -172,7 +172,6 @@
         </div>
     </div>
 </div>
-
 <!-- EDD -->
 <div class="py-4 px-4">
 	<form action="/technolog/todaynextdaymenu" method="post">
@@ -265,6 +264,48 @@
     </table>
 </div>
 @else
+
+<!-- EDD -->
+<div class="modal fade" id="exampleModalsadd" tabindex="-1" aria-labelledby="exampleModalLabelsadd" aria-hidden="true">
+    <div class="modal-dialog  modal-lg">
+        <div class="modal-content loaders">
+        <form action="/technolog/nextdayaddgarden" method="post">
+                @csrf
+            <div class="modal-header bg-info">
+                <h5 class="modal-title text-white" id="exampleModalLabel">Qo'shish</h5>
+                <button type="button" class="btn-close " data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="kingarden">
+                    <label for="basic-url" class="form-label">MTM nomi</label>
+                    <select class="form-select" id="selectadd" name="kgarden" aria-label="Default select example" required>
+                        <option selected>--</option>
+                        @foreach($gardens as $gardenall)
+                        @if(!isset($gardenall['ok']))
+                        <option value="{{$gardenall['id']}}">{{$gardenall['kingar_name']}}</option>
+                        @endif
+                        @endforeach
+                    </select>
+                </div>
+                <div class="yangages">
+                </div>
+                <span>Ishchilar soni:</span>
+                <div>
+                    <input type="text" class = "form-control" name="workers" required>
+                </div>
+            </div>
+            <div class="loader-box">
+                <div class="loader"></div>
+            </div>
+            <div class="modal-footer">
+                <!-- <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button> -->
+                <button type="submit" class="btn btn-info text-white">Qo'shish</button>
+            </div>
+            </form>
+        </div>
+    </div>
+</div>
+<!-- EDD -->
 <!-- //////////////////////////////////////////////////////////////Taxminiy menular/////////////////////////////////////////////////////////// -->
 <!-- Worker count edit -->
 <!-- Modal -->
@@ -351,21 +392,15 @@
     <div class="row">
         <div class="col-md-6">
             <b>Taxminiy menyular</b>
-            <a href="/technolog/createnextdaypdf">
+            <!-- <a href="/technolog/createnextdaypdf">
                 <i class="far fa-file-pdf" style="color: dodgerblue; font-size: 18px;"></i>
-            </a>
+            </a> -->
         </div>
         <div class="col-md-3">
-            <b>Bog'chalarga so'rov yuborish</b>
-            <a href="/technolog/sendtoallgarden">
-                <i class="far fa-paper-plane" style="color: dodgerblue; font-size: 18px;"></i>
-            </a>
+            
         </div>
         <div class="col-md-3">
-            <b>Taxminiy menyu yuborish</b>
-            <a href="/technolog/nextsendmenutoallgarden">
-                <i class="far fa-paper-plane" style="color: dodgerblue; font-size: 18px;"></i>
-            </a>
+        <button class="btn btn-info p-0" style="padding: 3px 16px !important; text-align:end" data-bs-toggle="modal" data-bs-target="#exampleModalsadd"> <i class="fas fa-plus-square text-white "></i></button>
         </div>
     </div>
     <hr>
@@ -374,7 +409,6 @@
             <tr>
                 <th scope="col" rowspan="2">ID</th>
                 <th scope="col" rowspan="2">MTT-nomi</th>
-                <th scope="col" rowspan="2">So'rash</th>
                 <th scope="col" rowspan="2">Xodimlar 
                 @foreach($ages as $age)
                 <th scope="col" colspan="2"> 
@@ -382,7 +416,6 @@
                 </th>
                 @endforeach
                 <th style="width: 70px;" rowspan="2">Накладной</th>
-                <th style="width: 70px;" rowspan="2">Menyu</th>
             </tr>
             <tr style="color: #888888;">
                 @foreach($ages as $age)
@@ -397,7 +430,6 @@
             <tr>
                 <td>{{ $t++ }}</td>
                 <td>{{ $row['kingar_name'] }}</td>
-                <td><a href="/technolog/sendtoonegarden/{{ $row['kingar_name_id'] }}"><i class="far fa-paper-plane" style="color: dodgerblue;"></i></a></td>
                 <td>{{ $row['workers_count'] }} <i class="w_countedit far fa-edit" data-menu-id="{{ $row['kingar_name_id'] }}" data-wor-count="{{ $row['workers_count'] }}" data-king-name="{{ $row['kingar_name'] }}" data-bs-toggle="modal" data-bs-target="#wcountModal" style="color: #727213; font-size: 14px; cursor: pointer;"></i></td>
                 @foreach($ages as $age)
                 @if(isset($row[$age->id]))
@@ -414,7 +446,6 @@
                 @endif
                 @endforeach
                 <td><a href="/nextnakladnoyPDF/{{ $row['kingar_name_id'] }}" target="_blank"><i class="far fa-file-pdf" style="color: dodgerblue; font-size: 18px;"></i></a></td>
-                <td><a href="/technolog/nextsendmenutoonegarden/{{ $row['kingar_name_id'] }}"><i class="far fa-paper-plane" style="color: dodgerblue;"></i></a></td>
             </tr>
         @endforeach
         </tbody>
@@ -432,7 +463,7 @@
 @endsection
 
 @section('script')
-@if($sendmenu == 1)
+@if($sendmenu == 0)
 <script>
     document.getElementById('select-all').onclick = function() {
         var checkboxes = document.getElementsByName('vehicle');
@@ -508,10 +539,7 @@
             var k = inp.attr('data-id');
             inp.each(function() {
                 var j = $(this).attr('data-id');
-                console.log(j);
                 var valuess = $(this).val();
-                console.log(valuess);
-                console.log(g)
                 $.ajax({
                     method: 'GET',
                     url: '/technolog/addage/' + g + '/' + j + '/' + valuess,
@@ -574,6 +602,48 @@
             }
         })
     });
+    $('.w_countedit').click(function() {
+        var king = $(this).attr('data-menu-id');
+        var wc = $(this).attr('data-wor-count');
+        var kn = $(this).attr('data-king-name');
+        var div = $('.wor_countedit');
+        var title = $('.gardentitle');
+        div.html("<input type='number' name='workers' class='form-control' value="+wc+">");
+        title.html("<p>"+kn+"</p><input type='hidden' name='kingid' class='' value="+king+">");
+    });
+
+    $('.ch_countedit').click(function() {
+        var nextrow = $(this).attr('data-nextrow-id');
+        var chc = $(this).attr('data-child-count');
+        var kn = $(this).attr('data-kinga-name');
+        var temprow = $(this).attr('data-temprow-id');
+        var tempchild = $(this).attr('data-tempchild-count');
+        var div1 = $('.chil_countedit');
+        var div2 = $('.temp_count');
+        var title = $('.childrentitle');
+        title.html("<p>"+kn+"</p><input type='hidden' name='nextrow' class='' value="+nextrow+"><input type='hidden' name='temprow' class='' value="+temprow+">");
+        div1.html("<input type='number' name='agecount' class='form-control' value="+chc+">");
+        div2.html("<br><p style='color: red'>Xabarnoma: <i class='far fa-envelope' style='color: #c40c0c'></i> "+tempchild+"</p>");
+    });
+
+    $('.next_menu').click(function() {
+        var nextmenu = $(this).attr('data-nextmenu-id');
+        var nextrow = $(this).attr('data-nextrow-count');
+        var king = $(this).attr('data-king-name');
+        var div = $('.menutitle');
+        var select = $('.menu_select');
+        div.html("<p>"+king+"</p><input type='hidden' name='nextrow' class='' value="+nextrow+">");
+        $.ajax({
+            method: "GET",
+            url: '/technolog/fornextmenuselect',
+            data: {
+                'menuid': nextmenu,
+            },
+            success: function(data) {
+                select.html(data);
+            }
+        })
+    });
 </script>
 @else
 <script>
@@ -616,6 +686,21 @@
             },
             success: function(data) {
                 select.html(data);
+            }
+        })
+    });
+    $('#selectadd').change(function() {
+        g = $(this).val();
+        hn = $('.yangages');
+        $.ajax({
+            method: "GET",
+            url: '/technolog/ageranges/' + g,
+            beforeSend: function() {
+                $('.loader-box').show();
+            },
+            success: function(data) {
+                hn.html(data);
+                $('.loader-box').hide();
             }
         })
     });
