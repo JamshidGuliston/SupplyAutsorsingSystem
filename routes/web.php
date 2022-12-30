@@ -56,6 +56,7 @@ Route::group(['prefix' => 'storage', 'middleware' => ['isStorage', 'auth']], fun
     Route::get('home/{id}', [StorageController::class, 'index'])->name('storage.home');
     Route::get('addproductform', [StorageController::class, 'addproductform'])->name('storage.addproductform');
     Route::post('addproducts', [StorageController::class, 'addproducts'])->name('storage.addproducts');
+    Route::post('addr_products', [StorageController::class, 'addr_products'])->name('storage.addr_products');
     Route::post('addproduct', [StorageController::class, 'addproduct'])->name('storage.addproduct');
     Route::get('addedproducts/{id}', [StorageController::class, 'addedproducts'])->name('storage.addedproducts');
     Route::get('orders', [StorageController::class, 'orders'])->name('storage.orders');

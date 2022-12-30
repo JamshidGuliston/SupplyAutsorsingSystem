@@ -274,7 +274,100 @@
     @include('storage.sidemenu'); 
 @endsection
 @section('content')
-<!-- AddModal -->
+<!-- Add residual -->
+<div class="modal fade" id="addresidual" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Продукт қўшиш</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body addfood">  
+                <form id="add-form" action="" method="get">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <span class="input-note">Махсулот:</span>
+                            <select id="input-notebar" class="form-select" required>
+                                @foreach($products as $row)
+                                    <option value="{{$row['id']}}">{{$row['product_name']}}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <span class="input-note">::</span>
+                            <select class="form-select" required>
+                               <option>----</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <span class="input-income">Оғирлиги:</span>
+                            <br>
+                            <input id="input-expensebar" class="form-control" type="text" onkeypress="javascript:return isNumber(event)">        
+                        </div>
+                        <div class="col-md-3">
+                            <span class="input-expense">Келган нархи:</span>
+                            <br>
+                            <input id="input-incomebar" class="form-control" type="number">
+                        </div>
+                        <div class="col-md-3">
+                            <i id="additem" style="margin-top: 35px; cursor: pointer" class="icon fas fa-plus" aria-hidden="false"></i>
+                            <!-- <input  style="margin-top: 35px;" class="button" type="button" value="+"> -->
+                        </div>
+                    </div>
+                </form> 
+                <br>
+                <!-- TABLE -->
+                <form method="POST" action="{{route('storage.addr_products')}}">
+                    @csrf
+                    <input type="hidden" id="titleid" name="month_id" value="{{ $id }}">
+                    <table id="test1">
+                        <thead>
+                            <tr>
+                                <th id="note">Mahsulot</th>
+                                <th id="expense">Og'irlik</th>
+                                <th id="income">Narxi</th>
+                                <th>O'chirish</th>
+                            </tr>
+                        </thead>
+                            <tbody id="table-body">
+                            </tbody>
+                    </table>
+                    <br>
+                    <div class="row">
+                        <div class="col-md-2"></div>
+                        <div class="col-md-4">
+                            <input type="text" name="title" class="form-control" placeholder="Izoh" required>
+                        </div>
+                        <div class="col-md-4">
+                            <select class="form-select" name="date_id" required>
+                                <option value="">--Sana--</option>
+                                @foreach($days as $row)
+                                    <option value="{{$row['id']}}">{{$row['day_number'].".".$row['month_name'].".".$row['year_name']}}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="col-md-2">
+                        </div>
+                    </div>
+                    <br>
+                    <div class="row">
+                        <div class="col-md-4">
+                        </div>
+                        <div class="col-md-4">
+                            <input type="checkbox" id="residual" name="residual" value="True">
+                            <label for="residual"> Qoldiq</label>
+                            <br>
+                            <button type="submit" class="form-control">Qo'shish</button>
+                        </div>
+                        <div class="col-md-4"></div>
+                    </div>
+                </form>  
+            </div>
+            <hr>
+        </div>
+    </div>
+</div>
+<!-- Add Product -->
 <div class="modal fade" id="addModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-xl">
         <div class="modal-content">
@@ -317,7 +410,7 @@
                             <input id="input-summa-bar" class="form-control" type="number">
                         </div>
                         <div class="col-md-3">
-                            <i id="add-item" class="icon fas fa-plus" aria-hidden="false"></i>
+                            <i id="add-item" style="margin-top: 35px; cursor: pointer" class="icon fas fa-plus" aria-hidden="false"></i>
                             <!-- <input  style="margin-top: 35px;" class="button" type="button" value="+"> -->
                         </div>
                     </div>
@@ -363,9 +456,6 @@
                         <div class="col-md-4">
                         </div>
                         <div class="col-md-4">
-                            <input type="checkbox" id="residual" name="residual" value="True">
-                            <label for="residual"> Qoldiq</label>
-                            <br>
                             <button type="submit" class="form-control">Qo'shish</button>
                         </div>
                         <div class="col-md-4"></div>
@@ -415,13 +505,14 @@
 <div class="py-4 px-4">
     <div class="row">
         <div class="col-md-4">
+            <button class="form-control"  onclick="hideModal(1)" data-bs-toggle="modal" data-bs-target="#addresidual">Qoldiq</button>
         </div>
         <div class="col-md-4">
         </div>
         <div class="col-md-2">
         </div>
         <div class="col-md-2" style="text-align: end;">
-            <button class="form-control" data-bs-toggle="modal" data-bs-target="#addModal">+</button>
+            <button class="form-control" onclick="hideModal(2)" data-bs-toggle="modal" data-bs-target="#addModal">+</button>
         </div>
     </div>
     <hr>
@@ -455,6 +546,15 @@
 
 @section('script')
 <script>
+    // function hideModal(t) {
+    //     var x2 = document.getElementById("addModal");
+    //     var x1 = document.getElementById("addresidual");
+    //     if (t == 1) {
+    //         x2.remove();
+    //     } else {
+    //         x1.style.display = "none";
+    //     }
+    // }
 	function isNumber(evt) {
         let charCode = (evt.which) ? evt.which : event.keyCode;
         if (charCode > 31 && (charCode < 48 || charCode > 57) && charCode != 46)
@@ -465,6 +565,23 @@
     // All this is based on the concept of not manipulating the HTML. 
 
     // container for balance, income, expenses
+    var r_money = {};
+    r_money.current_income = $('#current-income');
+    r_money.current_balance = $('#current-balance');
+    r_money.current_expenses = $('#current-expenses');
+
+    // get current values for money
+    r_money.balance = 0;
+    r_money.income = 0;
+    r_money.expenses = 0;
+
+    // Define an update method
+    r_money.update = function() {
+        r_money.current_income.html(r_money.income);
+        r_money.current_expenses.html(r_money.expenses);
+        r_money.current_balance.html(r_money.balance);
+    }
+
     var money = {};
     money.current_income = $('#current-income');
     money.current_balance = $('#current-balance');
@@ -477,14 +594,15 @@
 
     // Define an update method
     money.update = function() {
-    money.current_income.html(money.income);
-    money.current_expenses.html(money.expenses);
-    money.current_balance.html(money.balance);
+        money.current_income.html(money.income);
+        money.current_expenses.html(money.expenses);
+        money.current_balance.html(money.balance);
     }
 
  
     // container for product and actions
     var product = {};
+    var r_product = {};
 
     // Get current products and then we will update the money information
 
@@ -492,13 +610,14 @@
     // iterate through items to add up curren prices.
     product.iterate = function() {
         product.items = $('#tablebody tr');
+        product.items = $('#tablebody tr');
         money.income = 0;
         money.expenses = 0;
     
         product.items.each(function() {
             var this_row = $(this);
             //add delete reference 
-            $(this).find('td input').click(function() {
+            $(this).find('td span input').click(function() {
                 product_delete_row(this_row);
             });
             
@@ -522,12 +641,48 @@
   
     }
 
+    // residual
+    r_product.iterate = function() {
+        r_product.items = $('#table-body tr');
+        r_product.items = $('#table-body tr');
+        r_money.income = 0;
+        r_money.expenses = 0;
+    
+        r_product.items.each(function() {
+            var this_row = $(this);
+            //add delete reference 
+            $(this).find('td i').click(function() {
+                r_product_delete_row(this_row);
+            });
+            
+            // get Expense
+            var product_expense = parse_currency($(this).find('td')[1].innerHTML);
+
+            // get Income
+            var product_income  = parse_currency($(this).find('td')[2].innerHTML);
+        
+            // Math it together to get some numbers for output later.
+            r_money.income += product_income;
+            r_money.expenses += product_expense;
+    
+        });
+    
+        // update balance
+        r_money.balance = r_money.income - r_money.expenses; 
+
+        // update details
+        r_money.update();
+  
+    }
+
     // Call product iterate for price updates.
     product.iterate();
+    r_product.iterate();
 
 
     // add product
     product.add_product = $('#add-item');
+    r_product.add_product = $('#additem');
 
     product.add_product.click(function(i, el) {
     // if(fields_validate()) {
@@ -538,11 +693,25 @@
     
     }); 
 
+    r_product.add_product.click(function(i, el) {
+    // if(fields_validate()) {
+        r_add_product();
+        r_product.iterate();
+    
+    // }
+    
+    }); 
+
     // delete product row
 
     function product_delete_row(row) {
         row.remove();
         product.iterate();
+    }
+
+    function r_product_delete_row(row) {
+        row.remove();
+        r_product.iterate();
     }
 
 
@@ -567,10 +736,10 @@
         // add income 
         .append($('<td>').html(get_income_input() + "<input type='hidden' name='costs[]' value="+get_income_input()+">"))
         .append($('<td>').html($('#get_shop_select').find('option:selected').text() + "<input type='hidden' name='shops[]' value="+get_shop_select()+">"))
-        .append($('<td>').html(get_summa_input() + "<input type='hidden' name='costs[]' value="+get_summa_input()+">"))
+        .append($('<td>').html(get_summa_input() + "<input type='hidden' name='pays[]' value="+get_summa_input()+">"))
         // .append($('<td>').html(get_date_input()))
         // add delete button
-        .append($('<td>').html('<input type="button" style="background: red; border: none" value="Delete">'));
+        .append($('<td>').html('<span><input type="button" style="background: red; border: none" value="Delete"></span>'));
 
         var find = 0;
         $('#tablebody').find("td").each(function() {
@@ -590,12 +759,44 @@
         }
     }
 
+    function r_add_product() {
+        
+        var row = $('<tr>')
+        // add description
+        .append($('<td>').html($('#input-notebar').find('option:selected').text() + "<input type='hidden' name='productsid[]' value="+$('#input-notebar').val()+">"))
+        // update expense
+        .append($('<td>').html(get_weight_input() + "<input type='hidden' name='weights[]' value="+get_weight_input() +">"))
+        // add income 
+        .append($('<td>').html(get_cost_input() + "<input type='hidden' name='costs[]' value="+get_cost_input()+">"))
+        // .append($('<td>').html(get_date_input()))
+        // add delete button
+        .append($('<td>').html('<i style="background: red; border: none; cursor: pointer">Delete</i>'));
+
+        var find = 0;
+        $('#table-body').find("td").each(function() {
+            if ( $(this).text() == $('#input-notebar').find('option:selected').text() ){
+                find = 1;
+            }
+        });
+        
+        if(find == 0){
+            row.prependTo('#table-body');
+        }
+    }
 
 
     // Get inputed value for income
     function get_income_input() {
         if($('#input-income-bar').val() != "") {
             return $('#input-income-bar').val();
+        } else {
+            return 0;
+        }
+    }
+
+    function get_cost_input() {
+        if($('#input-incomebar').val() != "") {
+            return $('#input-incomebar').val();
         } else {
             return 0;
         }
@@ -610,6 +811,15 @@
         }
     }
 
+    function get_weight_input() {
+        if($('#input-expensebar').val() != "") {
+            return $('#input-expensebar').val();
+        } else {
+            return 0;
+        }
+    }
+    
+
     function get_summa_input() {
         if($('#input-summa-bar').val() != "") {
             return $('#input-summa-bar').val();
@@ -617,6 +827,7 @@
             return 0;
         }
     }
+    
 
     function get_shop_select() {
         if($('#get_shop_select').val() != "") {

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Add_group;
 use App\Models\Add_large_werehouse;
 use App\Models\Day;
+use App\Models\debts;
 use App\Models\Kindgarden;
 use App\Models\Menu_composition;
 use App\Models\minus_multi_storage;
@@ -114,6 +115,76 @@ class StorageController extends Controller
     }
 
     public function addproducts(Request $request){
+        $id = $request->month_id;
+        if($id == 0){
+            $id = Month::where('month_active', 1)->first()->id;
+        }
+        $products = $request->productsid;
+        $weights = $request->weights;
+        $costs = $request->costs;
+        $shops = $request->shops;
+        $pays = $request->pays;
+        if($products != null){
+            $group = Add_group::create([
+                'day_id' => $request->date_id,
+                'group_name' => $request->title,
+                'residual' => 0,
+            ]);
+        }
+        $real = [];
+        for($i = 0; $i < count($products);  $i++){
+            Add_large_werehouse::create([
+                'add_group_id' => $group->id,
+                'shop_id' => $shops[$i],
+                'product_id' => $products[$i],
+                'weight' => $weights[$i],
+                'cost' => $costs[$i]
+            ]);
+        }
+        $ww = [];
+        $total = [];
+        for($i = 0; $i < count($shops); $i++){
+            if(empty($total[$i])){
+                $total[$i] = 0;
+                $real[$i] = 0;
+            }
+            $ww[$i] = $shops[$i];
+            $total[$i] += $pays[$i];
+            $real[$i] += $costs[$i] * $weights[$i];
+        }
+
+        for($i = 0; $i < count($shops); $i++){
+            $last = debts::where('shop_id', $shops[$i])->orderby('id', 'DESC')->first();
+            $r = 0;
+            $hr = 0;
+            if($last == null){
+                if($total[$i] < $real[$i]){
+                    $r = abs($total[$i] - $real[$i]);
+                    $hr = 0;
+                }else{
+                    $r = 0;
+                    $hr = abs($total[$i] - $real[$i]);
+                }
+            }elseif($total[$i] + $last->hisloan < $last->loan + $real[$i]){
+                $r = abs($total[$i] + $last->hisloan - ($last->loan + $real[$i]));
+                $hr = 0;
+            }else{
+                $r = 0;
+                $hr = abs($total[$i] + $last->hisloan - ($last->loan + $real[$i]));
+            }
+            debts::create([
+                'shop_id' => $shops[$i],
+                'pay' => $total[$i],
+                'loan' => $r,
+                'hisloan' => $hr,
+                'gr_id' => $group->id
+            ]);
+        }
+
+        return redirect()->route('storage.addedproducts', $id);
+    }
+
+    public function addr_products(Request $request){
         // dd($request->all());
         $id = $request->month_id;
         if($id == 0){
@@ -126,7 +197,7 @@ class StorageController extends Controller
         $group = Add_group::create([
             'day_id' => $request->date_id,
             'group_name' => $request->title,
-            'residual' => 0,
+            'residual' => 1,
         ]);
 
         for($i = 0; $i < count($products);  $i++){
