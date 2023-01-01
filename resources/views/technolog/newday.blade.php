@@ -484,7 +484,7 @@
             h = $('.yang-ages');
             $.ajax({
                 method: "GET",
-                url: '/technolog/ageranges/' + g,
+                url: '/technolog/gageranges/' + g,
                 beforeSend: function() {
                     $('.loader-box').show();
                 },
@@ -536,9 +536,9 @@
 
         $('.add-age').click(function() {
             var inp = $('.ageranges');
-            var k = inp.attr('data-id');
             inp.each(function() {
                 var j = $(this).attr('data-id');
+                var g = $(this).attr('gar-id');
                 var valuess = $(this).val();
                 $.ajax({
                     method: 'GET',

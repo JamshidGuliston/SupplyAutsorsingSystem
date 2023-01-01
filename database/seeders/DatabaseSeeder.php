@@ -24,7 +24,8 @@ class DatabaseSeeder extends Seeder
             product_categoriesTableSeeder::class,
             noyuksTableSeeder::class,
             Norm_categoryTableSeeder::class,
-            NormTableSeeder::class
+            NormTableSeeder::class,
+            TypeOfWorkSeeder::class,
         ]);
     }
 }

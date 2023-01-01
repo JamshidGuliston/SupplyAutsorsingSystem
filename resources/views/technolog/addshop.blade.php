@@ -41,6 +41,17 @@
             </div>
         </div>
         <div class="form-group row">
+            <label for="staticEmail" class="col-sm-2 col-form-label">Faoliyat turi: </label>
+            <div class="col-sm-10">
+                <select id='select_type' name="type" class="form-select">
+                    <option value="" selected>-----</option>
+                    @foreach($types as $row)
+                        <option value='{{ $row->id }}'>{{ $row->type_name }}</option>
+                    @endforeach
+                </select>
+            </div>
+        </div>
+        <div class="form-group row shtype">
             <label for="inputPassword" class="col-sm-2 col-form-label">Махсулотлар</label>
             <div class="col-sm-10">
                 <select id='testSelect1' name="products[]" class="form-select" aria-label="Default select example" multiple>
@@ -51,7 +62,7 @@
             </div>
         </div>
 
-        <div class="form-group row">
+        <div class="form-group row shtype">
             <label for="inputPassword" class="col-sm-2 col-form-label">Боғчалари</label>
             <div class="col-sm-10">
                 <select id='testSelect2' name="gardens[]" class="form-select" aria-label="Default select example" multiple>
@@ -105,6 +116,14 @@
 	function disable() {
 		document.multiselect('#testSelect1').setIsEnabled(false);
 	}
+
+    $("#select_type").change(function(){
+        if(this.value == 2){
+            $(".shtype").hide();
+        }else{
+            $(".shtype").show();
+        }
+    });
 </script>
 
 @endsection

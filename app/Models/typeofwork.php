@@ -5,13 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Month extends Model
+class typeofwork extends Model
 {
     use HasFactory;
-    protected $fillable = [
-    	'month_name',
-		'month_en',
-		'year_id',
-	    'month_active'
-	];
 }

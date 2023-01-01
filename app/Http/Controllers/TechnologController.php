@@ -37,7 +37,9 @@ use App\Models\Season;
 use App\Models\Shop;
 use App\Models\Size;
 use App\Models\titlemenu_food;
+use App\Models\typeofwork;
 use App\Models\User;
+use Database\Seeders\TypeOfWorkSeeder;
 use Illuminate\Support\Str;
 use Dompdf\Dompdf;
 use TCG\Voyager\Models\Category;
@@ -46,10 +48,10 @@ class TechnologController extends Controller
 {
     public function index(Request $request)
     {
-        $month = Month::where('month_active', 1)->get();
+        $months = Month::where('month_active', 1)->get();
         // dd($month[0]->id);
         // faqat aktiv oy sanalarini oladi
-        $days = Day::where('month_id', $month[0]->id)
+        $days = Day::where('month_id', $months[0]->id)
             ->join('months', 'months.id', '=', 'days.month_id')
             ->join('years', 'years.id', '=', 'days.year_id')
             ->select('days.id', 'days.day_number', 'days.month_id', 'months.month_name', 'years.year_name')
@@ -64,7 +66,7 @@ class TechnologController extends Controller
         // date("h:i:sa:M-d-Y");
         $d = strtotime("-10 hours 30 minutes");
         // dd($days[0]->day_number);
-        return view('technolog.home', ['date' => $days, 'tomm' => $d, 'kingardens' => $kingar, 'menus' => $menus, 'next' => $nextdaymenu]);
+        return view('technolog.home', ['date' => $days, 'tomm' => $d, 'kingardens' => $kingar, 'menus' => $menus, 'next' => $nextdaymenu, 'months' => $months]);
     }
 
     // yangi kun ishlari
@@ -546,6 +548,19 @@ class TechnologController extends Controller
         return $html;
     }
 
+    public function gageranges(Request $request, $id)
+    {
+        $results = Kindgarden::where('id', $id)->with('age_range')->get();
+        $html = [];
+        foreach ($results[0]->age_range as $rows) {
+            array_push($html, "<div class='input-group mb-3 mt-3'>
+            <span class='input-group-text' id='inputGroup-sizing-default'>" . $rows['age_name'] . "</span>
+            <input type='number' data-id = '". $rows['id'] ."' gar-id = '". $results[0]->id ."' class='form-control ageranges' aria-label='Sizing example input' aria-describedby='inputGroup-sizing-default' required>
+            </div>");
+        }
+        return $html;
+    }
+
 
     public function addage(Request $request, $bogid, $ageid, $qiymati)
     {
@@ -938,20 +953,27 @@ class TechnologController extends Controller
         $shop = Shop::where('id', $id)->with('product')->with('kindgarden')->first();
         $products = Product::all();
         $gardens = Kindgarden::all();
-        return view('technolog.shopsettings', compact('shop', 'products', 'gardens'));
+        $types = typeofwork::all();
+        return view('technolog.shopsettings', compact('types', 'shop', 'products', 'gardens'));
     }
 
     public function updateshop(Request $request)
     {
         $shop = Shop::find($request->shopid);
         $prd = $request->products;
-        $shop->product()->sync($prd);
         $grd = $request->gardens;
+        if($request->type == 2){
+            $prd = [];
+            $grd = [];
+        }
+        $shop->product()->sync($prd);
         $shop->kindgarden()->sync($grd);
+
         $shop->update([
-                'shop_name' => $request->shopname,
-                'hide' => $request->hide
-            ]);
+            'shop_name' => $request->shopname,
+            'type_id' => $request->type,
+            'hide' => $request->hide
+        ]);
         return redirect()->route('technolog.shops');
     }
 
@@ -959,21 +981,26 @@ class TechnologController extends Controller
     {
         $products = Product::all();
         $gardens = Kindgarden::all();
+        $types = typeofwork::all();
 
-        return view('technolog.addshop', compact('products', 'gardens'));
+        return view('technolog.addshop', compact('products', 'gardens', 'types'));
     }
 
     public function createshop(Request $request)
     {
         $shop = Shop::create([
             'shop_name' => $request->name,
+            'type_id' => $request->type,
             'telegram_id' => 0,
             'hide' => 1
         ]);
-        $prd = $request->products;
-        $shop->product()->sync($prd);
-        $grd = $request->gardens;
-        $shop->kindgarden()->sync($grd);
+
+        if($request->type == 1){
+            $prd = $request->products;
+            $shop->product()->sync($prd);
+            $grd = $request->gardens;
+            $shop->kindgarden()->sync($grd);
+        }
 
         return redirect()->route('technolog.shops');
     }

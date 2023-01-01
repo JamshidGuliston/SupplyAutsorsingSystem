@@ -38,6 +38,21 @@
             </div>
         </div>
         <div class="form-group row">
+            <label for="staticEmail" class="col-sm-2 col-form-label">Faoliyat turi: </label>
+            <div class="col-sm-10">
+                <select id='select_type' name="type" class="form-select">
+                    <option value="" selected>-----</option>
+                    @foreach($types as $row)
+                    @if($shop->type_id == $row->id)
+                        <option value='{{ $row->id }}' selected>{{ $row->type_name }}</option>
+                    @else
+                        <option value='{{ $row->id }}'>{{ $row->type_name }}</option>
+                    @endif
+                    @endforeach
+                </select>
+            </div>
+        </div>
+        <div class="form-group row shtype">
             <label for="inputPassword" class="col-sm-2 col-form-label">Махсулотлар</label>
             <div class="col-sm-10">
                 <select id='testSelect1' name="products[]" class="form-select" aria-label="Default select example" multiple>
@@ -57,7 +72,7 @@
             </div>
         </div>
 
-        <div class="form-group row">
+        <div class="form-group row shtype">
             <label for="inputPassword" class="col-sm-2 col-form-label">Боғчалари</label>
             <div class="col-sm-10">
                 <select id='testSelect2' name="gardens[]" class="form-select" aria-label="Default select example" multiple>
@@ -120,5 +135,21 @@
 	function disable() {
 		document.multiselect('#testSelect1').setIsEnabled(false);
 	}
+
+    $("#select_type").change(function(){
+        if(this.value == 2){
+            document.multiselect('#testSelect1').setIsEnabled(false);
+            document.multiselect('#testSelect2').setIsEnabled(false);
+        }else{
+            document.multiselect('#testSelect1').setIsEnabled(true);
+            document.multiselect('#testSelect2').setIsEnabled(true);
+        }
+    });
 </script>
+@if($shop->type_id == 2)
+<script>
+    document.multiselect('#testSelect1').setIsEnabled(false);
+    document.multiselect('#testSelect2').setIsEnabled(false);
+</script>
+@endif
 @endsection
