@@ -467,21 +467,21 @@ class StorageController extends Controller
             foreach($kindproducts[$garden] as $key => $val){
                 if($key == 'k') continue;
                 $prod = Product::where('id', $key)->with('shop')->first();
-                if($prod->shop->count() == 0){
-                    if(!isset($mods[$key]) or $mods[$key] <= 0){
-                        $mods[$key] = 0;
-                    }
-                    if(isset($kindworkerproducts[$garden][$key])){
-                        $val = $val + $kindworkerproducts[$garden][$key];
-                    }
-                    if(($val / $prod->div) - $mods[$key] > 0){
-                        order_product_structure::create([
-                            'order_product_name_id' => $order->id,
-                            'product_name_id' => $key,
-                            'product_weight' => ($val / $prod->div) - $mods[$key],
-                        ]);
-                    }
+                // if($prod->shop->count() == 0){
+                if(!isset($mods[$key]) or $mods[$key] <= 0){
+                    $mods[$key] = 0;
                 }
+                if(isset($kindworkerproducts[$garden][$key])){
+                    $val = $val + $kindworkerproducts[$garden][$key];
+                }
+                if(($val / $prod->div) - $mods[$key] > 0){
+                    order_product_structure::create([
+                        'order_product_name_id' => $order->id,
+                        'product_name_id' => $key,
+                        'product_weight' => ($val / $prod->div) - $mods[$key],
+                    ]);
+                }
+                // }
             }
 
         }
