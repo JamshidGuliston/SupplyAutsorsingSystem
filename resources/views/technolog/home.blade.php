@@ -79,10 +79,13 @@
 @section('content')
 <div class="date">
     <div class="month">
-        <a href="#" class="month__item">{{ "<<<" }}</a>
+        @if($year->id != 1)
+            <a href="/technolog/showdate/{{ $year->id-1 }}/0/0" class="month__item">{{ $year->year_name - 1 }}</a>
+        @endif
         @foreach($months as $month)
             <a href="/technolog/showdate/{{ $year->id }}/{{ $month->id }}/0" class="month__item {{ ($month->month_active == 1) ? 'active' : null }}">{{ $month->month_name }}</a>
         @endforeach
+        <a href="/technolog/showdate/{{ $year->id+1 }}/0/0" class="month__item">{{ $year->year_name + 1 }}</a>
     </div>
     <div class="day">
         @foreach($date as $day)

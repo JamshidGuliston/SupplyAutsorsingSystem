@@ -106,7 +106,9 @@
 </div>
 <div class="date">
     <div class="month">
-        <a href="#" class="month__item">{{ "<<<" }}</a>
+        @if($y_id != 1)
+            <a href="/technolog/showdate/{{ $y_id-1 }}/0/0" class="month__item">{{ "<<" }}</a>
+        @endif
         @foreach($months as $month)
             <a href="/technolog/showdate/{{ $y_id }}/{{ $month->id }}/0" class="month__item {{ ( $month->id == $m_id) ? 'active' : null }}">{{ $month->month_name }}</a>
         @endforeach
