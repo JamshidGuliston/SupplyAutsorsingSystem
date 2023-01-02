@@ -3,24 +3,32 @@
 @section('css')
 <style>
     .date{
-        margin-bottom: 30px;
+        margin-bottom: 10px;
     }
     .modal-header{
         background-color: ghostwhite;
     }
     .year {
         text-align: center;
+        /* background-color: #83e2ff; */
+    }
+    .lline {
+        text-align: center;
+        background-color: #e2e1dc;
+        height: 4px;
     }
     .month{
-        margin: 10px 20px;
+        margin: 0px 20px;
         display: flex;
         justify-content: left;
+        background-color: midnightblue;
     }
     .day {
-        margin: 10px 20px;
+        margin: 0px 20px;
+        padding: 6px;
         display: flex;
         justify-content: left;
-        height: 34px;
+        height: 46px;
     }
 
     .month__item{
@@ -39,18 +47,17 @@
     }
 
     .month__item, .day__item{
-        color: black;
         cursor: context-menu;
         /* border: 1px solid #87706a; */
         text-decoration: none;
     }
     .active{
-        background-color: #23b242;
+        background-color: #63a3c4;
         color: #fff;
     }
     .month__item:hover,
     .day__item:hover{
-        background-color: #23b242;
+        background-color: #63a3c4;
         color: #fff;
         transition: all .5s;
         cursor: pointer;
@@ -105,12 +112,16 @@
     </div>
 </div>
 <div class="date">
+    <!-- <div class="lline"></div> -->
+    <div class = "year first-text fw-bold">
+        {{ $year->year_name }}
+    </div>
     <div class="month">
         @if($y_id != 1)
             <a href="/technolog/showdate/{{ $y_id-1 }}/0/0" class="month__item">{{ $year->year_name - 1 }}</a>
         @endif
         @foreach($months as $month)
-            <a href="/technolog/showdate/{{ $y_id }}/{{ $month->id }}/0" class="month__item {{ ( $month->id == $m_id) ? 'active' : null }}">{{ $month->month_name }}</a>
+            <a href="/technolog/showdate/{{ $y_id }}/{{ $month->id }}/0" class="month__item {{ ( $month->id == $m_id) ? 'active first-text' : 'second-text' }} fw-bold">{{ $month->month_name }}</a>
         @endforeach
         <a href="/technolog/showdate/{{ $year->id+1 }}/0/0" class="month__item">{{ $year->year_name + 1 }}</a>
     </div>
@@ -119,6 +130,7 @@
             <a href="/technolog/showdate/{{ $day->year_id }}/{{ $day->month_id }}/{{ $day->id }}" class="day__item {{ ( $day->id == $aday) ? 'active' : null }}">{{ $day->day_number }}</a>
         @endforeach
     </div>
+    <!-- <div class="lline"></div> -->
 </div>
 <div class="py-4 px-4">
 <div class="row">

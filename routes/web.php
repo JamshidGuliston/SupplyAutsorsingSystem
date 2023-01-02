@@ -166,8 +166,6 @@ Route::group(['prefix' => 'technolog', 'middleware' => ['isTechnolog', 'auth']],
     Route::get('nextdelivershop/{id}', [TechnologController::class, 'nextdelivershop'])->name('technolog.nextdelivershop');
     Route::get('nextdayshoppdf/{id}', [TechnologController::class, 'nextdayshoppdf'])->name('technolog.nextdayshoppdf');
     // sklad
-    Route::get('addshopproduct/{id}', [TechnologController::class, 'addshopproduct'])->name('technolog.addshopproduct');
-    Route::post('productshoptogarden', [TechnologController::class, 'productshoptogarden'])->name('technolog.productshoptogarden');
     Route::get('orderskladpdf/{id}', [TechnologController::class, 'orderskladpdf'])->name('technolog.orderskladpdf');
     // chef
     Route::get('allchefs', [TechnologController::class, 'allchefs'])->name('technolog.allchefs');

@@ -5,24 +5,32 @@
 <script src="/js/multiselect.min.js"></script>
 <style>
     .date{
-        margin-bottom: 30px;
+        margin-bottom: 10px;
     }
     .modal-header{
         background-color: ghostwhite;
     }
     .year {
         text-align: center;
+        /* background-color: #83e2ff; */
+    }
+    .lline {
+        text-align: center;
+        background-color: #e2e1dc;
+        height: 4px;
     }
     .month{
-        margin: 10px 20px;
+        margin: 0px 20px;
         display: flex;
         justify-content: left;
+        background-color: midnightblue;
     }
     .day {
-        margin: 10px 20px;
+        margin: 0px 20px;
+        padding: 6px;
         display: flex;
         justify-content: left;
-        height: 34px;
+        height: 46px;
     }
 
     .month__item{
@@ -41,18 +49,17 @@
     }
 
     .month__item, .day__item{
-        color: black;
         cursor: context-menu;
         /* border: 1px solid #87706a; */
         text-decoration: none;
     }
     .active{
-        background-color: #23b242;
+        background-color: #63a3c4;
         color: #fff;
     }
     .month__item:hover,
     .day__item:hover{
-        background-color: #23b242;
+        background-color: #63a3c4;
         color: #fff;
         transition: all .5s;
         cursor: pointer;
@@ -69,6 +76,12 @@
     span{
         color: black;
     }
+    th, td{
+        text-align: center;
+        vertical-align: middle;
+        border-bottom-color: currentColor;
+        border-right: 1px solid #c2b8b8;
+    }
 </style>
 @endsection
 
@@ -78,12 +91,15 @@
 
 @section('content')
 <div class="date">
+    <div class="year first-text fw-bold">
+        {{ $year->year_name }}
+    </div>
     <div class="month">
         @if($year->id != 1)
             <a href="/technolog/showdate/{{ $year->id-1 }}/0/0" class="month__item">{{ $year->year_name - 1 }}</a>
         @endif
         @foreach($months as $month)
-            <a href="/technolog/showdate/{{ $year->id }}/{{ $month->id }}/0" class="month__item {{ ($month->month_active == 1) ? 'active' : null }}">{{ $month->month_name }}</a>
+            <a href="/technolog/showdate/{{ $year->id }}/{{ $month->id }}/0" class="month__item {{ ( $month->id == $month->id ) ? 'active first-text' : 'second-text' }} fw-bold">{{ $month->month_name }}</a>
         @endforeach
         <a href="/technolog/showdate/{{ $year->id+1 }}/0/0" class="month__item">{{ $year->year_name + 1 }}</a>
     </div>

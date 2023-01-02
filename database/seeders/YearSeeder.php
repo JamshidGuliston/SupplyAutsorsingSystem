@@ -18,8 +18,8 @@ class YearSeeder extends Seeder
         $rows = Year::all();
         $start = 2021;
         $moths = [["Yanvar", "January"], ["Fevral", "February"], ["Mart", "March"], ["Aprel", "April"], ["May", "May"], ["Iyun", "June"], ["Iyul", "July"], ["Avgust", "August"], ["Sentabr", "September"], ["Oktabr", "October"], ["Noyabr", "November"], ["Dekabr", "December"]];
-        if(1){
-            for($t = 3; $t<50; $t++){
+        if($rows->count() == 0){
+            for($t = 1; $t<50; $t++){
                 $y = Year::create([
                     'year_name' => $start + $t,
                     'year_active' => 0

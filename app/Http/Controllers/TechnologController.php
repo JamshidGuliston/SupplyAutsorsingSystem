@@ -71,37 +71,25 @@ class TechnologController extends Controller
     public function newday(Request $request)
     {
         Temporary::truncate();
-        $months = Month::all();
-        $year = Year::orderBy('id', 'DESC')->first();
+        $year = Year::where('year_name', $request->dayyear)->first();
+        $acyear = Year::where('year_active', 1)->first();
+        if($year->id != $acyear->id){
+            Year::where('year_active', 1)->update(['year_active' => 0]);
+            Month::where('yearid', $acyear->id)->where('month_active', 1)->update(['month_active' => 0]);
+            Year::where('year_name', $request->dayyear)->update(['year_active' => 1]);
+        }
+        $months = Month::where('yearid', $year->id)->get();
         date_default_timezone_set('Asia/Tashkent');
         $d = strtotime("-10 hours 30 minutes");
         foreach ($months as $month) {
             if ($month->month_en == date("F", $d)) {
-                Month::where('month_en', $request->daymonth)
-                    ->update(['month_active' => 1]);
+                $month->update(['month_active' => 1]);
                 $activeID = $month;
             } else {
-                Month::where('month_en', $month->month_en)
-                    ->update(['month_active' => 0]);
+                $month->update(['month_active' => 0]);
             }
         }
-        if (empty($year->year_name)) {
-            $rr = Year::create([
-                'year_name' => $request->dayyear,
-                'year_active' => 1
-            ]);
-            $year = $rr;
-        }
-        if (date("Y", $d) != $year->year_name) {
-            Year::where('id', $year->id)
-                ->update(['year_active' => 0]);
-            $rr = Year::create([
-                'year_name' => $request->dayyear,
-                'year_active' => 1
-            ]);
-            $year = $rr;
-        }
-        
+        // dd($activeID);
         $newday = Day::where('year_id', $year->id)
             ->where('month_id', $activeID->id)
             ->where('day_number', date("d", $d))->first();
@@ -1395,53 +1383,7 @@ class TechnologController extends Controller
     }
 
     // sklad
-    public function addshopproduct(Request $request, $dayid=0){
-        $months = Month::all();
-        $activid = 0;
-        foreach($months as $row){
-            if($row->month_active == 1){
-                $activid = $row->id;
-            }
-        }
-        $days = Day::where('month_id', $activid)->get();
-        for($i = 0; $i < count($days); $i++){
-            if($dayid == 0){
-                $days[count($days)-1]['active'] = 1;
-                // $dayid = $days[$i]['id'];
-            }
-            if($days[$i]['id'] == $dayid){
-                $days[$i]['active'] = 1;
-                $dayid = $days[$i]['id'];
-            }
-        }
-        // dd($days);
-        $shops = Shop::where('hide', 1)->get();
-        $products = Product::where('hide', 1)->get();
-        $orederproduct = plus_multi_storage::where('day_id', $dayid)
-            ->join('kindgardens', 'kindgardens.id', '=', 'plus_multi_storages.kingarden_name_d')
-            ->join('shops', 'shops.id', '=', 'plus_multi_storages.shop_id')
-            ->join('products', 'products.id', '=', 'plus_multi_storages.product_name_id')
-            // ->where('day_id', $days[1]->id)
-            // ->select('order_products.id', 'days.day_number', 'order_products.order_title', 'order_products.document_processes_id', 'kindgardens.kingar_name') 
-            ->orderby('plus_multi_storages.id', 'DESC')
-            ->get();
-        
-        // dd($orederproduct);
-        $kingar = Kindgarden::where('hide', 1)->get();
-        
-        // foreach($orederproduct as $item){
-            //     $t = 0;
-            //     foreach($kingar as $ki){
-                //         if($item->kingar_name == $ki->kingar_name)
-                //         {
-                    //             $kingar[$t]['ok'] = 1;
-                    //         }
-                    //         $t++;
-                    //     }
-                    // }
-        // dd($products);
-        return view('technolog.addshopproduct', ['allproducts' => $products, 'shops' => $shops, 'days' => $days, 'gardens' => $kingar, 'orders' => $orederproduct, 'months'=>$months]);   
-    }
+    
     // skladga buyurtma pdf
     public function orderskladpdf(Request $request, $id){
         $document = order_product::where('order_products.id', $id)
@@ -1528,19 +1470,7 @@ class TechnologController extends Controller
         return redirect()->route('technolog.chefgetproducts');
     }
     // end chif
-    public function productshoptogarden(Request $request){
-        // dd($request->all());
-        // plus_multi_storage::create([
-        //     'day_id' => $request->dayid,
-        //     'shop_id' => $request->shopname,
-        //     'kingarden_name_d' => $request->mtmname,
-        //     'order_product_id' => 0,
-        //     'product_name_id' => $request->productid,
-        //     'product_weight' => $request->weight
-        // ]);
 
-        return redirect()->route('technolog.addshopproduct', $request->dayid);
-    }
     // kichkina skladlar /////////////////////////////////////////
     public function minusmultistorage(Request $request, $kid, $monthid){
         $king = Kindgarden::where('id', $kid)->first();
