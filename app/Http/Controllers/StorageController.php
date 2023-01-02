@@ -32,9 +32,8 @@ use TCG\Voyager\Models\MenuItem;
 class StorageController extends Controller
 {
     public function activmonth($month_id){
-        $year = Year::where('year_active', 1)->first();
         $month = Month::where('id', $month_id)->first();
-        $days = Day::where('month_id', $month->id)->where('year_id', $year->id)
+        $days = Day::where('month_id', $month->id)->where('year_id', $month->yearid)
                 ->join('months', 'months.id', '=', 'days.month_id')
                 ->join('years', 'years.id', '=', 'days.year_id')
                 ->get(['days.id', 'days.day_number', 'months.month_name', 'years.year_name']);
@@ -51,11 +50,17 @@ class StorageController extends Controller
         return $days;
     }
 
-    public function index(Request $request, $id = 0)
+    public function index(Request $request, $yearid=0, $id = 0)
     {
+        if($yearid == 0){
+            $yearid = Year::where('year_active', 1)->first()->id;
+        }
+        $year = Year::where('id', $yearid)->first();
+        $months = Month::where('yearid', $yearid)->get();
+        
         $il = $id;
         if($id == 0){
-            $il = Month::where('month_active', 1)->first()->id;
+            $il = Month::where('yearid', $yearid)->first()->id;
         }
         $dayes = Day::orderby('id', 'DESC')->get();
         $month_days = $this->activmonth($il);
@@ -104,9 +109,8 @@ class StorageController extends Controller
                 return $a["p_sort"] > $b["p_sort"];
             }
         });
-
-        $months = Month::all();
-        return view('storage.home', ['months' => $months, 'products' => $alladd, 'id' => $id]);
+        
+        return view('storage.home', ['year' => $year, 'months' => $months, 'products' => $alladd, 'id' => $id]);
     }
 
     public function addproductform(Request $request){

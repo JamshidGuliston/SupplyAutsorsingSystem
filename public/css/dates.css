@@ -1,0 +1,78 @@
+.date{
+    margin-bottom: 10px;
+}
+.modal-header{
+    background-color: ghostwhite;
+}
+.year {
+    text-align: center;
+    /* background-color: #83e2ff; */
+}
+.lline {
+    text-align: center;
+    background-color: #e2e1dc;
+    height: 4px;
+}
+.month{
+    margin: 0px 20px;
+    display: flex;
+    justify-content: left;
+    background-color: midnightblue;
+}
+.day {
+    margin: 0px 20px;
+    padding: 6px;
+    display: flex;
+    justify-content: left;
+    height: 46px;
+}
+
+.month__item{
+    width: calc(100% / 13);
+    text-align: center;
+    border-bottom: 1px solid #000;
+}
+.day__item{
+    background-color: #ecf6f1;
+    text-align: center;
+    vertical-align: middle;
+    min-width: 34px;
+    padding: 5px;
+    margin-left: 5px;
+    border-radius: 50%;
+}
+
+.month__item, .day__item{
+    cursor: context-menu;
+    /* border: 1px solid #87706a; */
+    text-decoration: none;
+}
+.active{
+    background-color: #63a3c4;
+    color: #fff;
+}
+.month__item:hover,
+.day__item:hover{
+    background-color: #63a3c4;
+    color: #fff;
+    transition: all .5s;
+    cursor: pointer;
+}
+table, th{
+    padding: 10px;
+    border-collapse: collapse;
+    background-color: white;
+}
+tr:hover {background-color: aliceblue;}
+td, th{
+    text-align: center;
+}
+span{
+    color: black;
+}
+th, td{
+    text-align: center;
+    vertical-align: middle;
+    border-bottom-color: currentColor;
+    border-right: 1px solid #c2b8b8;
+}

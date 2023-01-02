@@ -4,54 +4,7 @@
     @include('storage.sidemenu'); 
 @endsection
 @section('css')
-<style>
-    .year {
-        text-align: center;
-    }
-    .month,
-    .day {
-        margin: 10px 20px;
-        display: flex;
-        justify-content: left;
-    }
-
-    .month__item{
-        width: calc(100% / 12);
-        text-align: center;
-        border-bottom: 1px solid #000;
-    }
-
-    .month__item + .month__item {
-        /* border-left: 1px solid #000; */
-    }
-    .day__item{
-        background-color: #ecf6f1;
-        text-align: center;
-        vertical-align: middle;
-        min-width: 34px;
-        padding: 5px;
-        margin-left: 5px;
-        border-radius: 50%;
-    }
-
-    .month__item, .day__item{
-        color: black;
-        cursor: context-menu;
-        /* border: 1px solid #87706a; */
-        text-decoration: none;
-    }
-    .active{
-        background-color: #23b242;
-        color: #fff;
-    }
-    .month__item:hover,
-    .day__item:hover{
-        background-color: #23b242;
-        color: #fff;
-        transition: all .5s;
-        cursor: pointer;
-    }
-</style>
+<link href="/css/dates.css?ver=1.0" rel="stylesheet"/>
 @endsection
 @section('content')
 <!-- Modal -->
@@ -74,11 +27,17 @@
 </div>
 <!-- DELET -->
 <div class="date">
-    <!-- <div class="year">2022</div> -->
+    <div class = "year first-text fw-bold">
+        {{ $year->year_name }}
+    </div>
     <div class="month">
+        @if($year->id != 1)
+            <a href="/storage/home/{{ $year->id-1 }}/0" class="month__item">{{ $year->year_name - 1 }}</a>
+        @endif
         @foreach($months as $month)
-            <a href="/storage/home/{{ $month->id }}" class="month__item {{ (Request::is('storage/home/'.$month->id) or ($month->month_active == 1 and $id == 0)) ? 'active' : null }}">{{ $month->month_name }}</a>
+            <a href="/storage/home/{{ $year->id }}/{{ $month->id }}" class="month__item {{ ( $month->id == 11) ? 'active first-text' : 'second-text' }} fw-bold">{{ $month->month_name }}</a>
         @endforeach
+        <a href="/storage/home/{{ $year->id+1 }}/0" class="month__item">{{ $year->year_name + 1 }}</a>
     </div>
 </div>
 <div class="container-fluid px-4">
