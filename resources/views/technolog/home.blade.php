@@ -3,14 +3,77 @@
 @section('css')
 <link href="/css/multiselect.css" rel="stylesheet"/>
 <script src="/js/multiselect.min.js"></script>
-<script>
-    function today(){
-        console.log('ok');
+<style>
+    .date{
+        margin-bottom: 30px;
     }
-    function tommorow(){
-        console.log('ok');
+    .modal-header{
+        background-color: ghostwhite;
     }
-</script>
+    .year {
+        text-align: center;
+    }
+    .month{
+        margin: 10px 20px;
+        display: flex;
+        justify-content: left;
+    }
+    .day {
+        margin: 10px 20px;
+        display: flex;
+        justify-content: left;
+        height: 34px;
+    }
+
+    .month__item{
+        width: calc(100% / 12);
+        text-align: center;
+        border-bottom: 1px solid #000;
+    }
+
+    .month__item + .month__item {
+        /* border-left: 1px solid #000; */
+    }
+    .day__item{
+        background-color: #ecf6f1;
+        text-align: center;
+        vertical-align: middle;
+        min-width: 34px;
+        padding: 5px;
+        margin-left: 5px;
+        border-radius: 50%;
+    }
+
+    .month__item, .day__item{
+        color: black;
+        cursor: context-menu;
+        /* border: 1px solid #87706a; */
+        text-decoration: none;
+    }
+    .active{
+        background-color: #23b242;
+        color: #fff;
+    }
+    .month__item:hover,
+    .day__item:hover{
+        background-color: #23b242;
+        color: #fff;
+        transition: all .5s;
+        cursor: pointer;
+    }
+    table, th{
+        padding: 10px;
+        border-collapse: collapse;
+        background-color: white;
+    }
+    tr:hover {background-color: aliceblue;}
+    td, th{
+        text-align: center;
+    }
+    span{
+        color: black;
+    }
+</style>
 @endsection
 
 @section('leftmenu')
@@ -19,82 +82,57 @@
 
 @section('content')
 <div class="date">
-    <!-- <div class="year">2020</div> -->
     <div class="month">
+        <a href="#" class="month__item">{{ "<<<" }}</a>
         @foreach($months as $month)
             <a href="/storage/addedproducts/{{ $month->id }}" class="month__item {{ (Request::is('storage/addedproducts/'.$month->id) or ($month->month_active == 1)) ? 'active' : null }}">{{ $month->month_name }}</a>
         @endforeach
     </div>
-    <!-- <div class="day">
-        <a href="#" class="day__item">1</a>
-        <a href="#" class="day__item">2</a>
-        <a href="#" class="day__item">3</a>
-        <a href="#" class="day__item">4</a>
-        <a href="#" class="day__item">5</a>
-        <a href="#" class="day__item">6</a>
-        <a href="#" class="day__item">7</a>
-        <a href="#" class="day__item">8</a>
-        <a href="#" class="day__item">9</a>
-        <a href="#" class="day__item">10</a>
-        <a href="#" class="day__item">11</a>
-        <a href="#" class="day__item">12</a>
-        <a href="#" class="day__item">13</a>
-        <a href="#" class="day__item">14</a>
-        <a href="#" class="day__item">15</a>
-        <a href="#" class="day__item">16</a>
-        <a href="#" class="day__item">17</a>
-        <a href="#" class="day__item">18</a>
-        <a href="#" class="day__item">19</a>
-        <a href="#" class="day__item">20</a>
-        <a href="#" class="day__item">21</a>
-        <a href="#" class="day__item">22</a>
-        <a href="#" class="day__item">23</a>
-        <a href="#" class="day__item">24</a>
-        <a href="#" class="day__item">25</a>
-    </div> -->
+    <div class="day">
+        @foreach($date as $day)
+        <a href="/technolog/sendmenu/{{ $day->id }}" class="day__item">{{ $day->day_number }}</a>
+        @endforeach
+        <div id="timeline">
+            <!-- //date -->
+            <!-- @if(!empty($date) and count($date)>2)
+            <div class="dot" id="one">
+                <a href="{{ route('technolog.sendmenu', ['day'=> $date[count($date)-1]->id]); }}"><span>{{ $date[count($date)-1]->day_number }}</span></a>
+                <date>{{ $date[count($date)-1]->month_name }}</date>
+            </div>
+            @endif -->
+            @if(!empty($date) and count($date)>1)
+            <div class="dot" id="two">
+                <a href="#"><span>{{ "" }}</span></a>\
+            </div>
+            @endif
+            @if(!empty($date) and count($date)>0)
+            <div class="dot" id="three">
+                <a href="#"><span>{{ "" }}</span></a>
+            </div>
+            @endif
+            @if(empty($date))
+            <div class="dot" id="four" type="button" data-bs-toggle="modal" data-bs-target="#exampleModals">
+                <span>{{ date("d", $tomm) }}</span>
+                <date>{{ date("F", $tomm) }}</date>
+            </div>
+            @elseif($date[0]->day_number != date("d", $tomm))
+            <div class="dot" id="four" type="button" data-bs-toggle="modal" data-bs-target="#exampleModals">
+                <span>{{ date("d", $tomm) }}</span>
+                <date>{{ date("F", $tomm) }}</date>
+            </div>
+            @endif 
+            <!-- $date[0]->day_number == date("d", $tomm) -->
+            @if(1)
+            <div class="dot" id="four2">
+                <a href="{{ route('technolog.sendmenu', ['day'=> date('d-F-Y', $tomm)]); }}"><span>{{ "T" }}</span></a>
+                <date>{{ "Taxminiy" }}</date>
+            </div>
+            @endif
+            <div class="inside"></div>
+        </div>
+    </div>
 </div>
 <div class="container-fluid px-4">
-    <div id="timeline">
-        <!-- //date -->
-        @if(!empty($date) and count($date)>2)
-        <div class="dot" id="one">
-            <a href="{{ route('technolog.sendmenu', ['day'=> $date[count($date)-1]->id]); }}"><span>{{ $date[count($date)-1]->day_number }}</span></a>
-            <date>{{ $date[count($date)-1]->month_name }}</date>
-        </div>
-        @endif
-        <!-- @if(!empty($date) and count($date)>1)
-        <div class="dot" id="two">
-            <a href="{{ route('technolog.sendmenu', ['day'=> $date[1]->id]); }}"><span>{{ $date[1]->day_number }}</span></a>
-            <date>{{ $date[1]->month_name }}</date>
-        </div>
-        @endif -->
-        @if(!empty($date) and count($date)>0)
-        <div class="dot" id="three">
-            <a href="{{ route('technolog.sendmenu', ['day'=> $date[0]->id]); }}"><span>{{ $date[0]->day_number }}</span></a>
-            <date>{{ $date[0]->month_name }}</date>
-        </div>
-        @endif
-        @if(empty($date))
-        <div class="dot" id="four" type="button" data-bs-toggle="modal" data-bs-target="#exampleModals">
-            <span>{{ date("d", $tomm) }}</span>
-            <date>{{ date("F", $tomm) }}</date>
-        </div>
-        @elseif($date[0]->day_number != date("d", $tomm))
-        <div class="dot" id="four" type="button" data-bs-toggle="modal" data-bs-target="#exampleModals">
-            <span>{{ date("d", $tomm) }}</span>
-            <date>{{ date("F", $tomm) }}</date>
-        </div>
-        @endif 
-        <!-- $date[0]->day_number == date("d", $tomm) -->
-        @if(1)
-        <div class="dot" id="four2">
-            <a href="{{ route('technolog.sendmenu', ['day'=> date('d-F-Y', $tomm)]); }}"><span>{{ "T" }}</span></a>
-            <date>{{ "Taxminiy" }}</date>
-        </div>
-        @endif
-        <div class="inside"></div>
-    </div>
-
     <!-- Modals -->
     <!-- Button trigger modal -->
     <!-- <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
@@ -191,6 +229,9 @@
 
         })
     });
+
+    $('#three').hide();
+    $('#two').hide();
 
     $('.list-group-item-action').click(function() {
         var gardenid = $(this).attr('data-garden-id');

@@ -37,6 +37,7 @@ body {
 div#timeline {
     background-color: #6ac3de;
     margin-top: 10px;
+    margin-left: 10px;
     margin-bottom: 20px;
     height: 10px;
     width: 100%;

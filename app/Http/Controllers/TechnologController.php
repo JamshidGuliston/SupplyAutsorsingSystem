@@ -48,25 +48,25 @@ class TechnologController extends Controller
 {
     public function index(Request $request)
     {
-        $months = Month::where('month_active', 1)->get();
-        // dd($month[0]->id);
+        $year = Month::where('month_active', 1)->first();
+        $months = Month::where('yearid', Year::where('year_active', 1)->first()->id)->get();
         // faqat aktiv oy sanalarini oladi
-        $days = Day::where('month_id', $months[0]->id)
+        $days = Day::where('month_id', $year->id)
             ->join('months', 'months.id', '=', 'days.month_id')
             ->join('years', 'years.id', '=', 'days.year_id')
             ->select('days.id', 'days.day_number', 'days.month_id', 'months.month_name', 'years.year_name')
             ->orderBy('days.id', 'DESC')->get();
-        // dd($days);
+        
         $kingar = Kindgarden::all();
         $nextdaymenu = Nextday_namber::all();
         $season = Season::where('hide', 1)->first();
         $menus = Titlemenu::where('menu_season_id', $season->id)->get();
-        // dd($season);
+        
         date_default_timezone_set('Asia/Tashkent');
         // date("h:i:sa:M-d-Y");
         $d = strtotime("-10 hours 30 minutes");
         // dd($days[0]->day_number);
-        return view('technolog.home', ['date' => $days, 'tomm' => $d, 'kingardens' => $kingar, 'menus' => $menus, 'next' => $nextdaymenu, 'months' => $months]);
+        return view('technolog.home', ['years' => $year, 'date' => $days, 'tomm' => $d, 'kingardens' => $kingar, 'menus' => $menus, 'next' => $nextdaymenu, 'months' => $months]);
     }
 
     // yangi kun ishlari

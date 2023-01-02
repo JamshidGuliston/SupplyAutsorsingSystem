@@ -11,7 +11,7 @@ class Month extends Model
     protected $fillable = [
     	'month_name',
 		'month_en',
-		'year_id',
+		'yearid',
 	    'month_active'
 	];
 }

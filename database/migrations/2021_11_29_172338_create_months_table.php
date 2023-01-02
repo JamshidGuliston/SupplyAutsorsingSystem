@@ -17,7 +17,7 @@ class CreateMonthsTable extends Migration
             $table->increments('id');
             $table->string('month_name');
             $table->string('month_en');
-            $table->string('year_id');
+            $table->string('yearid');
             $table->boolean('month_active')->default(0);
             $table->timestamps();
         });
