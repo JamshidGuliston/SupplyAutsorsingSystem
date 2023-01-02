@@ -55,7 +55,7 @@ class TechnologController extends Controller
             ->join('months', 'months.id', '=', 'days.month_id')
             ->join('years', 'years.id', '=', 'days.year_id')
             ->select('days.id', 'days.day_number', 'days.month_id', 'months.month_name', 'years.year_name')
-            ->orderBy('days.id', 'DESC')->get();
+            ->get();
         
         $kingar = Kindgarden::all();
         $nextdaymenu = Nextday_namber::all();
