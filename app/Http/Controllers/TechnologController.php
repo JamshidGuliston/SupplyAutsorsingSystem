@@ -63,9 +63,7 @@ class TechnologController extends Controller
         $menus = Titlemenu::where('menu_season_id', $season->id)->get();
         
         date_default_timezone_set('Asia/Tashkent');
-        // date("h:i:sa:M-d-Y");
         $d = strtotime("-10 hours 30 minutes");
-        // dd($days[0]->day_number);
         return view('technolog.home', ['year' => $year, 'date' => $days, 'tomm' => $d, 'kingardens' => $kingar, 'menus' => $menus, 'next' => $nextdaymenu, 'months' => $months]);
     }
 
@@ -164,7 +162,6 @@ class TechnologController extends Controller
 
     public function sendmenu($day)
     {
-        // dd($day);
         date_default_timezone_set('Asia/Tashkent');
         $d = strtotime("-10 hours 30 minutes");
         $ages = Age_range::all();
@@ -255,6 +252,10 @@ class TechnologController extends Controller
 
     public function showdate($y_id, $m_id, $day)
     {
+        $year = Year::where('id', $y_id)->first();
+        if($m_id == 0){
+            $m_id = Month::where('yearid', $y_id)->first()->id;
+        }
         if($day == 0){
             $day = Day::where('month_id', $m_id)->first()->id;
         }
@@ -281,7 +282,7 @@ class TechnologController extends Controller
                 $loo++;
             }
         }
-        return view('technolog.showdate', ['y_id' => $y_id, 'm_id' => $m_id, 'aday' => $day, 'months' => $months,'days' => $days, 'ages' => $ages, 'nextdayitem' => $nextdayitem]);
+        return view('technolog.showdate', ['year' => $year, 'y_id' => $y_id, 'm_id' => $m_id, 'aday' => $day, 'months' => $months,'days' => $days, 'ages' => $ages, 'nextdayitem' => $nextdayitem]);
     }
     // yetkazib beruvchilar
 

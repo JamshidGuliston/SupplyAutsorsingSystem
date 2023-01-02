@@ -107,11 +107,12 @@
 <div class="date">
     <div class="month">
         @if($y_id != 1)
-            <a href="/technolog/showdate/{{ $y_id-1 }}/0/0" class="month__item">{{ "<<" }}</a>
+            <a href="/technolog/showdate/{{ $y_id-1 }}/0/0" class="month__item">{{ $year->year_name - 1 }}</a>
         @endif
         @foreach($months as $month)
             <a href="/technolog/showdate/{{ $y_id }}/{{ $month->id }}/0" class="month__item {{ ( $month->id == $m_id) ? 'active' : null }}">{{ $month->month_name }}</a>
         @endforeach
+        <a href="/technolog/showdate/{{ $year->id+1 }}/0/0" class="month__item">{{ $year->year_name + 1 }}</a>
     </div>
     <div class="day">
         @foreach($days as $day)
@@ -166,7 +167,7 @@
             <td>{{ $t++ }}</td>
             <td>{{ $row['kingar_name'] }}</td>
             <td>{{ $row['workers_count'] }} </td>
-            <td><a href="/activsecondmenuPDF/{{ $day }}/{{ $row['kingar_name_id'] }}" target="_blank"><i class="far fa-file-pdf" style="color: dodgerblue; font-size: 18px;"></i></a></td>
+            <td><a href="/activsecondmenuPDF/{{ $aday }}/{{ $row['kingar_name_id'] }}" target="_blank"><i class="far fa-file-pdf" style="color: dodgerblue; font-size: 18px;"></i></a></td>
             @foreach($ages as $age)
             @if(isset($row[$age->id]))
                 <td>
