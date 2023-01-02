@@ -26,13 +26,9 @@
     }
 
     .month__item{
-        width: calc(100% / 12);
+        width: calc(100% / 13);
         text-align: center;
         border-bottom: 1px solid #000;
-    }
-
-    .month__item + .month__item {
-        /* border-left: 1px solid #000; */
     }
     .day__item{
         background-color: #ecf6f1;
@@ -85,12 +81,12 @@
     <div class="month">
         <a href="#" class="month__item">{{ "<<<" }}</a>
         @foreach($months as $month)
-            <a href="/storage/addedproducts/{{ $month->id }}" class="month__item {{ (Request::is('storage/addedproducts/'.$month->id) or ($month->month_active == 1)) ? 'active' : null }}">{{ $month->month_name }}</a>
+            <a href="/technolog/showdate/{{ $year->id }}/{{ $month->id }}/0" class="month__item {{ ($month->month_active == 1) ? 'active' : null }}">{{ $month->month_name }}</a>
         @endforeach
     </div>
     <div class="day">
         @foreach($date as $day)
-        <a href="/technolog/sendmenu/{{ $day->id }}" class="day__item">{{ $day->day_number }}</a>
+        <a href="/technolog/showdate/{{ $day->year_id }}/{{ $day->month_id }}/{{ $day->id }}" class="day__item">{{ $day->day_number }}</a>
         @endforeach
         <div id="timeline">
             <!-- //date -->

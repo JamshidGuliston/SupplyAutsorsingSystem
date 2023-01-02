@@ -48,13 +48,13 @@ class TechnologController extends Controller
 {
     public function index(Request $request)
     {
-        $year = Month::where('month_active', 1)->first();
+        $year = Year::where('year_active', 1)->first();
         $months = Month::where('yearid', Year::where('year_active', 1)->first()->id)->get();
         // faqat aktiv oy sanalarini oladi
-        $days = Day::where('month_id', $year->id)
+        $days = Day::where('month_id', Month::where('month_active', 1)->first()->id)
             ->join('months', 'months.id', '=', 'days.month_id')
             ->join('years', 'years.id', '=', 'days.year_id')
-            ->select('days.id', 'days.day_number', 'days.month_id', 'months.month_name', 'years.year_name')
+            ->select('days.id', 'days.day_number', 'days.month_id', 'months.month_name', 'years.year_name', 'days.year_id')
             ->get();
         
         $kingar = Kindgarden::all();
@@ -66,7 +66,7 @@ class TechnologController extends Controller
         // date("h:i:sa:M-d-Y");
         $d = strtotime("-10 hours 30 minutes");
         // dd($days[0]->day_number);
-        return view('technolog.home', ['years' => $year, 'date' => $days, 'tomm' => $d, 'kingardens' => $kingar, 'menus' => $menus, 'next' => $nextdaymenu, 'months' => $months]);
+        return view('technolog.home', ['year' => $year, 'date' => $days, 'tomm' => $d, 'kingardens' => $kingar, 'menus' => $menus, 'next' => $nextdaymenu, 'months' => $months]);
     }
 
     // yangi kun ishlari
@@ -157,18 +157,7 @@ class TechnologController extends Controller
             }
         }
         Nextday_namber::truncate();
-        // bog'chalarga bugungi menyu faollashdi
 
-        // $users = Kindgarden::where('hide', 1)->get();
-        // $path = "https://api.telegram.org/bot";
-        // $token = "5064211282:AAH8CZUdU5i2Vl-4WB3PF4Kll6KoCzgHk8k";
-        // $text = "Боғчангиз учун эртанги овқатлар менюсига болалар сонини критинг. <b>3-4 ёшгача = ?</b>";
-        // $buttons = '{"inline_keyboard":[[{"text":"1","callback_data":"addnumber_1"}, {"text":"2","callback_data":"addnumber_2"}, {"text":"3","callback_data":"addnumber_3"}], [{"text":"4","callback_data":"addnumber_4"}, {"text":"5","callback_data":"addnumber_5"}, {"text":"6","callback_data":"addnumber_6"}], [{"text":"7","callback_data":"addnumber_7"}, {"text":"8","callback_data":"addnumber_8"}, {"text":"9","callback_data":"addnumber_9"}], [{"text":"0","callback_data":"addnumber_0"}, {"text":"<","callback_data":"remove_<"}]]}';
-        // dd($users);
-        // foreach ($users as $user) {
-        //     Person::where('telegram_id', $user->telegram_user_id)->update(array('childs_count' => '0'));
-        //     $this->curl_get_contents($path . $token . '/sendmessage?chat_id=' . $user->telegram_user_id . '&text=' . $text . '&parse_mode=html&reply_markup=' . $buttons);
-        // }    
         return redirect()->route('technolog.sendmenu', ['day' => date("d-F-Y", $d)]);
     }
 
@@ -179,9 +168,7 @@ class TechnologController extends Controller
         date_default_timezone_set('Asia/Tashkent');
         $d = strtotime("-10 hours 30 minutes");
         $ages = Age_range::all();
-        // dd($ages);
         $sid = Season::where('hide', 1)->first();
-        // dd($sid);
         $menus = Titlemenu::all();
         if ($day == date("d-F-Y", $d)) {
             $gr = Temporary::join('kindgardens', 'temporaries.kingar_name_id', '=', 'kindgardens.id')
@@ -263,27 +250,38 @@ class TechnologController extends Controller
             }
             $nextday = 1;
             return view('technolog.newday', ['sendmenu' => $sendmenu, 'nextdayitem' => $nextdayitem, 'shops' => $shops, 'ages' => $ages, 'menus' => $menus, 'temps' => $mass, 'gardens' => $gar, 'activ'=>$activ]);
-        } else {
-
-            $nextday = Number_children::where('day_id', $day)->join('kindgardens', 'number_childrens.kingar_name_id', '=', 'kindgardens.id')
-                            ->orderby('number_childrens.kingar_name_id', 'ASC')
-                            ->get();
-            // dd($nextday);
-            $nextdayitem = array();
-            $loo = 0;
-            for($i = 0; $i < count($nextday); $i++){
-                $nextdayitem[$loo]['kingar_name_id'] = $nextday[$i]->kingar_name_id;
-                $nextdayitem[$loo]['kingar_name'] = $nextday[$i]->kingar_name;
-                $nextdayitem[$loo][$nextday[$i]->king_age_name_id] = array($nextday[$i]->id, $nextday[$i]->kingar_children_number, $nextday[$i]->tempid, $nextday[$i]->age_number, $nextday[$i]->kingar_menu_id);
-                $nextdayitem[$loo]['workers_count'] = $nextday[$i]->workers_count;
-                if ($i + 1 < count($nextday) and $nextday[$i + 1]->kingar_name_id != $nextdayitem[$loo]['kingar_name_id']) {
-                    $loo++;
-                }
-            }
-
-            // dd($nextdayitem);
-            return view('technolog.showdate', ['day' => $day, 'ages' => $ages, 'nextdayitem' => $nextdayitem]);
         }
+    }
+
+    public function showdate($y_id, $m_id, $day)
+    {
+        if($day == 0){
+            $day = Day::where('month_id', $m_id)->first()->id;
+        }
+        // dd($day);
+        $months = Month::where('yearid', $y_id)->get();
+        $ages = Age_range::all();
+        $nextday = Number_children::where('day_id', $day)->join('kindgardens', 'number_childrens.kingar_name_id', '=', 'kindgardens.id')
+                        ->orderby('number_childrens.kingar_name_id', 'ASC')
+                        ->get();
+        $nextdayitem = array();
+        $loo = 0;
+        $days = Day::where('month_id', $m_id)
+            ->join('months', 'months.id', '=', 'days.month_id')
+            ->join('years', 'years.id', '=', 'days.year_id')
+            ->select('days.id', 'days.day_number', 'days.month_id', 'months.month_name', 'years.year_name', 'days.year_id')
+            ->get();
+        
+        for($i = 0; $i < count($nextday); $i++){
+            $nextdayitem[$loo]['kingar_name_id'] = $nextday[$i]->kingar_name_id;
+            $nextdayitem[$loo]['kingar_name'] = $nextday[$i]->kingar_name;
+            $nextdayitem[$loo][$nextday[$i]->king_age_name_id] = array($nextday[$i]->id, $nextday[$i]->kingar_children_number, $nextday[$i]->tempid, $nextday[$i]->age_number, $nextday[$i]->kingar_menu_id);
+            $nextdayitem[$loo]['workers_count'] = $nextday[$i]->workers_count;
+            if ($i + 1 < count($nextday) and $nextday[$i + 1]->kingar_name_id != $nextdayitem[$loo]['kingar_name_id']) {
+                $loo++;
+            }
+        }
+        return view('technolog.showdate', ['y_id' => $y_id, 'm_id' => $m_id, 'aday' => $day, 'months' => $months,'days' => $days, 'ages' => $ages, 'nextdayitem' => $nextdayitem]);
     }
     // yetkazib beruvchilar
 

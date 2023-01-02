@@ -2,6 +2,71 @@
 
 @section('css')
 <style>
+    .date{
+        margin-bottom: 30px;
+    }
+    .modal-header{
+        background-color: ghostwhite;
+    }
+    .year {
+        text-align: center;
+    }
+    .month{
+        margin: 10px 20px;
+        display: flex;
+        justify-content: left;
+    }
+    .day {
+        margin: 10px 20px;
+        display: flex;
+        justify-content: left;
+        height: 34px;
+    }
+
+    .month__item{
+        width: calc(100% / 13);
+        text-align: center;
+        border-bottom: 1px solid #000;
+    }
+    .day__item{
+        background-color: #ecf6f1;
+        text-align: center;
+        vertical-align: middle;
+        min-width: 34px;
+        padding: 5px;
+        margin-left: 5px;
+        border-radius: 50%;
+    }
+
+    .month__item, .day__item{
+        color: black;
+        cursor: context-menu;
+        /* border: 1px solid #87706a; */
+        text-decoration: none;
+    }
+    .active{
+        background-color: #23b242;
+        color: #fff;
+    }
+    .month__item:hover,
+    .day__item:hover{
+        background-color: #23b242;
+        color: #fff;
+        transition: all .5s;
+        cursor: pointer;
+    }
+    table, th{
+        padding: 10px;
+        border-collapse: collapse;
+        background-color: white;
+    }
+    tr:hover {background-color: aliceblue;}
+    td, th{
+        text-align: center;
+    }
+    span{
+        color: black;
+    }
     th, td{
         text-align: center;
         vertical-align: middle;
@@ -39,28 +104,41 @@
         </div>
     </div>
 </div>
+<div class="date">
+    <div class="month">
+        <a href="#" class="month__item">{{ "<<<" }}</a>
+        @foreach($months as $month)
+            <a href="/technolog/showdate/{{ $y_id }}/{{ $month->id }}/0" class="month__item {{ ( $month->id == $m_id) ? 'active' : null }}">{{ $month->month_name }}</a>
+        @endforeach
+    </div>
+    <div class="day">
+        @foreach($days as $day)
+            <a href="/technolog/showdate/{{ $day->year_id }}/{{ $day->month_id }}/{{ $day->id }}" class="day__item {{ ( $day->id == $aday) ? 'active' : null }}">{{ $day->day_number }}</a>
+        @endforeach
+    </div>
+</div>
 <div class="py-4 px-4">
 <div class="row">
     <div class="col-md-6">
-        <b>Haqiqiy menyu</b>
-        <a href="/technolog/createnewdaypdf/{{ $day }}">
+        @foreach($days as $day)
+        @if($day->id == $aday)
+            <b>{{ $day->day_number.":".$day->month_name.":".$day->year_name }}</b>
+        @endif
+        @endforeach
+        <!-- <a href="/technolog/createnewdaypdf/{{ $day }}">
             <i class="far fa-file-pdf" style="color: dodgerblue; font-size: 18px;"></i>
-        </a>
+        </a> -->
     </div>
     <div class="col-md-3">
         
     </div>
     <div class="col-md-3">
-        <b>Bog'chalarga menyu yuborish</b>
-        <a href="/technolog/activsendmenutoallgardens/{{ $day }}">
-            <i class="far fa-paper-plane" style="color: dodgerblue; font-size: 18px;"></i>
-        </a>
     </div>
 </div>
 <hr>
 <table class="table table-light py-4 px-4">
     <thead>
-        <tr>
+    <tr>
             <th scope="col" rowspan="2">ID</th>
             <th scope="col" rowspan="2">MTT-nomi</th>
             <th scope="col" rowspan="2">Xodimlar</th> 
@@ -71,7 +149,6 @@
             </th>
             @endforeach
             <th style="width: 70px;" rowspan="2">Nakladnoy</th>
-            <th style="width: 70px;" rowspan="2">Menyu</th>
         </tr>
         <tr style="color: #888888;">
             @foreach($ages as $age)
@@ -104,7 +181,6 @@
             @endif
             @endforeach
             <td><a href="/activnakladPDF/{{ $day }}/{{ $row['kingar_name_id'] }}" target="_blank"><i class="far fa-file-pdf" style="color: dodgerblue; font-size: 18px;"></i></a></td>
-            <td><a href="/technolog/activsendmenutoonegarden/{{ $day }}/{{ $row['kingar_name_id'] }}"><i class="far fa-paper-plane" style="color: dodgerblue;"></i></a></td>
         </tr>
     @endforeach
     </tbody>
