@@ -59,7 +59,10 @@ class StorageController extends Controller
         
         $il = $id;
         if($id == 0){
-            $il = Month::where('yearid', $yearid)->first()->id;
+            $il = Month::where('month_active', 1)->where('yearid', $yearid)->first()->id;
+            if($il == null){
+                $il = Month::where('yearid', $yearid)->first()->id;
+            }
         }
         $dayes = Day::orderby('id', 'DESC')->get();
         $month_days = $this->activmonth($il);
@@ -518,7 +521,10 @@ class StorageController extends Controller
         $months = Month::where('yearid', $yearid)->get();
         $il = $id;
         if($id == 0){
-            $il = Month::where('yearid', $yearid)->first()->id;
+            $il = Month::where('month_active', 1)->where('yearid', $yearid)->first()->id;
+            if($il == null){
+                $il = Month::where('yearid', $yearid)->first()->id;
+            }
         }
         $start = $this->activmonth($il);
         $days = $this->activyear($il);
