@@ -50,10 +50,9 @@ class AccountantController extends Controller
     }
 
     public function activyear(){
-        $year = Year::orderBy('id', 'DESC')->first();
-        $days = Day::where('year_id', $year->id)
-                ->join('months', 'months.id', '=', 'days.month_id')
+        $days = Day::join('months', 'months.id', '=', 'days.month_id')
                 ->join('years', 'years.id', '=', 'days.year_id')
+                ->orderby('days.id', 'DESC')
                 ->get(['days.id', 'days.day_number', 'months.month_name', 'years.year_name']);
         return $days;
     }
