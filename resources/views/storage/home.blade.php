@@ -35,7 +35,7 @@
             <a href="/storage/home/{{ $year->id-1 }}/0" class="month__item">{{ $year->year_name - 1 }}</a>
         @endif
         @foreach($months as $month)
-            <a href="/storage/home/{{ $year->id }}/{{ $month->id }}" class="month__item {{ ( $month->id == 11) ? 'active first-text' : 'second-text' }} fw-bold">{{ $month->month_name }}</a>
+            <a href="/storage/home/{{ $year->id }}/{{ $month->id }}" class="month__item {{ ( $month->id == $id) ? 'active first-text' : 'second-text' }} fw-bold">{{ $month->month_name }}</a>
         @endforeach
         <a href="/storage/home/{{ $year->id+1 }}/0" class="month__item">{{ $year->year_name + 1 }}</a>
     </div>

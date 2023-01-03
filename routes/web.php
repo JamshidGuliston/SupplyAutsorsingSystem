@@ -58,7 +58,7 @@ Route::group(['prefix' => 'storage', 'middleware' => ['isStorage', 'auth']], fun
     Route::post('addproducts', [StorageController::class, 'addproducts'])->name('storage.addproducts');
     Route::post('addr_products', [StorageController::class, 'addr_products'])->name('storage.addr_products');
     Route::post('addproduct', [StorageController::class, 'addproduct'])->name('storage.addproduct');
-    Route::get('addedproducts/{id}', [StorageController::class, 'addedproducts'])->name('storage.addedproducts');
+    Route::get('addedproducts/{year}/{id}', [StorageController::class, 'addedproducts'])->name('storage.addedproducts');
     Route::get('orders', [StorageController::class, 'orders'])->name('storage.orders');
     Route::get('getdoc', [StorageController::class, 'getdoc'])->name('storage.getdoc');
     Route::get('dostcontrolpassword', [StorageController::class, 'dostcontrolpassword']);

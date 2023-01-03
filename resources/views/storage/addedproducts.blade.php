@@ -466,14 +466,22 @@
         </div>
     </div>
 </div>
-
 <div class="date">
-    <!-- <div class="year">2020</div> -->
-    <div class="month">
-        @foreach($months as $month)
-            <a href="/storage/addedproducts/{{ $month->id }}" class="month__item {{ (Request::is('storage/addedproducts/'.$month->id) or ($month->month_active == 1 and $id == 0)) ? 'active' : null }}">{{ $month->month_name }}</a>
-        @endforeach
+    <div class = "year first-text fw-bold">
+        {{ $year->year_name }}
     </div>
+    <div class="month">
+        @if($year->id != 1)
+            <a href="/storage/addedproducts/{{ $year->id-1 }}/0" class="month__item">{{ $year->year_name - 1 }}</a>
+        @endif
+        @foreach($months as $month)
+            <a href="/storage/addedproducts/{{ $year->id }}/{{ $month->id }}" class="month__item {{ ( $month->id == $id) ? 'active first-text' : 'second-text' }} fw-bold">{{ $month->month_name }}</a>
+        @endforeach
+        <a href="/storage/addedproducts/{{ $year->id+1 }}/0" class="month__item">{{ $year->year_name + 1 }}</a>
+    </div>
+</div>
+<div class="date">
+    
     <!-- <div class="day">
         <a href="#" class="day__item">1</a>
         <a href="#" class="day__item">2</a>

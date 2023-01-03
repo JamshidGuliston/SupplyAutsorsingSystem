@@ -41,8 +41,7 @@ class StorageController extends Controller
     }
 
     public function activyear($menuid){
-        $year = Year::where('year_active', 1)->first();
-        $days = Day::where('year_id', $year->id)->where('month_id', $menuid)
+        $days = Day::where('month_id', $menuid)
                 ->join('months', 'months.id', '=', 'days.month_id')
                 ->join('years', 'years.id', '=', 'days.year_id')
                 ->orderby('days.id', 'DESC')
@@ -110,7 +109,7 @@ class StorageController extends Controller
             }
         });
         
-        return view('storage.home', ['year' => $year, 'months' => $months, 'products' => $alladd, 'id' => $id]);
+        return view('storage.home', ['year' => $year, 'months' => $months, 'products' => $alladd, 'id' => $il]);
     }
 
     public function addproductform(Request $request){
@@ -120,9 +119,6 @@ class StorageController extends Controller
 
     public function addproducts(Request $request){
         $id = $request->month_id;
-        if($id == 0){
-            $id = Month::where('month_active', 1)->first()->id;
-        }
         $products = $request->productsid;
         $weights = $request->weights;
         $costs = $request->costs;
@@ -191,9 +187,6 @@ class StorageController extends Controller
     public function addr_products(Request $request){
         // dd($request->all());
         $id = $request->month_id;
-        if($id == 0){
-            $id = Month::where('month_active', 1)->first()->id;
-        }
         $products = $request->productsid;
         $weights = $request->weights;
         $costs = $request->costs;
@@ -519,11 +512,15 @@ class StorageController extends Controller
         ]);
     }
 
-    public function addedproducts(Request $request, $id){
-        $months = Month::all();
+    public function addedproducts(Request $request, $yearid, $id){
+        if($yearid == 0){
+            $yearid = Year::where('year_active', 1)->first()->id;
+        }
+        $year = Year::where('id', $yearid)->first();
+        $months = Month::where('yearid', $yearid)->get();
         $il = $id;
         if($id == 0){
-            $il = Month::where('month_active', 1)->first()->id;
+            $il = Month::where('yearid', $yearid)->first()->id;
         }
         $start = $this->activmonth($il);
         $days = $this->activyear($il);
@@ -533,10 +530,11 @@ class StorageController extends Controller
                 ->join('years', 'years.id', '=', 'days.year_id')
                 ->orderby('add_groups.id', 'DESC')
                 ->get(['add_groups.id', 'add_groups.group_name', 'days.day_number', 'months.month_name', 'years.year_name']);
-        // dd($days);
+        
         $products = Product::all();
         $shops = Shop::where('hide', 1)->get();
-        return view('storage.addedproducts', compact('shops', 'group', 'months', 'id', 'days', 'products'));
+        $id = $il;
+        return view('storage.addedproducts', compact('shops', 'group', 'months', 'id', 'days', 'products', 'year'));
     }
     
     public function document(Request $request){
