@@ -128,7 +128,11 @@ class TestController extends Controller
                         ->orderBy('menu_meal_time_id')
 						->orderBy('menu_food_id')
                         ->get();	
-        $day = Day::where('days.id', $today)->join('months', 'months.id', '=', 'days.month_id')->orderBy('days.id', 'DESC')->first(['days.day_number','days.id as id', 'months.month_name']);
+        $day = Day::where('days.id', $today)
+			->join('months', 'months.id', '=', 'days.month_id')
+			->join('years', 'years.id', '=', 'days.year_id')
+			->orderBy('days.id', 'DESC')
+			->first(['days.day_number','days.id as id', 'months.month_name', 'years.year_name']);
         // dd($day);
         $workerfood = titlemenu_food::where('day_id', ($today-1))
                     ->where('worker_age_id', $ageid)
@@ -831,7 +835,11 @@ class TestController extends Controller
 
 			
 			// xodimlar ovqati uchun
-			$day = Day::where('days.id', $today)->join('months', 'months.id', '=', 'days.month_id')->orderBy('days.id', 'DESC')->first(['days.day_number','days.id as id', 'months.month_name']);
+			$day = Day::where('days.id', $today)
+				->join('months', 'months.id', '=', 'days.month_id')
+				->join('years', 'years.id', '=', 'days.year_id')
+				->orderBy('days.id', 'DESC')
+				->first(['days.day_number','days.id as id', 'months.month_name', 'years.year_name']);
 			// dd($day);
 			$workerfood = titlemenu_food::where('day_id', ($today-1))
 						->where('worker_age_id', $age->id)

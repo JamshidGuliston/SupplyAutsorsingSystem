@@ -86,7 +86,7 @@
 							@foreach($menu as $row)
 								<td style="text-align: left; border: none !important;">
 								@if($loop->index == 0)
-									Боғча номи: <b>{{ $row[0]['kingar_name']; }}</b><br/>sana: <b>{{ $day['day_number'].'.'.$day['month_name'] }}.2022-й;</b><b>
+									Боғча номи: <b>{{ $row[0]['kingar_name']; }}</b><br/>sana: <b>{{ $day['day_number'].'.'.$day['month_name'].' '.$day['year_name'] }}й.</b><b>
 								@endif
 								<?php
 									echo  $row[0]['age_name'] . "</b>ли болалар сони: <b>" . $row[0]['kingar_children_number'].";</b>";

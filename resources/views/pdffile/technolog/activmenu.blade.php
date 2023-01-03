@@ -21,13 +21,22 @@
 			/* padding: 300px 100px 10px 100px; */
 			width:100%;
 		}
+		.column {
+			float: left;
+			text-align: center;
+			width: 33%;
+		}
+
+		/* Clear floats after the columns */
+		.row:after {
+			content: "";
+			display: table;
+			clear: both;
+		}
 		.row{
 			display: flex;
 			flex-wrap: nowrap;
 			justify-content: space-between;
-		}
-		.row > div{
-			margin-left: 50px;
 		}
 		table{
 			border-collapse: collapse;
@@ -71,7 +80,7 @@
                 <div class="table" id="table_with_data">
                 	<?php
 						echo "Боғча номи: <b>".$menu[0]['kingar_name']."</b><br/>";
-                		echo  'sana: <b>"'.$day['day_number'].'".'.$day['month_name'].' 2022-й;</b>    <b>           ' . $menu[0]['age_name'] . "</b>ли болалар сони: <b>" . $menu[0]['kingar_children_number'].";</b>";
+                		echo  'sana: <b>"'.$day['day_number'].'".'.$day['month_name'].' '.$day['year_name'].'й.</b>    <b>           ' . $menu[0]['age_name'] . "</b>ли болалар сони: <b>" . $menu[0]['kingar_children_number'].";</b>";
                 		if($menu[0]['worker_age_id'] == $menu[0]['king_age_name_id']){
                 			echo "  ходимлар сони: <b>".$menu[0]['workers_count'].";</b>  ";	
                 		}
@@ -338,17 +347,17 @@
 									</tr>
                         </tbody>
                       </table>
-                      <div class="row">
-                      	<div>
-					  		<img src="images/qrmanzil.jpg" alt="QR-code" width="140">
-					  	</div>
-					  	<div>
-					  		<p style="text-align: center;">Технолог __________________</p>
-					  	</div>
-					  	<div>
-					  		<p style="text-align: right;">Бош ошпаз __________________</p>
-					  	</div>
-					  </div>
+                      <div class="row" style="margin-top: 15px;">
+							<div class="column">
+								<img src="images/qrmanzil.jpg" alt="QR-code" width="140">
+							</div>
+							<div class="column">
+								<p style="text-align: center;"><strong> Бош ошпаз:</strong> __________________;</p>
+							</div>
+							<div class="column">
+								<p style="text-align: right;"><strong>Танишдим ДМТТ рахбари: </strong> __________________;</p>
+							</div>
+						</div>
                 </div>
             </div>
         </div>
