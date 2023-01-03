@@ -71,7 +71,7 @@ class AccountantController extends Controller
 
     public function bycosts(Request $request, $id){
         $region = Region::where('id', $id)->first();
-        $year = Year::orderBy('id', 'DESC')->first();
+        $year = Year::where('year_active', 1)->first();
         // $days = Day::where('year_id', $year->id)->get();
         $days = Day::where('year_id', $year->id)
             ->join('months', 'months.id', '=', 'days.month_id')
