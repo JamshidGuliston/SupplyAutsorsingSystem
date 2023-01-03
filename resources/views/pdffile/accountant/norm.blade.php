@@ -95,9 +95,9 @@
 						<td>{{ $row['norm_weight'] }}</td>
 						<td><?php
 							if(mb_strimwidth($row['product_name'], 0, 3) == 'Тух')
-								 printf("%01.1f", ($row['norm_weight'] * $nakproducts[1]["children"]));
+								 printf("%01.3f", ($row['norm_weight'] * $nakproducts[1]["children"]));
 							else
-								printf("%01.1f", ($row['norm_weight'] * $nakproducts[1]["children"]) / $row['div']);
+								printf("%01.3f", ($row['norm_weight'] * $nakproducts[1]["children"]) / $row['div']);
 						?></td>
 						<?php 
 							$summ = 0;
@@ -112,9 +112,9 @@
 						<td><?php printf("%01.1f", $summ) ?></td>
 						<td><?php
 							if(mb_strimwidth($row['product_name'], 0, 3) == 'Тух')
-								printf("%01.1f", $summ -$row['norm_weight'] * $nakproducts[1]["children"]);
+								printf("%01.3f", $summ -$row['norm_weight'] * $nakproducts[1]["children"]);
 							else
-								printf("%01.1f", $summ - ($row['norm_weight'] * $nakproducts[1]["children"]) / $row['div']);
+								printf("%01.3f", $summ - ($row['norm_weight'] * $nakproducts[1]["children"]) / $row['div']);
 						?></td>
                         <?php
 							if(mb_strimwidth($row['product_name'], 0, 3) == 'Тух')
@@ -126,19 +126,19 @@
                         ?>
 						<td><?php 
 							if(mb_strimwidth($row['product_name'], 0, 3) == 'Тух')
-								printf("%01.1f", $summ / ($row['norm_weight'] * $nakproducts[1]["children"]) * 100);
+								printf("%01.3f", $summ / ($row['norm_weight'] * $nakproducts[1]["children"]) * 100);
 							else
-								printf("%01.1f", $summ / (($row['norm_weight'] * $nakproducts[1]["children"]) / $row['div']) * 100);
+								printf("%01.3f", $summ / (($row['norm_weight'] * $nakproducts[1]["children"]) / $row['div']) * 100);
 						?></td>
 					</tr>
 					@endforeach
                     <tr>
                         <th scope="col" style="width: 25%;">Жами</th>
                         <th style="width: 30px;"></th>
-                        <th><?php printf("%01.1f", $ww) ?></th>
-                        <th><?php printf("%01.1f", $www) ?></th>
-                        <th><?php printf("%01.1f", $wwww) ?></th>
-                        <th><?php printf("%01.1f", $www / $ww * 100) ?></th>
+                        <th><?php printf("%01.3f", $ww) ?></th>
+                        <th><?php printf("%01.3f", $www) ?></th>
+                        <th><?php printf("%01.3f", $wwww) ?></th>
+                        <th><?php printf("%01.3f", $www / $ww * 100) ?></th>
                     </tr>
                     </tbody>
                 </table>
