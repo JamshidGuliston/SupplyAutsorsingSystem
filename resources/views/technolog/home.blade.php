@@ -20,7 +20,7 @@
             <a href="/technolog/showdate/{{ $year->id-1 }}/0/0" class="month__item">{{ $year->year_name - 1 }}</a>
         @endif
         @foreach($months as $month)
-            <a href="/technolog/showdate/{{ $year->id }}/{{ $month->id }}/0" class="month__item {{ ( $month->id == $month->id ) ? 'active first-text' : 'second-text' }} fw-bold">{{ $month->month_name }}</a>
+            <a href="/technolog/showdate/{{ $year->id }}/{{ $month->id }}/0" class="month__item {{ ( $month->month_active == 1 ) ? 'active first-text' : 'second-text' }} fw-bold">{{ $month->month_name }}</a>
         @endforeach
         <a href="/technolog/showdate/{{ $year->id+1 }}/0/0" class="month__item">{{ $year->year_name + 1 }}</a>
     </div>
