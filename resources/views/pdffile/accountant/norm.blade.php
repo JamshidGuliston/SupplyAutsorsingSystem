@@ -109,7 +109,7 @@
 							?>
 							@endif
 						@endforeach
-						<td><?php printf("%01.1f", $summ) ?></td>
+						<td><?php printf("%01.3f", $summ) ?></td>
 						<td><?php
 							if(mb_strimwidth($row['product_name'], 0, 3) == 'Тух')
 								printf("%01.3f", $summ -$row['norm_weight'] * $nakproducts[1]["children"]);
