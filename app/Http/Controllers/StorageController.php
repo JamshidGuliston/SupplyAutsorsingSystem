@@ -211,17 +211,15 @@ class StorageController extends Controller
     }
 
     public function addmultisklad(Request $request){
-        $months = Month::all();
         $season = Season::where('hide', 1)->first();
         $menus = Titlemenu::where('menu_season_id', $season->id)->get();
         $gardens = Kindgarden::where('hide', 1)->get();
         $orders = order_product::orderby('id', 'DESC')->get();
         // dd($menus);
-        return view('storage.addmultisklad', compact('orders','gardens', 'months', 'menus'));
+        return view('storage.addmultisklad', compact('orders','gardens', 'menus'));
     }
 
     public function onedaymulti(Request $request, $dayid){
-        $months = Month::all();
         $orederproduct = order_product::where('day_id', $dayid)
             ->join('kindgardens', 'kindgardens.id', '=', 'order_products.kingar_name_id')
             ->select('order_products.id', 'order_products.order_title', 'order_products.document_processes_id', 'kindgardens.kingar_name') 
@@ -231,7 +229,7 @@ class StorageController extends Controller
             ->get();
         $kingar = Kindgarden::all();
 
-        return view('storage.onedaymulti', ['gardens' => $kingar, 'orders' => $orederproduct, 'products'=>$orederitems, 'months'=>$months]);
+        return view('storage.onedaymulti', ['gardens' => $kingar, 'orders' => $orederproduct, 'products'=>$orederitems]);
     }
 
     public function orderitem(Request $request, $id)

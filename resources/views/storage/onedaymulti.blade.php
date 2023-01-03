@@ -91,45 +91,6 @@
     </div>
 </div>
 <!-- DELET -->
-<div class="date">
-    <!-- <div class="year">2020</div> -->
-    <div class="month">
-        @foreach($months as $month)
-        @if($month->month_active == 1)
-            <a href="#" class="month__item active">{{ $month->month_name }}</a>
-        @else
-            <a href="#" class="month__item">{{ $month->month_name }}</a>
-        @endif
-        @endforeach
-    </div>
-    <div class="day">
-        <a href="#" class="day__item">1</a>
-        <a href="#" class="day__item">2</a>
-        <a href="#" class="day__item">3</a>
-        <a href="#" class="day__item">4</a>
-        <a href="#" class="day__item">5</a>
-        <a href="#" class="day__item">6</a>
-        <a href="#" class="day__item">7</a>
-        <a href="#" class="day__item">8</a>
-        <a href="#" class="day__item">9</a>
-        <a href="#" class="day__item">10</a>
-        <a href="#" class="day__item">11</a>
-        <a href="#" class="day__item">12</a>
-        <a href="#" class="day__item">13</a>
-        <a href="#" class="day__item">14</a>
-        <a href="#" class="day__item">15</a>
-        <a href="#" class="day__item">16</a>
-        <a href="#" class="day__item">17</a>
-        <a href="#" class="day__item">18</a>
-        <a href="#" class="day__item">19</a>
-        <a href="#" class="day__item">20</a>
-        <a href="#" class="day__item">21</a>
-        <a href="#" class="day__item">22</a>
-        <a href="#" class="day__item">23</a>
-        <a href="#" class="day__item">24</a>
-        <a href="#" class="day__item">25</a>
-    </div>
-</div>
 <div class="py-4 px-4">
     <!-- @if(isset($orders[0]->day_number))
     <h4>Oyning {{ $orders[0]->day_number."-sanasi" }}</h4>
