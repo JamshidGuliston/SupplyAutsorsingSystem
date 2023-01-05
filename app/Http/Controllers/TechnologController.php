@@ -54,6 +54,7 @@ class TechnologController extends Controller
         $days = Day::where('month_id', Month::where('month_active', 1)->first()->id)
             ->join('months', 'months.id', '=', 'days.month_id')
             ->join('years', 'years.id', '=', 'days.year_id')
+            ->orderby('days.id', 'DESC')
             ->select('days.id', 'days.day_number', 'days.month_id', 'months.month_name', 'years.year_name', 'days.year_id')
             ->get();
         
