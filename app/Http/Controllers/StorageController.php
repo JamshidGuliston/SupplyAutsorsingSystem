@@ -671,6 +671,7 @@ class StorageController extends Controller
 	                    'shop_id' => 0,
 	                    'kingarden_name_d' => $order['kingar_name_id'],
 	                    'order_product_id' => $order['id'],
+                        'residual' => 0,
 	                    'product_name_id' => $row['product_name_id'],
 	                    'product_weight' => $row['product_weight'],
 	                ]);

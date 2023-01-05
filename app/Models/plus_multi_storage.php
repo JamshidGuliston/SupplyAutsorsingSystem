@@ -14,6 +14,7 @@ class plus_multi_storage extends Model
         'kingarden_name_d',
         'order_product_id',
         'product_name_id',
+        'residual',
         'product_weight',
     ];
 }

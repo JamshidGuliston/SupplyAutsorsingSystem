@@ -18,6 +18,7 @@ class CreatePlusMultiStoragesTable extends Migration
             $table->integer('day_id');
             $table->integer('kingarden_name_d');
             $table->integer('order_product_id');
+            $table->boolean('residual');
             $table->integer('product_name_id');
             $table->double('product_weight', 8, 3);
             $table->timestamps();
