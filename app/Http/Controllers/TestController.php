@@ -1009,7 +1009,7 @@ class TestController extends Controller
 			foreach($row as $pid => $value){
 				$mod = plus_multi_storage::where('day_id', $firstday->id)
 					->where('kingarden_name_d', $kid)
-					->where('order_product_id', -1)
+					->where('residual', 1)
 					->where('product_name_id', $pid)
 					->get();
 				if($mod->count() == 0 and $value >= 0){
