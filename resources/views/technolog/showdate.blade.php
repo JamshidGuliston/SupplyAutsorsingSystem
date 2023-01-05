@@ -105,7 +105,7 @@
             @if(isset($row[$age->id]))
                 <td>
                     {{ $row[$age->id][1]."  " }}
-                    <i class="edites far fa-edit text-info" data-bs-toggle="modal" data-bs-target="#exampleModal" data-agecount="{{ $row[$age->id][1] }}" data-dayid="{{ $aday }}" data-ageid="{{ $age->id }}" data-kinid="{{ $row['kingar_name_id'] }}" style="cursor: pointer; margin-right: 16px;"> </i>
+                    <i class="edites far fa-edit text-info" data-bs-toggle="modal" data-bs-target="#exampleModal" data-agecount="{{ $row[$age->id][1] }}" data-dayid="{{ $day->id }}" data-monthid = "{{ $day->month_id }}" data-yearid = "{{ $day->year_id }}" data-ageid="{{ $age->id }}" data-kinid="{{ $row['kingar_name_id'] }}" style="cursor: pointer; margin-right: 16px;"> </i>
                     @if($row[$age->id][2] != null)
                     <i class="far fa-envelope" style="color: #c40c0c"></i> 
                     @endif
@@ -131,10 +131,12 @@
             // alert(1);    
             var kinid = $(this).attr('data-kinid');
             var dayid = $(this).attr('data-dayid');
+            var monthid = $(this).attr('data-monthid');
+            var yearid = $(this).attr('data-yearid');
             var ageid = $(this).attr('data-ageid');
             var agecount = $(this).attr('data-agecount');
             var modaledite = $('.edites_modal');
-            modaledite.html("<input type='hidden' name='dayid' value="+dayid+"><input type='hidden' name='kinid' value="+kinid+"><input type='hidden' name='ageid' value="+ageid+"><input type='text' class='form-control' name='agecount' value="+agecount+">");
+            modaledite.html("<input type='hidden' name='dayid' value="+dayid+"><input type='hidden' name='monthid' value="+monthid+"><input type='hidden' name='yearid' value="+yearid+"><input type='hidden' name='kinid' value="+kinid+"><input type='hidden' name='ageid' value="+ageid+"><input type='text' class='form-control' name='agecount' value="+agecount+">");
         });
     });
 </script>

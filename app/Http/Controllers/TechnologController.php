@@ -652,11 +652,10 @@ class TechnologController extends Controller
     }
 
     public function activagecountedit(Request $request){
-        // dd($request->all());
         Number_children::where('day_id', $request->dayid)->where('kingar_name_id', $request->kinid)->where('king_age_name_id', $request->ageid)
                     ->update(['kingar_children_number' => $request->agecount]);
         
-        return redirect()->route('technolog.sendmenu', $request->dayid);
+        return redirect()->route('technolog.showdate', ["year" => $request->yearid, "month" => $request->monthid, "day" => $request->dayid]);
     }
 
     // mayda skladlarga product buyurtma berish
