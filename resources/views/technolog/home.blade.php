@@ -54,7 +54,7 @@
             @elseif($date[count($date)-1]->day_number != date("d", $tomm))
             <div class="dot" id="four" type="button" data-bs-toggle="modal" data-bs-target="#exampleModals">
                 <span>{{ date("d", $tomm) }}</span>
-                <date>{{ date("F", $tomm).$date[0]->day_number." ".date("d", $tomm) }}</date>
+                <date>{{ date("F", $tomm) }}</date>
             </div>
             @endif 
             <!-- $date[0]->day_number == date("d", $tomm) -->
