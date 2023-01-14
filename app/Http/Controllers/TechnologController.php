@@ -1707,6 +1707,7 @@ class TechnologController extends Controller
                     'shop_id' => -1,
                     'kingarden_name_d' => $request->kingarid,
                     'order_product_id' => 0,
+                    'residual' => 0,
                     'product_name_id' => $key,
                     'product_weight' => $value,
                 ]);
