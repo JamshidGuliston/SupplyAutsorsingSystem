@@ -96,12 +96,17 @@
 							@endforeach
 							<th>Жами</th>
 							<th style="width: 7%;">Сумма</th>
+							<th>Устама {{ $ust }}%</th>
+							<th>Сумма</th>
+							<th>ҚҚС {{ $nds }}%</th>
+							<th>Сумма жами</th>
                         </tr>
                     </thead>
                     <tbody>
 					<?php 
 						$kgsumm = 0;
 						$costsumm = 0;
+						$ndssumm = 0;
 					?>
 					@foreach($nakproducts as $key => $row)
 					<?php 
@@ -149,6 +154,10 @@
                         @endif
 						<td style="width: 6%;"><?php printf("%01.3f", $summ) ?></td>
 						<td ><?php $costsumm += $summ*$row[0]; printf("%01.2f", $summ*$row[0]) ?></td>
+						<td ><?php printf("%01.2f", ($summ*$row[0]*$ust)/100) ?></td>
+						<td ><?php printf("%01.2f", $summ*$row[0] + ($summ*$row[0]*$ust)/100) ?></td>
+						<td ><?php printf("%01.2f", (($summ*$row[0] + ($summ*$row[0]*$ust)/100)*$nds)/100) ?></td>
+						<td ><?php printf("%01.2f", $summ*$row[0] + ($summ*$row[0]*$ust)/100 + (($summ*$row[0] + ($summ*$row[0]*$ust)/100)*$nds)/100) ?></td>
 					</tr>
 					@endforeach
 					<tr>
@@ -156,6 +165,10 @@
 						<td colspan="{{ count($days) }}"></td>
 						<td><?php printf("%01.3f", $kgsumm); ?></td>
 						<td><?php printf("%01.3f", $costsumm); ?></td>
+						<td><?php printf("%01.3f", ($costsumm * $ust)/100); ?></td>
+						<td><?php printf("%01.3f", $costsumm + ($costsumm * $ust)/100); ?></td>
+						<td><?php printf("%01.3f", ($costsumm + ($costsumm * $ust)/100)*$nds/100); ?></td>
+						<td><?php printf("%01.3f", $costsumm + ($costsumm * $ust)/100 + ($costsumm + ($costsumm * $ust)/100)*$nds/100); ?></td>
 					</tr>
                     </tbody>
                 </table>

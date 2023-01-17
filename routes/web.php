@@ -199,7 +199,7 @@ Route::group(['prefix' => 'accountant', 'middleware' => ['isAccountant', 'auth']
     Route::post('editcost', [AccountantController::class, 'editcost'])->name('accountant.editcost');
     // hisobot
     Route::get('narxselect/{region_id}', [AccountantController::class, 'narxselect'])->name('accountant.narxselect');
-    Route::get('nakapit/{id}/{ageid}/{start}/{end}/{costid}', [AccountantController::class, 'nakapit'])->name('accountant.nakapit');
+    Route::get('nakapit/{id}/{ageid}/{start}/{end}/{costid}/{nds}/{ust}', [AccountantController::class, 'nakapit'])->name('accountant.nakapit');
     Route::get('nakapitexcel/{id}/{ageid}/{start}/{end}/{costid}', [AccountantController::class, 'nakapitexcel'])->name('accountant.nakapitexcel');
     Route::get('schotfaktur/{id}/{ageid}/{start}/{end}/{costid}', [AccountantController::class, 'schotfaktur'])->name('accountant.schotfaktur');
     Route::get('allschotfaktur/{id}/{start}/{end}/{costid}', [AccountantController::class, 'allschotfaktur'])->name('accountant.allschotfaktur');

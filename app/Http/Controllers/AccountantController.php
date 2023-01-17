@@ -358,7 +358,7 @@ class AccountantController extends Controller
         return view('accountant.kindreportworker', compact('days', 'nakproducts', 'yeardays', 'costsdays', 'costs', 'ages', 'kindgar'));
     }
 
-    public function nakapit(Request $request, $id, $ageid, $start, $end, $costid){
+    public function nakapit(Request $request, $id, $ageid, $start, $end, $costid, $nds, $ust){
         $kindgar = Kindgarden::where('id', $id)->first();
         $nakproducts = [];
         $age = Age_range::where('id', $ageid)->first();
@@ -440,7 +440,7 @@ class AccountantController extends Controller
         });
         // dd($nakproducts);
         $dompdf = new Dompdf('UTF-8');
-		$html = mb_convert_encoding(view('pdffile.accountant.nakapit', compact('age', 'days', 'nakproducts', 'costsdays', 'costs', 'kindgar')), 'HTML-ENTITIES', 'UTF-8');
+		$html = mb_convert_encoding(view('pdffile.accountant.nakapit', compact('age', 'days', 'nakproducts', 'costsdays', 'costs', 'kindgar', 'nds', 'ust')), 'HTML-ENTITIES', 'UTF-8');
 		$dompdf->loadHtml($html);
         
 		// (Optional) Setup the paper size and orientation
