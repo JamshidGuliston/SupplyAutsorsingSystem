@@ -152,7 +152,7 @@
                         <label>QQS</label>
                         <input class="form-control" id="nds" placeholder="QQS %" value="0">
                     </div>
-                    <br>
+                    <hr>
                     <div class="col-sm-4">
                         <input type="hidden" id="kind" name="kindid" value="{{ $kindgar->id }}" /> 
                         <select class="form-select" id="startdayid" onchange="changeFunc();" aria-label="Default select example" required>
