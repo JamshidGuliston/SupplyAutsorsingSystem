@@ -171,11 +171,11 @@
                     </div>
                     <div class="col-sm-6">
                         <label>Ustama</label>
-                        <input class="form-control" id="ust" placeholder="Ustama %" required>
+                        <input class="form-control" id="ust" placeholder="Ustama %" value="0">
                     </div>
                     <div class="col-sm-6">
                         <label>QQS</label>
-                        <input class="form-control" id="nds" placeholder="QQS %" required>
+                        <input class="form-control" id="nds" placeholder="QQS %" value="0">
                     </div>
                 <h5 class="menutitle"></h5>
                 <div class="urlpdf">
