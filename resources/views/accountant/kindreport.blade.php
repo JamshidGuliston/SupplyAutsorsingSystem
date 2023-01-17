@@ -143,7 +143,8 @@
                 <h5 class="modal-title" id="exampleModalLabel">Hisobot: {{ $kindgar->kingar_name}}</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <div class="modal-body row">
+            <div class="modal-body">
+                <div class="row">
                     <div class="col-sm-6">
                         <label>Ustama</label>
                         <input class="form-control" id="ust" placeholder="Ustama %" value="0">
@@ -152,7 +153,8 @@
                         <label>QQS</label>
                         <input class="form-control" id="nds" placeholder="QQS %" value="0">
                     </div>
-                    <hr>
+                </div>
+                <div class="row">
                     <div class="col-sm-4">
                         <input type="hidden" id="kind" name="kindid" value="{{ $kindgar->id }}" /> 
                         <select class="form-select" id="startdayid" onchange="changeFunc();" aria-label="Default select example" required>
@@ -178,6 +180,7 @@
                             @endforeach
                         </select>
                     </div>
+                </div>
                 <h5 class="menutitle"></h5>
                 <div class="urlpdf">
                 </div>
