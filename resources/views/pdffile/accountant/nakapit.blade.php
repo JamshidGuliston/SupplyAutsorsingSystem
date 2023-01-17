@@ -88,14 +88,14 @@
                 <table style="width:100%; table-layout: fixed;">
                     <thead>
                         <tr style="width: 15%;">
-                            <th scope="col" style="width: 10%;">Махсулотлар</th>
+                            <th scope="col" style="width: 7%;">Махсулотлар</th>
                             <th style="width: 10px;">...</th>
                             <th style="width: 30px; font-size: 7px"><bold>Нарх ҚҚС билан</bold></th>
                             @foreach($days as $day)
 								<th scope="col">{{ $day->day_number; }}</th>
 							@endforeach
 							<th>Жами</th>
-							<th style="width: 7%;">Сумма</th>
+							<th>Сумма</th>
 							<th>Устама {{ $ust }}%</th>
 							<th>Сумма</th>
 							<th>ҚҚС {{ $nds }}%</th>
@@ -152,7 +152,7 @@
                         @if($row['product_name'] != "Болалар сони")
                       		<?php $kgsumm += $summ; ?>
                         @endif
-						<td style="width: 6%;"><?php printf("%01.3f", $summ) ?></td>
+						<td ><?php printf("%01.3f", $summ) ?></td>
 						<td ><?php $costsumm += $summ*$row[0]; printf("%01.2f", $summ*$row[0]) ?></td>
 						<td ><?php printf("%01.2f", ($summ*$row[0]*$ust)/100) ?></td>
 						<td ><?php printf("%01.2f", $summ*$row[0] + ($summ*$row[0]*$ust)/100) ?></td>
