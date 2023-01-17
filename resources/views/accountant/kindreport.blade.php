@@ -174,9 +174,9 @@
                             <label>Ustama %</label>
                             <input class="form-control" id="ust" placeholder="Ustama %" required>
                         </div>
-                        <div class="col-sm-6">
+                        <div class="col-sm-3">
                             <label>QQS %</label>
-                            <input class="form-control" id="nds" placeholder="NDS %" required>
+                            <input class="form-control" id="nds" placeholder="QQS %" required>
                         </div>
                     </div>
                 <h5 class="menutitle"></h5>
