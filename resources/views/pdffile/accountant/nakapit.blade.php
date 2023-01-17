@@ -87,7 +87,7 @@
                 </div>
                 <table style="width:100%; table-layout: fixed;">
                     <thead>
-                        <tr style="width: 15%;">
+                        <tr>
                             <th scope="col" style="width: 7%;">Махсулотлар</th>
                             <th style="width: 10px;">...</th>
                             <th style="width: 30px; font-size: 7px"><bold>Нарх ҚҚС билан</bold></th>
