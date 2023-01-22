@@ -19,6 +19,7 @@ use App\Models\Add_large_werehouse;
 use App\Models\minus_multi_storage;
 use App\Models\order_product_structure;
 use App\Models\plus_multi_storage;
+use App\Models\Protsents;
 use App\Models\Season;
 use App\Models\Titlemenu;
 use App\Models\Year;
@@ -71,7 +72,6 @@ class AccountantController extends Controller
     public function bycosts(Request $request, $id){
         $region = Region::where('id', $id)->first();
         $year = Year::where('year_active', 1)->first();
-        // $days = Day::where('year_id', $year->id)->get();
         $days = Day::where('year_id', $year->id)
             ->join('months', 'months.id', '=', 'days.month_id')
             ->join('years', 'years.id', '=', 'days.year_id')
@@ -97,8 +97,17 @@ class AccountantController extends Controller
 
     public function pluscosts(Request $request){
         // dd($request->all());
+        $mid = Day::where('id', $request->dayid)->first()->month_id;
+
         $bool = bycosts::where('day_id', $request->dayid)->where('region_name_id', $request->regionid)->get();
         if($bool->count() == 0){
+            Protsents::create([
+                'region_id' => $request->regionid,
+                'month_id' => $mid,
+                'nds' => $request->nds,
+                'raise' => $request->raise,
+                'protsent' => 0
+            ]);
             foreach($request->orders as $key => $value){
                 if($value == null){
                     $value = 0;

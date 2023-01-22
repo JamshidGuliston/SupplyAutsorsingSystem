@@ -85,6 +85,16 @@
                                 <option value="{{$row['id']}}">{{ $row['day_number'].'.'.$row['month_name'].' '.$row['year_name'] }}</option>
                             @endforeach
                         </select>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <label>Ustama</label>
+                            <input class="form-control" name="raise" placeholder="Ustama %" required>
+                        </div>
+                        <div class="col-sm-6">
+                            <label>QQS</label>
+                            <input class="form-control" name="nds" placeholder="QQS %" required>
+                        </div>
                     </div> 
                     <hr> 
                     <table class="table table-light table-striped table-hover" style="width: calc(100% - 2rem)!important;">
