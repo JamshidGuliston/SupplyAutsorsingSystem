@@ -1535,7 +1535,6 @@ class TechnologController extends Controller
         }
         $months = Month::all();
         $days = Day::where('year_id', Year::where('year_active', 1)->first()->id)->where('month_id', Month::where('id', $monthid)->first()->id)->get();
-        dd($days);
         $minusproducts = [];
         foreach($days as $day){
             $minus = minus_multi_storage::where('day_id', $day->id)
@@ -1595,7 +1594,7 @@ class TechnologController extends Controller
                 $plusproducts[$row->product_name_id]['productname'] = $row->product_name;
             }
         }
-        // dd($minusproducts);
+        dd($plusproducts);
         return view('technolog.plusmultistorage', ['plusproducts' => $plusproducts, 'minusproducts' => $minusproducts, 'kingar' => $king, 'days' => $days, 'months' => $months, 'monthid' => $ill]); 
     }
 
