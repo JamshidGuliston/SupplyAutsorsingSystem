@@ -58,22 +58,22 @@ class LoginController extends Controller
 
     public function login(Request $request){
         $input = $request->all();
-        $this->validate($request, [
-            'email'=>'required|email',
-            'password'=>'required',
-            'g-recaptcha-response' => function($attribute, $value, $fail){
-                $secretKey = '6LfD7ScjAAAAAKDFipaiJ4WMPB7gJeoLYNCmFbCw';   
-                $response = $value;
-                $userIP = $_SERVER['REMOTE_ADDR'];
-                $url = "https://www.google.com/recaptcha/api/siteverify?secret=$secretKey&response=$response&remoteip=$userIP";
-                $response = \file_get_contents($url);
-                $response = json_decode($response);
-                if(!$response->success){
-                    redirect()->route('login')->with('messages', 'Iltimos reCaptchani cherting');
-                    $fail($attribute.'google reCatpcha failed');
-                }
-            }
-        ]);
+        // $this->validate($request, [
+        //     'email'=>'required|email',
+        //     'password'=>'required',
+        //     'g-recaptcha-response' => function($attribute, $value, $fail){
+        //         $secretKey = '6LfD7ScjAAAAAKDFipaiJ4WMPB7gJeoLYNCmFbCw';   
+        //         $response = $value;
+        //         $userIP = $_SERVER['REMOTE_ADDR'];
+        //         $url = "https://www.google.com/recaptcha/api/siteverify?secret=$secretKey&response=$response&remoteip=$userIP";
+        //         $response = \file_get_contents($url);
+        //         $response = json_decode($response);
+        //         if(!$response->success){
+        //             redirect()->route('login')->with('messages', 'Iltimos reCaptchani cherting');
+        //             $fail($attribute.'google reCatpcha failed');
+        //         }
+        //     }
+        // ]);
 
         if(auth()->attempt(array('email'=>$input['email'], 'password'=>$input['password']))){
             if(auth()->user()->role_id == 4){

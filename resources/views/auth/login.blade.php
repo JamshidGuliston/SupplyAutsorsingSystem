@@ -175,7 +175,7 @@
                             </div>
 
                             <div class="col-lg-12 loginbttm">
-                                <div class="g-recaptcha" data-sitekey="6LfD7ScjAAAAACSAMyR8hhDpviT55YzQU9TRru9q"></div>
+                                <!-- <div class="g-recaptcha" data-sitekey="6LfD7ScjAAAAACSAMyR8hhDpviT55YzQU9TRru9q"></div> -->
                                 @if (isset($messages))
                                     <div class="alert">{!! $messages !!}</div>
                                 @endif
