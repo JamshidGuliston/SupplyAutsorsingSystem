@@ -1535,6 +1535,7 @@ class TechnologController extends Controller
         }
         $months = Month::all();
         $days = Day::where('year_id', Year::where('year_active', 1)->first()->id)->where('month_id', Month::where('id', $monthid)->first()->id)->get();
+        dd($days);
         $minusproducts = [];
         foreach($days as $day){
             $minus = minus_multi_storage::where('day_id', $day->id)
