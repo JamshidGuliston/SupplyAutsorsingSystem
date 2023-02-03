@@ -1577,7 +1577,7 @@ class TechnologController extends Controller
                     'products.div',
                     'products.sort'
                 ]);
-
+            dd($plus);
             foreach($plus as $row){
                 if(!isset($plusproducts[$row->product_name_id][$day->id])){
                     $plusproducts[$row->product_name_id][$day->id."+"] = 0;
