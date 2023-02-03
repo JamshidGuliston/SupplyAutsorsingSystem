@@ -1577,7 +1577,6 @@ class TechnologController extends Controller
                     'products.div',
                     'products.sort'
                 ]);
-            dd($plus);
             foreach($plus as $row){
                 if(!isset($plusproducts[$row->product_name_id][$day->id])){
                     $plusproducts[$row->product_name_id][$day->id."+"] = 0;
@@ -1594,7 +1593,6 @@ class TechnologController extends Controller
                 $plusproducts[$row->product_name_id]['productname'] = $row->product_name;
             }
         }
-        dd($plusproducts);
         return view('technolog.plusmultistorage', ['plusproducts' => $plusproducts, 'minusproducts' => $minusproducts, 'kingar' => $king, 'days' => $days, 'months' => $months, 'monthid' => $ill]); 
     }
 
