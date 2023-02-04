@@ -228,7 +228,7 @@ class StorageController extends Controller
             ->select('order_products.id', 'order_products.order_title', 'order_products.document_processes_id', 'kindgardens.kingar_name') 
             ->orderby('order_products.id', 'DESC')
             ->get();
-        $orederitems = order_product_structure::join('products', 'products.id', '=', 'order_product_structures.product_name_id')
+        // $orederitems = order_product_structure::join('products', 'products.id', '=', 'order_product_structures.product_name_id')
             ->get();
         $kingar = Kindgarden::all();
 

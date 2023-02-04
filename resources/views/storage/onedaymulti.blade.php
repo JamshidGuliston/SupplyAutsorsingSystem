@@ -121,11 +121,11 @@
                     @endif
                 </td>
                 <td>
-                    @foreach($products as $item)
+                    <!-- @foreach($products as $item)
                     @if($item->order_product_name_id == $order->id)
                     {{ $item->product_name."-".$item->product_weight.", " }}
                     @endif
-                    @endforeach
+                    @endforeach -->
                 </td>
                 <td>
                     <a href="/storage/orderskladpdf/{{ $order->id }}" target="__blank">pdf</a>
@@ -154,9 +154,9 @@
                         <i class="fas fa-undo" data-produc-id="{{$order['id']}}" data-bs-toggle="modal" data-bs-target="#Modalback" style="cursor: pointer; margin-left: 16px; color: deepskyblue"></i>
                     @endif
                 </td>
-                <div>
-                    ui
-                </div>
+                <td>
+                    <i class="far fa-trash-alt" data-produc-id="{{$order['id']}}" data-bs-toggle="modal" data-bs-target="#Modaldelete" style="cursor: pointer; margin-left: 16px; color: deepskyblue"></i>
+                </td>
             </tr>
             @endforeach
         </tbody>
