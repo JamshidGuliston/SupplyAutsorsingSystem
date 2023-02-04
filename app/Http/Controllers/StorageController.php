@@ -233,7 +233,7 @@ class StorageController extends Controller
             $orederitems = [];
         $kingar = Kindgarden::all();
 
-        return view('storage.onedaymulti', ['gardens' => $kingar, 'orders' => $orederproduct, 'products'=>$orederitems]);
+        return view('storage.onedaymulti', ['gardens' => $kingar, 'orders' => $orederproduct, 'products'=>$orederitems, 'dayid' => $dayid]);
     }
 
     public function orderitem(Request $request, $id)
@@ -736,7 +736,9 @@ class StorageController extends Controller
     }
 
     public function deleteorder(Request $request){
-        dd($request->all());
+        order_product::where('id', $request->orderid)->delete();
+        order_product_structure::where('order_product_name_id', $request->orderid)->delete();
+        return redirect()->route('storage.onedaymulti', $request->dayid)->with('status', "Maxsulotlar o'chrildi!");
     }
     
 }

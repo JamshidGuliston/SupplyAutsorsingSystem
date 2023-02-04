@@ -179,7 +179,7 @@
                 </td>
                 <td>
                     @if($order['document_processes_id'] == 3)
-                        <i class="far fa-trash-alt" data-produc-id="{{$order['id']}}" data-bs-toggle="modal" data-bs-target="#ModalTrash" style="cursor: pointer; margin-left: 16px; color: deepskyblue"></i>
+                        <i class="far fa-trash-alt" data-produc-id="{{$order['id']}}" data-day-id="{{$dayid}}" data-bs-toggle="modal" data-bs-target="#ModalTrash" style="cursor: pointer; margin-left: 16px; color: deepskyblue"></i>
                     @endif
                 </td>
             </tr>
@@ -196,8 +196,9 @@
     $(document).ready(function() {
         $('.fa-trash-alt').click(function() {
             id = $(this).attr('data-produc-id');
+            dayid = $(this).attr('data-day-id');
             h = $('.op');
-            h.html("<input type='hidden' name='orderid' value='"+id+"' >");
+            h.html("<input type='hidden' name='orderid' value='"+id+"' ><input type='hidden' name='dayid' value='"+dayid+"' >");
         });
         $('.fa-paper-plane').click(function() {
             id = $(this).attr('data-produc-id');
@@ -251,4 +252,15 @@
         });
     });
 </script>
+@if(session('status'))
+<script> 
+    // alert('{{ session("status") }}');
+    swal({
+        title: "Ajoyib!",
+        text: "{{ session('status') }}",
+        icon: "success",
+        button: "ok",
+    });
+</script>
+@endif
 @endsection
