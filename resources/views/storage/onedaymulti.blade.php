@@ -155,7 +155,7 @@
                     @endif
                 </td>
                 <div>
-                    <i class="far fa-trash-alt" data-produc-id="{{$order['id']}}" data-bs-toggle="modal" data-bs-target="#Modaldelete" style="cursor: pointer; margin-left: 16px; color: deepskyblue"></i>
+                    ui
                 </div>
             </tr>
             @endforeach
