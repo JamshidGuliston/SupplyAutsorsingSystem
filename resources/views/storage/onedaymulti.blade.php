@@ -155,7 +155,9 @@
                     @endif
                 </td>
                 <td>
-                    <i class="far fa-trash-alt" data-produc-id="{{$order['id']}}" data-bs-toggle="modal" data-bs-target="#Modaldelete" style="cursor: pointer; margin-left: 16px; color: deepskyblue"></i>
+                    if($order['document_processes_id'] == 3)
+                        <i class="far fa-trash-alt" data-produc-id="{{$order['id']}}" data-bs-toggle="modal" data-bs-target="#Modaldelete" style="cursor: pointer; margin-left: 16px; color: deepskyblue"></i>
+                    @endif
                 </td>
             </tr>
             @endforeach
