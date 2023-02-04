@@ -106,6 +106,7 @@
                 <th style="width: 40px;">PDF</th>
                 <th style="width: 70px;">Holati</th>
                 <th style="width: 70px;">...</th>
+                <th style="width: 70px;"></th>
             </tr>
         </thead>
         <tbody>
@@ -153,6 +154,9 @@
                         <i class="fas fa-undo" data-produc-id="{{$order['id']}}" data-bs-toggle="modal" data-bs-target="#Modalback" style="cursor: pointer; margin-left: 16px; color: deepskyblue"></i>
                     @endif
                 </td>
+                <div>
+                    <i class="far fa-trash-alt" data-produc-id="{{$order['id']}}" data-bs-toggle="modal" data-bs-target="#Modaldelete" style="cursor: pointer; margin-left: 16px; color: deepskyblue"></i>
+                </div>
             </tr>
             @endforeach
         </tbody>
