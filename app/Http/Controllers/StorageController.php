@@ -738,7 +738,7 @@ class StorageController extends Controller
     public function deleteorder(Request $request){
         order_product::where('id', $request->orderid)->delete();
         order_product_structure::where('order_product_name_id', $request->orderid)->delete();
-        return redirect()->route('storage.onedaymulti', $request->dayid)->with('status', "Maxsulotlar o'chrildi!");
+        return redirect()->route('storage.onedaymulti', $request->dayid)->with('status', "Maxsulotlar o\'chirildi!");
     }
     
 }
