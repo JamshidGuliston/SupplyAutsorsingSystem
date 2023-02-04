@@ -159,7 +159,7 @@
                     @elseif($order['document_processes_id'] == 2)
                     <span style="color: green">Yuborildi</span>
                     @elseif($order['document_processes_id'] == 3)
-                    <span style="color: green;text-align: center;background-color: #ffd12a;padding: 3px 10px;display: inline-block;font-size: 14px;">Qabul qilindi</span>
+                    <span style="color: green;text-align: center;background-color: #ffd12a;padding: 3px 10px;display: inline-block;font-size: 14px;">Yaratildi</span>
                     @elseif($order['document_processes_id'] == 4)
                     <span style="color: white;background-color: blue;padding: 3px 9px;border-radius: 3px;">Yuborildi</span>
                     @elseif($order['document_processes_id'] == 5)
