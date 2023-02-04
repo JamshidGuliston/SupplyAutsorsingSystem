@@ -229,7 +229,7 @@ class StorageController extends Controller
             ->orderby('order_products.id', 'DESC')
             ->get();
         // $orederitems = order_product_structure::join('products', 'products.id', '=', 'order_product_structures.product_name_id')
-            ->get();
+            // ->get();
         $kingar = Kindgarden::all();
 
         return view('storage.onedaymulti', ['gardens' => $kingar, 'orders' => $orederproduct, 'products'=>$orederitems]);
