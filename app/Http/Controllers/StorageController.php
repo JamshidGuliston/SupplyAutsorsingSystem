@@ -734,5 +734,9 @@ class StorageController extends Controller
         ]);
         return redirect()->route('storage.takecategories');
     }
+
+    public function deleteorder(Request $request){
+        dd($request->all());
+    }
     
 }
