@@ -178,7 +178,7 @@
                 </td>
                 <td>
                     @if($order['document_processes_id'] == 3)
-                        <i class="far fa-trash-alt" data-title-id="{{$order['order_title']}}" data-produc-id="{{$order['id']}}" data-day-id="{{$dayid}}" data-bs-toggle="modal" data-bs-target="#ModalTrash" style="cursor: pointer; margin-left: 16px; color: deepskyblue"></i>
+                        <i class="far fa-trash-alt" data-title-id="{{$order['kingar_name']}}" data-produc-id="{{$order['id']}}" data-day-id="{{$dayid}}" data-bs-toggle="modal" data-bs-target="#ModalTrash" style="cursor: pointer; margin-left: 16px; color: deepskyblue"></i>
                     @endif
                 </td>
             </tr>
