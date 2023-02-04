@@ -88,7 +88,7 @@
                 <p>DELETE</p>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn">O'chirish</button>
+                <button type="submit" class="btn">O'chirish</button>
             </div>
         </div>
     </form>
