@@ -81,7 +81,6 @@
 
             </div>
             <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">O'chirish</h5>
                 <button type="button" class="btn-close " data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
@@ -179,7 +178,7 @@
                 </td>
                 <td>
                     @if($order['document_processes_id'] == 3)
-                        <i class="far fa-trash-alt" data-produc-id="{{$order['id']}}" data-day-id="{{$dayid}}" data-bs-toggle="modal" data-bs-target="#ModalTrash" style="cursor: pointer; margin-left: 16px; color: deepskyblue"></i>
+                        <i class="far fa-trash-alt" data-title-id="{{$order['order_title']}}" data-produc-id="{{$order['id']}}" data-day-id="{{$dayid}}" data-bs-toggle="modal" data-bs-target="#ModalTrash" style="cursor: pointer; margin-left: 16px; color: deepskyblue"></i>
                     @endif
                 </td>
             </tr>
@@ -197,8 +196,9 @@
         $('.fa-trash-alt').click(function() {
             id = $(this).attr('data-produc-id');
             dayid = $(this).attr('data-day-id');
+            title = $(this).attr('data-title-id');
             h = $('.op');
-            h.html("<input type='hidden' name='orderid' value='"+id+"' ><input type='hidden' name='dayid' value='"+dayid+"' >");
+            h.html("<p>"+title+" maxsulotlarini o'chirish.</p><input type='hidden' name='orderid' value='"+id+"' ><input type='hidden' name='dayid' value='"+dayid+"' >");
         });
         $('.fa-paper-plane').click(function() {
             id = $(this).attr('data-produc-id');
