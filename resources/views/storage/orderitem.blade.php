@@ -23,8 +23,6 @@
     </div>
 </div>
 <!-- DELET -->
-
-<!-- EDIT -->
 <!-- Modal -->
 <div class="modal editesmodal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog">

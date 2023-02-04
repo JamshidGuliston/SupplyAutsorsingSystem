@@ -71,6 +71,29 @@
         </div>
     </div>
 </div>
+
+<div class="modal fade" id="ModalTrash" tabindex="-1" aria-labelledby="exampleModalLabels" aria-hidden="true">
+    <div class="modal-dialog">
+    <form action="{{route('storage.deleteorder')}}" method="POST">
+        @csrf
+        <div class="modal-content">
+            <div class="op">
+
+            </div>
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">O'chirish</h5>
+                <button type="button" class="btn-close " data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>DELETE</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn">O'chirish</button>
+            </div>
+        </div>
+    </form>
+    </div>
+</div>
 <!-- DELET -->
 <!-- Modal -->
 <div class="modal fade" id="Modaldelete" tabindex="-1" aria-labelledby="exampleModalLabels" aria-hidden="true">
@@ -156,7 +179,7 @@
                 </td>
                 <td>
                     @if($order['document_processes_id'] == 3)
-                        <i class="far fa-trash-alt" data-produc-id="{{$order['id']}}" data-bs-toggle="modal" data-bs-target="#Modaldelete" style="cursor: pointer; margin-left: 16px; color: deepskyblue"></i>
+                        <i class="far fa-trash-alt" data-produc-id="{{$order['id']}}" data-bs-toggle="modal" data-bs-target="#ModalTrash" style="cursor: pointer; margin-left: 16px; color: deepskyblue"></i>
                     @endif
                 </td>
             </tr>
@@ -171,14 +194,18 @@
 @section('script')
 <script>
     $(document).ready(function() {
-
+        $('.fa-trash-alt').click(function() {
+            id = $(this).attr('data-produc-id');
+            h = $('.op');
+            h.html("<input type='hidden' name='orderid' value='"+id+"' >");
+        });
         $('.fa-paper-plane').click(function() {
             id = $(this).attr('data-produc-id');
             // console.log(id)
-        })
+        });
         $('.fa-undo').click(function() {
             id = $(this).attr('data-produc-id');
-        })
+        });
         $('#sendpass').click(function() {
             var g = id;
             var pass = $('#passw').val();
@@ -222,6 +249,6 @@
                 }
             })
         });
-    })
+    });
 </script>
 @endsection
