@@ -77,14 +77,14 @@
     <form action="{{route('storage.deleteorder')}}" method="POST">
         @csrf
         <div class="modal-content">
-            <div class="op">
-
-            </div>
             <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">O'chirish</h5>
                 <button type="button" class="btn-close " data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <p>DELETE</p>
+                <div class="op">
+
+                </div>
             </div>
             <div class="modal-footer">
                 <button type="submit" class="btn">O'chirish</button>
