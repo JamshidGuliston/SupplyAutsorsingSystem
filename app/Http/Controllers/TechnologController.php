@@ -152,6 +152,7 @@ class TechnologController extends Controller
     {
         date_default_timezone_set('Asia/Tashkent');
         $d = strtotime("-10 hours 30 minutes");
+        $bool = array();
         $ages = Age_range::all();
         $sid = Season::where('hide', 1)->first();
         $menus = Titlemenu::all();
@@ -203,7 +204,6 @@ class TechnologController extends Controller
                                 'nextday_nambers.workers_count', 
                                 'nextday_nambers.kingar_menu_id', 
                                 'nextday_nambers.kingar_name_id', 
-                                'nextday_nambers.id', 
                                 'kindgardens.id as kingarid',
                                 'kindgardens.kingar_name',
                                 'temporaries.id as tempid',
@@ -213,6 +213,10 @@ class TechnologController extends Controller
             $nextdayitem = array();
             $loo = 0;
             for($i = 0; $i < count($nextday); $i++){
+                $ct = Nextday_namber::where('kingar_name_id', $nextday[$i]->kingar_name_id)->where('king_age_name_id', $nextday[$i]->king_age_name_id)->get();
+                if($ct->count() > 1){
+                    Nextday_namber::where('kingar_name_id', $nextday[$i]->kingar_name_id)->where('king_age_name_id', $nextday[$i]->king_age_name_id)->first()->delete();
+                }
                 $nextdayitem[$loo]['id'] = $nextday[$i]->id;
                 $nextdayitem[$loo]['kingar_name_id'] = $nextday[$i]->kingar_name_id;
                 $nextdayitem[$loo]['kingar_name'] = $nextday[$i]->kingar_name;

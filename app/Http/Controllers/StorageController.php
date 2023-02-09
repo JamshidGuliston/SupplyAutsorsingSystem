@@ -499,8 +499,7 @@ class StorageController extends Controller
             ->get();
         $orederitems = order_product_structure::join('products', 'products.id', '=', 'order_product_structures.product_name_id')
             ->get();
-        // dd($orederproduct);
-
+            
         return view('storage.orders', ['orders' => $orederproduct, 'products' => $orederitems]);
     }
 
