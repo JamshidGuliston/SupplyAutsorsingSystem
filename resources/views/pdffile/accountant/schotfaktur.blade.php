@@ -87,7 +87,7 @@
                 <table style="table-layout: fixed;">
                     <thead>
                         <tr>
-                            <th scope="col" style="width: 15%;">Махсулот номи</th>
+                            <th scope="col">Махсулот номи</th>
                             <th style="width: 5px;">Ед.м</th>
                             <th style="width: 30px;">калич</th>
 							<th style="width: 8%;">цена</th>
