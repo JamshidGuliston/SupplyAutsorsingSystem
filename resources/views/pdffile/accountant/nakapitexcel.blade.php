@@ -1,6 +1,6 @@
 <table>
   <tr>
-	  <td colspan="4"><b>Sana: "___".<?php printf('%02d', $days[0]->month_id) ?>. 2022 / {{ $kindgar->kingar_name." / ".$age->age_name }}</b></td>
+	  <td colspan="4"><b>Sana: "___".<?php printf('%02d', $days[0]->month_id % 12) ?>. <?php printf('%02d', $costs[0]->year_name) ?> / {{ $kindgar->kingar_name." / ".$age->age_name }}</b></td>
   </tr>
   <tr>
 	<th><b>Махсулотлар</b></th>
@@ -9,8 +9,12 @@
 	@foreach($days as $day)
 		<th><b>{{ $day->day_number; }}</b></th>
 	@endforeach
-	<th><b>Жами</b></th>
-	<th><b>Сумма</b></th>
+	<th>Жами</th>
+	<th>Сумма</th>
+	<th>Устама {{ $ust }}%</th>
+	<th>Сумма</th>
+	<th>ҚҚС {{ $nds }}%</th>
+	<th>Сумма жами</th>
   </tr>
   <?php 
 		$kgsumm = 0;
@@ -45,14 +49,26 @@
 				</td>
 			@endif
 		@endforeach
-		<td style="width: 6%;"><?php $kgsumm += $summ; printf("%01.3f", $summ) ?></td>
-		<td ><?php $costsumm += $summ*$row[0]; printf("%01.1f", $summ*$row[0]) ?></td>
+		@if($row['product_name'] != "Болалар сони")
+			<?php $kgsumm += $summ; ?>
+		@endif
+		<td ><?php printf("%01.3f", $summ) ?></td>
+		<td ><?php $costsumm += $summ*$row[0]; printf("%01.2f", $summ*$row[0]) ?></td>
+		<td ><?php printf("%01.2f", ($summ*$row[0]*$ust)/100) ?></td>
+		<td ><?php printf("%01.2f", $summ*$row[0] + ($summ*$row[0]*$ust)/100) ?></td>
+		<td ><?php printf("%01.2f", (($summ*$row[0] + ($summ*$row[0]*$ust)/100)*$nds)/100) ?></td>
+		<td ><?php printf("%01.2f", $summ*$row[0] + ($summ*$row[0]*$ust)/100 + (($summ*$row[0] + ($summ*$row[0]*$ust)/100)*$nds)/100) ?></td>
 	</tr>
 	@endforeach
 	<tr>
-		<td colspan="3"><b>Жами:</b></td>
+	<tr>
+		<td colspan="3">Жами:</td>
 		<td colspan="{{ count($days) }}"></td>
 		<td><?php printf("%01.3f", $kgsumm); ?></td>
 		<td><?php printf("%01.3f", $costsumm); ?></td>
+		<td><?php printf("%01.3f", ($costsumm * $ust)/100); ?></td>
+		<td><?php printf("%01.3f", $costsumm + ($costsumm * $ust)/100); ?></td>
+		<td><?php printf("%01.3f", ($costsumm + ($costsumm * $ust)/100)*$nds/100); ?></td>
+		<td><?php printf("%01.3f", $costsumm + ($costsumm * $ust)/100 + ($costsumm + ($costsumm * $ust)/100)*$nds/100); ?></td>
 	</tr>
 </table>     

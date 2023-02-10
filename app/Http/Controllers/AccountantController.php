@@ -464,9 +464,9 @@ class AccountantController extends Controller
 		$dompdf->stream($name, ['Attachment' => 0]);
     }
 
-    public function nakapitexcel(Request $request, $id, $ageid, $start, $end, $costid){
+    public function nakapitexcel(Request $request, $id, $ageid, $start, $end, $costid, $nds, $ust){
         // Excel::store(new NakapitelExport($request, $id, $ageid, $start, $end, $costid), "nakapitel.xlsx");
-        return Excel::download(new NakapitelExport($request, $id, $ageid, $start, $end, $costid), 'excellist.xlsx');
+        return Excel::download(new NakapitelExport($request, $id, $ageid, $start, $end, $costid, $nds, $ust), 'excellist.xlsx');
         // return response(Storage::get('nakapitel.xlsx'))->header('Content-Type', Storage::mimeType('nakapitel.xlsx'));
     }
 

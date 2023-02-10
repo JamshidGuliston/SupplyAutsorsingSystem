@@ -13,8 +13,8 @@ use Maatwebsite\Excel\Concerns\FromView;
 
 class NakapitelExport implements FromView
 {
-    protected $request, $id, $ageid, $start, $end, $costid;
-    public function __construct(Request $request, $id, $ageid, $start, $end, $costid)
+    protected $request, $id, $ageid, $start, $end, $costid, $nds, $ust;
+    public function __construct(Request $request, $id, $ageid, $start, $end, $costid, $nds, $ust)
     {
         $this->request = $request;
         $this->id = $id;
@@ -22,10 +22,14 @@ class NakapitelExport implements FromView
         $this->start = $start;
         $this->end = $end;
         $this->costid = $costid;
+        $this->nds = $nds;
+        $this->ust = $ust;
     } 
 
     public function view(): View
     {
+        $nds = $this->nds;
+        $ust = $this->ust;
         $kindgar = Kindgarden::where('id', $this->id)->first();
         $nakproducts = [];
         $age = Age_range::where('id', $this->ageid)->first();
@@ -106,6 +110,6 @@ class NakapitelExport implements FromView
             }
         });
 
-        return view('pdffile.accountant.nakapitexcel', compact('age', 'days', 'nakproducts', 'costsdays', 'costs', 'kindgar'));
+        return view('pdffile.accountant.nakapitexcel', compact('age', 'days', 'nakproducts', 'costsdays', 'costs', 'kindgar', 'ust', 'nds'));
     }
 }
