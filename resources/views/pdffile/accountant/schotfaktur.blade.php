@@ -79,8 +79,8 @@
                 <div class="table" id="table_with_data">
 					<div class="col-md-12">
                         <center>НАКЛАДНАЯ-СЧЁТ ФАКТУРА № ______</center>
-                        <center>от " ____".<?php printf('%02d', $days[0]->month_id) ?>. 2022г</center>
-                        <center>К товарно-отгрузчным документом №____ от" ____ ".<?php printf('%02d', $days[0]->month_id) ?>. 2022 года</center><br>
+                        <center>от " ____".<?php printf('%02d', $days[0]->month_id % 12) ?>. <?php printf('%02d', $costs[0]->year_name) ?>г</center>
+                        <center>К товарно-отгрузчным документом №____ от" ____ ".<?php printf('%02d', $days[0]->month_id % 12) ?>. <?php printf('%02d', $costs[0]->year_name) ?> года</center><br>
 						<center>Поставщик:МЧЖ Нишон Инвест / {{ $kindgar->kingar_name." / ".$age->age_name }}</center>
 					</div>
                 </div>
@@ -91,9 +91,14 @@
                             <th style="width: 7px;">Ед.м</th>
                             <th style="width: 30px;">калич</th>
 							<th style="width: 8%;">цена</th>
-							<th>Стоимость паставка</th>
+							<!-- <th>Стоимость паставка</th>
 							<th>Надбавка ставка сумма</th>
-							<th>С тоимость поставка с учетом Надбавка</th>
+							<th>С тоимость поставка с учетом Надбавка</th> -->
+							<th>Сумма</th>
+							<th>Устама {{ $ust }}%</th>
+							<th>Сумма</th>
+							<th>ҚҚС {{ $nds }}%</th>
+							<th>Сумма жами</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -122,12 +127,11 @@
 						@endforeach
 						<td><?php printf("%01.3f", $summ) ?></td>
                         <td>{{ $row[0] }}</td>
-						<td ><?php printf("%01.2f", $summ*$row[0]) ?></td>
-                        <?php
-                            $ww += $summ*$row[0];
-                        ?>
-						<td><?php printf("%01.2f", ($summ*$row[0]/100)*15) ?></td>
-						<td><?php printf("%01.2f", $summ*$row[0] + ($summ*$row[0]/100)*15) ?></td>
+						<td ><?php $costsumm += $summ*$row[0]; printf("%01.2f", $summ*$row[0]) ?></td>
+						<td ><?php printf("%01.2f", ($summ*$row[0]*$ust)/100) ?></td>
+						<td ><?php printf("%01.2f", $summ*$row[0] + ($summ*$row[0]*$ust)/100) ?></td>
+						<td ><?php printf("%01.2f", (($summ*$row[0] + ($summ*$row[0]*$ust)/100)*$nds)/100) ?></td>
+						<td ><?php printf("%01.2f", $summ*$row[0] + ($summ*$row[0]*$ust)/100 + (($summ*$row[0] + ($summ*$row[0]*$ust)/100)*$nds)/100) ?></td>
 					</tr>
 					@endforeach
                     <tr>
@@ -135,9 +139,11 @@
                         <th style="width: 7px;"></th>
                         <th style="width: 30px;"></th>
                         <th style="width: 8%;"></th>
-                        <th><?php printf("%01.1f", $ww) ?></th>
-                        <th><?php printf("%01.1f", $ww/100*15) ?></th>
-                        <th><?php printf("%01.1f", $ww + $ww/100*15) ?></th>
+                        <td><?php printf("%01.3f", $costsumm); ?></td>
+						<td><?php printf("%01.3f", ($costsumm * $ust)/100); ?></td>
+						<td><?php printf("%01.3f", $costsumm + ($costsumm * $ust)/100); ?></td>
+						<td><?php printf("%01.3f", ($costsumm + ($costsumm * $ust)/100)*$nds/100); ?></td>
+						<td><?php printf("%01.3f", $costsumm + ($costsumm * $ust)/100 + ($costsumm + ($costsumm * $ust)/100)*$nds/100); ?></td>
                     </tr>
                     <tr>
                         <td>Всего к оплата</td>

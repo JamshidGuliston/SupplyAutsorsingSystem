@@ -563,7 +563,7 @@ class AccountantController extends Controller
 		$dompdf->stream($name, ['Attachment' => 0]);
     }
 
-    public function schotfaktur(Request $request, $id, $ageid, $start, $end, $costid){
+    public function schotfaktur(Request $request, $id, $ageid, $start, $end, $costid, $nds, $ust){
         $kindgar = Kindgarden::where('id', $id)->first();
         $nakproducts = [];
         $age = Age_range::where('id', $ageid)->first();
@@ -636,7 +636,7 @@ class AccountantController extends Controller
         });
 
         $dompdf = new Dompdf('UTF-8');
-		$html = mb_convert_encoding(view('pdffile.accountant.schotfaktur', compact('age', 'days', 'nakproducts', 'costsdays', 'costs', 'kindgar')), 'HTML-ENTITIES', 'UTF-8');
+		$html = mb_convert_encoding(view('pdffile.accountant.schotfaktur', compact('age', 'days', 'nakproducts', 'costsdays', 'costs', 'kindgar', 'nds', 'ust')), 'HTML-ENTITIES', 'UTF-8');
 		$dompdf->loadHtml($html);
 
 		// (Optional) Setup the paper size and orientation
