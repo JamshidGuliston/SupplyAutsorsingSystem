@@ -84,7 +84,7 @@
 						<center>Поставщик:МЧЖ Нишон Инвест / {{ $kindgar->kingar_name." / ".$age->age_name }}</center>
 					</div>
                 </div>
-                <table style="width:100%; table-layout: fixed;">
+                <table style="table-layout: fixed;">
                     <thead>
                         <tr>
                             <th scope="col" style="width: 25%;">Махсулот номи</th>
@@ -147,7 +147,7 @@
                     </tr>
                     <tr>
                         <td>Всего к оплата</td>
-                        <td colspan="6"></td>
+                        <td colspan="8"></td>
                     </tr>
                     </tbody>
                 </table>
