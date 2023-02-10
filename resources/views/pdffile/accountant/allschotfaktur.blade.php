@@ -10,7 +10,7 @@
 <!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"> -->
 <title>Title</title>
 <style>
-	 @page { margin: 0.2in 0.8in 0in 0.3in; }
+	 @page { margin: 0.2in 0.2in 0in 0.3in; }
 	body{
 		font-family: DejaVu Sans;
 		font-size:10px;
@@ -80,7 +80,7 @@
 					<div class="col-md-12">
                         <center>НАКЛАДНАЯ-СЧЁТ ФАКТУРА № ______</center>
                         <center>от " ____".<?php printf('%02d', $days[0]->month_id % 12) ?>. <?php printf('%02d', $costs[0]->year_name) ?>г</center>
-                        <center>К товарно-отгрузчным документом №____ от" ____ ".<?php printf('%02d', $days[0]->month_id) % 12 ?>. <?php printf('%02d', $costs[0]->year_name) ?> года</center><br>
+                        <center>К товарно-отгрузчным документом №____ от" ____ ".<?php printf('%02d', $days[0]->month_id % 12)  ?>. <?php printf('%02d', $costs[0]->year_name) ?> года</center><br>
 						<center>{{ $kindgar->kingar_name." / " }}</center>
 					</div>
                 </div>

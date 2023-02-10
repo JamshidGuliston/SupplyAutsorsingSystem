@@ -10,7 +10,7 @@
 <!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"> -->
 <title>Title</title>
 <style>
-	 @page { margin: 0.2in 0.8in 0in 0.3in; }
+	 @page { margin: 0.4in 0.2in 0in 0.3in; }
 	body{
 		font-family: DejaVu Sans;
 		font-size:9px;
