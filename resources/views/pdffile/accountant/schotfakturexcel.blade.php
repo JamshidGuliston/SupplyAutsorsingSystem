@@ -14,14 +14,14 @@
 		<th>Сумма жами</th>
 	</tr>
 	<?php
-		$ww = 0;
+		$costsumm = 0;
 	?>
 	@foreach($nakproducts as $key => $row)
 	<tr>
 		<td>{{ $row['product_name'] }}</td>
 		<td>{{ $row['size_name'] }}</td>
 		<?php 
-			$costsumm = 0;
+			$summ = 0;
 		?>
 		@foreach($days as $day)
 			@if(isset($row[$day['id']]))
