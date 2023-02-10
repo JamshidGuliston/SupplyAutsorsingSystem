@@ -58,17 +58,17 @@ class FakturaExport implements FromView
                 $productscount[$row->product_name_id][$this->ageid] += $row->weight;
                 $productscount[$row->product_name_id][$this->ageid.'-children'] = $row->kingar_children_number;
                 $productscount[$row->product_name_id][$this->ageid.'div'] = $row->div;
-                $productscount[$row->product_name_id]['product_name'] = $row->product_name;
                 $productscount[$row->product_name_id][$this->ageid.'sort'] = $row->sort;
+                $productscount[$row->product_name_id]['product_name'] = $row->product_name;
                 $productscount[$row->product_name_id]['size_name'] = $row->size_name;
             }
             
             foreach($productscount as $key => $row){
                 if(isset($row['product_name'])){
-                    
                     $nakproducts[$key][$day->id] = ($row[$this->ageid]*$row[$this->ageid.'-children']) / $row[$this->ageid.'div'];;
                     $nakproducts[$key]['product_name'] = $row['product_name'];
                     $nakproducts[$key]['size_name'] = $row['size_name'];
+                    $nakproducts[$key]['sort'] = $row[$this->ageid.'sort'];
                 }
             }
             // dd($nakproducts);
@@ -94,13 +94,13 @@ class FakturaExport implements FromView
                     $bool[$row->day_id] = 1;
                 }
             }
-
-            usort($nakproducts, function ($a, $b){
-                if(isset($a["sort"]) and isset($b["sort"])){
-                    return $a["sort"] > $b["sort"];
-                }
-            });
         }
+
+        usort($nakproducts, function ($a, $b){
+            if(isset($a["sort"]) and isset($b["sort"])){
+                return $a["sort"] > $b["sort"];
+            }
+        });
         
         return view('pdffile.accountant.schotfakturexcel', compact('age', 'days', 'nakproducts', 'costsdays', 'costs', 'kindgar', 'nds', 'ust'));
         
