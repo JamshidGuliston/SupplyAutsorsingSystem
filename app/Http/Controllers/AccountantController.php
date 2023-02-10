@@ -735,11 +735,11 @@ class AccountantController extends Controller
 		$dompdf->stream($name, ['Attachment' => 0]);
     }
   
-    public function schotfakturexcel(Request $request, $id, $ageid, $start, $end, $costid){
-        return Excel::download(new FakturaExport($request, $id, $ageid, $start, $end, $costid), 'Fakturaexcellist.xlsx');
+    public function schotfakturexcel(Request $request, $id, $ageid, $start, $end, $costid, $nds, $ust){
+        return Excel::download(new FakturaExport($request, $id, $ageid, $start, $end, $costid, $nds, $ust), 'Fakturaexcellist.xlsx');
     }
 
-    public function allschotfaktur(Request $request, $id, $start, $end, $costid){
+    public function allschotfaktur(Request $request, $id, $start, $end, $costid, $nds, $ust){
         $kindgar = Kindgarden::where('id', $id)->first();
         $nakproducts = [];
         $ages = Age_range::all();
