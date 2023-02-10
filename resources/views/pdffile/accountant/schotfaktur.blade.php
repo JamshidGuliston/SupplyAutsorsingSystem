@@ -103,7 +103,7 @@
                     </thead>
                     <tbody>
                     <?php
-                        $ww = 0;
+                        $costsumm = 0;
                     ?>
 					@foreach($nakproducts as $key => $row)
 					<tr>
