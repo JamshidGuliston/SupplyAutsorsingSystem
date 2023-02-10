@@ -87,10 +87,10 @@
                 <table style="width:100%; table-layout: fixed;">
                     <thead>
                         <tr>
-                            <th scope="col" style="width: 15%;">Махсулот номи</th>
-                            <th style="width: 4px;">Ед.м</th>
-                            <th style="width: 30px;">калич</th>
-							<th style="width: 8%;">цена</th>
+                            <th scope="col">Махсулот номи</th>
+                            <th>Ед.м</th>
+                            <th>калич</th>
+							<th>цена</th>
 							<th>Сумма</th>
 							<th>Устама {{ $ust }}%</th>
 							<th>Сумма</th>
