@@ -742,23 +742,25 @@ class StorageController extends Controller
     }
 
     public function debts(Request $request){
-        $debts = debts::join('shops', 'shops.id', '=', 'debts.shop_id')
+        $debts = debts::select(['debts.id as debtid', 'debts.shop_id', 'shops.shop_name', 'debts.pay', 'debts.loan', 'debts.hisloan', 'debts.row_id', 'debts.created_at as date'])
+                ->join('shops', 'shops.id', '=', 'debts.shop_id')
                 ->join('add_large_werehouses', 'add_large_werehouses.id', '=', 'debts.row_id')
                 ->where('add_large_werehouses.shop_id', ">", 0)
                 ->orderby('debts.id', 'DESC')
-                ->paginate(50, ['debts.id as debtid', 'debts.shop_id', 'shops.shop_name', 'debts.pay', 'debts.loan', 'debts.hisloan', 'debts.row_id', 'debts.created_at as date']);
+                ->paginate(50);
 
         // dd($debts);
         return view('storage.debts', compact('debts'));
     }
 
     public function shopdebts(Request $request){
-        $debts = debts::where('debts.shop_id', $request->ShopId)
+        $debts = debts::select(['debts.id as debtid', 'debts.shop_id', 'shops.shop_name', 'debts.pay', 'debts.loan', 'debts.hisloan', 'debts.row_id', 'debts.created_at as date'])
+                ->where('debts.shop_id', $request->ShopId)
                 ->join('shops', 'shops.id', '=', 'debts.shop_id')
                 ->join('add_large_werehouses', 'add_large_werehouses.id', '=', 'debts.row_id')
                 ->where('add_large_werehouses.shop_id', ">", 0)
                 ->orderby('debts.id', 'DESC')
-                ->paginate(50, ['debts.id as debtid', 'debts.shop_id', 'shops.shop_name', 'debts.pay', 'debts.loan', 'debts.hisloan', 'debts.row_id', 'debts.created_at as date']);
+                ->paginate(50);
         // dd($debts);
         return view('storage.shopdebts', compact('debts'));
     }
