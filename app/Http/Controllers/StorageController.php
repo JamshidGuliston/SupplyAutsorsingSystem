@@ -747,7 +747,7 @@ class StorageController extends Controller
                 ->join('add_large_werehouses', 'add_large_werehouses.id', '=', 'debts.row_id')
                 ->where('add_large_werehouses.shop_id', ">", 0)
                 ->orderby('debts.id', 'DESC')
-                ->paginate(50);
+                ->paginate(30);
 
         // dd($debts);
         return view('storage.debts', compact('debts'));
@@ -760,7 +760,7 @@ class StorageController extends Controller
                 ->join('add_large_werehouses', 'add_large_werehouses.id', '=', 'debts.row_id')
                 ->where('add_large_werehouses.shop_id', ">", 0)
                 ->orderby('debts.id', 'DESC')
-                ->paginate(50);
+                ->paginate(30);
         // dd($debts);
         return view('storage.shopdebts', compact('debts'));
     }
