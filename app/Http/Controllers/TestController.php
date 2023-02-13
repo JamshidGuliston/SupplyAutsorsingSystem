@@ -12,6 +12,7 @@ use App\Models\bycosts;
 use App\Models\Region;
 use Illuminate\Support\Facades\DB;
 use App\Models\Day;
+use App\Models\debts;
 use App\Models\Food;
 use App\Models\Food_category;
 use App\Models\Food_composition;
@@ -33,6 +34,7 @@ use App\Models\order_product_structure;
 use App\Models\plus_multi_storage;
 use App\Models\Product;
 use App\Models\Product_category;
+use App\Models\Protsents;
 use App\Models\Season;
 use App\Models\Shop;
 use App\Models\Size;
@@ -792,8 +794,9 @@ class TestController extends Controller
 		$products = Product::orderBy('sort', 'ASC')->get();
 		$nextdaymenuitem = [];
 		$workerproducts = [];
+		$region_id = Kindgarden::where('id', $gid)->first()->region_id;
 		// kamchilik bor boshlangich qiymat berishda
-		$costs = bycosts::where('day_id', bycosts::where('day_id', '<=', $today)->where('region_name_id', Kindgarden::where('id', $gid)->first()->region_id)->orderBy('day_id', 'DESC')->first()->day_id)->where('region_name_id', Kindgarden::where('id', $gid)->first()->region_id)->orderBy('day_id', 'DESC')->get();
+		$costs = bycosts::where('day_id', bycosts::where('day_id', '<=', $today)->where('region_name_id', Kindgarden::where('id', $gid)->first()->region_id)->orderBy('day_id', 'DESC')->first()->day_id)->where('region_name_id', $region_id)->orderBy('day_id', 'DESC')->get();
 		$narx = [];
 		foreach($costs as $row){
 			if(!isset($narx[$row->praduct_name_id])){
@@ -891,10 +894,11 @@ class TestController extends Controller
 				$nextdaymenuitem[$key]['rows'] += count($row)-3;
 			}
 		}
-		// dd($allproductagesumm);
-        
+		// % nds ustama
+		$protsent = Protsents::where('region_id', $region_id)->where('month_id', Day::where('id', $today)->first()->month_id)->first();
+
         $dompdf = new Dompdf('UTF-8');
-		$html = mb_convert_encoding(view('pdffile.technolog.activsecondmenu', ['narx' => $narx,'day' => $day, 'agesumm' => $allproductagesumm, 'productallcount' => $productallcount, 'workerproducts' => $workerproducts,'menu' => $menuage, 'menuitem' => $nextdaymenuitem, 'products' => $products, 'workerfood' => $workerfood]), 'HTML-ENTITIES', 'UTF-8');
+		$html = mb_convert_encoding(view('pdffile.technolog.activsecondmenu', ['narx' => $narx,'day' => $day, 'agesumm' => $allproductagesumm, 'productallcount' => $productallcount, 'workerproducts' => $workerproducts,'menu' => $menuage, 'menuitem' => $nextdaymenuitem, 'products' => $products, 'workerfood' => $workerfood, 'protsent' => $protsent]), 'HTML-ENTITIES', 'UTF-8');
 		$dompdf->loadHtml($html);
 
 		// (Optional) Setup the paper size and orientation
