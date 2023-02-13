@@ -19,7 +19,7 @@ class CreateDebtsTable extends Migration
             $table->integer('pay');
             $table->integer('loan');
             $table->integer('hisloan');
-            $table->integer('gr_id');
+            $table->integer('row_id');
             $table->timestamps();
         });
     }

@@ -82,6 +82,8 @@ Route::group(['prefix' => 'storage', 'middleware' => ['isStorage', 'auth']], fun
     Route::post('update_takecategory', [StorageController::class, 'update_takecategory'])->name('storage.update_takecategory');
     Route::post('delete_takecategory', [StorageController::class, 'delete_takecategory'])->name('storage.delete_takecategory');
     Route::post('deleteorder', [StorageController::class, 'deleteorder'])->name('storage.deleteorder');
+    Route::get('debts', [StorageController::class, 'debts'])->name('storage.debts');
+    Route::get('shopdebts', [StorageController::class, 'shopdebts'])->name('storage.shopdebts');
     
 });
 

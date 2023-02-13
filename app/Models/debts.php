@@ -13,6 +13,6 @@ class debts extends Model
 	    'pay',
         'loan',
         'hisloan',
-        'gr_id'
+        'row_id'
 	];
 }

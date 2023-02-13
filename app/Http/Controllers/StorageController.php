@@ -135,14 +135,16 @@ class StorageController extends Controller
             ]);
         }
         $real = [];
+        $ids = array();
         for($i = 0; $i < count($products);  $i++){
-            Add_large_werehouse::create([
+            $tid = Add_large_werehouse::create([
                 'add_group_id' => $group->id,
                 'shop_id' => $shops[$i],
                 'product_id' => $products[$i],
                 'weight' => $weights[$i],
                 'cost' => $costs[$i]
-            ]);
+            ])->id;
+            array_push($ids, $tid);
         }
         $ww = [];
         $total = [];
@@ -180,11 +182,11 @@ class StorageController extends Controller
                 'pay' => $total[$i],
                 'loan' => $r,
                 'hisloan' => $hr,
-                'gr_id' => $group->id
+                'row_id' => $ids[$i]
             ]);
         }
 
-        return redirect()->route('storage.addedproducts', $id);
+        return redirect()->route('storage.addedproducts', [ 0,  $id]);
     }
 
     public function addr_products(Request $request){
@@ -512,7 +514,7 @@ class StorageController extends Controller
         ]);
     }
 
-    public function addedproducts(Request $request, $yearid, $id){
+    public function addedproducts(Request $request, $yearid = 0, $id){
         if($yearid == 0){
             $yearid = Year::where('year_active', 1)->first()->id;
         }
@@ -737,6 +739,28 @@ class StorageController extends Controller
         order_product::where('id', $request->orderid)->delete();
         order_product_structure::where('order_product_name_id', $request->orderid)->delete();
         return redirect()->route('storage.onedaymulti', $request->dayid)->with('status', "Maxsulotlar o\'chirildi!");
+    }
+
+    public function debts(Request $request){
+        $debts = debts::join('shops', 'shops.id', '=', 'debts.shop_id')
+                ->join('add_large_werehouses', 'add_large_werehouses.id', '=', 'debts.row_id')
+                ->where('add_large_werehouses.shop_id', ">", 0)
+                ->orderby('debts.id', 'DESC')
+                ->paginate(50, ['debts.id as debtid', 'debts.shop_id', 'shops.shop_name', 'debts.pay', 'debts.loan', 'debts.hisloan', 'debts.row_id', 'debts.created_at as date']);
+
+        // dd($debts);
+        return view('storage.debts', compact('debts'));
+    }
+
+    public function shopdebts(Request $request){
+        $debts = debts::where('debts.shop_id', $request->ShopId)
+                ->join('shops', 'shops.id', '=', 'debts.shop_id')
+                ->join('add_large_werehouses', 'add_large_werehouses.id', '=', 'debts.row_id')
+                ->where('add_large_werehouses.shop_id', ">", 0)
+                ->orderby('debts.id', 'DESC')
+                ->paginate(50, ['debts.id as debtid', 'debts.shop_id', 'shops.shop_name', 'debts.pay', 'debts.loan', 'debts.hisloan', 'debts.row_id', 'debts.created_at as date']);
+        // dd($debts);
+        return view('storage.shopdebts', compact('debts'));
     }
     
 }

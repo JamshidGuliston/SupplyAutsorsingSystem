@@ -68,7 +68,7 @@
         </div>
     </div>
 
-    <form action="{{route('storage.addproduct')}}" method="POST">
+    <!-- <form action="{{route('storage.addproduct')}}" method="POST">
         @csrf
         <input type="hidden" name="titleid" value="{{$id}}">
         <div class="row">
@@ -97,7 +97,7 @@
             </div>
         </div>
     </form>
-</div>
+</div> -->
 
 <div class="row py-1 px-4">
     <div class="col-md-12">
@@ -110,7 +110,7 @@
                         <th scope="col">Birlik</th>
                         <th scope="col">Og'irligi</th>
                         <th scope="col">Narxi</th>
-                        <th scope="col" style="text-align: end;">O'chirish</th>
+                        <!-- <th scope="col" style="text-align: end;">O'chirish</th> -->
                     </tr>
                 </thead>
                 <tbody>
@@ -122,13 +122,13 @@
                         <td>{{ $item->size_name }}</td>
                         <td>{{ $item->weight }}</td>
                         <td>{{ $item->cost }}</td>
-                        <td style="text-align: end;"><i class="detete  fa fa-trash" aria-hidden="true" data-name-id="{{ $item->product_name }}" data-delet-id="{{$item->id}}" data-bs-toggle="modal" style="cursor: pointer; color: crimson" data-bs-target="#exampleModalss"></i></td>
+                        <!-- <td style="text-align: end;"><i class="detete  fa fa-trash" aria-hidden="true" data-name-id="{{ $item->product_name }}" data-delet-id="{{$item->id}}" data-bs-toggle="modal" style="cursor: pointer; color: crimson" data-bs-target="#exampleModalss"></i></td> -->
                     </tr>
                     @endforeach
                 </tbody>
             </table>
         </div>
-        <a href="/storage/addedproducts/{{ $group->month_id }}">Orqaga</a>
+        <a href="/storage/addedproducts/0/{{ $group->month_id }}">Orqaga</a>
     </div>
 </div>
 
