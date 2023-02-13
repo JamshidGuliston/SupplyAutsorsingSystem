@@ -178,7 +178,7 @@
 								@endforeach
 							@endforeach
 							<tr>
-								<th scope="row" rowspan="4" class='vrt-header' style="padding: 0px; border-top: 2px solid black"><span>Болалар</span></th>
+								<th scope="row" rowspan="5" class='vrt-header' style="padding: 0px; border-top: 2px solid black"><span>Болалар</span></th>
 								<td scope="row" class="align-baseline" style="padding: 0px; border-top: 2px solid black">Жами миқдор</td>
 								<td style="padding: 0px; border-top: 2px solid black"></td>
 								<?php
@@ -235,9 +235,24 @@
 								?>
 							</tr>
 							<tr>
+								<td scope="row" class="align-baseline" style="padding: 0px;"></td>
+								<td></td>
+								<td style="padding: 0px; font-size: 5px" colspan="<?= floor($col/5); ?>">Жами харажат</td>
+								<td style="padding: 0px; font-size: 5px" colspan="<?= floor($col/5); ?>">Устама {{ $protsent->raise }} %</td>
+								<td style="padding: 0px; font-size: 5px" colspan="<?= floor($col/5); ?>">Сумма устама билан</td>
+								<td style="padding: 0px; font-size: 5px" colspan="<?= floor($col/5); ?>">ҚҚС {{ $protsent->nds }} %</td>
+								<td style="padding: 0px; font-size: 5px" colspan="<?= floor($col/5); ?>">Жами сумма</td>
+								<td colspan="<?= $col - 5 * floor($col/5) ?>"></td>
+							</tr>
+							<tr>
 								<td scope="row" class="align-baseline" style="padding: 0px;">Жами харажат</td>
 								<td></td>
-								<td style="padding: 0px; font-size: 5px" colspan="<?= $col; ?>">Асосий сумма: <?php printf("%01.2f", $chcost); ?> Устама: <?php printf("%01.2f", $chcost + $chcost * $protsent->raise / 100) ?> ҚҚС: <?php printf("%01.2f", $chcost + $chcost * $protsent->raise / 100 + ($chcost + $chcost * $protsent->raise / 100) * $protsent->nds / 100); ?></td>
+								<td style="padding: 0px; font-size: 5px" colspan="<?= floor($col/5); ?>"><?php printf("%01.2f", $chcost); ?></td>
+								<td style="padding: 0px; font-size: 5px" colspan="<?= floor($col/5); ?>"><?php printf("%01.2f", $chcost * $protsent->raise / 100) ?></td>
+								<td style="padding: 0px; font-size: 5px" colspan="<?= floor($col/5); ?>"><?php printf("%01.2f", $chcost + $chcost * $protsent->raise / 100) ?></td>
+								<td style="padding: 0px; font-size: 5px" colspan="<?= floor($col/5); ?>"><?php printf("%01.2f", ($chcost + $chcost * $protsent->raise / 100) * $protsent->nds / 100); ?></td>
+								<td style="padding: 0px; font-size: 5px" colspan="<?= floor($col/5); ?>"><?php printf("%01.2f", $chcost + $chcost * $protsent->raise / 100 + ($chcost + $chcost * $protsent->raise / 100) * $protsent->nds / 100); ?></td>
+								<td colspan="<?= $col - 5 * floor($col/5) ?>"></td>
 							</tr>
 							<tr style="border-top: 2px solid black;">
 								<th scope="row" rowspan="5" class='vrt-header' style="padding: 0px; border-top: 2px solid black"><span>Ходимлар</span></th>
