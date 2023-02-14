@@ -237,7 +237,7 @@
 								?>
 							</tr>
 							<tr>
-								<td scope="row" class="align-baseline" style="padding: 0px;"></td>
+								<td scope="row" class="align-baseline" style="padding: 0px;">...</td>
 								<td></td>
 								<td style="padding: 0px; font-size: 5px" colspan="<?= floor($col/5); ?>">Жами харажат</td>
 								<td style="padding: 0px; font-size: 5px" colspan="<?= floor($col/5); ?>">Устама {{ $protsent['raise'] }} %</td>
@@ -346,7 +346,7 @@
 								<?php } ?>
 							</tr>
 							<tr>
-								<td scope="row" class="align-baseline" style="padding: 0px;">Жами харажат</td>
+								<td scope="row" class="align-baseline" style="padding: 0px;">...</td>
 								<td></td>
 								<td style="padding: 0px; font-size: 5px" colspan="<?= floor($col/5); ?>"><?php printf("%01.2f", $xcost); ?></td>
 								<td style="padding: 0px; font-size: 5px" colspan="<?= floor($col/5); ?>"><?php printf("%01.2f", $xcost * $protsent['raise'] / 100) ?></td>
@@ -369,10 +369,10 @@
 											$tit = "1 бола 3-4 ёш";
 										}
 										if($key == 3){
-											$tit = "1 бола Қисқа гурух";
+											$tit = "1 бола Қисқа";
 										}
 									?>
-									<th scope="row" colspan="2" class="align-baseline" style="padding: 0px;">{{ $tit }}</th>
+									<th scope="row" colspan="2" class="align-baseline" style="padding: 0px; font-size: 5px">{{ $tit }}</th>
 									<td></td>
 									@foreach($row as $m)
 										<?php $all += $m; ?>
