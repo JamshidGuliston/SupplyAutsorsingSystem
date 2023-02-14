@@ -316,7 +316,7 @@
 								?>
 							</tr> -->
 							<tr>
-								<td scope="row" class="align-baseline" style="padding: 0px;"><b>Сумма жами</b></td>
+								<td scope="row" class="align-baseline" style="padding: 0px;"><b>...</b></td>
 								<td></td>
 								<?php
 								$xcost = 0;
@@ -346,7 +346,7 @@
 								<?php } ?>
 							</tr>
 							<tr>
-								<td scope="row" class="align-baseline" style="padding: 0px;">...</td>
+								<td scope="row" class="align-baseline" style="padding: 0px;">Жами харажат</td>
 								<td></td>
 								<td style="padding: 0px; font-size: 5px" colspan="<?= floor($col/5); ?>"><?php printf("%01.2f", $xcost); ?></td>
 								<td style="padding: 0px; font-size: 5px" colspan="<?= floor($col/5); ?>"><?php printf("%01.2f", $xcost * $protsent['raise'] / 100) ?></td>
