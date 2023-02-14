@@ -82,6 +82,7 @@
 						<tr>
 							<?php
 								$workers = 0;
+								$countch = array_fill(1, 10, 0);
 							?>
 							@foreach($menu as $row)
 								<td style="text-align: left; border: none !important;">
@@ -89,6 +90,7 @@
 									Боғча номи: <b>{{ $row[0]['kingar_name']; }}</b><br/>sana: <b>{{ $day['day_number'].'.'.$day['month_name'].' '.$day['year_name'] }}й.</b><b>
 								@endif
 								<?php
+									$countch[$row[0]['king_age_name_id']] = $row[0]['kingar_children_number'];
 									echo  $row[0]['age_name'] . "</b>ли болалар сони: <b>" . $row[0]['kingar_children_number'].";</b>";
 									if($row[0]['worker_age_id'] == $row[0]['king_age_name_id']){
 										$workers = $row[0]['workers_count'];
@@ -238,25 +240,29 @@
 								<td scope="row" class="align-baseline" style="padding: 0px;"></td>
 								<td></td>
 								<td style="padding: 0px; font-size: 5px" colspan="<?= floor($col/5); ?>">Жами харажат</td>
-								<td style="padding: 0px; font-size: 5px" colspan="<?= floor($col/5); ?>">Устама {{ $protsent->raise }} %</td>
+								<td style="padding: 0px; font-size: 5px" colspan="<?= floor($col/5); ?>">Устама {{ $protsent['raise'] }} %</td>
 								<td style="padding: 0px; font-size: 5px" colspan="<?= floor($col/5); ?>">Сумма устама билан</td>
-								<td style="padding: 0px; font-size: 5px" colspan="<?= floor($col/5); ?>">ҚҚС {{ $protsent->nds }} %</td>
+								<td style="padding: 0px; font-size: 5px" colspan="<?= floor($col/5); ?>">ҚҚС {{ $protsent['nds'] }} %</td>
 								<td style="padding: 0px; font-size: 5px" colspan="<?= floor($col/5); ?>">Жами сумма</td>
-								<td colspan="<?= $col - 5 * floor($col/5) ?>"></td>
+								<?php if ($col - 5 * floor($col/5 > 0)){ ?>
+									<td colspan="<?= $col - 5 * floor($col/5) ?>"></td>
+								<?php } ?>
 							</tr>
 							<tr>
 								<td scope="row" class="align-baseline" style="padding: 0px;">Жами харажат</td>
 								<td></td>
 								<td style="padding: 0px; font-size: 5px" colspan="<?= floor($col/5); ?>"><?php printf("%01.2f", $chcost); ?></td>
-								<td style="padding: 0px; font-size: 5px" colspan="<?= floor($col/5); ?>"><?php printf("%01.2f", $chcost * $protsent->raise / 100) ?></td>
-								<td style="padding: 0px; font-size: 5px" colspan="<?= floor($col/5); ?>"><?php printf("%01.2f", $chcost + $chcost * $protsent->raise / 100) ?></td>
-								<td style="padding: 0px; font-size: 5px" colspan="<?= floor($col/5); ?>"><?php printf("%01.2f", ($chcost + $chcost * $protsent->raise / 100) * $protsent->nds / 100); ?></td>
-								<td style="padding: 0px; font-size: 5px" colspan="<?= floor($col/5); ?>"><?php printf("%01.2f", $chcost + $chcost * $protsent->raise / 100 + ($chcost + $chcost * $protsent->raise / 100) * $protsent->nds / 100); ?></td>
-								<td colspan="<?= $col - 5 * floor($col/5) ?>"></td>
+								<td style="padding: 0px; font-size: 5px" colspan="<?= floor($col/5); ?>"><?php printf("%01.2f", $chcost * $protsent['raise'] / 100) ?></td>
+								<td style="padding: 0px; font-size: 5px" colspan="<?= floor($col/5); ?>"><?php printf("%01.2f", $chcost + $chcost * $protsent['raise'] / 100) ?></td>
+								<td style="padding: 0px; font-size: 5px" colspan="<?= floor($col/5); ?>"><?php printf("%01.2f", ($chcost + $chcost * $protsent['raise'] / 100) * $protsent['nds'] / 100); ?></td>
+								<td style="padding: 0px; font-size: 5px" colspan="<?= floor($col/5); ?>"><?php printf("%01.2f", $chcost + $chcost * $protsent['raise'] / 100 + ($chcost + $chcost * $protsent['raise'] / 100) * $protsent['nds'] / 100); ?></td>
+								<?php if ($col - 5 * floor($col/5 > 0)){ ?>
+									<td colspan="<?= $col - 5 * floor($col/5) ?>"></td>
+								<?php } ?>
 							</tr>
 							<tr style="border-top: 2px solid black;">
-								<th scope="row" rowspan="5" class='vrt-header' style="padding: 0px; border-top: 2px solid black"><span>Ходимлар</span></th>
-								<td scope="row" class="align-baseline" style="padding: 0px; border-top: 2px solid black">1 та ходим учун гр</td>
+								<th scope="row" rowspan="4" class='vrt-header' style="padding: 0px; border-top: 2px solid black"><span>Ходимлар</span></th>
+								<td scope="row" class="align-baseline" style="padding: 0px; border-top: 2px solid black">1 та ходимга</td>
 								<td style="padding: 0px; border-top: 2px solid black"></td>
 								<?php
 								for($t = 0; $t < count($products); $t++){
@@ -291,7 +297,7 @@
 								}
 								?>
 							</tr>
-							<tr>
+							<!-- <tr>
 								<td scope="row" class="align-baseline" style="padding: 0px;">Нархи</td>
 								<td></td>
 								<?php
@@ -308,7 +314,7 @@
 									}
 								}
 								?>
-							</tr>
+							</tr> -->
 							<tr>
 								<td scope="row" class="align-baseline" style="padding: 0px;"><b>Сумма жами</b></td>
 								<td></td>
@@ -318,21 +324,38 @@
 									if(isset($products[$t]['yes']) and isset($workerproducts[$products[$t]['id']])){
 										$xcost += ($workers * $workerproducts[$products[$t]['id']]) / $products[$t]['div'] * $narx[$products[$t]['id']];
 								?>
-									<td style="padding: 0px; font-size: 5px"><?php round(($workers * $workerproducts[$products[$t]['id']]) / $products[$t]['div'] * $narx[$products[$t]['id']], 1); ?></td>
+									<!-- <td style="padding: 0px; font-size: 5px"> -->
+									<?php round(($workers * $workerproducts[$products[$t]['id']]) / $products[$t]['div'] * $narx[$products[$t]['id']], 1); ?>
+									<!-- </td> -->
 								<?php	
 									}
 									elseif(isset($products[$t]['yes'])){
 									?>
-										<td style="padding: 0px;"></td>
+										<!-- <td style="padding: 0px;"></td> -->
 									<?php	
 									}
 								}
 								?>
+								<td style="padding: 0px; font-size: 5px" colspan="<?= floor($col/5); ?>">Жами харажат</td>
+								<td style="padding: 0px; font-size: 5px" colspan="<?= floor($col/5); ?>">Устама {{ $protsent['raise'] }} %</td>
+								<td style="padding: 0px; font-size: 5px" colspan="<?= floor($col/5); ?>">Сумма устама билан</td>
+								<td style="padding: 0px; font-size: 5px" colspan="<?= floor($col/5); ?>">ҚҚС {{ $protsent['nds'] }} %</td>
+								<td style="padding: 0px; font-size: 5px" colspan="<?= floor($col/5); ?>">Жами сумма</td>
+								<?php if ($col - 5 * floor($col/5 > 0)){ ?>
+									<td style="padding: 0px; font-size: 5px" colspan="<?= $col - 5 * floor($col/5) ?>"><b>Умумий нарх</b></td>
+								<?php } ?>
 							</tr>
 							<tr>
 								<td scope="row" class="align-baseline" style="padding: 0px;">Жами харажат</td>
 								<td></td>
-								<td style="padding: 0px; font-size: 5px" colspan="<?= $col; ?>"><?php printf("%01.2f",$xcost); ?></td>
+								<td style="padding: 0px; font-size: 5px" colspan="<?= floor($col/5); ?>"><?php printf("%01.2f", $xcost); ?></td>
+								<td style="padding: 0px; font-size: 5px" colspan="<?= floor($col/5); ?>"><?php printf("%01.2f", $xcost * $protsent['raise'] / 100) ?></td>
+								<td style="padding: 0px; font-size: 5px" colspan="<?= floor($col/5); ?>"><?php printf("%01.2f", $xcost + $xcost * $protsent['raise'] / 100) ?></td>
+								<td style="padding: 0px; font-size: 5px" colspan="<?= floor($col/5); ?>"><?php printf("%01.2f", ($xcost + $xcost * $protsent['raise'] / 100) * $protsent['nds'] / 100); ?></td>
+								<td style="padding: 0px; font-size: 5px" colspan="<?= floor($col/5); ?>"><?php printf("%01.2f", $xcost + $xcost * $protsent['raise'] / 100 + ($xcost + $xcost * $protsent['raise'] / 100) * $protsent['nds'] / 100); ?></td>
+								<?php if ($col - 5 * floor($col/5 > 0)){ ?>
+									<td style="padding: 0px; font-size: 5px" colspan="<?= $col - 5 * floor($col/5) ?>"><?php printf("%01.2f", $chcost + $chcost * $protsent['raise'] / 100 + ($chcost + $chcost * $protsent['raise'] / 100) * $protsent['nds'] / 100 + $xcost + $xcost * $protsent['raise'] / 100 + ($xcost + $xcost * $protsent['raise'] / 100) * $protsent->nds / 100); ?></td>
+								<?php } ?>
 							</tr>
 							@foreach($agesumm as $key => $row)
 								<tr>
@@ -340,13 +363,13 @@
 										$all = 0;
 										$tit = '';
 										if($key == 1){
-											$tit = "4-7 ёш";
+											$tit = "1 бола 4-7 ёш";
 										}
 										if($key == 2){
-											$tit = "3-4 ёш";
+											$tit = "1 бола 3-4 ёш";
 										}
 										if($key == 3){
-											$tit = "Қисқа гурух";
+											$tit = "1 бола Қисқа гурух";
 										}
 									?>
 									<th scope="row" colspan="2" class="align-baseline" style="padding: 0px;">{{ $tit }}</th>
@@ -354,24 +377,17 @@
 									@foreach($row as $m)
 										<?php $all += $m; ?>
 									@endforeach
-									<td style="padding: 0px; font-size: 5px" colspan="<?= $col; ?>"><?php printf("%01.2f", $all / 1); ?></td>
+									<?php if($countch[$key] != 0) {$all = $all / $countch[$key];}  ?>
+									<td style="padding: 0px; font-size: 5px" colspan="<?= floor($col/5); ?>"><?php printf("%01.2f", $all); ?></td>
+									<td style="padding: 0px; font-size: 5px" colspan="<?= floor($col/5); ?>"><?php printf("%01.2f", $all * $protsent['raise'] / 100) ?></td>
+									<td style="padding: 0px; font-size: 5px" colspan="<?= floor($col/5); ?>"><?php printf("%01.2f", $all + $all * $protsent['raise'] / 100) ?></td>
+									<td style="padding: 0px; font-size: 5px" colspan="<?= floor($col/5); ?>"><?php printf("%01.2f", ($all + $all * $protsent['raise'] / 100) * $protsent['nds'] / 100); ?></td>
+									<td style="padding: 0px; font-size: 5px" colspan="<?= floor($col/5); ?>"><?php printf("%01.2f", $all + $all * $protsent['raise'] / 100 + ($all + $all * $protsent['raise'] / 100) * $protsent['nds'] / 100); ?></td>
+									<?php if ($col - 5 * floor($col/5 > 0)){ ?>
+										<td style="padding: 0px; font-size: 5px" colspan="<?= $col - 5 * floor($col/5) ?>"></td>
+									<?php } ?>
 								</tr>	
 							@endforeach
-							<tr>
-								<th scope="row" colspan="2" class="align-baseline" style="padding: 0px;">Болалар учун</th>
-								<td></td>
-								<td style="padding: 0px; font-size: 5px" colspan="<?= $col; ?>"><?php printf("%01.2f", $chcost / 1); ?></td>
-							</tr>
-							<tr>
-								<th scope="row" colspan="2" class="align-baseline" style="padding: 0px;">Ходимлар учун</th>
-								<td></td>
-								<td style="padding: 0px; font-size: 5px" colspan="<?= $col; ?>"><?php if($workers > 0) printf("%01.2f", $xcost / $workers); else printf("%01.2f", 0);?></td>
-							</tr>
-							<tr>
-								<th scope="row" colspan="2" class="align-baseline" style="padding: 0px;">Умумий маблағ</th>
-								<td></td>
-								<td style="padding: 0px; font-size: 5px" colspan="<?= $col; ?>"><?php printf("%01.2f", $chcost + $xcost); ?></td>
-							</tr>	
                         </tbody>
                       </table>
                 </div>
