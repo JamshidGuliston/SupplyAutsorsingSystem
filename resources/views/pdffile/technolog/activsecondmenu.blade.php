@@ -244,7 +244,7 @@
 								<td style="padding: 0px; font-size: 5px" colspan="<?= floor($col/5); ?>">Сумма устама билан</td>
 								<td style="padding: 0px; font-size: 5px" colspan="<?= floor($col/5); ?>">ҚҚС {{ $protsent['nds'] }} %</td>
 								<td style="padding: 0px; font-size: 5px" colspan="<?= floor($col/5); ?>">Жами сумма</td>
-								<?php if ($col - 5 * floor($col/5 > 0)){ ?>
+								<?php if ($col - 5 * floor($col/5) > 0){ ?>
 									<td colspan="<?= $col - 5 * floor($col/5) ?>"></td>
 								<?php } ?>
 							</tr>
@@ -256,7 +256,7 @@
 								<td style="padding: 0px; font-size: 5px" colspan="<?= floor($col/5); ?>"><?php printf("%01.2f", $chcost + $chcost * $protsent['raise'] / 100) ?></td>
 								<td style="padding: 0px; font-size: 5px" colspan="<?= floor($col/5); ?>"><?php printf("%01.2f", ($chcost + $chcost * $protsent['raise'] / 100) * $protsent['nds'] / 100); ?></td>
 								<td style="padding: 0px; font-size: 5px" colspan="<?= floor($col/5); ?>"><?php printf("%01.2f", $chcost + $chcost * $protsent['raise'] / 100 + ($chcost + $chcost * $protsent['raise'] / 100) * $protsent['nds'] / 100); ?></td>
-								<?php if ($col - 5 * floor($col/5 > 0)){ ?>
+								<?php if ($col - 5 * floor($col/5) > 0){ ?>
 									<td colspan="<?= $col - 5 * floor($col/5) ?>"></td>
 								<?php } ?>
 							</tr>
@@ -341,8 +341,8 @@
 								<td style="padding: 0px; font-size: 5px" colspan="<?= floor($col/5); ?>">Сумма устама билан</td>
 								<td style="padding: 0px; font-size: 5px" colspan="<?= floor($col/5); ?>">ҚҚС {{ $protsent['nds'] }} %</td>
 								<td style="padding: 0px; font-size: 5px" colspan="<?= floor($col/5); ?>">Жами сумма</td>
-								<?php if ($col - 5 * floor($col/5 > 0)){ ?>
-									<td style="padding: 0px; font-size: 5px" colspan="<?= $col - 5 * floor($col/5) ?>"><b>Умумий нарх</b></td>
+								<?php if ($col - 5 * floor($col/5) > 0){ ?>
+									<td style="padding: 0px; font-size: 5px" colspan="<?= $col - 5 * floor($col/5) ?>"><b></b></td>
 								<?php } ?>
 							</tr>
 							<tr>
@@ -353,8 +353,8 @@
 								<td style="padding: 0px; font-size: 5px" colspan="<?= floor($col/5); ?>"><?php printf("%01.2f", $xcost + $xcost * $protsent['raise'] / 100) ?></td>
 								<td style="padding: 0px; font-size: 5px" colspan="<?= floor($col/5); ?>"><?php printf("%01.2f", ($xcost + $xcost * $protsent['raise'] / 100) * $protsent['nds'] / 100); ?></td>
 								<td style="padding: 0px; font-size: 5px" colspan="<?= floor($col/5); ?>"><?php printf("%01.2f", $xcost + $xcost * $protsent['raise'] / 100 + ($xcost + $xcost * $protsent['raise'] / 100) * $protsent['nds'] / 100); ?></td>
-								<?php if ($col - 5 * floor($col/5 > 0)){ ?>
-									<td style="padding: 0px; font-size: 5px" colspan="<?= $col - 5 * floor($col/5) ?>"><?php printf("%01.2f", $chcost + $chcost * $protsent['raise'] / 100 + ($chcost + $chcost * $protsent['raise'] / 100) * $protsent['nds'] / 100 + $xcost + $xcost * $protsent['raise'] / 100 + ($xcost + $xcost * $protsent['raise'] / 100) * $protsent->nds / 100); ?></td>
+								<?php if ($col - 5 * floor($col/5) > 0){ ?>
+									<td style="padding: 0px; font-size: 5px" colspan="<?= $col - 5 * floor($col/5) ?>"></td>
 								<?php } ?>
 							</tr>
 							@foreach($agesumm as $key => $row)
@@ -383,11 +383,16 @@
 									<td style="padding: 0px; font-size: 5px" colspan="<?= floor($col/5); ?>"><?php printf("%01.2f", $all + $all * $protsent['raise'] / 100) ?></td>
 									<td style="padding: 0px; font-size: 5px" colspan="<?= floor($col/5); ?>"><?php printf("%01.2f", ($all + $all * $protsent['raise'] / 100) * $protsent['nds'] / 100); ?></td>
 									<td style="padding: 0px; font-size: 5px" colspan="<?= floor($col/5); ?>"><?php printf("%01.2f", $all + $all * $protsent['raise'] / 100 + ($all + $all * $protsent['raise'] / 100) * $protsent['nds'] / 100); ?></td>
-									<?php if ($col - 5 * floor($col/5 > 0)){ ?>
+									<?php if ($col - 5 * floor($col/5) > 0){ ?>
 										<td style="padding: 0px; font-size: 5px" colspan="<?= $col - 5 * floor($col/5) ?>"></td>
 									<?php } ?>
 								</tr>	
 							@endforeach
+							<tr>
+								<th scope="row" colspan="2" class="align-baseline" style="padding: 0px; font-size: 5px">{{ "Умумий сумма" }}</th>
+								<td></td>
+								<td style="padding: 0px; font-size: 5px" colspan="<?= floor($col); ?>"><?php printf("%01.2f", $chcost + $chcost * $protsent['raise'] / 100 + ($chcost + $chcost * $protsent['raise'] / 100) * $protsent['nds'] / 100 + $xcost + $xcost * $protsent['raise'] / 100 + ($xcost + $xcost * $protsent['raise'] / 100) * $protsent->nds / 100); ?></td>
+							</tr>
                         </tbody>
                       </table>
                 </div>
