@@ -255,7 +255,7 @@
 								<td style="padding: 0px; font-size: 5px" colspan="<?= floor($col/5); ?>"><?php printf("%01.2f", $chcost * $protsent['raise'] / 100) ?></td>
 								<td style="padding: 0px; font-size: 5px" colspan="<?= floor($col/5); ?>"><?php printf("%01.2f", $chcost + $chcost * $protsent['raise'] / 100) ?></td>
 								<td style="padding: 0px; font-size: 5px" colspan="<?= floor($col/5); ?>"><?php printf("%01.2f", ($chcost + $chcost * $protsent['raise'] / 100) * $protsent['nds'] / 100); ?></td>
-								<td style="padding: 0px; font-size: 5px" colspan="<?= floor($col/5); ?>"><?php printf("%01.2f", $chcost + $chcost * $protsent['raise'] / 100 + ($chcost + $chcost * $protsent['raise'] / 100) * $protsent['nds'] / 100); ?></td>
+								<td style="padding: 0px; font-size: 5px" colspan="<?= floor($col/5); ?>"><b><?php printf("%01.2f", $chcost + $chcost * $protsent['raise'] / 100 + ($chcost + $chcost * $protsent['raise'] / 100) * $protsent['nds'] / 100); ?></b></td>
 								<?php if ($col - 5 * floor($col/5) > 0){ ?>
 									<td colspan="<?= $col - 5 * floor($col/5) ?>"></td>
 								<?php } ?>
@@ -352,7 +352,7 @@
 								<td style="padding: 0px; font-size: 5px" colspan="<?= floor($col/5); ?>"><?php printf("%01.2f", $xcost * $protsent['raise'] / 100) ?></td>
 								<td style="padding: 0px; font-size: 5px" colspan="<?= floor($col/5); ?>"><?php printf("%01.2f", $xcost + $xcost * $protsent['raise'] / 100) ?></td>
 								<td style="padding: 0px; font-size: 5px" colspan="<?= floor($col/5); ?>"><?php printf("%01.2f", ($xcost + $xcost * $protsent['raise'] / 100) * $protsent['nds'] / 100); ?></td>
-								<td style="padding: 0px; font-size: 5px" colspan="<?= floor($col/5); ?>"><?php printf("%01.2f", $xcost + $xcost * $protsent['raise'] / 100 + ($xcost + $xcost * $protsent['raise'] / 100) * $protsent['nds'] / 100); ?></td>
+								<td style="padding: 0px; font-size: 5px" colspan="<?= floor($col/5); ?>"><b><?php printf("%01.2f", $xcost + $xcost * $protsent['raise'] / 100 + ($xcost + $xcost * $protsent['raise'] / 100) * $protsent['nds'] / 100); ?></b></td>
 								<?php if ($col - 5 * floor($col/5) > 0){ ?>
 									<td style="padding: 0px; font-size: 5px" colspan="<?= $col - 5 * floor($col/5) ?>"></td>
 								<?php } ?>
@@ -391,7 +391,7 @@
 							<tr>
 								<th scope="row" colspan="2" class="align-baseline" style="padding: 0px; font-size: 5px">{{ "Умумий сумма" }}</th>
 								<td></td>
-								<td style="padding: 0px; font-size: 5px" colspan="<?= floor($col); ?>"><?php printf("%01.2f", $chcost + $chcost * $protsent['raise'] / 100 + ($chcost + $chcost * $protsent['raise'] / 100) * $protsent['nds'] / 100 + $xcost + $xcost * $protsent['raise'] / 100 + ($xcost + $xcost * $protsent['raise'] / 100) * $protsent->nds / 100); ?></td>
+								<td style="padding: 0px; font-size: 5px" colspan="<?= floor($col); ?>"><b><?php printf("%01.2f", $chcost + $chcost * $protsent['raise'] / 100 + ($chcost + $chcost * $protsent['raise'] / 100) * $protsent['nds'] / 100 + $xcost + $xcost * $protsent['raise'] / 100 + ($xcost + $xcost * $protsent['raise'] / 100) * $protsent->nds / 100); ?></b></td>
 							</tr>
                         </tbody>
                       </table>
