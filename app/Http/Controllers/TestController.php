@@ -897,7 +897,8 @@ class TestController extends Controller
 		// % nds ustama
 		$protsent = Protsents::where('region_id', $region_id)->where('month_id', Day::where('id', $today)->first()->month_id)->first();
 		if(empty($protsent->nds)){
-			$protsent = array('raise' => 0, 'nds' => 0);
+			$protsent['raise'] = 0;
+			$protsent['nds'] = 0;
 		}
         $dompdf = new Dompdf('UTF-8');
 		$html = mb_convert_encoding(view('pdffile.technolog.activsecondmenu', ['narx' => $narx,'day' => $day, 'agesumm' => $allproductagesumm, 'productallcount' => $productallcount, 'workerproducts' => $workerproducts,'menu' => $menuage, 'menuitem' => $nextdaymenuitem, 'products' => $products, 'workerfood' => $workerfood, 'protsent' => $protsent]), 'HTML-ENTITIES', 'UTF-8');
