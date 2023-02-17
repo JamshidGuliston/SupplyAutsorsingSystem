@@ -391,7 +391,7 @@
 							<tr>
 								<th scope="row" colspan="2" class="align-baseline" style="padding: 0px; font-size: 5px">{{ "Умумий сумма" }}</th>
 								<td></td>
-								<td style="padding: 0px; font-size: 5px" colspan="<?= floor($col); ?>"><b><?php printf("%01.2f", $chcost + $chcost * $protsent['raise'] / 100 + ($chcost + $chcost * $protsent['raise'] / 100) * $protsent['nds'] / 100 + $xcost + $xcost * $protsent['raise'] / 100 + ($xcost + $xcost * $protsent['raise'] / 100) * $protsent->nds / 100); ?></b></td>
+								<td style="padding: 0px; font-size: 5px" colspan="<?= floor($col); ?>"><b><?php printf("%01.2f", $chcost + $chcost * $protsent['raise'] / 100 + ($chcost + $chcost * $protsent['raise'] / 100) * $protsent['nds'] / 100 + $xcost + $xcost * $protsent['raise'] / 100 + ($xcost + $xcost * $protsent['raise'] / 100) * $protsent['nds'] / 100); ?></b></td>
 							</tr>
                         </tbody>
                       </table>
