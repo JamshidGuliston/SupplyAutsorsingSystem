@@ -427,7 +427,8 @@ class AccountantController extends Controller
                 }
             }
 
-            $costsdays = bycosts::where('region_name_id', Kindgarden::where('id', $id)->first()->region_id)
+            $costsdays = bycosts::where('day_id', $costid)
+                        ->where('region_name_id', Kindgarden::where('id', $id)->first()->region_id)
                         ->join('days', 'bycosts.day_id', '=', 'days.id')
                         ->join('years', 'days.year_id', '=', 'years.id')
                         ->orderBy('day_id', 'DESC')
