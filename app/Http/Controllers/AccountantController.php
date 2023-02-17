@@ -614,19 +614,20 @@ class AccountantController extends Controller
                 }
             }
 
-            // $costsdays = bycosts::where('region_name_id', Kindgarden::where('id', $id)->first()->region_id)
-            //             ->join('days', 'bycosts.day_id', '=', 'days.id')
-            //             ->join('years', 'days.year_id', '=', 'years.id')
-            //             ->orderBy('day_id', 'DESC')
-            //             ->get(['bycosts.day_id', 'days.day_number', 'days.month_id', 'years.year_name']);
-            // $costs = [];
-            // $bool = [];
-            // foreach($costsdays as $row){
-            //     if(!isset($bool[$row->day_id])){
-            //         array_push($costs, $row);
-            //         $bool[$row->day_id] = 1;
-            //     }
-            // }
+            $costsdays = bycosts::where('day_id', $costid)
+                        ->where('region_name_id', Kindgarden::where('id', $id)->first()->region_id)
+                        ->join('days', 'bycosts.day_id', '=', 'days.id')
+                        ->join('years', 'days.year_id', '=', 'years.id')
+                        ->orderBy('day_id', 'DESC')
+                        ->get(['bycosts.day_id', 'days.day_number', 'days.month_id', 'years.year_name']);
+            $costs = [];
+            $bool = [];
+            foreach($costsdays as $row){
+                if(!isset($bool[$row->day_id])){
+                    array_push($costs, $row);
+                    $bool[$row->day_id] = 1;
+                }
+            }
         }
 
         usort($nakproducts, function ($a, $b){
