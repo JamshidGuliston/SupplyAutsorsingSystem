@@ -78,9 +78,16 @@
             <div class="col-md-12">
                 <div class="table" id="table_with_data">
 					<div class="col-md-12">
+						<?php
+							if($days[0]->month_id % 12 == 0){
+								$mth = 12;
+							}else{
+								$mth = $days[0]->month_id % 12;
+							}
+						?>
                         <center>НАКЛАДНАЯ-СЧЁТ ФАКТУРА № ______</center>
-                        <center>от " ____".<?php printf('%02d', $days[0]->month_id % 12) ?>. <?php printf('%02d', $costs[0]->year_name) ?>г</center>
-                        <center>К товарно-отгрузчным документом №____ от" ____ ".<?php printf('%02d', $days[0]->month_id % 12)  ?>. <?php printf('%02d', $costs[0]->year_name) ?> года</center><br>
+                        <center>от " ____".<?php printf('%02d', $mth) ?>. <?php printf('%02d', $costs[0]->year_name) ?>г</center>
+                        <center>К товарно-отгрузчным документом №____ от" ____ ".<?php printf('%02d', $mth)  ?>. <?php printf('%02d', $costs[0]->year_name) ?> года</center><br>
 						<center>{{ $kindgar->kingar_name." / " }}</center>
 					</div>
                 </div>
