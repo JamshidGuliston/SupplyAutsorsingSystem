@@ -268,3 +268,17 @@
 </div>
 @endsection
 
+@section('script')
+@if(session('status'))
+<script> 
+    // alert('{{ session("status") }}');
+    swal({
+        title: "Ajoyib!",
+        text: "{{ session('status') }}",
+        icon: "success",
+        button: "ok",
+    });
+</script>
+@endif
+@endsection
+

@@ -79,6 +79,9 @@ class LoginController extends Controller
             if(auth()->user()->role_id == 4){
                 return redirect()->route('storage.home', ['year' => 0, 'id' => 0]);
             }
+            elseif(auth()->user()->role_id == 2){
+                return redirect()->route('boss.home');
+            }
             elseif(auth()->user()->role_id == 3){
                 return redirect()->route('technolog.home');
             }
@@ -87,6 +90,9 @@ class LoginController extends Controller
             }
             elseif(auth()->user()->role_id == 6){
                 return redirect()->route('chef.home');
+            }
+            elseif(auth()->user()->role_id == 7){
+                return redirect()->route('casher.home');
             }
         }
         else{

@@ -1760,6 +1760,11 @@ class TechnologController extends Controller
         dd($errors);
         dd("OK");
     }
+    
+    function funtest(){
+        return Kindgarden::all();
+    }
+    
     //  /////////////////////////////////////////
 
     function curl_get_contents($url)

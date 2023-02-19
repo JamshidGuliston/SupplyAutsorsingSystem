@@ -7,6 +7,8 @@ use App\Http\Controllers\TechnologController;
 use App\Http\Controllers\ChefController;
 use App\Http\Controllers\AccountantController;
 use App\Http\Controllers\ApiControllers\TelegramController;
+use App\Http\Controllers\BossController;
+use App\Http\Controllers\CasherController;
 use App\Http\Controllers\HomeController;
 use Illuminate\Support\Facades\Auth;
 /*
@@ -88,6 +90,8 @@ Route::group(['prefix' => 'storage', 'middleware' => ['isStorage', 'auth']], fun
 });
 
 Route::group(['prefix' => 'technolog', 'middleware' => ['isTechnolog', 'auth']], function () {
+    Route::get('funtest', [TechnologController::class, 'funtest']);
+    
     Route::get('home', [TechnologController::class, 'index'])->name('technolog.home');
     Route::post('newday', [TechnologController::class, 'newday'])->name('technolog.newday');
     Route::get('sendmenu/{day}', [TechnologController::class, 'sendmenu'])->name('technolog.sendmenu');
@@ -224,6 +228,18 @@ Route::group(['prefix' => 'accountant', 'middleware' => ['isAccountant', 'auth']
     Route::get('getmodproduct/{id}', [AccountantController::class, 'getmodproduct']);
 
 });
+
+Route::group(['prefix' => 'casher', 'middleware' => ['isChasher', 'auth']], function () {
+    Route::get('home', [CasherController::class, 'index'])->name('casher.home');
+    Route::get('cashes', [CasherController::class, 'costs'])->name('casher.costs');
+    Route::get('costs', [CasherController::class, 'costs'])->name('casher.costs');
+    Route::get('allcosts', [CasherController::class, 'allcosts'])->name('casher.allcosts');
+});
+
+Route::group(['prefix' => 'boss', 'middleware' => ['isBoss', 'auth']], function () {
+    Route::get('home', [BossController::class, 'index'])->name('boss.home');
+});
+
 
 Route::get('/minusp', [TestController::class, 'minusproduct']);
 Route::get('/modproducts', [TestController::class, 'modproducts']);

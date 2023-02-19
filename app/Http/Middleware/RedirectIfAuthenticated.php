@@ -28,6 +28,9 @@ class RedirectIfAuthenticated
             if(Auth::guard($guard)->check() and auth()->user()->role_id == 4){
                 return redirect()->route('storage.home', ['year' => 0, 'id' => 0]);
             }
+            elseif(Auth::guard($guard)->check() and auth()->user()->role_id == 2){
+                return redirect()->route('boss.home');
+            }
             elseif(Auth::guard($guard)->check() and auth()->user()->role_id == 3){
                 return redirect()->route('technolog.home');
             }
@@ -36,6 +39,9 @@ class RedirectIfAuthenticated
             }
             elseif(Auth::guard($guard)->check() and auth()->user()->role_id == 6){
                 return redirect()->route('chef.home');
+            }
+            elseif(Auth::guard($guard)->check() and auth()->user()->role_id == 7){
+                return redirect()->route('casher.home');
             }
 
         }

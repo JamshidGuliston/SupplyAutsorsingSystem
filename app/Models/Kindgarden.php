@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 
 class Kindgarden extends Model
 {
@@ -17,6 +18,7 @@ class Kindgarden extends Model
         'worker_count',
         'hide'
     ];
+
     public function age_range(){
         return $this->belongsToMany(Age_range::class);
     }
