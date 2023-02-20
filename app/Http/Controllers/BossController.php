@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\cashes;
 use Illuminate\Http\Request;
 
 class BossController extends Controller
@@ -13,7 +14,15 @@ class BossController extends Controller
      */
     public function index()
     {
-        return view('boss.home');
+        $cashes = cashes::join('all_costs', 'all_costs.id', '=', 'cashes.allcost_id')
+            ->select('cashes.id as cashid', 'cashes.description', 'cashes.summ', 'months.month_name', 'years.year_name', 'all_costs.allcost_name', 'days.day_number', 'cashes.status')
+            ->join('days', 'days.id', '=', 'cashes.day_id')
+            ->join('years', 'years.id', '=', 'days.year_id')
+            ->join('months', 'months.id', '=', 'days.month_id')
+            ->orderby('cashes.id', 'DESC')
+            ->paginate(50);
+        
+        return view('boss.home', compact('cashes'));
     }
 
     /**
@@ -66,9 +75,10 @@ class BossController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function accepted(Request $request)
     {
-        //
+        cashes::where('id', $request->id)->update(['status' => 2]);
+        return redirect()->route('boss.home')->with('status', "Qabul qilindi"); 
     }
 
     /**

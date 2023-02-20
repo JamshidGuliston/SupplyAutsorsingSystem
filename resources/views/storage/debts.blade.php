@@ -16,7 +16,6 @@
 @endsection
 @section('content')
 <div class="py-4 px-4">
-    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addModal">Pul berish</button>
     <hr>
     <table class="table table-light py-4 px-4">
         <thead>

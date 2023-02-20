@@ -8,4 +8,12 @@ use Illuminate\Database\Eloquent\Model;
 class cashes extends Model
 {
     use HasFactory;
+    protected $fillable = [
+        'allcost_id',
+        'day_id',
+        'summ',
+        'description',
+        'vid',
+        'status'
+    ];
 }

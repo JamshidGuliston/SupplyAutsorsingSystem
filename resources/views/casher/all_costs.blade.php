@@ -14,7 +14,6 @@
 }
 </style>
 @endsection
-
 @section('content')
 <!-- Edite -->
 <div class="modal editesmodal fade" id="Modalgarden" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -43,7 +42,7 @@
 <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModal" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
-            <form action="{{route('casher.deletecash')}}" method="post">
+            <form action="{{route('casher.alldeletecost')}}" method="post">
                 @csrf
                 <div class="modal-header bg-danger">
                     <h5 class="modal-title text-white" id="exampleModalLabel">O'chirish</h5>
@@ -60,31 +59,24 @@
         </div>
     </div>
 </div>
-<div class="py-4 px-4">
-    <form method="POST" action="{{route('casher.createcash')}}">
+<!-- DELET -->
+<div class="container-fluid px-4">
+<form method="POST" action="{{route('casher.allcreatecost')}}">
         @csrf
         <div class="form-group row">
+            <label for="staticEmail" class="col-md-1 col-form-label">Номи: </label>
+            <div class="col-md-3">
+                <input type="text" name="name" class="form-control" id="staticEmail" required>
+            </div>
+            <label for="inputPassword" class="col-md-1 col-form-label">Turi:</label>
             <div class="col-md-3">
                 <select class="form-select" name="catid" aria-label="Default select example">
-                    @foreach($allcosts as $row)
-                    <option value="{{$row['id']}}">{{$row['allcost_name']}}</option>
+                    @foreach($costs as $row)
+                    <option value="{{$row['id']}}">{{$row['cost_name']}}</option>
                     @endforeach
                 </select>
             </div>
-            <div class="col-md-2">
-                <select class="form-select" name="dayid" aria-label="Default select example">
-                    @foreach($days as $row)
-                    <option value="{{$row['id']}}">{{$row['day_number'].'.'.$row['month_name'].'.'.$row['year_name']}}</option>
-                    @endforeach
-                </select>
-            </div>
-            <div class="col-md-3">
-                <input type="number" name="value" class="form-control" placeholder="so'm" required>
-            </div>
-            <div class="col-md-3">
-                <input type="text" name="description" class="form-control" placeholder="izoh" required>
-            </div>
-            <div class="col-md-1">
+            <div class="col-md-4">
                 <button type="submit" class="btn btn-success">Saqlash</button>
             </div>
         </div>
@@ -95,11 +87,8 @@
         <thead>
             <tr>
                 <th scope="col">ID</th>
-                <th scope="col">Izoh</th>
+                <th scope="col">Nomi</th>
                 <th scope="col">Turi</th>
-                <th scope="col">Sana</th>
-                <th scope="col">So'm</th>
-                <th scope="col">Holati</th>
                 <th scope="col">...</th>
             </tr>
         </thead>
@@ -107,27 +96,19 @@
             @php
                 $bool = []
             @endphp
-            @foreach($cashes as $row)
+            @foreach($allcosts as $row)
                 <tr>
-                    <td>{{ $row->cashid }}</td>
-                    <td>{{ $row->description }}</td>
+                    <td>{{ $row->allid }}</td>
                     <td>{{ $row->allcost_name }}</td>
-                    <td>{{ $row->day_number.'/'.$row->month_name.'/'.$row->year_name }}</td>
-                    <td>{{ $row->summ }} so'm</td>
-                    @if($row->status == 1)
-                        <td><p><i class="fas fa-clock"></i></p></td>
-                        <td style="text-align: end;"><i class="detete  fa fa-trash" aria-hidden="true" data-name-id="{{ $row->description }}" data-delet-id="{{ $row->cashid }}" data-bs-toggle="modal" style="cursor: pointer; color: crimson" data-bs-target="#deleteModal"></i></td>
-                    @else
-                        <td><i class="fas fa-check"></i></td>
-                        <td></td>
-                    @endif
+                    <td>{{ $row->cost_name }}</td>
+                    <td style="text-align: end;"><i class="detete  fa fa-trash" aria-hidden="true" data-name-id="{{ $row->allcost_name }}" data-delet-id="{{ $row->allid }}" data-bs-toggle="modal" style="cursor: pointer; color: crimson" data-bs-target="#deleteModal"></i></td>
                 </tr>
             @endforeach
         </tbody>
     </table>
-    {{ $cashes->links() }}
+    {{ $allcosts->links() }}
     <br>
-    <a href="/casher/home">Orqaga</a>
+    <a href="/casher/home">Orqaga</a>    
 </div>
 @endsection
 
@@ -144,8 +125,7 @@
             deleteid = $(this).attr('data-delet-id');
             pro_name = $(this).attr('data-name-id');
             var div = $('.deletename');
-            // alert(deletes);
-            div.html("<p>"+pro_name+".</p><input type='hidden' name='cashid' value="+deleteid+">");
+            div.html("<p>"+pro_name+" maxsulotini o'chirish.</p><input type='hidden' name='costid' value="+deleteid+">");
             
         });
     });
