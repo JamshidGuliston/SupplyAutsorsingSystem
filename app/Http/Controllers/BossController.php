@@ -3,10 +3,20 @@
 namespace App\Http\Controllers;
 
 use App\Models\cashes;
+use App\Models\costs;
+use App\Models\Day;
 use Illuminate\Http\Request;
 
 class BossController extends Controller
 {
+    public function days(){
+        $days = Day::join('months', 'months.id', '=', 'days.month_id')
+                ->join('years', 'years.id', '=', 'days.year_id')
+                ->orderby('days.id', 'DESC')
+                ->get(['days.id', 'days.day_number', 'months.month_name', 'years.year_name']);
+        return $days;
+    }
+    
     /**
      * Display a listing of the resource.
      *
@@ -23,6 +33,14 @@ class BossController extends Controller
             ->paginate(50);
         
         return view('boss.home', compact('cashes'));
+    }
+
+    
+    public function report(Request $request){
+        $days = $this->days();
+        $costs = costs::where('cost_hide', 1)->get();
+        
+        return view('boss.report', compact('days', 'costs'));
     }
 
     /**

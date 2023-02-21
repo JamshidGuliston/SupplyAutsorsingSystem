@@ -233,21 +233,28 @@ Route::group(['prefix' => 'casher', 'middleware' => ['isChasher', 'auth']], func
     Route::get('home', [CasherController::class, 'index'])->name('casher.home');
     Route::get('cashes', [CasherController::class, 'costs'])->name('casher.costs');
     Route::get('costs', [CasherController::class, 'costs'])->name('casher.costs');
+    Route::get('allcosts', [CasherController::class, 'allcosts'])->name('casher.allcosts');
+    Route::get('report', [CasherController::class, 'report'])->name('casher.report');
     Route::post('createcost', [CasherController::class, 'createcost'])->name('casher.createcost');
     Route::post('deletecost', [CasherController::class, 'deletecost'])->name('casher.deletecost');
     Route::post('editecost', [CasherController::class, 'editecost'])->name('casher.editecost');
-    Route::get('allcosts', [CasherController::class, 'allcosts'])->name('casher.allcosts');
     Route::post('allcreatecost', [CasherController::class, 'allcreatecost'])->name('casher.allcreatecost');
     Route::post('alldeletecost', [CasherController::class, 'alldeletecost'])->name('casher.alldeletecost');
     Route::post('alleditecost', [CasherController::class, 'alleditecost'])->name('casher.alleditecost');
     Route::post('createcash', [CasherController::class, 'createcash'])->name('casher.createcash');
     Route::post('deletecash', [CasherController::class, 'deletecash'])->name('casher.deletecash');
+    Route::get('selectallcost/{id}', [CasherController::class, 'selectallcost'])->name('casher.selectallcost');
+    Route::get('selectreport/{type}/{id}/{b}/{e}', [CasherController::class, 'selectreport'])->name('casher.selectallcost');
     
 });
 
 Route::group(['prefix' => 'boss', 'middleware' => ['isBoss', 'auth']], function () {
     Route::get('home', [BossController::class, 'index'])->name('boss.home');
     Route::post('accepted', [BossController::class, 'accepted'])->name('boss.accepted');
+    Route::get('report', [BossController::class, 'report'])->name('boss.report');
+    Route::get('selectallcost/{id}', [CasherController::class, 'selectallcost'])->name('casher.selectallcost');
+    Route::get('selectreport/{type}/{id}/{b}/{e}', [CasherController::class, 'selectreport'])->name('casher.selectallcost');
+    
 });
 
 

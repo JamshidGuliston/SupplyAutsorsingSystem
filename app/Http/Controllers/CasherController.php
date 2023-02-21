@@ -15,12 +15,17 @@ class CasherController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
-    {
+    public function days(){
         $days = Day::join('months', 'months.id', '=', 'days.month_id')
                 ->join('years', 'years.id', '=', 'days.year_id')
                 ->orderby('days.id', 'DESC')
                 ->get(['days.id', 'days.day_number', 'months.month_name', 'years.year_name']);
+        return $days;
+    }
+
+    public function index()
+    {
+        $days = $this->days();
         $allcosts = all_costs::where('allcost_hide', 1)->get();
         $cashes = cashes::join('all_costs', 'all_costs.id', '=', 'cashes.allcost_id')
             ->select('cashes.id as cashid', 'cashes.description', 'cashes.summ', 'months.month_name', 'years.year_name', 'all_costs.allcost_name', 'days.day_number', 'cashes.status')
@@ -95,13 +100,82 @@ class CasherController extends Controller
     }
 
     public function deletecash(Request $request){
-        $r = cashes::where('id', $request->cashid)->get();
+        $r = cashes::where('id', $request->cashid)->first();
+        
         if($r->status == 1){
             cashes::where('id', $request->cashid)->delete();
+            return redirect()->route('casher.home')->with('status', "Uchirildi");
         }else{
-
+            return redirect()->route('casher.home');
         }
-        return redirect()->route('casher.home')->with('status', "Uchirildi");
+    }
+
+    public function report(Request $request){
+        $days = $this->days();
+        $costs = costs::where('cost_hide', 1)->get();
+        
+        return view('casher.report', compact('days', 'costs'));
+    }
+
+    public function selectallcost($id)
+    {
+        $all = all_costs::where('cost_name_id', $id)->where('allcost_hide', 1)->get();
+
+        $html = "<select class='form-select' id='allcostid' aria-label='Default select example'>
+                    <option value='0' >Hammasi</option>";
+                foreach($all as $row){
+                    $id = $row->id;
+                    $name = $row->allcost_name;
+                    $html .=  "<option value=".$id.">".$name."</option>";
+                }
+        $html .= "</select>";
+
+        return $html;
+    }
+
+    public function selectreport($type, $id, $b, $e){
+        $days = $this->days();
+        switch ($type) {
+            case 0:
+                $report = cashes::where('status', 2)->where('day_id', '>=', $b)->where('day_id', '<=', $e)->get();
+                break;
+            case 1:
+                $report = cashes::where('status', 2)
+                        ->where('all_costs.cost_name_id', '=', $id)
+                        ->where('day_id', '>=', $b)->where('day_id', '<=', $e)
+                        ->join('all_costs', 'all_costs.id', '=', 'cashes.allcost_id')
+                        ->get();
+                break;
+            case 2:
+                $report = cashes::where('status', 2)->where('allcost_id', '=', $id)->where('day_id', '>=', $b)->where('day_id', '<=', $e)->get();
+                break;
+        }
+        $html = "<table class='table table-light py-4 px-4'>
+                    <thead>
+                        <tr>
+                            <th scope='col'>ID</th>
+                            <th scope='col'>Izoh</th>
+                            <th scope='col'>Belgilangan sana</th>
+                            <th scope='col'>Yaratilgan sana</th>
+                            <th scope='col'>Miqdori</th>
+                        </tr>
+                    </thead>
+                    <tbody>";
+                    $total = 0;
+                    foreach($report as $row){
+                        $total = $total + $row->summ;
+                        $html = $html."<tr>
+                            <td>".$row->id."</td>
+                            <td>".$row->description."</td>
+                            <td>".$days->find($row->day_id)->day_number.".".$days->find($row->day_id)->month_name.".".$days->find($row->day_id)->year_name."</td>
+                            <td>".$row->created_at."</td>
+                            <td>".$row->summ."</td>
+                            </tr>";
+                    }
+        $html = $html."<tr><td><b>Jami:</b></td><td colspan='3'></td><td><b>".$total."</b></td></tr></tbody>
+                </table>";
+
+        return $html;
     }
     /**
      * Show the form for creating a new resource.
