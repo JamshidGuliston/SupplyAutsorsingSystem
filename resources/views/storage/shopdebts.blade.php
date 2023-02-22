@@ -43,9 +43,9 @@
                     <td>{{ $row->pay }}</td>
                     <td>{{ $row->product_name }}</td>
                     <td>{{ $row->weight }}</td>
-                    <td>{{ $row->cost }} so'm</td>
-                    <td>{{ $row->loan }} so'm</td>
-                    <td>{{ $row->date }}</td>
+                    <td>{{ $row->cost }}</td>
+                    <td>{{ $row->loan }}</td>
+                    <td>{{ $days->find($row->day_id)->day_number.'.'.$days->find($row->day_id)->month_name.'.'.$days->find($row->day_id)->year_name}}</td>
                     <td style="text-align: end;"><i class="detete  fa fa-trash" aria-hidden="true" data-name-id="" data-delet-id="" data-bs-toggle="modal" style="cursor: pointer; color: crimson" data-bs-target="#exampleModalss"></i></td>
                 </tr>
             @endforeach
@@ -53,7 +53,7 @@
     </table>
     {{ $debts->links() }}
     <br>
-    <a href="/storage/home/0/0">Orqaga</a>
+    <a href="/storage/debts">Orqaga</a>
 </div>
 @endsection
 

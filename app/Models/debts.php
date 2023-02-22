@@ -10,6 +10,7 @@ class debts extends Model
     use HasFactory;
     protected $fillable = [
     	'shop_id',
+        'day_id',
 	    'pay',
         'loan',
         'hisloan',

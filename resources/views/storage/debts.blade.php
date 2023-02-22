@@ -16,6 +16,32 @@
 @endsection
 @section('content')
 <div class="py-4 px-4">
+    <form method="POST" action="{{route('storage.createpay')}}">
+        @csrf
+        <div class="form-group row">
+            <div class="col-md-3">
+                <select class="form-select" name="catid" aria-label="Default select example">
+                    @foreach($shops as $row)
+                    <option value="{{$row['id']}}">{{$row['shop_name']}}</option>
+                    @endforeach
+                </select>
+            </div>
+            <div class="col-md-2">
+                <select class="form-select" name="dayid" aria-label="Default select example">
+                    @foreach($days as $row)
+                    <option value="{{$row['id']}}">{{$row['day_number'].'.'.$row['month_name'].'.'.$row['year_name']}}</option>
+                    @endforeach
+                </select>
+            </div>
+            <div class="col-md-3">
+                <input type="number" name="value" class="form-control" placeholder="so'm" required>
+            </div>
+            <div class="col-md-1">
+                <button type="submit" class="btn btn-success">ok</button>
+            </div>
+        </div>
+
+    </form>
     <hr>
     <table class="table table-light py-4 px-4">
         <thead>
@@ -25,8 +51,8 @@
                 <th scope="col">To'landi</th>
                 <th scope="col">Maxsulot</th>
                 <th scope="col">Kg</th>
-                <th scope="col">Narxi</th>
-                <th scope="col">Jami</th>
+                <th scope="col">Narxi (so'm)</th>
+                <th scope="col">Jami (so'm)</th>
                 <th scope="col">Sana</th>
                 <th scope="col">...</th>
             </tr>
@@ -42,9 +68,9 @@
                     <td>{{ $row->pay }}</td>
                     <td>{{ $row->product_name }}</td>
                     <td>{{ $row->weight }}</td>
-                    <td>{{ $row->cost }} so'm</td>
-                    <td>{{ $row->loan }} so'm</td>
-                    <td>{{ $row->date }}</td>
+                    <td>{{ $row->cost }}</td>
+                    <td>{{ $row->loan }}</td>
+                    <td>{{ $days->find($row->day_id)->day_number.'.'.$days->find($row->day_id)->month_name.'.'.$days->find($row->day_id)->year_name}}</td>
                     <td style="text-align: end;"><i class="detete  fa fa-trash" aria-hidden="true" data-name-id="" data-delet-id="" data-bs-toggle="modal" style="cursor: pointer; color: crimson" data-bs-target="#exampleModalss"></i></td>
                 </tr>
             @endforeach

@@ -31,6 +31,13 @@ use TCG\Voyager\Models\MenuItem;
 
 class StorageController extends Controller
 {
+    public function days(){
+        $days = Day::join('months', 'months.id', '=', 'days.month_id')
+                ->join('years', 'years.id', '=', 'days.year_id')
+                ->orderby('days.id', 'DESC')
+                ->get(['days.id', 'days.day_number', 'months.month_name', 'years.year_name']);
+        return $days;
+    }
     public function activmonth($month_id){
         $month = Month::where('id', $month_id)->first();
         $days = Day::where('month_id', $month->id)->where('year_id', $month->yearid)
@@ -161,6 +168,7 @@ class StorageController extends Controller
         for($i = 0; $i < count($shops); $i++){
             debts::create([
                 'shop_id' => $shops[$i],
+                'day_id' => $request->date_id,
                 'pay' => $total[$i],
                 'loan' => $real[$i],
                 'hisloan' => 0,
@@ -519,7 +527,7 @@ class StorageController extends Controller
                 ->get(['add_groups.id', 'add_groups.group_name', 'days.day_number', 'months.month_name', 'years.year_name']);
         
         $products = Product::all();
-        $shops = Shop::where('hide', 1)->get();
+        $shops = Shop::where('type_id', 2)->where('hide', 1)->get();
         $id = $il;
         return view('storage.addedproducts', compact('shops', 'group', 'months', 'id', 'days', 'products', 'year'));
     }
@@ -724,29 +732,141 @@ class StorageController extends Controller
     }
 
     public function debts(Request $request){
-        $debts = debts::select(['debts.id as debtid', 'debts.shop_id', 'shops.shop_name', 'add_large_werehouses.cost', 'add_large_werehouses.weight', 'products.product_name', 'debts.pay', 'debts.loan', 'debts.hisloan', 'debts.row_id', 'debts.created_at as date'])
-                ->join('shops', 'shops.id', '=', 'debts.shop_id')
-                ->join('add_large_werehouses', 'add_large_werehouses.id', '=', 'debts.row_id')
-                ->join('products', 'products.id', '=', 'add_large_werehouses.product_id')
-                ->where('add_large_werehouses.shop_id', ">", 0)
-                ->orderby('debts.id', 'DESC')
-                ->paginate(50);
+        $shops = Shop::where('type_id', 2)->get();
+        $days = $this->days();
+        
+        $debts = debts::select(['debts.id as debtid', 'debts.day_id', 'debts.shop_id', 'shops.shop_name', 'add_large_werehouses.cost', 'add_large_werehouses.weight', 'products.product_name', 'debts.pay', 'debts.loan', 'debts.hisloan', 'debts.row_id', 'debts.created_at as date'])
+            ->leftjoin('shops', 'debts.shop_id', '=', 'shops.id')
+            ->leftjoin('add_large_werehouses', 'debts.row_id', '=', 'add_large_werehouses.id')
+            ->leftjoin('products', 'add_large_werehouses.product_id', '=', 'products.id')
+            ->orderby('debts.id', 'DESC')
+            ->paginate(50);
 
-        // dd($debts);
-        return view('storage.debts', compact('debts'));
+        
+        return view('storage.debts', compact('debts', 'shops', 'days'));
     }
 
     public function shopdebts(Request $request){
-        $debts = debts::select(['debts.id as debtid', 'debts.shop_id', 'shops.shop_name', 'add_large_werehouses.cost', 'add_large_werehouses.weight', 'products.product_name', 'debts.pay', 'debts.loan', 'debts.hisloan', 'debts.row_id', 'debts.created_at as date'])
+        $days = $this->days();
+        $debts = debts::select(['debts.id as debtid', 'debts.day_id', 'debts.shop_id', 'shops.shop_name', 'add_large_werehouses.cost', 'add_large_werehouses.weight', 'products.product_name', 'debts.pay', 'debts.loan', 'debts.hisloan', 'debts.row_id', 'debts.created_at as date'])
                 ->where('debts.shop_id', $request->ShopId)
-                ->join('shops', 'shops.id', '=', 'debts.shop_id')
-                ->join('add_large_werehouses', 'add_large_werehouses.id', '=', 'debts.row_id')
-                ->join('products', 'products.id', '=', 'add_large_werehouses.product_id')
-                ->where('add_large_werehouses.shop_id', ">", 0)
+                ->leftjoin('shops', 'debts.shop_id', '=', 'shops.id')
+                ->leftjoin('add_large_werehouses', 'debts.row_id', '=', 'add_large_werehouses.id')
+                ->leftjoin('products', 'add_large_werehouses.product_id', '=', 'products.id')
                 ->orderby('debts.id', 'DESC')
                 ->paginate(50);
-        // dd($debts);
-        return view('storage.shopdebts', compact('debts'));
+        return view('storage.shopdebts', compact('debts', 'days'));
+    }
+
+    public function payreport(){
+        $shops = Shop::all();
+        $days = $this->days();
+
+        return view('storage.payreport', compact('shops', 'days'));
+    }
+    
+    public function createpay(Request $request){
+        
+        debts::create([
+            'shop_id' => $request->catid,
+            'day_id' => $request->dayid,
+            'pay' => $request->value,
+            'loan' => 0,
+            'hisloan' => 0,
+            'row_id' => 0
+        ]);
+
+        return redirect()->route('storage.debts');
+    }
+
+    public function selectreport($id, $b, $e){
+        if($b == 0){
+            $b = Day::first()->id;
+        }
+        if($e == 0){
+            $e = Day::orderby('id', 'DESC')->first()->id;
+        }
+        
+        if($id == 0){
+            $shops = Shop::where('type_id', 2)->get();
+        }
+        else{
+            $shops = Shop::where('id', $id)->get();
+        }
+        
+        $report = [];
+        $days = $this->days();
+
+        foreach($shops as $row){
+            $name = $shops->find($row->id)->shop_name;
+            $oldpay = debts::where('shop_id', $row->id)->where('day_id', '<', $b)->sum('pay');
+            $oldloan = debts::where('shop_id', $row->id)->where('day_id', '<', $b)->sum('loan');
+            
+            $deb = debts::where('shop_id', $row->id)
+                ->where('day_id', '>=', $b)
+                ->where('day_id', '<=', $e)
+                ->get()->toarray();
+            
+            $deb["shop"] = array("name" => $name, "oldpay" => $oldpay, "oldloan" => $oldloan, "debt" => $oldpay-$oldloan);
+            
+            array_push($report, $deb);
+        }
+
+        $html = "<table class='table table-light py-4 px-4'>
+                    <thead>
+                        <tr>
+                            <th scope='col'>Tashkilot</th>
+                            <th scope='col'>To'langan</th>
+                            <th scope='col'>Haqiqiy miqdor</th>
+                            <th scope='col'>Farqi</th>
+                            <th scope='col'>Qarzdorlik</th>
+                            <th scope='col'>Sana</th>
+                        </tr>
+                    </thead>
+                    <tbody>";
+                    $total = 0;
+                    foreach($report as $shop){
+                        $total1 = 0;
+                        $total2 = 0;
+                        $html = $html."<tr>
+                                    <td><b>".$shop['shop']['name']."</b></td>
+                                    <td>".$shop['shop']['oldpay']."</td>
+                                    <td>".$shop['shop']['oldloan']."</td>
+                                    <td>".$shop['shop']['debt']."</td>
+                                    <td></td>
+                                    <td>Hisobot davriga qadar</td>
+                                </tr>";
+                        foreach($shop as $key => $row){
+                            if($key != 'shop'){
+                                $total1 = $total1 + $row['pay'];
+                                $total2 = $total2 + $row['loan'];
+                                $html = $html."<tr>
+                                        <td></td>
+                                        <td>".$row['pay']."</td>
+                                        <td>".$row['loan']."</td>
+                                        <td></td>
+                                        <td></td>
+                                        <td>".$row['day_id']."</td>
+                                    </tr>";
+                            }
+                        }
+
+                        $html = $html."<tr>
+                                    <td><b>Yakunda Jami:</b></td>
+                                    <td><b>".$total1."</b></td>
+                                    <td><b>".$total2."</b></td>
+                                    <td><b>".$total1 - $total2."</b></td>
+                                    <td><b>".$shop['shop']['debt'] + $total1-$total2."</b></td>
+                                    <td></td>
+                                </tr>";
+                        $total = $total + $shop['shop']['debt'] + $total1-$total2;
+                    }
+
+        $html = $html."<tr><td><b>Jami:</b></td><td colspan='3'></td><td><b>".$total."</b></td><td></td></tr></tbody>
+                </table>";
+
+        return $html;
+
     }
     
 }
