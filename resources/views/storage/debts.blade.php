@@ -22,10 +22,11 @@
             <tr>
                 <th scope="col">ID</th>
                 <th scope="col">Firma</th>
-                <th scope="col">To'langan</th>
-                <th scope="col">Qarzdorlik</th>
-                <th scope="col">Firma qarzi</th>
-                <th style="width: 40px;"><a href="#">Maxsulot</a></th>
+                <th scope="col">To'landi</th>
+                <th scope="col">Maxsulot</th>
+                <th scope="col">Kg</th>
+                <th scope="col">Narxi</th>
+                <th scope="col">Jami</th>
                 <th scope="col">Sana</th>
                 <th scope="col">...</th>
             </tr>
@@ -38,10 +39,11 @@
                 <tr>
                     <td>{{ $row->debtid }}</td>
                     <td><a href="/storage/shopdebts?ShopId={{ $row->shop_id }}">{{ $row->shop_name }}</a></td>
-                    <td>{{ $row->pay }} so'm</td>
+                    <td>{{ $row->pay }}</td>
+                    <td>{{ $row->product_name }}</td>
+                    <td>{{ $row->weight }}</td>
+                    <td>{{ $row->cost }} so'm</td>
                     <td>{{ $row->loan }} so'm</td>
-                    <td>{{ $row->hisloan }} so'm</td>
-                    <td><a href="#">Product</a></td>
                     <td>{{ $row->date }}</td>
                     <td style="text-align: end;"><i class="detete  fa fa-trash" aria-hidden="true" data-name-id="" data-delet-id="" data-bs-toggle="modal" style="cursor: pointer; color: crimson" data-bs-target="#exampleModalss"></i></td>
                 </tr>
