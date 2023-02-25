@@ -92,12 +92,12 @@ Route::group(['prefix' => 'storage', 'middleware' => ['isStorage', 'auth']], fun
     Route::post('createpay', [StorageController::class, 'createpay'])->name('storage.createpay');
     Route::get('selectreport/{id}/{b}/{e}', [StorageController::class, 'selectreport'])->name('storage.selectreport');
     Route::get('takinglargebase', [StorageController::class, 'takinglargebase'])->name('storage.takinglargebase');
-    Route::get('addtakinglargebase', [StorageController::class, 'addtakinglargebase'])->name('storage.addtakinglargebase');
+    Route::post('addtakinglargebase', [StorageController::class, 'addtakinglargebase'])->name('storage.addtakinglargebase');
     Route::get('editetakinglargebase', [StorageController::class, 'editetakinglargebase'])->name('storage.editetakinglargebase');
     Route::get('deletetakinglargebase', [StorageController::class, 'deletetakinglargebase'])->name('storage.deletetakinglargebase');
-    Route::get('intakinglargebase', [StorageController::class, 'intakinglargebase'])->name('storage.intakinglargebase');
-    Route::get('addintakinglargebase', [StorageController::class, 'addintakinglargebase'])->name('storage.addintakinglargebase');
-    Route::get('deleteintakinglargebase', [StorageController::class, 'addintakinglargebase'])->name('storage.addintakinglargebase');
+    Route::get('intakinglargebase/{id}', [StorageController::class, 'intakinglargebase'])->name('storage.intakinglargebase');
+    Route::post('addintakinglargebase', [StorageController::class, 'addintakinglargebase'])->name('storage.addintakinglargebase');
+    Route::post('deleteintakinglargebase', [StorageController::class, 'deleteintakinglargebase'])->name('storage.deleteintakinglargebase');
     Route::get('takinglargebase', [StorageController::class, 'takinglargebase'])->name('storage.takinglargebase');
     Route::get('takingsmallbase', [StorageController::class, 'takingsmallbase'])->name('storage.takingsmallbase');
     Route::get('addtakingsmallbase', [StorageController::class, 'addtakingsmallbase'])->name('storage.addtakingsmallbase');

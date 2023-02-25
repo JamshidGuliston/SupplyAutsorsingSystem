@@ -14,5 +14,6 @@ class Take_small_base extends Model
         'takegroup_id',
         'product_id',
         'weight',
+        'cost',
     ];
 }

@@ -9,9 +9,9 @@ class Take_product extends Model
 {
     use HasFactory;
     protected $fillable = [
-        'outside_id',
         'takegroup_id',
         'product_id',
         'weight',
+        'cost',
     ];
 }

@@ -29,7 +29,6 @@
                 <th scope="col">Narxi</th>
                 <th scope="col">Jami</th>
                 <th scope="col">Sana</th>
-                <th scope="col">...</th>
             </tr>
         </thead>
         <tbody>
@@ -46,7 +45,6 @@
                     <td>{{ $row->cost }}</td>
                     <td>{{ $row->loan }}</td>
                     <td>{{ $days->find($row->day_id)->day_number.'.'.$days->find($row->day_id)->month_name.'.'.$days->find($row->day_id)->year_name}}</td>
-                    <td style="text-align: end;"><i class="detete  fa fa-trash" aria-hidden="true" data-name-id="" data-delet-id="" data-bs-toggle="modal" style="cursor: pointer; color: crimson" data-bs-target="#exampleModalss"></i></td>
                 </tr>
             @endforeach
         </tbody>

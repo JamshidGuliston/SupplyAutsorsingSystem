@@ -12,6 +12,7 @@ class Take_group extends Model
         'contur_id',
         'day_id',
         'taker_id',
+        'outside_id',
         'title',
         'description',
     ];

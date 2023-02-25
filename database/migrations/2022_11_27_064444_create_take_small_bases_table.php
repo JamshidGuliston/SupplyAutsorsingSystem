@@ -20,6 +20,7 @@ class CreateTakeSmallBasesTable extends Migration
             $table->integer("takegroup_id");
             $table->integer("product_id");
             $table->double('weight', 8,3);
+            $table->integer("cost");
             $table->timestamps();
         });
     }

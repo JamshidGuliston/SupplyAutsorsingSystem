@@ -898,30 +898,77 @@ class StorageController extends Controller
                         'take_groups.title',
                         'take_groups.day_id',
                         'take_groups.taker_id',
+                        'outside_products.outside_name',
                         'users.name',
                         'take_groups.day_id',
                     )
                     ->where('users.role_id', '!=', 6)
+                    ->orderby('take_groups.id', 'DESC')
                     ->join('users', 'users.id', '=', 'take_groups.taker_id')
+                    ->join('outside_products', 'outside_products.id', '=', 'take_groups.outside_id')
                     ->get();
         $days = $this->days();
+        $outtypes = Outside_product::all();
         $users = User::where('users.role_id', '!=', 6)->get();
-        return view('storage.takinglargebase', compact('res', 'days', 'users'));
+
+        return view('storage.takinglargebase', compact('res', 'days', 'users', 'outtypes'));
     }
 
-    public function intakinglargebase(){
+    public function addtakinglargebase(Request $request){
+        // dd($request->all());
+        Take_group::create([
+            'contur_id' => 1,
+            'day_id' => $request->day_id,
+            'taker_id' => $request->user_id,
+            'outside_id' => $request->outid,
+            'title' => $request->title,
+            'description' => "",
+        ]);
+
+        return redirect()->route('storage.takinglargebase');
+    }
+    public function deletetakinglargebase(Request $request){
+        Take_group::where('id', $request->gid);
+        return redirect()->route('storage.takinglargebase');
+    }
+
+    public function intakinglargebase(Request $request, $id){
         $res = Take_product::select(
-                        'outside_products.',
-                        'take_groups.day_id',
-                        'take_groups.day_id',
+                        'take_products.id as tid',
+                        'take_products.product_id',
+                        'products.product_name',
+                        'sizes.size_name',
+                        'take_products.weight',
+                        'take_products.cost',
                     )
-                    ->join('outside_products', 'outside_products.id', '=', 'take_products.outside_id')
+                    ->where('take_products.takegroup_id', $id)
                     ->join('take_groups', 'take_groups.id', '=', 'take_products.takegroup_id')
                     ->join('products', 'products.id', '=', 'take_products.product_id')
+                    ->join('sizes', 'sizes.id', '=', 'products.size_name_id')
+                    ->orderby('take_products.id', 'DESC')
                     ->get();
-
+        
+        $products = Product::all();
+        
+        return view('storage.intakinglargebase', compact('res', 'products', 'id'));
     }
 
+    public function addintakinglargebase(Request $request){
+
+        Take_product::create([
+            'takegroup_id' => $request->groid,
+            'product_id' => $request->productid,
+            'weight' => $request->weight,
+            'cost' => $request->cost,
+        ]);
+
+        return redirect()->route('storage.intakinglargebase', ['id' => $request->groid]);
+    }
+    public function deleteintakinglargebase(Request $request){
+        Take_product::where('id', $request->rowid)->delete();
+        
+        return redirect()->route('storage.intakinglargebase', ['id' => $request->grodid]);
+    }
     public function takingsmallbase(){
         $res = Take_group::select(
             'take_groups.id as gid',

@@ -18,6 +18,7 @@ class CreateTakeGroupsTable extends Migration
             $table->integer("contur_id");
             $table->integer("day_id");
             $table->integer("taker_id");
+            $table->integer("outside_id");
             $table->string("title");
             $table->string("description");
             $table->boolean("group_hide");

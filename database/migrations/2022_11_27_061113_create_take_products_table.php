@@ -15,10 +15,10 @@ class CreateTakeProductsTable extends Migration
     {
         Schema::create('take_products', function (Blueprint $table) {
             $table->id();
-            $table->integer("outside_id");
             $table->integer("takegroup_id");
             $table->integer("product_id");
             $table->double('weight', 8,3);
+            $table->integer("cost");
             $table->timestamps();
         });
     }
