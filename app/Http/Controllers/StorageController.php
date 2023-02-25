@@ -21,7 +21,9 @@ use App\Models\Season;
 use App\Models\Shop;
 use App\Models\Shop_product;
 use App\Models\Take_group;
+use App\Models\Take_product;
 use App\Models\Titlemenu;
+use App\Models\User;
 use App\Models\Year;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -733,17 +735,38 @@ class StorageController extends Controller
 
     public function debts(Request $request){
         $shops = Shop::where('type_id', 2)->get();
+        $products = Product::all();
         $days = $this->days();
         
-        $debts = debts::select(['debts.id as debtid', 'debts.day_id', 'debts.shop_id', 'shops.shop_name', 'add_large_werehouses.cost', 'add_large_werehouses.weight', 'products.product_name', 'debts.pay', 'debts.loan', 'debts.hisloan', 'debts.row_id', 'debts.created_at as date'])
+        $debts = debts::select(['debts.id as debtid', 'products.id as productid', 'debts.day_id', 'debts.shop_id', 'shops.shop_name', 'add_large_werehouses.cost', 'add_large_werehouses.weight', 'add_large_werehouses.id as lid', 'sizes.size_name', 'products.product_name', 'debts.pay', 'debts.loan', 'debts.hisloan', 'debts.row_id', 'debts.created_at as date'])
             ->leftjoin('shops', 'debts.shop_id', '=', 'shops.id')
             ->leftjoin('add_large_werehouses', 'debts.row_id', '=', 'add_large_werehouses.id')
             ->leftjoin('products', 'add_large_werehouses.product_id', '=', 'products.id')
+            ->leftjoin('sizes', 'sizes.id', '=', 'products.size_name_id')
             ->orderby('debts.id', 'DESC')
             ->paginate(50);
 
+        $pay = debts::sum('pay');
+        $loan = debts::sum('loan');
         
-        return view('storage.debts', compact('debts', 'shops', 'days'));
+        return view('storage.debts', compact('debts', 'shops', 'products', 'days', 'pay', 'loan'));
+    }
+
+    public function editedebts(Request $request){
+        // dd($request->all());
+        if($request->larid != null)
+            Add_large_werehouse::where('id', $request->larid)->update(['shop_id' => $request->editeshop_id, 'product_id' => $request->productid, 'weight' => $request->weight, 'cost' => $request->cost]);
+        debts::where('id', $request->debt_id)->update(['shop_id' => $request->editeshop_id, 'day_id' => $request->editedayid, 'pay' => $request->pay_value, 'loan' => $request->weight * $request->cost]);
+
+        return redirect()->route('storage.debts');
+    }
+
+    public function deletedebt(Request $request){
+        if($request->larid != null)
+            Add_large_werehouse::where('id', $request->dlarid)->delete();
+        debts::where('id', $request->ddebt_id)->delete();
+
+        return redirect()->route('storage.debts');
     }
 
     public function shopdebts(Request $request){
@@ -867,6 +890,55 @@ class StorageController extends Controller
 
         return $html;
 
+    }
+
+    public function takinglargebase(){
+        $res = Take_group::select(
+                        'take_groups.id as gid',
+                        'take_groups.title',
+                        'take_groups.day_id',
+                        'take_groups.taker_id',
+                        'users.name',
+                        'take_groups.day_id',
+                    )
+                    ->where('users.role_id', '!=', 6)
+                    ->join('users', 'users.id', '=', 'take_groups.taker_id')
+                    ->get();
+        $days = $this->days();
+        $users = User::where('users.role_id', '!=', 6)->get();
+        return view('storage.takinglargebase', compact('res', 'days', 'users'));
+    }
+
+    public function intakinglargebase(){
+        $res = Take_product::select(
+                        'outside_products.',
+                        'take_groups.day_id',
+                        'take_groups.day_id',
+                    )
+                    ->join('outside_products', 'outside_products.id', '=', 'take_products.outside_id')
+                    ->join('take_groups', 'take_groups.id', '=', 'take_products.takegroup_id')
+                    ->join('products', 'products.id', '=', 'take_products.product_id')
+                    ->get();
+
+    }
+
+    public function takingsmallbase(){
+        $res = Take_group::select(
+            'take_groups.id as gid',
+            'take_groups.title',
+            'take_groups.day_id',
+            'take_groups.taker_id',
+            'users.name',
+            'take_groups.day_id',
+        )
+        ->where('users.role_id', '=', 6)
+        ->join('users', 'users.id', '=', 'take_groups.taker_id')
+        ->get();
+        $days = $this->days();
+        $users = User::where('users.role_id', '=', 6)->with('kindgarden')->get()->toarray();
+        // dd($users);
+        return view('storage.takingsmallbase', compact('res', 'days', 'users'));
+       
     }
     
 }

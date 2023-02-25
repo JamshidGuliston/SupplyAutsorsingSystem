@@ -120,7 +120,7 @@
             @endforeach
         </tbody>
     </table>
-    <a href="/storage/home">Orqaga</a>
+    <a href="/storage/home/0/0">Orqaga</a>
 </div>
 
 @endsection
