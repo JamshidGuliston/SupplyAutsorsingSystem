@@ -80,7 +80,7 @@
         <div class="modal-dialog modal-xl">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">Omborxona</h5>
+                    <h5 class="modal-title" id="exampleModalLabel"><b class="kindname"></b> Omborxona</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                     <div class="modal-body" style="text-align: center;">
@@ -126,7 +126,7 @@
         <div class="col-md-3">
             <div class="p-3 bg-white shadow-sm d-flex justify-content-around align-items-center rounded">
                 <div>
-                    <a href="#!" class="list-group-item-action bg-transparent first-text fw-bold" class="fs-5" data-garden-id="{{ $item->id }}" data-bs-toggle="modal" data-bs-target="#exampleModal" style="color: #6ac3de;">{{$item->kingar_name}}</a>
+                    <a href="#!" class="list-group-item-action bg-transparent first-text fw-bold" class="fs-5" data-name ="{{ $item->kingar_name }}" data-garden-id="{{ $item->id }}" data-bs-toggle="modal" data-bs-target="#exampleModal" style="color: #6ac3de;">{{$item->kingar_name}}</a>
 
                     <div class="user-box">
                         <div class="user-worker-number">
@@ -167,7 +167,9 @@
 
     $('.list-group-item-action').click(function() {
         var gardenid = $(this).attr('data-garden-id');
-        // alert(gardenid);
+        var name = $(this).attr('data-name');
+        var title = $('.kindname');
+        title.html(name);
         var div = $('.divmodproduct');
         $.ajax({
             method: "GET",
