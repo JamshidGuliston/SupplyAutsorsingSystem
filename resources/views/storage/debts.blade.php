@@ -26,23 +26,23 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body foodcomposition"> 
-                <select id='dshopsSelect' class="form-select" aria-label="Default select example" required>
+                <select id='dshopsSelect' class="form-select" aria-label="Default select example" required disabled>
                     @foreach($shops as $row)
                         <option value='{{ $row->id }}'>{{ $row->shop_name }}</option>
                     @endforeach
                 </select><br>
-                <select id='dproductSelect' class="form-select" aria-label="Default select example" required>
+                <select id='dproductSelect' class="form-select" aria-label="Default select example" required disabled>
                     @foreach($products as $row)
                         <option value='{{ $row->id }}'>{{ $row->product_name }}</option>
                     @endforeach
                 </select><br>
                 <label>Miqdori</label>
-                <input type="number" id="dpweight" class="form-control" ><br>
+                <input type="number" id="dpweight" class="form-control" disabled><br>
                 <label>Narxi</label>
-                <input type="number" id="dpcost" class="form-control" ><br>
+                <input type="number" id="dpcost" class="form-control" disabled><br>
                 <label>To'landi</label>
-                <input type="number" id="dpay_" class="form-control" ><br>
-                <select id='ddaySelect' class="form-select" aria-label="Default select example" required>
+                <input type="number" id="dpay_" class="form-control" disabled><br>
+                <select id='ddaySelect' class="form-select" aria-label="Default select example" required disabled>
                     @foreach($days as $row)
                         <option value='{{ $row->id }}'>{{ $row->day_number.'.'.$row->month_name.'.'.$row->year_name }}</option>
                     @endforeach

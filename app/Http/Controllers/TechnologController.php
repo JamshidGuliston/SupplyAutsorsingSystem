@@ -1679,16 +1679,14 @@ class TechnologController extends Controller
                             }
                             else
                                 $countin = 0;
-                                $html = $html.$countin." + <input type='text' style='width: 50px; font-size: 12px' name='prodadd[". $product->id ."]'>
-                            </td>
+                                $html = $html.$countin."</td>
                             <td>";
                             if(isset($minusproducts[$product->id])){ 
                                 $countout = $minusproducts[$product->id];
                             }
                             else
                                 $countout = 0;
-                            $html = $html.$countout." + <input type='text' style='width: 50px; font-size: 12px' name='prodminus[". $product->id ."]'>
-                            </td>
+                            $html = $html.$countout."</td>
                             <td>". sprintf('%0.1f', $countin - $countout) .' '.$product->size_name."</td>
                         </tr>";
                     }
