@@ -22,7 +22,7 @@ use Illuminate\Support\Facades\Auth;
 |
 */
 
-Route::any('telegrambot', [TelegramController::class, 'telegrambot']);
+// Route::any('telegrambot', [TelegramController::class, 'telegrambot']);
 
 Route::get('/', function () {
     return redirect()->route('technolog.home');
@@ -105,6 +105,7 @@ Route::group(['prefix' => 'storage', 'middleware' => ['isStorage', 'auth']], fun
     Route::get('intakingsmallbase/{id}/{kid}', [StorageController::class, 'intakingsmallbase'])->name('storage.intakingsmallbase');
     Route::post('addintakingsmallbase', [StorageController::class, 'addintakingsmallbase'])->name('storage.addintakingsmallbase');
     
+
 });
 
 Route::group(['prefix' => 'technolog', 'middleware' => ['isTechnolog', 'auth']], function () {
