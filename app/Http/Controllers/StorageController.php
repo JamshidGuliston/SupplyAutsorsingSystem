@@ -22,6 +22,7 @@ use App\Models\Shop;
 use App\Models\Shop_product;
 use App\Models\Take_group;
 use App\Models\Take_product;
+use App\Models\Take_small_base;
 use App\Models\Titlemenu;
 use App\Models\User;
 use App\Models\Year;
@@ -966,26 +967,87 @@ class StorageController extends Controller
     }
     public function deleteintakinglargebase(Request $request){
         Take_product::where('id', $request->rowid)->delete();
-        
+
         return redirect()->route('storage.intakinglargebase', ['id' => $request->grodid]);
     }
     public function takingsmallbase(){
         $res = Take_group::select(
-            'take_groups.id as gid',
-            'take_groups.title',
-            'take_groups.day_id',
-            'take_groups.taker_id',
-            'users.name',
-            'take_groups.day_id',
-        )
-        ->where('users.role_id', '=', 6)
-        ->join('users', 'users.id', '=', 'take_groups.taker_id')
-        ->get();
+                        'take_groups.id as gid',
+                        'take_groups.title',
+                        'take_groups.day_id',
+                        'take_groups.taker_id',
+                        'outside_products.outside_name',
+                        'users.name',
+                        'users.id as uid',
+                        'take_groups.day_id',
+                    )
+                    ->where('users.role_id', '=', 6)
+                    ->orderby('take_groups.id', 'DESC')
+                    ->join('users', 'users.id', '=', 'take_groups.taker_id')
+                    ->join('outside_products', 'outside_products.id', '=', 'take_groups.outside_id')
+                    ->get();
         $days = $this->days();
-        $users = User::where('users.role_id', '=', 6)->with('kindgarden')->get()->toarray();
+        $outtypes = Outside_product::all();
+        $users = User::where('users.role_id', '=', 6)->with('kindgarden')->get();
         // dd($users);
-        return view('storage.takingsmallbase', compact('res', 'days', 'users'));
+        return view('storage.takingsmallbase', compact('res', 'days', 'users', 'outtypes'));
        
+    }
+
+    public function addtakingsmallbase(Request $request){
+        
+        Take_group::create([
+            'contur_id' => 1,
+            'day_id' => $request->day_id,
+            'taker_id' => $request->user_id,
+            'outside_id' => $request->outid,
+            'title' => $request->title,
+            'description' => "",
+        ]);
+
+        return redirect()->route('storage.takingsmallbase');
+    }
+
+    public function intakingsmallbase(Request $request, $id, $kid){
+        $res = Take_small_base::select(
+                'take_small_bases.id as tid',
+                'take_small_bases.product_id',
+                'products.product_name',
+                'sizes.size_name',
+                'take_small_bases.weight',
+                'take_small_bases.cost',
+            )
+            ->where('take_small_bases.takegroup_id', $id)
+            ->join('take_groups', 'take_groups.id', '=', 'take_small_bases.takegroup_id')
+            ->join('products', 'products.id', '=', 'take_small_bases.product_id')
+            ->join('sizes', 'sizes.id', '=', 'products.size_name_id')
+            ->orderby('take_small_bases.id', 'DESC')
+            ->get();
+
+        $products = Product::all();
+
+        $kind = Kindgarden::where('id', $kid)->first();
+
+        return view('storage.intakingsmallbase', compact('res', 'products', 'id', 'kind'));    
+    }
+
+    public function addintakingsmallbase(Request $request){
+
+        Take_small_base::create([
+            'kindgarden_id' => $request->kid,
+            'takegroup_id' => $request->groid,
+            'product_id' => $request->productid,
+            'weight' => $request->weight,
+            'cost' => $request->cost,
+        ]);
+
+        return redirect()->route('storage.intakingsmallbase', ['id' => $request->groid, 'kid' => $request->kid]);
+    }
+
+    public function deletetakingsmallbase(Request $request){
+        Take_small_base::where('id', $request->rowid)->delete();
+
+        return redirect()->route('storage.intakingsmallbase', ['id' => $request->grodid, 'kid' => $request->kind_id]);
     }
     
 }

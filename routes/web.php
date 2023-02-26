@@ -100,9 +100,10 @@ Route::group(['prefix' => 'storage', 'middleware' => ['isStorage', 'auth']], fun
     Route::post('deleteintakinglargebase', [StorageController::class, 'deleteintakinglargebase'])->name('storage.deleteintakinglargebase');
     Route::get('takinglargebase', [StorageController::class, 'takinglargebase'])->name('storage.takinglargebase');
     Route::get('takingsmallbase', [StorageController::class, 'takingsmallbase'])->name('storage.takingsmallbase');
-    Route::get('addtakingsmallbase', [StorageController::class, 'addtakingsmallbase'])->name('storage.addtakingsmallbase');
-    Route::get('deletetakingsmallbase', [StorageController::class, 'deletetakingsmallbase'])->name('storage.deletetakingsmallbase');
-    Route::get('intakingsmallbase', [StorageController::class, 'takingsmallbase'])->name('storage.takingsmallbase');
+    Route::post('addtakingsmallbase', [StorageController::class, 'addtakingsmallbase'])->name('storage.addtakingsmallbase');
+    Route::post('deletetakingsmallbase', [StorageController::class, 'deletetakingsmallbase'])->name('storage.deletetakingsmallbase');
+    Route::get('intakingsmallbase/{id}/{kid}', [StorageController::class, 'intakingsmallbase'])->name('storage.intakingsmallbase');
+    Route::post('addintakingsmallbase', [StorageController::class, 'addintakingsmallbase'])->name('storage.addintakingsmallbase');
     
 });
 

@@ -16,7 +16,6 @@ class CreateTakeSmallBasesTable extends Migration
         Schema::create('take_small_bases', function (Blueprint $table) {
             $table->id();
             $table->integer("kindgarden_id");
-            $table->integer("outside_id");
             $table->integer("takegroup_id");
             $table->integer("product_id");
             $table->double('weight', 8,3);

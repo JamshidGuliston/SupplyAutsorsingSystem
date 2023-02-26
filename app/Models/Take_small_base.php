@@ -10,7 +10,6 @@ class Take_small_base extends Model
     use HasFactory;
     protected $fillable = [
         'kindgarden_id',
-        'outside_id',
         'takegroup_id',
         'product_id',
         'weight',
