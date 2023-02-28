@@ -2,11 +2,15 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Age_range;
+use App\Models\bycosts;
 use App\Models\cashes;
 use App\Models\costs;
 use App\Models\Day;
 use App\Models\Kindgarden;
 use App\Models\Month;
+use App\Models\Number_children;
+use App\Models\Region;
 use App\Models\Year;
 use Illuminate\Http\Request;
 
@@ -22,6 +26,15 @@ class BossController extends Controller
     public function months_of_year($yearid){
         $months = Month::where('yearid', $yearid)->get();
         return $months;
+    }
+
+    public function days_of_month($month_id){
+        $month = Month::where('id', $month_id)->first();
+        $days = Day::where('month_id', $month->id)->where('year_id', $month->yearid)
+                ->join('months', 'months.id', '=', 'days.month_id')
+                ->join('years', 'years.id', '=', 'days.year_id')
+                ->get(['days.id', 'days.day_number', 'months.month_name', 'years.year_name']);
+        return $days;
     }
     /**
      * Display a listing of the resource.
@@ -58,7 +71,59 @@ class BossController extends Controller
     }
 
     public function showincome(Request $request){
-        return $request->all();
+        $daysofmonth = $this->days_of_month($request->monthid);
+        $regions = Region::all();
+        if($request->kindid == 0)
+            $kindgardens = Kindgarden::all();
+        else
+            $kindgardens = Kindgarden::where('id', $request->kindid)->get();
+        $inregions = [];
+        $allproducts = [];
+        foreach($kindgardens as $kindgar){
+            foreach($daysofmonth as $day){
+                foreach(Age_range::all() as $age){
+                    $join = Number_children::where('number_childrens.day_id', $day->id)
+                        ->where('number_childrens.kingar_name_id', $kindgar->id)
+                        ->where('number_childrens.king_age_name_id', $age->id)
+                        ->join('kindgardens', 'kindgardens.id', '=', 'number_childrens.kingar_name_id')
+                        ->leftjoin('active_menus', function($join){
+                            $join->on('number_childrens.day_id', '=', 'active_menus.day_id');
+                            $join->on('number_childrens.kingar_menu_id', '=', 'active_menus.title_menu_id');
+                            $join->on('number_childrens.king_age_name_id', '=', 'active_menus.age_range_id');
+                        })
+                        ->join('products', 'active_menus.product_name_id', '=', 'products.id')
+                        ->join('sizes', 'products.size_name_id', '=', 'sizes.id')
+                        ->get();
+                    array_push($allproducts, $join);
+                }
+            }
+        }
+
+        $report = [];
+        foreach($allproducts as $day){
+            foreach($day as $product){
+                if(!isset($report[$product->product_name_id]["kg"])){
+                    $report[$product->product_name_id]["kg"] = 0;
+                }
+                $report[$product->product_name_id]["kg"] += $product->weight/$product->div * $product->kingar_children_number;
+            }
+        }
+
+        $cost = bycosts::where('day_id', bycosts::where('day_id', '<', $daysofmonth->last()->id)->where('region_name_id', 1)->orderBy('day_id', 'DESC')->first()->day_id)
+            ->where('region_name_id', 1)
+            ->where('praduct_name_id', $product->product_name_id)
+            ->first()->price_cost;
+        // $mods = $this->multimods();
+        // dd($mods);
+        // usort($incomes, function ($a, $b){
+        //     if(isset($a["p_sort"]) and isset($b["p_sort"])){
+        //         return $a["p_sort"] > $b["p_sort"];
+        //     }
+        // });
+
+        return $report;
+
+
         
     }
     /**
