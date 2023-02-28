@@ -5,6 +5,9 @@ namespace App\Http\Controllers;
 use App\Models\cashes;
 use App\Models\costs;
 use App\Models\Day;
+use App\Models\Kindgarden;
+use App\Models\Month;
+use App\Models\Year;
 use Illuminate\Http\Request;
 
 class BossController extends Controller
@@ -16,7 +19,10 @@ class BossController extends Controller
                 ->get(['days.id', 'days.day_number', 'months.month_name', 'years.year_name']);
         return $days;
     }
-    
+    public function months_of_year($yearid){
+        $months = Month::where('yearid', $yearid)->get();
+        return $months;
+    }
     /**
      * Display a listing of the resource.
      *
@@ -43,6 +49,18 @@ class BossController extends Controller
         return view('boss.report', compact('days', 'costs'));
     }
 
+    public function incomereport(){
+        $yid = Year::where('year_active', 1)->first()->id;
+        $months = $this->months_of_year($yid);
+        $kinds = Kindgarden::all();
+        
+        return view('boss.incomereport', compact('months', 'kinds'));
+    }
+
+    public function showincome(Request $request){
+        return $request->all();
+        
+    }
     /**
      * Show the form for creating a new resource.
      *

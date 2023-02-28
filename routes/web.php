@@ -271,6 +271,8 @@ Route::group(['prefix' => 'boss', 'middleware' => ['isBoss', 'auth']], function 
     Route::get('home', [BossController::class, 'index'])->name('boss.home');
     Route::post('accepted', [BossController::class, 'accepted'])->name('boss.accepted');
     Route::get('report', [BossController::class, 'report'])->name('boss.report');
+    Route::get('incomereport', [BossController::class, 'incomereport'])->name('boss.incomereport');
+    Route::get('showincome', [BossController::class, 'showincome'])->name('boss.showincome');
     Route::get('selectallcost/{id}', [CasherController::class, 'selectallcost'])->name('casher.selectallcost');
     Route::get('selectreport/{type}/{id}/{b}/{e}', [CasherController::class, 'selectreport'])->name('casher.selectallcost');
     

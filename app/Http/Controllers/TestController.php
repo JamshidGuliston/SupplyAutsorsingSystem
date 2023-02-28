@@ -1020,7 +1020,7 @@ class TestController extends Controller
 					->where('product_name_id', $pid)
 					->get();
 				$kin = Kindgarden::where('id', $kid)->first();
-				if($kin->region_id != 1 and $mod->count() == 0 and $value >= 0){
+				if($mod->count() == 0 and $value >= 0){
 					plus_multi_storage::create([
 						'day_id' => $firstday->id,
 						'shop_id' => -1,
