@@ -1632,6 +1632,7 @@ class TechnologController extends Controller
         }
         // dd($minusproducts);
         $plusproducts = [];
+        $takedproducts = [];
         foreach($days as $day){
             $plus = plus_multi_storage::where('day_id', $day->id)
                 ->where('kingarden_name_d', $kid)
@@ -1652,10 +1653,10 @@ class TechnologController extends Controller
                     $plusproducts[$row->product_name_id] = 0;
                 }
                 $plusproducts[$row->product_name_id] += $row->product_weight;
+                $takedproducts[$row->product_name_id] = 0;
             }
         }
 
-        $takedproducts = [];
         foreach($days as $day){
             $plus = Take_small_base::where('take_small_bases.kindgarden_id', $kid)
                 ->where('take_groups.day_id', $day->id)
