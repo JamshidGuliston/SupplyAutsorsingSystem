@@ -36,6 +36,7 @@ use App\Models\Product_category;
 use App\Models\Season;
 use App\Models\Shop;
 use App\Models\Size;
+use App\Models\Take_small_base;
 use App\Models\titlemenu_food;
 use App\Models\typeofwork;
 use App\Models\User;
@@ -1654,6 +1655,26 @@ class TechnologController extends Controller
             }
         }
 
+        $takedproducts = [];
+        foreach($days as $day){
+            $plus = Take_small_base::where('take_groups.day_id', $day->id)
+                ->where('Take_small_bases.kingarden_name_d', $kid)
+                // ->join('products', 'Take_small_bases.product_name_id', '=', 'products.id')
+                ->get([
+                    'Take_small_bases.id',
+                    'Take_small_bases.product_id',
+                    'take_groups.day_id',
+                    'Take_small_bases.kingarden_id',
+                    'Take_small_bases.weight',
+                ]);
+            foreach($plus as $row){
+                if(!isset($takedproducts[$row->product_name_id])){
+                    $takedproducts[$row->product_id] = 0;
+                }
+                $takedproducts[$row->product_name_id] += $row->product_weight;
+            }
+        }
+
         $products = Product::join('sizes', 'sizes.id', '=', 'products.size_name_id')
                 ->get(['products.id', 'products.product_name', 'sizes.size_name']);
         
@@ -1665,6 +1686,7 @@ class TechnologController extends Controller
                         <th scope='col'>Maxsulot</th>
                         <th scope='col'>Кирим</th>
                         <th scope='col'>Чиқим</th>
+                        <th scope='col'>Чиқити</th>
                         <th scope='col'>Қолдиқ</th>
                     </tr>
                 </thead>
@@ -1687,7 +1709,15 @@ class TechnologController extends Controller
                             else
                                 $countout = 0;
                             $html = $html.$countout."</td>
-                            <td>". sprintf('%0.1f', $countin - $countout) .' '.$product->size_name."</td>
+                            <td>";
+                            if(isset($takedproducts[$product->id])){ 
+                                $counttrash = $takedproducts[$product->id];
+                            }
+                            else
+                                $counttrash = 0;
+                            $html = $html.$counttrash."</td>
+                            
+                            <td>". sprintf('%0.1f', $countin - $countout - $counttrash) .' '.$product->size_name."</td>
                         </tr>";
                     }
                 }
