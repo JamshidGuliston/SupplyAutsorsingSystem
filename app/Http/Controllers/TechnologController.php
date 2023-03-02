@@ -1658,13 +1658,13 @@ class TechnologController extends Controller
         $takedproducts = [];
         foreach($days as $day){
             $plus = Take_small_base::where('take_groups.day_id', $day->id)
-                ->where('Take_small_bases.kingarden_id', $kid)
+                ->where('Take_small_bases.kindgarden_id', $kid)
                 // ->join('products', 'Take_small_bases.product_name_id', '=', 'products.id')
                 ->get([
                     'Take_small_bases.id',
                     'Take_small_bases.product_id',
                     'take_groups.day_id',
-                    'Take_small_bases.kingarden_id',
+                    'Take_small_bases.kindgarden_id',
                     'Take_small_bases.weight',
                 ]);
             foreach($plus as $row){
