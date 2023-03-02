@@ -1711,6 +1711,7 @@ class TechnologController extends Controller
                                 $countout = 0;
                             $html = $html.$countout."</td>
                             <td>";
+                            
                             if(isset($takedproducts[$product->id])){ 
                                 $counttrash = $takedproducts[$product->id];
                             }
