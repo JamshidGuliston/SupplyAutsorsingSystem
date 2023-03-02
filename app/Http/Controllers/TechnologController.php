@@ -1657,22 +1657,22 @@ class TechnologController extends Controller
 
         $takedproducts = [];
         foreach($days as $day){
-            $plus = Take_small_base::where('take_groups.day_id', $day->id)
-                ->where('Take_small_bases.kindgarden_id', $kid)
-                ->join('take_groups', 'take_groups.id', '=', 'Take_small_bases.takegroup_id')
+            $plus = Take_small_base::where('take_small_bases.kindgarden_id', $kid)
+                ->where('take_groups.day_id', $day->id)
+                ->join('take_groups', 'take_groups.id', '=', 'take_small_bases.takegroup_id')
                 // ->join('products', 'Take_small_bases.product_name_id', '=', 'products.id')
                 ->get([
-                    'Take_small_bases.id',
-                    'Take_small_bases.product_id',
+                    'take_small_bases.id',
+                    'take_small_bases.product_id',
                     'take_groups.day_id',
-                    'Take_small_bases.kindgarden_id',
-                    'Take_small_bases.weight',
+                    'take_small_bases.kindgarden_id',
+                    'take_small_bases.weight',
                 ]);
             foreach($plus as $row){
-                if(!isset($takedproducts[$row->product_name_id])){
+                if(!isset($takedproducts[$row->product_id])){
                     $takedproducts[$row->product_id] = 0;
                 }
-                $takedproducts[$row->product_name_id] += $row->product_weight;
+                $takedproducts[$row->product_id] += $row->weight;
             }
         }
         dd($takedproducts);
