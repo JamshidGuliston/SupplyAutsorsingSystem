@@ -1675,6 +1675,7 @@ class TechnologController extends Controller
                 $takedproducts[$row->product_name_id] += $row->product_weight;
             }
         }
+        dd($takedproducts);
 
         $products = Product::join('sizes', 'sizes.id', '=', 'products.size_name_id')
                 ->get(['products.id', 'products.product_name', 'sizes.size_name']);
@@ -1711,7 +1712,7 @@ class TechnologController extends Controller
                                 $countout = 0;
                             $html = $html.$countout."</td>
                             <td>";
-                            
+
                             if(isset($takedproducts[$product->id])){ 
                                 $counttrash = $takedproducts[$product->id];
                             }
