@@ -41,8 +41,22 @@ class BossController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
+        if($request->yearid == 0){
+            $yearid = Year::where('year_active', 1)->first()->id;
+        }
+        $year = Year::where('id', $yearid)->first();
+        $months = Month::where('yearid', $yearid)->get();
+        
+        $il = $request->monthid;
+        if($request->monthid == 0){
+            $il = Month::where('month_active', 1)->where('yearid', $yearid)->first()->id;
+            if($il == null){
+                $il = Month::where('yearid', $yearid)->first()->id;
+            }
+        }
+
         $cashes = cashes::join('all_costs', 'all_costs.id', '=', 'cashes.allcost_id')
             ->select('cashes.id as cashid', 'cashes.description', 'cashes.summ', 'months.month_name', 'years.year_name', 'all_costs.allcost_name', 'days.day_number', 'cashes.status')
             ->join('days', 'days.id', '=', 'cashes.day_id')
@@ -52,6 +66,19 @@ class BossController extends Controller
             ->paginate(50);
         
         return view('boss.home', compact('cashes'));
+    }
+
+    public function cashe()
+    {
+        $cashes = cashes::join('all_costs', 'all_costs.id', '=', 'cashes.allcost_id')
+            ->select('cashes.id as cashid', 'cashes.description', 'cashes.summ', 'months.month_name', 'years.year_name', 'all_costs.allcost_name', 'days.day_number', 'cashes.status')
+            ->join('days', 'days.id', '=', 'cashes.day_id')
+            ->join('years', 'years.id', '=', 'days.year_id')
+            ->join('months', 'months.id', '=', 'days.month_id')
+            ->orderby('cashes.id', 'DESC')
+            ->paginate(50);
+        
+        return view('boss.cashe', compact('cashes'));
     }
 
     

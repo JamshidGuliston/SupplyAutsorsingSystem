@@ -1704,7 +1704,8 @@ class TechnologController extends Controller
                             }
                             else
                                 $countin = 0;
-                                $html = $html.$countin."</td>
+                                $html = $html.$countin. + "<input type='text' style='width: 50px; font-size: 12px' name='prodadd[". $product->id ."]'>
+                                </td>
                             <td>";
                             if(isset($minusproducts[$product->id])){ 
                                 $countout = $minusproducts[$product->id];
@@ -1748,17 +1749,17 @@ class TechnologController extends Controller
             }
         }
 
-        foreach($request->prodminus as $key => $value){
-            if($value != null){
-                minus_multi_storage::create([
-                    'day_id' => $request->dayid,
-                    'kingarden_name_id' => $request->kingarid,
-                    'kingar_menu_id' => -1,
-                    'product_name_id' => $key,
-                    'product_weight' => $value,
-                ]);
-            }
-        }
+        // foreach($request->prodminus as $key => $value){
+        //     if($value != null){
+        //         minus_multi_storage::create([
+        //             'day_id' => $request->dayid,
+        //             'kingarden_name_id' => $request->kingarid,
+        //             'kingar_menu_id' => -1,
+        //             'product_name_id' => $key,
+        //             'product_weight' => $value,
+        //         ]);
+        //     }
+        // }
 
         return redirect()->route('technolog.home');
     }

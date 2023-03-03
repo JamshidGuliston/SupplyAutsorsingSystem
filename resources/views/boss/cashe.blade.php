@@ -8,7 +8,7 @@
 <div class="modal editesmodal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModal" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
-            <form action="#" method="post">
+            <form action="{{route('boss.accepted')}}" method="post">
                 @csrf
                 <div class="modal-header bg-warning">
                     <h5 class="modal-title" id="exampleModalLabel">Qabul qilish</h5>
@@ -25,22 +25,6 @@
         </div>
     </div>
 </div>
-
-<div class="date">
-    <div class = "year first-text fw-bold">
-        {{ $year->year_name }}
-    </div>
-    <div class="month">
-        @if($year->id != 1)
-            <a href="/storage/home/{{ $year->id-1 }}/0" class="month__item">{{ $year->year_name - 1 }}</a>
-        @endif
-        @foreach($months as $month)
-            <a href="/storage/home/{{ $year->id }}/{{ $month->id }}" class="month__item {{ ( $month->id == $id) ? 'active first-text' : 'second-text' }} fw-bold">{{ $month->month_name }}</a>
-        @endforeach
-        <a href="/storage/home/{{ $year->id+1 }}/0" class="month__item">{{ $year->year_name + 1 }}</a>
-    </div>
-</div>
-
 <div class="container-fluid px-4">
     <hr>
     <table class="table table-light py-4 px-4">

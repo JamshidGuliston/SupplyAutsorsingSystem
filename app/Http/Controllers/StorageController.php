@@ -321,6 +321,7 @@ class StorageController extends Controller
         }
         // dd($minusproducts);
         $plusproducts = [];
+        $takedproducts = [];
         foreach($days as $day){
             $plus = plus_multi_storage::where('day_id', $day->id)
                 ->where('kingarden_name_d', $kid)
@@ -341,12 +342,33 @@ class StorageController extends Controller
                     $plusproducts[$row->product_name_id] = 0;
                 }
                 $plusproducts[$row->product_name_id] += $row->product_weight;
+                $takedproducts[$row->product_name_id] = 0;
             }
         }
 
         $products = Product::join('sizes', 'sizes.id', '=', 'products.size_name_id')
                 ->get(['products.id', 'products.product_name', 'sizes.size_name']);
         
+        foreach($days as $day){
+            $plus = Take_small_base::where('take_small_bases.kindgarden_id', $kid)
+                ->where('take_groups.day_id', $day->id)
+                ->join('take_groups', 'take_groups.id', '=', 'take_small_bases.takegroup_id')
+                // ->join('products', 'Take_small_bases.product_name_id', '=', 'products.id')
+                ->get([
+                    'take_small_bases.id',
+                    'take_small_bases.product_id',
+                    'take_groups.day_id',
+                    'take_small_bases.kindgarden_id',
+                    'take_small_bases.weight',
+                ]);
+            foreach($plus as $row){
+                if(!isset($takedproducts[$row->product_id])){
+                    $takedproducts[$row->product_id] = 0;
+                }
+                $takedproducts[$row->product_id] += $row->weight;
+            }
+        }
+
         $mods = [];
         foreach($products as $product){
             if(isset($minusproducts[$product->id]) or isset($plusproducts[$product->id])){
@@ -361,8 +383,14 @@ class StorageController extends Controller
                 }
                 else
                     $countout = 0;
+                
+                if(isset($takedproducts[$product->id])){ 
+                    $counttrash = $takedproducts[$product->id];
+                }
+                else
+                    $counttrash = 0;
 
-                $mods[$product->id] = $countin - $countout;
+                $mods[$product->id] = $countin - $countout - $counttrash;
             }
         }
         return $mods;
