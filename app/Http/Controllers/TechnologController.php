@@ -1704,7 +1704,7 @@ class TechnologController extends Controller
                             }
                             else
                                 $countin = 0;
-                                $html = $html.$countin. + "<input type='text' style='width: 50px; font-size: 12px' name='prodadd[". $product->id ."]'>
+                                $html = $html.$countin." + <input type='text' style='width: 50px; font-size: 12px' name='prodadd[". $product->id ."]'>
                                 </td>
                             <td>";
                             if(isset($minusproducts[$product->id])){ 
