@@ -81,12 +81,14 @@ class BossController extends Controller
         $totalproducts = [];
         foreach($nochs as $noch){
             // dd($noch);
-            $foundmenu = $bymenus->where('day_id', $noch->day_id)->where('title_menu_id', $noch->kingar_menu_id);
+            $foundmenu = $bymenus->where('day_id', $noch->day_id)
+                        ->where('title_menu_id', $noch->kingar_menu_id)
+                        ->where('age_range_id', $noch->king_age_name_id);
             foreach($foundmenu as $menu){
                   if(!isset($totalproducts[$noch->kingar_name_id][$menu->product_name_id])){
                     $totalproducts[$noch->kingar_name_id][$menu->product_name_id]['weight'] = 0;
                   }               
-                  $totalproducts[$noch->kingar_name_id][$menu->product_name_id]['weight'] += $menu->weight * $noch->kingar_children_number / $products->find($menu->product_name_id)->div;
+                  $totalproducts[$noch->kingar_name_id][$menu->product_name_id]['weight'] += ($menu->weight * $noch->kingar_children_number) / $products->find($menu->product_name_id)->div;
             }
 
         }
