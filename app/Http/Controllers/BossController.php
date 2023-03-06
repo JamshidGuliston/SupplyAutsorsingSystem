@@ -12,6 +12,7 @@ use App\Models\Day;
 use App\Models\Kindgarden;
 use App\Models\Month;
 use App\Models\Number_children;
+use App\Models\Product;
 use App\Models\Protsents;
 use App\Models\Region;
 use App\Models\Year;
@@ -75,6 +76,7 @@ class BossController extends Controller
                         ->where('add_groups.day_id', '<=', $days->last()->id)
                         ->join('add_groups', 'add_groups.id', '=', 'add_large_werehouses.add_group_id')
                         ->get();
+        $products = Product::all();
         // dd($avgproducts);
         $totalproducts = [];
         foreach($nochs as $noch){
@@ -84,7 +86,7 @@ class BossController extends Controller
                   if(!isset($totalproducts[$noch->kingar_name_id][$menu->product_name_id])){
                     $totalproducts[$noch->kingar_name_id][$menu->product_name_id]['weight'] = 0;
                   }               
-                  $totalproducts[$noch->kingar_name_id][$menu->product_name_id]['weight'] += $menu->weight;
+                  $totalproducts[$noch->kingar_name_id][$menu->product_name_id]['weight'] += $menu->weight * $noch->kingar_children_number / $products->find($menu->product_name_id)->div;
             }
 
         }
