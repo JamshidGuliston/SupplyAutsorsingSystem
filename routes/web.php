@@ -268,7 +268,7 @@ Route::group(['prefix' => 'casher', 'middleware' => ['isChasher', 'auth']], func
 });
 
 Route::group(['prefix' => 'boss', 'middleware' => ['isBoss', 'auth']], function () {
-    Route::get('home/?yearid=0&monthid=0', [BossController::class, 'index'])->name('boss.home');
+    Route::get('home', [BossController::class, 'index'])->name('boss.home', ['yearid'=>0, 'monthid'=>0]);
     Route::get('cashe', [BossController::class, 'cashe'])->name('boss.cashe');
     Route::post('accepted', [BossController::class, 'accepted'])->name('boss.accepted');
     Route::get('report', [BossController::class, 'report'])->name('boss.report');

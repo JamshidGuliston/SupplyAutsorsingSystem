@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Active_menu;
+use App\Models\Add_large_werehouse;
 use App\Models\Age_range;
 use App\Models\bycosts;
 use App\Models\cashes;
@@ -10,9 +12,11 @@ use App\Models\Day;
 use App\Models\Kindgarden;
 use App\Models\Month;
 use App\Models\Number_children;
+use App\Models\Protsents;
 use App\Models\Region;
 use App\Models\Year;
 use Illuminate\Http\Request;
+use PhpOffice\PhpSpreadsheet\Calculation\Statistical\Averages;
 
 class BossController extends Controller
 {
@@ -56,16 +60,38 @@ class BossController extends Controller
                 $il = Month::where('yearid', $yearid)->first()->id;
             }
         }
+        $id = $il;
+        $days = $this->days_of_month($id);
+        $prt = Protsents::where('month_id', $id)->get()->toarray();
+        $nochs = Number_children::where('day_id', '>=', $days->first()->id)
+                    ->join('kindgardens', 'kindgardens.id', '=', 'number_childrens.kingar_name_id')
+                    ->where('day_id', '<=', $days->last()->id)
+                    ->get();
+        $bymenus = Active_menu::where('day_id', '>=', $days->first()->id)
+                            ->where('day_id', '<=', $days->last()->id)->get();
+        $avgproducts = Add_large_werehouse::groupBy('product_id')
+                        ->selectRaw('avg(cost) as avgcost, product_id')
+                        ->where('add_groups.day_id', '>=', $days->first()->id)
+                        ->where('add_groups.day_id', '<=', $days->last()->id)
+                        ->join('add_groups', 'add_groups.id', '=', 'add_large_werehouses.add_group_id')
+                        ->get();
+        // dd($avgproducts);
+        $totalproducts = [];
+        foreach($nochs as $noch){
+            // dd($noch);
+            $foundmenu = $bymenus->where('day_id', $noch->day_id)->where('title_menu_id', $noch->kingar_menu_id);
+            foreach($foundmenu as $menu){
+                  if(!isset($totalproducts[$noch->kingar_name_id][$menu->product_name_id])){
+                    $totalproducts[$noch->kingar_name_id][$menu->product_name_id]['weight'] = 0;
+                  }               
+                  $totalproducts[$noch->kingar_name_id][$menu->product_name_id]['weight'] += $menu->weight;
+            }
 
-        $cashes = cashes::join('all_costs', 'all_costs.id', '=', 'cashes.allcost_id')
-            ->select('cashes.id as cashid', 'cashes.description', 'cashes.summ', 'months.month_name', 'years.year_name', 'all_costs.allcost_name', 'days.day_number', 'cashes.status')
-            ->join('days', 'days.id', '=', 'cashes.day_id')
-            ->join('years', 'years.id', '=', 'days.year_id')
-            ->join('months', 'months.id', '=', 'days.month_id')
-            ->orderby('cashes.id', 'DESC')
-            ->paginate(50);
+        }
+        dd($totalproducts);
+
         
-        return view('boss.home', compact('cashes'));
+        return view('boss.home', compact('year', 'months', 'id'));
     }
 
     public function cashe()
