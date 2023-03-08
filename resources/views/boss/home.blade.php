@@ -34,12 +34,12 @@
     </div>
     <div class="month">
         @if($year->id != 1)
-            <a href="/storage/home/{{ $year->id-1 }}/0" class="month__item">{{ $year->year_name - 1 }}</a>
+            <a href="{{ route('boss.home', ['yearid'=> $year->id, 'monthid'=> 0]) }}" class="month__item">{{ $year->year_name - 1 }}</a>
         @endif
         @foreach($months as $month)
-            <a href="/storage/home/{{ $year->id }}/{{ $month->id }}" class="month__item {{ ( $month->id == $id) ? 'active first-text' : 'second-text' }} fw-bold">{{ $month->month_name }}</a>
+            <a href="{{ route('boss.home', ['yearid'=> $year->id, 'monthid'=> $month->id]) }}" class="month__item {{ ( $month->id == $id) ? 'active first-text' : 'second-text' }} fw-bold">{{ $month->month_name }}</a>
         @endforeach
-        <a href="/storage/home/{{ $year->id+1 }}/0" class="month__item">{{ $year->year_name + 1 }}</a>
+        <a href="{{ route('boss.home', ['yearid'=> $year->id, 'monthid'=> 0]) }}" class="month__item">{{ $year->year_name + 1 }}</a>
     </div>
 </div>
 
@@ -48,13 +48,11 @@
     <table class="table table-light py-4 px-4">
         <thead>
             <tr>
-                <th scope="col">ID</th>
-                <th scope="col">Izoh</th>
-                <th scope="col">Turi</th>
-                <th scope="col">Sana</th>
+            @foreach($regions as $region)
+                <th colspan="6">{{ $region->region_name }}</th>
+            @endforeach
+                <th scope="col">Chiqidi</th>
                 <th scope="col">So'm</th>
-                <th scope="col">Holati</th>
-                <th scope="col">...</th>
             </tr>
         </thead>
         

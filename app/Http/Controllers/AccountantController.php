@@ -76,7 +76,7 @@ class AccountantController extends Controller
             ->join('months', 'months.id', '=', 'days.month_id')
             ->join('years', 'years.id', '=', 'days.year_id')
             ->get(['days.id', 'days.day_number', 'months.month_name', 'years.year_name']);
-        $costs = bycosts::where('day_id', '>', $days[0]['id'])
+        $costs = bycosts::where('day_id', '>=', $days[0]['id'])
                 ->where('region_name_id', $id)
                 ->join('products', 'bycosts.praduct_name_id', '=', 'products.id')
                 ->get(['bycosts.id', 'bycosts.praduct_name_id', 'bycosts.day_id', 'bycosts.price_cost', 'products.product_name']);

@@ -77,7 +77,7 @@ class BossController extends Controller
                         ->join('add_groups', 'add_groups.id', '=', 'add_large_werehouses.add_group_id')
                         ->get();
         $products = Product::all();
-        // dd($avgproducts);
+        // dd();
         $totalproducts = [];
         foreach($nochs as $noch){
             // dd($noch);
@@ -92,10 +92,28 @@ class BossController extends Controller
             }
 
         }
-        dd($totalproducts);
 
-        
-        return view('boss.home', compact('year', 'months', 'id'));
+        $sumbyregion = [];
+        foreach($totalproducts as $key => $kind){
+            $k = Kindgarden::where('id', $key)->first();
+            // print_r($k);
+            $costs = bycosts::where('day_id', '>=', $days->first()->id)
+                ->where('day_id', '<=', $days->last()->id)
+                ->where('region_name_id', $k->region_id)
+                ->orderBy('day_id', 'DESC')->get();
+            
+            foreach($kind as $pkey => $row){
+                if(!isset($sumbyregion[$k->region_id])){
+                    $sumbyregion[$k->region_id]['summ_sale'] = 0;
+                    $sumbyregion[$k->region_id]['summ_by'] = 0;
+                }
+                $sumbyregion[$k->region_id]['summ_sale'] += $row['weight'] * isset($costs->where('praduct_name_id', $pkey)->first()->price_cost)? $costs->where('praduct_name_id', $pkey)->first()->price_cost : 0;
+                $sumbyregion[$k->region_id]['summ_by'] += $row['weight'] * isset($avgproducts->where('product_id', $pkey)->first()->avgcost) ? $avgproducts->where('product_id', $pkey)->first()->avgcost : 0;
+            }
+        }
+
+        $regions = Region::all();
+        return view('boss.home', compact('year', 'months', 'id', 'prt', 'sumbyregion', 'regions'));
     }
 
     public function cashe()
