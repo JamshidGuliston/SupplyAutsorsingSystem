@@ -46,15 +46,35 @@
 <div class="container-fluid px-4">
     <hr>
     <table class="table table-light py-4 px-4">
-        <thead>
-            <tr>
+        <tbody>
             @foreach($regions as $region)
-                <th colspan="6">{{ $region->region_name }}</th>
-            @endforeach
-                <th scope="col">Chiqidi</th>
-                <th scope="col">So'm</th>
+            <tr><td colspan="6" style="background-color:#5c605e63"><b>{{ $region->region_name }}</b></td></tr>
+            <tr>
+                <td>Olindi</td>
+                <td>Sotildi</td>
+                <td>Farqi</td>
+                <td>Ustama {{$prt->where('region_id', 1)->first()->raise}} %</td>
+                <td>NDS {{$prt->where('region_id', 1)->first()->nds}} %</td>
+                <td>Jami</td>
             </tr>
-        </thead>
+            <tr>
+            <?php 
+                $sumbyregion[$region->id]['summ_by'] = isset($sumbyregion[$region->id]['summ_by']) ? $sumbyregion[$region->id]['summ_by'] : 0;
+                $sumbyregion[$region->id]['summ_sale'] = isset($sumbyregion[$region->id]['summ_sale']) ? $sumbyregion[$region->id]['summ_sale'] : 0;
+            ?>
+                <td>{{ $sumbyregion[$region->id]['summ_by'] }}</td>
+                <td>{{ $sumbyregion[$region->id]['summ_sale'] }}</td>
+                <td>{{ $sumbyregion[$region->id]['summ_sale'] - $sumbyregion[$region->id]['summ_by'] }}</td>
+                <td>{{ ($sumbyregion[$region->id]['summ_sale'] - $sumbyregion[$region->id]['summ_by'])/100 * $prt->where('region_id', 1)->first()->raise }}</td>
+                <td></td>
+                <td>Jami</td>
+            </tr>
+            @endforeach
+            <tr>
+                <td colspan="5">Jami</td>
+                <td>...</td>
+            </tr>
+        </tbody>
         
     </table>
     <br>  

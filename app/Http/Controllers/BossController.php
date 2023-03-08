@@ -63,7 +63,7 @@ class BossController extends Controller
         }
         $id = $il;
         $days = $this->days_of_month($id);
-        $prt = Protsents::where('month_id', $id)->get()->toarray();
+        $prt = Protsents::where('month_id', $id)->get();
         $nochs = Number_children::where('day_id', '>=', $days->first()->id)
                     ->join('kindgardens', 'kindgardens.id', '=', 'number_childrens.kingar_name_id')
                     ->where('day_id', '<=', $days->last()->id)
@@ -111,7 +111,7 @@ class BossController extends Controller
                 $sumbyregion[$k->region_id]['summ_by'] += $row['weight'] * isset($avgproducts->where('product_id', $pkey)->first()->avgcost) ? $avgproducts->where('product_id', $pkey)->first()->avgcost : 0;
             }
         }
-
+        // dd($sumbyregion);
         $regions = Region::all();
         return view('boss.home', compact('year', 'months', 'id', 'prt', 'sumbyregion', 'regions'));
     }
