@@ -1077,5 +1077,18 @@ class StorageController extends Controller
 
         return redirect()->route('storage.intakingsmallbase', ['id' => $request->grodid, 'kid' => $request->kind_id]);
     }
+
+    public function changesome(){
+        while(1){
+            $pp = plus_multi_storage::where('order_product_id', '>=', 3872)->get();
+            foreach($pp as $row){
+                if($row->kingarden_name_d != 1 and $row->kingarden_name_d != 24){
+                    $row->update(['day_id' => 296]);
+                }
+            }
+            break;
+        }
+        dd("OK");
+    }
     
 }

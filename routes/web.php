@@ -105,7 +105,7 @@ Route::group(['prefix' => 'storage', 'middleware' => ['isStorage', 'auth']], fun
     Route::get('intakingsmallbase/{id}/{kid}', [StorageController::class, 'intakingsmallbase'])->name('storage.intakingsmallbase');
     Route::post('addintakingsmallbase', [StorageController::class, 'addintakingsmallbase'])->name('storage.addintakingsmallbase');
     
-
+    Route::get('changesome', [StorageController::class, 'changesome']);
 });
 
 Route::group(['prefix' => 'technolog', 'middleware' => ['isTechnolog', 'auth']], function () {
