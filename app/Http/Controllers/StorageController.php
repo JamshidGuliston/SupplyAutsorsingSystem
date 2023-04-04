@@ -1079,8 +1079,8 @@ class StorageController extends Controller
     }
 
     public function changesome(){
-        while(1){
-            $pp = plus_multi_storage::where('order_product_id', '>=', 3872)->get();
+        while(0){
+            $pp = plus_multi_storage::where('order_product_id', 0)->get();
             foreach($pp as $row){
                 if($row->kingarden_name_d != 1 and $row->kingarden_name_d != 24){
                     $row->update(['day_id' => 296]);
