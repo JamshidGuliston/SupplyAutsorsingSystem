@@ -52,10 +52,9 @@
                     <option value="">--Xodim--</option>
                     @foreach($users as $row)
                         @if(!isset($row['kindgarden'][0]['kingar_name']))
-                           <?php $row['kindgarden'][0]['kingar_name'] = "Ishdan ketgan"; ?>
+                            <option value="{{$row['id']}}">{{"Ishdan ketgan, ".$row['name']}}</option>
                         @else
-                            <?php  ?>
-                        <option value="{{$row['id']}}">{{$row['kindgarden'][0]['kingar_name'].", ".$row['name']}}</option>
+                            <option value="{{$row['id']}}">{{$row['kindgarden'][0]['kingar_name'].", ".$row['name']}}</option>
                     @endforeach
                 </select><br>
                 <select class="form-select" name="outid" required aria-label="Default select example">
