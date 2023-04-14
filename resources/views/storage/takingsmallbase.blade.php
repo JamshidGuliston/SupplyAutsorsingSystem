@@ -55,6 +55,7 @@
                             <option value="{{$row['id']}}">{{"Ishdan ketgan, ".$row['name']}}</option>
                         @else
                             <option value="{{$row['id']}}">{{$row['kindgarden'][0]['kingar_name'].", ".$row['name']}}</option>
+                        @endif
                     @endforeach
                 </select><br>
                 <select class="form-select" name="outid" required aria-label="Default select example">
