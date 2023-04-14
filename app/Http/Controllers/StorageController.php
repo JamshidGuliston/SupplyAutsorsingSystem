@@ -1017,7 +1017,7 @@ class StorageController extends Controller
         $days = $this->days();
         $outtypes = Outside_product::all();
         $users = User::where('users.role_id', '=', 6)->with('kindgarden')->get();
-        dd($users);
+        dd($users[34]);
         return view('storage.takingsmallbase', compact('res', 'days', 'users', 'outtypes'));
     }
 
