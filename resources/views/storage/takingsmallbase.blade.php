@@ -51,9 +51,10 @@
                 <select class="form-select" name="user_id" required>
                     <option value="">--Xodim--</option>
                     @foreach($users as $row)
-                        @if(!isset($row['kindgarden'][0]['kingar_name'])){
+                        @if(!isset($row['kindgarden'][0]['kingar_name']))
                            <?php $row['kindgarden'][0]['kingar_name'] = "Ishdan ketgan"; ?>
-                        }
+                        @else
+                            <?php  ?>
                         <option value="{{$row['id']}}">{{$row['kindgarden'][0]['kingar_name'].", ".$row['name']}}</option>
                     @endforeach
                 </select><br>
