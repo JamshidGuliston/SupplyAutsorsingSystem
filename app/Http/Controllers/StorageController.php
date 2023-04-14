@@ -1019,7 +1019,6 @@ class StorageController extends Controller
         $users = User::where('users.role_id', '=', 6)->with('kindgarden')->get();
         // dd($users);
         return view('storage.takingsmallbase', compact('res', 'days', 'users', 'outtypes'));
-       
     }
 
     public function addtakingsmallbase(Request $request){

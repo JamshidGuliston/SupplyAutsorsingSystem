@@ -51,6 +51,9 @@
                 <select class="form-select" name="user_id" required>
                     <option value="">--Xodim--</option>
                     @foreach($users as $row)
+                        if(empty($row['kindgarden'][0]['kingar_name'])){
+                            $row['kindgarden'][0]['kingar_name'] = "Ishdan ketgan";
+                        }
                         <option value="{{$row['id']}}">{{$row['kindgarden'][0]['kingar_name'].", ".$row['name']}}</option>
                     @endforeach
                 </select><br>
