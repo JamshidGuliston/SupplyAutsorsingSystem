@@ -78,7 +78,7 @@
             <div class="col-md-12">
                 <div class="table" id="table_with_data">
 					<div class="col-md-12">
-                        <center>_______ йил _____________ ойида мактабгача таълим муассасаларида тарбияланувчиларнинг
+                        <center>{{ $date->year_name }} йил {{ $date->month_name }} ойида мактабгача таълим муассасаларида тарбияланувчиларнинг
  озиқ-овқат маҳсулотлари билан таъминланиши ҳақида маълумот</center>
                     	<br>
 						<center>{{ $kindgar->kingar_name." / ".$age->age_name }}</center>

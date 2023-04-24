@@ -854,7 +854,6 @@ class AccountantController extends Controller
         $age = Age_range::where('id', $ageid)->first();
         $days = Day::where('id', '>=', $start)->where('id', '<=', $end)->get();
         $date = $this->fullydate($start);
-        dd($date);
         foreach($days as $day){
             $join = Number_children::where('number_childrens.day_id', $day->id)
                     ->where('kingar_name_id', $id)
@@ -907,7 +906,7 @@ class AccountantController extends Controller
             }
         });
         $dompdf = new Dompdf('UTF-8');
-		$html = mb_convert_encoding(view('pdffile.accountant.norm', compact('age', 'days', 'nakproducts', 'kindgar')), 'HTML-ENTITIES', 'UTF-8');
+		$html = mb_convert_encoding(view('pdffile.accountant.norm', compact('age', 'date', 'nakproducts', 'kindgar')), 'HTML-ENTITIES', 'UTF-8');
 		$dompdf->loadHtml($html);
 
 		// (Optional) Setup the paper size and orientation
