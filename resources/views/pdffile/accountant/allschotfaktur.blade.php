@@ -85,10 +85,10 @@
 								$mth = $days[0]->month_id % 12;
 							}
 						?>
-                        <center>НАКЛАДНАЯ-СЧЁТ ФАКТУРА № ______</center>
-                        <center>от " ____".<?php printf('%02d', $mth) ?>. <?php printf('%02d', $costs[0]->year_name) ?>г</center>
-                        <center>К товарно-отгрузчным документом №____ от" ____ ".<?php printf('%02d', $mth)  ?>. <?php printf('%02d', $costs[0]->year_name) ?> года</center><br>
-						<center>{{ $kindgar->kingar_name." / " }}</center>
+                        <center>Ҳисоб-фактура № ______</center>
+                        <center> " ____".<?php printf('%02d', $mth) ?>. <?php printf('%02d', $costs[0]->year_name) ?>й</center>
+                        <center>Шартнома хужжатлари №____ " ____ ".<?php printf('%02d', $mth)  ?>. <?php printf('%02d', $costs[0]->year_name) ?> йил</center><br>
+						<center>"Етказиб берувчи: "<strong>NISHON INVEST MCHJ </strong>Буюртмачи: <strong>{{ $kindgar->kingar_name }}</strong></center>
 					</div>
                 </div>
                 <table style="width:100%; table-layout: fixed;">
