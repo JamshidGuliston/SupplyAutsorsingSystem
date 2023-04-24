@@ -88,7 +88,7 @@
                         <center>Ҳисоб-фактура № ______</center>
                         <center> " ____".<?php printf('%02d', $mth) ?>. <?php printf('%02d', $costs[0]->year_name) ?>й</center>
                         <center>Шартнома хужжатлари №____ " ____ ".<?php printf('%02d', $mth)  ?>. <?php printf('%02d', $costs[0]->year_name) ?> йил</center><br>
-						<center><pre>Етказиб берувчи: <strong>NISHON INVEST MCHJ </strong>        Буюртмачи: <strong>{{ $kindgar->kingar_name }}</strong></pre></center>
+						<center>Етказиб берувчи: <strong>NISHON INVEST MCHJ </strong><pre>         </pre>Буюртмачи: <strong>{{ $kindgar->kingar_name }}</strong></center>
 					</div>
                 </div>
                 <table style="width:100%; table-layout: fixed;">
