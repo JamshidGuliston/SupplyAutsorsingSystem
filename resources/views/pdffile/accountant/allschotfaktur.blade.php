@@ -102,12 +102,12 @@
                     <thead>
                         <tr>
                             <th scope="col">Махсулот номи</th>
-                            <th>Ед.м</th>
-                            <th>калич</th>
-							<th>цена</th>
-							<th>Сумма</th>
+                            <th>ўл.бир</th>
+                            <th>сони</th>
+							<th>Нархи</th>
+							<th>Суммаси</th>
 							<th>Устама {{ $ust }}%</th>
-							<th>Сумма</th>
+							<th>Етказиб бериш суммаси</th>
 							<th>ҚҚС {{ $nds }}%</th>
 							<th>Сумма жами</th>
                         </tr>
@@ -150,10 +150,6 @@
 						<td><?php printf("%01.3f", ($costsumm + ($costsumm * $ust)/100)*$nds/100); ?></td>
 						<td><?php printf("%01.3f", $costsumm + ($costsumm * $ust)/100 + ($costsumm + ($costsumm * $ust)/100)*$nds/100); ?></td>
                     </tr>
-                    <tr>
-                        <td>Всего к оплата</td>
-                        <td colspan="8"></td>
-                    </tr>
                     </tbody>
                 </table>
                 <div class="row">
@@ -161,7 +157,7 @@
 						<img src="images/qrmanzil.jpg" alt="QR-code" width="140">
 					</div>
 					<div class="column">
-						<h4>Получил________________</h4>
+						<h4>Олувчи________________</h4>
 					</div>
                 </div>
             </div>
