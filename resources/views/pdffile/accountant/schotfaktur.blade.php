@@ -85,7 +85,7 @@
 								$mth = $days[0]->month_id % 12;
 							}
 						?>
-                        <center>Ҳисоб-фактура № ______</center>
+                        <center>Ҳисоб-фактура № <?php printf('%02d', $costs[0]->year_name) ?>-<?php printf('%02d', $mth) ?>/{{ $kindgar->id }}</center>
                         <center> " ____".<?php printf('%02d', $mth) ?>. <?php printf('%02d', $costs[0]->year_name) ?>й</center>
                         <center>Шартнома хужжатлари №____ " ____ ".<?php printf('%02d', $mth)  ?>. <?php printf('%02d', $costs[0]->year_name) ?> йил</center><br>
 						<div class="row">
