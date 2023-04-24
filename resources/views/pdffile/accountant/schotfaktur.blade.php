@@ -85,22 +85,29 @@
 								$mth = $days[0]->month_id % 12;
 							}
 						?>
-                        <center>НАКЛАДНАЯ-СЧЁТ ФАКТУРА № ______</center>
-                        <center>от " ____".<?php printf('%02d', $mth) ?>. <?php printf('%02d', $costs[0]->year_name) ?>г</center>
-                        <center>К товарно-отгрузчным документом №____ от" ____ ".<?php printf('%02d', $mth) ?>. <?php printf('%02d', $costs[0]->year_name) ?> года</center><br>
-						<center>Поставщик:МЧЖ Нишон Инвест / {{ $kindgar->kingar_name." / ".$age->age_name }}</center>
+                        <center>Ҳисоб-фактура № ______</center>
+                        <center> " ____".<?php printf('%02d', $mth) ?>. <?php printf('%02d', $costs[0]->year_name) ?>й</center>
+                        <center>Шартнома хужжатлари №____ " ____ ".<?php printf('%02d', $mth)  ?>. <?php printf('%02d', $costs[0]->year_name) ?> йил</center><br>
+						<div class="row">
+							<div class="column">
+								Етказиб берувчи: <strong>NISHON INVEST MCHJ </strong>
+							</div>
+							<div class="column">
+								Буюртмачи: <strong>{{ $kindgar->kingar_name }}</strong>
+							</div>
+						</div>
 					</div>
                 </div>
                 <table style="table-layout: fixed;">
                     <thead>
                         <tr>
-                            <th scope="col">Махсулот номи</th>
-                            <th>Ед.м</th>
-                            <th>калич</th>
-							<th>цена</th>
-							<th>Сумма</th>
+							<th scope="col">Махсулот номи</th>
+                            <th>Ўл.бир</th>
+                            <th>Сони</th>
+							<th>Нархи</th>
+							<th>Суммаси</th>
 							<th>Устама {{ $ust }}%</th>
-							<th>Сумма</th>
+							<th>Етказиб бериш суммаси</th>
 							<th>ҚҚС {{ $nds }}%</th>
 							<th>Сумма жами</th>
                         </tr>
@@ -149,10 +156,6 @@
 						<td><?php printf("%01.3f", ($costsumm + ($costsumm * $ust)/100)*$nds/100); ?></td>
 						<td><?php printf("%01.3f", $costsumm + ($costsumm * $ust)/100 + ($costsumm + ($costsumm * $ust)/100)*$nds/100); ?></td>
                     </tr>
-                    <tr>
-                        <td>Всего к оплата</td>
-                        <td colspan="8"></td>
-                    </tr>
                     </tbody>
                 </table>
               	<div class="row">
@@ -160,7 +163,7 @@
 						<img src="images/qrmanzil.jpg" alt="QR-code" width="140">
 					</div>
 					<div class="column">
-						<h4>Получил________________</h4>
+						<h4>Олувчи________________</h4>
 					</div>
                 </div>
             </div>
