@@ -976,7 +976,7 @@ class StorageController extends Controller
                     ->join('sizes', 'sizes.id', '=', 'products.size_name_id')
                     ->orderby('take_products.id', 'DESC')
                     ->get();
-        
+        // dd($res);
         $products = Product::all();
         
         return view('storage.intakinglargebase', compact('res', 'products', 'id'));
