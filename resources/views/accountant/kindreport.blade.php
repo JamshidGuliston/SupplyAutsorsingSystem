@@ -177,7 +177,14 @@
                         <select class="form-select" id="costdayid" onchange="changeFunc();" aria-label="Default select example" required>
                             <option value="">Narx sanasi</option>
                             @foreach($costs as $row)
-                                <option value="{{$row['day_id']}}">{{ sprintf("%02d", $row['day_number']).'.'.sprintf("%02d", $row['month_id']).'.'.$row['year_name'] }}</option>
+                            <?php
+                                if($row['month_id'] % 12 == 0){
+                                    $mth = 12;
+                                }else{
+                                    $mth = $row['month_id'] % 12;
+                                }
+                            ?>
+                                <option value="{{$row['day_id']}}">{{ sprintf("%02d", $row['day_number']).'.'.sprintf("%02d", $mth).'.'.$row['year_name'] }}</option>
                             @endforeach
                         </select>
                     </div>
