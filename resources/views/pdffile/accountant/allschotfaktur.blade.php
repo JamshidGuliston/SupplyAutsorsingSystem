@@ -150,13 +150,12 @@
                     </tbody>
                 </table>
                 <div class="row">
-                  <div class="column">
-                    <h4>Руководитель________________________   </h4>
-                    <h4>Главный бухгалтер___________________</h4>
-                  </div>
-                  <div class="column">
-                    <h4>Получил________________</h4>
-                  </div>
+					<div class="column">
+						<img src="images/qrmanzil.jpg" alt="QR-code" width="140">
+					</div>
+					<div class="column">
+						<h4>Получил________________</h4>
+					</div>
                 </div>
             </div>
         </div>

@@ -183,9 +183,6 @@
 					<div class="column">
 						<img src="images/qrmanzil.jpg" alt="QR-code" width="140">
 					</div>
-					<div class="column">
-						<h4>Бош. Хисобчи ____________________</h4>
-					</div>
                 </div>
             </div>
         </div>

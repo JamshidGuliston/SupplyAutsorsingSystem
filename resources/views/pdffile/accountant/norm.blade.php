@@ -57,6 +57,19 @@
 	.page-break {
 		page-break-after: always;
 	}
+	/* Create two equal columns that floats next to each other */
+	.column {
+		float: left;
+		text-align: center;
+		width: 50%;
+	}
+
+	/* Clear floats after the columns */
+	.row:after {
+		content: "";
+		display: table;
+		clear: both;
+	}
 </style>
 </head>
 <body>
@@ -142,9 +155,13 @@
                     </tr>
                     </tbody>
                 </table>
-                <div class="col-md-6">
-                    <p>МЧЖ "НИШОН ИНВЕСТ" директори: _________________   ______________________ </p>
-                    <p>Технолог _______________     __________________</p>
+                <div class="row">
+                    <div class="column">
+						<img src="images/qrmanzil.jpg" alt="QR-code" width="140">
+					</div>
+					<div class="column">
+                    	<p>Технолог _______________     __________________</p>
+					</div>
                 </div>
             </div>
         </div>
