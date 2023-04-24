@@ -97,7 +97,7 @@
                         <tr>
                             <th scope="col" style="width: 7%;">Махсулотлар</th>
                             <th style="width: 10px;">...</th>
-                            <th style="width: 30px; font-size: 7px"><bold>Нарх ҚҚС билан</bold></th>
+                            <th style="width: 30px; font-size: 7px"><bold>Нарх</bold></th>
                             @foreach($days as $day)
 								<th scope="col">{{ $day->day_number; }}</th>
 							@endforeach

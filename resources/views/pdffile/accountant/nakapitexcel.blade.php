@@ -5,7 +5,7 @@
   <tr>
 	<th><b>Махсулотлар</b></th>
 	<th><b>...</b></th>
-	<th><b>Нарх ҚҚС билан</b></th>
+	<th><b>Нарх</b></th>
 	@foreach($days as $day)
 		<th><b>{{ $day->day_number; }}</b></th>
 	@endforeach
