@@ -59,7 +59,7 @@ class AccountantController extends Controller
     }
 
     public function fullydate($id){
-        $day = Day::where('id', $id)->join('months', 'months.id', '=', 'days.month_id')
+        $day = Day::where('days.id', $id)->join('months', 'months.id', '=', 'days.month_id')
         ->join('years', 'years.id', '=', 'days.year_id')
         ->get(['days.id', 'days.day_number', 'months.month_name', 'years.year_name']);
         return $day;
