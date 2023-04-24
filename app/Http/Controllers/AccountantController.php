@@ -727,7 +727,7 @@ class AccountantController extends Controller
         });
 
         $dompdf = new Dompdf('UTF-8');
-		$html = mb_convert_encoding(view('pdffile.accountant.schotfakturworker', compact('days', 'nakproducts', 'costsdays', 'costs', 'kindgar')), 'HTML-ENTITIES', 'UTF-8');
+		$html = mb_convert_encoding(view('pdffile.accountant.schotfakturworker', compact('days', 'ageid', 'nakproducts', 'costsdays', 'costs', 'kindgar')), 'HTML-ENTITIES', 'UTF-8');
 		$dompdf->loadHtml($html);
 
 		$dompdf->setPaper('A4');
