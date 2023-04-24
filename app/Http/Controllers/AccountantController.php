@@ -59,7 +59,7 @@ class AccountantController extends Controller
     }
 
     public function fullydate($id){
-        $day = Day::join('months', 'months.id', '=', 'days.month_id')
+        $day = Day::where('id', $id)->join('months', 'months.id', '=', 'days.month_id')
         ->join('years', 'years.id', '=', 'days.year_id')
         ->get(['days.id', 'days.day_number', 'months.month_name', 'years.year_name']);
         return $day;
@@ -853,7 +853,7 @@ class AccountantController extends Controller
         $nakproducts = [];
         $age = Age_range::where('id', $ageid)->first();
         $days = Day::where('id', '>=', $start)->where('id', '<=', $end)->get();
-        $date = $this->fullydate($days[0]->id);
+        $date = $this->fullydate($start);
         dd($date);
         foreach($days as $day){
             $join = Number_children::where('number_childrens.day_id', $day->id)
