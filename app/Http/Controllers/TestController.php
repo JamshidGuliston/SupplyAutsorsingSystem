@@ -805,11 +805,11 @@ class TestController extends Controller
 		}
 		$workerproducts = array_fill(1, 500, 0);
 		$productallcount = array_fill(1, 500, 0);
-		$allproductagesumm[1] = array_fill(1, 500, 0);
-		$allproductagesumm[2] = array_fill(1, 500, 0);
-		$allproductagesumm[3] = array_fill(1, 500, 0);
-		$menuage = [];
 		$ages = Age_range::all();
+		foreach($ages as $age){
+			$allproductagesumm[$age->id] = array_fill(1, 500, 0);
+		}
+		$menuage = [];
 		foreach($ages as $age){
 			$menu = Number_children::where([
 				['kingar_name_id', '=', $gid],
