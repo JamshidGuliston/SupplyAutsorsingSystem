@@ -24,7 +24,7 @@
                     <div class="col-md-5">
                         <div class="product-select">
                             <select id="onemenu" class="form-select" onchange="changeFunc();" aria-label="Default select example">
-                                <option value="">4-7, 3-4 ёш меню</option>
+                                <option value="">3-7 ёш меню</option>
                                 @foreach($menus as $row)
                                 <option value="{{$row['id']}}">{{$row['menu_name']}}</option>
                                 @endforeach
@@ -163,7 +163,7 @@
                     div.append("<input type='hidden' name='workerfoods["+tr+"]["+$(this).val()+"]' value="+onemenuid+">");
                 });
                 
-                div.append("<tr><td>"+tr+"-кун</td><td><input type='hidden' name='onemenu["+tr+"][1]' value="+onemenuid+"><input type='hidden' name='onemenu["+tr+"][2]' value="+onemenuid+">"+onemenutext+"</td><td>"+(bb ? "+":"-")+"</td><td><input type='hidden' name='onemenu["+tr+"][3]' value="+twomenuid+">"+twomenutext+"</td></tr>");
+                div.append("<tr><td>"+tr+"-кун</td><td><input type='hidden' name='onemenu["+tr+"][4]' value="+onemenuid+"><input type='hidden' name='onemenu["+tr+"][1]' value="+onemenuid+"><input type='hidden' name='onemenu["+tr+"][2]' value="+onemenuid+">"+onemenutext+"</td><td>"+(bb ? "+":"-")+"</td><td><input type='hidden' name='onemenu["+tr+"][3]' value="+twomenuid+">"+twomenutext+"</td></tr>");
             }
             
         });
