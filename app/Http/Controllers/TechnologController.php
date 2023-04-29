@@ -1763,7 +1763,17 @@ class TechnologController extends Controller
 
         return redirect()->route('technolog.home');
     }
-
+    
+    public function asdf(){
+		$data = Number_children::where('day_id', '>=', 296)->get();
+		foreach($data as $row){
+            if($row->kingar_name_id != 3){
+                $temp[$row->day_id][$row->kingar_name_id][$row->king_age_name_id] = $row->kingar_children_number;
+            }
+		}
+        dd($temp);
+	}
+    
     public function finding($day){
         // $days = Day::where('id', '>=', 122)->orderBy('id', 'DESC')->get();
         $kinds = Kindgarden::all();

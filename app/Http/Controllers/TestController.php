@@ -920,7 +920,7 @@ class TestController extends Controller
 			$dompdf->stream($name);	
 		}
 	}
-
+    
 	// Hozirgi kungacha ishlatilgan maxsulotlarni minus_multi_storajega yozish /////////////////////////////////////////////////////////////////////////////////////////////////
 	public function minusproduct(Request $request){
 		$days = Day::all();

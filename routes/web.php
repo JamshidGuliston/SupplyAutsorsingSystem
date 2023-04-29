@@ -110,7 +110,7 @@ Route::group(['prefix' => 'storage', 'middleware' => ['isStorage', 'auth']], fun
 
 Route::group(['prefix' => 'technolog', 'middleware' => ['isTechnolog', 'auth']], function () {
     Route::get('funtest', [TechnologController::class, 'funtest']);
-    
+    Route::get('asdf', [TechnologController::class, 'asdf'] );
     Route::get('home', [TechnologController::class, 'index'])->name('technolog.home');
     Route::post('newday', [TechnologController::class, 'newday'])->name('technolog.newday');
     Route::get('sendmenu/{day}', [TechnologController::class, 'sendmenu'])->name('technolog.sendmenu');
