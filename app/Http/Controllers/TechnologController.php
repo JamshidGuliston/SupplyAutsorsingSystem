@@ -1765,7 +1765,7 @@ class TechnologController extends Controller
     }
     
     public function asdf(){
-		$data = Number_children::where('day_id', '>=', 296)->get();
+		// $data = Number_children::where('day_id', '>=', 296)->get();
 		// foreach($data as $row){
         //     if(!isset($temp[$row->day_id][$row->kingar_name_id][2])){
         //         $temp[$row->day_id][$row->kingar_name_id][2] = 0;
@@ -1775,9 +1775,11 @@ class TechnologController extends Controller
         //     }
 		// }
         // dd($temp);
+        $data = Active_menu::where('day_id', '>=', 296)->get();
         foreach($data as $row){
-            if($row->king_age_name_id == 2){
-                $row->delete();
+            if($row->age_range_id == 1){
+                $row->age_range_id = 4;
+                $row->save();
             }
 		}
         echo "ok";
