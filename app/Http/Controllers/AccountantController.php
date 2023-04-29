@@ -1426,7 +1426,7 @@ class AccountantController extends Controller
         if($yearid == 0){
             $yearid = Year::where('year_active', 1)->first()->id;
         }
-        $start = $this->daysthisyear($yearid);
+        $start = $this->daysthisyear($yearid)->last()->id;
         dd($start);
         $addlarch = Add_large_werehouse::where('add_groups.day_id', '>=', $start->first()->id)
                     ->join('add_groups', 'add_groups.id', '=', 'add_large_werehouses.add_group_id')
