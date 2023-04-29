@@ -1767,10 +1767,19 @@ class TechnologController extends Controller
     public function asdf(){
 		$data = Number_children::where('day_id', '>=', 296)->get();
 		foreach($data as $row){
+            if(!isset($temp[$row->day_id][$row->kingar_name_id][2])){
+                $temp[$row->day_id][$row->kingar_name_id][2] = 0;
+            }
             if($row->king_age_name_id != 3){
                 $temp[$row->day_id][$row->kingar_name_id][$row->king_age_name_id] = $row->kingar_children_number;
             }
 		}
+
+        // foreach($data as $row){
+        //     if($row->king_age_name_id != 3){
+        //         $temp[$row->day_id][$row->kingar_name_id][$row->king_age_name_id] = $row->kingar_children_number;
+        //     }
+		// }
         dd($temp);
 	}
     
