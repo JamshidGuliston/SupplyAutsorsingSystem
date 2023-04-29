@@ -1776,7 +1776,7 @@ class TechnologController extends Controller
 		}
         // dd($temp);
         foreach($data as $row){
-            if($row->king_age_name_id != 1){
+            if($row->king_age_name_id == 1){
                 $row->kingar_children_number = $temp[$row->day_id][$row->kingar_name_id][1] + $temp[$row->day_id][$row->kingar_name_id][2];
                 $row->king_age_name_id = 4;
                 $row->save();
