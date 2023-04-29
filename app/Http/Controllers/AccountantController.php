@@ -58,6 +58,15 @@ class AccountantController extends Controller
         return $days;
     }
 
+    public function daysthisyear($id){
+        $days = Day::where('years.id', $id)
+                ->join('months', 'months.id', '=', 'days.month_id')
+                ->join('years', 'years.id', '=', 'days.year_id')
+                ->orderby('days.id', 'DESC')
+                ->get(['days.id', 'days.day_number', 'months.month_name', 'years.year_name']);
+        return $days;
+    }
+
     public function fullydate($id){
         $day = Day::where('days.id', $id)->join('months', 'months.id', '=', 'days.month_id')
         ->join('years', 'years.id', '=', 'days.year_id')
@@ -1410,6 +1419,20 @@ class AccountantController extends Controller
         }
 
         return $mods;
+    }
+
+    // katta sklad qoldiq
+    public function modsofproducts(Request $request, $yearid){
+        if($yearid == 0){
+            $yearid = Year::where('year_active', 1)->first()->id;
+        }
+        $start = $this->daysthisyear($yearid);
+        dd($start);
+        $addlarch = Add_large_werehouse::where('add_groups.day_id', '>=', $start->first()->id)
+                    ->join('add_groups', 'add_groups.id', '=', 'add_large_werehouses.add_group_id')
+                    ->join('products', 'products.id', '=', 'add_large_werehouses.product_id')
+                    ->join('sizes', 'sizes.id', '=', 'products.size_name_id')
+                    ->get();
     }
 
 }

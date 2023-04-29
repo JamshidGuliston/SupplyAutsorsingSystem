@@ -245,6 +245,8 @@ Route::group(['prefix' => 'accountant', 'middleware' => ['isAccountant', 'auth']
     Route::get('bigbase', [AccountantController::class, 'bigbase']);
     Route::get('multibase', [AccountantController::class, 'multibase']);
     Route::get('getmodproduct/{id}', [AccountantController::class, 'getmodproduct']);
+    // mods of products
+    Route::get('modsofproducts/{id}', [AccountantController::class, 'modsofproducts']);
 
 });
 
