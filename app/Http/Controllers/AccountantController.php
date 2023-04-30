@@ -1422,17 +1422,134 @@ class AccountantController extends Controller
     }
 
     // katta sklad qoldiq
-    public function modsofproducts(Request $request, $yearid){
-        if($yearid == 0){
-            $yearid = Year::where('year_active', 1)->first()->id;
-        }
+    public function modsofproducts(Request $request){
+        $yearid = Year::where('year_active', 1)->first()->id;
+        $days = $this->daysthisyear($yearid);
+        
+        return view('accountant.modsofproducts', ['days' => $days]);
+    }
+
+    public function getreportlargebase(Request $request){    
+        $yearid = Year::where('year_active', 1)->first()->id;
         $start = $this->daysthisyear($yearid)->last()->id;
-        dd($start);
-        $addlarch = Add_large_werehouse::where('add_groups.day_id', '>=', $start->first()->id)
+        $addlarch = Add_large_werehouse::where('add_groups.day_id', '>=', $start)
+                    ->where('add_groups.day_id', '<=', $request->lastid)
                     ->join('add_groups', 'add_groups.id', '=', 'add_large_werehouses.add_group_id')
                     ->join('products', 'products.id', '=', 'add_large_werehouses.product_id')
                     ->join('sizes', 'sizes.id', '=', 'products.size_name_id')
                     ->get();
+        
+        $alladd = [];
+        $t = 0;
+        foreach($addlarch as $row){
+            if(!isset($alladd[$row->product_id])){
+                // $alladd[$t++.'id'] = $row->product_id;
+                $mc = Add_large_werehouse::where('add_large_werehouses.product_id', $row->product_id)
+                        ->where('add_groups.day_id', '>=', $start)
+                        ->where('add_groups.day_id', '<=', $request->lastid)
+                        ->join('add_groups', 'add_groups.id', '=', 'add_large_werehouses.add_group_id')
+                        ->avg('cost');
+                $alladd[$row->product_id]['weight'] = 0;
+                $alladd[$row->product_id]['minusweight'] = 0;
+                $alladd[$row->product_id]['p_name'] = $row->product_name;
+                $alladd[$row->product_id]['size_name'] = $row->size_name;
+                $alladd[$row->product_id]['p_sort'] = $row->sort;
+                $alladd[$row->product_id]['middlecost'] = $mc;
+            }
+            $alladd[$row->product_id]['weight'] += $row->weight; 
+        }
+        $minuslarch = order_product_structure::where('order_products.day_id', '>=', $start)
+                    ->where('order_products.day_id', '<=', $request->lastid)
+                    ->join('order_products', 'order_products.id', '=', 'order_product_structures.order_product_name_id')
+                    ->join('products', 'products.id', '=', 'order_product_structures.product_name_id')
+                    ->join('sizes', 'sizes.id', '=', 'products.size_name_id')
+                    ->get();
+        
+        foreach($minuslarch as $row){
+            if(!isset($alladd[$row->product_name_id])){
+                $alladd[$row->product_name_id]['weight'] = 0;
+                $alladd[$row->product_name_id]['minusweight'] = 0;
+                $alladd[$row->product_id]['middlecost'] = 0;
+                $alladd[$row->product_name_id]['p_name'] = $row->product_name;
+                $alladd[$row->product_name_id]['size_name'] = $row->size_name;
+                $alladd[$row->product_name_id]['p_sort'] = $row->sort;
+            }
+            $alladd[$row->product_name_id]['minusweight'] += $row->product_weight;
+        }
+        usort($alladd, function ($a, $b){
+            if(isset($a["p_sort"]) and isset($b["p_sort"])){
+                return $a["p_sort"] > $b["p_sort"];
+            }
+        });
+        
+        $html = "<table style='background-color: white' class='table'>
+                <thead>
+                    <tr>
+                        <th rowspan='2'>Махсулот номи</th>
+                        <th rowspan='2'>Ул.бир</th>
+                        <th colspan='3'>Кирим</th>
+                        <th colspan='3'>Чиқим</th>
+                        <th colspan='3'>Қолдиқ</th>
+                    </tr>
+                    <tr>
+                        <th>Микдори</th>
+                        <th>Уртача нархи</th>
+                        <th>Суммаси</th>
+                        <th>Микдори</th>
+                        <th>Нархи</th>
+                        <th>Суммаси</th>
+                        <th>Микдори</th>
+                        <th>Нархи</th>
+                        <th>Суммаси</th>
+                    </tr>
+                </thead>
+                <tbody>";
+        $taking = 0;
+        $giving = 0;
+        $mod = 0;
+        foreach($alladd as $row){
+            $taking = $taking + $row["weight"] * $row["middlecost"];
+            $giving = $giving + $row["minusweight"] * $row["middlecost"];
+            $mod = $mod + ($row["weight"]-$row["minusweight"]) * $row["middlecost"];
+            $html = $html."*";
+            $html = $html."
+                <tr>
+                    <td>".$row["p_name"]."</td>
+                    <td>".$row["size_name"]."</td>
+                    <td>".$row["weight"]."</td>
+                    <td>".$row["middlecost"]."</td>   
+                    <td>".$row["weight"] * $row["middlecost"]."</td>
+                    <td>".$row["minusweight"]."</td>
+                    <td>".$row["middlecost"]."</td>   
+                    <td>".$row["minusweight"] * $row["middlecost"]."</td>
+                    <td>".$row["weight"]-$row["minusweight"]."</td>
+                    <td>".$row["middlecost"]."</td>   
+                    <td>".($row["weight"]-$row["minusweight"]) * $row["middlecost"]."</td>    
+                </tr>
+            ";  
+        }
+
+
+        $html = $html."
+            <tr>
+                <td><b>Jami:</b></td>
+                <td></td>
+                <td></td>
+                <td></td>   
+                <td><b>".$taking."</b></td>
+                <td></td>
+                <td></td>   
+                <td><b>".$giving."</b></td>
+                <td></td>
+                <td></td>   
+                <td><b>".$mod."</b></td>    
+            </tr>
+        ";
+        $html = $html."</tbody>
+                </table>
+                ";
+            
+        return $html;
     }
 
 }
