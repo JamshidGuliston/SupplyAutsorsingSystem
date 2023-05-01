@@ -1508,6 +1508,9 @@ class AccountantController extends Controller
         $giving = 0;
         $mod = 0;
         foreach($alladd as $row){
+            if(!isset($row["middlecost"])){
+                $row["middlecost"] = 0;
+            }
             $taking = $taking + $row["weight"] * $row["middlecost"];
             $giving = $giving + $row["minusweight"] * $row["middlecost"];
             $mod = $mod + ($row["weight"]-$row["minusweight"]) * $row["middlecost"];
