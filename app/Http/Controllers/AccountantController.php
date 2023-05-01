@@ -1467,13 +1467,14 @@ class AccountantController extends Controller
         
         foreach($minuslarch as $row){
             if(empty($alladd[$row->product_name_id])){
-                dd($row);
+                // dd($row);
                 $alladd[$row->product_id]['middlecost'] = 0;
                 $alladd[$row->product_name_id]['weight'] = 0;
                 $alladd[$row->product_name_id]['minusweight'] = 0;
                 $alladd[$row->product_name_id]['p_name'] = $row->product_name;
                 $alladd[$row->product_name_id]['size_name'] = $row->size_name;
                 $alladd[$row->product_name_id]['p_sort'] = $row->sort;
+                dd($alladd);
             }
             $alladd[$row->product_name_id]['minusweight'] += $row->product_weight;
         }
