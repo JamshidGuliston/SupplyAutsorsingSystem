@@ -17,6 +17,25 @@
         vertical-align: middle;
         border: solid 1px #b1b1b14f;
     }
+    .loader-box {
+    	text-align: center;
+    	font-size: 54px;
+        display: none;
+        position: absolute;
+    }
+    .loader {
+        border: 9px solid #f3f3f3;
+        border-radius: 50%;
+        border-top: 9px solid #3498db;
+        width: 60px;
+        display: block;
+        height: 60px;
+        -webkit-animation: spin 2s linear infinite;
+        animation: spin 2s linear infinite;
+        position: absolute;
+        left: 353px;
+        top: 153px;
+    }
 
 </style>
 @endsection
@@ -42,7 +61,12 @@
         </div>
     </div>
     <hr>
-    <div class="report"></div>
+    <div class="loader-box">
+        <i class="fas fa-spinner fa-pulse"></i>
+    </div>
+    <div class="report">
+    	
+    </div>
 </div>
 @endsection
 @section('script')
@@ -54,6 +78,9 @@
             alert("Vaqtni belgilang.");
         }else{
             $.ajax({
+            	beforeSend: function() {
+	                // $('.loader-box').show();
+	            },
                 method: "GET",
                 data:{
                     'lastid' : regionid
@@ -61,44 +88,10 @@
                 url: '/accountant/getreportlargebase',
                 success: function(data) {
                     div.html(data);
+                    $('.loader-box').hide();
                 }
             })
         }
     });
-
-    $('.list-group-item-action').click(function() {
-        var gardenid = $(this).attr('data-garden-id');
-        // alert(gardenid);
-        var div = $('.divmodproduct');
-        $.ajax({
-            method: "GET",
-            url: '/technolog/getmodproduct/'+gardenid,
-            success: function(data) {
-                div.html(data);
-            }
-
-        })
-    });
-    
-    function changeFunc() {
-        var div = $('.divmodproduct');
-        // div.html("<p value=''>1-sad</p>");
-    }
-
-    document.multiselect('#testSelect1')
-		.setCheckBoxClick("checkboxAll", function(target, args) {
-			console.log("Checkbox 'Select All' was clicked and got value ", args.checked);
-		})
-		.setCheckBoxClick("1", function(target, args) {
-			console.log("Checkbox for item with value '1' was clicked and got value ", args.checked);
-		});
-
-	function enable() {
-		document.multiselect('#testSelect1').setIsEnabled(true);
-	}
-
-	function disable() {
-		document.multiselect('#testSelect1').setIsEnabled(false);
-	}
 </script>
 @endsection
