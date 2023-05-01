@@ -1443,7 +1443,7 @@ class AccountantController extends Controller
         $t = 0;
         foreach($addlarch as $row){
             if(!isset($alladd[$row->product_id])){
-                // $alladd[$t++.'id'] = $row->product_id;
+                $alladd[$row->product_id]['middlecost'] = 0;
                 $mc = Add_large_werehouse::where('add_large_werehouses.product_id', $row->product_id)
                         ->where('add_groups.day_id', '>=', $start)
                         ->where('add_groups.day_id', '<=', $request->lastid)
@@ -1507,7 +1507,6 @@ class AccountantController extends Controller
         $taking = 0;
         $giving = 0;
         $mod = 0;
-        dd($alladd);
         foreach($alladd as $row){
             $taking = $taking + $row["weight"] * $row["middlecost"];
             $giving = $giving + $row["minusweight"] * $row["middlecost"];
