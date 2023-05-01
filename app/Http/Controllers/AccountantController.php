@@ -1541,7 +1541,7 @@ class AccountantController extends Controller
                 <td><b>".sprintf('%0.2f', $giving)."</b></td>
                 <td></td>
                 <td></td>   
-                <td><b>".sprintf('%0.2f',$mod."</b></td>    
+                <td><b>".sprintf('%0.2f',$mod)."</b></td>    
             </tr>
         ";
         $html = $html."</tbody>
