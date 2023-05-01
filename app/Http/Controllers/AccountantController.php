@@ -1463,10 +1463,10 @@ class AccountantController extends Controller
                     ->join('order_products', 'order_products.id', '=', 'order_product_structures.order_product_name_id')
                     ->join('products', 'products.id', '=', 'order_product_structures.product_name_id')
                     ->join('sizes', 'sizes.id', '=', 'products.size_name_id')
-                    ->get();
+                    ->get(["order_products.product_name_id", "order_products.product_weight", "products.product_name", "products.sort", "sizes.size_name" ]);
         foreach($minuslarch as $row){
-            dd($row);
             if(!isset($alladd[$row->product_name_id])){
+                dd($row);
                 $alladd[$row->product_id]['middlecost'] = 0;
                 $alladd[$row->product_name_id]['weight'] = 0;
                 $alladd[$row->product_name_id]['minusweight'] = 0;
