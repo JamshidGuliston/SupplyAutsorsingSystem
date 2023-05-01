@@ -1458,16 +1458,15 @@ class AccountantController extends Controller
             }
             $alladd[$row->product_id]['weight'] += $row->weight; 
         }
-        dd($alladd);
         $minuslarch = order_product_structure::where('order_products.day_id', '>=', $start)
                     ->where('order_products.day_id', '<=', $request->lastid)
                     ->join('order_products', 'order_products.id', '=', 'order_product_structures.order_product_name_id')
                     ->join('products', 'products.id', '=', 'order_product_structures.product_name_id')
                     ->join('sizes', 'sizes.id', '=', 'products.size_name_id')
                     ->get(["order_product_structures.product_name_id", "order_product_structures.product_weight", "products.product_name", "products.sort", "sizes.size_name" ]);
-        dd($minuslarch);
+        
         foreach($minuslarch as $row){
-            if(!isset($alladd[$row->product_name_id])){
+            if(empty($alladd[$row->product_name_id])){
                 dd($row);
                 $alladd[$row->product_id]['middlecost'] = 0;
                 $alladd[$row->product_name_id]['weight'] = 0;
