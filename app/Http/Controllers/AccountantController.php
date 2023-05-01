@@ -1515,15 +1515,15 @@ class AccountantController extends Controller
                 <tr>
                     <td>".$row["p_name"]."</td>
                     <td>".$row["size_name"]."</td>
-                    <td>".sprintf('%0.2f', $row["weight"])."</td>
-                    <td>".sprintf('%0.2f', $row["middlecost"])."</td>   
-                    <td>".sprintf('%0.2f', $row["weight"] * $row["middlecost"])."</td>
-                    <td>".sprintf('%0.2f', $row["minusweight"])."</td>
-                    <td>".sprintf('%0.2f', $row["middlecost"])."</td>   
-                    <td>".sprintf('%0.2f', $row["minusweight"] * $row["middlecost"])."</td>
-                    <td>".sprintf('%0.2f', $row["weight"]-$row["minusweight"])."</td>
-                    <td>".sprintf('%0.2f', $row["middlecost"])."</td>   
-                    <td>".sprintf('%0.2f', ($row["weight"]-$row["minusweight"]) * $row["middlecost"])."</td>    
+                    <td>".sprintf('%0.2f', number_format($row["weight"]))."</td>
+                    <td>".sprintf('%0.2f', number_format($row["middlecost"]))."</td>   
+                    <td>".sprintf('%0.2f', number_format($row["weight"] * $row["middlecost"]))."</td>
+                    <td>".sprintf('%0.2f', number_format($row["minusweight"]))."</td>
+                    <td>".sprintf('%0.2f', number_format($row["middlecost"]))."</td>   
+                    <td>".sprintf('%0.2f', number_format($row["minusweight"] * $row["middlecost"]))."</td>
+                    <td>".sprintf('%0.2f', number_format($row["weight"]-$row["minusweight"]))."</td>
+                    <td>".sprintf('%0.2f', number_format($row["middlecost"]))."</td>   
+                    <td>".sprintf('%0.2f', number_format(($row["weight"]-$row["minusweight"]) * $row["middlecost"]))."</td>    
                 </tr>
             ";  
         }
@@ -1541,7 +1541,7 @@ class AccountantController extends Controller
                 <td><b>".sprintf('%0.2f', $giving)."</b></td>
                 <td></td>
                 <td></td>   
-                <td><b>".sprintf('%0.2f', $mod)."</b></td>    
+                <td><b>".sprintf('%0.2f',$mod."</b></td>    
             </tr>
         ";
         $html = $html."</tbody>
