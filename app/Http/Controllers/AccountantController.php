@@ -1511,20 +1511,19 @@ class AccountantController extends Controller
             $taking = $taking + $row["weight"] * $row["middlecost"];
             $giving = $giving + $row["minusweight"] * $row["middlecost"];
             $mod = $mod + ($row["weight"]-$row["minusweight"]) * $row["middlecost"];
-            $html = $html."*";
             $html = $html."
                 <tr>
                     <td>".$row["p_name"]."</td>
                     <td>".$row["size_name"]."</td>
-                    <td>".$row["weight"]."</td>
-                    <td>".$row["middlecost"]."</td>   
-                    <td>".$row["weight"] * $row["middlecost"]."</td>
-                    <td>".$row["minusweight"]."</td>
-                    <td>".$row["middlecost"]."</td>   
-                    <td>".$row["minusweight"] * $row["middlecost"]."</td>
-                    <td>".$row["weight"]-$row["minusweight"]."</td>
-                    <td>".$row["middlecost"]."</td>   
-                    <td>".($row["weight"]-$row["minusweight"]) * $row["middlecost"]."</td>    
+                    <td>".sprintf('%0.2f', $row["weight"])."</td>
+                    <td>".sprintf('%0.2f', $row["middlecost"])."</td>   
+                    <td>".sprintf('%0.2f', $row["weight"] * $row["middlecost"])."</td>
+                    <td>".sprintf('%0.2f', $row["minusweight"])."</td>
+                    <td>".sprintf('%0.2f', $row["middlecost"])."</td>   
+                    <td>".sprintf('%0.2f', $row["minusweight"] * $row["middlecost"])."</td>
+                    <td>".sprintf('%0.2f', $row["weight"]-$row["minusweight"])."</td>
+                    <td>".sprintf('%0.2f', $row["middlecost"])."</td>   
+                    <td>".sprintf('%0.2f', ($row["weight"]-$row["minusweight"]) * $row["middlecost"])."</td>    
                 </tr>
             ";  
         }
@@ -1536,13 +1535,13 @@ class AccountantController extends Controller
                 <td></td>
                 <td></td>
                 <td></td>   
-                <td><b>".$taking."</b></td>
+                <td><b>".sprintf('%0.2f', $taking)."</b></td>
                 <td></td>
                 <td></td>   
-                <td><b>".$giving."</b></td>
+                <td><b>".sprintf('%0.2f', $giving)."</b></td>
                 <td></td>
                 <td></td>   
-                <td><b>".$mod."</b></td>    
+                <td><b>".sprintf('%0.2f', $mod)."</b></td>    
             </tr>
         ";
         $html = $html."</tbody>
