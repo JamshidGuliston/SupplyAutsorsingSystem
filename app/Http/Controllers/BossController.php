@@ -103,7 +103,7 @@ class BossController extends Controller
                 ->orderBy('day_id', 'DESC')->get();
             
             foreach($kind as $pkey => $row){
-                if(!isset($sumbyregion[$k->region_id]['summ_sale'])){
+                if(empty($sumbyregion[$k->region_id]['summ_sale'])){
                     $sumbyregion[$k->region_id]['summ_sale'] = 0;
                     $sumbyregion[$k->region_id]['summ_by'] = 0;
                 }
