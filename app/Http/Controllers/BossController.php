@@ -94,7 +94,7 @@ class BossController extends Controller
         }
 
         $sumbyregion = [];
-        dd($totalproducts);
+        // dd($totalproducts);
         foreach($totalproducts as $key => $kind){
             $k = Kindgarden::where('id', $key)->first();
             // print_r($k);
