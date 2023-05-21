@@ -107,8 +107,13 @@ class BossController extends Controller
                     $sumbyregion[$k->region_id]['summ_sale'] = 0;
                     $sumbyregion[$k->region_id]['summ_by'] = 0;
                 }
+                $mc = Add_large_werehouse::where('add_large_werehouses.product_id', $pkey)
+                        ->where('add_groups.day_id', '>=', $days->first()->id)
+                        ->where('add_groups.day_id', '<=', $days->last()->id)
+                        ->join('add_groups', 'add_groups.id', '=', 'add_large_werehouses.add_group_id')
+                        ->avg('cost');
                 $sumbyregion[$k->region_id]['summ_sale'] += $row['weight'] * isset($costs->where('praduct_name_id', $pkey)->first()->price_cost)? $costs->where('praduct_name_id', $pkey)->first()->price_cost : 0;
-                $sumbyregion[$k->region_id]['summ_by'] += $row['weight'] * isset($avgproducts->where('product_id', $pkey)->first()->avgcost) ? $avgproducts->where('product_id', $pkey)->first()->avgcost : 0;
+                $sumbyregion[$k->region_id]['summ_by'] += $row['weight'] * $mc;
             }
         }
         // dd($sumbyregion);
