@@ -13,7 +13,7 @@
 	 @page { margin: 0.2in 0.8in 0in 0.3in; }
 	body{
 		font-family: DejaVu Sans;
-		font-size:12px;
+		font-size:11px;
 		/* background-image: url(images/bg.jpg); */
 		background-position: top left;
 		background-repeat: no-repeat;
@@ -54,6 +54,23 @@
 		transform: rotate(-90deg);
 		white-space: nowrap;
 	}
+	.column {
+		float: left;
+		text-align: center;
+		width: 50%;
+	}
+
+	/* Clear floats after the columns */
+	.row:after {
+		content: "";
+		display: table;
+		clear: both;
+	}
+	.row{
+		display: flex;
+		flex-wrap: nowrap;
+		justify-content: space-between;
+	}
 </style>
 </head>
 <body>
@@ -65,16 +82,19 @@
 						<a href="#">
 							<i class="fas fa-store-alt" style="color: dodgerblue; font-size: 18px;"></i>
 						</a>
-						<b>{{ "№ "."______"." / ". $document->kingar_name}}</b>
-						<b>{{ " / Cана: ".$document->order_title }}</b>
+						<center>
+							<b>Юк хати    &nbsp;&nbsp;&nbsp;&nbsp;    № {{ $document->docid }}</b>
+							<b>&nbsp;&nbsp;&nbsp;&nbsp;  {{ "   Cана: ".$document->order_title }}</b>
+						</center>
+						Кимдан:<b> Нишон инвест МЧЖ </b><br>  
+						Кимга: <b> {{ $document->kingar_name }}</b>
 					</div>
                 </div>
-                <hr>
                 <table style="width:100%; table-layout: fixed;">
                     <thead>
                         <tr style="width: 15%;">
                             <th scope="col" style="width: 6%;">TR</th>
-                            <th scope="col" style="width: 30%;">Maxsulotlar</th>
+                            <th scope="col" style="width: 35%;">Maxsulotlar</th>
                             <th scope="col" style="width: 15%;">O'lcham</th>
                             <th scope="col" style="width: 15%;">Miqdori</th>
                             <th scope="col" style="width: 10%;">Narx</th>
@@ -91,7 +111,7 @@
 						@if($row->product_weight >= 0.1 or $row->product_name_id == 38)
                         <tr>
                             <th scope="row">{{ $tr++ }}</th>
-                            <td>{{ $row->product_name }}</td>
+                            <td style="text-align:  left; padding-left: 2px">{{ $row->product_name }}</td>
 							<td>{{ $row->size_name }}</td>
 							<td><?php printf("%01.2f", $row->product_weight); ?></td>
 							<td></td>
@@ -102,6 +122,14 @@
                     </tbody>
                 </table>
             </div>
+            <div class="row" style="margin-top: 15px;">
+				<div class="column">
+					<img src="images/qrmanzil.jpg" alt="QR-code" width="140">
+				</div>
+				<div class="column">
+					<p style="text-align: right;">Қабул қилувчи: __________________;</p>
+				</div>
+			</div>
         </div>
     </div>
 </bod>

@@ -274,6 +274,57 @@
     @include('storage.sidemenu'); 
 @endsection
 @section('content')
+<!-- deleteModal -->
+<div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+        <form action="" method="POST">
+            @csrf
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">O'chirish</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body foodcomposition"> 
+                <label>Miqdori</label>
+                <input type="hidden" id="ddebt_id" name="ddebt_id" class="form-control" ><br>
+            </div>
+            <div class="modal-footer">
+                <button type="submit" class="btn editsub btn-success">O'chirish</button>
+            </div>
+        </form>
+        </div>
+    </div>
+</div>
+<!-- Delete -->
+<!-- EditModal -->
+<div class="modal editesmodal fade" id="editModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+        <form action="{{route('storage.editegroup')}}" method="POST">
+            @csrf
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">O'zgartirish</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body foodcomposition"> 
+            	<input type="text" class="form-select"  id="title" name="nametitle"><br>
+                <select id='daySelect' name="editedayid" class="form-select" aria-label="Default select example" required>
+                    @foreach($days as $row)
+                        <option value='{{ $row->id }}'>{{ $row->day_number.'.'.$row->month_name.'.'.$row->year_name }}</option>
+                    @endforeach
+                </select><br>
+                <input type="hidden" id="group_id" name="group_id" class="form-control">
+                <input type="hidden" id="gyear_id" name="year_id" class="form-control">
+                <input type="hidden" id="gmonth_id" name="month_id" class="form-control" >
+            </div>
+            <div class="modal-footer">
+                <button type="submit" class="btn editsub btn-success">Saqlash</button>
+            </div>
+        </form>
+        </div>
+    </div>
+</div>
+<!-- EDIT -->
 <!-- Add residual -->
 <div class="modal fade" id="addresidual" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-xl">
@@ -341,7 +392,7 @@
                         <div class="col-md-4">
                             <select class="form-select" name="date_id" required>
                                 <option value="">--Sana--</option>
-                                @foreach($days as $row)
+                                @foreach($start as $row)
                                     <option value="{{$row['id']}}">{{$row['day_number'].".".$row['month_name'].".".$row['year_name']}}</option>
                                 @endforeach
                             </select>
@@ -443,7 +494,7 @@
                         <div class="col-md-4">
                             <select class="form-select" name="date_id" required>
                                 <option value="">--Sana--</option>
-                                @foreach($days as $row)
+                                @foreach($start as $row)
                                     <option value="{{$row['id']}}">{{$row['day_number'].".".$row['month_name'].".".$row['year_name']}}</option>
                                 @endforeach
                             </select>
@@ -532,6 +583,7 @@
                 <th scope="col">Title</th>
                 <th scope="col">Date</th>
                 <th style="width: 40px;">PDF</th>
+                <th style="width: 60px;">...</th>
             </tr>
         </thead>
         <tbody>
@@ -542,6 +594,15 @@
                 <td>{{ $item['day_number'].".".$item['month_name'].".".$item['year_name'] }}</td>
                 <td>
                     <a href="/storage/document/{{ $item->id }}" target="_blank">pdf</a>
+                </td>
+                <td>
+                	<i class="edite_  fa fa-edit" aria-hidden="true" 
+                            data-title = "{{ $item['group_name'] }}" 
+                            data-id = "{{ $item['id'] }}"
+                            data-dayid = "{{ $item['dayid'] }}"
+                            data-yearid = "{{ $year->id }}"
+                            data-monthid = "{{ $id }}"
+                            data-bs-toggle="modal" style="cursor: pointer; color:cadetblue" data-bs-target="#editModal"></i>
                 </td>
             </tr>
             @endforeach
@@ -554,6 +615,30 @@
 
 @section('script')
 <script>
+	$('.edite_').click(function() {
+        var id = $(this).attr('data-id');
+        document.getElementById("group_id").value = id;
+        var title = $(this).attr('data-title');
+        document.getElementById("title").value = title;
+        var dayid = $(this).attr('data-dayid');
+        var options = document.getElementById("daySelect").options;
+        for (var i = 0; i < options.length; i++) {
+            if (options[i].value == dayid) {
+                options[i].selected = true;
+                break;
+            }
+        }
+        var yearid = $(this).attr('data-yearid');
+        var monthid = $(this).attr('data-monthid');
+        
+        document.getElementById("gyear_id").value = yearid;
+        document.getElementById("gmonth_id").value = monthid;
+    });
+    $('.detete').click(function() {
+            var debtid = $(this).attr('data-debt-id');
+            document.getElementById("ddebt_id").value = debtid;
+            var shopid = $(this).attr('data-shop-id');
+    });
     // function hideModal(t) {
     //     var x2 = document.getElementById("addModal");
     //     var x1 = document.getElementById("addresidual");

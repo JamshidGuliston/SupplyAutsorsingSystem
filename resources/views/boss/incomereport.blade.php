@@ -4,6 +4,8 @@
 @include('boss.sidemenu'); 
 @endsection
 @section('css')
+<link href="/css/multiselect.css" rel="stylesheet"/>
+<script src="/js/multiselect.min.js"></script>
 <style>
 .w-5{
     width: 2%;
@@ -11,6 +13,15 @@
 }
 .flex-1{
     display: none;
+}
+td{
+	border-right: dashed 2px #999999;
+	border-bottom: solid 1px #999999;
+	padding-left: 10px;
+}
+th{
+	border: solid 2px #198754;
+	padding-left: 10px;
 }
 </style>
 @endsection
@@ -26,7 +37,6 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body editesproduct">
-                
                 <div id="ghidden"></div>
             </div>
             <div class="modal-footer">
@@ -69,8 +79,7 @@
         </div>
         <div class="form-group row">
             <div class="col-md-3">
-                <select id="RegionSelect" class="form-select" name="catid" aria-label="Default select example">
-                    <option value="0">Hammasi</option>
+                <select id='testSelect1' name="catid[]" class="form-select" aria-label="Default select example" multiple>
                     @foreach($kinds as $row)
                     <option value="{{$row['id']}}">{{$row['kingar_name']}}</option>
                     @endforeach
@@ -91,7 +100,7 @@
                 <input type="number" id="nds" class="form-control" >
             </div>
             <div class="col-md-2">
-                <button type="submit" id="showreport" class="btn btn-success">show</button>
+                <button type="submit" id="showreport" class="btn btn-success">Hisobot</button>
             </div>
         </div>
 
@@ -109,24 +118,27 @@
 <script>
     $(document).ready(function() {
         $('#showreport').click(function(){
-            var kindid = $("#RegionSelect option:selected").val();
+            var kindid = [];
+            $.each($('#testSelect1 option:selected'), function(){
+            	kindid.push($(this).val());
+            });
             var monthid = $("#month option:selected").val();
             var raise = $("#raise").val();
             var nds = $("#nds").val();
-            var kindtext = $("#RegionSelect option:selected").text();
+            var kindtext = $("#testSelect1 option:selected").text();
             var monthtext = $("#month option:selected").text();
             var div = $('.sname');
             var table = $('.repottable');
             if(monthid == 0){
                 alert("Oy tanlanmagan!");
             }else{
-                div.html("<h3><b>"+kindtext+"</b> "+monthtext+"</h3>");
+                div.html("<b>"+kindtext+"</b> "+monthtext+"");
                 $.ajax({
                     method: "GET",
                     data: {kindid: kindid, monthid: monthid, raise: raise, nds: nds}, 
                     url: '/boss/showincome',
                     success: function(data) {
-                        console.log(data);
+                        table.html(data);
                     }
                 });
             }
@@ -153,6 +165,32 @@
 
         return true;
     }
+    
+    document.multiselect('#testSelect1')
+		.setCheckBoxClick("checkboxAll", function(target, args) {
+			console.log("Checkbox 'Select All' was clicked and got value ", args.checked);
+		})
+		.setCheckBoxClick("1", function(target, args) {
+			console.log("Checkbox for item with value '1' was clicked and got value ", args.checked);
+		});
+
+	function enable() {
+		document.multiselect('#testSelect1').setIsEnabled(true);
+	}
+
+	function disable() {
+		document.multiselect('#testSelect1').setIsEnabled(false);
+	}
+
+    $("#select_type").change(function(){
+        if(this.value == 2){
+            document.multiselect('#testSelect1').setIsEnabled(false);
+            document.multiselect('#testSelect2').setIsEnabled(false);
+        }else{
+            document.multiselect('#testSelect1').setIsEnabled(true);
+            document.multiselect('#testSelect2').setIsEnabled(true);
+        }
+    });
 </script>
 @if(session('status'))
 <script> 

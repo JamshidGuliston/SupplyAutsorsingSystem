@@ -32,6 +32,7 @@ Route::get('/showmenu/{kid}/{did}/{aid}', [TestController::class, 'showmenu']);
 // ommaga ochiq bot orqali taxminiy menyuni ko'rish
 Route::get('/nextdaymenuPDF/{kid}/{aid}', [TestController::class, 'nextdaymenuPDF']);
 Route::get('/nextdaysecondmenuPDF/{kid}', [TestController::class, 'nextdaysecondmenuPDF']);
+Route::get('/nextdaysomenakladnoyPDF/{kid}', [TestController::class, 'nextdaysomenakladnoyPDF']);
 Route::get('/nextnakladnoyPDF/{kid}', [TestController::class, 'nextnakladnoyPDF']);
 Route::get('/gow', [TestController::class, 'addchilds']);
 
@@ -104,6 +105,7 @@ Route::group(['prefix' => 'storage', 'middleware' => ['isStorage', 'auth']], fun
     Route::post('deletetakingsmallbase', [StorageController::class, 'deletetakingsmallbase'])->name('storage.deletetakingsmallbase');
     Route::get('intakingsmallbase/{id}/{kid}', [StorageController::class, 'intakingsmallbase'])->name('storage.intakingsmallbase');
     Route::post('addintakingsmallbase', [StorageController::class, 'addintakingsmallbase'])->name('storage.addintakingsmallbase');
+    Route::post('editegroup', [StorageController::class, 'editegroup'])->name('storage.editegroup');
     
     Route::get('changesome', [StorageController::class, 'changesome']);
 });
@@ -206,6 +208,9 @@ Route::group(['prefix' => 'technolog', 'middleware' => ['isTechnolog', 'auth']],
     
     Route::get('finding/{id}', [TechnologController::class, 'finding']);
     
+    Route::get('updatemanu', [TechnologController::class, 'updatemanu']);
+    Route::post('editactivemanu', [TechnologController::class, 'editactivemanu'])->name('technolog.editactivemanu');
+    Route::get('getactivemenuproducts', [TechnologController::class, 'getactivemenuproducts']);
 });
 
 Route::group(['prefix' => 'chef', 'middleware' => ['isChef', 'auth']], function () {
@@ -223,6 +228,7 @@ Route::group(['prefix' => 'accountant', 'middleware' => ['isAccountant', 'auth']
     Route::get('bycosts/{id}', [AccountantController::class, 'bycosts'])->name('accountant.bycosts');
     Route::post('pluscosts', [AccountantController::class, 'pluscosts'])->name('accountant.pluscosts');
     Route::post('editcost', [AccountantController::class, 'editcost'])->name('accountant.editcost');
+    Route::post('editallcosts', [AccountantController::class, 'editallcosts'])->name('accountant.editallcosts');
     // hisobot
     Route::get('narxselect/{region_id}', [AccountantController::class, 'narxselect'])->name('accountant.narxselect');
     Route::get('nakapit/{id}/{ageid}/{start}/{end}/{costid}/{nds}/{ust}', [AccountantController::class, 'nakapit'])->name('accountant.nakapit');
@@ -247,6 +253,7 @@ Route::group(['prefix' => 'accountant', 'middleware' => ['isAccountant', 'auth']
     Route::get('getmodproduct/{id}', [AccountantController::class, 'getmodproduct']);
     // mods of products
     Route::get('modsofproducts', [AccountantController::class, 'modsofproducts']);
+    Route::get('getingcosts', [AccountantController::class, 'getingcosts']);
     Route::get('getreportlargebase', [AccountantController::class, 'getreportlargebase']);
 
 });

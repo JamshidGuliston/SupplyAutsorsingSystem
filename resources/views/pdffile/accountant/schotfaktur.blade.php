@@ -86,7 +86,7 @@
 							}
 						?>
                         <center>Ҳисоб-фактура № <?php printf('%02d', $costs[0]->year_name) ?>-<?php printf('%02d', $mth) ?>/{{ $kindgar->id ."-".$age->id }}</center>
-                        <center> " ____".<?php printf('%02d', $mth) ?>. <?php printf('%02d', $costs[0]->year_name) ?>й</center>
+                        <center> " <?php echo $days->last()->day_number ?> ".<?php printf('%02d', $mth) ?>. <?php printf('%02d', $costs[0]->year_name) ?>й</center>
                         <center>Шартнома хужжатлари №____ " ____ . _______ ". <?php printf('%02d', $costs[0]->year_name) ?> йил</center><br>
 						<div class="row">
 							<div class="column">
@@ -127,7 +127,7 @@
 							@if(isset($row[$day['id']]))
                       			@if($row['size_name'] == "дона")
                       				<?php  
-                                        $summ += round($row[$day['id']], 0);
+                                        $summ += $row[$day['id']];
                                     ?>
                       			@else
                       				<?php  
@@ -150,11 +150,11 @@
                         <th style="width: 7px;"></th>
                         <th style="width: 30px;"></th>
                         <th style="width: 8%;"></th>
-                        <td><?php printf("%01.3f", $costsumm); ?></td>
-						<td><?php printf("%01.3f", ($costsumm * $ust)/100); ?></td>
-						<td><?php printf("%01.3f", $costsumm + ($costsumm * $ust)/100); ?></td>
-						<td><?php printf("%01.3f", ($costsumm + ($costsumm * $ust)/100)*$nds/100); ?></td>
-						<td><?php printf("%01.3f", $costsumm + ($costsumm * $ust)/100 + ($costsumm + ($costsumm * $ust)/100)*$nds/100); ?></td>
+                        <td><?php printf("%01.2f", $costsumm); ?></td>
+						<td><?php printf("%01.2f", ($costsumm * $ust)/100); ?></td>
+						<td><?php printf("%01.2f", $costsumm + ($costsumm * $ust)/100); ?></td>
+						<td><?php printf("%01.2f", ($costsumm + ($costsumm * $ust)/100)*$nds/100); ?></td>
+						<td><?php printf("%01.2f", $costsumm + ($costsumm * $ust)/100 + ($costsumm + ($costsumm * $ust)/100)*$nds/100); ?></td>
                     </tr>
                     </tbody>
                 </table>

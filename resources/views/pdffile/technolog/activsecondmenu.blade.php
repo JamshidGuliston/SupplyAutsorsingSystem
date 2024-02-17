@@ -88,14 +88,18 @@
 								<td style="text-align: left; border: none !important;">
 								@if($loop->index == 0)
 									Боғча номи: <b>{{ $row[0]['kingar_name']; }}</b><br/>sana: <b>{{ $day['day_number'].'.'.$day['month_name'].' '.$day['year_name'] }}й.</b><b>
+									<?php
+										$workers = $row[0]['workers_count'];
+										echo "  ходимлар сони: <b>".$row[0]['workers_count'].";</b>  ";	
+									?>
 								@endif
 								<?php
 									$countch[$row[0]['king_age_name_id']] = $row[0]['kingar_children_number'];
 									echo  $row[0]['age_name'] . "</b>ли болалар сони: <b>" . $row[0]['kingar_children_number'].";</b>";
-									if($row[0]['worker_age_id'] == $row[0]['king_age_name_id']){
-										$workers = $row[0]['workers_count'];
-										echo "  ходимлар сони: <b>".$row[0]['workers_count'].";</b>  ";	
-									}
+									// if($row[0]['worker_age_id'] == $row[0]['king_age_name_id']){
+									// 	$workers = $row[0]['workers_count'];
+									// 	echo "  ходимлар сони: <b>".$row[0]['workers_count'].";</b>  ";	
+									// }
 								?>
 							</td>
 							@endforeach
@@ -285,6 +289,7 @@
 								<?php
 								for($t = 0; $t < count($products); $t++){
 									if(isset($products[$t]['yes']) and isset($workerproducts[$products[$t]['id']])){
+										$chcost += ($workers * $workerproducts[$products[$t]['id']]) / $products[$t]['div'];
 								?>
 									<td style="padding: 0px; font-size: 5px"><?php printf("%01.3f", ($workers * $workerproducts[$products[$t]['id']]) / $products[$t]['div']); ?></td>
 								<?php	
@@ -404,7 +409,7 @@
 						<p style="text-align: center;"><strong> Бош ошпаз:</strong> __________________;</p>
 					</div>
 					<div class="column">
-						<p style="text-align: right;"><strong>Танишдим ДМТТ рахбари: </strong> __________________;</p>
+						<p style="text-align: right;"><strong>ДМТТ директори: </strong> __________________;</p>
 					</div>
 				</div>
             </div>

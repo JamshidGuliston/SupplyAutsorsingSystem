@@ -144,6 +144,12 @@
 										$narx[40] = 0; $narx[41] = 13000; $narx[42] = 28000; $narx[43] = 3000; $narx[44] = 4000; $narx[45] = 12000; $narx[46] = 39000; $narx[47] = 49000; $narx[48] = 13000; $narx[49] = 3000;
 										$narx[50] = 28000; $narx[51] = 22000; $narx[52] = 4000; $narx[53] = 9000; $narx[54] = 8000; $narx[55] = 18000; $narx[56] = 9000; $narx[57] = 13000; $narx[58] = 17000; $narx[59] = 28000;
 										$narx[60] = 2400; $narx[61] = 0; $narx[62] = 0; $narx[63] = 0; $narx[64] = 0;
+										$narx[65] = 2400; $narx[66] = 0; $narx[67] = 0; $narx[68] = 0; $narx[69] = 0;
+										$narx[70] = 2400; $narx[71] = 0; $narx[72] = 0; $narx[73] = 0; $narx[74] = 0;
+										$narx[75] = 2400; $narx[76] = 0; $narx[77] = 0; $narx[78] = 0; $narx[79] = 0;
+										$narx[80] = 2400; $narx[81] = 0; $narx[82] = 0; $narx[83] = 0; $narx[84] = 0;
+										$narx[85] = 2400; $narx[86] = 0; $narx[87] = 0; $narx[88] = 0; $narx[89] = 0;
+										$narx[90] = 2400; $narx[91] = 0; $narx[92] = 0; $narx[93] = 0; $narx[94] = 0;
 			                            for($t = 0; $t < count($products); $t++){
 											if(isset($products[$t]['yes']) and isset($productallcount[$products[$t]['id']])){
 			                            ?>

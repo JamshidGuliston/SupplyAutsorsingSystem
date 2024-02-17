@@ -48,7 +48,8 @@ class BossController extends Controller
      */
     public function index(Request $request)
     {
-        if($request->yearid == 0){
+    	$yearid = $request->yearid;
+        if($yearid == 0){
             $yearid = Year::where('year_active', 1)->first()->id;
         }
         $year = Year::where('id', $yearid)->first();
@@ -94,6 +95,9 @@ class BossController extends Controller
         }
 
         $sumbyregion = [];
+        $inarray[1] = [];
+        $inarray[2] = [];
+        $inarray[3] = [];
         // dd($totalproducts);
         foreach($totalproducts as $key => $kind){
             $k = Kindgarden::where('id', $key)->first();
@@ -107,17 +111,25 @@ class BossController extends Controller
                 if(empty($sumbyregion[$k->region_id]['summ_sale'])){
                     $sumbyregion[$k->region_id]['summ_sale'] = 0;
                     $sumbyregion[$k->region_id]['summ_by'] = 0;
+                    $sumbyregion[$k->region_id]['summ_by'] = 0;
                 }
                 $mc = Add_large_werehouse::where('add_large_werehouses.product_id', $pkey)
                         ->where('add_groups.day_id', '>=', $days->first()->id)
                         ->where('add_groups.day_id', '<=', $days->last()->id)
                         ->join('add_groups', 'add_groups.id', '=', 'add_large_werehouses.add_group_id')
                         ->avg('cost');
+                if($mc == 0){
+                	$mc = Add_large_werehouse::where('add_large_werehouses.product_id', $pkey)
+                	->orderBy('id', 'DESC')
+                	->first('cost');
+                	$mc = $mc ? $mc->cost : 0;
+                }
                 $sumbyregion[$k->region_id]['summ_sale'] += $row['weight'] * $costs->where('praduct_name_id', $pkey)->first()->price_cost;
-                $sumbyregion[$k->region_id]['summ_by'] += $row['weight'] * $mc;
+                $sumbyregion[$k->region_id]['summ_by'] += $row['weight'] * ($mc == null)? 0 : $mc;
+                array_push($inarray[$k->region_id], array($pkey => $row['weight'], 'cost' => $row['weight'] * $mc));
             }
         }
-        // dd($sumbyregion);
+        
         $regions = Region::all();
         return view('boss.home', compact('year', 'months', 'id', 'prt', 'sumbyregion', 'regions'));
     }
@@ -154,17 +166,14 @@ class BossController extends Controller
     public function showincome(Request $request){
         $daysofmonth = $this->days_of_month($request->monthid);
         $regions = Region::all();
-        if($request->kindid == 0)
-            $kindgardens = Kindgarden::all();
-        else
-            $kindgardens = Kindgarden::where('id', $request->kindid)->get();
+        $kindgardens = $request->kindid;
         $inregions = [];
         $allproducts = [];
         foreach($kindgardens as $kindgar){
             foreach($daysofmonth as $day){
                 foreach(Age_range::all() as $age){
                     $join = Number_children::where('number_childrens.day_id', $day->id)
-                        ->where('number_childrens.kingar_name_id', $kindgar->id)
+                        ->where('number_childrens.kingar_name_id', $kindgar)
                         ->where('number_childrens.king_age_name_id', $age->id)
                         ->join('kindgardens', 'kindgardens.id', '=', 'number_childrens.kingar_name_id')
                         ->leftjoin('active_menus', function($join){
@@ -184,28 +193,87 @@ class BossController extends Controller
         foreach($allproducts as $day){
             foreach($day as $product){
                 if(!isset($report[$product->product_name_id]["kg"])){
+                	$report[$product->product_name_id]["p_name"] = $product->product_name;
+                	$report[$product->product_name_id]["size_name"] = $product->size_name;
                     $report[$product->product_name_id]["kg"] = 0;
+                    $cost = bycosts::where('day_id', bycosts::where('day_id', '<', $daysofmonth->last()->id)->where('region_name_id', 1)->orderBy('day_id', 'DESC')->first()->day_id)
+			            ->where('region_name_id', 1)
+			            ->where('praduct_name_id', $product->product_name_id)
+			            ->first()->price_cost;
+			        $report[$product->product_name_id]["salecost"] = $cost;
+			        $mc = Add_large_werehouse::where('add_large_werehouses.product_id', $product->product_name_id)
+                        ->where('add_groups.day_id', '>=', $daysofmonth->first()->id)
+                        ->where('add_groups.day_id', '<=', $daysofmonth->last()->id)
+                        ->join('add_groups', 'add_groups.id', '=', 'add_large_werehouses.add_group_id')
+                        ->avg('cost');
+                    if($mc == 0){
+                    	$mc = Add_large_werehouse::where('add_large_werehouses.product_id', $product->product_name_id)
+                    	->orderBy('id', 'DESC')
+                    	->first('cost');
+                    	$mc = $mc ? $mc->cost : 0;
+                    }
+                    $report[$product->product_name_id]["bycost"] = $mc;
                 }
                 $report[$product->product_name_id]["kg"] += $product->weight/$product->div * $product->kingar_children_number;
             }
         }
-
-        $cost = bycosts::where('day_id', bycosts::where('day_id', '<', $daysofmonth->last()->id)->where('region_name_id', 1)->orderBy('day_id', 'DESC')->first()->day_id)
-            ->where('region_name_id', 1)
-            ->where('praduct_name_id', $product->product_name_id)
-            ->first()->price_cost;
-        // $mods = $this->multimods();
-        // dd($mods);
-        // usort($incomes, function ($a, $b){
-        //     if(isset($a["p_sort"]) and isset($b["p_sort"])){
-        //         return $a["p_sort"] > $b["p_sort"];
-        //     }
-        // });
-
-        return $report;
-
-
+		
+		$html = "<table style='background-color: white; width: 100%;'>
+                <thead>
+                <tr>
+                        <th>Maxsulot</th>
+                        <th>..</th>
+                        <th>Bir oylik kg</th>
+                        <th>Kirim o'r.narx</th>
+                        <th>Kirim summa</th>
+                        <th>Chiqim narx</th>
+                        <th>Chiqim summa</th>
+                        <th>Farqi</th>
+                        <th>Marja %</th>
+                    </tr>
+                </thead>
+                <tbody>";
+                
+		$taking = 0;
+        $giving = 0;
+        $mod = 0;
+        foreach($report as $key => $row){
+            $taking = $taking + $row["kg"] * $row["bycost"];
+            $giving = $giving + $row["kg"] * $row["salecost"];
+            $mod = $mod +  $row["kg"] * $row["salecost"] - $row["kg"] * $row["bycost"];
+            $html = $html."
+                <tr>
+                    <td>".$row["p_name"]."</td>
+                    <td>".$row["size_name"]."</td>
+                    <td>".sprintf('%0.2f', $row["kg"])."</td>
+                    <td>".sprintf('%0.0f', $row["bycost"])."</td>   
+                    <td>".sprintf('%0.2f', $row["kg"] * $row["bycost"])."</td>
+                    <td>".sprintf('%0.0f', $row["salecost"])."</td>
+                    <td>".sprintf('%0.2f', $row["kg"] * $row["salecost"])."</td>   
+                    <td>".sprintf('%0.2f', $row["kg"] * $row["salecost"] - $row["kg"] * $row["bycost"])."</td>
+                    <td>".sprintf('%0.0f', ($row["kg"] * $row["salecost"] - $row["kg"] * $row["bycost"]) / ($row["kg"] * $row["salecost"]) * 100)."</td>   
+                </tr>
+            ";  
+        }
         
+        $html = $html."
+            <tr>
+                <td><b>Jami:</b></td>
+                <td></td>
+                <td></td>
+                <td></td>   
+                <td><b>".sprintf('%0.2f', $taking)."</b></td>
+                <td></td> 
+                <td><b>".sprintf('%0.2f', $giving)."</b></td>
+                <td><b>".sprintf('%0.2f',$mod)."</b></td>    
+                <td><b>".sprintf('%0.0f',$mod / $giving * 100)."</b></td>   
+            </tr>
+        ";
+        $html = $html."</tbody>
+                </table>
+                ";
+            
+        return $html;
     }
     /**
      * Show the form for creating a new resource.

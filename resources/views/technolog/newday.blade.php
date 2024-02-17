@@ -228,7 +228,7 @@
                 <th scope="col">MTT-nomi</th>
                 <th scope="col">Xodimlar 
                     <!-- shu joyida ishchilar faqat 1 - idli menyudan ovqatlanadi -->
-                    <input id="hiddenworkerage" type="hidden" name="workerage" value="1">
+                    <input id="hiddenworkerage" type="hidden" name="workerage" value="4">
                     <!-- <select name="workerege" id="workerege" required>
                         <option value="">---</option>
                         @foreach($ages as $age)

@@ -35,6 +35,7 @@ use App\Models\Product;
 use App\Models\Product_category;
 use App\Models\Season;
 use App\Models\Shop;
+use App\Models\Take_group;
 use App\Models\Size;
 use App\Models\Take_small_base;
 use App\Models\titlemenu_food;
@@ -47,6 +48,14 @@ use TCG\Voyager\Models\Category;
 
 class TechnologController extends Controller
 {
+	public function days(){
+        $days = Day::join('months', 'months.id', '=', 'days.month_id')
+                ->join('years', 'years.id', '=', 'days.year_id')
+                ->orderby('days.id', 'DESC')
+                ->get(['days.id', 'days.day_number', 'months.month_name', 'years.year_name']);
+        return $days;
+    }
+    
     public function index(Request $request)
     {
         $year = Year::where('year_active', 1)->first();
@@ -64,7 +73,7 @@ class TechnologController extends Controller
         $menus = Titlemenu::where('menu_season_id', $season->id)->get();
         
         date_default_timezone_set('Asia/Tashkent');
-        $d = strtotime("-10 hours 30 minutes");
+        $d = strtotime("-8 hours 30 minutes");
         return view('technolog.home', ['year' => $year, 'date' => $days, 'tomm' => $d, 'kingardens' => $kingar, 'menus' => $menus, 'next' => $nextdaymenu, 'months' => $months]);
     }
 
@@ -81,7 +90,7 @@ class TechnologController extends Controller
         }
         $months = Month::where('yearid', $year->id)->get();
         date_default_timezone_set('Asia/Tashkent');
-        $d = strtotime("-10 hours 30 minutes");
+        $d = strtotime("-8 hours 30 minutes");
         foreach ($months as $month) {
             if ($month->month_en == date("F", $d)) {
                 $month->update(['month_active' => 1]);
@@ -152,7 +161,7 @@ class TechnologController extends Controller
     public function sendmenu($day)
     {
         date_default_timezone_set('Asia/Tashkent');
-        $d = strtotime("-10 hours 30 minutes");
+        $d = strtotime("-8 hours 30 minutes");
         $bool = array();
         $ages = Age_range::all();
         $sid = Season::where('hide', 1)->first();
@@ -571,7 +580,7 @@ class TechnologController extends Controller
 
     public function nextdayaddgarden(Request $request){
         date_default_timezone_set('Asia/Tashkent');
-    	$d = strtotime("-10 hours 30 minutes");
+    	$d = strtotime("-8 hours 30 minutes");
         $find = Nextday_namber::where('kingar_name_id', $request->kgarden)->get();
         if($find->count() == 0){
             foreach($request->ages as $key => $value){
@@ -651,7 +660,7 @@ class TechnologController extends Controller
         }
 
         date_default_timezone_set('Asia/Tashkent');
-        $d = strtotime("-10 hours 30 minutes");
+        $d = strtotime("-8 hours 30 minutes");
 
         return redirect()->route('technolog.sendmenu', ['day' => date("d-F-Y", $d)]);
     }
@@ -1357,7 +1366,7 @@ class TechnologController extends Controller
     public function editnextcheldren(Request $request){
         // soat
         date_default_timezone_set('Asia/Tashkent');
-        $d = strtotime("-10 hours 30 minutes");
+        $d = strtotime("-8 hours 30 minutes");
         Nextday_namber::where('id', $request->nextrow)
                     ->update(['kingar_children_number' => $request->agecount]);
         Temporary::where('id', $request->temprow)->update(['age_number' => $request->agecount]);
@@ -1381,7 +1390,7 @@ class TechnologController extends Controller
 
     public function editnextmenu(Request $request){
         date_default_timezone_set('Asia/Tashkent');
-    	$d = strtotime("-10 hours 30 minutes");
+    	$d = strtotime("-8 hours 30 minutes");
         Nextday_namber::where('id', $request->nextrow)->update(['kingar_menu_id' => $request->menuid]);
         return redirect()->route('technolog.sendmenu', ['day' => date("d-F-Y", $d)]);
     }
@@ -1602,9 +1611,9 @@ class TechnologController extends Controller
     }
 
     public function getmodproduct(Request $request, $kid){
-        $king = Kindgarden::where('id', $kid)->first();
+        $king = Kindgarden::where('id', $kid)->with('user')->first();	
         $days = Day::where('year_id', Year::where('year_active', 1)->first()->id)->where('month_id', Month::where('month_active', 1)->first()->id)->get();
-        // dd($days);
+  
         $minusproducts = [];
         foreach($days as $day){
             $minus = minus_multi_storage::where('day_id', $day->id)
@@ -1683,7 +1692,8 @@ class TechnologController extends Controller
         
         $html = "<table class='table table-light table-striped table-hover'>
                 <input type='hidden' name='kingarid' value='". $kid ."'>
-                <input type='hidden' name='dayid' value='". $days[0]->id ."'>
+                <input type='hidden' name='chefid' value='". $king['user'][0]['id'] ."'>
+                <input type='hidden' name='dayid' value='". $days[count($days)-1]->id ."'>
                 <thead>
                     <tr>
                         <th scope='col'>Maxsulot</th>
@@ -1712,7 +1722,8 @@ class TechnologController extends Controller
                             }
                             else
                                 $countout = 0;
-                            $html = $html.$countout."</td>
+                            $html = $html.$countout." + <input type='text' style='width: 50px; font-size: 12px' name='prodminus[". $product->id ."]'>
+                                </td>
                             <td>";
 
                             if(isset($takedproducts[$product->id])){ 
@@ -1722,7 +1733,7 @@ class TechnologController extends Controller
                                 $counttrash = 0;
                             $html = $html.$counttrash."</td>
                             
-                            <td>". sprintf('%0.1f', $countin - $countout - $counttrash) .' '.$product->size_name."</td>
+                            <td>". sprintf('%0.3f', $countin - $countout - $counttrash) .' '.$product->size_name."</td>
                         </tr>";
                     }
                 }
@@ -1748,18 +1759,27 @@ class TechnologController extends Controller
                 ]);
             }
         }
-
-        // foreach($request->prodminus as $key => $value){
-        //     if($value != null){
-        //         minus_multi_storage::create([
-        //             'day_id' => $request->dayid,
-        //             'kingarden_name_id' => $request->kingarid,
-        //             'kingar_menu_id' => -1,
-        //             'product_name_id' => $key,
-        //             'product_weight' => $value,
-        //         ]);
-        //     }
-        // }
+		
+		$take = Take_group::create([
+            'contur_id' => 1,
+            'day_id' => $request->dayid,
+            'taker_id' => $request->chefid,
+            'outside_id' => 1,
+            'title' => "Yo'qolgan maxulotlar",
+            'description' => "",
+        ]);
+        
+        foreach($request->prodminus as $key => $value){
+            if($value != null){
+            	Take_small_base::create([
+		            'kindgarden_id' => $request->kingarid,
+		            'takegroup_id' => $take->id,
+		            'product_id' => $key,
+		            'weight' => $value,
+		            'cost' => 0,
+		        ]);
+            }
+        }
 
         return redirect()->route('technolog.home');
     }
@@ -1797,6 +1817,62 @@ class TechnologController extends Controller
         
         dd($errors);
         dd("OK");
+    }
+    
+    public function updatemanu(){
+    	$days = $this->days();
+    	return view('technolog.updatemanu', ['days' => $days]); 
+    	
+    }
+    
+    public function getactivemenuproducts(Request $request){
+    	$days = Day::where('days.id', '>=', $request->bid)
+    			->where('days.id', '<=', $request->eid)
+    			->join('months', 'months.id', '=', 'days.month_id')
+                ->join('years', 'years.id', '=', 'days.year_id')
+                ->get(['days.id', 'days.day_number', 'months.month_name', 'years.year_name']);
+        $titlemenu = Titlemenu::all();
+        $foods = Food::all();
+        $ages = Age_range::all();
+    	$products = Product::join('sizes', 'sizes.id', '=', 'products.size_name_id')
+                ->get(['products.id', 'products.product_name', 'sizes.size_name']);
+        
+        $menus = Active_menu::where('day_id', ">=", $request->bid)->where('day_id', "<=", $request->eid)->get();
+        
+        $html = "<table class='table table-light table-striped table-hover'>
+                <thead>
+                    <tr>
+                        <th scope='col'>Yosh</th>
+                        <th scope='col'>Menu</th>
+                        <th scope='col'>Taom nomi</th>
+                        <th scope='col'>Maxsulot</th>
+                        <th scope='col'>Kg</th>
+                    </tr>
+                </thead>
+                <tbody>";
+                foreach($menus as $row){
+                    $html = $html."<tr>
+                        <td>". $ages->find($row->age_range_id)->age_name ."</td>
+                        <td>". $titlemenu->find($row->title_menu_id)->menu_name ."</td>
+                        <td>". $foods->find($row->menu_food_id)->food_name ."</td>
+                        <td>". $products->find($row->product_name_id)->product_name ."</td>
+                        <td> <input type='text' name='weight[".$row->id."]' value='". $row->weight ."'/></td>
+                    </tr>";
+                    
+                }
+        $html = $html."</tbody>
+            </table>
+            ";
+        
+        return $html;
+    }
+    
+    public function editactivemanu(Request $request){
+    	foreach ($request->weight as $key => $value){
+    		Active_menu::where('id', $key)->update(['weight' => $value]);
+    	}
+    	
+    	return redirect()->route('technolog.seasons');
     }
     
     function funtest(){

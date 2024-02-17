@@ -10,7 +10,7 @@
 <!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"> -->
 <title>Title</title>
 <style>
-	 @page { margin: 0.2in 0.1in 0in 0.1in; }
+	 @page { margin: 0.1in 0.1in 0in 0.1in; }
 	body{
 		font-family: DejaVu Sans;
 		font-size:7px;
@@ -32,7 +32,6 @@
 	td {
 		/* text-align: center; */
 		overflow: hidden;
-		word-wrap: break-word;
 	}
 	th{
 		border: 1px solid black;
@@ -41,7 +40,7 @@
 	td{
 		border-right: 1px solid black;
 		border-bottom: 1px solid black;
-		padding-left: 2px;
+		padding-left: 0.5px;
 	}
 	.vrt-header span{
 		display: inline-block;
@@ -80,24 +79,24 @@
 						<a href="#">
 							<i class="fas fa-store-alt" style="color: dodgerblue; font-size: 18px;"></i>
 						</a>
-						<!-- <b>{{ "Text" }}</b> -->
+						 <center><b>{{ $regions->find($kindgardens[0]->region_id)->region_name." мттларнинг ". $days[0]->year_name ." йил ". $days[0]->month_name ." ойида берилган озиқ овқат махсулотларининг хисоб китоби" }}</b></center> 
 					</div>
                 </div>
                 <table style="table-layout: fixed;">
                     <thead>
                         <tr>
-                            <th scope="col">Махсулот</th>
-                            <th>Ўлчов</th>
-                            <th><bold>Нарх</bold></th>
+                            <th scope="col" style="width: 7.5%;">Махсулот</th>
+                            <th style="width: 1.5%;">Ўл<br>бир</th>
+                            <th style="width: 2.5%;"><bold>Нарх</bold></th>
                             @foreach($kindgardens as $day)
 								<th scope="col" colspan="2">{{ $day->kingar_name; }}</th>
 							@endforeach
 							<th>КГ</th>
-							<th>Сумма</th>
-							<th>Устама {{ $over }}%</th>
-							<th>Жами сумма</th>
-							<th>НДС {{ $nds }}%</th>
-							<th>Хаммаси жами</th>
+							<th style="width: 4%;">Сумма</th>
+							<!--<th style="width: 4%;">Устама {{ $over }}%</th>-->
+							<!--<th style="width: 4%;">Жами сумма</th>-->
+							<!--<th style="width: 4%;">НДС {{ $nds }}%</th>-->
+							<!--<th style="width: 4%;">Хаммаси жами</th>-->
                         </tr>
                     </thead>
                     <tbody>
@@ -127,29 +126,29 @@
 							@endif
 							@if(isset($row[$day['id']]))
                           		@if($row['size_name'] == "дона")
-                                  <td style="width: 40px;">
+                                  <td>
                                   <?php  
-                                      echo round($row[$day['id']], 0); 
-                                      $summ += round($row[$day['id']], 0);
+                                      printf("%01.3f", $row[$day['id']]); 
+                                      $summ += $row[$day['id']];
                                   ?>
                                   </td>
-                                  <td style="font-size: 6px;">
+                                  <td style="font-size: 6px;"  style="width: 5%">
                                       <?php  
-                                          echo round(round($row[$day['id']], 0) * $row[0], 2);
-                                          $regionsumm[$day['id']] += round(round($row[$day['id']], 0) * $row[0], 2);
+                                          printf("%01.2f", $row[$day['id']] * $row[0]);
+                                          $regionsumm[$day['id']] += $row[$day['id']] * $row[0];
                                       ?>
                                   </td>
                                 @else
-                                	<td style="width: 40px;">
+                                	<td>
                                     <?php  
-                                        echo round($row[$day['id']], 3); 
-                                        $summ += round($row[$day['id']], 3);
+                                        printf("%01.3f", $row[$day['id']]); 
+                                        $summ += $row[$day['id']];
                                     ?>
                                     </td>
-                                    <td style="font-size: 6px;">
+                                    <td style="font-size: 6px;"  style="width: 5%">
                                         <?php  
-                                            echo round(round($row[$day['id']], 3) * $row[0], 2);
-                                            $regionsumm[$day['id']] += round(round($row[$day['id']], 3) * $row[0], 2);
+                                            printf("%01.2f", $row[$day['id']] * $row[0]);
+                                            $regionsumm[$day['id']] += $row[$day['id']] * $row[0];
                                         ?>
                                     </td>
                                 @endif
@@ -163,28 +162,48 @@
 								</td>
 							@endif
 						@endforeach
-						<td><?php echo round($summ, 3) ?></td>
-						<td style="font-size: 6px;"><?php $summa += round($summ * $row[0], 3); echo round($summ * $row[0], 3); ?></td>
-						<td style="font-size: 6px;"><?php $ustsumma += round(($summ * $row[0])/100 * $over, 3); echo round(($summ * $row[0])/100 * $over, 3) ?></td>
-						<td style="font-size: 6px;"><?php $allsumma += round($summ * $row[0] + ($summ * $row[0])/100 * $over, 3); echo round($summ * $row[0] + ($summ * $row[0])/100 * $over, 3) ?></td>
-						<td style="font-size: 6px;"><?php $ndssumma += round(round($summ * $row[0] + ($summ * $row[0])/100 * $over, 3) * $nds / (100 + $nds), 3); echo round(round($summ * $row[0] + ($summ * $row[0])/100 * $over, 3) * $nds / (100 + $nds), 3) ?></td>
-						<td style="font-size: 6px;"><?php $jamisumma += round($summ * $row[0] + ($summ * $row[0])/100 * $over, 3) + round(round($summ * $row[0] + ($summ * $row[0])/100 * $over, 3) / 100 * $nds, 3); echo round(round($summ * $row[0] + ($summ * $row[0])/100 * $over, 3) + round(round($summ * $row[0] + ($summ * $row[0])/100 * $over, 3) / 100 * $nds, 3), 3) ?></td>
+						<td><?php printf("%01.3f", $summ) ?></td>
+						<td style="font-size: 6px;"><?php $summa += $summ * $row[0]; printf("%01.2f",$summ * $row[0]); ?></td>
+						<!--<td style="font-size: 6px;"><?php $ustsumma += ($summ * $row[0])/100 * $over; printf("%01.2f", ($summ * $row[0])/100 * $over) ?></td>-->
+						<!--<td style="font-size: 6px;"><?php $allsumma += $summ * $row[0] + ($summ * $row[0])/100 * $over; printf("%01.2f", $summ * $row[0] + ($summ * $row[0])/100 * $over) ?></td>-->
+						<!--<td style="font-size: 6px;"><?php $ndssumma += ($summ * $row[0] + ($summ * $row[0])/100 * $over) / 100 * $nds; printf("%01.2f", ($summ * $row[0] + ($summ * $row[0])/100 * $over) / 100 * $nds) ?></td>-->
+						<!--<td style="font-size: 6px;"><?php $jamisumma += $summ * $row[0] + ($summ * $row[0])/100 * $over + ($summ * $row[0] + ($summ * $row[0])/100 * $over) / 100 * $nds; printf("%01.2f", $summ * $row[0] + ($summ * $row[0])/100 * $over + ($summ * $row[0] + ($summ * $row[0])/100 * $over) / 100 * $nds) ?></td>-->
 					</tr>
 					@endforeach
 					<tr>
-						<td><bold>Jami:</bold></td>
-						<td></td>
-						<td></td>
+						<td colspan="3"><bold>Jami:</bold></td>
 						@foreach($kindgardens as $day)
-							<td></td>
-							<td><?php printf("%01.1f", $regionsumm[$day['id']]) ?></td>
+							<td colspan="2" style="text-align: right"><?php printf("%01.2f", $regionsumm[$day['id']]) ?></td>
 						@endforeach
-						<td><?php printf("%01.1f", 0) ?></td>
-						<td style="font-size: 6px;"><?php printf("%01.2f", $summa) ?></td>
-						<td style="font-size: 6px;"><?php printf("%01.2f", $ustsumma) ?></td>
-						<td style="font-size: 6px;"><?php printf("%01.2f", $allsumma) ?></td>
-						<td style="font-size: 6px;"><?php printf("%01.2f", $ndssumma) ?></td>
-						<td style="font-size: 6px;"><?php printf("%01.2f", $jamisumma) ?></td>
+						<td colspan="2" style="text-align: right"><?php printf("%01.2f", $summa) ?></td>
+					</tr>
+					<tr>
+						<td colspan="3">Устама {{ $over }}%</td>
+						@foreach($kindgardens as $day)
+							<td  colspan="2" style="text-align: right"><?php printf("%01.2f", $regionsumm[$day['id']]/100 * $over) ?></td>
+						@endforeach
+						<td colspan="2" style="text-align: right"><?php printf("%01.2f", $summa/100 * $over) ?></td>
+					</tr>
+					<tr>
+						<td colspan="3">Сумма Устама билан</td>
+						@foreach($kindgardens as $day)
+							<td  colspan="2" style="text-align: right"><?php printf("%01.2f", $regionsumm[$day['id']] + $regionsumm[$day['id']]/100 * $over) ?></td>
+						@endforeach
+						<td colspan="2" style="text-align: right"><?php printf("%01.2f", $summa + $summa/100 * $over) ?></td>
+					</tr>
+					<tr>
+						<td colspan="3">НДС {{ $nds }}%</td>
+						@foreach($kindgardens as $day)
+							<td  colspan="2" style="text-align: right"><?php printf("%01.2f", ($regionsumm[$day['id']] + $regionsumm[$day['id']]/100 * $over)/100 * $nds) ?></td>
+						@endforeach
+						<td colspan="2" style="text-align: right"><?php printf("%01.2f", ($summa + $summa/100 * $over)/100 * $nds) ?></td>
+					</tr>
+					<tr>
+						<td colspan="3">Жами сумма НДС билан</td>
+						@foreach($kindgardens as $day)
+							<td  colspan="2" style="text-align: right"><?php printf("%01.2f", $regionsumm[$day['id']] + $regionsumm[$day['id']]/100 * $over + ($regionsumm[$day['id']] + $regionsumm[$day['id']]/100 * $over)/100 * $nds) ?></td>
+						@endforeach
+						<td colspan="2" style="text-align: right"><?php printf("%01.2f", $summa + $summa/100 * $over + ($summa + $summa/100 * $over)/100 * $nds) ?></td>
 					</tr>
                     </tbody>
                 </table>

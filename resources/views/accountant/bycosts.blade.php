@@ -66,7 +66,7 @@
 @include('accountant.sidemenu'); 
 @endsection
 @section('content')
-<!-- EDD -->
+<!-- ADD -->
 <div class="modal fade" id="Modalsadd" tabindex="-1" aria-labelledby="exampleModalLabelsadd" aria-hidden="true">
     <div class="modal-dialog  modal-lg">
         <div class="modal-content">
@@ -126,6 +126,60 @@
 </div>
 
 <!-- End -->
+<!--edit-->
+<div class="modal fade" id="allpModal" tabindex="-1" aria-labelledby="exampleModalLabelsadd" aria-hidden="true">
+    <div class="modal-dialog  modal-lg">
+        <div class="modal-content">
+            <div class="modal-header bg-info">
+                <h5 class="modal-title text-white" id="exampleModalLabel">Maxsulot narxlarini o'zgartirish</h5>
+                <button type="button" class="btn-close " data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form action="{{route('accountant.editallcosts')}}" method="POST">
+                @csrf
+                <input type="hidden" name="regionid" value="{{ $id }}">
+                <div class="allp_edit">
+                </div>
+                <div class="modal-body">
+                    <!--<div class="row">-->
+                    <!--    <div class="col-sm-6">-->
+                    <!--        <label>Ustama</label>-->
+                    <!--        <input class="form-control" name="raise" placeholder="Ustama %" required>-->
+                    <!--    </div>-->
+                    <!--    <div class="col-sm-6">-->
+                    <!--        <label>QQS</label>-->
+                    <!--        <input class="form-control" name="nds" placeholder="QQS %" required>-->
+                    <!--    </div>-->
+                    <!--</div> -->
+                    <hr> 
+                    <table class="table table-light table-striped table-hover" style="width: calc(100% - 2rem)!important;">
+                        <thead>
+                            <tr>
+                                <th scope="col">ID</th>
+                                <th scope="col">Maxsulot</th>
+                                <th scope="col">Narxi</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php $i = 0; ?>
+                            @foreach($productall as $all)
+                                <tr>
+                                    <th scope="row">{{ ++$i }}</th>
+                                    <td>{{ $all->product_name }}</td>
+                                    <td style="width: 50px;"><input type="text" name="orders[{{ $all->id }}]"  placeholder="{{ '1 '.$all->size_name.' '.$all->product_name.' narxi' }}" value="0"></td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn add-age btn-primary text-white">Tasdiqlash</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!--end edit-->
 <!-- Modal -->
 <div class="modal editesmodal fade" id="pcountModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog">
@@ -209,7 +263,7 @@
 <div class="py-4 px-4">
     <div class="row">
         <div class="col-md-6">
-            <b>- {{ $region->region_name }}</b>
+            <b> {{ $region->region_name }}</b>
         </div>
         <div class="col-md-3">
             <!-- <b>Bog'chalarga so'rov yuborish</b>
@@ -228,7 +282,9 @@
             <th style="width: 30px;">Махсулотлар</th>
             @foreach($days as $day)
                 @if(isset($day->yes))
-                    <th scope="col">{{ $day->day_number.'.'.$day->month_name.'.'.$day->year_name }}</th>
+                    <th scope="col">{{ $day->day_number.'.'.$day->month_name.'.'.$day->year_name }} 
+                    <i class="allpedites far fa-edit text-info" data-bs-toggle="modal" data-bs-target="#allpModal"  monthdata-dayid="{{ $day['id']  }}" style="cursor: pointer; margin-right: 16px;"> </i>
+                    </th>
                 @endif
             @endforeach
         </thead>
@@ -275,6 +331,23 @@
         div.html("<input type='hidden' name='prodid' class='form-control' value="+prodid+"><input type='hidden' name='regid' class='form-control' value="+regid+"><input type='hidden' name='dayid' class='form-control' value="+dayid+"><input type='text' name='kg' class='form-control' value="+kg+">");
         // title.html("<p>"+kn+"</p><input type='hidden' name='kingid' class='' value="+king+">");
     });
+
+    $('.allpedites').click(function() {
+        var dayid = $(this).attr('monthdata-dayid');
+        var div = $('.allp_edit');
+        div.html("<input type='hidden' name='dayid' class='form-control' value="+dayid+">");
+        $.ajax({
+            method: "GET",
+            url: '/accountant/getingcosts',
+            data: {
+                'dayid': dayid,
+            },
+            success: function(data) {
+                
+            }
+        })
+    });
+
 
     $('.ch_countedit').click(function() {
         var nextrow = $(this).attr('data-nextrow-id');

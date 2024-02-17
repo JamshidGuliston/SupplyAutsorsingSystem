@@ -6,6 +6,7 @@ use App\Exports\NakapitelExport;
 use App\Exports\FakturaExport;
 use App\Models\Age_range;
 use App\Models\bycosts;
+use App\Models\Active_menu;
 use App\Models\Day;
 use App\Models\Kindgarden;
 use App\Models\Month;
@@ -62,7 +63,6 @@ class AccountantController extends Controller
         $days = Day::where('years.id', $id)
                 ->join('months', 'months.id', '=', 'days.month_id')
                 ->join('years', 'years.id', '=', 'days.year_id')
-                ->orderby('days.id', 'DESC')
                 ->get(['days.id', 'days.day_number', 'months.month_name', 'years.year_name']);
         return $days;
     }
@@ -88,13 +88,14 @@ class AccountantController extends Controller
     public function bycosts(Request $request, $id){
         $region = Region::where('id', $id)->first();
         $year = Year::where('year_active', 1)->first();
-        $days = Day::where('year_id', $year->id)
-            ->join('months', 'months.id', '=', 'days.month_id')
+        //where('year_id', $year->id)
+        $days = Day::join('months', 'months.id', '=', 'days.month_id')
             ->join('years', 'years.id', '=', 'days.year_id')
             ->get(['days.id', 'days.day_number', 'months.month_name', 'years.year_name']);
         $costs = bycosts::where('day_id', '>=', $days[0]['id'])
                 ->where('region_name_id', $id)
                 ->join('products', 'bycosts.praduct_name_id', '=', 'products.id')
+                ->orderby('day_id', 'DESC')
                 ->get(['bycosts.id', 'bycosts.praduct_name_id', 'bycosts.day_id', 'bycosts.price_cost', 'products.product_name']);
         
         $minusproducts = [];
@@ -430,7 +431,7 @@ class AccountantController extends Controller
                     $nakproducts[0][$day->id] = $childs;
                     $nakproducts[0]['product_name'] = "Болалар сони";
                     $nakproducts[0]['size_name'] = "";
-                    $nakproducts[$key][$day->id] = ($row[$ageid]*$row[$ageid.'-children']) / $row[$ageid.'div'];;
+                    $nakproducts[$key][$day->id] = ($row[$ageid]*$row[$ageid.'-children']) / $row[$ageid.'div'];
                     $nakproducts[$key]['product_name'] = $row['product_name'];
                     $nakproducts[$key]['sort'] = $row[$ageid.'sort'];
                     $nakproducts[$key]['size_name'] = $row['size_name'];
@@ -942,7 +943,11 @@ class AccountantController extends Controller
         // dd($request->all());
         $over = $request->over;
         $nds = $request->nds;
-        $days = Day::where('id', '>=', $request->start)->where('id', '<=', $request->end)->get();
+        $days = Day::where('days.id', '>=', $request->start)->where('days.id', '<=', $request->end)
+                ->join('months', 'months.id', '=', 'days.month_id')
+                ->join('years', 'years.id', '=', 'days.year_id')
+                ->get(['days.id', 'days.day_number', 'months.month_name', 'years.year_name']);
+        $regions = Region::all();
         $nakproducts = [];
         $first = $days[0]['id'];
         $kindgardens = [];
@@ -989,7 +994,7 @@ class AccountantController extends Controller
                 
             }
         }
-
+        
         $costs = bycosts::where('day_id', $request->cost_id)
                 ->where('region_name_id', $request->region_id)
                 ->orderBy('day_id', 'DESC')->get();
@@ -1007,7 +1012,7 @@ class AccountantController extends Controller
         });
         // dd($nakproducts);
         $dompdf = new Dompdf('UTF-8');
-		$html = mb_convert_encoding(view('pdffile.accountant.svod', compact('age', 'nakproducts', 'kindgardens', 'over', 'nds')), 'HTML-ENTITIES', 'UTF-8');
+		$html = mb_convert_encoding(view('pdffile.accountant.svod', compact('days', 'age', 'regions', 'nakproducts', 'kindgardens', 'over', 'nds')), 'HTML-ENTITIES', 'UTF-8');
 		$dompdf->loadHtml($html);
 
 		$dompdf->setPaper('A3',  'landscape');
@@ -1476,6 +1481,36 @@ class AccountantController extends Controller
             }
             $alladd[$row->product_name_id]['minusweight'] += $row->product_weight;
         }
+        
+        // $nochs = Number_children::where('day_id', '>=', $start)
+        //             ->join('kindgardens', 'kindgardens.id', '=', 'number_childrens.kingar_name_id')
+        //             ->where('day_id', '<=', $request->lastid)
+        //             ->get();
+        // $bymenus = Active_menu::where('day_id', '>=', $start)
+        //                     ->where('day_id', '<=', $request->lastid)->get();
+                            
+        // $ages = Age_range::all();
+        // $products = Product::all();
+        // $totalproducts = [];
+        // foreach($ages as $age){
+        //     $foundmenu = $bymenus->where('age_range_id', $age->id);
+        //     foreach($products as $prd){
+        //     	if(!isset($totalproducts[$prd->id])){
+        //               $totalproducts[$prd->id] = 0;
+        //         } 
+        //     	$w = $foundmenu->where('product_name_id', $prd->id)->sum('weight');
+        //     	$totalproducts[$prd->id] += ($w * $nochs->where('king_age_name_id', $age->id)->sum('kingar_children_number')) / $prd->div;
+        //     }
+            // foreach($foundmenu as $menu){
+            //     if(!isset($totalproducts[$menu->product_name_id])){
+            //         $totalproducts[$menu->product_name_id] = 0;
+            //     }               
+            //     $totalproducts[$menu->product_name_id] += ($menu->weight * $noch->kingar_children_number) / $products->find($menu->product_name_id)->div;
+            // }
+        // }
+        // return json_encode($totalproducts);
+        
+                            
         usort($alladd, function ($a, $b){
             if(isset($a["p_sort"]) and isset($b["p_sort"])){
                 return $a["p_sort"] > $b["p_sort"];
@@ -1507,7 +1542,7 @@ class AccountantController extends Controller
         $taking = 0;
         $giving = 0;
         $mod = 0;
-        foreach($alladd as $row){
+        foreach($alladd as $key => $row){
             $taking = $taking + $row["weight"] * $row["middlecost"];
             $giving = $giving + $row["minusweight"] * $row["middlecost"];
             $mod = $mod + ($row["weight"]-$row["minusweight"]) * $row["middlecost"];
@@ -1549,6 +1584,22 @@ class AccountantController extends Controller
                 ";
             
         return $html;
+    }
+    
+    public function editallcosts(Request $request){
+    	
+    	foreach ($request->orders as $key => $value){
+    		bycosts::where('day_id', $request->dayid)
+                ->where('region_name_id', $request->regionid)
+                ->where('praduct_name_id', $key)
+                ->update(['price_cost' => $value]);
+    	}
+    	
+    	return redirect()->route('accountant.bycosts', $request->regionid);
+    }
+    
+    public function getingcosts(Request $request){
+    	
     }
 
 }

@@ -47,32 +47,52 @@
     <hr>
     <table class="table table-light py-4 px-4">
         <tbody>
+        	<?php
+        		$total = 0;
+        		$ndstotal = 0;
+        		$usttotal = 0;
+        		$diftotal = 0;
+        		$saletotal = 0;
+        		$bytotal = 0;
+        	?>
             @foreach($regions as $region)
             <tr><td colspan="6" style="background-color:#5c605e63"><b>{{ $region->region_name }}</b></td></tr>
             <tr>
                 <td>Olindi</td>
                 <td>Sotildi</td>
                 <td>Farqi</td>
-                <td>Ustama {{$prt->where('region_id', 1)->first()->raise}} %</td>
-                <td>NDS {{$prt->where('region_id', 1)->first()->nds}} %</td>
+                <td>Ustama {{$prt->where('region_id', $region->id)->first()->raise}} %</td>
+                <td>NDS {{$prt->where('region_id', $region->id)->first()->nds}} %</td>
                 <td>Jami</td>
             </tr>
             <tr>
             <?php 
                 $sumbyregion[$region->id]['summ_by'] = isset($sumbyregion[$region->id]['summ_by']) ? $sumbyregion[$region->id]['summ_by'] : 0;
                 $sumbyregion[$region->id]['summ_sale'] = isset($sumbyregion[$region->id]['summ_sale']) ? $sumbyregion[$region->id]['summ_sale'] : 0;
+                $total = $total + $sumbyregion[$region->id]['summ_sale'] + $sumbyregion[$region->id]['summ_sale'] / 100 * $prt->where('region_id', $region->id)->first()->raise + ($sumbyregion[$region->id]['summ_sale'] + $sumbyregion[$region->id]['summ_sale'] / 100 * $prt->where('region_id', $region->id)->first()->raise) / 100 * $prt->where('region_id', $region->id)->first()->nds;
+                $bytotal = $bytotal + $sumbyregion[$region->id]['summ_by'];
+                $saletotal = $saletotal + $sumbyregion[$region->id]['summ_sale'];
+                $usttotal = $usttotal + $sumbyregion[$region->id]['summ_sale'] / 100 * $prt->where('region_id', $region->id)->first()->raise;
+                $ndstotal = $ndstotal + ($sumbyregion[$region->id]['summ_sale'] + $sumbyregion[$region->id]['summ_sale'] / 100 * $prt->where('region_id', $region->id)->first()->raise) / 100 * $prt->where('region_id', $region->id)->first()->nds;
             ?>
                 <td>{{ $sumbyregion[$region->id]['summ_by'] }}</td>
                 <td>{{ $sumbyregion[$region->id]['summ_sale'] }}</td>
                 <td>{{ $sumbyregion[$region->id]['summ_sale'] - $sumbyregion[$region->id]['summ_by'] }}</td>
-                <td>{{ ($sumbyregion[$region->id]['summ_sale'] - $sumbyregion[$region->id]['summ_by'])/100 * $prt->where('region_id', 1)->first()->raise }}</td>
-                <td></td>
-                <td>Jami</td>
+                <td>{{ $sumbyregion[$region->id]['summ_sale'] / 100 * $prt->where('region_id', $region->id)->first()->raise }}</td>
+                <td>{{ ($sumbyregion[$region->id]['summ_sale'] + $sumbyregion[$region->id]['summ_sale'] / 100 * $prt->where('region_id', $region->id)->first()->raise) / 100 * $prt->where('region_id', $region->id)->first()->nds }}</td>
+                <td>{{ $sumbyregion[$region->id]['summ_sale'] + $sumbyregion[$region->id]['summ_sale'] / 100 * $prt->where('region_id', $region->id)->first()->raise + ($sumbyregion[$region->id]['summ_sale'] + $sumbyregion[$region->id]['summ_sale'] / 100 * $prt->where('region_id', $region->id)->first()->raise) / 100 * $prt->where('region_id', $region->id)->first()->nds }}</td>
             </tr>
             @endforeach
             <tr>
-                <td colspan="5">Jami</td>
-                <td>...</td>
+                <td colspan="6"><b>Jami</b></td>
+            </tr>
+            <tr>
+            	<td>{{ $bytotal }}</td>
+            	<td>{{ $saletotal }}</td>
+            	<td>{{ $diftotal }}</td>
+            	<td>{{ $usttotal }}</td>
+            	<td>{{ $ndstotal }}</td>
+            	<td>{{ $total }}</td>
             </tr>
         </tbody>
         

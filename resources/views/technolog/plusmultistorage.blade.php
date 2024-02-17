@@ -222,6 +222,7 @@
         <thead>
             <tr>
                 <th style="width: 30px;">Махсулотлар</th>
+                <th scope="col">{{ "O'tgan oydan Qoldiq" }}</th>
                 @foreach($days as $day)
                 <th scope="col">{{ $day->day_number }}</th>
                 @endforeach
@@ -248,11 +249,10 @@
                 @foreach($days as $day)
                     @if(isset($row[$day['id']."+"]) or isset($row[$day['id']."-"]))
                         <td>
-                        {{ $row[$day['id']."+"] }}
-                        @if($row[$day['id']."-"] != 0)
-                            <hr>
-                            {{ $row[$day['id']."-"] }}
-                        @endif
+                        	{{ $row[$day['id']."-"] }}
+                        </td>
+                        <td>
+                        	{{ $row[$day['id']."+"] }}
                         </td>
                         <?php $all += $row[$day['id']."+"] + $row[$day['id']."-"]; ?>
                     @else
@@ -266,7 +266,7 @@
                     <?php
                 }
                 ?>
-                <td style="width: 70px;">+{{ $all }}</td>
+                <td style="width: 70px;">{{ $all }}</td>
                 <!-- <td style="width: 70px;">{{ round($all-$allq, 2) }}</td> -->
             </tr>
             @endforeach

@@ -118,7 +118,7 @@ class ChefController extends Controller
 
     public function right(Request $request)
     {
-        $day = Day::orderby('id', 'DESC')->get();
+        $day = Day::orderby('id', 'DESC')->first();
         order_product::where('id', $request->orderid)->update([
             'document_processes_id' => 5
         ]);
@@ -132,7 +132,7 @@ class ChefController extends Controller
                                 ->get();
             if($find->count() == 0){
                 plus_multi_storage::create([
-                    'day_id' => $order['day_id'],
+                    'day_id' => $day->id,
                     'shop_id' => 0,
                     'kingarden_name_d' => $order['kingar_name_id'],
                     'order_product_id' => $order['id'],

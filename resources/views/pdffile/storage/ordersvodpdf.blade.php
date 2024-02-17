@@ -54,6 +54,23 @@
 		transform: rotate(-90deg);
 		white-space: nowrap;
 	}
+	.column {
+		float: left;
+		text-align: center;
+		width: 33%;
+	}
+
+	/* Clear floats after the columns */
+	.row:after {
+		content: "";
+		display: table;
+		clear: both;
+	}
+	.row{
+		display: flex;
+		flex-wrap: nowrap;
+		justify-content: space-between;
+	}
 </style>
 </head>
 <body>
@@ -100,6 +117,14 @@
                     </tbody>
                 </table>
             </div>
+            <div class="row" style="margin-top: 15px;">
+				<div class="column">
+					<img src="images/qrmanzil.jpg" alt="QR-code" width="140">
+				</div>
+				<div class="column">
+					<p style="text-align: right;"><strong>Қабул қилувчи: </strong> __________________;</p>
+				</div>
+			</div>
         </div>
     </div>
 </bod>

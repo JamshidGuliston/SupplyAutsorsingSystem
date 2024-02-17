@@ -32,11 +32,13 @@ use App\Models\minus_multi_storage;
 use App\Models\Nextday_namber;
 use App\Models\order_product_structure;
 use App\Models\plus_multi_storage;
+use App\Models\Take_small_base;
 use App\Models\Product;
 use App\Models\Product_category;
 use App\Models\Protsents;
 use App\Models\Season;
 use App\Models\Shop;
+use App\Models\Shop_product;
 use App\Models\Size;
 use App\Models\titlemenu_food;
 use Dompdf\Dompdf;
@@ -231,6 +233,88 @@ class TestController extends Controller
 		// Output the generated PDF to Browser
 		$dompdf->stream($name, ['Attachment' => 0]);
 	}
+	
+	public function nextdaysomenakladnoyPDF($kid){
+		$king = Kindgarden::where('id', $kid)->first();
+		$join = Nextday_namber::where('kingar_name_id', $kid)
+				->leftjoin('menu_compositions', function($join){
+                    $join->on('nextday_nambers.kingar_menu_id', '=', 'menu_compositions.title_menu_id');
+                    $join->on('nextday_nambers.king_age_name_id', '=', 'menu_compositions.age_range_id');
+                })
+                ->join('products', 'menu_compositions.product_name_id', '=', 'products.id')
+				->get();
+		// dd($join);
+		$ages = Age_range::all();
+		$agerange = array();
+		foreach($ages as $row){
+			$agerange[$row->id] = 0;
+		}
+		$endday = Day::orderBy('id', 'DESC')->join('months', 'months.id', '=', 'days.month_id')
+        	->join('years', 'years.id', '=', 'days.year_id')
+        	->first(['days.id', 'days.day_number', 'months.id as MID', 'months.month_name', 'years.year_name']);
+		// $productscount = array_fill(1, 500, $agerange);
+		// $workproduct = array_fill(1, 500, 0);
+		$workerfood = titlemenu_food::where('titlemenu_foods.day_id', $endday->id)->get();
+		// dd($productscount);
+		$workproduct = [];
+		foreach($join as $row){
+			$h = Product::where('id', $row->product_name_id)->with('shop')->first();
+			if(empty($productscount[$row->product_name_id])){
+				$productscount[$row->product_name_id][0] = 0;
+				$productscount[$row->product_name_id][1] = 0;
+				$productscount[$row->product_name_id][2] = 0;
+				$productscount[$row->product_name_id][3] = 0;
+				$productscount[$row->product_name_id][4] = 0;
+				$productscount[$row->product_name_id][5] = 0;
+				$productscount[$row->product_name_id][6] = 0;
+			}
+			if($row->age_range_id == 1 and $row->menu_meal_time_id = 3){
+				foreach($workerfood as $ww){
+					if($row->menu_food_id == $ww->food_id){
+						if(empty($workproduct[$row->product_name_id])){
+							$workproduct[$row->product_name_id][1] = 0;
+							$workproduct[$row->product_name_id][2] = 0;
+							$workproduct[$row->product_name_id][3] = 0;
+							$workproduct[$row->product_name_id][4] = 0;
+							$workproduct[$row->product_name_id][5] = 0;
+							$workproduct[$row->product_name_id][6] = 0;
+						}
+						if($h->shop->count()>=1){
+							$workproduct[$row->product_name_id] += $row->weight;
+							$workproduct[$row->product_name_id.'div'] = $row->div;
+							$workproduct[$row->product_name_id.'wcount'] = $row->workers_count;
+						}
+					}
+				}
+			}
+			if($h->shop->count()>=1){
+				$productscount[$row->product_name_id][$row->age_range_id] += $row->weight;
+				$productscount[$row->product_name_id][$row->age_range_id.'-children'] = $row->kingar_children_number;
+				$productscount[$row->product_name_id][$row->age_range_id.'div'] = $row->div;
+				$productscount[$row->product_name_id]['product_name'] = $row->product_name;
+			}
+		}
+		// dd($workproduct);
+		
+		$dompdf = new Dompdf('UTF-8');
+		$html = mb_convert_encoding(view('docnextday.somenakladnoy', ['workproduct' => $workproduct, 'productscount' => $productscount, 'king' => $king, 'ages' => $ages, 'day' => $endday]), 'HTML-ENTITIES', 'UTF-8');
+		$dompdf->loadHtml($html);
+
+		// (Optional) Setup the paper size and orientation
+		$dompdf->setPaper('A4');
+		// $customPaper = array(0,0,360,360);
+		// $dompdf->setPaper($customPaper);
+		$name = $endday['id'].$kid."nextnaklad.pdf";
+		// Render the HTML as PDF
+		$dompdf->render();
+
+		if (auth()->user()->id < 6){
+			$dompdf->stream($name, ['Attachment' => 0]);
+		}
+		else{
+			$dompdf->stream($name);	
+		}
+	}
 
 	public function activnakladPDF(Request $request, $today, $gid)
 	{
@@ -256,7 +340,7 @@ class TestController extends Controller
 		$workerfood = titlemenu_food::where('titlemenu_foods.day_id', ($today-1))->get();
 		// dd($workerfood);
 		foreach($join as $row){
-			if($row->age_range_id == 1 and $row->menu_meal_time_id = 3){
+			if($row->age_range_id == 4 and $row->menu_meal_time_id = 3){
 				foreach($workerfood as $ww){
 					if($row->menu_food_id == $ww->food_id){
 						$workproduct[$row->product_name_id] += $row->weight;
@@ -791,6 +875,7 @@ class TestController extends Controller
     }
     // ikkinchi menyu 
 	public function activsecondmenuPDF(Request $request, $today, $gid){ 
+		//dd($today);
 		$products = Product::orderBy('sort', 'ASC')->get();
 		$nextdaymenuitem = [];
 		$workerproducts = [];
@@ -873,18 +958,19 @@ class TestController extends Controller
 				}
 			}
 			// dd($nextdaymenuitem[$item->menu_meal_time_id][$item->menu_food_id]);
-			if($age->id == 1){
+			if($age->id == 4){
 				foreach($workerfood as $tr){
-					foreach($nextdaymenuitem[3][$tr->food_id][1] as $key => $value){
+					foreach($nextdaymenuitem[3][$tr->food_id][4] as $key => $value){
 						if($key != 'age_name'){
 							$workerproducts[$key] += $value['one'];
 						} 
-						// array_push($workerproducts, $nextdaymenuitem[3][$tr->food_id]);
+						array_push($workerproducts, $nextdaymenuitem[3][$tr->food_id]);
 					}
 				}
+				// dd($workerproducts);	
 			}
 		}
-
+		// dd($workerproducts);
 		foreach($nextdaymenuitem as $key => $item){
 			$nextdaymenuitem[$key]['rows'] = count($item)-1;
 			foreach($item as $rkey => $row){
@@ -994,7 +1080,28 @@ class TestController extends Controller
 				}
 				$minusproduct[$row->kingarden_name_id][$row->product_name_id] += $row->product_weight;
 			}
+			
+			$taked = Take_small_base::where('take_groups.day_id', $day->id)
+                ->join('take_groups', 'take_groups.id', '=', 'take_small_bases.takegroup_id')
+                // ->join('products', 'Take_small_bases.product_name_id', '=', 'products.id')
+                ->get([
+                    'take_small_bases.id',
+                    'take_small_bases.product_id',
+                    'take_groups.day_id',
+                    'take_small_bases.kindgarden_id',
+                    'take_small_bases.weight',
+                ]);
+            
+            foreach($taked as $row){
+                if(!isset($minusproduct[$row->kindgarden_id][$row->product_id])){
+					$minusproduct[$row->kindgarden_id][$row->product_id] = 0;
+				}
+                
+                $minusproduct[$row->kindgarden_id][$row->product_id] += $row->weight;
+            }
 		}
+		
+		
 
 		foreach($prevmonth as $day){
 			// bog'chalarga o'tgan oyda yuborilganlar maxsulotlarning qoldiqlarini xisoblash
@@ -1006,6 +1113,7 @@ class TestController extends Controller
 				if(!isset($modproduct[$row->kingarden_name_d][$row->product_name_id])){
 					$modproduct[$row->kingarden_name_d][$row->product_name_id] = -$minusproduct[$row->kingarden_name_d][$row->product_name_id];
 				}
+				
 				$modproduct[$row->kingarden_name_d][$row->product_name_id] += $row->product_weight;
 			}
 		}

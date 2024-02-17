@@ -10,7 +10,7 @@
 <!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"> -->
 <title>Title</title>
 <style>
-	 @page { margin: 0.2in 0.2in 0in 0.3in; }
+	 @page { margin: 0.1in 0.2in 0.2in 0.3in; }
 	body{
 		font-family: DejaVu Sans;
 		font-size:10px;
@@ -86,7 +86,7 @@
 							}
 						?>
                         <center>Ҳисоб-фактура № <?php printf('%02d', $costs[0]->year_name) ?>-<?php printf('%02d', $mth) ?>/{{ $kindgar->id }}</center>
-                        <center> " ____".<?php printf('%02d', $mth) ?>. <?php printf('%02d', $costs[0]->year_name) ?>й</center>
+                        <center> " <?php echo $days->last()->day_number ?> ".<?php printf('%02d', $mth) ?>. <?php printf('%02d', $costs[0]->year_name) ?>й</center>
                         <center>Шартнома хужжатлари №____ " ____ . _____" <?php printf('%02d', $costs[0]->year_name) ?> йил</center><br>
 						<div class="row">
 							<div class="column">
@@ -144,11 +144,11 @@
                         <th style="width: 7px;"></th>
                         <th style="width: 30px;"></th>
                         <th style="width: 8%;"></th>
-                        <td><?php printf("%01.3f", $costsumm); ?></td>
-						<td><?php printf("%01.3f", ($costsumm * $ust)/100); ?></td>
-						<td><?php printf("%01.3f", $costsumm + ($costsumm * $ust)/100); ?></td>
-						<td><?php printf("%01.3f", ($costsumm + ($costsumm * $ust)/100)*$nds/100); ?></td>
-						<td><?php printf("%01.3f", $costsumm + ($costsumm * $ust)/100 + ($costsumm + ($costsumm * $ust)/100)*$nds/100); ?></td>
+                        <td><?php printf("%01.2f", $costsumm); ?></td>
+						<td><?php printf("%01.2f", ($costsumm * $ust)/100); ?></td>
+						<td><?php printf("%01.2f", $costsumm + ($costsumm * $ust)/100); ?></td>
+						<td><?php printf("%01.2f", ($costsumm + ($costsumm * $ust)/100)*$nds/100); ?></td>
+						<td><?php printf("%01.2f", $costsumm + ($costsumm * $ust)/100 + ($costsumm + ($costsumm * $ust)/100)*$nds/100); ?></td>
                     </tr>
                     </tbody>
                 </table>

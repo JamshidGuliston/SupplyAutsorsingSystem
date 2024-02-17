@@ -20,5 +20,12 @@
         </div>
         @endforeach
     </div>
+    <hr>
+    <div class="p-3 bg-white shadow-sm d-flex flex-column justify-content-around align-items-center rounded">
+            <div class="text-center">
+				<a href="/technolog/updatemanu">Menyuni o'zgartirish</a>
+			</div>
+        </div>
+    </div>
 </div>
 @endsection

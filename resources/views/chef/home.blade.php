@@ -151,11 +151,14 @@
                 <!-- </form> -->
                 @if($bool->count() == 0)
                 <!-- <form action="#" method="get"> -->
-                    <br>
-                    <p><b>Omborxona: </b>Omborxonadan olingan maxsulot ro'yxatini yuboring. </p>
-                    <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#Modalsadd" style="width: 100%;">Maxsulotlar</button>
+                    <!--<br>-->
+                    <!--<p><b>Omborxona: </b>Omborxonadan olingan maxsulot ro'yxatini yuboring. </p>-->
+                    <!--<button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#Modalsadd" style="width: 100%;">Maxsulotlar</button>-->
                 <!-- </form> -->
                 @endif
+                <p></p>
+                <p><b>Nakladnoy, non va sud maxsulotlari </b></p>
+                <a href="/nextdaysomenakladnoyPDF/{{ $kindgarden->id }}" class="btn btn-success" style="width: 100%;" download>Nakladnoy</a>
             </div>
         </div>
     </div>

@@ -68,8 +68,8 @@
             <div class="col-md-2">Gacha</div>
         </div>
         <div class="form-group row">
-            <div class="col-md-3">
-                <select id="RegionSelect" class="form-select" name="catid" aria-label="Default select example">
+            <div class="col-md-3"> 
+                <select id="RegionSelect" class="form-select" name="catid[]" aria-label="Default select example" multiple required>
                     <option value="0">Hammasi</option>
                     @foreach($costs as $row)
                     <option value="{{$row['id']}}">{{$row['cost_name']}}</option>
@@ -196,6 +196,21 @@
         icon: "success",
         button: "ok",
     });
+    document.multiselect('#testSelect1')
+		.setCheckBoxClick("checkboxAll", function(target, args) {
+			console.log("Checkbox 'Select All' was clicked and got value ", args.checked);
+		})
+		.setCheckBoxClick("1", function(target, args) {
+			console.log("Checkbox for item with value '1' was clicked and got value ", args.checked);
+		});
+
+	function enable() {
+		document.multiselect('#testSelect1').setIsEnabled(true);
+	}
+
+	function disable() {
+		document.multiselect('#testSelect1').setIsEnabled(false);
+	}
 </script>
 @endif
 @endsection

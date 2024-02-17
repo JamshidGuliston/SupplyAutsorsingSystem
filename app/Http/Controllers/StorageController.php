@@ -414,7 +414,7 @@ class StorageController extends Controller
     }
 
     public function workermenuproduct($stop, $menuid, $foodid, $worker_count, $kindproducts){
-        $menuitem = Menu_composition::where('title_menu_id', $menuid)->where('menu_meal_time_id', 3)->where('menu_food_id', $foodid)->where('age_range_id', 1)->get();
+        $menuitem = Menu_composition::where('title_menu_id', $menuid)->where('menu_meal_time_id', 3)->where('menu_food_id', $foodid)->where('age_range_id', 4)->get();
         foreach($menuitem as $row){
             if(!isset($kindproducts[$row['product_name_id']])){
                 $kindproducts[$row['product_name_id']] = 0;
@@ -425,7 +425,7 @@ class StorageController extends Controller
             }
             $kindproducts[$row['product_name_id']] += $row['weight'] * $worker_count;
         }
-        // dd($kindproducts);
+        
         return $kindproducts;
     }
 
@@ -475,7 +475,7 @@ class StorageController extends Controller
                     $kindworkerproducts[$garden] = $this->workermenuproduct($stop, $val, $key, $kind->worker_count, $kindworkerproducts[$garden]);
                 }
             }
-            // dd($kindproducts[$garden]);
+            // dd($kindworkerproducts[$garden]);
             $mods = $this->productsmod($garden);
             date_default_timezone_set('Asia/Tashkent');
             $order = order_product::create([
@@ -549,18 +549,23 @@ class StorageController extends Controller
             }
         }
         $start = $this->activmonth($il);
-        $days = $this->activyear($il);
+        $days = $this->days();
         $group = Add_group::where('day_id', '>=', $start->first()->id)->where('day_id', '<=', $start->last()->id)
                 ->join('days', 'days.id', '=', 'add_groups.day_id')
                 ->join('months', 'months.id', '=', 'days.month_id')
                 ->join('years', 'years.id', '=', 'days.year_id')
                 ->orderby('add_groups.id', 'DESC')
-                ->get(['add_groups.id', 'add_groups.group_name', 'days.day_number', 'months.month_name', 'years.year_name']);
+                ->get(['add_groups.id', 'add_groups.group_name', 'days.id as dayid', 'days.day_number', 'months.month_name', 'years.year_name']);
         
         $products = Product::all();
-        $shops = Shop::where('type_id', 2)->where('hide', 1)->get();
+        $shops = Shop::where('hide', 1)->get();
         $id = $il;
-        return view('storage.addedproducts', compact('shops', 'group', 'months', 'id', 'days', 'products', 'year'));
+        return view('storage.addedproducts', compact('shops', 'group', 'months', 'id', 'days', 'products', 'year', 'start'));
+    }
+    
+    public function editegroup(Request $request){
+    	Add_group::where('id', $request->group_id)->update(['day_id' => $request->editedayid , 'group_name' => $request->nametitle]);
+        return redirect()->route('storage.addedproducts', ['year' => $request->year_id, 'id' => $request->month_id]);
     }
     
     public function document(Request $request){
@@ -791,8 +796,11 @@ class StorageController extends Controller
     }
 
     public function deletedebt(Request $request){
-        if($request->larid != null)
+        if($request->dlarid != null){
+        	// dd($request->dlarid);
             Add_large_werehouse::where('id', $request->dlarid)->delete();
+        }
+        // dd(0);
         debts::where('id', $request->ddebt_id)->delete();
 
         return redirect()->route('storage.debts');

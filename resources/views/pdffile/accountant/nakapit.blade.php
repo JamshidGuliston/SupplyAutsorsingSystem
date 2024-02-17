@@ -10,10 +10,10 @@
 <!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"> -->
 <title>Title</title>
 <style>
-	 @page { margin: 0.2in 0.2in 0in 0.2in; }
+	 @page { margin: 0.2in 0.2in 0.2in 0.2in; }
 	body{
 		font-family: DejaVu Sans;
-		font-size:6px;
+		font-size:8px;
 		/* background-image: url(images/bg.jpg); */
 		background-position: top left;
 		background-repeat: no-repeat;
@@ -89,24 +89,24 @@
 								$mth = $days[0]->month_id % 12;
 							}
 						?>
-						<b>Sana: "_____".<?php printf('%02d', $mth) ?>. <?php printf('%02d', $costs[0]->year_name) ?> / {{ $kindgar->kingar_name." / ".$age->age_name }}</b>
+						<center><b>Нишон инвест МЧЖ хизмат кўрсатаётган  {{ $kindgar->kingar_name }} " <?php echo $days->last()->day_number ?> ". <?php printf('%02d', $mth) ?> . <?php printf('%02d', $costs[0]->year_name) ?> йил  {{ $age->age_name }} учун НАКАПИТЕЛ</b></center>
 					</div>
                 </div>
                 <table style="width:100%; table-layout: fixed;">
                     <thead>
                         <tr>
-                            <th scope="col" style="width: 7%;">Махсулотлар</th>
+                            <th scope="col" style="width: 10%;">Махсулотлар</th>
                             <th style="width: 10px;">...</th>
                             <th style="width: 30px; font-size: 7px"><bold>Нарх</bold></th>
                             @foreach($days as $day)
 								<th scope="col">{{ $day->day_number; }}</th>
 							@endforeach
 							<th>Жами</th>
-							<th>Сумма</th>
-							<th>Устама {{ $ust }}%</th>
-							<th>Сумма</th>
-							<th>ҚҚС {{ $nds }}%</th>
-							<th>Сумма жами</th>
+							<th style="width: 6%;">Сумма</th>
+							<!--<th>Устама {{ $ust }}%</th>-->
+							<!--<th>Сумма</th>-->
+							<!--<th>ҚҚС {{ $nds }}%</th>-->
+							<!--<th>Сумма жами</th>-->
                         </tr>
                     </thead>
                     <tbody>
@@ -122,7 +122,7 @@
 							$str = substr($row['product_name'], 0, 13);
 					?>
 					<tr>
-						<td>{{ $row['product_name'] }}</td>
+						<td style="text-align: left; padding-left: 2px">{{ $row['product_name'] }}</td>
 						<td>{{ $row['size_name'] }}</td>
 						<td>{{ $row[0] }}</td>
 						<?php 
@@ -139,13 +139,13 @@
 								@else
                                 	@if($row['size_name'] == "дона")
                                   		<?php  
-                                            echo round($row[$day['id']], 0); 
-                                            $summ += round($row[$day['id']], 0);
+                                            printf("%01.3f", $row[$day['id']]); 
+                                            $summ += $row[$day['id']];
                                         ?>
                                 	@else
                                 		<?php  
-                                            echo round($row[$day['id']], 3); 
-                                            $summ += round($row[$day['id']], 3);
+                                            printf("%01.3f", $row[$day['id']]); 
+                                            $summ += $row[$day['id']];
                                         ?>
                                   	@endif
 								@endif
@@ -161,27 +161,31 @@
                         @endif
 						<td ><?php printf("%01.3f", $summ) ?></td>
 						<td ><?php $costsumm += $summ*$row[0]; printf("%01.2f", $summ*$row[0]) ?></td>
-						<td ><?php printf("%01.2f", ($summ*$row[0]*$ust)/100) ?></td>
-						<td ><?php printf("%01.2f", $summ*$row[0] + ($summ*$row[0]*$ust)/100) ?></td>
-						<td ><?php printf("%01.2f", (($summ*$row[0] + ($summ*$row[0]*$ust)/100)*$nds)/100) ?></td>
-						<td ><?php printf("%01.2f", $summ*$row[0] + ($summ*$row[0]*$ust)/100 + (($summ*$row[0] + ($summ*$row[0]*$ust)/100)*$nds)/100) ?></td>
+						<!--<td ><?php printf("%01.2f", ($summ*$row[0]*$ust)/100) ?></td>-->
+						<!--<td ><?php printf("%01.2f", $summ*$row[0] + ($summ*$row[0]*$ust)/100) ?></td>-->
+						<!--<td ><?php printf("%01.2f", (($summ*$row[0] + ($summ*$row[0]*$ust)/100)*$nds)/100) ?></td>-->
+						<!--<td ><?php printf("%01.2f", $summ*$row[0] + ($summ*$row[0]*$ust)/100 + (($summ*$row[0] + ($summ*$row[0]*$ust)/100)*$nds)/100) ?></td>-->
 					</tr>
 					@endforeach
 					<tr>
 						<td colspan="3">Жами:</td>
 						<td colspan="{{ count($days) }}"></td>
-						<td><?php printf("%01.3f", $kgsumm); ?></td>
-						<td><?php printf("%01.3f", $costsumm); ?></td>
-						<td><?php printf("%01.3f", ($costsumm * $ust)/100); ?></td>
-						<td><?php printf("%01.3f", $costsumm + ($costsumm * $ust)/100); ?></td>
-						<td><?php printf("%01.3f", ($costsumm + ($costsumm * $ust)/100)*$nds/100); ?></td>
-						<td><?php printf("%01.3f", $costsumm + ($costsumm * $ust)/100 + ($costsumm + ($costsumm * $ust)/100)*$nds/100); ?></td>
+						<td><?php printf("%01.2f", $kgsumm); ?></td>
+						<td><?php printf("%01.2f", $costsumm); ?></td>
+						<!--<td><?php printf("%01.2f", ($costsumm * $ust)/100); ?></td>-->
+						<!--<td><?php printf("%01.2f", $costsumm + ($costsumm * $ust)/100); ?></td>-->
+						<!--<td><?php printf("%01.2f", ($costsumm + ($costsumm * $ust)/100)*$nds/100); ?></td>-->
+						<!--<td><?php printf("%01.2f", $costsumm + ($costsumm * $ust)/100 + ($costsumm + ($costsumm * $ust)/100)*$nds/100); ?></td>-->
 					</tr>
                     </tbody>
                 </table>
 				<div class="row">
 					<div class="column">
 						<img src="images/qrmanzil.jpg" alt="QR-code" width="140">
+					</div>
+					<div class="column">
+						<p></p>
+						<p style="text-align: center;"><strong>ДМТТ рахбари: </strong> __________________;</p>
 					</div>
                 </div>
             </div>
