@@ -178,6 +178,9 @@
 								$narx[80] = 2400; $narx[81] = 0; $narx[82] = 0; $narx[83] = 0; $narx[84] = 0;
 								$narx[85] = 2400; $narx[86] = 0; $narx[87] = 0; $narx[88] = 0; $narx[89] = 0;
 								$narx[90] = 2400; $narx[91] = 0; $narx[92] = 0; $narx[93] = 0; $narx[94] = 0;
+								$narx[95] = 2400; $narx[96] = 0; $narx[97] = 0; $narx[98] = 0; $narx[99] = 0;
+								$narx[100] = 2400; $narx[101] = 0; $narx[102] = 0; $narx[103] = 0; $narx[104] = 0;
+								$narx[105] = 2400; $narx[106] = 0; $narx[107] = 0; $narx[108] = 0; $narx[109] = 0;
 								for($t = 0; $t < count($products); $t++){
 									if(isset($products[$t]['yes']) and isset($productallcount[$products[$t]['id']])){
 								?>

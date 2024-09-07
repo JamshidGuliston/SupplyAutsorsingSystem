@@ -79,7 +79,7 @@
 						<a href="#">
 							<i class="fas fa-store-alt" style="color: dodgerblue; font-size: 18px;"></i>
 						</a>
-						 <center><b>{{ $regions->find($kindgardens[0]->region_id)->region_name." мттларнинг ". $days[0]->year_name ." йил ". $days[0]->month_name ." ойида берилган озиқ овқат махсулотларининг хисоб китоби" }}</b></center> 
+						 <center><b>{{ $regions->find($kindgardens[0]->region_id)->region_name." мттларнинг ". $days[0]->year_name ." йил ". $days[0]->month_name ." ойида берилган озиқ овқат махсулотларининг хисоб-китоби" }}</b></center> 
 					</div>
                 </div>
                 <table style="table-layout: fixed;">

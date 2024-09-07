@@ -75,15 +75,32 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <?php $i = 0; ?>
+                    <?php $i = 1; $products = []?>
                     @foreach($res as $row)
+                    
+                    	@if(!isset($products[$row->product_id]))
+                    		<?php
+                    		    $products[$row->product_id]['tid'] = $row->tid;
+                    			$products[$row->product_id]['product_name'] = $row->product_name;
+                    			$products[$row->product_id]['weight'] = $row->weight;
+                    			$products[$row->product_id]['size_name'] = $row->size_name;
+                    			$products[$row->product_id]['cost'] = $row->cost;
+                    		?>
+                    	@else
+                    		<?php 
+                    			$products[$row->product_id]['weight'] += $row->weight;
+                    		?>
+                    	@endif
+                    	
+                    @endforeach
+                    @foreach($products as $row)
                     <tr>
-                        <th scope="row">{{ $row->tid }}</th>
-                        <td>{{ $row->product_name }}</td>
-                        <td>{{ $row->size_name }}</td>
-                        <td>{{ $row->weight }}</td>
-                        <td>{{ $row->cost }}</td>
-                        <td style="text-align: end;"><i class="detete  fa fa-trash" aria-hidden="true" data-name-id="{{ $row->product_name }}" data-delete-id="{{$row->tid}}" data-bs-toggle="modal" style="cursor: pointer; color: crimson" data-bs-target="#deleteModal"></i></td>
+                        <th scope="row">{{ $i++ }}</th>
+                        <td>{{ $row['product_name'] }}</td>
+                        <td>{{ $row['size_name'] }}</td>
+                        <td>{{ $row['weight'] }}</td>
+                        <td>{{ $row['cost'] }}</td>
+                        <td style="text-align: end;"><i class="detete  fa fa-trash" aria-hidden="true" data-name-id="{{ $row['product_name'] }}" data-delete-id="{{ $row['tid'] }}" data-bs-toggle="modal" style="cursor: pointer; color: crimson" data-bs-target="#deleteModal"></i></td>
                     </tr>
                     @endforeach
                 </tbody>

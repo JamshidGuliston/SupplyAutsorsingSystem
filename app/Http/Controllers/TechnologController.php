@@ -1875,6 +1875,28 @@ class TechnologController extends Controller
     	return redirect()->route('technolog.seasons');
     }
     
+    public function pageCreateProduct(){
+    	$categories = Product_category::all();
+        $norms = Norm_category::all();
+        $sizes = Size::all(); 
+    	return view('technolog.createproduct', compact('categories', 'norms', 'sizes'));
+    }
+    
+    public function createproduct(Request $request){
+    	Product::create([
+    		'product_name' => $request->product_name,
+    		'size_name_id' => $request->sizeid,
+    		'category_name_id' => $request->catid,
+    		'product_image' => "...",
+    		'norm_cat_id' => $request->normid,
+    		'div' => $request->div,
+    		'sort' => $request->sort,
+    		'hide' => $request->hide
+    	]);
+    	
+    	return redirect()->route('technolog.allproducts');
+    }
+    
     function funtest(){
         return Kindgarden::all();
     }

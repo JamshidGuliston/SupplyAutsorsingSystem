@@ -84,24 +84,41 @@
                 <th scope="col">Sabab turi</th>
                 <th scope="col">Shaxs</th>
                 <th scope="col">Sana</th>
-                <th style="width: 40px;">Svod</th>
+                <th style="width: 40px;">...</th>
                 <!-- <th style="width: 40px;">...</th> -->
             </tr>
         </thead>
         <tbody>
             @php
-                $bool = []
+                $filter = [];
             @endphp
             @foreach($res as $row)
-                <tr>
-                    <td>{{ $row->gid }}</td>
-                    <td><a href="/storage/intakingsmallbase/{{ $row->gid }}/{{ $users->find($row->uid)->kindgarden[0]['id'] }}">{{ $row->title }}</a></td>
-                    <td>{{ $row->outside_name }}</td>
-                    <td>{{ $users->find($row->uid)->kindgarden[0]['kingar_name'].', '.$users->find($row->uid)->name }}</td>
-                    <td>{{ $days->find($row->day_id)->day_number.'.'.$days->find($row->day_id)->month_name.'.'.$days->find($row->day_id)->year_name}}</td>
-                    <td><a href="#">PDF</a></td>
-                    <!-- <td style="text-align: end;"><i class="detete  fa fa-trash" aria-hidden="true" data-name-id="{{ $row->title }}" data-group-id="{{ $row->gid }}" data-bs-toggle="modal" style="cursor: pointer; color: crimson" data-bs-target="#deleteModal"></i></td> -->
-                </tr>
+            	@php
+            		$user = $users->find($row->uid);
+            	@endphp
+        		@if(isset($user) and count($user->kindgarden) > 0 and !isset($filter[$row->day_id.'-'.$row->taker_id]))
+        			@php
+		                $filter[$row->day_id.'-'.$row->taker_id] = 1;
+		            @endphp
+        			<tr>
+	                    <td>{{ $row->gid }}</td>
+	                    <td><a href="/storage/intakingsmallbase/{{ $row->gid }}/{{ $users->find($row->uid)->kindgarden[0]['id'] }}/{{ $row->day_id }}">{{ $row->title }}</a></td>
+	                    <td>{{ $row->outside_name }}</td>
+	                    <td>{{ $users->find($row->uid)->kindgarden[0]['kingar_name'].', '.$users->find($row->uid)->name }}</td>
+	                    <td>{{ $days->find($row->day_id)->day_number.'.'.$days->find($row->day_id)->month_name.'.'.$days->find($row->day_id)->year_name}}</td>
+	                    <td><a href="/storage/intakingsmallbasepdf/{{ $row->day_id }}/{{ $users->find($row->uid)->kindgarden[0]['id'] }}" target="_blank">PDF</a></td>
+	                    <!-- <td style="text-align: end;"><i class="detete  fa fa-trash" aria-hidden="true" data-name-id="{{ $row->title }}" data-group-id="{{ $row->gid }}" data-bs-toggle="modal" style="cursor: pointer; color: crimson" data-bs-target="#deleteModal"></i></td> -->
+	                </tr>
+        		@elseif(!isset($filter[$row->day_id.'-'.$row->taker_id]))
+        			<tr>
+	                    <td>{{ $row->gid }}</td>
+	                    <td><a href="/storage/intakingsmallbase/{{ $row->gid }}/{{ 0 }}">{{ $row->title }}</a></td>
+	                    <td>{{ $row->outside_name }}</td>
+	                    <td>{{ 'Nomalum bogcha, Noamalum oshpaz' }}</td>
+	                    <td>{{ $days->find($row->day_id)->day_number.'.'.$days->find($row->day_id)->month_name.'.'.$days->find($row->day_id)->year_name}}</td>
+	                    <td><a href="#">PDF</a></td>
+	                </tr>
+        		@endif
             @endforeach
         </tbody>
     </table>

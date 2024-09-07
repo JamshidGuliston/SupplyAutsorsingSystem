@@ -66,6 +66,7 @@ Route::group(['prefix' => 'storage', 'middleware' => ['isStorage', 'auth']], fun
     Route::get('getdoc', [StorageController::class, 'getdoc'])->name('storage.getdoc');
     Route::get('dostcontrolpassword', [StorageController::class, 'dostcontrolpassword']);
     Route::get('document/{id}', [StorageController::class, 'document']);
+    Route::get('intakingsmallbasepdf/{day}/{kid}', [StorageController::class, 'intakingsmallbasepdf']);
     Route::get('backcontrolpassword', [StorageController::class, 'backcontrolpassword']);
 
     Route::get('addmultisklad', [StorageController::class, 'addmultisklad'])->name('storage.addmultisklad');
@@ -103,7 +104,7 @@ Route::group(['prefix' => 'storage', 'middleware' => ['isStorage', 'auth']], fun
     Route::get('takingsmallbase', [StorageController::class, 'takingsmallbase'])->name('storage.takingsmallbase');
     Route::post('addtakingsmallbase', [StorageController::class, 'addtakingsmallbase'])->name('storage.addtakingsmallbase');
     Route::post('deletetakingsmallbase', [StorageController::class, 'deletetakingsmallbase'])->name('storage.deletetakingsmallbase');
-    Route::get('intakingsmallbase/{id}/{kid}', [StorageController::class, 'intakingsmallbase'])->name('storage.intakingsmallbase');
+    Route::get('intakingsmallbase/{id}/{kid}/{day}', [StorageController::class, 'intakingsmallbase'])->name('storage.intakingsmallbase');
     Route::post('addintakingsmallbase', [StorageController::class, 'addintakingsmallbase'])->name('storage.addintakingsmallbase');
     Route::post('editegroup', [StorageController::class, 'editegroup'])->name('storage.editegroup');
     
@@ -211,6 +212,9 @@ Route::group(['prefix' => 'technolog', 'middleware' => ['isTechnolog', 'auth']],
     Route::get('updatemanu', [TechnologController::class, 'updatemanu']);
     Route::post('editactivemanu', [TechnologController::class, 'editactivemanu'])->name('technolog.editactivemanu');
     Route::get('getactivemenuproducts', [TechnologController::class, 'getactivemenuproducts']);
+    
+    Route::get('pagecreateproduct', [TechnologController::class, 'pageCreateProduct']);
+    Route::post('createproduct', [TechnologController::class, 'createproduct'])->name('createproduct');
 });
 
 Route::group(['prefix' => 'chef', 'middleware' => ['isChef', 'auth']], function () {

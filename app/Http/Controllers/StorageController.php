@@ -31,14 +31,14 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Dompdf\Dompdf;
 use TCG\Voyager\Models\MenuItem;
-
+use DB;
 class StorageController extends Controller
 {
     public function days(){
         $days = Day::join('months', 'months.id', '=', 'days.month_id')
                 ->join('years', 'years.id', '=', 'days.year_id')
                 ->orderby('days.id', 'DESC')
-                ->get(['days.id', 'days.day_number', 'months.month_name', 'years.year_name']);
+                ->get(['days.id', 'days.day_number', 'months.id as month_id', 'months.month_name', 'years.year_name']);
         return $days;
     }
     public function activmonth($month_id){
@@ -1022,10 +1022,11 @@ class StorageController extends Controller
                     ->join('users', 'users.id', '=', 'take_groups.taker_id')
                     ->join('outside_products', 'outside_products.id', '=', 'take_groups.outside_id')
                     ->get();
+       
         $days = $this->days();
         $outtypes = Outside_product::all();
         $users = User::where('users.role_id', '=', 6)->with('kindgarden')->get();
-        // dd($users);
+       
         return view('storage.takingsmallbase', compact('res', 'days', 'users', 'outtypes'));
     }
 
@@ -1043,27 +1044,67 @@ class StorageController extends Controller
         return redirect()->route('storage.takingsmallbase');
     }
 
-    public function intakingsmallbase(Request $request, $id, $kid){
+    public function intakingsmallbase(Request $request, $id, $kid, $day){
         $res = Take_small_base::select(
                 'take_small_bases.id as tid',
+                'take_groups.id as groupid',
                 'take_small_bases.product_id',
                 'products.product_name',
                 'sizes.size_name',
                 'take_small_bases.weight',
                 'take_small_bases.cost',
             )
-            ->where('take_small_bases.takegroup_id', $id)
-            ->join('take_groups', 'take_groups.id', '=', 'take_small_bases.takegroup_id')
-            ->join('products', 'products.id', '=', 'take_small_bases.product_id')
-            ->join('sizes', 'sizes.id', '=', 'products.size_name_id')
+            ->where('take_small_bases.kindgarden_id', $kid)
+            ->where('take_groups.day_id', $day)
+            ->leftjoin('take_groups', 'take_groups.id', '=', 'take_small_bases.takegroup_id')
+            ->leftjoin('products', 'products.id', '=', 'take_small_bases.product_id')
+            ->leftjoin('sizes', 'sizes.id', '=', 'products.size_name_id')
             ->orderby('take_small_bases.id', 'DESC')
             ->get();
-
+		// dd($res);
         $products = Product::all();
 
         $kind = Kindgarden::where('id', $kid)->first();
 
         return view('storage.intakingsmallbase', compact('res', 'products', 'id', 'kind'));    
+    }
+    
+    public function intakingsmallbasepdf(Request $request, $day, $kid){
+        $res = Take_small_base::select(
+                'take_small_bases.id as tid',
+                'take_groups.id as groupid',
+                'take_small_bases.product_id',
+                'products.product_name',
+                'sizes.size_name',
+                'take_small_bases.weight',
+                'take_small_bases.cost',
+            )
+            ->where('take_small_bases.kindgarden_id', $kid)
+            ->where('take_groups.day_id', $day)
+            ->leftjoin('take_groups', 'take_groups.id', '=', 'take_small_bases.takegroup_id')
+            ->leftjoin('products', 'products.id', '=', 'take_small_bases.product_id')
+            ->leftjoin('sizes', 'sizes.id', '=', 'products.size_name_id')
+            ->orderby('take_small_bases.id', 'DESC')
+            ->get();
+            
+        $products = Product::all();
+
+        $kind = Kindgarden::where('id', $kid)->first();   
+            
+        // usort($res, function ($a, $b){
+        //     if(isset($a["sort"]) and isset($b["sort"])){
+        //         return $a["sort"] > $b["sort"];
+        //     }
+        // });
+        $days = $this->days();
+        $users = User::where('users.role_id', '=', 6)->with('kindgarden')->get();
+        
+        $dompdf = new Dompdf('UTF-8');
+		$html = mb_convert_encoding(view('pdffile.storage.intakingsmallbasepdf', compact('kind', 'days', 'day', 'products', 'res', 'users')), 'HTML-ENTITIES', 'UTF-8');
+		$dompdf->loadHtml($html);
+		$dompdf->setPaper('A4',  'landscape');
+		$dompdf->render();
+		$dompdf->stream('demo.pdf', ['Attachment' => 0]);
     }
 
     public function addintakingsmallbase(Request $request){

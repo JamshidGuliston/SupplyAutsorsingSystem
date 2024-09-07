@@ -1010,7 +1010,7 @@ class AccountantController extends Controller
                 return $a["sort"] > $b["sort"];
             }
         });
-        // dd($nakproducts);
+        
         $dompdf = new Dompdf('UTF-8');
 		$html = mb_convert_encoding(view('pdffile.accountant.svod', compact('days', 'age', 'regions', 'nakproducts', 'kindgardens', 'over', 'nds')), 'HTML-ENTITIES', 'UTF-8');
 		$dompdf->loadHtml($html);
@@ -1088,9 +1088,12 @@ class AccountantController extends Controller
                 return $a["sort"] > $b["sort"];
             }
         });
+        $regions = Region::all();
+        $years = Year::all();
+        $months = Month::all();
         // dd($nakproducts);
         $dompdf = new Dompdf('UTF-8');
-		$html = mb_convert_encoding(view('pdffile.accountant.svod', compact('nakproducts', 'kindgardens', 'over', 'nds')), 'HTML-ENTITIES', 'UTF-8');
+		$html = mb_convert_encoding(view('pdffile.accountant.svod', compact('nakproducts', 'kindgardens', 'over', 'nds', 'regions', 'days', 'years', 'months')), 'HTML-ENTITIES', 'UTF-8');
 		$dompdf->loadHtml($html);
 
 		$dompdf->setPaper('A3',  'landscape');
