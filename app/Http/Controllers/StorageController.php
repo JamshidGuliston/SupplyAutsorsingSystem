@@ -213,8 +213,61 @@ class StorageController extends Controller
         $menus = Titlemenu::where('menu_season_id', $season->id)->get();
         $gardens = Kindgarden::where('hide', 1)->get();
         $orders = order_product::orderby('id', 'DESC')->get();
+        $days = $this->days();
         // dd($menus);
-        return view('storage.addmultisklad', compact('orders','gardens', 'menus'));
+        return view('storage.addmultisklad', compact('orders','gardens', 'menus', 'days'));
+    }
+
+    public function report(Request $request){
+        dd($request->all());
+
+        $days = Day::where('days.id', '>=', $request->start)->where('days.id', '<=', $request->end)
+                ->join('months', 'months.id', '=', 'days.month_id')
+                ->join('years', 'years.id', '=', 'days.year_id')
+                ->get(['days.id', 'days.day_number', 'months.month_name', 'years.year_name']);
+                
+        $nakproducts = [];
+        $kindgardens = [];
+        foreach($request->kindgardens as $row_id){
+            array_push($kindgardens, Kindgarden::where('id', $row_id)->first());
+            foreach($days as $day){
+                $ages = Age_range::all();
+                foreach($ages as $age){
+                    $join = Number_children::where('number_childrens.day_id', $day->id)
+                        ->where('kingar_name_id', $row_id)
+                        ->where('king_age_name_id', $age->id)
+                        ->leftjoin('active_menus', function($join){
+                            $join->on('number_childrens.kingar_menu_id', '=', 'active_menus.title_menu_id');
+                            $join->on('number_childrens.king_age_name_id', '=', 'active_menus.age_range_id');
+                        })
+                        ->where('active_menus.day_id', $day->id)
+                        ->join('products', 'active_menus.product_name_id', '=', 'products.id')
+                        ->join('sizes', 'products.size_name_id', '=', 'sizes.id')
+                        ->get();
+                    $productscount = array();
+                    foreach($join as $row){
+                        if(!isset($productscount[$row->product_name_id][$row->age_range_id])){
+                            $productscount[$row->product_name_id][$row->age_range_id] = 0;
+                        }
+                        $productscount[$row->product_name_id][$row->age_range_id] += $row->weight;
+                        $productscount[$row->product_name_id][$row->age_range_id.'-children'] = $row->kingar_children_number;
+                        $productscount[$row->product_name_id][$row->age_range_id.'div'] = $row->div;
+                        $productscount[$row->product_name_id]['product_name'] = $row->product_name;
+                        $productscount[$row->product_name_id][$row->age_range_id.'sort'] = $row->sort;
+                        $productscount[$row->product_name_id]['size_name'] = $row->size_name;
+                    }
+                    
+                    foreach($productscount as $key => $row){
+                        if(!isset($nakproducts[$key][$row_id])){
+                            $nakproducts[$key][$row_id] = 0;
+                        }
+                        $nakproducts[$key][$row_id] += ($row[$age->id]*$row[$age->id.'-children']) / $row[$age->id.'div'];
+                        $nakproducts[$key]['product_name'] = $row['product_name'];
+                        $nakproducts[$key]['sort'] = $row[$age->id.'sort'];
+                        $nakproducts[$key]['size_name'] = $row['size_name'];
+                    }
+    
+                }
     }
 
     public function onedaymulti(Request $request, $dayid){

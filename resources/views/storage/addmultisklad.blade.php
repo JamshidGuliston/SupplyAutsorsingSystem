@@ -86,9 +86,63 @@
         </div>
     </div>
 </div>
+{{-- Report --}}
+<div class="modal fade" id="modalsettings" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Umumiy Xisobot</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form action="{{route('storage.report')}}" method="GET" target="_blank">
+            <div class="row modal-body">
+                @csrf
+                <div class="col-sm-4">
+                    <select id='testSelect1' name="kindgardens[]" class="form-select" aria-label="Default select example" multiple required>
+                        @foreach($gardens as $row)
+                            <option value='{{ $row->id }}'>{{ $row->kingar_name }}</option>
+                        @endforeach
+                    </select>
+                </div>
+                <div class="col-sm-2">
+                    <select class="form-select" id="enddayid" name="start" aria-label="Default select example" required>
+                        <option value="">-Sanadan-</option>
+                        @foreach($days as $row)
+                            <option value="{{$row['id']}}">{{ $row['day_number'].".".$row['month_name'].".".$row['year_name']; }}</option>
+                        @endforeach
+                    </select>
+                </div>
+                <div class="col-sm-2">
+                    <select class="form-select" id="enddayid" name="end" aria-label="Default select example" required>
+                        <option value="">-Sanaga-</option>
+                        @foreach($days as $row)
+                            <option value="{{$row['id']}}">{{ $row['day_number'].".".$row['month_name'].".".$row['year_name']; }}</option>
+                        @endforeach
+                    </select>
+                </div>
+                <div class="col-sm-6">
+                    Yuklab olish
+                    <button type="submit" class="btn btn-info form-control">PDF <i class="fas fa-download" aria-hidden="true"></i></button>
+                </div>
+                <br/>
+            </div>
+            </form>
+            <div class="modal-footer">
+                <!-- <button type="button" class="btn btn-success" data-bs-dismiss="modal">Close</button> -->
+            </div>
+        </div>
+    </div>
+</div>
 <!-- EDIT -->
 <div class="py-4 px-4">
-    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addModal">Яратиш</button>
+    <div class="row">
+        <div class="col-md-6">
+            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addModal">Bozorlik yaratish</button>
+        </div>
+        <div class="col-md-6">
+            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalsettings">Xisobot</button>
+        </div>
+    </div>
     <hr>
     <!-- @if(isset($orders[0]->day_number))
     <h4>Oyning {{ $orders[0]->day_number."-sanasi" }}</h4>
@@ -168,7 +222,7 @@
             
         });
     });
-    document.multiselect('#testSelect2')
+    document.multiselect('#testSelect1')
 		.setCheckBoxClick("checkboxAll", function(target, args) {
 			console.log("Checkbox 'Select All' was clicked and got value ", args.checked);
 		})
