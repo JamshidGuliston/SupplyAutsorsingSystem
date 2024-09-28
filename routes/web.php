@@ -186,7 +186,11 @@ Route::group(['prefix' => 'technolog', 'middleware' => ['isTechnolog', 'auth']],
     Route::post('editminusproduct', [TechnologController::class, 'editminusproduct'])->name('technolog.editminusproduct');
     Route::post('plusmultimodadd', [TechnologController::class, 'plusmultimodadd'])->name('technolog.plusmultimodadd');
     Route::get('plusmultistorage/{id}/{monthid}', [TechnologController::class, 'plusmultistorage'])->name('technolog.plusmultistorage');
+    Route::get('weightcurrent/{kind}/{yearid}/{monthid}', [TechnologController::class, 'weightcurrent'])->name('technolog.weightcurrent');
     Route::get('getmodproduct/{id}', [TechnologController::class, 'getmodproduct'])->name('technolog.getmodproduct');
+    Route::get('getweightproducts', [TechnologController::class, 'getweightproducts'])->name('technolog.getweightproducts');
+    Route::post('addingweights', [TechnologController::class, 'addingweights'])->name('technolog.addingweights');
+    Route::post('editegroup', [TechnologController::class, 'editegroup'])->name('technolog.editegroup');
     // end telegram
     Route::post('editnextworkers', [TechnologController::class, 'editnextworkers'])->name('technolog.editnextworkers');
     Route::post('editnextcheldren', [TechnologController::class, 'editnextcheldren'])->name('technolog.editnextcheldren');

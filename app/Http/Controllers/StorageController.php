@@ -369,6 +369,14 @@ class StorageController extends Controller
             }
         }
 
+        $groups = Groupweight::where('kindergarden_id', $kid)
+                    ->where('day_id', '>=', $days->first()->id)
+                    ->where('day_id', '<=', $days->last()->id)
+                    ->orderBy('id', 'DESC')
+                    ->first();
+
+        $actualweights = Weightproduct::where('groupweight_id', $groups->id)->get();
+
         $mods = [];
         foreach($products as $product){
             if(isset($minusproducts[$product->id]) or isset($plusproducts[$product->id])){
@@ -390,7 +398,7 @@ class StorageController extends Controller
                 else
                     $counttrash = 0;
 
-                $mods[$product->id] = $countin - $countout - $counttrash;
+                $mods[$product->id] = ($actualweights->where('product_id', $product->id)->first()->weight >= ($countin - $countout - $counttrash)) ? $actualweights->where('product_id', $product->id)->first()->weight : ($countin - $countout - $counttrash);
             }
         }
         return $mods;

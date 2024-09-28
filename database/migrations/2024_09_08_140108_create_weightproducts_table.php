@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateCashesTable extends Migration
+class CreateWeightproductsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -12,15 +12,12 @@ class CreateCashesTable extends Migration
      * @return void
      */
     public function up()
-    {
-        Schema::create('cashes', function (Blueprint $table) {
+    {	
+        Schema::create('weightproducts', function (Blueprint $table) {
             $table->id();
-            $table->integer('allcost_id');
-            $table->integer('day_id');
-            $table->integer('summ');
-            $table->string('description');
-            $table->integer('vid');
-            $table->integer('status');
+            $table->integer('groupweight_id');
+            $table->integer('product_id');
+            $table->double('weight');
             $table->timestamps();
         });
     }
@@ -32,6 +29,6 @@ class CreateCashesTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('cashes');
+        Schema::dropIfExists('weightproducts');
     }
 }

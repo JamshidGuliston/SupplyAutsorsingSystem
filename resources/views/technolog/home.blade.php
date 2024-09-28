@@ -4,6 +4,50 @@
 <link href="/css/multiselect.css" rel="stylesheet"/>
 <link href="/css/dates.css?ver=1.0" rel="stylesheet"/>
 <script src="/js/multiselect.min.js"></script>
+<style>
+    .loader-box {
+        width: 100%;
+        background-color: #80afc68a;
+        height: 100%;
+        position: absolute;
+        top: 0;
+        left: 0;
+        display: flex;
+        align-items: center;
+        display: none;
+        justify-content: center;
+    }
+    .loader {
+        border: 5px solid #f3f3f3;
+        border-radius: 50%;
+        border-top: 5px solid #3498db;
+        width: 30px;
+        display: block;
+        height: 30px;
+        -webkit-animation: spin 2s linear infinite;
+        animation: spin 2s linear infinite;
+        position: absolute;
+        left: 353px;
+    }
+
+    @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+    
+    .divmodproduct{
+        text-align: center;
+    }
+    @keyframes spin {
+        0% {
+            -webkit-transform: rotate(0deg);
+        }
+
+        100% {
+            -webkit-transform: rotate(360deg);
+        }
+    }
+</style>
 @endsection
 
 @section('leftmenu')
@@ -83,14 +127,17 @@
                     <h5 class="modal-title" id="exampleModalLabel"><b class="kindname"></b> Omborxona</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <form method='post' action='/technolog/plusmultimodadd'>
-                    @csrf
+                <!-- <form method='post' action='/technolog/plusmultimodadd'>
+                    @csrf -->
                     <div class="modal-body" style="text-align: center;">
                         <div class="divmodproduct">
+                            <div class="loader-box">
+                                <div class="loader"></div>
+                            </div>
                         </div>
-                        <button type="submit"  class="btn btn-success" >Saqlash</button>
+                        <!-- <button type="submit"  class="btn btn-success" >Saqlash</button> -->
                     </div>
-                </form>
+                <!-- </form> -->
                 <div class="modal-footer" >
 
                 </div>
@@ -129,9 +176,10 @@
         @foreach($kingardens as $item)
         <div class="col-md-3">
             <div class="p-3 bg-white shadow-sm d-flex justify-content-around align-items-center rounded">
+                <!-- <i class="fas fa-school fs-1 primary-text border rounded-full secondary-bg p-3"></i> -->
+                <i class="fas fa-school fs-1 primary-text border rounded-full"></i>
                 <div>
                     <a href="#!" class="list-group-item-action bg-transparent first-text fw-bold" class="fs-5" data-name ="{{ $item->kingar_name }}" data-garden-id="{{ $item->id }}" data-bs-toggle="modal" data-bs-target="#exampleModal" style="color: #6ac3de;">{{$item->kingar_name}}</a>
-
                     <div class="user-box">
                         <div class="user-worker-number">
                             <i class="fas fa-users" style="color: #959fa3; margin-right: 8px; font-size: 20px;"></i>
@@ -139,10 +187,11 @@
                         </div>
                         <a href="{{ route('technolog.plusmultistorage',  ['id' => $item->id, 'monthid' => 0 ]) }}" style="color: #959fa3; margin-right: 6px; font-size: 14px;"><i class="fas fa-plus"></i></a>
                         <a href="{{ route('technolog.minusmultistorage',  ['id' => $item->id, 'monthid' => 0 ]) }}" style="color: #959fa3; margin-right: 6px; font-size: 14px;"><i class="fas fa-minus"></i></a>
+                        <a href="{{ route('technolog.weightcurrent',  ['kind' => $item->id, 'yearid' => 0, 'monthid' => 0 ]) }}" style="color: #959fa3; margin-right: 6px; font-size: 20px;"><i class="fas fa-balance-scale"></i></a>
                         <a href="{{ route('technolog.settings',  ['id' => $item->id ]) }}" style="color: #959fa3; margin-right: 6px; font-size: 20px;"><i class="fas fa-cog"></i></a>
                     </div>
                 </div>
-                <i class="fas fa-school fs-1 primary-text border rounded-full secondary-bg p-3"></i>
+                
             </div>
         </div>
         @endforeach
@@ -178,8 +227,13 @@
         $.ajax({
             method: "GET",
             url: '/technolog/getmodproduct/'+gardenid,
+            beforeSend: function() {
+                div.html("<div class='loader-box'><div class='loader'></div></div>");
+                $('.loader-box').show();
+            },
             success: function(data) {
                 div.html(data);
+                $('.loader-box').hide();
             }
 
         })

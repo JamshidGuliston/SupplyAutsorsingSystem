@@ -20,6 +20,8 @@ use App\Models\Person;
 use App\Models\Kindgarden;
 use App\Models\Year;
 use App\Models\Temporary;
+use App\Models\Groupweight;
+use App\Models\Weightproduct;
 use App\Models\Menu_composition;
 use App\Models\Number_children;
 use App\Models\Titlemenu;
@@ -56,6 +58,15 @@ class TechnologController extends Controller
         return $days;
     }
     
+    public function activmonth($month_id){
+        $month = Month::where('id', $month_id)->first();
+        $days = Day::where('month_id', $month->id)->where('year_id', $month->yearid)
+                ->join('months', 'months.id', '=', 'days.month_id')
+                ->join('years', 'years.id', '=', 'days.year_id')
+                ->get(['days.id', 'days.day_number', 'months.month_name', 'years.year_name']);
+        return $days;
+    }
+
     public function index(Request $request)
     {
         $year = Year::where('year_active', 1)->first();
@@ -1615,33 +1626,11 @@ class TechnologController extends Controller
         $days = Day::where('year_id', Year::where('year_active', 1)->first()->id)->where('month_id', Month::where('month_active', 1)->first()->id)->get();
   
         $minusproducts = [];
-        foreach($days as $day){
-            $minus = minus_multi_storage::where('day_id', $day->id)
-                ->where('kingarden_name_id', $kid)
-                ->join('products', 'minus_multi_storages.product_name_id', '=', 'products.id')
-                ->get([
-                    'minus_multi_storages.id',
-                    'minus_multi_storages.product_name_id',
-                    'minus_multi_storages.day_id',
-                    'minus_multi_storages.kingarden_name_id',
-                    'minus_multi_storages.product_weight',
-                    'products.product_name',
-                    'products.size_name_id',
-                    'products.div',
-                    'products.sort'
-                ]);
-            // echo $minus->count()." ";
-            foreach($minus as $row){
-                if(!isset($minusproducts[$row->product_name_id])){
-                    $minusproducts[$row->product_name_id] = 0;
-                }
-                $minusproducts[$row->product_name_id] += $row->product_weight;
-                // $minusproducts[$row->product_name_id]['productname'] = $row->product_name;
-            }
-        }
-        // dd($minusproducts);
         $plusproducts = [];
         $takedproducts = [];
+        $actualweights = [];
+        $addeds = [];
+
         foreach($days as $day){
             $plus = plus_multi_storage::where('day_id', $day->id)
                 ->where('kingarden_name_d', $kid)
@@ -1657,20 +1646,23 @@ class TechnologController extends Controller
                     'products.div',
                     'products.sort'
                 ]);
-            foreach($plus as $row){
-                if(!isset($plusproducts[$row->product_name_id])){
-                    $plusproducts[$row->product_name_id] = 0;
-                }
-                $plusproducts[$row->product_name_id] += $row->product_weight;
-                $takedproducts[$row->product_name_id] = 0;
-            }
-        }
-
-        foreach($days as $day){
-            $plus = Take_small_base::where('take_small_bases.kindgarden_id', $kid)
+            $minus = minus_multi_storage::where('day_id', $day->id)
+                ->where('kingarden_name_id', $kid)
+                ->join('products', 'minus_multi_storages.product_name_id', '=', 'products.id')
+                ->get([
+                    'minus_multi_storages.id',
+                    'minus_multi_storages.product_name_id',
+                    'minus_multi_storages.day_id',
+                    'minus_multi_storages.kingarden_name_id',
+                    'minus_multi_storages.product_weight',
+                    'products.product_name',
+                    'products.size_name_id',
+                    'products.div',
+                    'products.sort'
+                ]);
+            $trashes = Take_small_base::where('take_small_bases.kindgarden_id', $kid)
                 ->where('take_groups.day_id', $day->id)
                 ->join('take_groups', 'take_groups.id', '=', 'take_small_bases.takegroup_id')
-                // ->join('products', 'Take_small_bases.product_name_id', '=', 'products.id')
                 ->get([
                     'take_small_bases.id',
                     'take_small_bases.product_id',
@@ -1678,14 +1670,56 @@ class TechnologController extends Controller
                     'take_small_bases.kindgarden_id',
                     'take_small_bases.weight',
                 ]);
+            $groups = Groupweight::where('kindergarden_id', $kid)
+                ->where('day_id', $day->id)
+                ->first();
+            if(isset($groups)){
+                $actuals = Weightproduct::where('groupweight_id', $groups->id)->get();
+            }
+            else{
+                $actuals = [];
+            }
+            
+            foreach($minus as $row){
+                if(!isset($minusproducts[$row->product_name_id])){
+                    $minusproducts[$row->product_name_id] = 0;
+                }
+                $minusproducts[$row->product_name_id] += $row->product_weight;
+            }
             foreach($plus as $row){
+                if(!isset($plusproducts[$row->product_name_id])){
+                    $plusproducts[$row->product_name_id] = 0;
+                    $addeds[$row->product_name_id] = 0;
+                }
+                $plusproducts[$row->product_name_id] += $row->product_weight;
+                $takedproducts[$row->product_name_id] = 0;
+            }
+            foreach($trashes as $row){
                 if(!isset($takedproducts[$row->product_id])){
                     $takedproducts[$row->product_id] = 0;
                 }
                 $takedproducts[$row->product_id] += $row->weight;
+                $minusproducts[$row->product_name_id] += $row->weight;
+            }
+            foreach($actuals as $row){
+                if(!isset($actualweights[$row->product_id])){
+                    $actualweights[$row->product_id] = 0;
+                }
+                if(!isset($plusproducts[$row->product_id])){
+                    $plusproducts[$row->product_id] = 0;
+                    $addeds[$row->product_id] = 0;
+                }
+                if(!isset($minusproducts[$row->product_id])){
+                    $minusproducts[$row->product_id] = 0;
+                }
+                $actualweights[$row->product_id] += $row->weight;
+                if($plusproducts[$row->product_id] - $minusproducts[$row->product_id] < $row->weight){
+                    $addeds[$row->product_id] += $row->weight - ($plusproducts[$row->product_id] - $minusproducts[$row->product_id]);
+                    // echo $row->product_id." ".$addeds[$row->product_id]." ".$plusproducts[$row->product_id]." - ".$minusproducts[$row->product_id]." = ".$row->weight."<br/>";
+                    $plusproducts[$row->product_id] += $row->weight - ($plusproducts[$row->product_id] - $minusproducts[$row->product_id]);
+                }
             }
         }
-        // dd($takedproducts);
 
         $products = Product::join('sizes', 'sizes.id', '=', 'products.size_name_id')
                 ->get(['products.id', 'products.product_name', 'sizes.size_name']);
@@ -1698,6 +1732,7 @@ class TechnologController extends Controller
                     <tr>
                         <th scope='col'>Maxsulot</th>
                         <th scope='col'>Кирим</th>
+                        <th scope='col'>Ортирма</th>
                         <th scope='col'>Чиқим</th>
                         <th scope='col'>Чиқити</th>
                         <th scope='col'>Қолдиқ</th>
@@ -1710,30 +1745,37 @@ class TechnologController extends Controller
                             <td>". $product->product_name ."</td>
                             <td>";
                             if(isset($plusproducts[$product->id])){ 
-                                $countin = $plusproducts[$product->id];
+                                $totalin = $plusproducts[$product->id];
                             }
                             else
-                                $countin = 0;
-                                $html = $html.$countin." + <input type='text' style='width: 50px; font-size: 12px' name='prodadd[". $product->id ."]'>
-                                </td>
+                                $totalin = 0;
+                            if(isset($addeds[$product->id])){ 
+                                $totaladded = $addeds[$product->id];
+                            }
+                            else
+                                $totaladded = 0;
+
+                            $html = $html.$totalin-$totaladded."
+                            <td>";
+                            
+                            $html = $html. sprintf('%0.3f', $totaladded) ."
                             <td>";
                             if(isset($minusproducts[$product->id])){ 
-                                $countout = $minusproducts[$product->id];
+                                $totalout = $minusproducts[$product->id];
                             }
                             else
-                                $countout = 0;
-                            $html = $html.$countout." + <input type='text' style='width: 50px; font-size: 12px' name='prodminus[". $product->id ."]'>
-                                </td>
+                                $totalout = 0;
+                            $html = $html.$totalout." 
                             <td>";
 
                             if(isset($takedproducts[$product->id])){ 
-                                $counttrash = $takedproducts[$product->id];
+                                $totaltrash = $takedproducts[$product->id];
                             }
                             else
-                                $counttrash = 0;
-                            $html = $html.$counttrash."</td>
+                                $totaltrash = 0;
+                            $html = $html.$totaltrash."</td>
                             
-                            <td>". sprintf('%0.3f', $countin - $countout - $counttrash) .' '.$product->size_name."</td>
+                            <td>". sprintf('%0.3f', $totalin - $totalout).' '.$product->size_name."</td>
                         </tr>";
                     }
                 }
@@ -1866,6 +1908,99 @@ class TechnologController extends Controller
         
         return $html;
     }
+
+    public function weightcurrent(Request $request, $kind, $yearid = 0, $monthid){
+        // dd($request->all(), $kind, $yearid, $monthid);
+        if($yearid == 0){
+            $yearid = Year::where('year_active', 1)->first()->id;
+        }
+        $year = Year::where('id', $yearid)->first();
+        $months = Month::where('yearid', $yearid)->get();
+        $il = $monthid;
+        if($monthid == 0){
+            $il = Month::where('month_active', 1)->where('yearid', $yearid)->first()->id;
+            if($il == null){
+                $il = Month::where('yearid', $yearid)->first()->id;
+            }
+        }
+        $monthdays = $this->activmonth($il);
+        $days = $this->days();
+        $products = Product::all();
+        $kindergarden = Kindgarden::where('id', $kind)->first();
+        $id = $il;
+        $groups = Groupweight::where('kindergarden_id', $kind)
+                    ->where('day_id', '>=', $monthdays[0]->id)->where('day_id', '<=', $monthdays[count($monthdays)-1]->id)
+                    ->orderBy('id', 'DESC')
+                    ->get();
+        
+        return view('technolog.weightcurrent', compact('groups', 'months', 'id', 'days', 'products', 'year', 'monthdays', 'il', 'kindergarden'));
+    }
+
+    public function editegroup(Request $request){
+        
+        Groupweight::where('id', $request->group_id)->update([
+            'name' => $request->nametitle,
+            'day_id' => $request->editedayid
+        ]);
+
+        foreach($request->weights as $key => $value){
+            Weightproduct::where('groupweight_id', $request->group_id)->where('product_id', $key)->update([
+                'weight' => $value
+            ]);
+        }
+
+        return redirect()->route('technolog.weightcurrent', ['kind' => $request->kind_id, 'yearid' => $request->yearid, 'monthid' => $request->monthid]);
+    }
+
+    public function addingweights(Request $request){
+        // dd($request->all());
+        $group = Groupweight::create([
+            'name' => $request->title,
+            'kindergarden_id' => $request->kindergarden_id,
+            'day_id' => $request->day_id
+        ]);
+
+        foreach($request->weights as $key => $value){
+                Weightproduct::create([
+                    'groupweight_id' => $group->id,
+                    'product_id' => $key,
+                    'weight' => $value,
+                ]);
+        }
+        
+        return redirect()->route('technolog.weightcurrent', ['kind' => $request->kindergarden_id, 'yearid' => 0, 'monthid' => 0]);
+    }
+
+    public function getweightproducts(Request $request){
+        $products = Product::all();
+        $prgroup = Weightproduct::where('groupweight_id', $request->group_id)->get();
+        // dd($request->group_id);
+        $html = "<table class='table table-light table-striped table-hover' style='width: calc(100% - 2rem)!important;'>
+                <thead>
+                    <tr>
+                        <th scope='col'>ID</th>
+                        <th scope='col'>Maxsulot</th>
+                        <th scope='col'>Miqdori</th>
+                    </tr>
+                </thead>
+                <tbody>";
+        
+        $i = 0;
+        foreach($products as $all){
+            $weightproduct = $prgroup->where('product_id', $all->id)->first();
+            $weight = $weightproduct ? $weightproduct->weight : 0;
+            
+            $html = $html."<tr>
+                <td scope='row'>". ++$i ."</td>
+                <td>". $all->product_name ."</td>";
+                $html = $html."<td style='width: 50px;'><input type='text' name='weights[". $all->id ."]' value='". $weight ."'></td>";
+            $html = $html."</tr>";
+        }
+        $html = $html."</tbody>
+                </table>";
+        
+        return $html;
+    }
     
     public function editactivemanu(Request $request){
     	foreach ($request->weight as $key => $value){
@@ -1879,7 +2014,7 @@ class TechnologController extends Controller
     	$categories = Product_category::all();
         $norms = Norm_category::all();
         $sizes = Size::all(); 
-    	return view('technolog.createproduct', compact('categories', 'norms', 'sizes'));
+    	return view('technolog.creteproduct', compact('categories', 'norms', 'sizes'));
     }
     
     public function createproduct(Request $request){
