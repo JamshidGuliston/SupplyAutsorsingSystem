@@ -118,6 +118,39 @@
     <!-- <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
     Launch demo modal
     </button> -->
+    <!-- Modal inout -->
+    <div class="modal fade" id="Modalinout" tabindex="-1" aria-labelledby="exampleModalLabelsadd" aria-hidden="true">
+        <div class="modal-dialog  modal-lg">
+            <div class="modal-content">
+                <div class="modal-header bg-info">
+                    <h5 class="modal-title text-white" id="exampleModalLabel">Xisobot qurish</h5>
+                    <button type="button" class="btn-close " data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form action="{{route('technolog.reportinout')}}" method="GET">
+                    @csrf
+                    <input type="hidden" id="kindergarden_id" name="kindergarden_id">
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="kindergarden-name col-sm-12">
+                            </div>
+                        <hr>
+                        <div class="col-sm-12">
+                            <select class="form-select" name="month_id" aria-label="Default select example" required>
+                                <option value="">Oyni tanlang</option>
+                                @foreach($monthsofyears as $row)
+                                    <option value="{{$row['id']}}">{{ $row['month_name'].'-'.$row['year_name'] }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn add-age btn-primary text-white">Ko'rish</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
 
     <!-- Modal -->
     <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -187,6 +220,7 @@
                         </div>
                         <a href="{{ route('technolog.plusmultistorage',  ['id' => $item->id, 'monthid' => 0 ]) }}" style="color: #959fa3; margin-right: 6px; font-size: 14px;"><i class="fas fa-plus"></i></a>
                         <a href="{{ route('technolog.minusmultistorage',  ['id' => $item->id, 'monthid' => 0 ]) }}" style="color: #959fa3; margin-right: 6px; font-size: 14px;"><i class="fas fa-minus"></i></a>
+                        <a href="#!" style="color: #959fa3; margin-right: 6px; font-size: 14px;" ><i class="inout fas fa-exchange-alt" data-kname ="{{ $item->kingar_name }}" data-garden-id="{{ $item->id }}" data-bs-toggle="modal" data-bs-target="#Modalinout"></i></a>
                         <a href="{{ route('technolog.weightcurrent',  ['kind' => $item->id, 'yearid' => 0, 'monthid' => 0 ]) }}" style="color: #959fa3; margin-right: 6px; font-size: 20px;"><i class="fas fa-balance-scale"></i></a>
                         <a href="{{ route('technolog.settings',  ['id' => $item->id ]) }}" style="color: #959fa3; margin-right: 6px; font-size: 20px;"><i class="fas fa-cog"></i></a>
                     </div>
@@ -215,6 +249,14 @@
         })
     });
 
+    $('.inout').click(function() {
+        var gardenid = $(this).attr('data-garden-id');
+        document.getElementById("kindergarden_id").value = gardenid;
+        var name = $(this).attr('data-kname');
+        var div = $('.kindergarden-name');
+        div.html(name);
+    });
+
     $('#three').hide();
     $('#two').hide();
 
@@ -235,7 +277,6 @@
                 div.html(data);
                 $('.loader-box').hide();
             }
-
         })
     });
     

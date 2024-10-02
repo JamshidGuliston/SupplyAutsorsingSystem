@@ -83,7 +83,7 @@
     } */
     /* Description Line */
     .input-note{
-    margin-right: 415px;
+        margin-right: 415px;
     }
     .input-income{
         margin-right: 53px;
@@ -263,7 +263,7 @@
 </style>
 @endsection
 @section('leftmenu')
-    @include('storage.sidemenu'); 
+    @include('technolog.sidemenu'); 
 @endsection
 @section('content')
 <!-- ADD -->
@@ -326,18 +326,19 @@
 <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
-        <form action="" method="POST">
+        <form action="{{route('technolog.deleteweights')}}" method="POST">
             @csrf
             <div class="modal-header">
                 <h5 class="modal-title" id="exampleModalLabel">O'chirish</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body foodmcomposition"> 
-                <label>Miqdori</label>
-                <input type="hidden" id="ddebt_id" name="ddebt_id" class="form-control" ><br>
+                <div class="deletetitle"></div>
+                <input type="hidden" id="id" name="group_id" class="form-control" ><br>
+                <input type="hidden" id="kindergardenId" name="kindergardenId" class="form-control" ><br>
             </div>
             <div class="modal-footer">
-                <button type="submit" class="btn editsub btn-success">O'chirish</button>
+                <button type="submit" class="btn btn-danger">O'chirish</button>
             </div>
         </form>
         </div>
@@ -574,36 +575,6 @@
         <a href="/technolog/weightcurrent/{{ $kindergarden->id }}/{{ $year->id+1 }}/0" class="month__item">{{ $year->year_name + 1 }}</a>
     </div>
 </div>
-<div class="date">
-    
-    <!-- <div class="day">
-        <a href="#" class="day__item">1</a>
-        <a href="#" class="day__item">2</a>
-        <a href="#" class="day__item">3</a>
-        <a href="#" class="day__item">4</a>
-        <a href="#" class="day__item">5</a>
-        <a href="#" class="day__item">6</a>
-        <a href="#" class="day__item">7</a>
-        <a href="#" class="day__item">8</a>
-        <a href="#" class="day__item">9</a>
-        <a href="#" class="day__item">10</a>
-        <a href="#" class="day__item">11</a>
-        <a href="#" class="day__item">12</a>
-        <a href="#" class="day__item">13</a>
-        <a href="#" class="day__item">14</a>
-        <a href="#" class="day__item">15</a>
-        <a href="#" class="day__item">16</a>
-        <a href="#" class="day__item">17</a>
-        <a href="#" class="day__item">18</a>
-        <a href="#" class="day__item">19</a>
-        <a href="#" class="day__item">20</a>
-        <a href="#" class="day__item">21</a>
-        <a href="#" class="day__item">22</a>
-        <a href="#" class="day__item">23</a>
-        <a href="#" class="day__item">24</a>
-        <a href="#" class="day__item">25</a>
-    </div> -->
-</div> 
 <div class="py-4 px-4">
     <div class="row">
         <div class="col-md-4">
@@ -612,20 +583,20 @@
         <div class="col-md-4">
         </div>
         <div class="col-md-2">
+            <a href=""></a>
         </div>
         <div class="col-md-2" style="text-align: end;">
-            <button class="form-control" data-bs-toggle="modal" data-bs-target="#Modaladd">Qo'shish</button>
+            <button style="width: 50% !important;" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#Modaladd">Qo'shish</button>
         </div>
     </div>
     <hr>
-    <table class="table table-light py-4 px-4">
-        <thead>
-
+    <table class="table py-4 px-4">
+        <thead>     
             <tr>
                 <th scope="col">ID</th>
                 <th scope="col">Title</th>
                 <th scope="col">Date</th>
-                <th style="width: 40px;">PDF</th>
+                <th style="width: 80px;"><a href="/technolog/monthlyweights/{{ $kindergarden->id }}/{{ $id }}" target="_blank" style="color:cadetblue">Umumiy</a></th>
                 <th style="width: 60px;">...</th>
                 <th style="width: 60px;">...</th>
             </tr>
@@ -637,7 +608,7 @@
                 <td>{{ $item['name'] }}</td>
                 <td>{{ $days->find($item['day_id'])->day_number."-".$months->find($id)->month_name."-".$year->year_name }}</td>
                 <td>
-                    <a href="/storage/document/{{ $item->id }}" target="_blank">pdf</a>
+                    <a href="/technolog/weightsdocument/{{ $item->id }}" target="_blank">pdf</a>
                 </td>
                 <td>
                 	<i class="edite_  fa fa-edit" aria-hidden="true" 
@@ -650,19 +621,17 @@
                             data-bs-toggle="modal" style="cursor: pointer; color:cadetblue" data-bs-target="#editModal"></i>
                 </td>
                 <td>
-                	<i class="trash_  fa fa-trash" aria-hidden="true" 
-                            data-t_itle = "{{ $item['group_name'] }}" 
-                            data-mid = "{{ $item['id'] }}"
-                            data-day_id = "{{ $item['dayid'] }}"
-                            data-year_id = "{{ $year->id }}"
-                            data-month_id = "{{ $id }}"
-                            data-bs-toggle="modal" style="cursor: pointer; color:cadetblue" data-bs-target="#editModal"></i>
+                	<i class="delete  fa fa-trash" aria-hidden="true" 
+                            data-grouptitle = "{{ $item['name'] }}" 
+                            data-id = "{{ $item['id'] }}"
+                            data-kindergarid = "{{ $kindergarden->id }}"
+                            data-bs-toggle="modal" style="cursor: pointer; color:cadetblue" data-bs-target="#deleteModal"></i>
                 </td>
             </tr>
             @endforeach
         </tbody>
     </table>
-    <a href="/storage/home">Orqaga</a>
+    <a href="/technolog/home">Orqaga</a>
 </div>
 
 @endsection
@@ -701,10 +670,14 @@
         document.getElementById("gyear_id").value = yearid;
         document.getElementById("gmonth_id").value = monthid;
     });
-    $('.detete').click(function() {
-            var debtid = $(this).attr('data-debt-id');
-            document.getElementById("ddebt_id").value = debtid;
-            var shopid = $(this).attr('data-shop-id');
+    $('.delete').click(function() {
+        var name = $(this).attr('data-grouptitle');
+        var id = $(this).attr('data-id');
+        var kindergarid = $(this).attr('data-kindergarid');
+        var title = $(".deletetitle");
+        title.html("<div><b>"+name+"</b></div>");
+        document.getElementById("id").value = id;
+        document.getElementById("kindergardenId").value = kindergarid;
     });
 	function isNumber(evt) {
         let charCode = (evt.which) ? evt.which : event.keyCode;

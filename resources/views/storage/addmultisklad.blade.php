@@ -94,7 +94,7 @@
                 <h5 class="modal-title" id="exampleModalLabel">Umumiy Xisobot</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <form action="{{route('storage.report')}}" method="GET" target="_blank">
+            <form action="{{route('storage.allreport')}}" method="GET" target="_blank">
             <div class="row modal-body">
                 @csrf
                 <div class="col-sm-4">

@@ -268,6 +268,9 @@ class StorageController extends Controller
                     }
     
                 }
+                 
+            }
+        }
     }
 
     public function onedaymulti(Request $request, $dayid){
@@ -346,35 +349,12 @@ class StorageController extends Controller
         $king = Kindgarden::where('id', $kid)->first();
         $month = Month::where('month_active', 1)->first();
         $days = $this->activmonth($month->id);
-        // dd($days);
         $minusproducts = [];
-        foreach($days as $day){
-            $minus = minus_multi_storage::where('day_id', $day->id)
-                ->where('kingarden_name_id', $kid)
-                ->join('products', 'minus_multi_storages.product_name_id', '=', 'products.id')
-                ->get([
-                    'minus_multi_storages.id',
-                    'minus_multi_storages.product_name_id',
-                    'minus_multi_storages.day_id',
-                    'minus_multi_storages.kingarden_name_id',
-                    'minus_multi_storages.product_weight',
-                    'products.product_name',
-                    'products.size_name_id',
-                    'products.div',
-                    'products.sort'
-                ]);
-            // echo $minus->count()." ";
-            foreach($minus as $row){
-                if(!isset($minusproducts[$row->product_name_id])){
-                    $minusproducts[$row->product_name_id] = 0;
-                }
-                $minusproducts[$row->product_name_id] += $row->product_weight;
-                // $minusproducts[$row->product_name_id]['productname'] = $row->product_name;
-            }
-        }
-        // dd($minusproducts);
         $plusproducts = [];
         $takedproducts = [];
+        $actualweights = [];
+        $addeds = [];
+
         foreach($days as $day){
             $plus = plus_multi_storage::where('day_id', $day->id)
                 ->where('kingarden_name_d', $kid)
@@ -390,23 +370,23 @@ class StorageController extends Controller
                     'products.div',
                     'products.sort'
                 ]);
-            foreach($plus as $row){
-                if(!isset($plusproducts[$row->product_name_id])){
-                    $plusproducts[$row->product_name_id] = 0;
-                }
-                $plusproducts[$row->product_name_id] += $row->product_weight;
-                $takedproducts[$row->product_name_id] = 0;
-            }
-        }
-
-        $products = Product::join('sizes', 'sizes.id', '=', 'products.size_name_id')
-                ->get(['products.id', 'products.product_name', 'sizes.size_name']);
-        
-        foreach($days as $day){
-            $plus = Take_small_base::where('take_small_bases.kindgarden_id', $kid)
+            $minus = minus_multi_storage::where('day_id', $day->id)
+                ->where('kingarden_name_id', $kid)
+                ->join('products', 'minus_multi_storages.product_name_id', '=', 'products.id')
+                ->get([
+                    'minus_multi_storages.id',
+                    'minus_multi_storages.product_name_id',
+                    'minus_multi_storages.day_id',
+                    'minus_multi_storages.kingarden_name_id',
+                    'minus_multi_storages.product_weight',
+                    'products.product_name',
+                    'products.size_name_id',
+                    'products.div',
+                    'products.sort'
+                ]);
+            $trashes = Take_small_base::where('take_small_bases.kindgarden_id', $kid)
                 ->where('take_groups.day_id', $day->id)
                 ->join('take_groups', 'take_groups.id', '=', 'take_small_bases.takegroup_id')
-                // ->join('products', 'Take_small_bases.product_name_id', '=', 'products.id')
                 ->get([
                     'take_small_bases.id',
                     'take_small_bases.product_id',
@@ -414,21 +394,60 @@ class StorageController extends Controller
                     'take_small_bases.kindgarden_id',
                     'take_small_bases.weight',
                 ]);
+            $groups = Groupweight::where('kindergarden_id', $kid)
+                ->where('day_id', $day->id)
+                ->first();
+            if(isset($groups)){
+                $actuals = Weightproduct::where('groupweight_id', $groups->id)->get();
+            }
+            else{
+                $actuals = [];
+            }
+            
+            foreach($minus as $row){
+                if(!isset($minusproducts[$row->product_name_id])){
+                    $minusproducts[$row->product_name_id] = 0;
+                }
+                $minusproducts[$row->product_name_id] += $row->product_weight;
+            }
             foreach($plus as $row){
+                if(!isset($plusproducts[$row->product_name_id])){
+                    $plusproducts[$row->product_name_id] = 0;
+                    $addeds[$row->product_name_id] = 0;
+                }
+                $plusproducts[$row->product_name_id] += $row->product_weight;
+                $takedproducts[$row->product_name_id] = 0;
+            }
+            foreach($trashes as $row){
                 if(!isset($takedproducts[$row->product_id])){
                     $takedproducts[$row->product_id] = 0;
                 }
                 $takedproducts[$row->product_id] += $row->weight;
+                $minusproducts[$row->product_name_id] += $row->weight;
+            }
+            foreach($actuals as $row){
+                if(!isset($actualweights[$row->product_id])){
+                    $actualweights[$row->product_id] = 0;
+                }
+                if(!isset($plusproducts[$row->product_id])){
+                    $plusproducts[$row->product_id] = 0;
+                    $addeds[$row->product_id] = 0;
+                }
+                if(!isset($minusproducts[$row->product_id])){
+                    $minusproducts[$row->product_id] = 0;
+                }
+                $actualweights[$row->product_id] += $row->weight;
+                if($plusproducts[$row->product_id] - $minusproducts[$row->product_id] < $row->weight){
+                    $addeds[$row->product_id] += $row->weight - ($plusproducts[$row->product_id] - $minusproducts[$row->product_id]);
+                    // echo $row->product_id." ".$addeds[$row->product_id]." ".$plusproducts[$row->product_id]." - ".$minusproducts[$row->product_id]." = ".$row->weight."<br/>";
+                    $plusproducts[$row->product_id] += $row->weight - ($plusproducts[$row->product_id] - $minusproducts[$row->product_id]);
+                }
             }
         }
-
-        $groups = Groupweight::where('kindergarden_id', $kid)
-                    ->where('day_id', '>=', $days->first()->id)
-                    ->where('day_id', '<=', $days->last()->id)
-                    ->orderBy('id', 'DESC')
-                    ->first();
-
-        $actualweights = Weightproduct::where('groupweight_id', $groups->id)->get();
+        
+        $products = Product::join('sizes', 'sizes.id', '=', 'products.size_name_id')
+                ->get(['products.id', 'products.product_name', 'sizes.size_name']);
+        
 
         $mods = [];
         foreach($products as $product){
@@ -445,15 +464,11 @@ class StorageController extends Controller
                 else
                     $countout = 0;
                 
-                if(isset($takedproducts[$product->id])){ 
-                    $counttrash = $takedproducts[$product->id];
-                }
-                else
-                    $counttrash = 0;
 
-                $mods[$product->id] = ($actualweights->where('product_id', $product->id)->first()->weight >= ($countin - $countout - $counttrash)) ? $actualweights->where('product_id', $product->id)->first()->weight : ($countin - $countout - $counttrash);
+                $mods[$product->id] = $countin - $countout;
             }
         }
+
         return $mods;
     }
 
@@ -659,7 +674,6 @@ class StorageController extends Controller
     // svod sklad
     public function ordersvodpdf(Request $request, $id){
         $document = order_product::where('order_products.day_id', $id)->get();
-        // dd($document);
         $items = [];
         foreach($document as $row){
             $item = order_product_structure::where('order_product_name_id', $row->id)
@@ -1127,7 +1141,7 @@ class StorageController extends Controller
 
         $kind = Kindgarden::where('id', $kid)->first();
 
-        return view('storage.intakingsmallbase', compact('res', 'products', 'id', 'kind'));    
+        return view('storage.intakingsmallbase', compact('res', 'products', 'id', 'kind', 'day'));    
     }
     
     public function intakingsmallbasepdf(Request $request, $day, $kid){
@@ -1168,8 +1182,50 @@ class StorageController extends Controller
 		$dompdf->stream('demo.pdf', ['Attachment' => 0]);
     }
 
-    public function addintakingsmallbase(Request $request){
+    public function allreport(Request $request){
+        // dd($request->all());
+        $kindergardens = [];
+        foreach($request->kindgardens as $row){
+            $kindergardens[] = order_product::where('order_products.day_id', '>=', $request->start)
+                        ->where('order_products.day_id', '<=', $request->end)
+                        ->where('order_products.kingar_name_id', '=', $row)
+                        ->get();
+        }
+        $items = [];
+        foreach($kindergardens as $kindergarden){
+            foreach($kindergarden as $row){
+                $item = order_product_structure::where('order_product_name_id', $row->id)
+                    ->join('products', 'products.id', '=', 'order_product_structures.product_name_id')
+                    ->join('sizes', 'sizes.id', '=', 'products.size_name_id')
+                    ->get();
+                foreach($item as $in){
+                    if(!isset($items[$in->product_name_id])){
+                        $items[$in->product_name_id]['product_weight'] = 0;
+                        $items[$in->product_name_id]['product_name'] = $in->product_name;
+                        $items[$in->product_name_id]['size_name'] = $in->size_name;
+                        $items[$in->product_name_id]['p_sort'] = $in->sort;
+                    }
+                    $items[$in->product_name_id]['product_weight'] += $in->product_weight;
+                }  
+            }
+        }
 
+        usort($items, function ($a, $b){
+            if(isset($a["p_sort"]) and isset($b["p_sort"])){
+                return $a["p_sort"] > $b["p_sort"];
+            }
+        });
+
+        $dompdf = new Dompdf('UTF-8');
+		$html = mb_convert_encoding(view('pdffile.storage.allreportpdf', compact('items')), 'HTML-ENTITIES', 'UTF-8');
+		$dompdf->loadHtml($html);
+		$dompdf->setPaper('A4');
+		$dompdf->render();
+		$dompdf->stream('demo.pdf', ['Attachment' => 0]);
+
+    }
+
+    public function addintakingsmallbase(Request $request){
         Take_small_base::create([
             'kindgarden_id' => $request->kid,
             'takegroup_id' => $request->groid,
@@ -1178,13 +1234,13 @@ class StorageController extends Controller
             'cost' => $request->cost,
         ]);
 
-        return redirect()->route('storage.intakingsmallbase', ['id' => $request->groid, 'kid' => $request->kid]);
+        return redirect()->route('storage.intakingsmallbase', ['id' => $request->groid, 'kid' => $request->kid, 'day' => $request->day]);
     }
 
     public function deletetakingsmallbase(Request $request){
         Take_small_base::where('id', $request->rowid)->delete();
 
-        return redirect()->route('storage.intakingsmallbase', ['id' => $request->grodid, 'kid' => $request->kind_id]);
+        return redirect()->route('storage.intakingsmallbase', ['id' => $request->grodid, 'kid' => $request->kind_id, 'day' => $request->day]);
     }
 
     public function changesome(){

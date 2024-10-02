@@ -63,7 +63,7 @@ class TechnologController extends Controller
         $days = Day::where('month_id', $month->id)->where('year_id', $month->yearid)
                 ->join('months', 'months.id', '=', 'days.month_id')
                 ->join('years', 'years.id', '=', 'days.year_id')
-                ->get(['days.id', 'days.day_number', 'months.month_name', 'years.year_name']);
+                ->get(['days.id', 'days.day_number', 'months.month_name', 'days.month_id', 'years.year_name', 'days.year_id']);
         return $days;
     }
 
@@ -71,13 +71,19 @@ class TechnologController extends Controller
     {
         $year = Year::where('year_active', 1)->first();
         $months = Month::where('yearid', Year::where('year_active', 1)->first()->id)->get();
+        
         // faqat aktiv oy sanalarini oladi
         $days = Day::where('month_id', Month::where('month_active', 1)->first()->id)
             ->join('months', 'months.id', '=', 'days.month_id')
             ->join('years', 'years.id', '=', 'days.year_id')
             ->select('days.id', 'days.day_number', 'days.month_id', 'months.month_name', 'years.year_name', 'days.year_id')
             ->get();
-        
+
+        $monthsofyears = Month::where('months.id', '<=', $days->first()->month_id)
+            ->join('years', 'years.id', '=', 'months.yearid')
+            ->orderBy('months.id', 'DESC')
+            ->get(['months.id','months.month_name', 'years.year_name']);
+
         $kingar = Kindgarden::all();
         $nextdaymenu = Nextday_namber::all();
         $season = Season::where('hide', 1)->first();
@@ -85,7 +91,7 @@ class TechnologController extends Controller
         
         date_default_timezone_set('Asia/Tashkent');
         $d = strtotime("-8 hours 30 minutes");
-        return view('technolog.home', ['year' => $year, 'date' => $days, 'tomm' => $d, 'kingardens' => $kingar, 'menus' => $menus, 'next' => $nextdaymenu, 'months' => $months]);
+        return view('technolog.home', ['year' => $year, 'date' => $days, 'tomm' => $d, 'kingardens' => $kingar, 'menus' => $menus, 'next' => $nextdaymenu, 'months' => $months, 'monthsofyears' => $monthsofyears]);
     }
 
     // yangi kun ishlari
@@ -1621,6 +1627,204 @@ class TechnologController extends Controller
         return view('technolog.plusmultistorage', ['plusproducts' => $plusproducts, 'minusproducts' => $minusproducts, 'kingar' => $king, 'days' => $days, 'months' => $months, 'monthid' => $ill]); 
     }
 
+    public function deleteweights(Request $request){
+        // dd($request->all());
+        Weightproduct::where('groupweight_id', $request->group_id)->delete();
+        Groupweight::where('id', $request->group_id)->delete();
+
+        return redirect()->route('technolog.weightcurrent', ['kind' => $request->kindergardenId, 'yearid' => 0, 'monthid' => 0]);
+    }
+
+    public function weightsdocument(Request $request, $group_id){
+        $group = Groupweight::where('id', $group_id)->first();
+        $kind = Kindgarden::where('id', $group->kindergarden_id)->first();
+        $day = Day::where('days.id', $group->day_id)
+                ->join('months', 'months.id', '=', 'days.month_id')
+                ->join('years', 'years.id', '=', 'days.year_id')
+                ->first(['days.id', 'days.day_number', 'months.month_name', 'years.year_name']);
+        // dd($day);
+        $products = Weightproduct::where('groupweight_id', $group_id)
+                ->join('products', 'products.id', '=', 'weightproducts.product_id')
+                ->join('sizes', 'sizes.id', '=', 'products.size_name_id')->get();
+        // dd($products);
+        $document = []; 
+        foreach($products as $row){
+            if($row->weight > 0){
+                $document[$row->product_id]['group_id'] = $row->groupweight_id;
+                $document[$row->product_id]['product_name'] = $row->product_name;
+                $document[$row->product_id]['size_name'] = $row->size_name;
+                $document[$row->product_id]['sort'] = $row->sort;
+                $document[$row->product_id]['weight'] = $row->weight;
+                $document[$row->product_id]['cost'] = 0;
+            }
+        }
+        usort($document, function ($a, $b){
+            if(isset($a["sort"]) and isset($b["sort"])){
+                return $a["sort"] > $b["sort"];
+            }
+        });
+        // dd($document);
+        $dompdf = new Dompdf('UTF-8');
+		$html = mb_convert_encoding(view('pdffile.technolog.weightsdocument', compact('document', 'kind', 'day')), 'HTML-ENTITIES', 'UTF-8');
+		$dompdf->loadHtml($html);
+		$dompdf->setPaper('A4',  'landscape');
+		$dompdf->render();
+		$dompdf->stream('demo.pdf', ['Attachment' => 0]);
+         
+    }
+
+    public function monthlyweights(Request $request, $kid, $monthid){
+        $days = $this->activmonth($monthid);
+        $products = Product::orderBy('sort', 'ASC')->get();
+        $kind = Kindgarden::where('id', $kid)->first();
+        $groups = Groupweight::where('groupweights.kindergarden_id', $kid)
+                ->where('days.month_id', $monthid)
+                ->join('days', 'days.id', '=', 'groupweights.day_id')
+                ->get([
+                    'groupweights.id',
+                    'groupweights.kindergarden_id',
+                    'groupweights.day_id',
+                    'days.day_number'
+                ]);
+        
+        $document = []; 
+        foreach($groups as $row){
+            $prods = Weightproduct::where('weightproducts.groupweight_id', $row->id)
+                ->join('products', 'products.id', '=', 'weightproducts.product_id')
+                ->join('sizes', 'sizes.id', '=', 'products.size_name_id')->get();
+            foreach($prods as $product){
+                if($product->weight > 0){
+                    $document[$product->product_id][$row->day_id]['group_id'] = $product->groupweight_id;
+                    $document[$product->product_id][$row->day_id]['product_id'] = $product->product_id;
+                    $document[$product->product_id]['size_name'] = $product->size_name;
+                    $document[$product->product_id][$row->day_id]['sort'] = $product->sort;
+                    $document[$product->product_id][$row->day_id]['weight'] = $product->weight;
+                    $document[$product->product_id][$row->day_id]['cost'] = 0;
+                }
+            }
+        }
+
+        $dompdf = new Dompdf('UTF-8');
+		$html = mb_convert_encoding(view('pdffile.technolog.monthlyreport', compact('document', 'kind', 'days', 'products')), 'HTML-ENTITIES', 'UTF-8');
+		$dompdf->loadHtml($html);
+		$dompdf->setPaper('A4',  'landscape');
+		$dompdf->render();
+		$dompdf->stream('demo.pdf', ['Attachment' => 0]);
+    }
+
+    public function reportinout(Request $request){
+        $days = $this->activmonth($request->month_id);
+        $products = Product::orderBy('sort', 'ASC')->get();
+        $kind = Kindgarden::where('id', $request->kindergarden_id)->first();
+        
+        $prevmods = [];
+        $minusproducts = [];
+        $plusproducts = [];
+        $takedproducts = [];
+        $actualweights = [];
+        $addeds = [];
+        $isThisMeasureDay = [];
+
+        foreach($days as $day){
+            $plus = plus_multi_storage::where('day_id', $day->id)
+                ->where('kingarden_name_d', $kind->id)
+                ->join('products', 'plus_multi_storages.product_name_id', '=', 'products.id')
+                ->get([
+                    'plus_multi_storages.id',
+                    'plus_multi_storages.product_name_id',
+                    'plus_multi_storages.day_id',
+                    'plus_multi_storages.kingarden_name_d',
+                    'plus_multi_storages.residual',
+                    'plus_multi_storages.product_weight',
+                    'products.product_name',
+                    'products.size_name_id',
+                    'products.div',
+                    'products.sort'
+                ]);
+            $minus = minus_multi_storage::where('day_id', $day->id)
+                ->where('kingarden_name_id', $kind->id)
+                ->join('products', 'minus_multi_storages.product_name_id', '=', 'products.id')
+                ->get([
+                    'minus_multi_storages.id',
+                    'minus_multi_storages.product_name_id',
+                    'minus_multi_storages.day_id',
+                    'minus_multi_storages.kingarden_name_id',
+                    'minus_multi_storages.product_weight',
+                    'products.product_name',
+                    'products.size_name_id',
+                    'products.div',
+                    'products.sort'
+                ]);
+            $trashes = Take_small_base::where('take_small_bases.kindgarden_id', $kind->id)
+                ->where('take_groups.day_id', $day->id)
+                ->join('take_groups', 'take_groups.id', '=', 'take_small_bases.takegroup_id')
+                ->get([
+                    'take_small_bases.id',
+                    'take_small_bases.product_id',
+                    'take_groups.day_id',
+                    'take_small_bases.kindgarden_id',
+                    'take_small_bases.weight',
+                ]);
+            $groups = Groupweight::where('kindergarden_id', $kind->id)
+                ->where('day_id', $day->id)
+                ->first();
+            if(isset($groups)){
+                $actuals = Weightproduct::where('groupweight_id', $groups->id)->get();
+            }
+            else{
+                $actuals = [];
+            }
+            
+            foreach($minus as $row){
+                if(!isset($minusproducts[$row->product_name_id][$day->id])){
+                    $minusproducts[$row->product_name_id][$day->id] = 0;
+                }
+                $minusproducts[$row->product_name_id][$day->id] += $row->product_weight;
+            }
+            foreach($plus as $row){
+                if(!isset($prevmods[$row->product_name_id])){
+                    $prevmods[$row->product_name_id] = 0;
+                }
+                if(!isset($plusproducts[$row->product_name_id][$day->id])){
+                    $plusproducts[$row->product_name_id][$day->id] = 0;
+                    $addeds[$row->product_name_id][$day->id] = 0;
+                }
+                if($row->residual == 0){
+                    $plusproducts[$row->product_name_id][$day->id] += $row->product_weight;
+                    $takedproducts[$row->product_name_id][$day->id] = 0;
+                }else{
+                    $prevmods[$row->product_name_id] += $row->product_weight;
+                }
+            }
+            foreach($trashes as $row){
+                if(!isset($takedproducts[$row->product_id][$day->id])){
+                    $takedproducts[$row->product_id][$day->id] = 0;
+                }
+                $takedproducts[$row->product_id][$day->id] += $row->weight;
+            }
+            foreach($actuals as $row){
+                if(!isset($actualweights[$row->product_id][$day->id])){
+                    $actualweights[$row->product_id][$day->id] = 0;
+                    $isThisMeasureDay[$day->id] = 1;
+                }
+                if(!isset($plusproducts[$row->product_id][$day->id])){
+                    $plusproducts[$row->product_id][$day->id] = 0;
+                    $addeds[$row->product_id][$day->id] = 0;
+                }
+                if(!isset($minusproducts[$row->product_id][$day->id])){
+                    $minusproducts[$row->product_id][$day->id] = 0;
+                }
+                $actualweights[$row->product_id][$day->id] += $row->weight;
+            }
+        }
+        $dompdf = new Dompdf('UTF-8');
+		$html = mb_convert_encoding(view('pdffile.technolog.reportinout', compact('prevmods', 'kind', 'days', 'products', 'minusproducts', 'plusproducts', 'takedproducts', 'actualweights', 'isThisMeasureDay')), 'HTML-ENTITIES', 'UTF-8');
+		$dompdf->loadHtml($html);
+		$dompdf->setPaper('A0',  'landscape');
+		$dompdf->render();
+		$dompdf->stream('demo.pdf', ['Attachment' => 0]);
+    }
+
     public function getmodproduct(Request $request, $kid){
         $king = Kindgarden::where('id', $kid)->with('user')->first();	
         $days = Day::where('year_id', Year::where('year_active', 1)->first()->id)->where('month_id', Month::where('month_active', 1)->first()->id)->get();
@@ -1699,7 +1903,7 @@ class TechnologController extends Controller
                     $takedproducts[$row->product_id] = 0;
                 }
                 $takedproducts[$row->product_id] += $row->weight;
-                $minusproducts[$row->product_name_id] += $row->weight;
+                $minusproducts[$row->product_id] += $row->weight;
             }
             foreach($actuals as $row){
                 if(!isset($actualweights[$row->product_id])){
@@ -1944,9 +2148,19 @@ class TechnologController extends Controller
         ]);
 
         foreach($request->weights as $key => $value){
-            Weightproduct::where('groupweight_id', $request->group_id)->where('product_id', $key)->update([
-                'weight' => $value
-            ]);
+            $isThere = Weightproduct::where('groupweight_id', $request->group_id)->where('product_id', $key)->first();
+            if(isset($isThere)){
+                Weightproduct::where('groupweight_id', $request->group_id)->where('product_id', $key)->update([
+                    'weight' => $value
+                ]);
+            }
+            else{
+                Weightproduct::create([
+                    'groupweight_id' => $request->group_id,
+                    'product_id' => $key,
+                    'weight' => $value
+                ]);
+            }
         }
 
         return redirect()->route('technolog.weightcurrent', ['kind' => $request->kind_id, 'yearid' => $request->yearid, 'monthid' => $request->monthid]);
@@ -1961,11 +2175,13 @@ class TechnologController extends Controller
         ]);
 
         foreach($request->weights as $key => $value){
+            if($value > 0){
                 Weightproduct::create([
                     'groupweight_id' => $group->id,
                     'product_id' => $key,
                     'weight' => $value,
                 ]);
+            }
         }
         
         return redirect()->route('technolog.weightcurrent', ['kind' => $request->kindergarden_id, 'yearid' => 0, 'monthid' => 0]);

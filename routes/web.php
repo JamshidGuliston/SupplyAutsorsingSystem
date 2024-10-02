@@ -69,6 +69,7 @@ Route::group(['prefix' => 'storage', 'middleware' => ['isStorage', 'auth']], fun
     Route::get('intakingsmallbasepdf/{day}/{kid}', [StorageController::class, 'intakingsmallbasepdf']);
     Route::get('report', [StorageController::class, 'report'])->name('storage.report');
     Route::get('backcontrolpassword', [StorageController::class, 'backcontrolpassword']);
+    Route::get('allreport', [StorageController::class, 'allreport'])->name('storage.allreport');
 
     Route::get('addmultisklad', [StorageController::class, 'addmultisklad'])->name('storage.addmultisklad');
     Route::post('newordersklad', [StorageController::class, 'newordersklad'])->name('storage.newordersklad');
@@ -147,6 +148,7 @@ Route::group(['prefix' => 'technolog', 'middleware' => ['isTechnolog', 'auth']],
     Route::post('updateshop', [TechnologController::class, 'updateshop'])->name('updateshop');
     Route::get('addshop', [TechnologController::class, 'addshop'])->name('addshop');
     Route::post('createshop', [TechnologController::class, 'createshop'])->name('createshop');
+    Route::get('reportinout', [TechnologController::class, 'reportinout'])->name('technolog.reportinout');
     
     Route::get('food', [TechnologController::class, 'food'])->name('food');
     Route::get('foodsettings/{id}', [TechnologController::class, 'foodsettings'])->name('foodsettings');
@@ -187,7 +189,10 @@ Route::group(['prefix' => 'technolog', 'middleware' => ['isTechnolog', 'auth']],
     Route::post('editminusproduct', [TechnologController::class, 'editminusproduct'])->name('technolog.editminusproduct');
     Route::post('plusmultimodadd', [TechnologController::class, 'plusmultimodadd'])->name('technolog.plusmultimodadd');
     Route::get('plusmultistorage/{id}/{monthid}', [TechnologController::class, 'plusmultistorage'])->name('technolog.plusmultistorage');
+    Route::post('deleteweights', [TechnologController::class, 'deleteweights'])->name('technolog.deleteweights');
     Route::get('weightcurrent/{kind}/{yearid}/{monthid}', [TechnologController::class, 'weightcurrent'])->name('technolog.weightcurrent');
+    Route::get('weightsdocument/{group_id}', [TechnologController::class, 'weightsdocument'])->name('technolog.weightsdocument');
+    Route::get('monthlyweights/{kindid}/{monthid}', [TechnologController::class, 'monthlyweights'])->name('technolog.monthlyweights');
     Route::get('getmodproduct/{id}', [TechnologController::class, 'getmodproduct'])->name('technolog.getmodproduct');
     Route::get('getweightproducts', [TechnologController::class, 'getweightproducts'])->name('technolog.getweightproducts');
     Route::post('addingweights', [TechnologController::class, 'addingweights'])->name('technolog.addingweights');

@@ -14,6 +14,7 @@
             @csrf
             <input type="hidden" name="grodid" value="{{$id}}">
             <input type="hidden" name="kind_id" value="{{$kind->id}}">
+            <input type="hidden" name="day" value="{{$day}}">
             <div class="modal-header bg-danger">
                 <h5 class="modal-title text-white" id="exampleModalLabel">O'chirish</h5>
                 <button type="button" class="btn-close " data-bs-dismiss="modal" aria-label="Close"></button>
@@ -36,6 +37,7 @@
         @csrf
         <input type="hidden" name="groid" value="{{$id}}">
         <input type="hidden" name="kid" value="{{$kind->id}}">
+        <input type="hidden" name="day" value="{{$day}}">
         <div class="row">
             <div class="col-md-3">
                 <div class="product-select">
