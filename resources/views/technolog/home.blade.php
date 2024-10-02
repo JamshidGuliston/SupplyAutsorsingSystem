@@ -126,7 +126,7 @@
                     <h5 class="modal-title text-white" id="exampleModalLabel">Xisobot qurish</h5>
                     <button type="button" class="btn-close " data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <form action="{{route('technolog.reportinout')}}" method="GET">
+                <form action="{{route('technolog.reportinout')}}" method="GET" target="_blank">
                     @csrf
                     <input type="hidden" id="kindergarden_id" name="kindergarden_id">
                     <div class="modal-body">

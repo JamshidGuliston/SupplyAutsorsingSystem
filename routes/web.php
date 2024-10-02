@@ -149,6 +149,7 @@ Route::group(['prefix' => 'technolog', 'middleware' => ['isTechnolog', 'auth']],
     Route::get('addshop', [TechnologController::class, 'addshop'])->name('addshop');
     Route::post('createshop', [TechnologController::class, 'createshop'])->name('createshop');
     Route::get('reportinout', [TechnologController::class, 'reportinout'])->name('technolog.reportinout');
+    Route::get('reportinoutpdf', [TechnologController::class, 'reportinoutpdf'])->name('technolog.reportinoutpdf');
     
     Route::get('food', [TechnologController::class, 'food'])->name('food');
     Route::get('foodsettings/{id}', [TechnologController::class, 'foodsettings'])->name('foodsettings');
