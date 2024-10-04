@@ -25,7 +25,7 @@ use App\Models\Take_product;
 use App\Models\Take_small_base;
 use App\Models\Titlemenu;
 use App\Models\Groupweight;
-use App\Mosels\Weightproduct;
+use App\Models\Weightproduct;
 use App\Models\User;
 use App\Models\Year;
 use Illuminate\Http\Request;
