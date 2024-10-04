@@ -227,7 +227,7 @@
 									@endif
 									@if(isset($isThisMeasureDay[$day->id]))
 										<?php
-											echo $actualweights[product->id][$day->id];
+											echo $actualweights[$product->id][$day->id];
 											echo $plus[$product->id];
 											echo $minus[$product->id];
 										?>
