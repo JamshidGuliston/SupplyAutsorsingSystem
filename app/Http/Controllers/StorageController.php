@@ -421,11 +421,12 @@ class StorageController extends Controller
                 $takedproducts[$row->product_name_id] = 0;
             }
             foreach($trashes as $row){
-                if(!isset($takedproducts[$row->product_id])){
+                if(!isset($takedproducts[$row->product_id]) or !isset($minusproducts[$row->product_id])){
                     $takedproducts[$row->product_id] = 0;
+                    $minusproducts[$row->product_id] = 0;
                 }
                 $takedproducts[$row->product_id] += $row->weight;
-                $minusproducts[$row->product_name_id] += $row->weight;
+                $minusproducts[$row->product_id] += $row->weight;
             }
             foreach($actuals as $row){
                 if(!isset($actualweights[$row->product_id])){
