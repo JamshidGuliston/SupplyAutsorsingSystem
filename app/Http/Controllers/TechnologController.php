@@ -1943,6 +1943,7 @@ class TechnologController extends Controller
         $takedproducts = [];
         $actualweights = [];
         $addeds = [];
+        $isThisMeasureDay = [];
 
         foreach($days as $day){
             $plus = plus_multi_storage::where('day_id', $day->id)
@@ -2015,23 +2016,38 @@ class TechnologController extends Controller
                 $minusproducts[$row->product_id] += $row->weight;
             }
             foreach($actuals as $row){
-                if(!isset($actualweights[$row->product_id])){
-                    $actualweights[$row->product_id] = 0;
+                if(!isset($actualweights[$row->product_id][$day->id])){
+                    $actualweights[$row->product_id][$day->id] = 0;
+                    $isThisMeasureDay[$day->id] = 1;
                 }
-                if(!isset($plusproducts[$row->product_id])){
-                    $plusproducts[$row->product_id] = 0;
-                    $addeds[$row->product_id] = 0;
+                if(!isset($plusproducts[$row->product_id][$day->id])){
+                    $plusproducts[$row->product_id][$day->id] = 0;
+                    $addeds[$row->product_id][$day->id] = 0;
                 }
-                if(!isset($minusproducts[$row->product_id])){
-                    $minusproducts[$row->product_id] = 0;
+                if(!isset($minusproducts[$row->product_id][$day->id])){
+                    $minusproducts[$row->product_id][$day->id] = 0;
                 }
-                $actualweights[$row->product_id] += $row->weight;
-                if($plusproducts[$row->product_id] - $minusproducts[$row->product_id] < $row->weight){
-                    $addeds[$row->product_id] += $row->weight - ($plusproducts[$row->product_id] - $minusproducts[$row->product_id]);
-                    // echo $row->product_id." ".$addeds[$row->product_id]." ".$plusproducts[$row->product_id]." - ".$minusproducts[$row->product_id]." = ".$row->weight."<br/>";
-                    $plusproducts[$row->product_id] += $row->weight - ($plusproducts[$row->product_id] - $minusproducts[$row->product_id]);
-                }
+                $actualweights[$row->product_id][$day->id] += $row->weight;
             }
+            // foreach($actuals as $row){
+            //     if(!isset($actualweights[$row->product_id])){
+            //         $actualweights[$row->product_id] = 0;
+            //         $isThisMeasureDay[$day->id] = 1;
+            //     }
+            //     if(!isset($plusproducts[$row->product_id])){
+            //         $plusproducts[$row->product_id] = 0;
+            //         $addeds[$row->product_id] = 0;
+            //     }
+            //     if(!isset($minusproducts[$row->product_id])){
+            //         $minusproducts[$row->product_id] = 0;
+            //     }
+            //     $actualweights[$row->product_id] += $row->weight;
+            //     if($plusproducts[$row->product_id] - $minusproducts[$row->product_id] < $row->weight){
+            //         $addeds[$row->product_id] += $row->weight - ($plusproducts[$row->product_id] - $minusproducts[$row->product_id]);
+            //         // echo $row->product_id." ".$addeds[$row->product_id]." ".$plusproducts[$row->product_id]." - ".$minusproducts[$row->product_id]." = ".$row->weight."<br/>";
+            //         $plusproducts[$row->product_id] += $row->weight - ($plusproducts[$row->product_id] - $minusproducts[$row->product_id]);
+            //     }
+            // }
         }
 
         $products = Product::join('sizes', 'sizes.id', '=', 'products.size_name_id')
