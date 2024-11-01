@@ -1938,6 +1938,7 @@ class TechnologController extends Controller
         $king = Kindgarden::where('id', $kid)->with('user')->first();	
         $days = Day::where('year_id', Year::where('year_active', 1)->first()->id)->where('month_id', Month::where('month_active', 1)->first()->id)->get();
   
+        $prevmods = [];
         $minusproducts = [];
         $plusproducts = [];
         $takedproducts = [];
@@ -2016,18 +2017,18 @@ class TechnologController extends Controller
                 $minusproducts[$row->product_id] += $row->weight;
             }
             foreach($actuals as $row){
-                if(!isset($actualweights[$row->product_id][$day->id])){
-                    $actualweights[$row->product_id][$day->id] = 0;
+                if(!isset($actualweights[$row->product_id])){
+                    $actualweights[$row->product_id] = 0;
                     $isThisMeasureDay[$day->id] = 1;
                 }
-                if(!isset($plusproducts[$row->product_id][$day->id])){
-                    $plusproducts[$row->product_id][$day->id] = 0;
-                    $addeds[$row->product_id][$day->id] = 0;
+                if(!isset($plusproducts[$row->product_id])){
+                    $plusproducts[$row->product_id] = 0;
+                    $addeds[$row->product_id] = 0;
                 }
-                if(!isset($minusproducts[$row->product_id][$day->id])){
-                    $minusproducts[$row->product_id][$day->id] = 0;
+                if(!isset($minusproducts[$row->product_id])){
+                    $minusproducts[$row->product_id] = 0;
                 }
-                $actualweights[$row->product_id][$day->id] += $row->weight;
+                $actualweights[$row->product_id] += $row->weight;
             }
             // foreach($actuals as $row){
             //     if(!isset($actualweights[$row->product_id])){

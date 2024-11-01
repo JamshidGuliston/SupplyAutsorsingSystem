@@ -36,6 +36,7 @@ use App\Models\Take_small_base;
 use App\Models\Product;
 use App\Models\Product_category;
 use App\Models\Protsents;
+use App\Models\Groupweight;
 use App\Models\Season;
 use App\Models\Shop;
 use App\Models\Shop_product;
