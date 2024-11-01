@@ -1150,6 +1150,9 @@ class TestController extends Controller
 					if(!isset($takedproducts[$row->product_id])){
 						$takedproducts[$row->product_id] = 0;
 					}
+					if(!isset($minusproducts[$row->product_name_id])){
+						$minusproducts[$row->product_name_id] = 0;
+					}
 					$takedproducts[$row->product_id] += $row->weight;
 					$minusproducts[$row->product_name_id] += $row->weight;
 				}
