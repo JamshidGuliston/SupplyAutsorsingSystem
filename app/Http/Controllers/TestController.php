@@ -37,6 +37,7 @@ use App\Models\Product;
 use App\Models\Product_category;
 use App\Models\Protsents;
 use App\Models\Groupweight;
+use App\Models\Weightproduct;
 use App\Models\Season;
 use App\Models\Shop;
 use App\Models\Shop_product;
