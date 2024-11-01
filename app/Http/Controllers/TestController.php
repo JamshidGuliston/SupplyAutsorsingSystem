@@ -1173,8 +1173,8 @@ class TestController extends Controller
 				}
 
 				foreach($products as $row){
-					if(!isset($allminusproducts[$kid->id][$kid->id])){
-						$allminusproducts[$kid->id][$kid->id] = 0;
+					if(!isset($allminusproducts[$kid->id][$row->id])){
+						$allminusproducts[$kid->id][$row->id] = 0;
 					}
 					if(!isset($allplusproducts[$kid->id][$row->id])){
 						$allplusproducts[$kid->id][$row->id] = 0;
