@@ -1176,6 +1176,9 @@ class TestController extends Controller
 					if(!isset($allminusproducts[$kid->id][$row->id])){
 						$allminusproducts[$kid->id][$row->id] = 0;
 					}
+					if(!isset($plusproducts[$row->id])){
+						$plusproducts[$row->id] = 0;
+					}
 					if(!isset($allplusproducts[$kid->id][$row->id])){
 						$allplusproducts[$kid->id][$row->id] = 0;
 					}
