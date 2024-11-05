@@ -159,6 +159,10 @@
 							@if(!isset($plus[$product->id]))
 								<?php
 									$plus[$product->id] = 0;
+								?>
+							@endif
+							@if(!isset($minus[$product->id]))
+								<?php
 									$minus[$product->id] = 0;
 								?>
 							@endif
@@ -175,7 +179,7 @@
 									<td>0</td>
 								@endif
 								<?php 
-									$total =0;
+									$total = 0;
 								?>
 								@foreach($days as $day)
 									@if(isset($plusproducts[$product->id][$day->id]))
@@ -238,6 +242,7 @@
 											}
 											else{
 												$added[$product->id] = $added[$product->id] + $actualweights[$product->id][$day->id] - ($plus[$product->id] - $minus[$product->id]);
+												$plus[$product->id] += $actualweights[$product->id][$day->id] - ($plus[$product->id] - $minus[$product->id]);
 											}
 										?>
 									@else
@@ -246,7 +251,7 @@
 									@if(isset($isThisMeasureDay[$day->id]) and $plus[$product->id] - $minus[$product->id] < $actualweights[$product->id][$day->id])
 										<td>{{ sprintf('%0.3f', $actualweights[$product->id][$day->id]) }}</td>
 										<?php
-											$plus[$product->id] += sprintf('%0.3f',  $actualweights[$product->id][$day->id] - ($plus[$product->id] - $minus[$product->id]));
+											// $plus[$product->id] += sprintf('%0.3f',  $actualweights[$product->id][$day->id] - ($plus[$product->id] - $minus[$product->id]));
 										?>
 									@else
 										<td>{{ sprintf('%0.3f', $plus[$product->id] - $minus[$product->id]) }}</td>

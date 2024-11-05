@@ -1937,7 +1937,8 @@ class TechnologController extends Controller
     public function getmodproduct(Request $request, $kid){
         $king = Kindgarden::where('id', $kid)->with('user')->first();	
         $days = Day::where('year_id', Year::where('year_active', 1)->first()->id)->where('month_id', Month::where('month_active', 1)->first()->id)->get();
-  
+        $products = Product::join('sizes', 'sizes.id', '=', 'products.size_name_id')
+                ->get(['products.id', 'products.product_name', 'sizes.size_name']);
         $prevmods = [];
         $minusproducts = [];
         $plusproducts = [];
@@ -1948,12 +1949,13 @@ class TechnologController extends Controller
 
         foreach($days as $day){
             $plus = plus_multi_storage::where('day_id', $day->id)
-                ->where('kingarden_name_d', $kid)
+                ->where('kingarden_name_d', $king->id)
                 ->join('products', 'plus_multi_storages.product_name_id', '=', 'products.id')
                 ->get([
                     'plus_multi_storages.id',
                     'plus_multi_storages.product_name_id',
                     'plus_multi_storages.day_id',
+                    'plus_multi_storages.residual',
                     'plus_multi_storages.kingarden_name_d',
                     'plus_multi_storages.product_weight',
                     'products.product_name',
@@ -1962,7 +1964,7 @@ class TechnologController extends Controller
                     'products.sort'
                 ]);
             $minus = minus_multi_storage::where('day_id', $day->id)
-                ->where('kingarden_name_id', $kid)
+                ->where('kingarden_name_id', $king->id)
                 ->join('products', 'minus_multi_storages.product_name_id', '=', 'products.id')
                 ->get([
                     'minus_multi_storages.id',
@@ -1975,7 +1977,7 @@ class TechnologController extends Controller
                     'products.div',
                     'products.sort'
                 ]);
-            $trashes = Take_small_base::where('take_small_bases.kindgarden_id', $kid)
+            $trashes = Take_small_base::where('take_small_bases.kindgarden_id', $king->id)
                 ->where('take_groups.day_id', $day->id)
                 ->join('take_groups', 'take_groups.id', '=', 'take_small_bases.takegroup_id')
                 ->get([
@@ -1985,16 +1987,7 @@ class TechnologController extends Controller
                     'take_small_bases.kindgarden_id',
                     'take_small_bases.weight',
                 ]);
-            $groups = Groupweight::where('kindergarden_id', $kid)
-                ->where('day_id', $day->id)
-                ->first();
-            if(isset($groups)){
-                $actuals = Weightproduct::where('groupweight_id', $groups->id)->get();
-            }
-            else{
-                $actuals = [];
-            }
-            
+                
             foreach($minus as $row){
                 if(!isset($minusproducts[$row->product_name_id])){
                     $minusproducts[$row->product_name_id] = 0;
@@ -2002,57 +1995,75 @@ class TechnologController extends Controller
                 $minusproducts[$row->product_name_id] += $row->product_weight;
             }
             foreach($plus as $row){
+                if(!isset($prevmods[$row->product_name_id])){
+                    $prevmods[$row->product_name_id] = 0;
+                }
                 if(!isset($plusproducts[$row->product_name_id])){
                     $plusproducts[$row->product_name_id] = 0;
                     $addeds[$row->product_name_id] = 0;
                 }
-                $plusproducts[$row->product_name_id] += $row->product_weight;
-                $takedproducts[$row->product_name_id] = 0;
+                if($row->residual == 0){
+                    $plusproducts[$row->product_name_id] += $row->product_weight;
+                    $takedproducts[$row->product_name_id] = 0;
+                }else{
+                    $prevmods[$row->product_name_id] += $row->product_weight;
+                }
             }
             foreach($trashes as $row){
                 if(!isset($takedproducts[$row->product_id])){
                     $takedproducts[$row->product_id] = 0;
                 }
+                if(!isset($minusproducts[$row->product_name_id])){
+                    $minusproducts[$row->product_name_id] = 0;
+                }
                 $takedproducts[$row->product_id] += $row->weight;
-                $minusproducts[$row->product_id] += $row->weight;
             }
-            foreach($actuals as $row){
-                if(!isset($actualweights[$row->product_id])){
-                    $actualweights[$row->product_id] = 0;
-                    $isThisMeasureDay[$day->id] = 1;
+        
+            $groups = Groupweight::where('kindergarden_id', $king->id)
+                ->where('day_id', $day->id)
+                ->first();
+            if(isset($groups)){
+                $actuals = Weightproduct::where('groupweight_id', $groups->id)->get();
+                foreach($products as $row){
+                    if(!isset($prevmods[$row->id])){
+                        $prevmods[$row->id] = 0;
+                    }
+                    if(!isset($plusproducts[$row->id])){
+                        $plusproducts[$row->id] = 0;
+                    }
+                    if(!isset($added[$row->id])){
+                        $added[$row->id] = 0;
+                    }
+                    if(!isset($minusproducts[$row->id])){
+                        $minusproducts[$row->id] = 0;
+                    }
+                    if(!isset($takedproducts[$row->id])){
+                        $takedproducts[$row->id] = 0;
+                    }
+                    if(!isset($lost[$row->id])){
+                        $lost[$row->id] = 0;
+                    }
+                    if($actuals->where('product_id', $row->id)->count() > 0){
+                        $weight = $actuals->where('product_id', $row->id)->first()->weight;
+                    }
+                    else{
+                        $weight = 0;
+                    }
+                    if($weight -(($prevmods[$row->id] + $plusproducts[$row->id]) - ($minusproducts[$row->id] + $takedproducts[$row->id])) < 0){
+                        $lost[$row->id] += (($prevmods[$row->id] + $plusproducts[$row->id]) - ($minusproducts[$row->id] + $takedproducts[$row->id])) - $weight;
+                    }
+                    else{
+                        $added[$row->id] += $weight - (($prevmods[$row->id] + $plusproducts[$row->id]) - ($minusproducts[$row->id] + $takedproducts[$row->id]));
+                    }
+
+                    
                 }
-                if(!isset($plusproducts[$row->product_id])){
-                    $plusproducts[$row->product_id] = 0;
-                    $addeds[$row->product_id] = 0;
-                }
-                if(!isset($minusproducts[$row->product_id])){
-                    $minusproducts[$row->product_id] = 0;
-                }
-                $actualweights[$row->product_id] += $row->weight;
             }
-            // foreach($actuals as $row){
-            //     if(!isset($actualweights[$row->product_id])){
-            //         $actualweights[$row->product_id] = 0;
-            //         $isThisMeasureDay[$day->id] = 1;
-            //     }
-            //     if(!isset($plusproducts[$row->product_id])){
-            //         $plusproducts[$row->product_id] = 0;
-            //         $addeds[$row->product_id] = 0;
-            //     }
-            //     if(!isset($minusproducts[$row->product_id])){
-            //         $minusproducts[$row->product_id] = 0;
-            //     }
-            //     $actualweights[$row->product_id] += $row->weight;
-            //     if($plusproducts[$row->product_id] - $minusproducts[$row->product_id] < $row->weight){
-            //         $addeds[$row->product_id] += $row->weight - ($plusproducts[$row->product_id] - $minusproducts[$row->product_id]);
-            //         // echo $row->product_id." ".$addeds[$row->product_id]." ".$plusproducts[$row->product_id]." - ".$minusproducts[$row->product_id]." = ".$row->weight."<br/>";
-            //         $plusproducts[$row->product_id] += $row->weight - ($plusproducts[$row->product_id] - $minusproducts[$row->product_id]);
-            //     }
+
+            // if($day->id == 686){
+            //     dd($weight, $prevmods, $plusproducts, $minusproducts, $takedproducts, $lost, $added);
             // }
         }
-
-        $products = Product::join('sizes', 'sizes.id', '=', 'products.size_name_id')
-                ->get(['products.id', 'products.product_name', 'sizes.size_name']);
         
         $html = "<table class='table table-light table-striped table-hover'>
                 <input type='hidden' name='kingarid' value='". $kid ."'>
@@ -2061,50 +2072,55 @@ class TechnologController extends Controller
                 <thead>
                     <tr>
                         <th scope='col'>Maxsulot</th>
+                        <th scope='col'>O'tgan oydan</th>
                         <th scope='col'>Кирим</th>
                         <th scope='col'>Ортирма</th>
                         <th scope='col'>Чиқим</th>
                         <th scope='col'>Чиқити</th>
+                        <th scope='col'>Yo'qolgan</th>
                         <th scope='col'>Қолдиқ</th>
                     </tr>
                 </thead>
                 <tbody>";
                 foreach($products as $product){
+                    if(!isset($prevmods[$product->id])){
+                        $prevmods[$product->id] = 0;
+                    }
+                    if(!isset($plusproducts[$product->id])){
+                        $plusproducts[$product->id] = 0;
+                    }
+                    if(!isset($added[$product->id])){
+                        $added[$product->id] = 0;
+                    }
+                    if(!isset($minusproducts[$product->id])){
+                        $minusproducts[$product->id] = 0;
+                    }
+                    if(!isset($takedproducts[$product->id])){
+                        $takedproducts[$product->id] = 0;
+                    }
+                    if(!isset($lost[$product->id])){
+                        $lost[$product->id] = 0;
+                    }
                     if(isset($minusproducts[$product->id]) or isset($plusproducts[$product->id])){
                         $html = $html."<tr>
                             <td>". $product->product_name ."</td>
                             <td>";
-                            if(isset($plusproducts[$product->id])){ 
-                                $totalin = $plusproducts[$product->id];
-                            }
-                            else
-                                $totalin = 0;
-                            if(isset($addeds[$product->id])){ 
-                                $totaladded = $addeds[$product->id];
-                            }
-                            else
-                                $totaladded = 0;
-
-                            $html = $html.$totalin-$totaladded."
+                            $totalin = $plusproducts[$product->id] + $prevmods[$product->id] + $added[$product->id];
+                            $html = $html.sprintf('%0.3f', $prevmods[$product->id])."</td>
                             <td>";
                             
-                            $html = $html. sprintf('%0.3f', $totaladded) ."
-                            <td>";
-                            if(isset($minusproducts[$product->id])){ 
-                                $totalout = $minusproducts[$product->id];
-                            }
-                            else
-                                $totalout = 0;
-                            $html = $html.$totalout." 
+                            $html = $html. sprintf('%0.3f', $plusproducts[$product->id]) ."</td>
                             <td>";
 
-                            if(isset($takedproducts[$product->id])){ 
-                                $totaltrash = $takedproducts[$product->id];
-                            }
-                            else
-                                $totaltrash = 0;
-                            $html = $html.$totaltrash."</td>
-                            
+                            $html = $html.sprintf('%0.3f', $added[$product->id])."</td>
+                            <td>";
+
+                            $html = $html.sprintf('%0.3f', $minusproducts[$product->id])."</td>
+                            <td>";
+                            $totalout = $minusproducts[$product->id] + $takedproducts[$product->id];
+                            $html = $html.sprintf('%0.3f', $takedproducts[$product->id])."</td><td>";
+
+                            $html = $html.sprintf('%0.3f', $lost[$product->id])."</td>
                             <td>". sprintf('%0.3f', $totalin - $totalout).' '.$product->size_name."</td>
                         </tr>";
                     }
