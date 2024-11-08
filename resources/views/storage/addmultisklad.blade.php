@@ -69,12 +69,12 @@
             </div>
             <div class="modal-body foodcomposition"> 
                 <input type="number" name="maxday" class="form-control" placeholder="Сифати тез бузиладиганлар муддати" required>
-                <!-- Боғчаларни танлаш -->
-                <!-- <select id='testSelect1' name="gardens[]" class="form-select" aria-label="Default select example" multiple required>
+                Боғчаларни танлаш
+                <select id='testSelect1' name="gardens[]" class="form-select" aria-label="Default select example" multiple required>
                     @foreach($gardens as $row)
                         <option value='{{ $row->id }}'>{{ $row->kingar_name }}</option>
                     @endforeach
-                </select> -->
+                </select>
             </div>
             <div class="modal-footer">
                 <!-- <button type="button" class="btn btn-warning" data-bs-dismiss="modal">Close</button> -->
