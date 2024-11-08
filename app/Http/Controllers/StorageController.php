@@ -1209,7 +1209,7 @@ class StorageController extends Controller
     public function allreport(Request $request){
         // dd($request->all());
         $kindergardens = [];
-        foreach($request->kindgardens as $row){
+        foreach($request->gardens as $row){
             $kindergardens[] = order_product::where('order_products.day_id', '>=', $request->start)
                         ->where('order_products.day_id', '<=', $request->end)
                         ->where('order_products.kingar_name_id', '=', $row)
