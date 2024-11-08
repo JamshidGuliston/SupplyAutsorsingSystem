@@ -98,7 +98,11 @@
             <div class="row modal-body">
                 @csrf
                 <div class="col-sm-4">
-                    
+                    <select id='testSelect2' name="gardens[]" class="form-select" aria-label="Default select example" multiple required>
+                        @foreach($gardens as $row)
+                            <option value='{{ $row->id }}'>{{ $row->kingar_name }}</option>
+                        @endforeach
+                    </select>
                 </div>
                 <div class="col-sm-2">
                     <select class="form-select" id="enddayid" name="start" aria-label="Default select example" required>
@@ -219,6 +223,13 @@
         });
     });
     document.multiselect('#testSelect1')
+		.setCheckBoxClick("checkboxAll", function(target, args) {
+			console.log("Checkbox 'Select All' was clicked and got value ", args.checked);
+		})
+		.setCheckBoxClick("1", function(target, args) {
+			console.log("Checkbox for item with value '1' was clicked and got value ", args.checked);
+		});
+    document.multiselect('#testSelect2')
 		.setCheckBoxClick("checkboxAll", function(target, args) {
 			console.log("Checkbox 'Select All' was clicked and got value ", args.checked);
 		})
