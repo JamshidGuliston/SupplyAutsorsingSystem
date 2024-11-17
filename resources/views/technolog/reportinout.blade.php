@@ -22,6 +22,7 @@
 	}
 	table{
 		border-collapse: collapse;
+		width: 100%;
 		border: 2px solid black;	
 	}
 	thead{
@@ -45,7 +46,19 @@
 		background-color: #faffb3;
 		z-index: 3;
 	}
-
+	tbody tr:hover {
+		background-color: #c5effc; /* Light blue color for hover effect */
+		cursor: pointer; /* Optional: Adds a pointer cursor to indicate interactivity */
+	}
+	thead th {
+		position: sticky;
+		top: 0; /* Sticks the header to the top of the table's scrolling container */
+		z-index: 10; /* Ensures it appears above other content */
+		background-color: #faffb3; /* Optional: Makes the header visually distinct */
+		border: 2px solid black;
+		padding: 5px; /* Adjust padding as needed */
+		text-align: center;
+	}
 	td:nth-child(2) {
 		position: sticky;
 		border: 1px solid black;

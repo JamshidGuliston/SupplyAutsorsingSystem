@@ -1206,6 +1206,144 @@ class StorageController extends Controller
 		$dompdf->stream('demo.pdf', ['Attachment' => 0]);
     }
 
+    public function increasedreport(Request $request)
+    {
+        $king = Kindgarden::where('id', $request->gardenID)->with('user')->first();	
+        $days = Day::where('id', '>=', $request->start)->where('id', '<=', $request->end)->get();
+        $products = Product::join('sizes', 'sizes.id', '=', 'products.size_name_id')
+                ->get(['products.id', 'products.product_name', 'sizes.size_name']);
+        $prevmods = [];
+        $minusproducts = [];
+        $plusproducts = [];
+        $takedproducts = [];
+        $actualweights = [];
+        $addeds = [];
+        $isThisMeasureDay = [];
+
+        foreach($days as $day){
+            $plus = plus_multi_storage::where('day_id', $day->id)
+                ->where('kingarden_name_d', $king->id)
+                ->join('products', 'plus_multi_storages.product_name_id', '=', 'products.id')
+                ->get([
+                    'plus_multi_storages.id',
+                    'plus_multi_storages.product_name_id',
+                    'plus_multi_storages.day_id',
+                    'plus_multi_storages.residual',
+                    'plus_multi_storages.kingarden_name_d',
+                    'plus_multi_storages.product_weight',
+                    'products.product_name',
+                    'products.size_name_id',
+                    'products.div',
+                    'products.sort'
+                ]);
+            $minus = minus_multi_storage::where('day_id', $day->id)
+                ->where('kingarden_name_id', $king->id)
+                ->join('products', 'minus_multi_storages.product_name_id', '=', 'products.id')
+                ->get([
+                    'minus_multi_storages.id',
+                    'minus_multi_storages.product_name_id',
+                    'minus_multi_storages.day_id',
+                    'minus_multi_storages.kingarden_name_id',
+                    'minus_multi_storages.product_weight',
+                    'products.product_name',
+                    'products.size_name_id',
+                    'products.div',
+                    'products.sort'
+                ]);
+            $trashes = Take_small_base::where('take_small_bases.kindgarden_id', $king->id)
+                ->where('take_groups.day_id', $day->id)
+                ->join('take_groups', 'take_groups.id', '=', 'take_small_bases.takegroup_id')
+                ->get([
+                    'take_small_bases.id',
+                    'take_small_bases.product_id',
+                    'take_groups.day_id',
+                    'take_small_bases.kindgarden_id',
+                    'take_small_bases.weight',
+                ]);
+                
+            foreach($minus as $row){
+                if(!isset($minusproducts[$row->product_name_id])){
+                    $minusproducts[$row->product_name_id] = 0;
+                }
+                $minusproducts[$row->product_name_id] += $row->product_weight;
+            }
+            foreach($plus as $row){
+                if(!isset($prevmods[$row->product_name_id])){
+                    $prevmods[$row->product_name_id] = 0;
+                }
+                if(!isset($plusproducts[$row->product_name_id])){
+                    $plusproducts[$row->product_name_id] = 0;
+                    $addeds[$row->product_name_id] = 0;
+                }
+                if($row->residual == 0){
+                    $plusproducts[$row->product_name_id] += $row->product_weight;
+                    $takedproducts[$row->product_name_id] = 0;
+                }else{
+                    $prevmods[$row->product_name_id] += $row->product_weight;
+                }
+            }
+            foreach($trashes as $row){
+                if(!isset($takedproducts[$row->product_id])){
+                    $takedproducts[$row->product_id] = 0;
+                }
+                if(!isset($minusproducts[$row->product_name_id])){
+                    $minusproducts[$row->product_name_id] = 0;
+                }
+                $takedproducts[$row->product_id] += $row->weight;
+            }
+        
+            $groups = Groupweight::where('kindergarden_id', $king->id)
+                ->where('day_id', $day->id)
+                ->first();
+            if(isset($groups)){
+                $actuals = Weightproduct::where('groupweight_id', $groups->id)->get();
+                foreach($products as $row){
+                    if(!isset($prevmods[$row->id])){
+                        $prevmods[$row->id] = 0;
+                    }
+                    if(!isset($plusproducts[$row->id])){
+                        $plusproducts[$row->id] = 0;
+                    }
+                    if(!isset($added[$row->id])){
+                        $added[$row->id] = 0;
+                    }
+                    if(!isset($minusproducts[$row->id])){
+                        $minusproducts[$row->id] = 0;
+                    }
+                    if(!isset($takedproducts[$row->id])){
+                        $takedproducts[$row->id] = 0;
+                    }
+                    if(!isset($lost[$row->id])){
+                        $lost[$row->id] = 0;
+                    }
+                    if($actuals->where('product_id', $row->id)->count() > 0){
+                        $weight = $actuals->where('product_id', $row->id)->first()->weight;
+                    }
+                    else{
+                        $weight = 0;
+                    }
+                    if($weight -(($prevmods[$row->id] + $plusproducts[$row->id]) - ($minusproducts[$row->id] + $takedproducts[$row->id])) < 0){
+                        $lost[$row->id] += (($prevmods[$row->id] + $plusproducts[$row->id]) - ($minusproducts[$row->id] + $takedproducts[$row->id])) - $weight;
+                    }
+                    else{
+                        $added[$row->id] += $weight - (($prevmods[$row->id] + $plusproducts[$row->id]) - ($minusproducts[$row->id] + $takedproducts[$row->id]));
+                    }
+
+                    
+                }
+            }
+        }
+
+
+        $dompdf = new Dompdf('UTF-8');
+		$html = mb_convert_encoding(view('pdffile.storage.increasedskladpdf', ['document' => $products, 'added' => $added]), 'HTML-ENTITIES', 'UTF-8');
+		$dompdf->loadHtml($html);
+		$dompdf->setPaper('A4', 'landscape');
+		$dompdf->render();
+		$dompdf->stream('demo.pdf', ['Attachment' => 0]);
+
+    }
+
     public function allreport(Request $request){
         // dd($request->all());
         $kindergardens = [];

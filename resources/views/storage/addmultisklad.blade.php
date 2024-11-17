@@ -133,14 +133,64 @@
         </div>
     </div>
 </div>
+{{-- Report of increase --}}
+<div class="modal fade" id="modalIncreased" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Oshib ketilgan</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form action="{{route('storage.increasedreport')}}" method="GET" target="_blank">
+            <div class="row modal-body">
+                @csrf
+                <div class="col-sm-4">
+                    <select id='testSelect2' name="gardenID" class="form-select" aria-label="Default select example" required>
+                        @foreach($gardens as $row)
+                            <option value='{{ $row->id }}'>{{ $row->kingar_name }}</option>
+                        @endforeach
+                    </select>
+                </div>
+                <div class="col-sm-2">
+                    <select class="form-select" id="enddayid" name="start" aria-label="Default select example" required>
+                        <option value="">-Sanadan-</option>
+                        @foreach($days as $row)
+                            <option value="{{$row['id']}}">{{ $row['day_number'].".".$row['month_name'].".".$row['year_name']; }}</option>
+                        @endforeach
+                    </select>
+                </div>
+                <div class="col-sm-2">
+                    <select class="form-select" id="enddayid" name="end" aria-label="Default select example" required>
+                        <option value="">-Sanaga-</option>
+                        @foreach($days as $row)
+                            <option value="{{$row['id']}}">{{ $row['day_number'].".".$row['month_name'].".".$row['year_name']; }}</option>
+                        @endforeach
+                    </select>
+                </div><br/>
+                <div class="col-sm-6">
+                    Yuklab olish
+                    <button type="submit" class="btn btn-info form-control">PDF <i class="fas fa-download" aria-hidden="true"></i></button>
+                </div>
+                <br/>
+            </div>
+            </form>
+            <div class="modal-footer">
+                <!-- <button type="button" class="btn btn-success" data-bs-dismiss="modal">Close</button> -->
+            </div>
+        </div>
+    </div>
+</div>
 <!-- EDIT -->
 <div class="py-4 px-4">
     <div class="row">
-        <div class="col-md-6">
+        <div class="col-md-4">
             <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addModal">Bozorlik yaratish</button>
         </div>
-        <div class="col-md-6">
-            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalsettings">Xisobot</button>
+        <div class="col-md-4">
+            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalsettings">Ummumiy jo'natilgan Xisobot</button>
+        </div>
+        <div class="col-md-4">
+            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalIncreased">Orttirilgan Xisobot</button>
         </div>
     </div>
     <hr>
