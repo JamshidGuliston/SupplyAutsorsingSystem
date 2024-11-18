@@ -2106,7 +2106,7 @@ class TechnologController extends Controller
                         $html = $html."<tr>
                             <td>". $product->product_name ."</td>
                             <td>";
-                            $totalin = $plusproducts[$product->id] + $prevmods[$product->id] + $added[$product->id];
+                            $totalin = $plusproducts[$product->id] + $prevmods[$product->id];
                             $html = $html.sprintf('%0.3f', $prevmods[$product->id])."</td>
                             <td>";
                             
