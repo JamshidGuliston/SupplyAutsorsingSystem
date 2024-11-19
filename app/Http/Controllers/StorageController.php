@@ -1327,9 +1327,8 @@ class StorageController extends Controller
                     }
                     else{
                         $added[$row->id] += $weight - (($prevmods[$row->id] + $plusproducts[$row->id]) - ($minusproducts[$row->id] + $takedproducts[$row->id]));
-                    }
-
-                    
+                        $plusproducts[$row->id] += $weight - ($plusproducts[$row->id] - $minusproducts[$row->id]);
+                    }   
                 }
             }
         }

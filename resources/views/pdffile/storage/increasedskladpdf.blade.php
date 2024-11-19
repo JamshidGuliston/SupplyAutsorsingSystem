@@ -104,14 +104,16 @@
                             $counts = [];
                         ?>
                         @foreach($document as $row)
+						@if($added[$row->id] != 0)
                         <tr>
                             <th scope="row">{{ $tr++ }}</th>
                             <td>{{ $row["product_name"] }}</td>
 							<td>{{ $row["size_name"] }}</td>
-							<td>{{ $added[$row->id] }}</td>
+							<td>{{ sprintf('%0.3f', $added[$row->id]) }}</td>
 							<td>{{ "" }}</td>
 							<td></td>
                         </tr>
+						@endif
                         @endforeach
                     </tbody>
                 </table>
