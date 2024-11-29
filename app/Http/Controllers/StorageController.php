@@ -1350,6 +1350,7 @@ class StorageController extends Controller
             $kindergardens[] = order_product::where('order_products.day_id', '>=', $request->start)
                         ->where('order_products.day_id', '<=', $request->end)
                         ->where('order_products.kingar_name_id', '=', $row)
+                        ->where('order_products.document_processes_id', 5)
                         ->get();
         }
         $items = [];
