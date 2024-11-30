@@ -98,7 +98,7 @@
             <div class="row modal-body">
                 @csrf
                 <div class="col-sm-4">
-                    <select id='testSelect2' name="gardens[]" class="form-select" aria-label="Default select example" multiple required>
+                    <select id='testSelect2' name="garden" class="form-select" aria-label="Default select example" required>
                         @foreach($gardens as $row)
                             <option value='{{ $row->id }}'>{{ $row->kingar_name }}</option>
                         @endforeach

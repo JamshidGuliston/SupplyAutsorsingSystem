@@ -93,8 +93,11 @@
                             <th scope="col" style="width: 6%;">TR</th>
                             <th scope="col" style="width: 30%;">Махсулотлар</th>
                             <th scope="col" style="width: 15%;">Ўлчам</th>
-                            <th scope="col" style="width: 15%;">Миқдори</th>
-                            <th scope="col" style="width: 10%;">Нарх</th>
+							<!-- o'tgan oydan qoldiq -->
+							<th scope="col" style="width: 15%;">Ўтган ойдан қолдиқ</th>
+                            <th scope="col" style="width: 15%;">Юборилган</th>
+                            <th scope="col" style="width: 15%;">Сарфланган</th>
+                            <th scope="col" style="width: 10%;">Фарқи</th>
                             <th scope="col" style="width: 10%;">...</th>
                         </tr>
                     </thead>
@@ -109,7 +112,10 @@
 							<th scope="row">{{ $tr++ }}</th>
                             <td>{{ $row['product_name'] }}</td>
 							<td>{{ $row['size_name'] }}</td>
-							<td><?php printf("%01.1f", $row['product_weight']); ?></td>
+							<td><?php printf("%01.3f", $prevmods[$row->id]) ?></td>
+							<td><?php printf("%01.3f", $row['product_weight']); ?></td>
+							<td><?php printf("%01.3f", $productscount[$row->id]); ?></td>
+							<td><?php printf("%01.3f", $prevmods[$row->id] + $row['product_weight'] - $productscount[$row->id]); ?></td>
 							<td></td>
 							<td></td>
                         </tr>
