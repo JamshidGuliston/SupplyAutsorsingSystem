@@ -1375,6 +1375,7 @@ class StorageController extends Controller
                     ->where('order_products.document_processes_id', 5)
                     ->get();
         $items = [];
+        $productscount = [];
         foreach($kindergardens as $kindergarden){
             foreach($kindergarden as $row){
                 $item = order_product_structure::where('order_product_name_id', $row->id)
@@ -1417,7 +1418,6 @@ class StorageController extends Controller
                     ->join('sizes', 'products.size_name_id', '=', 'sizes.id')
                     ->get();
             
-            $productscount = [];
             foreach($join as $row){
                 if(!isset($productscount[$row->product_name_id])){
                     $productscount[$row->product_name_id] = 0;
