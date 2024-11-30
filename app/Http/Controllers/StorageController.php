@@ -1426,12 +1426,6 @@ class StorageController extends Controller
             
         }
 
-        usort($productscount, function ($a, $b){
-            if(isset($a["sort"]) and isset($b["sort"])){
-                return $a["sort"] > $b["sort"];
-            }
-        });
-
         $dompdf = new Dompdf('UTF-8');
 		$html = mb_convert_encoding(view('pdffile.storage.allreportpdf', compact('items', 'productscount', 'prevmods')), 'HTML-ENTITIES', 'UTF-8');
 		$dompdf->loadHtml($html);
