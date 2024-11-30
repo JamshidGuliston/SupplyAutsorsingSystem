@@ -1419,11 +1419,7 @@ class StorageController extends Controller
                 if(!isset($productscount[$row->product_name_id])){
                     $productscount[$row->product_name_id] = 0;
                 }
-                $productscount[$row->product_name_id] += $row->weight * $row->kingar_children_number;
-                $productscount[$row->product_name_id]['div'] = $row->div;
-                $productscount[$row->product_name_id]['sort'] = $row->sort;
-                $productscount[$row->product_name_id]['product_name'] = $row->product_name;
-                $productscount[$row->product_name_id]['size_name'] = $row->size_name;
+                $productscount[$row->product_name_id] += ($row->weight * $row->kingar_children_number)/$row->div;
             }
             
         }
