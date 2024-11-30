@@ -112,14 +112,14 @@
 							<th scope="row">{{ $tr++ }}</th>
                             <td>{{ $row['product_name'] }}</td>
 							<td>{{ $row['size_name'] }}</td>
-							<td><?php if(isset($prevmods[$key])){
+							<td><?php if(!isset($prevmods[$key])){
 									$prevmods[$key] = 0;
 								} 
 								printf("%01.3f", $prevmods[$key]) 
 								?>
 							</td>
 							<td><?php printf("%01.3f", $row['product_weight']); ?></td>
-							<td><?php if(isset($productscount[$key])){
+							<td><?php if(!isset($productscount[$key])){
 										$productscount[$key] = 0;
 									} 
 								printf("%01.3f", $productscount[$key]); ?>
