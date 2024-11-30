@@ -1387,6 +1387,7 @@ class StorageController extends Controller
                         $items[$in->product_name_id]['product_name'] = $in->product_name;
                         $items[$in->product_name_id]['size_name'] = $in->size_name;
                         $items[$in->product_name_id]['p_sort'] = $in->sort;
+                        $items[$in->product_name_id]['id'] = $in->product_name_id;
                     }
                     $items[$in->product_name_id]['product_weight'] += $in->product_weight;
                 }  

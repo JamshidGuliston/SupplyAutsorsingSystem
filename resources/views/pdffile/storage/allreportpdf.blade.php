@@ -107,24 +107,24 @@
                             $allm = array();
                             $counts = [];
                         ?>
-                        @foreach($items as $key => $row)
+                        @foreach($items as $row)
                         <tr>
 							<th scope="row">{{ $tr++ }}</th>
                             <td>{{ $row['product_name'] }}</td>
 							<td>{{ $row['size_name'] }}</td>
-							<td><?php if(!isset($prevmods[$key])){
-									$prevmods[$key] = 0;
+							<td><?php if(isset($prevmods[$row->id])){
+									$prevmods[$row->id] = 0;
 								} 
-								printf("%01.3f", $prevmods[$key]) 
+								printf("%01.3f", $prevmods[$row->id]) 
 								?>
 							</td>
 							<td><?php printf("%01.3f", $row['product_weight']); ?></td>
-							<td><?php if(!isset($productscount[$key])){
-										$productscount[$key] = 0;
+							<td><?php if(isset($productscount[$row->id])){
+										$productscount[$row->id] = 0;
 									} 
-								printf("%01.3f", $productscount[$key]); ?>
+								printf("%01.3f", $productscount[$row->id]); ?>
 							</td>
-							<td><?php printf("%01.3f", $prevmods[$key] + $row['product_weight'] - $productscount[$key]); ?></td>
+							<td><?php printf("%01.3f", $prevmods[$row->id] + $row['product_weight'] - $productscount[$row->id]); ?></td>
 							<td></td>
 							<td></td>
                         </tr>
