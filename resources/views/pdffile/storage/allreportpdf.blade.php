@@ -112,7 +112,7 @@
 							<th scope="row">{{ $tr++ }}</th>
                             <td>{{ $row['product_name'] }}</td>
 							<td>{{ $row['size_name'] }}</td>
-							<td><?php if(isset($prevmods[$row->id]){
+							<td><?php if(isset($prevmods[$row->id])){
 									$prevmods[$row->id] = 0;
 								} 
 								printf("%01.3f", $prevmods[$row->id]) 
