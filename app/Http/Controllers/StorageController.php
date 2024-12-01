@@ -1427,7 +1427,13 @@ class StorageController extends Controller
         }
 
         $dompdf = new Dompdf('UTF-8');
-		$html = mb_convert_encoding(view('pdffile.storage.allreportpdf', compact('items', 'productscount', 'prevmods')), 'HTML-ENTITIES', 'UTF-8');
+        // there is two button in the form. One of them is allreport and the other is nakladnoy
+        if($request->has('report')){
+            $html = mb_convert_encoding(view('pdffile.storage.allreportpdf', compact('items', 'productscount', 'prevmods')), 'HTML-ENTITIES', 'UTF-8');
+        }
+        else if($request->has('nakladnoy')){
+            $html = mb_convert_encoding(view('pdffile.storage.nakladnoypdf', compact('items', 'productscount', 'prevmods')), 'HTML-ENTITIES', 'UTF-8');
+        }
 		$dompdf->loadHtml($html);
 		$dompdf->setPaper('A4');
 		$dompdf->render();

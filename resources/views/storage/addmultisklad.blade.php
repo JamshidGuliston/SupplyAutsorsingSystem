@@ -121,8 +121,12 @@
                     </select>
                 </div>
                 <div class="col-sm-6">
-                    Yuklab olish
-                    <button type="submit" class="btn btn-info form-control">PDF <i class="fas fa-download" aria-hidden="true"></i></button>
+                    Ko'rish
+                    <button type="submit" name="report" class="btn btn-info form-control">KIRIM-CHIQIM <i class="fas fa-download" aria-hidden="true"></i></button>
+                </div>
+                <div class="col-sm-6">
+                    Ko'rish
+                    <button type="submit" name="nakladnoy" class="btn btn-info form-control">Nakladnoy PDF <i class="fas fa-download" aria-hidden="true"></i></button>
                 </div>
                 <br/>
             </div>
