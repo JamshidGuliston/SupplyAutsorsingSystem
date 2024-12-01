@@ -105,22 +105,28 @@
                             $counts = [];
                         ?>
                         @foreach($items as $row)
-                        <tr>
-							<th scope="row">{{ $tr++ }}</th>
-                            <td>{{ $row['product_name'] }}</td>
-							<td>{{ $row['size_name'] }}</td>
-							<?php 
-								if(!isset($prevmods[$row["id"]])){
-									$prevmods[$row["id"]] = 0;
-								} 
-								if(!isset($productscount[$row["id"]])){
-									$productscount[$row["id"]] = 0;
-								} 
-							?>
-							<td><?php printf("%01.3f", $prevmods[$row["id"]] + $row['product_weight'] - $productscount[$row["id"]]); ?></td>
-							<td></td>
-							<td></td>
-                        </tr>
+						<?php
+						if($prevmods[$row["id"]] + $row['product_weight'] - $productscount[$row["id"]] < 0){
+                        ?>
+							<tr>
+								<th scope="row">{{ $tr++ }}</th>
+								<td>{{ $row['product_name'] }}</td>
+								<td>{{ $row['size_name'] }}</td>
+								<?php 
+									if(!isset($prevmods[$row["id"]])){
+										$prevmods[$row["id"]] = 0;
+									} 
+									if(!isset($productscount[$row["id"]])){
+										$productscount[$row["id"]] = 0;
+									} 
+								?>
+								<td><?php printf("%01.3f",  $productscount[$row["id"]] - ($prevmods[$row["id"]] + $row['product_weight'])); ?></td>
+								<td></td>
+								<td></td>
+							</tr>
+						<?php
+						}
+						?>
                         @endforeach
                     </tbody>
                 </table>
