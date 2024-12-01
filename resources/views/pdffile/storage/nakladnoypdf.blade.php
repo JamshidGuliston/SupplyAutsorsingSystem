@@ -19,7 +19,7 @@
 		background-repeat: no-repeat;
 		background-size: 100%;
 		/* padding: 300px 100px 10px 100px; */
-		width: 100%;
+		width: 45%;
 	}
 	table{
 		border-collapse: collapse;
@@ -82,8 +82,12 @@
 						<a href="#">
 							<i class="fas fa-store-alt" style="color: dodgerblue; font-size: 18px;"></i>
 						</a>
-						<b>{{ "№ ".time() % 100000 }}</b>
-						<b>{{ " / Cана: ".date('m/d/Y', time()) }}</b>
+						<center>
+							<b>Юк хати    &nbsp;&nbsp;&nbsp;&nbsp;    № {{ time() % 100000  }}</b>
+							<b>&nbsp;&nbsp;&nbsp;&nbsp;  {{ "   Cана: ".$document['date'] }}</b>
+						</center>
+						Кимдан:<b> Нишон инвест МЧЖ </b><br>  
+						Кимга: <b> {{ $document['kindgarden'] }}</b>
 					</div>
                 </div>
                 <hr>

@@ -52,6 +52,14 @@ class StorageController extends Controller
         return $days;
     }
 
+    public function rangeOfDays($start, $end){
+        $days = Day::where('days.id', '>=', $start)->where('days.id', '<=', $end)
+                ->join('months', 'months.id', '=', 'days.month_id')
+                ->join('years', 'years.id', '=', 'days.year_id')
+                ->get(['days.id', 'days.day_number', 'months.month_name', 'years.year_name']);
+        return $days;
+    }
+
     public function activyear($menuid){
         $days = Day::where('month_id', $menuid)
                 ->join('months', 'months.id', '=', 'days.month_id')
@@ -1345,6 +1353,7 @@ class StorageController extends Controller
 
     public function allreport(Request $request){
         // dd($request->all());
+        $document = [];
         $prevmods = [];
         $plus = plus_multi_storage::where('day_id', $request->start)
                 ->where('kingarden_name_d', $request->garden)
@@ -1403,8 +1412,10 @@ class StorageController extends Controller
         });
 
         $kindgar = Kindgarden::where('id', $request->garden)->first();
+        $document['kindgarden'] = $kindgar->kindgarden_name;
         $nakproducts = [];
-        $days = Day::where('id', '>=', $request->start)->where('id', '<=', $request->end)->get();
+        $days = $this->rangeOfDays($request->start, $request->end);
+        $document['date'] = $days->last()->day_number."-".$days->last()->month_name."-".$days->last()->year_name;
         foreach($days as $day){
             $join = Number_children::where('number_childrens.day_id', $day->id)
                     ->where('kingar_name_id', $kindgar->id)
@@ -1429,13 +1440,13 @@ class StorageController extends Controller
         $dompdf = new Dompdf('UTF-8');
         // there is two button in the form. One of them is allreport and the other is nakladnoy
         if($request->has('report')){
-            $html = mb_convert_encoding(view('pdffile.storage.allreportpdf', compact('items', 'productscount', 'prevmods')), 'HTML-ENTITIES', 'UTF-8');
+            $html = mb_convert_encoding(view('pdffile.storage.allreportpdf', compact('items', 'productscount', 'prevmods', 'document')), 'HTML-ENTITIES', 'UTF-8');
         }
         else if($request->has('nakladnoy')){
-            $html = mb_convert_encoding(view('pdffile.storage.nakladnoypdf', compact('items', 'productscount', 'prevmods')), 'HTML-ENTITIES', 'UTF-8');
+            $html = mb_convert_encoding(view('pdffile.storage.nakladnoypdf', compact('items', 'productscount', 'prevmods', 'document')), 'HTML-ENTITIES', 'UTF-8');
         }
 		$dompdf->loadHtml($html);
-		$dompdf->setPaper('A4');
+		$dompdf->setPaper('A4', 'landscape');
 		$dompdf->render();
 		$dompdf->stream('demo.pdf', ['Attachment' => 0]);
 
