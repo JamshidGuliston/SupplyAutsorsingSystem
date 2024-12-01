@@ -1412,7 +1412,7 @@ class StorageController extends Controller
         });
 
         $kindgar = Kindgarden::where('id', $request->garden)->first();
-        $document['kindgarden'] = $kindgar->kindgarden_name;
+        $document['kindgarden'] = $kindgar->kingar_name;
         $nakproducts = [];
         $days = $this->rangeOfDays($request->start, $request->end);
         $document['date'] = $days->last()->day_number."-".$days->last()->month_name."-".$days->last()->year_name;
