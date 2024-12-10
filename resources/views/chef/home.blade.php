@@ -122,8 +122,8 @@
         <div class="col-md-3">
             <div class="p-3 bg-white shadow-sm align-items-center rounded">
                 <!-- <form action="/nextdaysecondmenuPDF/{{ $kindgarden->id }}" method="get" download> -->
-                    <p><b>Maxsulotlarni qabul qilish</b></p>
-                    <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#productsshowModal" style="width: 100%;">Maxsulotlar</button>
+                    <!-- <p><b>Maxsulotlarni qabul qilish</b></p>
+                    <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#productsshowModal" style="width: 100%;">Maxsulotlar</button> -->
                 <!-- </form> -->
             </div>
         </div>
