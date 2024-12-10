@@ -112,6 +112,8 @@ Route::group(['prefix' => 'storage', 'middleware' => ['isStorage', 'auth']], fun
     Route::post('editegroup', [StorageController::class, 'editegroup'])->name('storage.editegroup');
     
     Route::get('changesome', [StorageController::class, 'changesome']);
+
+    Route::post('confirmorder', [ChefController::class, 'right'])->name('storage.confirmorder');
 });
 
 Route::group(['prefix' => 'technolog', 'middleware' => ['isTechnolog', 'auth']], function () {
@@ -233,7 +235,7 @@ Route::group(['prefix' => 'chef', 'middleware' => ['isChef', 'auth']], function 
     Route::get('home', [ChefController::class, 'index'])->name('chef.home');
     Route::post('sendnumbers', [ChefController::class, 'sendnumbers'])->name('chef.sendnumbers');
     Route::post('minusproducts', [ChefController::class, 'minusproducts'])->name('chef.minusproducts');
-    Route::post('right', [ChefController::class, 'right'])->name('chef.right');
+    // Route::post('right', [ChefController::class, 'right'])->name('chef.right');
 });
 
 Route::group(['prefix' => 'accountant', 'middleware' => ['isAccountant', 'auth']], function () {

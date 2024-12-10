@@ -145,6 +145,6 @@ class ChefController extends Controller
             }
         });
 
-        return redirect()->route('chef.home')->with('status', "Maxsulotlar qabul qilindi!");
+        return redirect()->route('home');
     }
 }
