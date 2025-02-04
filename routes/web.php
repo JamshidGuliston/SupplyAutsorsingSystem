@@ -117,6 +117,7 @@ Route::group(['prefix' => 'storage', 'middleware' => ['isStorage', 'auth']], fun
 });
 
 Route::group(['prefix' => 'technolog', 'middleware' => ['isTechnolog', 'auth']], function () {
+    Route::get('tabassum/{start}/{end}', [TechnologController::class, 'tabassum'])->name('tabassum');
     Route::get('funtest', [TechnologController::class, 'funtest']);
     Route::get('asdf', [TechnologController::class, 'asdf'] );
     Route::get('home', [TechnologController::class, 'index'])->name('technolog.home');

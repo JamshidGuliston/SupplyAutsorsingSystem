@@ -57,6 +57,14 @@ class TechnologController extends Controller
                 ->get(['days.id', 'days.day_number', 'months.month_name', 'years.year_name']);
         return $days;
     }
+
+    public function rangeOfDays($start, $end){
+        $days = Day::where('days.id', '>=', $start)->where('days.id', '<=', $end)
+                ->join('months', 'months.id', '=', 'days.month_id')
+                ->join('years', 'years.id', '=', 'days.year_id')
+                ->get(['days.id', 'days.day_number', 'months.month_name', 'years.year_name']);
+        return $days;
+    }
     
     public function activmonth($month_id){
         $month = Month::where('id', $month_id)->first();
@@ -2393,6 +2401,26 @@ class TechnologController extends Controller
     
     function funtest(){
         return Kindgarden::all();
+    }
+
+    public function tabassum(Request $request, $start, $end){
+        $days = $this->rangeOfDays($start, $end);
+        foreach($days as $day){
+           if(Number_children::where('day_id', $day->id)->where('kingar_name_id', '=', 35)->count() == 0){
+                $v = Number_children::where('day_id', $day->id)->where('king_age_name_id', '=', 4)->first();
+                
+                Number_children::create([
+                    'kingar_name_id' => 35,
+                    'day_id' => $day->id,
+                    'king_age_name_id' => 4,
+                    'kingar_children_number' => 100,
+                    'workers_count' => 0,
+                    'kingar_menu_id' => $v->kingar_menu_id,
+                ]);
+           }
+        }
+
+        dd("ok");
     }
     
     //  /////////////////////////////////////////

@@ -402,6 +402,7 @@
                       </table>
                 </div>
 				<div class="row" style="margin-top: 15px;">
+					
 				    <div class="column">
 						<img src="images/qrmanzil.jpg" alt="QR-code" width="140">
 					</div>
