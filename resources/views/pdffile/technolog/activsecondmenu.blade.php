@@ -28,6 +28,12 @@
 			width: 33%;
 		}
 
+		.tabassumfooter{
+			float: left;
+			text-align: center;
+			width: 50%;
+		}
+
 		/* Clear floats after the columns */
 		.row:after {
 			content: "";
@@ -160,7 +166,7 @@
 										?>
 									</tr>
 									@foreach($food as $akey => $age)
-										@if (is_numeric($akey)){
+										@if (is_numeric($akey))
 										<tr>
 											<td scope="row" class="align-baseline" style="padding: 0px;"><?php echo $age['age_name'] ?></td>
 											<!-- <td scope="row" class="align-baseline" style="padding: 0px;"></td> -->
@@ -402,16 +408,24 @@
                       </table>
                 </div>
 				<div class="row" style="margin-top: 15px;">
-					
-				    <div class="column">
-						<img src="images/qrmanzil.jpg" alt="QR-code" width="140">
-					</div>
-					<div class="column">
-						<p style="text-align: center;"><strong> Бош ошпаз:</strong> __________________;</p>
-					</div>
-					<div class="column">
-						<p style="text-align: right;"><strong>ДМТТ директори: </strong> __________________;</p>
-					</div>
+					@if($menu[0][0]['kingar_name_id'] != 35)
+						<div class="column">
+							<img src="images/qrmanzil.jpg" alt="QR-code" width="140">
+						</div>
+						<div class="column">
+							<p style="text-align: center;"><strong> Бош ошпаз:</strong> __________________;</p>
+						</div>
+						<div class="column">
+							<p style="text-align: right;"><strong>ДМТТ директори: </strong> __________________;</p>
+						</div>
+					@else
+						<div class="tabassumfooter">
+							<p style="text-align: center;"><strong> Директор:</strong> __________________;</p>
+						</div>
+						<div class="tabassumfooter">
+							<p style="text-align: center;"><strong> Бош ошпаз:</strong> __________________;</p>
+						</div>
+					@endif
 				</div>
             </div>
         </div>
