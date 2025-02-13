@@ -129,7 +129,7 @@
         </div>
     </div>
     @endif
-    @if(intval(date("H")) >= 10)
+    @if(intval(date("H")) > 9 || (intval(date("H")) == 9 && intval(date("i")) >= 30))
     <div class="row g-3 my-2">
         <div class="col-md-3">
             <div class="p-3 bg-white shadow-sm align-items-center rounded">
@@ -141,7 +141,7 @@
             </div>
         </div>
     </div>
-    @endif
+    
     <div class="row g-3 my-2">
         <div class="col-md-3">
             <div class="p-3 bg-white shadow-sm align-items-center rounded">
@@ -162,6 +162,7 @@
             </div>
         </div>
     </div>
+    @endif
 </div>
 @endsection
 
