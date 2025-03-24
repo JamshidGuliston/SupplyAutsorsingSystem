@@ -418,11 +418,11 @@ class StorageController extends Controller
                 if(!isset($takedproducts[$row->product_id])){
                     $takedproducts[$row->product_id] = 0;
                 }
-                if(!isset($minusproducts[$row->product_name_id])){
-                    $minusproducts[$row->product_name_id] = 0;
+                if(!isset($minusproducts[$row->product_id])){
+                    $minusproducts[$row->product_id] = 0;
                 }
                 $takedproducts[$row->product_id] += $row->weight;
-                $minusproducts[$row->product_name_id] += $row->weight;
+                $minusproducts[$row->product_id] += $row->weight;
             }
             foreach($plus->where('day_id', $day->id) as $row){
                 if(!isset($prevmods[$row->product_name_id])){
@@ -498,10 +498,10 @@ class StorageController extends Controller
                 else
                     $countout = 0;
 
-                $mods[$product->id] = $countin - $countout;
+                $mods[$product->id] = round($countin - $countout, 3);
             }
         }
-
+        
         return $mods;
     }
 
