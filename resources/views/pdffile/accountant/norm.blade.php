@@ -82,7 +82,7 @@
  озиқ-овқат маҳсулотлари билан таъминланиши ҳақида маълумот</center>
                     	<br>
 						<center>{{ $kindgar->kingar_name." / ".$age->age_name }}</center>
-						<center>Хисобот давридаги бола катнови: {{ $nakproducts[1]["children"] }} нафар</center>
+						<center>Хисобот давридаги бола катнови: {{ $numberOfChild }} нафар</center>
 					</div>
                 </div>
                 <table style="width:100%; table-layout: fixed;">
