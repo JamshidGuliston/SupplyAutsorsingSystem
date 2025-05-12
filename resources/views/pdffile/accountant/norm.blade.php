@@ -101,7 +101,7 @@
                         $ww = 0;
                         $www = 0;
                         $wwww = 0;
-						dd(nakproducts);
+						dd($nakproducts);
                     ?>
 					@foreach($nakproducts as $key => $row)
 					<tr>
