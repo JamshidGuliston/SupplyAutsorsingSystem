@@ -919,7 +919,10 @@ class AccountantController extends Controller
                 return $a["sort"] > $b["sort"];
             }
         });
-        $numberOfChild = Number_children::where('day_id', '>=', $start)->where('day_id', '<=', $end)->sum('kingar_children_number');
+        $numberOfChild = Number_children::where('kingar_name_id', $id)
+            ->where('king_age_name_id', $ageid)
+            ->where('day_id', '>=', $start)
+            ->where('day_id', '<=', $end)->sum('kingar_children_number');
         $dompdf = new Dompdf('UTF-8');
 		$html = mb_convert_encoding(view('pdffile.accountant.norm', compact('numberOfChild', 'age', 'days', 'date', 'nakproducts', 'kindgar')), 'HTML-ENTITIES', 'UTF-8');
 		$dompdf->loadHtml($html);
