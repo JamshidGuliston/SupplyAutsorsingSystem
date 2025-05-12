@@ -1139,7 +1139,7 @@ class TestController extends Controller
 						$minusproducts[$row->product_name_id] = 0;
 					}
 					$takedproducts[$row->product_id] += $row->weight;
-					$minusproducts[$row->product_name_id] += $row->weight;
+					$minusproducts[$row->product_id] += $row->weight;
 				}
 				foreach($plus->where('day_id', $day->id) as $row){
 					if(!isset($prevmods[$row->product_name_id])){
