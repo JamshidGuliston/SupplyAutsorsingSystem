@@ -101,7 +101,6 @@
                         $ww = 0;
                         $www = 0;
                         $wwww = 0;
-						dd($nakproducts);
                     ?>
 					@foreach($nakproducts as $key => $row)
 					<tr>
@@ -109,10 +108,10 @@
 						<td>{{ $row['norm_weight'] }}</td>
 						<td><?php
 							if(mb_strimwidth($row['product_name'], 0, 3) == 'Тух')
-								 printf("%01.3f", ($row['norm_weight'] * $nakproducts[1]["children"]));
+								 printf("%01.3f", ($row['norm_weight'] * $row["children"]));
 							else{
-								printf("%01.3f", ($row['norm_weight'] * $nakproducts[1]["children"]) / $row['div']);
-								printf("%01.3f", $nakproducts[1]["children"]);
+								printf("%01.3f", ($row['norm_weight'] * $row["children"]) / $row['div']);
+								printf("%01.3f", $row["children"]);
 								printf("%01.3f", $row['div']);
 							}
 						?></td>
@@ -129,23 +128,23 @@
 						<td><?php printf("%01.3f", $summ) ?></td>
 						<td><?php
 							if(mb_strimwidth($row['product_name'], 0, 3) == 'Тух')
-								printf("%01.3f", $summ -$row['norm_weight'] * $nakproducts[1]["children"]);
+								printf("%01.3f", $summ -$row['norm_weight'] * $row["children"]);
 							else
-								printf("%01.3f", $summ - ($row['norm_weight'] * $nakproducts[1]["children"]) / $row['div']);
+								printf("%01.3f", $summ - ($row['norm_weight'] * $row["children"]) / $row['div']);
 						?></td>
                         <?php
 							if(mb_strimwidth($row['product_name'], 0, 3) == 'Тух')
-                            	$ww += ($row['norm_weight'] * $nakproducts[1]["children"]);
+                            	$ww += ($row['norm_weight'] * $row["children"]);
 							else
-								$ww += ($row['norm_weight'] * $nakproducts[1]["children"]) / $row['div'];
+								$ww += ($row['norm_weight'] * $row["children"]) / $row['div'];
 							$www += $summ;
-							$wwww += $summ - (($row['norm_weight'] * $nakproducts[1]["children"]) / $row['div']);
+							$wwww += $summ - (($row['norm_weight'] * $row["children"]) / $row['div']);
                         ?>
 						<td><?php 
 							if(mb_strimwidth($row['product_name'], 0, 3) == 'Тух')
-								printf("%01.3f", $summ / ($row['norm_weight'] * $nakproducts[1]["children"]) * 100);
+								printf("%01.3f", $summ / ($row['norm_weight'] * $row["children"]) * 100);
 							else
-								printf("%01.3f", $summ / (($row['norm_weight'] * $nakproducts[1]["children"]) / $row['div']) * 100);
+								printf("%01.3f", $summ / (($row['norm_weight'] * $row["children"]) / $row['div']) * 100);
 						?></td>
 					</tr>
 					@endforeach
