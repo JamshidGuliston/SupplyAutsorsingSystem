@@ -111,8 +111,6 @@
 								 printf("%01.3f", ($row['norm_weight'] * $row["children"]));
 							else{
 								printf("%01.3f", ($row['norm_weight'] * $row["children"]) / $row['div']);
-								printf("%01.3f", $row["children"]);
-								printf("%01.3f", $row['div']);
 							}
 						?></td>
 						<?php 
