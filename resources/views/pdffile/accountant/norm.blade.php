@@ -108,9 +108,9 @@
 						<td>{{ $row['norm_weight'] }}</td>
 						<td><?php
 							if(mb_strimwidth($row['product_name'], 0, 3) == 'Тух')
-								 printf("%01.3f", ($row['norm_weight'] * $row["children"]));
+								 printf("%01.3f", ($row['norm_weight'] * $numberOfChild));
 							else{
-								printf("%01.3f", ($row['norm_weight'] * $row["children"]) / $row['div']);
+								printf("%01.3f", ($row['norm_weight'] * $numberOfChild) / $row['div']);
 							}
 						?></td>
 						<?php 
