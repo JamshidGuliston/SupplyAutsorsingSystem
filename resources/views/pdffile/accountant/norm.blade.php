@@ -109,8 +109,11 @@
 						<td><?php
 							if(mb_strimwidth($row['product_name'], 0, 3) == 'Тух')
 								 printf("%01.3f", ($row['norm_weight'] * $nakproducts[1]["children"]));
-							else
+							else{
 								printf("%01.3f", ($row['norm_weight'] * $nakproducts[1]["children"]) / $row['div']);
+								printf("%01.3f", $nakproducts[1]["children"]);
+								printf("%01.3f", $row['div']);
+							}
 						?></td>
 						<?php 
 							$summ = 0;
