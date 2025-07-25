@@ -157,7 +157,7 @@
 						<img src="images/qrmanzil.jpg" alt="QR-code" width="140">
 					</div>
 					<div class="column">
-						<h4>Олувчи________________</h4>
+						<h4>ДМТТ рахбари________________</h4>
 					</div>
                 </div>
             </div>
