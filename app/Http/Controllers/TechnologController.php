@@ -961,7 +961,11 @@ class TechnologController extends Controller
                 'norm_cat_id' => $request['normid'],
                 'div' => $request['div'],
                 'sort' => $request['sort'],
-                'hide' => $request['hide']
+                'hide' => $request['hide'],
+                'proteins' => $request['proteins'] ?? 0,
+                'fats' => $request['fats'] ?? 0,
+                'carbohydrates' => $request['carbohydrates'] ?? 0,
+                'kcal' => $request['kcal'] ?? 0
             ]);
         return redirect()->route('technolog.settingsproduct', $request['productid'])->with('status', "Malumotlar saqlandi!");
     }
@@ -1061,7 +1065,7 @@ class TechnologController extends Controller
         $productall = Product::all();
         $food = Food_composition::where('food_name_id', $id)->join('food', 'food.id', '=', 'food_compositions.food_name_id')
                         ->join('products', 'products.id', '=', 'food_compositions.product_name_id')
-                        ->get(['food_compositions.id', 'food.food_name','products.product_name']);
+                        ->get(['food_compositions.id', 'food.food_name','products.product_name', 'food_compositions.gram']);
         // dd($food);
         foreach($food as $item){
             $t = 0;
@@ -1079,7 +1083,8 @@ class TechnologController extends Controller
     {
         Food_composition::create([
             'food_name_id' => $request->titleid,
-    	    'product_name_id' => $request->productid
+    	    'product_name_id' => $request->productid,
+            'gram' => $request->gram ?? 0
         ]);
         return redirect()->route('fooditem', $request->titleid);
     }
@@ -1093,7 +1098,8 @@ class TechnologController extends Controller
     {
         Food_composition::where('id', $request->id)
             ->update([
-    	        'product_name_id' => $request->productid
+    	        'product_name_id' => $request->productid,
+                'gram' => $request->gram ?? 0
             ]);
         
         return redirect()->route('fooditem', $request->titleid);
@@ -1259,7 +1265,7 @@ class TechnologController extends Controller
                 <td><input type='hidden' name='products[]' value='".$product->id."'></td>
                 <td>".$product->product_name."</td>";
                 foreach($menu->age_range as $row){
-                    $html = $html."<td><input type='text' name='ages".$product->id."[]' required style='width: 100%;'></td>";
+                    $html = $html."<td><input type='text' name='ages".$product->id."[]' value='".$product->gram."' required style='width: 100%;'></td>";
                 }
                 
                 $html = $html."</tr>";
@@ -2381,7 +2387,7 @@ class TechnologController extends Controller
     	$categories = Product_category::all();
         $norms = Norm_category::all();
         $sizes = Size::all(); 
-    	return view('technolog.creteproduct', compact('categories', 'norms', 'sizes'));
+    	return view('technolog.createproduct', compact('categories', 'norms', 'sizes'));
     }
     
     public function createproduct(Request $request){
@@ -2393,7 +2399,11 @@ class TechnologController extends Controller
     		'norm_cat_id' => $request->normid,
     		'div' => $request->div,
     		'sort' => $request->sort,
-    		'hide' => $request->hide
+    		'hide' => $request->hide,
+    		'proteins' => $request->proteins ?? 0,
+    		'fats' => $request->fats ?? 0,
+    		'carbohydrates' => $request->carbohydrates ?? 0,
+    		'kcal' => $request->kcal ?? 0
     	]);
     	
     	return redirect()->route('technolog.allproducts');
@@ -2434,5 +2444,81 @@ class TechnologController extends Controller
         $data = curl_exec($ch);
         curl_close($ch);
         return $data;
+    }
+
+    // Muassasalar (Bog'chalar) boshqaruvi
+    public function muassasalar(Request $request)
+    {
+        $kindgardens = Kindgarden::with('age_range')->orderBy('id', 'DESC')->get();
+        $regions = Region::all();
+        return view('technolog.muassasalar', compact('kindgardens', 'regions'));
+    }
+
+    public function addmuassasa(Request $request)
+    {
+        $regions = Region::all();
+        $ages = Age_range::all();
+        return view('technolog.addmuassasa', compact('regions', 'ages'));
+    }
+
+    public function createmuassasa(Request $request)
+    {
+        $kindgarden = Kindgarden::create([
+            'region_id' => $request->region_id,
+            'kingar_name' => $request->kingar_name,
+            'kingar_password' => $request->kingar_password,
+            'telegram_user_id' => 0,
+            'worker_count' => $request->worker_count,
+            'worker_age_id' => $request->worker_age_id ?? 1,
+            'hide' => $request->hide ?? 1
+        ]);
+
+        // Yosh guruhlari bog'lash
+        if($request->yongchek){
+            $kindgarden->age_range()->sync($request->yongchek);
+        }
+
+        return redirect()->route('technolog.muassasalar')->with('status', 'Yangi muassasa muvaffaqiyatli qo\'shildi!');
+    }
+
+    public function editmuassasa(Request $request, $id)
+    {
+        $kindgarden = Kindgarden::with('age_range')->where('id', $id)->first();
+        $regions = Region::all();
+        $ages = Age_range::all();
+        return view('technolog.editmuassasa', compact('kindgarden', 'regions', 'ages'));
+    }
+
+    public function updatemuassasa(Request $request)
+    {
+        $kindgarden = Kindgarden::find($request->kindgarden_id);
+        
+        $kindgarden->update([
+            'region_id' => $request->region_id,
+            'kingar_name' => $request->kingar_name,
+            'kingar_password' => $request->kingar_password,
+            'worker_count' => $request->worker_count,
+            'worker_age_id' => $request->worker_age_id ?? 1,
+            'hide' => $request->hide ?? 1
+        ]);
+
+        // Yosh guruhlari yangilash
+        if($request->yongchek){
+            $kindgarden->age_range()->sync($request->yongchek);
+        }
+
+        return redirect()->route('technolog.muassasalar')->with('status', 'Muassasa ma\'lumotlari muvaffaqiyatli yangilandi!');
+    }
+
+    public function deletemuassasa(Request $request)
+    {
+        $kindgarden = Kindgarden::find($request->id);
+        if($kindgarden){
+            // Bog'langan ma'lumotlarni o'chirish
+            $kindgarden->age_range()->detach();
+            $kindgarden->delete();
+        }
+        
+        return response()->json(['success' => true]);
     }
 }

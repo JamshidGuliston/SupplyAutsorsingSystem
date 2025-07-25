@@ -17,7 +17,11 @@ class Product extends Model
         'norm_cat_id',
         'div',
         'sort',
-        'hide'
+        'hide',
+        'proteins',
+        'fats',
+        'carbohydrates',
+        'kcal'
     ];
 
     public function shop(){

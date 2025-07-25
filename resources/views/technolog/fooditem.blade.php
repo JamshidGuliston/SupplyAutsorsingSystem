@@ -37,10 +37,12 @@
             <div id="hiddenid">
             </div>
             <div class="modal-header bg-warning">
-                <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+                <h5 class="modal-title" id="exampleModalLabel">Mahsulotni tahrirlash</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body editesproduct">
+                <div class="mb-3">
+                    <label class="form-label">Mahsulot</label>
                     <select class="form-select" name="productid" required aria-label="Default select example">
                         <option value="">--Mahsulotlar--</option>
                         @foreach($productall as $all)
@@ -49,6 +51,11 @@
                         @endif
                         @endforeach
                     </select>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Miqdori (gram)</label>
+                    <input type="number" step="0.001" min="0" class="form-control" name="gram" id="editGramInput" placeholder="Gram miqdorini kiriting" required>
+                </div>
             </div>
             <div class="modal-footer">
                 <!-- <button type="button" class="btn btn-warning" data-bs-dismiss="modal">Close</button> -->
@@ -73,8 +80,9 @@
         @csrf
         <input type="hidden" name="titleid" value="{{$id}}">
         <div class="row">
-            <div class="col-md-6">
+            <div class="col-md-4">
                 <div class="product-select">
+                    <!-- <label class="form-label">Mahsulot</label> -->
                     <select class="form-select" name="productid" required aria-label="Default select example">
                         <option value="">--Mahsulotlar--</option>
                         @foreach($productall as $all)
@@ -86,7 +94,13 @@
                 </div>
             </div>
             <div class="col-md-3">
-                <div class="sub" style="display: flex;justify-content: end;">
+                <div class="gram-input">
+                    <!-- <label class="form-label">Miqdori (gram)</label> -->
+                    <input type="number" step="0.001" min="0" class="form-control" name="gram" placeholder="Gram" required>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="sub" style="display: flex;justify-content: end; align-items: end;">
                     <button class="btn btn-dark">Qo'shish</button>
                 </div>
             </div>
@@ -102,7 +116,8 @@
                     <tr>
                         <th scope="col">ID</th>
                         <th scope="col">Maxsulot</th>
-                        <th scope="col" style="text-align: end;">Tahrirlash</th>
+                        <th scope="col">Miqdori (gram)</th>
+                        <th scope="col" style="text-align: end;">...</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -111,7 +126,11 @@
                     <tr>
                         <th scope="row">{{ ++$i }}</th>
                         <td>{{ $item->product_name }}</td>
-                        <td style="text-align: end;"><i data-edites-id="{{ $item->id }}" class="editess far fa-edit text-info" data-bs-toggle="modal" data-bs-target="#exampleModal" data-kinid="" style="cursor: pointer; margin-right: 16px;"> </i><i class="detete  fa fa-trash" aria-hidden="true" data-delet-id="{{$item->id}}" data-bs-toggle="modal" style="cursor: pointer;" data-bs-target="#exampleModalss"></i></td>
+                        <td>{{ $item->gram }} gr</td>
+                        <td style="text-align: end;">
+                            <!-- <i data-edites-id="{{ $item->id }}" data-gram="{{ $item->gram }}" class="editess far fa-edit text-info" data-bs-toggle="modal" data-bs-target="#exampleModal" data-kinid="" style="cursor: pointer; margin-right: 16px;"> </i> -->
+                            <i class="detete  fa fa-trash" aria-hidden="true" data-delet-id="{{$item->id}}" data-bs-toggle="modal" style="cursor: pointer;" data-bs-target="#exampleModalss"></i>
+                        </td>
                     </tr>
                     @endforeach
                 </tbody>
@@ -129,8 +148,10 @@
     $(document).ready(function() {
         $('.editess').click(function() {
             var g = $(this).attr('data-edites-id');
+            var gram = $(this).attr('data-gram');
             var div = $('#hiddenid');
             div.html("<input type='hidden' name='id' value="+g+">");
+            $('#editGramInput').val(gram);
         });
 
         $('.detete').click(function() {

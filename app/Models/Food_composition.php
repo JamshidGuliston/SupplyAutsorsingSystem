@@ -11,7 +11,8 @@ class Food_composition extends Model
     protected $fillable = [
         'id',
         'food_name_id',
-    	'product_name_id'
+    	'product_name_id',
+        'gram'
 	];
     
 }

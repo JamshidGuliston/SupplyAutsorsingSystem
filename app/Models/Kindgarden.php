@@ -16,6 +16,7 @@ class Kindgarden extends Model
         'kingar_password',
         'telegram_user_id',
         'worker_count',
+        'worker_age_id',
         'hide'
     ];
 

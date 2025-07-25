@@ -230,6 +230,14 @@ Route::group(['prefix' => 'technolog', 'middleware' => ['isTechnolog', 'auth']],
     
     Route::get('pagecreateproduct', [TechnologController::class, 'pageCreateProduct']);
     Route::post('createproduct', [TechnologController::class, 'createproduct'])->name('createproduct');
+    
+    // Muassasalar (Bog'chalar) boshqaruvi
+    Route::get('muassasalar', [TechnologController::class, 'muassasalar'])->name('technolog.muassasalar');
+    Route::get('addmuassasa', [TechnologController::class, 'addmuassasa'])->name('technolog.addmuassasa');
+    Route::post('createmuassasa', [TechnologController::class, 'createmuassasa'])->name('technolog.createmuassasa');
+    Route::get('editmuassasa/{id}', [TechnologController::class, 'editmuassasa'])->name('technolog.editmuassasa');
+    Route::post('updatemuassasa', [TechnologController::class, 'updatemuassasa'])->name('technolog.updatemuassasa');
+    Route::delete('deletemuassasa', [TechnologController::class, 'deletemuassasa'])->name('technolog.deletemuassasa');
 });
 
 Route::group(['prefix' => 'chef', 'middleware' => ['isChef', 'auth']], function () {

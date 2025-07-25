@@ -98,6 +98,38 @@
                 </select>
             </div>
         </div>
+
+        <!-- Nutrition Information Section -->
+        <hr style="margin: 30px 0;">
+        <h4 style="margin-bottom: 20px; color: #007bff;">Oziqlanuv qiymati (100 gram uchun)</h4>
+        
+        <div class="form-group row">
+            <label for="proteins" class="col-sm-2 col-form-label">Oqsillar (gr)</label>
+            <div class="col-sm-10">
+                <input type="number" step="0.01" min="0" name="proteins" class="form-control" id="proteins" value="{{ $product->proteins ?? 0 }}" placeholder="Oqsillar miqdori">
+            </div>
+        </div>
+
+        <div class="form-group row">
+            <label for="fats" class="col-sm-2 col-form-label">Yog'lar (gr)</label>
+            <div class="col-sm-10">
+                <input type="number" step="0.01" min="0" name="fats" class="form-control" id="fats" value="{{ $product->fats ?? 0 }}" placeholder="Yog'lar miqdori">
+            </div>
+        </div>
+
+        <div class="form-group row">
+            <label for="carbohydrates" class="col-sm-2 col-form-label">Uglevods (gr)</label>
+            <div class="col-sm-10">
+                <input type="number" step="0.01" min="0" name="carbohydrates" class="form-control" id="carbohydrates" value="{{ $product->carbohydrates ?? 0 }}" placeholder="Uglevods miqdori">
+            </div>
+        </div>
+
+        <div class="form-group row">
+            <label for="kcal" class="col-sm-2 col-form-label">Kaloriya (kcal)</label>
+            <div class="col-sm-10">
+                <input type="number" step="0.01" min="0" name="kcal" class="form-control" id="kcal" value="{{ $product->kcal ?? 0 }}" placeholder="Kaloriya miqdori">
+            </div>
+        </div>
         
         <div class="form-group row">
             <label for="inputPassword" class="col-sm-2 col-form-label">Ish faoliyati</label>
