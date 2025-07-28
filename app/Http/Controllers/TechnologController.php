@@ -918,7 +918,7 @@ class TechnologController extends Controller
                 'kingar_name_id' => $child->kingar_name_id,
                 'king_age_name_id' => $child->age_id,
                 'kingar_children_number' => $child->age_number,
-                'workers_count' => $workers['worker_count'],
+                'workers_count' => 10,
                 'kingar_menu_id' => $menuages[$child->age_id],
             ]);
 
@@ -1494,6 +1494,45 @@ class TechnologController extends Controller
         $user->kindgarden()->sync($tags);
 
         return redirect()->route('technolog.allchefs');
+    }
+
+    public function chefsettings(Request $request){
+        $user = User::where('id', $request->id)->first();
+        $kindgardens = Kindgarden::where('hide', 1)->get();
+        return view('technolog.chefsettings', compact('user', 'kindgardens'));
+    }
+
+    public function updatechef(Request $request)
+    {
+        $user = User::find($request->userid);
+        
+        // Asosiy ma'lumotlarni yangilash
+        $updateData = [
+            'name' => $request->chefname,
+            'email' => $request->chefemail,
+        ];
+
+        // Parol validatsiyasi va yangilash
+        if (!empty($request->newpassword)) {
+            if ($request->newpassword !== $request->confirmpassword) {
+                return redirect()->back()->withErrors(['password' => 'Parollar mos kelmaydi!'])->withInput();
+            }
+            
+            if (strlen($request->newpassword) < 6) {
+                return redirect()->back()->withErrors(['password' => 'Parol kamida 6 ta belgi bo\'lishi kerak!'])->withInput();
+            }
+            
+            $updateData['password'] = bcrypt($request->newpassword);
+        }
+
+        // User ma'lumotlarini yangilash
+        $user->update($updateData);
+
+        // Bog'chalar bilan bog'lanishni yangilash
+        $gardens = $request->gardens ?? [];
+        $user->kindgarden()->sync($gardens);
+
+        return redirect()->route('technolog.allchefs')->with('status', 'Chef ma\'lumotlari muvaffaqiyatli yangilandi!');
     }
 
     public function chefgetproducts(Request $request){
