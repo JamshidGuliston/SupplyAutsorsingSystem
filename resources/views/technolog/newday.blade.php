@@ -115,26 +115,32 @@
 </div>
 <!-- EDIT -->
 
-<!-- DELET -->
+<!-- DELETE -->
 <!-- Modal -->
-<div class="modal fade" id="exampleModals" tabindex="-1" aria-labelledby="exampleModalLabels" aria-hidden="true">
+<div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
-            <div class="modal-header bg-danger">
-                <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
-                <button type="button" class="btn-close " data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                ...
-            </div>
-            <div class="modal-footer">
-                <!-- <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button> -->
-                <button type="button" class="btn btn-danger">Ok</button>
-            </div>
+            <form action="/technolog/deletegarden" method="post">
+                @csrf
+                @method('DELETE')
+                <div class="modal-header bg-danger">
+                    <h5 class="modal-title text-white" id="deleteModalLabel">O'chirish tasdiqlash</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Rostdan ham bu bog'chani o'chirmoqchimisiz?</p>
+                    <h5 class="garden-delete-name text-danger"></h5>
+                    <input type="hidden" name="garden_id" class="delete-garden-id">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Bekor qilish</button>
+                    <button type="submit" class="btn btn-danger">Ha, o'chirish</button>
+                </div>
+            </form>
         </div>
     </div>
 </div>
-<!-- DELET -->
+<!-- DELETE -->
 
 
 <!-- EDD -->
@@ -256,7 +262,10 @@
                 <td><i class="far fa-window-close" style="color: red;"></i></td>
                 @endif
                 @endforeach
-                <td><i class="edites far fa-edit text-info" data-bs-toggle="modal" data-bs-target="#exampleModal" data-kinid="{{$temp['id']}}" style="cursor: pointer; margin-right: 16px;"> </i></td>
+                <td>
+                    <i class="edites far fa-edit text-info" data-bs-toggle="modal" data-bs-target="#exampleModal" data-kinid="{{$temp['id']}}" style="cursor: pointer; margin-right: 16px;"></i>
+                    <i class="deletegarden far fa-trash-alt text-danger" data-bs-toggle="modal" data-bs-target="#deleteModal" data-garden-id="{{$temp['id']}}" data-garden-name="{{$temp['name']}}" style="cursor: pointer;" title="O'chirish"></i>
+                </td>
             </tr>
             @endforeach
 
@@ -416,6 +425,7 @@
                 </th>
                 @endforeach
                 <th style="width: 70px;" rowspan="2">Накладной</th>
+                <th style="width: 70px;" rowspan="2">Amallar</th>
             </tr>
             <tr style="color: #888888;">
                 @foreach($ages as $age)
@@ -446,6 +456,9 @@
                 @endif
                 @endforeach
                 <td><a href="/nextnakladnoyPDF/{{ $row['kingar_name_id'] }}" target="_blank"><i class="far fa-file-pdf" style="color: dodgerblue; font-size: 18px;"></i></a></td>
+                <td>
+                    <i class="deletegarden far fa-trash-alt text-danger" data-bs-toggle="modal" data-bs-target="#deleteModal" data-garden-id="{{$row['kingar_name_id']}}" data-garden-name="{{$row['kingar_name']}}" style="cursor: pointer;" title="O'chirish"></i>
+                </td>
             </tr>
         @endforeach
         </tbody>
@@ -562,6 +575,14 @@
                 },
             })
         })
+
+        // O'chirish tugmasi
+        $('.deletegarden').click(function() {
+            var gardenId = $(this).attr('data-garden-id');
+            var gardenName = $(this).attr('data-garden-name');
+            $('.delete-garden-id').val(gardenId);
+            $('.garden-delete-name').text(gardenName);
+        });
 
     });
 
@@ -703,6 +724,14 @@
                 $('.loader-box').hide();
             }
         })
+    });
+
+    // O'chirish tugmasi
+    $('.deletegarden').click(function() {
+        var gardenId = $(this).attr('data-garden-id');
+        var gardenName = $(this).attr('data-garden-name');
+        $('.delete-garden-id').val(gardenId);
+        $('.garden-delete-name').text(gardenName);
     });
 </script>
 @endif

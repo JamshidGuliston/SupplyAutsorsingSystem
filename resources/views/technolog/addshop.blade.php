@@ -41,6 +41,18 @@
             </div>
         </div>
         <div class="form-group row">
+            <label for="bossname" class="col-sm-2 col-form-label">Rahbar ismi: </label>
+            <div class="col-sm-10">
+                <input type="text" name="bossname" class="form-control" id="bossname" value="{{ $shop->bossname ?? '' }}" placeholder="Ism Familiya">
+            </div>
+        </div>
+        <div class="form-group row">
+            <label for="phone" class="col-sm-2 col-form-label">Telefon: </label>
+            <div class="col-sm-10">
+                <input type="text" name="phone" class="form-control" id="phone" value="{{ $shop->phone ?? '' }}" placeholder="Telefon raqam">
+            </div>
+        </div>
+        <div class="form-group row">
             <label for="staticEmail" class="col-sm-2 col-form-label">Faoliyat turi: </label>
             <div class="col-sm-10">
                 <select id='select_type' name="type" class="form-select">
@@ -76,7 +88,11 @@
         <div class="form-group row">
             <label for="inputPassword" class="col-sm-2 col-form-label">Ish faoliyati</label>
             <div class="col-sm-10">
-                <input type="number" required name="hide" class="form-control" value="1">
+                <select name="hide" class="form-select" required>
+                    <option value="">-- Tanlang --</option>
+                    <option value="1">🟢 Faol</option>
+                    <option value="0">🔴 Faol emas</option>
+                </select>
             </div>
         </div>
         <div class="form-group row">

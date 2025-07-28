@@ -18,7 +18,7 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Bekor qilish</button>
-                <button type="button" class="btn btn-danger" id="confirmDelete">O'chirish</button>
+                <!-- <button type="button" class="btn btn-danger" id="confirmDelete">O'chirish</button> -->
             </div>
         </div>
     </div>
@@ -84,9 +84,9 @@
                                     <a href="{{ route('technolog.editmuassasa', $kindgarden->id) }}" class="btn btn-sm btn-warning">
                                         <i class="fas fa-edit"></i> Tahrirlash
                                     </a>
-                                    <button type="button" class="btn btn-sm btn-danger delete-btn" data-id="{{ $kindgarden->id }}">
+                                    <!-- <button type="button" class="btn btn-sm btn-danger delete-btn" data-id="{{ $kindgarden->id }}">
                                         <i class="fas fa-trash"></i> O'chirish
-                                    </button>
+                                    </button> -->
                                 </div>
                             </td>
                         </tr>

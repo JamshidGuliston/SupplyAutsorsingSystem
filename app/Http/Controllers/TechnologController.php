@@ -311,6 +311,13 @@ class TechnologController extends Controller
         }
         return view('technolog.showdate', ['year' => $year, 'y_id' => $y_id, 'm_id' => $m_id, 'aday' => $day, 'months' => $months,'days' => $days, 'ages' => $ages, 'nextdayitem' => $nextdayitem]);
     }
+
+    public function deleteGarden(Request $request){
+        $garden = Kindgarden::where('id', $request->garden_id)->first();
+        $garden->delete();
+        return redirect()->back();
+    }
+
     // yetkazib beruvchilar
 
     public function nextdelivershop(Request $request, $id){
@@ -972,8 +979,15 @@ class TechnologController extends Controller
 
     public function shops(Request $request)
     {
-        $shops = Shop::all();
-        // dd($shops);
+        // Faol do'konlar (hide = 1) - oxirgi kiritilganlar birinchi
+        $activeShops = Shop::where('hide', 1)->orderBy('id', 'desc')->get();
+        
+        // Nofaol do'konlar (hide = 0) - ID bo'yicha DESC tartibda
+        $inactiveShops = Shop::where('hide', 0)->orderBy('id', 'desc')->get();
+        
+        // Faol do'konlarni birinchi, nofaollarni oxiriga qo'yamiz
+        $shops = $activeShops->merge($inactiveShops);
+        
         return view('technolog.shops', compact('shops'));
     }
 
@@ -1000,6 +1014,8 @@ class TechnologController extends Controller
 
         $shop->update([
             'shop_name' => $request->shopname,
+            'bossname' => $request->bossname,
+            'phone' => $request->phone,
             'type_id' => $request->type,
             'hide' => $request->hide
         ]);
@@ -1019,6 +1035,8 @@ class TechnologController extends Controller
     {
         $shop = Shop::create([
             'shop_name' => $request->name,
+            'bossname' => $request->bossname,
+            'phone' => $request->phone,
             'type_id' => $request->type,
             'telegram_id' => 0,
             'hide' => 1

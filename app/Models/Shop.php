@@ -13,7 +13,9 @@ class Shop extends Model
         'shop_name',
         'type_id',
         'telegram_id',
-        'hide'
+        'hide',
+        'bossname',
+        'phone'
     ];
 
     public function product(){
