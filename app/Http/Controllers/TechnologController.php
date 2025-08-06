@@ -313,7 +313,7 @@ class TechnologController extends Controller
     }
 
     public function deleteGarden(Request $request){
-        $garden = Kindgarden::where('id', $request->garden_id)->first();
+        $garden = Nextday_namber::where('kingar_name_id', $request->garden_id)->first();
         $garden->delete();
         return redirect()->back();
     }
@@ -461,8 +461,6 @@ class TechnologController extends Controller
         $dompdf = new Dompdf('UTF-8');
 		$html = mb_convert_encoding(view('technolog.nextdayshoppdf', compact('shopproducts', 'shop', 'day')), 'HTML-ENTITIES', 'UTF-8');
 		$dompdf->loadHtml($html);
-
-		// (Optional) Setup the paper size and orientation
 		$dompdf->setPaper('A4');
 		// $customPaper = array(0,0,360,360);
 		// $dompdf->setPaper($customPaper);
@@ -1083,7 +1081,7 @@ class TechnologController extends Controller
         $productall = Product::all();
         $food = Food_composition::where('food_name_id', $id)->join('food', 'food.id', '=', 'food_compositions.food_name_id')
                         ->join('products', 'products.id', '=', 'food_compositions.product_name_id')
-                        ->get(['food_compositions.id', 'food.food_name','products.product_name', 'food_compositions.gram']);
+                        ->get(['food_compositions.id', 'products.id as productid', 'food.food_name','products.product_name', 'food_compositions.gram', 'food_compositions.weight_without_waste', 'food_compositions.proteins', 'food_compositions.fats', 'food_compositions.carbohydrates', 'food_compositions.kcal']);
         // dd($food);
         foreach($food as $item){
             $t = 0;
@@ -1099,11 +1097,30 @@ class TechnologController extends Controller
 
     public function addproductfood(Request $request)
     {
-        Food_composition::create([
+        $createData = [
             'food_name_id' => $request->titleid,
     	    'product_name_id' => $request->productid,
             'gram' => $request->gram ?? 0
-        ]);
+        ];
+        
+        // Yangi ustunlarni qo'shamiz (agar mavjud bo'lsa)
+        if (!empty($request->weight_without_waste)) {
+            $createData['weight_without_waste'] = $request->weight_without_waste;
+        }
+        if (!empty($request->proteins)) {
+            $createData['proteins'] = $request->proteins;
+        }
+        if (!empty($request->fats)) {
+            $createData['fats'] = $request->fats;
+        }
+        if (!empty($request->carbohydrates)) {
+            $createData['carbohydrates'] = $request->carbohydrates;
+        }
+        if (!empty($request->kcal)) {
+            $createData['kcal'] = $request->kcal;
+        }
+        
+        Food_composition::create($createData);
         return redirect()->route('fooditem', $request->titleid);
     }
 
@@ -1114,11 +1131,29 @@ class TechnologController extends Controller
 
     public function editproductfood(Request $request)
     {
-        Food_composition::where('id', $request->id)
-            ->update([
-    	        'product_name_id' => $request->productid,
-                'gram' => $request->gram ?? 0
-            ]);
+        $updateData = [
+    	    'product_name_id' => $request->productid,
+            'gram' => $request->gram ?? 0
+        ];
+        
+        // Yangi ustunlarni qo'shamiz (agar mavjud bo'lsa)
+        if (isset($request->weight_without_waste)) {
+            $updateData['weight_without_waste'] = $request->weight_without_waste;
+        }
+        if (isset($request->proteins)) {
+            $updateData['proteins'] = $request->proteins;
+        }
+        if (isset($request->fats)) {
+            $updateData['fats'] = $request->fats;
+        }
+        if (isset($request->carbohydrates)) {
+            $updateData['carbohydrates'] = $request->carbohydrates;
+        }
+        if (isset($request->kcal)) {
+            $updateData['kcal'] = $request->kcal;
+        }
+        
+        Food_composition::where('id', $request->id)->update($updateData);
         
         return redirect()->route('fooditem', $request->titleid);
     }
@@ -1152,7 +1187,9 @@ class TechnologController extends Controller
 
     public function menus(Request $request, $id)
     {
-        $menus = Titlemenu::where('menu_season_id', $id)->get();
+        $menus = Titlemenu::where('menu_season_id', $id)
+            ->orderBy('id', 'DESC')
+            ->get();
         $works = Nextday_namber::all();
         for($i = 0; $i < count($menus); $i++){
             $menus[$i]['us'] = 0;
@@ -1188,13 +1225,14 @@ class TechnologController extends Controller
     public function menuitem(Request $request, $id)
     {
         $times = Meal_time::all();
-        $titlemenu = Titlemenu::where('id', $id)->with('age_range')->first();
+        $titlemenu = Titlemenu::where('id', $id)->with('age_range')->first();        
+    
         $menuitem = Menu_composition::where('title_menu_id', $id)
-                ->join('titlemenus', 'titlemenus.id', '=', 'menu_compositions.title_menu_id')
-                ->join('meal_times', 'meal_times.id', '=', 'menu_compositions.menu_meal_time_id')
-                ->join('food', 'food.id', '=', 'menu_compositions.menu_food_id')
-                ->join('products', 'products.id', '=', 'menu_compositions.product_name_id')
-                ->join('age_ranges', 'age_ranges.id', '=', 'menu_compositions.age_range_id')
+                ->leftJoin('titlemenus', 'titlemenus.id', '=', 'menu_compositions.title_menu_id')
+                ->leftJoin('meal_times', 'meal_times.id', '=', 'menu_compositions.menu_meal_time_id')
+                ->leftJoin('food', 'food.id', '=', 'menu_compositions.menu_food_id')
+                ->leftJoin('products', 'products.id', '=', 'menu_compositions.product_name_id')
+                ->leftJoin('age_ranges', 'age_ranges.id', '=', 'menu_compositions.age_range_id')
                 ->orderby('menu_compositions.menu_meal_time_id', 'ASC')
                 ->orderby('menu_compositions.id', 'ASC')
                 ->get([
@@ -1209,8 +1247,15 @@ class TechnologController extends Controller
                     'products.id as productid', 
                     'age_ranges.id as ageid', 
                     'menu_compositions.weight',
-                    'menu_compositions.id'
-                ]); 
+                    'menu_compositions.id',
+                    'menu_compositions.waste_free',
+                    'menu_compositions.proteins',
+                    'menu_compositions.fats',
+                    'menu_compositions.carbohydrates',
+                    'menu_compositions.kcal'
+                ]);
+        
+        
         // dd($menuitem);
         return view('technolog.menuitem', compact('id', 'times', 'titlemenu', 'menuitem'));
     }
@@ -1266,25 +1311,38 @@ class TechnologController extends Controller
     {
         $menu = Titlemenu::where('id', $request->menuid)->with('age_range')->first();
         $foodcom = Food_composition::where('food_name_id', $request->id)
-                ->join('products', 'products.id', '=', 'food_compositions.product_name_id')->get();
+                ->join('products', 'products.id', '=', 'food_compositions.product_name_id')
+                ->get(['food_compositions.id', 'products.id as productid', 'products.product_name', 'food_compositions.gram', 'food_compositions.weight_without_waste', 'food_compositions.proteins', 'food_compositions.fats', 'food_compositions.carbohydrates', 'food_compositions.kcal']);
         $html = "<table class='table table-light table-striped table-hover'>
                 <thead>
                     <tr>
                         <th scope='col'>...</th>
                         <th scope='col'>Maxsulot</th>";
-        foreach($menu->age_range as $row){
-            $html = $html."<th scope='col'>".$row['age_name']."</th>";
-        }
-        $html = $html."</tr>
+                    foreach($menu->age_range as $row){
+                        $html = $html."<th scope='col'>".$row['age_name']."</th>";
+                    }
+                    $html = $html."
+                        <th scope='col'>Chiqindisiz (gr)</th>
+                        <th scope='col'>Oqsillar (gr)</th>
+                        <th scope='col'>Yog'lar (gr)</th>
+                        <th scope='col'>Uglevodlar (gr)</th>
+                        <th scope='col'>Kaloriya</th></tr>
                 </thead>
                 <tbody>";
+
         foreach($foodcom as $product){
             $html = $html."<tr>
-                <td><input type='hidden' name='products[]' value='".$product->id."'></td>
+                <td><input type='hidden' name='products[]' value='".$product->productid."'></td>
                 <td>".$product->product_name."</td>";
                 foreach($menu->age_range as $row){
-                    $html = $html."<td><input type='text' name='ages".$product->id."[]' value='".$product->gram."' required style='width: 100%;'></td>";
+                    $html = $html."<td><input type='text' name='ages[]' value='".$product->gram."' required style='width: 100%;'></td>";
                 }
+                $html = $html."
+                <td><input type='text' name='waste_free".$product->productid."' value='".$product->weight_without_waste."' placeholder='0' style='width: 100%;'></td>
+                <td><input type='text' name='proteins".$product->productid."' value='".$product->proteins."' placeholder='0' style='width: 100%;'></td>
+                <td><input type='text' name='fats".$product->productid."' value='".$product->fats."' placeholder='0' style='width: 100%;'></td>
+                <td><input type='text' name='carbohydrates".$product->productid."' value='".$product->carbohydrates."' placeholder='0' style='width: 100%;'></td>
+                <td><input type='text' name='kcal".$product->productid."' value='".$product->kcal."' placeholder='0' style='width: 100%;'></td>";
                 
                 $html = $html."</tr>";
         }
@@ -1298,21 +1356,45 @@ class TechnologController extends Controller
     {
         // dd($request->all());
         $menu = Titlemenu::where('id', $request->titleid)->with('age_range')->first();
+        $t = 0;
         foreach($request->products as $product)
         {
-            $ages = "ages".$product;
-            $t = 0;
+            $waste_free_field = "waste_free".$product;
+            $proteins_field = "proteins".$product;
+            $fats_field = "fats".$product;
+            $carbohydrates_field = "carbohydrates".$product;
+            $kcal_field = "kcal".$product;
+            
             foreach($menu->age_range as $age)
             {
                 // echo "menu: ".$request->titleid." mealtime: ".$request->timeid." food: ".$request->foodid." product: ".$product." age: ".$age->id." weight: ".$request[$ages][$t++]." <br/>";
-                Menu_composition::create([
+                $createData = [
                     'title_menu_id' => $request->titleid,
                     'menu_meal_time_id' => $request->timeid,
                     'menu_food_id' => $request->foodid,
                     'product_name_id' => $product,
                     'age_range_id' => $age->id,
-                    'weight' => $request[$ages][$t++]
-                ]);
+                    'weight' => $request["ages"][$t++]
+                ];
+                
+                // Yangi ustunlarni qo'shamiz (agar mavjud bo'lsa)
+                if (isset($request->$waste_free_field) && !empty($request->$waste_free_field)) {
+                    $createData['waste_free'] = $request->$waste_free_field;
+                }
+                if (isset($request->$proteins_field) && !empty($request->$proteins_field)) {
+                    $createData['proteins'] = $request->$proteins_field;
+                }
+                if (isset($request->$fats_field) && !empty($request->$fats_field)) {
+                    $createData['fats'] = $request->$fats_field;
+                }
+                if (isset($request->$carbohydrates_field) && !empty($request->$carbohydrates_field)) {
+                    $createData['carbohydrates'] = $request->$carbohydrates_field;
+                }
+                if (isset($request->$kcal_field) && !empty($request->$kcal_field)) {
+                    $createData['kcal'] = $request->$kcal_field;
+                }
+                
+                Menu_composition::create($createData);
             }
 
         }
@@ -1328,16 +1410,22 @@ class TechnologController extends Controller
                 ->where('menu_food_id', $request->foodid)
                 ->where('product_name_id', $request->prodid)
                 ->join('products', 'products.id', '=', 'menu_compositions.product_name_id')
-                ->get(['menu_compositions.id', 'products.product_name', 'age_range_id', 'weight']);
+                ->get(['menu_compositions.id', 'products.product_name', 'age_range_id', 'menu_compositions.weight', 'menu_compositions.waste_free', 'menu_compositions.proteins', 'menu_compositions.fats', 'menu_compositions.carbohydrates', 'menu_compositions.kcal']);
         // dd($foodcom);
         $html = "<table class='table table-light table-striped table-hover'>
                 <thead>
                     <tr>
                         <th scope='col'>...</th>
                         <th scope='col'>Maxsulot</th>";
-        foreach($menu->age_range as $row){
-            $html = $html."<th scope='col'>".$row['age_name']."</th>";
-        }
+                        foreach($menu->age_range as $row){
+                            $html = $html."<th scope='col'>".$row['age_name']."</th>";
+                        }
+                        $html = $html."<th scope='col'>Chiqindisiz (gr)</th>
+                        <th scope='col'>Oqsillar (gr)</th>
+                        <th scope='col'>Yog'lar (gr)</th>
+                        <th scope='col'>Uglevodlar (gr)</th>
+                        <th scope='col'>Kaloriya</th>";
+        
         $html = $html."</tr>
                 </thead>
                 <tbody>";
@@ -1348,6 +1436,11 @@ class TechnologController extends Controller
                 foreach($menu->age_range as $row){
                     $html = $html."<td><input type='text' name='ages[]' value='".$foodcom[$it]['weight']."' required style='width: 100%;'></td>";
                     $html = $html."<input type='hidden' name='rows[]' value='".$foodcom[$it]['id']."'>";
+                    $html = $html."<td><input type='text' name='waste_free[]' value='".($foodcom[$it]['waste_free'] ?? '')."' style='width: 100%;'></td>
+                    <td><input type='text' name='proteins[]' value='".($foodcom[$it]['proteins'] ?? '')."' style='width: 100%;'></td>
+                    <td><input type='text' name='fats[]' value='".($foodcom[$it]['fats'] ?? '')."' style='width: 100%;'></td>
+                    <td><input type='text' name='carbohydrates[]' value='".($foodcom[$it]['carbohydrates'] ?? '')."' style='width: 100%;'></td>
+                    <td><input type='text' name='kcal[]' value='".($foodcom[$it]['kcal'] ?? '')."' style='width: 100%;'></td>";
                     $it++;
                 }
                 
@@ -1364,12 +1457,39 @@ class TechnologController extends Controller
     {
         // dd($request->all());
         $it = 0;
+        $nutrition_it = 0; // Yangi ustunlar uchun alohida iterator
+        
         foreach($request->rows as $row){
-            Menu_composition::where('id', $row)
-                    ->update([
-                        'weight' => $request->ages[$it]
-                    ]);
+            $updateData = [
+                'weight' => $request->ages[$it]
+            ];
+            
+            // Yangi ustunlarni qo'shamiz (agar mavjud bo'lsa)
+            if (isset($request->waste_free) && isset($request->waste_free[$nutrition_it])) {
+                $updateData['waste_free'] = $request->waste_free[$nutrition_it];
+            }
+            if (isset($request->proteins) && isset($request->proteins[$nutrition_it])) {
+                $updateData['proteins'] = $request->proteins[$nutrition_it];
+            }
+            if (isset($request->fats) && isset($request->fats[$nutrition_it])) {
+                $updateData['fats'] = $request->fats[$nutrition_it];
+            }
+            if (isset($request->carbohydrates) && isset($request->carbohydrates[$nutrition_it])) {
+                $updateData['carbohydrates'] = $request->carbohydrates[$nutrition_it];
+            }
+            if (isset($request->kcal) && isset($request->kcal[$nutrition_it])) {
+                $updateData['kcal'] = $request->kcal[$nutrition_it];
+            }
+            
+            Menu_composition::where('id', $row)->update($updateData);
+            
             $it++;
+            
+            // Nutrition ustunlari faqat birinchi iteratsiyada increment bo'ladi
+            // chunki har bir yosh guruhi uchun bir xil nutrition ma'lumotlari ishlatiladi
+            if ($it % count($request->rows) == 1) {
+                $nutrition_it++;
+            }
         }
         return redirect()->route('technolog.menuitem', $request->menuid);
     }
@@ -1407,9 +1527,13 @@ class TechnologController extends Controller
 
     public function editnextworkers(Request $request){
         // soat
+        date_default_timezone_set('Asia/Tashkent');
+        $d = strtotime("-8 hours 30 minutes");
+        
         Nextday_namber::where('kingar_name_id', $request->kingid)
                     ->update(['workers_count' => $request->workers]);
         
+        return redirect()->route('technolog.sendmenu', ['day' => date("d-F-Y", $d)]);
     }
 
     public function editnextcheldren(Request $request){
@@ -1767,7 +1891,7 @@ class TechnologController extends Controller
                 if($product->weight > 0){
                     $document[$product->product_id][$row->day_id]['group_id'] = $product->groupweight_id;
                     $document[$product->product_id][$row->day_id]['product_id'] = $product->product_id;
-                    $document[$product->product_id]['size_name'] = $product->size_name;
+                    $document[$product->product_id][$row->day_id]['size_name'] = $product->size_name;
                     $document[$product->product_id][$row->day_id]['sort'] = $product->sort;
                     $document[$product->product_id][$row->day_id]['weight'] = $product->weight;
                     $document[$product->product_id][$row->day_id]['cost'] = 0;

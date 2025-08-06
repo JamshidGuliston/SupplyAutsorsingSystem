@@ -35,7 +35,7 @@
 
 <!-- AddModal -->
 <div class="modal editesmodal fade" id="addModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
+    <div class="modal-dialog modal-xl">
         <div class="modal-content">
         <form action="{{route('technolog.createmenucomposition')}}" method="POST">
             @csrf
@@ -110,7 +110,7 @@
 <!-- EDIT -->
 <!-- Modal -->
 <div class="modal editesmodal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
+    <div class="modal-dialog modal-lg">
         <div class="modal-content">
         <form action="{{route('technolog.editemenuproduct')}}" method="POST">
             @csrf
@@ -169,6 +169,11 @@
                         <th scope="col">Maxsulot</th>
                         @foreach($titlemenu->age_range as $row)
                         <th scope="col" style="text-align: end;">{{ $row['age_name'] }}</th>
+                        <th scope="col" style="text-align: end;">Chiqindisiz (gr)</th>
+                        <th scope="col" style="text-align: end;">Oqsillar (gr)</th>
+                        <th scope="col" style="text-align: end;">Yog'lar (gr)</th>
+                        <th scope="col" style="text-align: end;">Uglevodlar (gr)</th>
+                        <th scope="col" style="text-align: end;">Kaloriya</th>
                         @endforeach
                         <th scope="col" style="text-align: end;">Tahrirlash</th>
                     </tr>
@@ -194,8 +199,14 @@
                         <tr>
                             <td rowspan="{{ round($fd/count($titlemenu->age_range)) }}" style="text-align: center;">{{ $menuitem[$it]['food_name'] }} <i class="fas fa-minus-circle fooddel" data-menu-id="{{ $menuitem[$it]['menuid'] }}" data-time-id="{{ $menuitem[$it]['meal_timeid'] }}" data-food-id="{{ $menuitem[$it]['foodid'] }}" data-foodname-id="{{ $menuitem[$it]['food_name'] }}" style="color: #da1313; cursor: pointer;" data-bs-toggle="modal" data-bs-target="#deleteModalfood"></i></td>
                             <td>{{ $menuitem[$it]['product_name'] }}</td>
-                            @foreach($titlemenu->age_range as $row)
+                           @foreach($titlemenu->age_range as $row)
                             <td style="text-align: end;">{{ $menuitem[$it]['weight']." гр" }}</td>
+                            <td style="text-align: end;">{{ $menuitem[$it]['waste_free'] ?? '-' }}</td>
+                            <td style="text-align: end;">{{ $menuitem[$it]['proteins'] ?? '-' }}</td>
+                            <td style="text-align: end;">{{ $menuitem[$it]['fats'] ?? '-' }}</td>
+                            <td style="text-align: end;">{{ $menuitem[$it]['carbohydrates'] ?? '-' }}</td>
+                            <td style="text-align: end;">{{ $menuitem[$it]['kcal'] ?? '-' }}</td>
+                            
                             <?php $it++; ?>
                             @endforeach
                             <?php $it--;?>
@@ -220,6 +231,12 @@
                             <td>{{ $menuitem[$it]['product_name'] }}</td>
                             @foreach($titlemenu->age_range as $row)
                             <td style="text-align: end;">{{ $menuitem[$it]['weight']." гр" }}</td>
+                            <td style="text-align: end;">{{ $menuitem[$it]['waste_free'] ?? '-' }}</td>
+                            <td style="text-align: end;">{{ $menuitem[$it]['proteins'] ?? '-' }}</td>
+                            <td style="text-align: end;">{{ $menuitem[$it]['fats'] ?? '-' }}</td>
+                            <td style="text-align: end;">{{ $menuitem[$it]['carbohydrates'] ?? '-' }}</td>
+                            <td style="text-align: end;">{{ $menuitem[$it]['kcal'] ?? '-' }}</td>
+                            
                             <?php $it++; ?>
                             @endforeach
                             <?php $it--;?>
@@ -233,6 +250,12 @@
                             <td>{{ $menuitem[$it]['product_name'] }}</td>
                             @foreach($titlemenu->age_range as $row)
                             <td style="text-align: end;">{{ $menuitem[$it]['weight']." гр" }}</td>
+                            <td style="text-align: end;">{{ $menuitem[$it]['waste_free'] ?? '-' }}</td>
+                            <td style="text-align: end;">{{ $menuitem[$it]['proteins'] ?? '-' }}</td>
+                            <td style="text-align: end;">{{ $menuitem[$it]['fats'] ?? '-' }}</td>
+                            <td style="text-align: end;">{{ $menuitem[$it]['carbohydrates'] ?? '-' }}</td>
+                            <td style="text-align: end;">{{ $menuitem[$it]['kcal'] ?? '-' }}</td>
+                            
                             <?php $it++; ?>
                             @endforeach
                             <?php $it--;?>

@@ -55,8 +55,8 @@
             @foreach($ages as $rows)
             <?php $i = 1; ?>
             <div class="col-sm-2">
-                <input class="form-check-input" name="yongchek[]" type="checkbox" id="inlineCheckbox1" value="{{$rows['id']}}">
-                <label class="form-check-label" for="inlineCheckbox1">{{$rows['age_name']}}</label>
+                <input class="form-check-input" name="yongchek" type="radio" id="inlineRadio{{$rows['id']}}" value="{{$rows['id']}}" required>
+                <label class="form-check-label" for="inlineRadio{{$rows['id']}}">{{$rows['age_name']}}</label>
             </div>
             @endforeach
         </div>

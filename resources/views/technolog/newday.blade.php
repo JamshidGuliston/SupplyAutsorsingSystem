@@ -115,22 +115,22 @@
 </div>
 <!-- EDIT -->
 
-<!-- DELETE -->
+<!-- DELETE Modal 1 - Birinchi jadval uchun -->
 <!-- Modal -->
-<div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+<div class="modal fade" id="deleteModal1" tabindex="-1" aria-labelledby="deleteModalLabel1" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <form action="/technolog/deletegarden" method="post">
                 @csrf
                 @method('DELETE')
                 <div class="modal-header bg-danger">
-                    <h5 class="modal-title text-white" id="deleteModalLabel">O'chirish tasdiqlash</h5>
+                    <h5 class="modal-title text-white" id="deleteModalLabel1">O'chirish tasdiqlash</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
                     <p>Rostdan ham bu bog'chani o'chirmoqchimisiz?</p>
-                    <h5 class="garden-delete-name text-danger"></h5>
-                    <input type="hidden" name="garden_id" class="delete-garden-id">
+                    <h5 class="garden-delete-name1 text-danger"></h5>
+                    <input type="hidden" name="garden_id" class="delete-garden-id1">
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Bekor qilish</button>
@@ -140,7 +140,34 @@
         </div>
     </div>
 </div>
-<!-- DELETE -->
+<!-- DELETE Modal 1 -->
+
+<!-- DELETE Modal 2 - Ikkinchi jadval uchun -->
+<!-- Modal -->
+<div class="modal fade" id="deleteModal2" tabindex="-1" aria-labelledby="deleteModalLabel2" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form action="/technolog/deletegarden" method="post">
+                @csrf
+                @method('DELETE')
+                <div class="modal-header bg-danger">
+                    <h5 class="modal-title text-white" id="deleteModalLabel2">O'chirish tasdiqlash</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Rostdan ham bu bog'chani o'chirmoqchimisiz?</p>
+                    <h5 class="garden-delete-name2 text-danger"></h5>
+                    <input type="hidden" name="garden_id" class="delete-garden-id2">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Bekor qilish</button>
+                    <button type="submit" class="btn btn-danger">Ha, o'chirish</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<!-- DELETE Modal 2 -->
 
 
 <!-- EDD -->
@@ -264,7 +291,7 @@
                 @endforeach
                 <td>
                     <i class="edites far fa-edit text-info" data-bs-toggle="modal" data-bs-target="#exampleModal" data-kinid="{{$temp['id']}}" style="cursor: pointer; margin-right: 16px;"></i>
-                    <i class="deletegarden far fa-trash-alt text-danger" data-bs-toggle="modal" data-bs-target="#deleteModal" data-garden-id="{{$temp['id']}}" data-garden-name="{{$temp['name']}}" style="cursor: pointer;" title="O'chirish"></i>
+                    <i class="deletegarden2 far fa-trash-alt text-danger" data-bs-toggle="modal" data-bs-target="#deleteModal2" data-garden-id="{{$temp['id']}}" data-garden-name="{{$temp['name']}}" style="cursor: pointer;" title="O'chirish"></i>
                 </td>
             </tr>
             @endforeach
@@ -457,7 +484,7 @@
                 @endforeach
                 <td><a href="/nextnakladnoyPDF/{{ $row['kingar_name_id'] }}" target="_blank"><i class="far fa-file-pdf" style="color: dodgerblue; font-size: 18px;"></i></a></td>
                 <td>
-                    <i class="deletegarden far fa-trash-alt text-danger" data-bs-toggle="modal" data-bs-target="#deleteModal" data-garden-id="{{$row['kingar_name_id']}}" data-garden-name="{{$row['kingar_name']}}" style="cursor: pointer;" title="O'chirish"></i>
+                    <!-- <i class="deletegarden1 far fa-trash-alt text-danger" data-bs-toggle="modal" data-bs-target="#deleteModal1" data-garden-id="{{$row['kingar_name_id']}}" data-garden-name="{{$row['kingar_name']}}" style="cursor: pointer;" title="O'chirish"></i> -->
                 </td>
             </tr>
         @endforeach
@@ -492,6 +519,19 @@
                 button[i].style.display = "none"; // depending on what you're doing
             }
         }
+
+        const target = document.querySelector('#deleteModal1');
+        if (target) {
+            new bootstrap.Modal(target).show();
+        }
+        // O'chirish tugmasi - Birinchi jadval uchun
+        $('.deletegarden1').click(function() {
+            alert('deletegarden1');
+            var gardenId = $(this).attr('data-garden-id');
+            var gardenName = $(this).attr('data-garden-name');
+            $('.delete-garden-id1').val(gardenId);
+            $('.garden-delete-name1').text(gardenName);
+        });
         $('#select-add').change(function() {
             g = $(this).val();
             h = $('.yang-ages');
@@ -576,13 +616,6 @@
             })
         })
 
-        // O'chirish tugmasi
-        $('.deletegarden').click(function() {
-            var gardenId = $(this).attr('data-garden-id');
-            var gardenName = $(this).attr('data-garden-name');
-            $('.delete-garden-id').val(gardenId);
-            $('.garden-delete-name').text(gardenName);
-        });
 
     });
 
@@ -668,70 +701,74 @@
 </script>
 @else
 <script>
-    $('.w_countedit').click(function() {
-        var king = $(this).attr('data-menu-id');
-        var wc = $(this).attr('data-wor-count');
-        var kn = $(this).attr('data-king-name');
-        var div = $('.wor_countedit');
-        var title = $('.gardentitle');
-        div.html("<input type='number' name='workers' class='form-control' value="+wc+">");
-        title.html("<p>"+kn+"</p><input type='hidden' name='kingid' class='' value="+king+">");
-    });
+    $(document).ready(function() {
+        $('.deletegarden2').click(function() {
+            alert('deletegarden2');
+            var gardenId = $(this).attr('data-garden-id');
+            var gardenName = $(this).attr('data-garden-name');
+            $('.delete-garden-id2').val(gardenId);
+            $('.garden-delete-name2').text(gardenName);
+        });
+        $('.w_countedit').click(function() {
+            var king = $(this).attr('data-menu-id');
+            var wc = $(this).attr('data-wor-count');
+            var kn = $(this).attr('data-king-name');
+            var div = $('.wor_countedit');
+            var title = $('.gardentitle');
+            div.html("<input type='number' name='workers' class='form-control' value="+wc+">");
+            title.html("<p>"+kn+"</p><input type='hidden' name='kingid' class='' value="+king+">");
+        });
 
-    $('.ch_countedit').click(function() {
-        var nextrow = $(this).attr('data-nextrow-id');
-        var chc = $(this).attr('data-child-count');
-        var kn = $(this).attr('data-kinga-name');
-        var temprow = $(this).attr('data-temprow-id');
-        var tempchild = $(this).attr('data-tempchild-count');
-        var div1 = $('.chil_countedit');
-        var div2 = $('.temp_count');
-        var title = $('.childrentitle');
-        title.html("<p>"+kn+"</p><input type='hidden' name='nextrow' class='' value="+nextrow+"><input type='hidden' name='temprow' class='' value="+temprow+">");
-        div1.html("<input type='number' name='agecount' class='form-control' value="+chc+">");
-        div2.html("<br><p style='color: red'>Xabarnoma: <i class='far fa-envelope' style='color: #c40c0c'></i> "+tempchild+"</p>");
-    });
+        $('.ch_countedit').click(function() {
+            var nextrow = $(this).attr('data-nextrow-id');
+            var chc = $(this).attr('data-child-count');
+            var kn = $(this).attr('data-kinga-name');
+            var temprow = $(this).attr('data-temprow-id');
+            var tempchild = $(this).attr('data-tempchild-count');
+            var div1 = $('.chil_countedit');
+            var div2 = $('.temp_count');
+            var title = $('.childrentitle');
+            title.html("<p>"+kn+"</p><input type='hidden' name='nextrow' class='' value="+nextrow+"><input type='hidden' name='temprow' class='' value="+temprow+">");
+            div1.html("<input type='number' name='agecount' class='form-control' value="+chc+">");
+            div2.html("<br><p style='color: red'>Xabarnoma: <i class='far fa-envelope' style='color: #c40c0c'></i> "+tempchild+"</p>");
+        });
 
-    $('.next_menu').click(function() {
-        var nextmenu = $(this).attr('data-nextmenu-id');
-        var nextrow = $(this).attr('data-nextrow-count');
-        var king = $(this).attr('data-king-name');
-        var div = $('.menutitle');
-        var select = $('.menu_select');
-        div.html("<p>"+king+"</p><input type='hidden' name='nextrow' class='' value="+nextrow+">");
-        $.ajax({
-            method: "GET",
-            url: '/technolog/fornextmenuselect',
-            data: {
-                'menuid': nextmenu,
-            },
-            success: function(data) {
-                select.html(data);
-            }
-        })
-    });
-    $('#selectadd').change(function() {
-        g = $(this).val();
-        hn = $('.yangages');
-        $.ajax({
-            method: "GET",
-            url: '/technolog/ageranges/' + g,
-            beforeSend: function() {
-                $('.loader-box').show();
-            },
-            success: function(data) {
-                hn.html(data);
-                $('.loader-box').hide();
-            }
-        })
-    });
+        $('.next_menu').click(function() {
+            var nextmenu = $(this).attr('data-nextmenu-id');
+            var nextrow = $(this).attr('data-nextrow-count');
+            var king = $(this).attr('data-king-name');
+            var div = $('.menutitle');
+            var select = $('.menu_select');
+            div.html("<p>"+king+"</p><input type='hidden' name='nextrow' class='' value="+nextrow+">");
+            $.ajax({
+                method: "GET",
+                url: '/technolog/fornextmenuselect',
+                data: {
+                    'menuid': nextmenu,
+                },
+                success: function(data) {
+                    select.html(data);
+                }
+            })
+        });
+        
+        $('#selectadd').change(function() {
+            g = $(this).val();
+            hn = $('.yangages');
+            $.ajax({
+                method: "GET",
+                url: '/technolog/ageranges/' + g,
+                beforeSend: function() {
+                    $('.loader-box').show();
+                },
+                success: function(data) {
+                    hn.html(data);
+                    $('.loader-box').hide();
+                }
+            })
+        });
 
-    // O'chirish tugmasi
-    $('.deletegarden').click(function() {
-        var gardenId = $(this).attr('data-garden-id');
-        var gardenName = $(this).attr('data-garden-name');
-        $('.delete-garden-id').val(gardenId);
-        $('.garden-delete-name').text(gardenName);
+        
     });
 </script>
 @endif

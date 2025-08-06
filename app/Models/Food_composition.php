@@ -12,7 +12,12 @@ class Food_composition extends Model
         'id',
         'food_name_id',
     	'product_name_id',
-        'gram'
+        'gram',
+        'weight_without_waste',
+        'proteins',
+        'fats',
+        'carbohydrates',
+        'kcal'
 	];
     
 }

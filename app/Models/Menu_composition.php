@@ -15,6 +15,11 @@ class Menu_composition extends Model
         'menu_food_id',
         'product_name_id',
         'age_range_id',
-        'weight'
+        'weight',
+        'waste_free',
+        'proteins',
+        'fats',
+        'carbohydrates',
+        'kcal',
 	];
 }

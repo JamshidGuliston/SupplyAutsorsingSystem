@@ -103,9 +103,9 @@
         </div>
 
         <div class="form-group row">
-            <label for="chefgardens" class="col-sm-2 col-form-label">Bog'chalar</label>
+            <label for="chefgardens" class="col-sm-2 col-form-label">Bog'cha</label>
             <div class="col-sm-10">
-                <select id='chefGardenSelect' name="gardens[]" class="form-select" aria-label="Default select example" multiple>
+                <select id='chefGardenSelect' name="gardens[]" class="form-select" aria-label="Default select example">
                     @foreach($kindgardens as $garden)
                         <?php $selected = false; ?>
                         @foreach($user->kindgarden as $userGarden)
