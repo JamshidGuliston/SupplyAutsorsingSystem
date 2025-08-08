@@ -90,7 +90,7 @@
                         <center>Шартнома хужжатлари №____ " ____ . _____" <?php printf('%02d', $costs[0]->year_name) ?> йил</center><br>
 						<div class="row">
 							<div class="column">
-								Етказиб берувчи: <strong>NISHON INVEST MCHJ </strong>
+								Етказиб берувчи: <strong> {{ env('COMPANY_NAME') }} </strong>
 							</div>
 							<div class="column">
 								Буюртмачи: <strong>{{ $kindgar->kingar_name }}</strong>

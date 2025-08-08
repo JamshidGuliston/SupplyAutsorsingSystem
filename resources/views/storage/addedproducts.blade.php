@@ -351,9 +351,9 @@
                             </select>
                         </div>
                         <div class="col-md-3">
-                            <span class="input-income">Оғирлиги:</span>
+                            <span class="input-income">Оғирлиги ёки Дона:</span>
                             <br>
-                            <input id="input-expensebar" class="form-control" type="text" onkeypress="javascript:return isNumber(event)">        
+                            <input id="input-expensebar" class="form-control" type="text" onkeypress="javascript:return isNumber(event)" placeholder="kg yoki ta">        
                         </div>
                         <div class="col-md-3">
                             <span class="input-expense">Келган нархи:</span>
@@ -446,9 +446,9 @@
                             </select>
                         </div>
                         <div class="col-md-3">
-                            <span class="input-income">Оғирлиги:</span>
+                            <span class="input-income">Оғирлиги ёки Дона:</span>
                             <br>
-                            <input id="input-expense-bar" class="form-control" type="text" onkeypress="javascript:return isNumber(event)">        
+                            <input id="input-expense-bar" class="form-control" type="text" onkeypress="javascript:return isNumber(event)" placeholder="kg yoki ta">        
                         </div>
                         <div class="col-md-3">
                             <span class="input-expense">Келган нархи:</span>

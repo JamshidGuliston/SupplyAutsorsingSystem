@@ -86,7 +86,7 @@
 							<b>Юк хати    &nbsp;&nbsp;&nbsp;&nbsp;    № {{ $document->docid }}</b>
 							<b>&nbsp;&nbsp;&nbsp;&nbsp;  {{ "   Cана: ".$document->order_title }}</b>
 						</center>
-						Кимдан:<b> Нишон инвест МЧЖ </b><br>  
+						Кимдан:<b> {{ env('COMPANY_NAME') }} </b><br>  
 						Кимга: <b> {{ $document->kingar_name }}</b>
 					</div>
                 </div>

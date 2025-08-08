@@ -98,7 +98,7 @@
             <div class="row modal-body">
                 @csrf
                 <div class="col-sm-4">
-                    <select id='testSelect2' name="garden" class="form-select" aria-label="Default select example" required>
+                    <select name="garden" class="form-select" aria-label="Default select example" required>
                         @foreach($gardens as $row)
                             <option value='{{ $row->id }}'>{{ $row->kingar_name }}</option>
                         @endforeach
@@ -149,7 +149,7 @@
             <div class="row modal-body">
                 @csrf
                 <div class="col-sm-4">
-                    <select id='testSelect2' name="gardenID" class="form-select" aria-label="Default select example" required>
+                    <select name="gardenID" class="form-select" aria-label="Default select example" required>
                         @foreach($gardens as $row)
                             <option value='{{ $row->id }}'>{{ $row->kingar_name }}</option>
                         @endforeach
@@ -184,17 +184,69 @@
         </div>
     </div>
 </div>
+
+{{-- Rasxod Modal --}}
+<div class="modal fade" id="modalRasxod" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Yangi Buyurtma Yaratish</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form action="{{route('storage.addrasxodgroup')}}" method="POST">
+                @csrf
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="group_name" class="form-label">Buyurtma nomi</label>
+                        <input type="text" class="form-control" id="group_name" name="group_name" placeholder="Buyurtma nomini kiriting" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="kingar_name_id" class="form-label">Muassasalar</label>
+                        <select class="form-select" id="testSelect2" name="kingar_name[]" aria-label="Default select example" required multiple>
+                            <option value="">Muassasalarni tanlang</option>
+                            @foreach($gardens as $row)
+                                <option value="{{$row->id}}">{{$row->kingar_name}}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="date_id" class="form-label">Sana</label>
+                        <select class="form-select" id="date_id" name="date_id" required>
+                            <option value="">Sanani tanlang</option>
+                            @foreach($days as $row)
+                                <option value="{{$row['id']}}">{{ $row['day_number'].".".$row['month_name'].".".$row['year_name']; }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Bekor qilish</button>
+                    <button type="submit" class="btn btn-success">Yaratish</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
 <!-- EDIT -->
 <div class="py-4 px-4">
+    @if(session('status'))
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            {{ session('status') }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    @endif
     <div class="row">
-        <div class="col-md-4">
+        <div class="col-md-3">
             <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addModal">Bozorlik yaratish</button>
         </div>
-        <div class="col-md-4">
+        <div class="col-md-3">
             <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalsettings">Ummumiy jo'natilgan Xisobot</button>
         </div>
-        <div class="col-md-4">
+        <div class="col-md-3">
             <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalIncreased">Orttirilgan Xisobot</button>
+        </div>
+        <div class="col-md-3">
+            <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#modalRasxod">+ Yaratish</button>
         </div>
     </div>
     <hr>

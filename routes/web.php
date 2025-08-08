@@ -110,6 +110,8 @@ Route::group(['prefix' => 'storage', 'middleware' => ['isStorage', 'auth']], fun
     Route::get('intakingsmallbase/{id}/{kid}/{day}', [StorageController::class, 'intakingsmallbase'])->name('storage.intakingsmallbase');
     Route::post('addintakingsmallbase', [StorageController::class, 'addintakingsmallbase'])->name('storage.addintakingsmallbase');
     Route::post('editegroup', [StorageController::class, 'editegroup'])->name('storage.editegroup');
+    Route::post('addrasxodgroup', [StorageController::class, 'addrasxodgroup'])->name('storage.addrasxodgroup');
+    Route::post('plusproduct', [StorageController::class, 'plusproduct'])->name('storage.plusproduct');
     
     Route::get('changesome', [StorageController::class, 'changesome']);
 

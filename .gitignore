@@ -4,6 +4,7 @@
 /storage/*.key
 /vendor
 /public/pdf
+/public/images
 
 .env
 .phpunit.result.cache

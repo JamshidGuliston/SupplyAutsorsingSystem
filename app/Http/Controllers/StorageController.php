@@ -1483,4 +1483,57 @@ class StorageController extends Controller
         dd("OK");
     }
     
+    public function addrasxodgroup(Request $request){
+        $request->validate([
+            'group_name' => 'required|string|max:255',
+            'date_id' => 'required|integer|exists:days,id',
+            'kingar_name' => 'required|array|min:1',
+            'kingar_name.*' => 'integer|exists:kindgardens,id'
+        ]);
+
+        // Har bir tanlangan bog'cha uchun alohida order yaratamiz
+        foreach($request->kingar_name as $garden_id) {
+            order_product::create([
+                'kingar_name_id' => $garden_id,
+                'day_id' => $request->date_id,
+                'order_title' => $request->group_name,
+                'document_processes_id' => 1,
+            ]);
+        }
+
+        $count = count($request->kingar_name);
+        return redirect()->route('storage.addmultisklad')->with('status', "{$count}ta muassasa uchun buyurtma muvaffaqiyatli yaratildi!");
+    }
+    
+    public function plusproduct(Request $request){
+        $request->validate([
+            'titleid' => 'required|integer|exists:order_products,id',
+            'orders' => 'required|array'
+        ]);
+
+        foreach($request->orders as $product_id => $weight) {
+            if(!empty($weight) && $weight > 0) {
+                // Avval bunday product mavjudligini tekshiramiz
+                $existing = order_product_structure::where('order_product_name_id', $request->titleid)
+                    ->where('product_name_id', $product_id)
+                    ->first();
+
+                if($existing) {
+                    // Mavjud bo'lsa, og'irlikni yangilaymiz
+                    $existing->update([
+                        'product_weight' => $existing->product_weight + $weight
+                    ]);
+                } else {
+                    // Mavjud bo'lmasa, yangi record yaratamiz
+                    order_product_structure::create([
+                        'order_product_name_id' => $request->titleid,
+                        'product_name_id' => $product_id,
+                        'product_weight' => $weight,
+                    ]);
+                }
+            }
+        }
+
+        return redirect()->route('storage.orderitem', $request->titleid)->with('status', 'Maxsulotlar muvaffaqiyatli qo\'shildi!');
+    }
 }

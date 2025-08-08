@@ -52,7 +52,7 @@
                 <h5 class="modal-title text-white" id="exampleModalLabel">Maxsulot buyurtmasi</h5>
                 <button type="button" class="btn-close " data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <form action="{{route('technolog.plusproduct')}}" method="POST">
+            <form action="{{route('storage.plusproduct')}}" method="POST">
                 @csrf
                 <input type="hidden" name="titleid" value="{{$orderid}}">
                 <div class="modal-body">
@@ -90,13 +90,25 @@
 
 <div class="box-products py-4 px-4">
     <div class="row mb-3">
-        <div class="col-md-12">
+        <div class="col-md-8">
             <div class="text-title">
                 <h3 class="documentnumber">{{ $orderid." - ҳужжат, " }} {{ $ordername->kingar_name.", " }} {{ $ordername->order_title }}</h3>
             </div>
         </div>
+        <div class="col-md-4 text-end">
+            <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#Modalsadd">
+                <i class="fas fa-plus"></i> Maxsulot qo'shish
+            </button>
+        </div>
     </div>    
 </div>
+
+@if(session('status'))
+    <div class="alert alert-success alert-dismissible fade show mx-4" role="alert">
+        {{ session('status') }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+@endif
 
 <div class="row py-1 px-4">
     <div class="col-md-12">

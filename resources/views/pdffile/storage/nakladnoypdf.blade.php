@@ -86,7 +86,7 @@
 							<b>Юк хати    &nbsp;&nbsp;&nbsp;&nbsp;    № {{ time() % 100000  }}</b>
 							<b>&nbsp;&nbsp;&nbsp;&nbsp;  {{ "   Cана: ".$document['date'] }}</b>
 						</center>
-						Кимдан:<b> Нишон инвест МЧЖ </b><br>  
+						Кимдан:<b> {{ env('COMPANY_NAME') }} </b><br>  
 						Кимга: <b> {{ $document['kindgarden'] }}</b>
 					</div>
                 </div>
