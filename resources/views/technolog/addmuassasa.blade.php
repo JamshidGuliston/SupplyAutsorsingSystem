@@ -62,10 +62,17 @@
             </div>
 
             <div class="form-group row">
-                <label for="region_id" class="col-sm-3 col-form-label"><strong>Viloyat *</strong></label>
+                <label for="short_name" class="col-sm-3 col-form-label"><strong>Muassasa kod *</strong></label>
+                <div class="col-sm-9">
+                    <input type="text" name="short_name" class="form-control" id="short_name" required placeholder="Muassasa kodini kiriting">
+                </div>
+            </div>
+
+            <div class="form-group row">
+                <label for="region_id" class="col-sm-3 col-form-label"><strong>Tuman *</strong></label>
                 <div class="col-sm-9">
                     <select class="form-select" name="region_id" required>
-                        <option value="">-- Viloyatni tanlang --</option>
+                        <option value="">-- Tumanni tanlang --</option>
                         @foreach($regions as $region)
                             <option value="{{ $region->id }}">{{ $region->region_name }}</option>
                         @endforeach
@@ -80,12 +87,12 @@
                 </div>
             </div>
 
-            <div class="form-group row">
+            <!-- <div class="form-group row">
                 <label for="kingar_password" class="col-sm-3 col-form-label"><strong>Parol</strong></label>
                 <div class="col-sm-9">
                     <input type="text" name="kingar_password" class="form-control" id="kingar_password" placeholder="Tizimga kirish paroli (ixtiyoriy)">
                 </div>
-            </div>
+            </div> -->
 
             <div class="form-group row">
                 <label for="hide" class="col-sm-3 col-form-label"><strong>Holati</strong></label>

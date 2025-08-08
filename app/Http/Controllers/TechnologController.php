@@ -299,6 +299,15 @@ class TechnologController extends Controller
             ->join('years', 'years.id', '=', 'days.year_id')
             ->select('days.id', 'days.day_number', 'days.month_id', 'months.month_name', 'years.year_name', 'days.year_id')
             ->get();
+
+        // Har bir kun uchun mahsulotlar ishlatilganligini tekshirish
+        $usage_status = [];
+        foreach($nextday as $kindgarden){
+            $has_usage = minus_multi_storage::where('day_id', $day)
+                ->where('kingarden_name_id', $kindgarden->kingar_name_id)
+                ->exists();
+            $usage_status[$kindgarden->kingar_name_id] = $has_usage ? 'Sarflangan' : 'Sarflanmagan';
+        }
         
         for($i = 0; $i < count($nextday); $i++){
             $nextdayitem[$loo]['kingar_name_id'] = $nextday[$i]->kingar_name_id;
@@ -309,10 +318,11 @@ class TechnologController extends Controller
                 $loo++;
             }
         }
-        return view('technolog.showdate', ['year' => $year, 'y_id' => $y_id, 'm_id' => $m_id, 'aday' => $day, 'months' => $months,'days' => $days, 'ages' => $ages, 'nextdayitem' => $nextdayitem]);
+        return view('technolog.showdate', ['year' => $year, 'y_id' => $y_id, 'm_id' => $m_id, 'aday' => $day, 'months' => $months,'days' => $days, 'ages' => $ages, 'nextdayitem' => $nextdayitem, 'usage_status' => $usage_status]);
     }
 
     public function deleteGarden(Request $request){
+        // dd($request->all());
         $garden = Nextday_namber::where('kingar_name_id', $request->garden_id)->first();
         $garden->delete();
         return redirect()->back();
@@ -1706,6 +1716,7 @@ class TechnologController extends Controller
         $months = Month::all();
         $days = Day::where('year_id', Year::where('year_active', 1)->first()->id)->where('month_id', Month::where('id', $monthid)->first()->id)->get();
         $minusproducts = [];
+        
         foreach($days as $day){
             $minus = minus_multi_storage::where('day_id', $day->id)
                 ->where('kingarden_name_id', $kid)
@@ -2644,10 +2655,14 @@ class TechnologController extends Controller
 
     public function createmuassasa(Request $request)
     {
+        // Validation
+        $request->validate(Kindgarden::rules());
+
         $kindgarden = Kindgarden::create([
             'region_id' => $request->region_id,
             'kingar_name' => $request->kingar_name,
-            'kingar_password' => $request->kingar_password,
+            'short_name' => $request->short_name,
+            'kingar_password' => $request->kingar_password ?? "123456",
             'telegram_user_id' => 0,
             'worker_count' => $request->worker_count,
             'worker_age_id' => $request->worker_age_id ?? 1,
@@ -2672,12 +2687,16 @@ class TechnologController extends Controller
 
     public function updatemuassasa(Request $request)
     {
+        // Validation (edit holatida ID ni o'tkazamiz)
+        $request->validate(Kindgarden::rules($request->kindgarden_id));
+
         $kindgarden = Kindgarden::find($request->kindgarden_id);
         
         $kindgarden->update([
             'region_id' => $request->region_id,
             'kingar_name' => $request->kingar_name,
-            'kingar_password' => $request->kingar_password,
+            'short_name' => $request->short_name,
+            'kingar_password' => $request->kingar_password ?? "123456",
             'worker_count' => $request->worker_count,
             'worker_age_id' => $request->worker_age_id ?? 1,
             'hide' => $request->hide ?? 1
@@ -2701,5 +2720,57 @@ class TechnologController extends Controller
         }
         
         return response()->json(['success' => true]);
+    }
+
+    // Mahsulotlarni sarflash uchun modal ma'lumotlarini olish
+    public function getProductsForExpense($dayid, $kingardenid){
+        $products = Product::where('hide', 1)->orderBy('sort', 'asc')->get();
+        $kindgarden = Kindgarden::where('id', $kingardenid)->first();
+        
+        return response()->json([
+            'products' => $products,
+            'kindgarden' => $kindgarden,
+            'day_id' => $dayid
+        ]);
+    }
+    
+    // Mahsulotlarni sarflash
+    public function saveProductExpense(Request $request){
+        // Ma'lumotlarni validatsiya qilish
+        $validated = $request->validate([
+            'day_id' => 'required|integer',
+            'kingarden_id' => 'required|integer',
+            'products' => 'required|array',
+            'products.*' => 'numeric|min:0'
+        ]);
+        
+        foreach($request->products as $product_id => $weight){
+            if($weight > 0){
+                // Mavjud yozuvni tekshirish
+                $existing = minus_multi_storage::where('day_id', $request->day_id)
+                    ->where('kingarden_name_id', $request->kingarden_id)
+                    ->where('product_name_id', $product_id)
+                    ->where('kingar_menu_id', -1)
+                    ->first();
+                
+                if($existing){
+                    // Mavjud bo'lsa, yangilash
+                    $existing->update([
+                        'product_weight' => $weight
+                    ]);
+                } else {
+                    // Yangi yozuv yaratish
+                    minus_multi_storage::create([
+                        'day_id' => $request->day_id,
+                        'kingarden_name_id' => $request->kingarden_id,
+                        'kingar_menu_id' => -1,
+                        'product_name_id' => $product_id,
+                        'product_weight' => $weight
+                    ]);
+                }
+            }
+        }
+        
+        return response()->json(['success' => true, 'message' => 'Mahsulotlar muvaffaqiyatli sarflandi!']);
     }
 }

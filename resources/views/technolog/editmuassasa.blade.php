@@ -68,10 +68,17 @@
             </div>
 
             <div class="form-group row">
-                <label for="region_id" class="col-sm-3 col-form-label"><strong>Viloyat *</strong></label>
+                <label for="short_name" class="col-sm-3 col-form-label"><strong>Muassasa kod *</strong></label>
+                <div class="col-sm-9">
+                    <input type="text" name="short_name" class="form-control" id="short_name" required value="{{ $kindgarden->short_name }}" placeholder="Muassasa kodini kiriting">
+                </div>
+            </div>
+
+            <div class="form-group row">
+                <label for="region_id" class="col-sm-3 col-form-label"><strong>Tuman *</strong></label>
                 <div class="col-sm-9">
                     <select class="form-select" name="region_id" required>
-                        <option value="">-- Viloyatni tanlang --</option>
+                        <option value="">-- Tumanni tanlang --</option>
                         @foreach($regions as $region)
                             <option value="{{ $region->id }}" {{ $kindgarden->region_id == $region->id ? 'selected' : '' }}>
                                 {{ $region->region_name }}
@@ -85,13 +92,6 @@
                 <label for="worker_count" class="col-sm-3 col-form-label"><strong>Xodimlar soni *</strong></label>
                 <div class="col-sm-9">
                     <input type="number" name="worker_count" class="form-control" id="worker_count" required min="1" value="{{ $kindgarden->worker_count }}" placeholder="Xodimlar sonini kiriting">
-                </div>
-            </div>
-
-            <div class="form-group row">
-                <label for="kingar_password" class="col-sm-3 col-form-label"><strong>Parol</strong></label>
-                <div class="col-sm-9">
-                    <input type="text" name="kingar_password" class="form-control" id="kingar_password" value="{{ $kindgarden->kingar_password }}" placeholder="Tizimga kirish paroli (ixtiyoriy)">
                 </div>
             </div>
 

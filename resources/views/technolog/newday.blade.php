@@ -424,6 +424,34 @@
     </div>
 </div>
 <!-- EDIT -->
+
+<!-- DELETE Modal 2 - Birinchi jadval uchun -->
+<!-- Modal -->
+<div class="modal fade" id="deleteModal2" tabindex="-1" aria-labelledby="deleteModalLabel1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form action="/technolog/deletegarden" method="post">
+                @csrf
+                @method('DELETE')
+                <div class="modal-header bg-danger">
+                    <h5 class="modal-title text-white" id="deleteModalLabel1">O'chirish tasdiqlash</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Rostdan ham bu bog'chani o'chirmoqchimisiz?</p>
+                    <h5 class="garden-delete-name2 text-danger"></h5>
+                    <input type="hidden" name="garden_id" class="delete-garden-id2">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Bekor qilish</button>
+                    <button type="submit" class="btn btn-danger">Ha, o'chirish</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<!-- DELETE Modal 2 -->
+
 <div class="py-4 px-4">
     <div class="row">
         <div class="col-md-6">
@@ -484,7 +512,7 @@
                 @endforeach
                 <td><a href="/nextnakladnoyPDF/{{ $row['kingar_name_id'] }}" target="_blank"><i class="far fa-file-pdf" style="color: dodgerblue; font-size: 18px;"></i></a></td>
                 <td>
-                    <!-- <i class="deletegarden1 far fa-trash-alt text-danger" data-bs-toggle="modal" data-bs-target="#deleteModal1" data-garden-id="{{$row['kingar_name_id']}}" data-garden-name="{{$row['kingar_name']}}" style="cursor: pointer;" title="O'chirish"></i> -->
+                    <i class="deletegarden2 far fa-trash-alt text-danger" data-bs-toggle="modal" data-bs-target="#deleteModal2" data-garden-id="{{$row['kingar_name_id']}}" data-garden-name="{{$row['kingar_name']}}" style="cursor: pointer;" title="O'chirish"></i>
                 </td>
             </tr>
         @endforeach
@@ -520,10 +548,10 @@
             }
         }
 
-        const target = document.querySelector('#deleteModal1');
-        if (target) {
-            new bootstrap.Modal(target).show();
-        }
+        // const target = document.querySelector('#deleteModal1');
+        // if (target) {
+        //     new bootstrap.Modal(target).show();
+        // }
         // O'chirish tugmasi - Birinchi jadval uchun
         $('.deletegarden1').click(function() {
             alert('deletegarden1');
@@ -703,7 +731,6 @@
 <script>
     $(document).ready(function() {
         $('.deletegarden2').click(function() {
-            alert('deletegarden2');
             var gardenId = $(this).attr('data-garden-id');
             var gardenName = $(this).attr('data-garden-name');
             $('.delete-garden-id2').val(gardenId);

@@ -103,6 +103,16 @@
         transition: all .5s;
         cursor: pointer;
     }
+    .usage-status-used {
+        background-color: #d4edda;
+        color: #155724;
+        font-weight: bold;
+    }
+    .usage-status-unused {
+        background-color: #f8d7da;
+        color: #721c24;
+        font-weight: bold;
+    }
 </style>
 @endsection
 
@@ -224,7 +234,7 @@
     <table class="table table-light py-4 px-4">
         <thead>
             <tr>
-                <th style="width: 30px;">Махсулотлар</th>
+                <th style="width: 30px;" rowspan="2">Махсулотлар</th>
                 @foreach($days as $day)
                 <th scope="col">{{ $day->day_number }}</th>
                 @endforeach
@@ -235,7 +245,21 @@
                     <?php
                 }
                 ?>
-                <th style="width: 70px;">Жами:</th>
+                <th style="width: 70px;" rowspan="2">Жами:</th>
+            </tr>
+            <tr>
+                @foreach($days as $day)
+                <th scope="col" class="{{ isset($usage_status[$day->id]) && $usage_status[$day->id] == 'Ishlatilgan' ? 'usage-status-used' : 'usage-status-unused' }}" style="font-size: 0.7rem;">
+                    {{ isset($usage_status[$day->id]) ? $usage_status[$day->id] : 'Ishlatilmagan' }}
+                </th>
+                @endforeach
+                <?php
+                for($i = 0; $i < 21-count($days); $i++){
+                    ?>
+                    <th scope="col"></th>
+                    <?php
+                }
+                ?>
             </tr>
         </thead>
         <tbody>

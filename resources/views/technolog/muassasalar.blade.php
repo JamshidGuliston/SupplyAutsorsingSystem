@@ -47,7 +47,8 @@
                         <tr>
                             <th scope="col">ID</th>
                             <th scope="col">Muassasa nomi</th>
-                            <th scope="col">Viloyat</th>
+                            <th scope="col">Muassasa kod</th>
+                            <th scope="col">Tuman</th>
                             <th scope="col">Xodimlar soni</th>
                             <th scope="col">Yosh guruhlari</th>
                             <th scope="col">Holati</th>
@@ -59,6 +60,7 @@
                         <tr>
                             <td>{{ $kindgarden->id }}</td>
                             <td><strong>{{ $kindgarden->kingar_name }}</strong></td>
+                            <td>{{ $kindgarden->short_name }}</td>
                             <td>
                                 @php
                                     $region = $regions->firstWhere('id', $kindgarden->region_id);

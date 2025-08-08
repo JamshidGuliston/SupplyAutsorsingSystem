@@ -32,6 +32,38 @@
         </div>
     </div>
 </div>
+
+<!-- Sarflash Modal -->
+<div class="modal fade" id="expenseModal" tabindex="-1" aria-labelledby="expenseModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="expenseModalLabel">Mahsulotlarni sarflash</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div id="expense-loading" class="text-center">
+                    <div class="spinner-border" role="status">
+                        <span class="visually-hidden">Yuklanmoqda...</span>
+                    </div>
+                </div>
+                <div id="expense-content" style="display: none;">
+                    <h6 id="kindgarden-name" class="mb-3"></h6>
+                    <form id="expense-form">
+                        <div id="products-list" class="row">
+                            <!-- Mahsulotlar ro'yxati bu yerda yuklanadi -->
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Bekor qilish</button>
+                <button type="button" class="btn btn-success" id="save-expense">Saqlash</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <div class="date">
     <!-- <div class="lline"></div> -->
     <div class = "year first-text fw-bold">
@@ -84,7 +116,8 @@
                 <span class="age_name{{ $age->id }}">{{ $age->age_name }} </span>
             </th>
             @endforeach
-            <th style="width: 70px;" rowspan="2">Nakladnoy</th>
+            <!-- <th style="width: 70px;" rowspan="2">Nakladnoy</th> -->
+            <th style="width: 70px;" rowspan="2">Maxsulotlar ishlatilganligi</th>
         </tr>
         <tr style="color: #888888;">
             @foreach($ages as $age)
@@ -116,7 +149,20 @@
                 <td>{{ ' ' }}</td>
             @endif
             @endforeach
-            <td><a href="/activnakladPDF/{{ $aday }}/{{ $row['kingar_name_id'] }}" target="_blank"><i class="far fa-file-pdf" style="color: dodgerblue; font-size: 18px;"></i></a></td>
+            <!-- <td><a href="/activnakladPDF/{{ $aday }}/{{ $row['kingar_name_id'] }}" target="_blank"><i class="far fa-file-pdf" style="color: dodgerblue; font-size: 18px;"></i></a></td> -->
+            <td>
+                @if($usage_status[$row['kingar_name_id']] == 'Sarflangan')
+                    <i class="fas fa-check-circle" style="color: green;"></i>
+                @else
+                    <i class="fas fa-times-circle" style="color: red;"></i>
+                    <i class="fas fa-carrot expense-btn" style="color: dodgerblue; font-size: 18px; margin-left: 10px; cursor: pointer;" 
+                       data-dayid="{{ $aday }}" 
+                       data-kingardenid="{{ $row['kingar_name_id'] }}" 
+                       data-toggle="modal" 
+                       data-target="#expenseModal" 
+                       title="Sarflash">Sarflash</i>
+                @endif
+            </td>
         </tr>
     @endforeach
     </tbody>
@@ -137,6 +183,111 @@
             var agecount = $(this).attr('data-agecount');
             var modaledite = $('.edites_modal');
             modaledite.html("<input type='hidden' name='dayid' value="+dayid+"><input type='hidden' name='monthid' value="+monthid+"><input type='hidden' name='yearid' value="+yearid+"><input type='hidden' name='kinid' value="+kinid+"><input type='hidden' name='ageid' value="+ageid+"><input type='text' class='form-control' name='agecount' value="+agecount+">");
+        });
+
+        // Sarflash tugmasi bosilganda
+        $('.expense-btn').click(function() {
+            var dayid = $(this).attr('data-dayid');
+            var kingardenid = $(this).attr('data-kingardenid');
+            
+            // Modalni ochish
+            $('#expenseModal').modal('show');
+            $('#expense-loading').show();
+            $('#expense-content').hide();
+            
+            // Mahsulotlar ro'yxatini yuklash
+            $.ajax({
+                url: '/technolog/getProductsForExpense/' + dayid + '/' + kingardenid,
+                method: 'GET',
+                success: function(response) {
+                    $('#expense-loading').hide();
+                    $('#expense-content').show();
+                    
+                    // Bog'cha nomini ko'rsatish
+                    $('#kindgarden-name').text(response.kindgarden.kingar_name + ' dan sarflash');
+                    
+                    // Mahsulotlar ro'yxatini yaratish
+                    var productsList = '';
+                    response.products.forEach(function(product) {
+                        productsList += `
+                            <div class="col-md-6 mb-3">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <h6 class="card-title">${product.product_name}</h6>
+                                        <div class="input-group">
+                                            <input type="number" 
+                                                   class="form-control" 
+                                                   name="products[${product.id}]" 
+                                                   step="0.001" 
+                                                   min="0" 
+                                                   placeholder="0.000">
+                                            <span class="input-group-text">kg</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                    });
+                    
+                    $('#products-list').html(productsList);
+                    
+                    // Yashirin ma'lumotlarni saqlash
+                    $('#expense-form').data('dayid', response.day_id);
+                    $('#expense-form').data('kingardenid', kingardenid);
+                },
+                error: function() {
+                    alert('Xatolik yuz berdi!');
+                    $('#expenseModal').modal('hide');
+                }
+            });
+        });
+
+        // Saqlash tugmasi
+        $('#save-expense').click(function() {
+            var form = $('#expense-form');
+            var dayid = form.data('dayid');
+            var kingardenid = form.data('kingardenid');
+            var products = {};
+            
+            // Mahsulot ma'lumotlarini yig'ish
+            form.find('input[name^="products"]').each(function() {
+                var name = $(this).attr('name');
+                var match = name.match(/products\[(\d+)\]/);
+                if (match) {
+                    var productId = match[1];
+                    var weight = $(this).val();
+                    if (weight && parseFloat(weight) > 0) {
+                        products[productId] = parseFloat(weight);
+                    }
+                }
+            });
+            
+            if (Object.keys(products).length === 0) {
+                alert('Kamida bitta mahsulot miqdorini kiriting!');
+                return;
+            }
+            
+            // Saqlash
+            $.ajax({
+                url: '/technolog/saveProductExpense',
+                method: 'POST',
+                data: {
+                    _token: $('meta[name="csrf-token"]').attr('content'),
+                    day_id: dayid,
+                    kingarden_id: kingardenid,
+                    products: products
+                },
+                success: function(response) {
+                    if (response.success) {
+                        alert(response.message);
+                        $('#expenseModal').modal('hide');
+                        location.reload(); // Sahifani yangilash
+                    }
+                },
+                error: function() {
+                    alert('Saqlashda xatolik yuz berdi!');
+                }
+            });
         });
     });
 </script>
