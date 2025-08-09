@@ -3,6 +3,14 @@
 @section('css')
 <link href="/css/multiselect.css" rel="stylesheet"/>
 <script src="/js/multiselect.min.js"></script>
+<style>
+/* Pagination styles fix */
+.pagination { margin: 0; }
+.pagination .page-link { color: #0d6efd; border: 1px solid #dee2e6; padding: .375rem .6rem; font-size: .875rem; }
+.pagination .page-item.active .page-link { background-color: #0d6efd; border-color: #0d6efd; color: #fff; }
+.pagination .page-link:hover { color: #0a58ca; background-color: #e9ecef; }
+.pagination .page-link svg { width: 16px; height: 16px; }
+</style>
 @endsection
 @section('leftmenu')
     @include('storage.sidemenu'); 
@@ -101,6 +109,16 @@
             @endforeach
         </tbody>
     </table>
+    
+    <!-- Pagination -->
+    <div class="row">
+        <div class="col-md-6">
+            <p class="text-muted small">{{ $res->firstItem() }} dan {{ $res->lastItem() }} gacha, jami {{ $res->total() }} yozuv</p>
+        </div>
+        <div class="col-md-6 d-flex justify-content-end">
+            {{ $res->links('pagination::bootstrap-4') }}
+        </div>
+    </div>
     <a href="/storage/home/0/0">Orqaga</a>
 </div>
 

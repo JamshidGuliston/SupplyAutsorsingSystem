@@ -222,7 +222,7 @@ class StorageController extends Controller
         $season = Season::where('hide', 1)->first();
         $menus = Titlemenu::where('menu_season_id', $season->id)->get();
         $gardens = Kindgarden::where('hide', 1)->get();
-        $orders = order_product::orderby('id', 'DESC')->get();
+        $orders = order_product::orderby('id', 'DESC')->paginate(10);
         $days = $this->days();
         // dd($menus);
         return view('storage.addmultisklad', compact('orders','gardens', 'menus', 'days'));
@@ -743,7 +743,7 @@ class StorageController extends Controller
                     ->join('products', 'products.id', '=', 'add_large_werehouses.product_id')
                     ->join('sizes', 'sizes.id', '=', 'products.size_name_id')
                     ->join('add_groups', 'add_groups.id', '=', 'add_large_werehouses.add_group_id')
-                    ->get(['add_large_werehouses.id', 'products.product_name', 'sizes.size_name', 'add_large_werehouses.weight','add_large_werehouses.cost', 'add_groups.created_at']);
+                    ->get(['add_large_werehouses.id', 'add_large_werehouses.product_id', 'add_large_werehouses.shop_id', 'products.product_name', 'sizes.size_name', 'add_large_werehouses.weight','add_large_werehouses.cost', 'add_groups.created_at']);
         foreach($productall as $item){
             $t = 0;
             foreach($products as $pro){
@@ -758,9 +758,77 @@ class StorageController extends Controller
                 ->join('days', 'days.id', '=', 'add_groups.day_id')
                 ->join('months', 'months.id', '=', 'days.month_id')
                 ->join('years', 'years.id', '=', 'days.year_id')
-                ->first(['add_groups.id', 'months.id as month_id', 'add_groups.group_name', 'days.day_number', 'months.month_name', 'years.year_name']);
-        // dd($group);
-        return view('storage.ingroup', compact('products', 'productall', 'group', 'id'));
+                ->first(['add_groups.id', 'add_groups.day_id as group_day_id', 'months.id as month_id', 'add_groups.group_name', 'days.day_number', 'months.month_name', 'years.year_name']);
+        $shops = Shop::where('hide', 1)->get();
+        return view('storage.ingroup', compact('products', 'productall', 'group', 'id', 'shops'));
+    }
+
+    public function addIngroupProduct(Request $request){
+        $request->validate([
+            'titleid' => 'required|integer|exists:add_groups,id',
+            'productid' => 'required|integer|exists:products,id',
+            'shop_id' => 'required|integer|exists:shops,id',
+            'weight' => 'required|numeric|min:0',
+            'cost' => 'required|numeric|min:0',
+            'pay' => 'required|numeric|min:0',
+        ]);
+        $alwId = Add_large_werehouse::create([
+            'add_group_id' => $request->titleid,
+            'shop_id' => $request->shop_id,
+            'product_id' => $request->productid,
+            'weight' => $request->weight,
+            'cost' => $request->cost
+        ])->id;
+        $group = Add_group::find($request->titleid);
+        debts::create([
+            'shop_id' => $request->shop_id,
+            'day_id' => $group->day_id,
+            'pay' => $request->pay,
+            'loan' => $request->weight * $request->cost,
+            'hisloan' => 0,
+            'row_id' => $alwId
+        ]);
+        return redirect()->route('storage.ingroup', $request->titleid)->with('status', "Qo'shildi");
+    }
+
+    public function editIngroupProduct(Request $request){
+        $request->validate([
+            'row_id' => 'required|integer|exists:add_large_werehouses,id',
+            'group_id' => 'required|integer|exists:add_groups,id',
+            'productid' => 'required|integer|exists:products,id',
+            'shop_id' => 'required|integer|exists:shops,id',
+            'weight' => 'required|numeric|min:0',
+            'cost' => 'required|numeric|min:0',
+            'pay' => 'required|numeric|min:0',
+        ]);
+        Add_large_werehouse::where('id', $request->row_id)->update([
+            'shop_id' => $request->shop_id,
+            'product_id' => $request->productid,
+            'weight' => $request->weight,
+            'cost' => $request->cost,
+        ]);
+        $group = Add_group::find($request->group_id);
+        debts::updateOrCreate(
+            ['row_id' => $request->row_id],
+            [
+                'shop_id' => $request->shop_id,
+                'day_id' => $group->day_id,
+                'pay' => $request->pay,
+                'loan' => $request->weight * $request->cost,
+                'hisloan' => 0
+            ]
+        );
+        return redirect()->route('storage.ingroup', $request->group_id)->with('status', "Tahrirlandi");
+    }
+
+    public function deleteIngroupProduct(Request $request){
+        $request->validate([
+            'row_id' => 'required|integer|exists:add_large_werehouses,id',
+            'group_id' => 'required|integer|exists:add_groups,id',
+        ]);
+        debts::where('row_id', $request->row_id)->delete();
+        Add_large_werehouse::where('id', $request->row_id)->delete();
+        return redirect()->route('storage.ingroup', $request->group_id)->with('status', "O'chirildi");
     }
 
     public function addproduct(Request $request){
@@ -1050,7 +1118,7 @@ class StorageController extends Controller
                     ->orderby('take_groups.id', 'DESC')
                     ->join('users', 'users.id', '=', 'take_groups.taker_id')
                     ->join('outside_products', 'outside_products.id', '=', 'take_groups.outside_id')
-                    ->get();
+                    ->paginate(10);
         $days = $this->days();
         $outtypes = Outside_product::all();
         $users = User::where('users.role_id', '!=', 6)->get();
