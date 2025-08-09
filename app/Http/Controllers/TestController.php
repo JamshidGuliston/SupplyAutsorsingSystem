@@ -960,7 +960,7 @@ class TestController extends Controller
 				}
 			}
 			// dd($nextdaymenuitem[$item->menu_meal_time_id][$item->menu_food_id]);
-			if($age->id == 4){
+			if($age->id == 4 and $workerfood->count() > 0){
 				foreach($workerfood as $tr){
 					foreach($nextdaymenuitem[3][$tr->food_id][4] as $key => $value){
 						if($key != 'age_name'){

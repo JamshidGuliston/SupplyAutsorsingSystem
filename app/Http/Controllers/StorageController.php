@@ -1117,7 +1117,6 @@ class StorageController extends Controller
         $res = Take_group::select(
                         'take_groups.id as gid',
                         'take_groups.title',
-                        'take_groups.day_id',
                         'take_groups.taker_id',
                         'outside_products.outside_name',
                         'users.name',
@@ -1128,7 +1127,8 @@ class StorageController extends Controller
                     ->orderby('take_groups.id', 'DESC')
                     ->join('users', 'users.id', '=', 'take_groups.taker_id')
                     ->join('outside_products', 'outside_products.id', '=', 'take_groups.outside_id')
-                    ->get();
+                    ->groupBy('take_groups.day_id', 'take_groups.taker_id', 'take_groups.id', 'take_groups.title', 'outside_products.outside_name', 'users.name', 'users.id')
+                    ->paginate(10);
        
         $days = $this->days();
         $outtypes = Outside_product::all();

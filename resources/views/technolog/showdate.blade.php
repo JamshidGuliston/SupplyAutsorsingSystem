@@ -58,7 +58,7 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Bekor qilish</button>
-                <button type="button" class="btn btn-success" id="save-expense">Saqlash</button>
+                <button type="button" class="btn btn-success" id="save-expense">Sarflash</button>
             </div>
         </div>
     </div>
@@ -220,7 +220,7 @@
                                                    name="products[${product.id}]" 
                                                    step="0.001" 
                                                    min="0" 
-                                                   placeholder="0.000">
+                                                   value="${product.product_weight}">
                                             <span class="input-group-text">kg</span>
                                         </div>
                                     </div>

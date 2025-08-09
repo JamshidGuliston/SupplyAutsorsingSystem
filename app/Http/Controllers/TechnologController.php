@@ -2724,7 +2724,67 @@ class TechnologController extends Controller
 
     // Mahsulotlarni sarflash uchun modal ma'lumotlarini olish
     public function getProductsForExpense($dayid, $kingardenid){
-        $products = Product::where('hide', 1)->orderBy('sort', 'asc')->get();
+        $join = Number_children::where('number_childrens.day_id', $dayid)
+				->where('kingar_name_id', $kingardenid)
+				->leftjoin('active_menus', function($join){
+                    // $join->on('day_id', '=', $today);
+                    $join->on('number_childrens.kingar_menu_id', '=', 'active_menus.title_menu_id');
+                    $join->on('number_childrens.king_age_name_id', '=', 'active_menus.age_range_id');
+                })
+				->where('active_menus.day_id', $dayid)
+                ->join('products', 'active_menus.product_name_id', '=', 'products.id')
+				->get();
+		// dd($join);	
+		$ages = Age_range::all();
+		$agerange = array();
+		foreach($ages as $row){
+			$agerange[$row->id] = 0;
+		}
+		$productscount = array_fill(1, 500, $agerange);
+		$workproduct = array_fill(1, 500, 0);
+		$workerfood = titlemenu_food::where('titlemenu_foods.day_id', ($dayid-1))->get();
+		// dd($workerfood);
+		foreach($join as $row){
+			if($row->age_range_id == 4 and $row->menu_meal_time_id = 3){
+				foreach($workerfood as $ww){
+					if($row->menu_food_id == $ww->food_id){
+						$workproduct[$row->product_name_id] += $row->weight;
+						$workproduct[$row->product_name_id.'div'] = $row->div;
+						$workproduct[$row->product_name_id.'wcount'] = $row->workers_count;
+					}
+				}
+			}
+			$productscount[$row->product_name_id][$row->age_range_id] += $row->weight;
+			$productscount[$row->product_name_id][$row->age_range_id.'-children'] = $row->kingar_children_number;
+			$productscount[$row->product_name_id][$row->age_range_id.'div'] = $row->div;
+			$productscount[$row->product_name_id]['product_name'] = $row->product_name;
+		}
+		
+        $bool = minus_multi_storage::where('day_id', $dayid)->where('kingarden_name_id', $kingardenid)->get();
+		
+        $products = [];
+        
+        if($bool->count() == 0){
+			foreach($productscount as $key => $row){
+				if(isset($row['product_name'])){
+					$summ = 0;
+					foreach($ages as $age){
+						if(isset($row[$age['id'].'-children'])){
+							$summ += ($row[$age['id']]*$row[$age['id'].'-children']) / $row[$age['id'].'div'];
+						}
+					}
+					if(isset($workproduct[$key.'wcount'])){
+						$summ += ($workproduct[$key]*$workproduct[$key.'wcount']) / $workproduct[$key.'div'];
+					}
+					$products[] = [
+						'id' => $key,
+						'product_name' => $row['product_name'],
+						'product_weight' => $summ,
+					];
+				}
+			}
+		}
+
         $kindgarden = Kindgarden::where('id', $kingardenid)->first();
         
         return response()->json([

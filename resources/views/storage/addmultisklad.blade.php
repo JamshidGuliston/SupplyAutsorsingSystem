@@ -203,7 +203,6 @@
                     <div class="mb-3">
                         <label for="kingar_name_id" class="form-label">Muassasalar</label>
                         <select class="form-select" id="testSelect2" name="kingar_name[]" aria-label="Default select example" required multiple>
-                            <option value="">Muassasalarni tanlang</option>
                             @foreach($gardens as $row)
                                 <option value="{{$row->id}}">{{$row->kingar_name}}</option>
                             @endforeach
