@@ -89,9 +89,9 @@ class AccountantController extends Controller
         $region = Region::where('id', $id)->first();
         $year = Year::where('year_active', 1)->first();
         //where('year_id', $year->id)
-        $days = Day::join('months', 'months.id', '=', 'days.month_id')
-            ->join('years', 'years.id', '=', 'days.year_id')
-            ->get(['days.id', 'days.day_number', 'months.month_name', 'years.year_name']);
+        $days = Day::where('year_id', $year->id)
+            ->join('months', 'months.id', '=', 'days.month_id')
+            ->get(['days.id', 'days.day_number', 'months.month_name']);
         $costs = bycosts::where('day_id', '>=', $days[0]['id'])
                 ->where('region_name_id', $id)
                 ->join('products', 'bycosts.praduct_name_id', '=', 'products.id')
@@ -109,7 +109,12 @@ class AccountantController extends Controller
         $productall = Product::join('sizes', 'sizes.id', '=', 'products.size_name_id')
                     ->get(['products.id', 'products.product_name', 'sizes.size_name']);
         
-        return view('accountant.bycosts', compact('region', 'minusproducts', 'costs', 'productall', 'id', 'days'));
+        // Protsents ma'lumotlarini yuklash
+        $protsents = \App\Models\Protsent::where('region_id', $id)
+                    ->orderBy('start_date', 'DESC')
+                    ->get();
+        
+        return view('accountant.bycosts', compact('region', 'minusproducts', 'costs', 'productall', 'id', 'days', 'protsents'));
     }
 
     public function pluscosts(Request $request){
@@ -118,13 +123,6 @@ class AccountantController extends Controller
 
         $bool = bycosts::where('day_id', $request->dayid)->where('region_name_id', $request->regionid)->get();
         if($bool->count() == 0){
-            Protsents::create([
-                'region_id' => $request->regionid,
-                'month_id' => $mid,
-                'nds' => $request->nds,
-                'raise' => $request->raise,
-                'protsent' => 0
-            ]);
             foreach($request->orders as $key => $value){
                 if($value == null){
                     $value = 0;
@@ -1607,6 +1605,96 @@ class AccountantController extends Controller
     
     public function getingcosts(Request $request){
     	
+    }
+
+    // Protsents CRUD methods
+    public function addprotsent(Request $request){
+        $request->validate([
+            'region_id' => 'required|integer',
+            'eater_cost' => 'required|numeric|min:0',
+            'start_date' => 'required|date',
+            'end_date' => 'required|date|after_or_equal:start_date',
+            'nds' => 'required|numeric|min:0|max:100',
+            'raise' => 'required|numeric|min:0|max:100',
+            'protsent' => 'required|numeric|min:0|max:100'
+        ]);
+
+        \App\Models\Protsent::create($request->all());
+
+        return redirect()->route('accountant.bycosts', $request->region_id)
+                        ->with('success', 'Protsent muvaffaqiyatli qo\'shildi!');
+    }
+
+    public function getprotsent($id){
+        $protsent = \App\Models\Protsent::findOrFail($id);
+        
+        $html = '
+            <input type="hidden" name="protsent_id" value="'.$protsent->id.'">
+            <div class="mb-3">
+                <label for="edit_eater_cost" class="form-label">Ovqatlanish narxi</label>
+                <input type="number" step="0.01" class="form-control" id="edit_eater_cost" name="eater_cost" value="'.$protsent->eater_cost.'" required>
+            </div>
+            <div class="row">
+                <div class="col-md-6">
+                    <label for="edit_start_date" class="form-label">Boshlanish sanasi</label>
+                    <input type="date" class="form-control" id="edit_start_date" name="start_date" value="'.$protsent->start_date->format('Y-m-d').'" required>
+                </div>
+                <div class="col-md-6">
+                    <label for="edit_end_date" class="form-label">Tugash sanasi</label>
+                    <input type="date" class="form-control" id="edit_end_date" name="end_date" value="'.$protsent->end_date->format('Y-m-d').'" required>
+                </div>
+            </div>
+            <div class="row mt-3">
+                <div class="col-md-4">
+                    <label for="edit_nds" class="form-label">QQS (%)</label>
+                    <input type="number" step="0.01" class="form-control" id="edit_nds" name="nds" value="'.$protsent->nds.'" required>
+                </div>
+                <div class="col-md-4">
+                    <label for="edit_raise" class="form-label">Ustama (%)</label>
+                    <input type="number" step="0.01" class="form-control" id="edit_raise" name="raise" value="'.$protsent->raise.'" required>
+                </div>
+                <div class="col-md-4">
+                    <label for="edit_protsent" class="form-label">Protsent (%)</label>
+                    <input type="number" step="0.01" class="form-control" id="edit_protsent" name="protsent" value="'.$protsent->protsent.'" required>
+                </div>
+            </div>
+        ';
+        
+        return $html;
+    }
+
+    public function editprotsent(Request $request){
+        $request->validate([
+            'protsent_id' => 'required|integer|exists:protsents,id',
+            'eater_cost' => 'required|numeric|min:0',
+            'start_date' => 'required|date',
+            'end_date' => 'required|date|after_or_equal:start_date',
+            'nds' => 'required|numeric|min:0|max:100',
+            'raise' => 'required|numeric|min:0|max:100',
+            'protsent' => 'required|numeric|min:0|max:100'
+        ]);
+
+        $protsent = \App\Models\Protsent::findOrFail($request->protsent_id);
+        $region_id = $protsent->region_id;
+        
+        $protsent->update($request->except('protsent_id'));
+
+        return redirect()->route('accountant.bycosts', $region_id)
+                        ->with('success', 'Protsent muvaffaqiyatli yangilandi!');
+    }
+
+    public function deleteprotsent(Request $request){
+        $request->validate([
+            'protsent_id' => 'required|integer|exists:protsents,id'
+        ]);
+
+        $protsent = \App\Models\Protsent::findOrFail($request->protsent_id);
+        $region_id = $protsent->region_id;
+        
+        $protsent->delete();
+
+        return redirect()->route('accountant.bycosts', $region_id)
+                        ->with('success', 'Protsent muvaffaqiyatli o\'chirildi!');
     }
 
 }

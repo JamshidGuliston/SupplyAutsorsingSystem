@@ -289,6 +289,12 @@ Route::group(['prefix' => 'accountant', 'middleware' => ['isAccountant', 'auth']
     Route::get('getingcosts', [AccountantController::class, 'getingcosts']);
     Route::get('getreportlargebase', [AccountantController::class, 'getreportlargebase']);
 
+    // Protsents routes
+    Route::post('addprotsent', [AccountantController::class, 'addprotsent'])->name('accountant.addprotsent');
+    Route::get('getprotsent/{id}', [AccountantController::class, 'getprotsent'])->name('accountant.getprotsent');
+    Route::post('editprotsent', [AccountantController::class, 'editprotsent'])->name('accountant.editprotsent');
+    Route::post('deleteprotsent', [AccountantController::class, 'deleteprotsent'])->name('accountant.deleteprotsent');
+
 });
 
 Route::group(['prefix' => 'casher', 'middleware' => ['isChasher', 'auth']], function () {
