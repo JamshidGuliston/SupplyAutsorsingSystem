@@ -1190,7 +1190,6 @@ class StorageController extends Controller
                         'users.name',
                         'take_groups.day_id',
                     )
-                    ->where('users.role_id', '!=', 6)
                     ->orderby('take_groups.id', 'DESC')
                     ->join('users', 'users.id', '=', 'take_groups.taker_id')
                     ->join('outside_products', 'outside_products.id', '=', 'take_groups.outside_id')
