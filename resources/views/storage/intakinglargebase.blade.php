@@ -1,108 +1,142 @@
 @extends('layouts.app')
 
+@section('css')
+<link href="/css/multiselect.css" rel="stylesheet"/>
+<script src="/js/multiselect.min.js"></script>
+<style>
+.sale-info {
+    background-color: #e3f2fd;
+    padding: 10px;
+    border-radius: 5px;
+    margin-bottom: 10px;
+}
+</style>
+@endsection
+
 @section('leftmenu')
-@include('storage.sidemenu'); 
+    @include('storage.sidemenu'); 
 @endsection
 
 @section('content')
-<!-- DELET -->
-<!-- Modal -->
-<div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="exampleModalLabelss" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-        <form action="{{route('storage.deleteintakinglargebase')}}" method="POST">
-            @csrf
-            <input type="hidden" name="grodid" value="{{$id}}">
-            <div class="modal-header bg-danger">
-                <h5 class="modal-title text-white" id="exampleModalLabel">O'chirish</h5>
-                <button type="button" class="btn-close " data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <div class="deletename"></div>
-            </div>
-            <div class="modal-footer">
-                <button type="submit" class="btn dele btn-danger">O'chirish</button>
-            </div>
-        </form>
-        </div>
-    </div>
-</div>
-<!-- DELET -->
 <div class="row py-1 px-4">
-    <h3>Katta ombor</h3>
-    <div class="col-md-12" >
-    <form action="{{route('storage.addintakinglargebase')}}" method="POST">
-        @csrf
-        <input type="hidden" name="groid" value="{{$id}}">
-        <div class="row">
-            <div class="col-md-3">
-                <div class="product-select">
-                    <select class="form-select" name="productid" required aria-label="Default select example">
-                        <option value="">--Mahsulotlar--</option>
-                        @foreach($products as $all)
-                            <option value="{{$all['id']}}">{{$all['product_name']}}</option>
-                        @endforeach
-                    </select>
-                </div>
-            </div>
-            <div class="col-md-2">
-                <input type="text" class="form-control" name="weight" placeholder="Og'irlik kg" required>
-            </div>
-            <div class="col-md-2">
-                <input type="number" class="form-control" name="cost" placeholder="Narx" required>
-            </div>
-            <div class="col-md-2">
-                <div class="sub" style="display: flex;justify-content: end;">
-                    <button class="btn btn-dark">Qo'shish</button>
-                </div>
-            </div>
-        </div>
-    </form>
-    </div>
+    <h3>Katta ombor - Sotilgan maxsulotlar</h3>
+    
     <div class="col-md-12">
-        <div class="table" style="margin-top: 20px">
-            <table class="table table-light table-striped table-hover">
+        <div class="table-responsive">
+            <table class="table table-light">
                 <thead>
                     <tr>
-                        <th scope="col">ID</th>
-                        <th scope="col">Maxsulot</th>
-                        <th scope="col">Birlik</th>
-                        <th scope="col">Og'irligi</th>
-                        <th scope="col">Narxi</th>
-                        <th scope="col" style="text-align: end;">O'chirish</th>
+                        <th>ID</th>
+                        <th>Maxsulot</th>
+                        <th>O'lcham</th>
+                        <th>Og'irlik (kg)</th>
+                        <th>Narx</th>
+                        <th>Sotuv ma'lumotlari</th>
+                        <th>Amallar</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <?php $i = 0; ?>
                     @foreach($res as $row)
                     <tr>
-                        <th scope="row">{{ $row->tid }}</th>
+                        <td>{{ $row->tid }}</td>
                         <td>{{ $row->product_name }}</td>
                         <td>{{ $row->size_name }}</td>
                         <td>{{ $row->weight }}</td>
                         <td>{{ $row->cost }}</td>
-                        <td style="text-align: end;"><i class="detete  fa fa-trash" aria-hidden="true" data-name-id="{{ $row->product_name }}" data-delete-id="{{$row->tid}}" data-bs-toggle="modal" style="cursor: pointer; color: crimson" data-bs-target="#deleteModal"></i></td>
+                        <td>
+                            @if($row->sale_id)
+                                <button class="btn btn-sm btn-info" onclick="viewSaleDetails({{ $row->sale_id }})">
+                                    <i class="fa fa-eye"></i> Sotuv #{{ $row->sale_id }}
+                                </button>
+                            @else
+                                <span class="text-muted">Sotilmagan</span>
+                            @endif
+                        </td>
+                        <td>
+                            @if($row->sale_id)
+                                <button class="btn btn-sm btn-warning" onclick="editSale({{ $row->sale_id }})">
+                                    <i class="fa fa-edit"></i>
+                                </button>
+                            @endif
+                        </td>
                     </tr>
                     @endforeach
                 </tbody>
             </table>
         </div>
-        <a href="/storage/takinglargebase">Orqaga</a>
     </div>
 </div>
-@endsection
 
-@section('script')
+<!-- Sale ma'lumotlarini ko'rish modal -->
+<div class="modal fade" id="saleDetailsModal" tabindex="-1" aria-labelledby="saleDetailsModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header bg-info">
+                <h5 class="modal-title" id="saleDetailsModalLabel">Sotuv ma'lumotlari</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" id="saleDetailsContent">
+                <!-- Sale ma'lumotlari bu yerga yuklanadi -->
+            </div>
+        </div>
+    </div>
+</div>
+
 <script>
-    $(document).ready(function() {
-        $('.detete').click(function() {
-            var rowid = $(this).attr('data-delete-id');
-            var pro_name = $(this).attr('data-name-id');
-            var div = $('.deletename');
-            div.html("<h3><b>"+pro_name+"</b> maxsulotini o'chirish.</h3><input type='hidden' name='rowid' value="+rowid+" >");
+// Sale ma'lumotlarini ko'rish
+function viewSaleDetails(saleId) {
+    fetch(`/storage/getSaleDetails/${saleId}`)
+        .then(response => response.json())
+        .then(data => {
+            if(data.success) {
+                document.getElementById('saleDetailsContent').innerHTML = `
+                    <div class="row">
+                        <div class="col-md-6">
+                            <p><strong>Faktura raqami:</strong> ${data.sale.invoice_number}</p>
+                            <p><strong>Xaridor:</strong> ${data.sale.buyer_shop.shop_name}</p>
+                            <p><strong>Sana:</strong> ${data.sale.day.day_number}.${data.sale.day.month_name}.${data.sale.day.year_name}</p>
+                        </div>
+                        <div class="col-md-6">
+                            <p><strong>Jami summa:</strong> ${data.sale.total_amount} so'm</p>
+                            <p><strong>To'langan:</strong> ${data.sale.paid_amount} so'm</p>
+                            <p><strong>Qarz:</strong> ${data.sale.debt_amount} so'm</p>
+                        </div>
+                    </div>
+                    <hr>
+                    <h6>Maxsulotlar:</h6>
+                    <table class="table table-sm">
+                        <thead>
+                            <tr>
+                                <th>Maxsulot</th>
+                                <th>Og'irlik</th>
+                                <th>Narx</th>
+                                <th>Jami</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${data.products.map(product => `
+                                <tr>
+                                    <td>${product.product.product_name}</td>
+                                    <td>${product.weight} kg</td>
+                                    <td>${product.cost} so'm</td>
+                                    <td>${product.weight * product.cost} so'm</td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                `;
+                new bootstrap.Modal(document.getElementById('saleDetailsModal')).show();
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Xatolik yuz berdi!');
         });
+}
 
-
-    });
+function editSale(saleId) {
+    // Sotuvni tahrirlash funksiyasi
+    alert('Sotuvni tahrirlash funksiyasi keyingi versiyada qo\'shiladi');
+}
 </script>
 @endsection

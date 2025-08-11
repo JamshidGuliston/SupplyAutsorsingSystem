@@ -119,6 +119,9 @@ Route::group(['prefix' => 'storage', 'middleware' => ['isStorage', 'auth']], fun
     Route::post('ingroup/add', [StorageController::class, 'addIngroupProduct'])->name('storage.ingroup.add');
     Route::post('ingroup/edit', [StorageController::class, 'editIngroupProduct'])->name('storage.ingroup.edit');
     Route::post('ingroup/delete', [StorageController::class, 'deleteIngroupProduct'])->name('storage.ingroup.delete');
+    Route::get('payment_history', [StorageController::class, 'paymentHistory'])->name('storage.payment_history');
+    Route::post('delete_payment', [StorageController::class, 'deletePayment'])->name('storage.delete_payment');
+    Route::post('createSaleWithTakeGroup', [StorageController::class, 'createSaleWithTakeGroup'])->name('storage.createSaleWithTakeGroup');
 });
 
 Route::group(['prefix' => 'technolog', 'middleware' => ['isTechnolog', 'auth']], function () {

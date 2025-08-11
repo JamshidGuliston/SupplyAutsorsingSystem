@@ -102,33 +102,10 @@
 </div>
 <!-- EDIT -->
 <div class="py-4 px-4">
-    <form method="POST" action="{{route('storage.createpay')}}">
-        @csrf
-        <div class="form-group row">
-            <div class="col-md-3">
-                <select class="form-select" name="catid" aria-label="Default select example">
-                    @foreach($shops as $row)
-                    <option value="{{$row['id']}}">{{$row['shop_name']}}</option>
-                    @endforeach
-                </select>
-            </div>
-            <div class="col-md-2">
-                <select class="form-select" name="dayid" aria-label="Default select example">
-                    @foreach($days as $row)
-                    <option value="{{$row['id']}}">{{$row['day_number'].'.'.$row['month_name'].'.'.$row['year_name']}}</option>
-                    @endforeach
-                </select>
-            </div>
-            <div class="col-md-3">
-                <input type="number" name="value" class="form-control" placeholder="so'm" required>
-            </div>
-            <div class="col-md-1">
-                <button type="submit" class="btn btn-success">ok</button>
-            </div>
-        </div>
-
-    </form>
-    <hr>
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h3>Qarzdorliklar</h3>
+        <a href="{{ route('storage.payment_history') }}" class="btn btn-info">To'lovlar tarixi</a>
+    </div>
     <table class="table table-light py-4 px-4">
         <thead>
             <tr>
@@ -162,7 +139,7 @@
                     <td>{{ $row->pay-$row->loan }}</td>
                     <td>{{ $days->find($row->day_id)->day_number.'.'.$days->find($row->day_id)->month_name.'.'.$days->find($row->day_id)->year_name}}</td>
                     <td style="text-align: end;">
-                        <i class="edite_  fa fa-edit" aria-hidden="true" 
+                        <!-- <i class="edite_  fa fa-edit" aria-hidden="true" 
                             data-debt-id="{{ $row->debtid }}" 
                             data-shop-id="{{ $row->shop_id }}" 
                             data-large-id="{{ $row->lid }}" 
@@ -181,7 +158,7 @@
                             data-cost="{{ $row->cost }}" 
                             data-pay="{{ $row->pay }}" 
                             data-day-id="{{ $row->day_id }}"
-                            data-bs-toggle="modal" style="cursor: pointer; color: crimson" data-bs-target="#deleteModal"></i>
+                            data-bs-toggle="modal" style="cursor: pointer; color: crimson" data-bs-target="#deleteModal"></i> -->
                     </td>
                 </tr>
             @endforeach

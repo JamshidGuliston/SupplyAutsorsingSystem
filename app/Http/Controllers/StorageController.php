@@ -28,6 +28,8 @@ use App\Models\Groupweight;
 use App\Models\Weightproduct;
 use App\Models\User;
 use App\Models\Year;
+use App\Models\Payment;
+use App\Models\Sale;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -1001,15 +1003,87 @@ class StorageController extends Controller
     }
     
     public function createpay(Request $request){
-        
-        debts::create([
+        // validation
+        $request->validate([
+            'catid' => 'required|exists:shops,id',
+            'dayid' => 'required|exists:days,id',
+            'cash_amount' => 'required|numeric|min:0',
+            'card_amount' => 'required|numeric|min:0',
+            'transfer_amount' => 'required|numeric|min:0',
+        ]);
+
+        $payment = Payment::create([
             'shop_id' => $request->catid,
             'day_id' => $request->dayid,
-            'pay' => $request->value,
-            'loan' => 0,
-            'hisloan' => 0,
-            'row_id' => 0
+            'total_amount' => $request->cash_amount + $request->card_amount + $request->transfer_amount,
+            'cash_amount' => $request->cash_amount, // Yoki alohida kiritish mumkin
+            'card_amount' => $request->card_amount,
+            'transfer_amount' => $request->transfer_amount,
+            'paid_to_debts' => 0,
+            'excess_amount' => 0,
+            'image' => $request->image ?? null,
+            'description' => $request->description ?? 'To\'lov'
         ]);
+        
+        // Firma bo'yicha barcha mavjud qarzlarni topish (faqat kun bilan cheklamasdan)
+        $existingDebts = debts::where('shop_id', $request->catid)
+            ->where('loan', '>', 0)
+            ->orderBy('day_id', 'asc') // Avval eski kunlardagi qarzlarni to'lab chiqish
+            ->get();
+        
+        $remainingAmount = $request->cash_amount + $request->card_amount + $request->transfer_amount; // To'lanayotgan pul miqdori
+        $excessAmount = 0; // Ortiqcha pul
+        $totalPaidToDebts = 0; // Qarzlarni yopish uchun sarflangan pul
+        
+        // Mavjud qarzlarni to'lab chiqish
+        foreach($existingDebts as $debt) {
+            if($remainingAmount > 0) {
+                $debtAmount = $debt->loan; // Qarz miqdori
+                
+                if($remainingAmount >= $debtAmount) {
+                    // To'liq qarz to'lanadi
+                    $debt->update([
+                        'pay' => $debt->pay + $debtAmount,
+                        'loan' => 0,
+                        'payment_id' => $payment->id
+                    ]);
+                    $remainingAmount -= $debtAmount;
+                    $totalPaidToDebts += $debtAmount;
+                } else {
+                    // Qisman qarz to'lanadi
+                    $debt->update([
+                        'pay' => $debt->pay + $remainingAmount,
+                        'loan' => $debtAmount - $remainingAmount,
+                        'payment_id' => $payment->id
+                    ]);
+                    $totalPaidToDebts += $remainingAmount;
+                    $remainingAmount = 0;
+                }
+            }
+        }
+        
+        // Agar ortiqcha pul qolsa, uni hisloan ustuniga qo'shish
+        if($remainingAmount > 0) {
+            $excessAmount = $remainingAmount;
+        }
+
+        $payment->update([
+            'paid_to_debts' => $totalPaidToDebts,
+            'excess_amount' => $excessAmount
+        ]);
+        
+        // Yangi to'lov yozuvini yaratish - faqat ortiqcha pul uchun
+        if($excessAmount > 0) {
+            debts::create([
+                'shop_id' => $request->catid,
+                'day_id' => $request->dayid,
+                'pay' => $excessAmount, // Faqat ortiqcha pul
+                'loan' => 0,
+                'hisloan' => $excessAmount,
+                'row_id' => 0,
+                'payment_id' => $payment->id
+            ]);
+        }
 
         return redirect()->route('storage.debts');
     }
@@ -1052,9 +1126,8 @@ class StorageController extends Controller
                         <tr>
                             <th scope='col'>Tashkilot</th>
                             <th scope='col'>To'langan</th>
-                            <th scope='col'>Haqiqiy miqdor</th>
-                            <th scope='col'>Farqi</th>
                             <th scope='col'>Qarzdorlik</th>
+                            <th scope='col'>Firma qarzi</th>
                             <th scope='col'>Sana</th>
                         </tr>
                     </thead>
@@ -1067,7 +1140,6 @@ class StorageController extends Controller
                                     <td><b>".$shop['shop']['name']."</b></td>
                                     <td>".$shop['shop']['oldpay']."</td>
                                     <td>".$shop['shop']['oldloan']."</td>
-                                    <td>".$shop['shop']['debt']."</td>
                                     <td></td>
                                     <td>Hisobot davriga qadar</td>
                                 </tr>";
@@ -1080,8 +1152,7 @@ class StorageController extends Controller
                                         <td>".$row['pay']."</td>
                                         <td>".$row['loan']."</td>
                                         <td></td>
-                                        <td></td>
-                                        <td>".$row['day_id']."</td>
+                                        <td>".$days->find($row['day_id'])->day_number.".".$days->find($row['day_id'])->month_name.".".$days->find($row['day_id'])->year_name."</td>
                                     </tr>";
                             }
                         }
@@ -1090,14 +1161,13 @@ class StorageController extends Controller
                                     <td><b>Yakunda Jami:</b></td>
                                     <td><b>".$total1."</b></td>
                                     <td><b>".$total2."</b></td>
-                                    <td><b>".$total1 - $total2."</b></td>
-                                    <td><b>".$shop['shop']['debt'] + $total1-$total2."</b></td>
+                                    <td><b></b></td>
                                     <td></td>
                                 </tr>";
                         $total = $total + $shop['shop']['debt'] + $total1-$total2;
                     }
 
-        $html = $html."<tr><td><b>Jami:</b></td><td colspan='3'></td><td><b>".$total."</b></td><td></td></tr></tbody>
+        $html = $html."<tr><td><b>Jami:</b></td><td colspan='3'></td><td><b></b></td><td></td></tr></tbody>
                 </table>";
 
         return $html;
@@ -1105,6 +1175,12 @@ class StorageController extends Controller
     }
 
     public function takinglargebase(){
+        $sales = Sale::where('status', 1)->get();
+        $days = $this->days();
+        $outtypes = Outside_product::all();
+        $users = User::where('users.role_id', '!=', 6)->get();
+        $products = Product::all();
+        $shops = Shop::where('type_id', 2)->get();
         $res = Take_group::select(
                         'take_groups.id as gid',
                         'take_groups.title',
@@ -1119,11 +1195,8 @@ class StorageController extends Controller
                     ->join('users', 'users.id', '=', 'take_groups.taker_id')
                     ->join('outside_products', 'outside_products.id', '=', 'take_groups.outside_id')
                     ->paginate(10);
-        $days = $this->days();
-        $outtypes = Outside_product::all();
-        $users = User::where('users.role_id', '!=', 6)->get();
 
-        return view('storage.takinglargebase', compact('res', 'days', 'users', 'outtypes'));
+        return view('storage.takinglargebase', compact('res', 'days', 'users', 'outtypes', 'sales', 'products', 'shops'));
     }
 
     public function addtakinglargebase(Request $request){
@@ -1565,7 +1638,7 @@ class StorageController extends Controller
                 'kingar_name_id' => $garden_id,
                 'day_id' => $request->date_id,
                 'order_title' => $request->group_name,
-                'document_processes_id' => 1,
+                'document_processes_id' => 3,
             ]);
         }
 
@@ -1603,5 +1676,85 @@ class StorageController extends Controller
         }
 
         return redirect()->route('storage.orderitem', $request->titleid)->with('status', 'Maxsulotlar muvaffaqiyatli qo\'shildi!');
+    }
+
+    public function paymentHistory(Request $request){
+        $shops = Shop::where('type_id', 2)->get();
+        $days = $this->days();
+        
+        $payments = Payment::select(['payments.*', 'shops.shop_name', 'days.day_number', 'days.month_id', 'days.year_id'])
+            ->leftjoin('shops', 'payments.shop_id', '=', 'shops.id')
+            ->leftjoin('days', 'payments.day_id', '=', 'days.id')
+            ->orderBy('payments.created_at', 'DESC')
+            ->paginate(50);
+        
+        return view('storage.payment_history', compact('payments', 'shops', 'days'));
+    }
+
+    public function deletePayment(Request $request){
+        
+        $payment = Payment::find($request->payment_id);
+        dd($payment);
+        // Payment o'chirish (deleting event avtomatik ishlaydi)
+        $payment->delete();
+        
+        return redirect()->route('storage.payment_history')->with('success', 'To\'lov muvaffaqiyatli o\'chirildi');
+    }
+
+    public function createSaleWithTakeGroup(Request $request){
+        // create sale 
+        $total_amount = 0;
+        foreach($request->products as $product){
+            $total_amount += $product['cost'] * $product['weight'];
+        }
+        try {
+            DB::beginTransaction();
+            $sale = Sale::create([
+                'buyer_shop_id' => $request->buyer_shop_id,
+                'day_id' => $request->day_id,
+                'total_amount' => $total_amount,
+                'paid_amount' => $request->paid_amount,
+                'notes' => $request->notes,
+            ]);
+            $takegroup = Take_group::create([
+                'contur_id' => 1,
+                'day_id' => $request->day_id,
+                'taker_id' => $request->user_id,
+                'outside_id' => $request->outid,
+                'title' => "Sotish".$request->buyer_shop_id."-".$request->day_id,
+                'description' => $request->notes,
+            ]);
+            foreach($request->products as $product){
+                Take_product::create([
+                    'takegroup_id' => $takegroup->id,
+                    'sale_id' => $sale->id,
+                    'product_id' => $product['product_id'],
+                    'weight' => $product['weight'],
+                    'cost' => $product['cost'],
+                ]);
+            }
+            // Qarz yaratish (agar to'liq to'lanmagan bo'lsa)
+            if ($request->total_amount > $request->paid_amount) {
+                $debtAmount = $request->total_amount - $request->paid_amount;
+                
+                debts::create([
+                    'shop_id' => $request->buyer_shop_id,
+                    'sale_id' => $sale->id,
+                    'day_id' => $request->day_id,
+                    'pay' => 0,
+                    'loan' => 0, // bizning qarzimiz
+                    'hisloan' => $debtAmount, // shop qarzi
+                    'debt_type' => 'sale', // Bu sotuv qarzi
+                    'row_id' => 0
+                ]);
+            }
+            
+            DB::commit();
+            
+            return response()->json(['success' => true, 'sale_id' => $sale->id, 'takegroup_id' => $takegroup->id]);
+        } catch (\Exception $e) {
+            DB::rollback();
+            return response()->json(['success' => false, 'message' => 'Xatolik: ' . $e->getMessage()]);
+        }
     }
 }
