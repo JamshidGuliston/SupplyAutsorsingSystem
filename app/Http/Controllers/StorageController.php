@@ -1191,8 +1191,8 @@ class StorageController extends Controller
                         'take_groups.day_id',
                     )
                     ->orderby('take_groups.id', 'DESC')
-                    ->join('users', 'users.id', '=', 'take_groups.taker_id')
-                    ->join('outside_products', 'outside_products.id', '=', 'take_groups.outside_id')
+                    ->leftjoin('users', 'users.id', '=', 'take_groups.taker_id')
+                    ->leftjoin('outside_products', 'outside_products.id', '=', 'take_groups.outside_id')
                     ->paginate(10);
 
         return view('storage.takinglargebase', compact('res', 'days', 'users', 'outtypes', 'sales', 'products', 'shops'));
