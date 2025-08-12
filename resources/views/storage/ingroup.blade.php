@@ -44,12 +44,16 @@
               <input type="number" step="0.001" min="0" class="form-control" name="weight" required>
             </div>
             <div class="col-md-4">
-              <label class="form-label">Narx (1 birlik)</label>
+              <label class="form-label">Narx (so'm/birlik)</label>
               <input type="number" step="0.01" min="0" class="form-control" name="cost" required>
             </div>
             <div class="col-md-4">
               <label class="form-label">To'lov</label>
               <input type="number" step="0.01" min="0" class="form-control" name="pay" required>
+            </div>
+            <div class="col-md-4">
+              <label class="form-label">Jami (so'm)</label>
+              <input type="text" class="form-control" id="total_amount" readonly style="background-color: #f8f9fa;">
             </div>
           </div>
         </div>
@@ -97,12 +101,16 @@
               <input type="number" step="0.001" min="0" class="form-control" name="weight" id="edit_weight" required>
             </div>
             <div class="col-md-4">
-              <label class="form-label">Narx (1 birlik)</label>
+              <label class="form-label">Narx (so'm/birlik)</label>
               <input type="number" step="0.01" min="0" class="form-control" name="cost" id="edit_cost" required>
             </div>
             <div class="col-md-4">
               <label class="form-label">To'lov</label>
               <input type="number" step="0.01" min="0" class="form-control" name="pay" id="edit_pay" required>
+            </div>
+            <div class="col-md-4">
+              <label class="form-label">Jami (so'm)</label>
+              <input type="text" class="form-control" id="edit_total_amount" readonly style="background-color: #f8f9fa;">
             </div>
           </div>
         </div>
@@ -152,7 +160,8 @@
         <th>Maxsulot</th>
         <th>Birlik</th>
         <th>Miqdor</th>
-        <th>Narx</th>
+        <th>Narx (so'm)</th>
+        <th>Jami (so'm)</th>
         <th>Do'kon</th>
         <th style="width:110px; text-align:end;">Amallar</th>
       </tr>
@@ -165,7 +174,8 @@
         <td>{{ $item->product_name }}</td>
         <td>{{ $item->size_name }}</td>
         <td>{{ $item->weight }}</td>
-        <td>{{ $item->cost }}</td>
+        <td>{{ number_format($item->cost, 0, ',', ' ') }} so'm</td>
+        <td>{{ number_format($item->cost * $item->weight, 0, ',', ' ') }} so'm</td>
         <td>
           @php $shop = $shops->firstWhere('id', $item->shop_id); @endphp
           {{ $shop ? $shop->shop_name : '-' }}
@@ -187,6 +197,11 @@
         </td>
       </tr>
       @endforeach
+      <tr style="border-top: 2px solid #000;">
+        <td colspan="5" style="text-align: right;"><strong>Umumiy summa:</strong></td>
+        <td style="text-align: right;"><strong>{{ number_format($productall->sum(function($item) { return $item->cost * $item->weight; }), 0, ',', ' ') }} so'm</strong></td>
+        <td colspan="2"></td>
+      </tr>
     </tbody>
   </table>
   <a href="/storage/addedproducts/{{ $group->month_id }}/{{ $group->id }}">Orqaga</a>
@@ -195,7 +210,46 @@
 
 @section('script')
 <script>
+  // Narxni formatlash funksiyasi
+  function formatPrice(price) {
+    return new Intl.NumberFormat('uz-UZ').format(price) + ' so\'m';
+  }
+
+  // Jami summani hisoblash funksiyasi
+  function calculateTotal(weight, cost) {
+    const total = weight * cost;
+    return formatPrice(total);
+  }
+
   document.addEventListener('DOMContentLoaded', function(){
+    // Add modal uchun
+    const weightInput = document.querySelector('input[name="weight"]');
+    const costInput = document.querySelector('input[name="cost"]');
+    const totalAmountInput = document.getElementById('total_amount');
+
+    function updateTotal() {
+      const weight = parseFloat(weightInput.value) || 0;
+      const cost = parseFloat(costInput.value) || 0;
+      totalAmountInput.value = calculateTotal(weight, cost);
+    }
+
+    weightInput.addEventListener('input', updateTotal);
+    costInput.addEventListener('input', updateTotal);
+
+    // Edit modal uchun
+    const editWeightInput = document.getElementById('edit_weight');
+    const editCostInput = document.getElementById('edit_cost');
+    const editTotalAmountInput = document.getElementById('edit_total_amount');
+
+    function updateEditTotal() {
+      const weight = parseFloat(editWeightInput.value) || 0;
+      const cost = parseFloat(editCostInput.value) || 0;
+      editTotalAmountInput.value = calculateTotal(weight, cost);
+    }
+
+    editWeightInput.addEventListener('input', updateEditTotal);
+    editCostInput.addEventListener('input', updateEditTotal);
+
     document.querySelectorAll('.edit-btn').forEach(function(btn){
       btn.addEventListener('click', function(){
         document.getElementById('edit_row_id').value = this.dataset.id;
@@ -203,7 +257,11 @@
         document.getElementById('edit_shop_id').value = this.dataset.shop;
         document.getElementById('edit_weight').value = this.dataset.weight;
         document.getElementById('edit_cost').value = this.dataset.cost;
-        // pay oldindan mavjud bo'lmasligi mumkin, foydalanuvchi kiritadi
+        
+        // Jami summani hisoblash
+        const weight = parseFloat(this.dataset.weight) || 0;
+        const cost = parseFloat(this.dataset.cost) || 0;
+        document.getElementById('edit_total_amount').value = calculateTotal(weight, cost);
       });
     });
 

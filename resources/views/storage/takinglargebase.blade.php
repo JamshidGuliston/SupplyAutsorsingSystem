@@ -200,22 +200,35 @@
         <thead>
             <tr>
                 <th scope="col">ID</th>
-                <th scope="col">Izoh</th>
-                <th scope="col">Sabab turi</th>
-                <th scope="col">Shaxs</th>
+                <th scope="col">Faktura raqami</th>
+                <th scope="col">Xaridor</th>
+                <th scope="col">Jami summa</th>
+                <th scope="col">To'langan</th>
+                <th scope="col">Qarz</th>
                 <th scope="col">Sana</th>
-                <th style="width: 40px;">Svod</th>
+                <th scope="col">Sotuvchi</th>
+                <th scope="col">Amallar</th>
             </tr>
         </thead>
         <tbody>
             @foreach($res as $row)
                 <tr>
-                    <td>{{ $row->gid }}</td>
-                    <td><a href="/storage/intakinglargebase/{{ $row->gid }}">{{ $row->title }}</a></td>
-                    <td>{{ $row->outside_name }}</td>
-                    <td>{{ $row->name }}</td>
-                    <td>{{ $days->find($row->day_id)->day_number.'.'.$days->find($row->day_id)->month_name.'.'.$days->find($row->day_id)->year_name}}</td>
-                    <td><a href="#">PDF</a></td>
+                    <td>{{ $row->sale_id }}</td>
+                    <td>{{ $row->invoice_number }}</td>
+                    <td>{{ $row->buyer_shop_name }}</td>
+                    <td>{{ number_format($row->total_amount, 0, ',', ' ') }} so'm</td>
+                    <td>{{ number_format($row->paid_amount, 0, ',', ' ') }} so'm</td>
+                    <td>{{ number_format($row->debt_amount, 0, ',', ' ') }} so'm</td>
+                    <td>{{ $row->day_number.'.'.$row->month_name.'.'.$row->year_name}}</td>
+                    <td>{{ $row->seller_name }}</td>
+                    <td>
+                        <a href="/storage/intakinglargebase/{{ $row->sale_id }}" class="btn btn-sm btn-info">
+                            <i class="fa fa-eye"></i> Maxsulotlar
+                        </a>
+                        <a href="/storage/intakinglargebasepdf/{{ $row->sale_id }}" class="btn btn-sm btn-warning" target="_blank">
+                            <i class="fa fa-file-pdf"></i> PDF
+                        </a>
+                    </td>
                 </tr>
             @endforeach
         </tbody>

@@ -12,7 +12,7 @@
 <style>
 	 @page { margin: 0.2in 0.8in 0in 0.3in; }
 	body{
-		font-family: DejaVu Sans;
+		font-family: 'DejaVu Sans', 'Arial Unicode MS', 'Arial', sans-serif;
 		font-size:12px;
 		/* background-image: url(images/bg.jpg); */
 		background-position: top left;
@@ -21,6 +21,20 @@
 		/* padding: 300px 100px 10px 100px; */
 		width: 45%;
 	}
+	.header {
+            text-align: center;
+            margin-bottom: 30px;
+            border-bottom: 2px solid #333;
+            padding-bottom: 10px;
+        }
+        .header h1 {
+            color: #2c3e50;
+            margin: 0;
+        }
+        .header p {
+            color: #7f8c8d;
+            margin: 0px 0;
+        }
 	table{
 		border-collapse: collapse;
 		border: 2px solid black;
@@ -76,6 +90,10 @@
 <body>
     <div class="container-fluid">
         <div class="row mt-5">
+			<!-- <div class="header">
+				<h1>Qabul qilingan maxsulotlari ro'yxati</h1>
+				<p>Sana: {{ $document[0]['created_at'] }}</p>
+			</div> -->
             <div class="col-md-6">
                 <div class="table" id="table_with_data">
 					<div class="col-md-6">
@@ -91,10 +109,10 @@
                         <tr style="width: 15%;">
                             <th scope="col" style="width: 6%;">TR</th>
                             <th scope="col" style="width: 30%;">Maxsulotlar</th>
-                            <th scope="col" style="width: 15%;">O'lcham</th>
-                            <th scope="col" style="width: 15%;">Miqdori</th>
-                            <th scope="col" style="width: 10%;">Narx</th>
-                            <th scope="col" style="width: 10%;">...</th>
+                            <th scope="col" style="width: 10%;">O'lcham</th>
+                            <th scope="col" style="width: 10%;">Miqdori</th>
+                            <th scope="col" style="width: 10%;">Narx (so'm)</th>
+                            <th scope="col" style="width: 15%;">Jami (so'm)</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -103,22 +121,40 @@
                             $allm = array();
                             $counts = [];
                         ?>
+                        @php $total_sum = 0; @endphp
                         @foreach($document as $row)
+                        @php $total_sum += $row["cost"] * $row["weight"]; @endphp
                         <tr>
                             <th scope="row">{{ $tr++ }}</th>
                             <td>{{ $row["product_name"] }}</td>
 							<td>{{ $row["size_name"] }}</td>
 							<td>{{ $row["weight"] }}</td>
-							<td>{{ $row["cost"] }}</td>
-							<td></td>
+							<td>{{ number_format($row["cost"], 0, ',', ' ') }}</td>
+							<td>{{ number_format($row["cost"] * $row["weight"], 0, ',', ' ') }}</td>
                         </tr>
                         @endforeach
+                        <tr style="border-top: 2px solid black;">
+                            <td colspan="4" style="text-align: right;"><strong>Jami summa:</strong></td>
+                            <td colspan="2" style="text-align: center;"><strong>{{ number_format($total_sum, 0, ',', ' ') }} so'm</strong></td>
+                        </tr>
                     </tbody>
                 </table>
             </div>
             <div class="row" style="margin-top: 15px;">
 				<div class="column">
-					<img src="images/qrmanzil.jpg" alt="QR-code" width="140">
+					@php
+						$qrImagePath = public_path('images/qrmanzil.jpg');
+					@endphp
+					@if(file_exists($qrImagePath))
+						@php
+							$qrImage = base64_encode(file_get_contents($qrImagePath));
+						@endphp
+						<img src="data:image/jpeg;base64,{{ $qrImage }}" alt="QR-code" width="140">
+					@else
+						<div style="width: 140px; height: 140px; border: 1px solid #ddd; display: flex; align-items: center; justify-content: center; background-color: #f8f9fa;">
+							<span style="font-size: 12px; color: #6c757d;">QR kod</span>
+						</div>
+					@endif
 				</div>
 				<div class="column">
 					<p style="text-align: right;"><strong>Қабул қилувчи: </strong> __________________;</p>

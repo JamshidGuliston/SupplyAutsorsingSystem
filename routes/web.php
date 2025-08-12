@@ -101,6 +101,7 @@ Route::group(['prefix' => 'storage', 'middleware' => ['isStorage', 'auth']], fun
     Route::get('editetakinglargebase', [StorageController::class, 'editetakinglargebase'])->name('storage.editetakinglargebase');
     Route::get('deletetakinglargebase', [StorageController::class, 'deletetakinglargebase'])->name('storage.deletetakinglargebase');
     Route::get('intakinglargebase/{id}', [StorageController::class, 'intakinglargebase'])->name('storage.intakinglargebase');
+    Route::get('intakinglargebasepdf/{id}', [StorageController::class, 'intakinglargebasepdf'])->name('storage.intakinglargebasepdf');
     Route::post('addintakinglargebase', [StorageController::class, 'addintakinglargebase'])->name('storage.addintakinglargebase');
     Route::post('deleteintakinglargebase', [StorageController::class, 'deleteintakinglargebase'])->name('storage.deleteintakinglargebase');
     Route::get('takinglargebase', [StorageController::class, 'takinglargebase'])->name('storage.takinglargebase');

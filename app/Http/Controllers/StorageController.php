@@ -691,6 +691,7 @@ class StorageController extends Controller
             $document[$row->product_id]['sort'] = $row->sort;
             $document[$row->product_id]['weight'] = $row->weight;
             $document[$row->product_id]['cost'] = $row->cost;
+            $document[$row->product_id]['created_at'] = $row->created_at;
         }
         usort($document, function ($a, $b){
             if(isset($a["sort"]) and isset($b["sort"])){
@@ -1181,18 +1182,25 @@ class StorageController extends Controller
         $users = User::where('users.role_id', '!=', 6)->get();
         $products = Product::all();
         $shops = Shop::where('type_id', 2)->get();
-        $res = Take_group::select(
-                        'take_groups.id as gid',
-                        'take_groups.title',
-                        'take_groups.day_id',
-                        'take_groups.taker_id',
-                        'outside_products.outside_name',
-                        'users.name',
-                        'take_groups.day_id',
+        
+        // Sale ma'lumotlarini olish
+        $res = Sale::select(
+                        'sales.id as sale_id',
+                        'sales.invoice_number',
+                        'sales.total_amount',
+                        'sales.paid_amount',
+                        'sales.debt_amount',
+                        'sales.created_at',
+                        'shops.shop_name as buyer_shop_name',
+                        'days.day_number',
+                        'days.month_id',
+                        'days.year_id',
+                        'users.name as seller_name'
                     )
-                    ->orderby('take_groups.id', 'DESC')
-                    ->leftjoin('users', 'users.id', '=', 'take_groups.taker_id')
-                    ->leftjoin('outside_products', 'outside_products.id', '=', 'take_groups.outside_id')
+                    ->leftjoin('shops', 'shops.id', '=', 'sales.buyer_shop_id')
+                    ->leftjoin('days', 'days.id', '=', 'sales.day_id')
+                    ->leftjoin('users', 'users.id', '=', 'sales.user_id')
+                    ->orderby('sales.id', 'DESC')
                     ->paginate(10);
 
         return view('storage.takinglargebase', compact('res', 'days', 'users', 'outtypes', 'sales', 'products', 'shops'));
@@ -1220,21 +1228,57 @@ class StorageController extends Controller
         $res = Take_product::select(
                         'take_products.id as tid',
                         'take_products.product_id',
+                        'take_products.sale_id',
                         'products.product_name',
                         'sizes.size_name',
                         'take_products.weight',
                         'take_products.cost',
                     )
-                    ->where('take_products.takegroup_id', $id)
-                    ->join('take_groups', 'take_groups.id', '=', 'take_products.takegroup_id')
+                    ->where('take_products.sale_id', $id)
                     ->join('products', 'products.id', '=', 'take_products.product_id')
                     ->join('sizes', 'sizes.id', '=', 'products.size_name_id')
                     ->orderby('take_products.id', 'DESC')
                     ->get();
-        // dd($res);
-        $products = Product::all();
         
-        return view('storage.intakinglargebase', compact('res', 'products', 'id'));
+        $products = Product::all();
+        $shops = Shop::where('type_id', 2)->get();
+        $days = $this->days();
+        
+        return view('storage.intakinglargebase', compact('res', 'products', 'id', 'shops', 'days'));
+    }
+
+    public function intakinglargebasepdf(Request $request, $id){
+        $res = Take_product::select(
+                        'take_products.id as tid',
+                        'take_products.product_id',
+                        'take_products.sale_id',
+                        'products.product_name',
+                        'sizes.size_name',
+                        'take_products.weight',
+                        'take_products.cost',
+                    )
+                    ->where('take_products.sale_id', $id)
+                    ->join('products', 'products.id', '=', 'take_products.product_id')
+                    ->join('sizes', 'sizes.id', '=', 'products.size_name_id')
+                    ->orderby('take_products.id', 'DESC')
+                    ->get();
+        
+        $products = Product::all();
+        $shops = Shop::where('type_id', 2)->get();
+        $days = $this->days();
+        
+        $dompdf = new Dompdf('UTF-8');
+        $options = new \Dompdf\Options();
+        $options->setIsHtml5ParserEnabled(true);
+        $options->setIsRemoteEnabled(true);
+        $options->setDefaultFont('DejaVu Sans');
+        $dompdf->setOptions($options);
+        
+        $html = mb_convert_encoding(view('pdffile.storage.intakinglargebasepdf', compact('res', 'products', 'id', 'shops', 'days')), 'HTML-ENTITIES', 'UTF-8');
+        $dompdf->loadHtml($html);
+        $dompdf->setPaper('A4');
+        $dompdf->render();
+        $dompdf->stream('sale_products.pdf', ['Attachment' => 0]);
     }
 
     public function addintakinglargebase(Request $request){

@@ -10,6 +10,42 @@
     border-radius: 5px;
     margin-bottom: 10px;
 }
+
+/* Jadval stillari */
+.table-striped tbody tr:nth-of-type(odd) {
+    background-color: rgba(0,0,0,.05);
+}
+
+.table-bordered {
+    border: 1px solid #dee2e6;
+}
+
+.table-dark {
+    background-color: #343a40;
+    color: white;
+}
+
+.table-info {
+    background-color: #d1ecf1;
+}
+
+.text-end {
+    text-align: right !important;
+}
+
+.text-center {
+    text-align: center !important;
+}
+
+/* Modal stillari */
+.modal-lg {
+    max-width: 900px;
+}
+
+.modal-body {
+    max-height: 70vh;
+    overflow-y: auto;
+}
 </style>
 @endsection
 
@@ -30,11 +66,11 @@
                         <th>Maxsulot</th>
                         <th>O'lcham</th>
                         <th>Og'irlik (kg)</th>
-                        <th>Narx</th>
-                        <th>Sotuv ma'lumotlari</th>
-                        <th>Amallar</th>
+                        <th>Narx (so'm/kg)</th>
+                        <th style="text-align: right;">Jami narx (so'm)</th>
                     </tr>
                 </thead>
+                <?php $total_price = 0; ?>
                 <tbody>
                     @foreach($res as $row)
                     <tr>
@@ -42,25 +78,16 @@
                         <td>{{ $row->product_name }}</td>
                         <td>{{ $row->size_name }}</td>
                         <td>{{ $row->weight }}</td>
-                        <td>{{ $row->cost }}</td>
-                        <td>
-                            @if($row->sale_id)
-                                <button class="btn btn-sm btn-info" onclick="viewSaleDetails({{ $row->sale_id }})">
-                                    <i class="fa fa-eye"></i> Sotuv #{{ $row->sale_id }}
-                                </button>
-                            @else
-                                <span class="text-muted">Sotilmagan</span>
-                            @endif
-                        </td>
-                        <td>
-                            @if($row->sale_id)
-                                <button class="btn btn-sm btn-warning" onclick="editSale({{ $row->sale_id }})">
-                                    <i class="fa fa-edit"></i>
-                                </button>
-                            @endif
-                        </td>
+                        <td>{{ number_format($row->cost, 0, ',', ' ') }} so'm</td>
+                        <td style="text-align: right;">{{ number_format($row->cost * $row->weight, 0, ',', ' ') }} so'm</td>
+                        <?php $total_price += $row->cost * $row->weight; ?>
                     </tr>
                     @endforeach
+                    <tr style="border-top: 2px solid #000;">
+                        <td colspan="4" style="text-align: right;"><strong>Umumiy summa:</strong></td>
+                        <td></td>
+                        <td style="text-align: right;"><strong>{{ number_format($total_price, 0, ',', ' ') }} so'm</strong></td>
+                    </tr>
                 </tbody>
             </table>
         </div>
@@ -83,12 +110,23 @@
 </div>
 
 <script>
+// Narxni formatlash funksiyasi
+function formatPrice(price) {
+    return new Intl.NumberFormat('uz-UZ').format(price) + ' so\'m';
+}
+
 // Sale ma'lumotlarini ko'rish
 function viewSaleDetails(saleId) {
     fetch(`/storage/getSaleDetails/${saleId}`)
         .then(response => response.json())
         .then(data => {
             if(data.success) {
+                // Umumiy narxni hisoblash
+                let totalProductPrice = 0;
+                data.products.forEach(product => {
+                    totalProductPrice += product.weight * product.cost;
+                });
+                
                 document.getElementById('saleDetailsContent').innerHTML = `
                     <div class="row">
                         <div class="col-md-6">
@@ -97,33 +135,43 @@ function viewSaleDetails(saleId) {
                             <p><strong>Sana:</strong> ${data.sale.day.day_number}.${data.sale.day.month_name}.${data.sale.day.year_name}</p>
                         </div>
                         <div class="col-md-6">
-                            <p><strong>Jami summa:</strong> ${data.sale.total_amount} so'm</p>
-                            <p><strong>To'langan:</strong> ${data.sale.paid_amount} so'm</p>
-                            <p><strong>Qarz:</strong> ${data.sale.debt_amount} so'm</p>
+                            <p><strong>Jami summa:</strong> ${formatPrice(data.sale.total_amount)}</p>
+                            <p><strong>To'langan:</strong> ${formatPrice(data.sale.paid_amount)}</p>
+                            <p><strong>Qarz:</strong> ${formatPrice(data.sale.debt_amount)}</p>
                         </div>
                     </div>
                     <hr>
                     <h6>Maxsulotlar:</h6>
-                    <table class="table table-sm">
-                        <thead>
-                            <tr>
-                                <th>Maxsulot</th>
-                                <th>Og'irlik</th>
-                                <th>Narx</th>
-                                <th>Jami</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            ${data.products.map(product => `
+                    <div class="table-responsive">
+                        <table class="table table-sm table-striped table-bordered">
+                            <thead class="table-dark">
                                 <tr>
-                                    <td>${product.product.product_name}</td>
-                                    <td>${product.weight} kg</td>
-                                    <td>${product.cost} so'm</td>
-                                    <td>${product.weight * product.cost} so'm</td>
+                                    <th>№</th>
+                                    <th>Maxsulot</th>
+                                    <th>Og'irlik (kg)</th>
+                                    <th>Narx (so'm/kg)</th>
+                                    <th>Jami (so'm)</th>
                                 </tr>
-                            `).join('')}
-                        </tbody>
-                    </table>
+                            </thead>
+                            <tbody>
+                                ${data.products.map((product, index) => `
+                                    <tr>
+                                        <td>${index + 1}</td>
+                                        <td><strong>${product.product.product_name}</strong></td>
+                                        <td class="text-center">${product.weight}</td>
+                                        <td class="text-end">${formatPrice(product.cost)}</td>
+                                        <td class="text-end"><strong>${formatPrice(product.weight * product.cost)}</strong></td>
+                                    </tr>
+                                `).join('')}
+                            </tbody>
+                            <tfoot class="table-info">
+                                <tr>
+                                    <td colspan="4" class="text-end"><strong>Umumiy narx:</strong></td>
+                                    <td class="text-end"><strong>${formatPrice(totalProductPrice)}</strong></td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
                 `;
                 new bootstrap.Modal(document.getElementById('saleDetailsModal')).show();
             }

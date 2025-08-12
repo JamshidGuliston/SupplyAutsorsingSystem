@@ -136,7 +136,12 @@
                 <!-- <form action="/activsecondmenuPDF/{{ $day->id }}/{{ $kindgarden->id }}" method="get"> -->
                     <p><b>Haqiqiy Menyu: </b>sana: {{ $day->day_number.".".$day->month_name.".".$day->year_name }}</p>
                     <p><i>Eslatma: menyu har kuni soat 10 dan keyin yangilanadi</i></p>
-                    <a href="/activsecondmenuPDF/{{ $day->id }}/{{ $kindgarden->id }}" class="btn btn-success" style="width: 100%;" download>Menyu</a>
+                    <a href="/activsecondmenuPDF/{{ $day->id }}/{{ $kindgarden->id }}" 
+                        class="btn btn-success d-flex align-items-center justify-content-center gap-2" 
+                        style="width: 100%;" 
+                        download>
+                            <i class="fas fa-download"></i> Haqiqiy Menyu
+                    </a>
                 <!-- </form> -->
             </div>
         </div>
@@ -147,7 +152,12 @@
             <div class="p-3 bg-white shadow-sm align-items-center rounded">
                 <!-- <form action="/nextdaysecondmenuPDF/{{ $kindgarden->id }}" method="get" download> -->
                     <p><b>Taxminiy menyu: </b></p>
-                    <a href="/nextdaysecondmenuPDF/{{ $kindgarden->id }}" class="btn btn-success" style="width: 100%;" download>Menyu</a>
+                    <a href="/nextdaysecondmenuPDF/{{ $kindgarden->id }}" 
+                        class="btn btn-primary d-flex align-items-center justify-content-center gap-2 mt-2" 
+                        style="width: 100%;" 
+                        download>
+                            <i class="fas fa-download"></i> Taxminiy Menyu
+                    </a>
                 <!-- </form> -->
                 @if($bool->count() == 0)
                 <!-- <form action="#" method="get"> -->
@@ -158,7 +168,12 @@
                 @endif
                 <p></p>
                 <p><b>Nakladnoy, non va sud maxsulotlari </b></p>
-                <a href="/nextdaysomenakladnoyPDF/{{ $kindgarden->id }}" class="btn btn-success" style="width: 100%;" download>Nakladnoy</a>
+                <a href="/nextdaysomenakladnoyPDF/{{ $kindgarden->id }}" 
+                    class="btn btn-warning d-flex align-items-center justify-content-center gap-2 mt-2" 
+                    style="width: 100%;" 
+                    download>
+                        <i class="fas fa-file-invoice"></i> Nakladnoy
+                </a>
             </div>
         </div>
     </div>

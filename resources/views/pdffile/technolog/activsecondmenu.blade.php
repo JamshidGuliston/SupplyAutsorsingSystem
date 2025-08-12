@@ -408,9 +408,12 @@
                       </table>
                 </div>
 				<div class="row" style="margin-top: 15px;">
-					@if($menu[0][0]['kingar_name_id'] != 35)
 						<div class="column">
-							<img src="images/qrmanzil.jpg" alt="QR-code" width="140">
+						@php
+							$qrImage = base64_encode(file_get_contents(public_path('images/qrmanzil.jpg')));
+						@endphp
+						<img src="data:image/jpeg;base64,{{ $qrImage }}" 
+							style="width:120; position:absolute; left:10px;">
 						</div>
 						<div class="column">
 							<p style="text-align: center;"><strong> Бош ошпаз:</strong> __________________;</p>
@@ -418,14 +421,6 @@
 						<div class="column">
 							<p style="text-align: right;"><strong>ДМТТ директори: </strong> __________________;</p>
 						</div>
-					@else
-						<div class="tabassumfooter">
-							<p style="text-align: center;"><strong> Директор:</strong> __________________;</p>
-						</div>
-						<div class="tabassumfooter">
-							<p style="text-align: center;"><strong> Бош ошпаз:</strong> __________________;</p>
-						</div>
-					@endif
 				</div>
             </div>
         </div>

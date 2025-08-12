@@ -446,7 +446,7 @@
                             </select>
                         </div>
                         <div class="col-md-3">
-                            <span class="input-income">Оғирлиги ёки Дона:</span>
+                            <span class="input-income">Бирлик:</span>
                             <br>
                             <input id="input-expense-bar" class="form-control" type="text" onkeypress="javascript:return isNumber(event)" placeholder="kg yoki ta">        
                         </div>
@@ -458,7 +458,7 @@
                         <div class="col-md-3">
                             <span class="input-expense">Berilgan summa:</span>
                             <br>
-                            <input id="input-summa-bar" class="form-control" type="number">
+                            <input id="input-summa-bar" class="form-control" type="number" value="0" disabled>
                         </div>
                         <div class="col-md-3">
                             <i id="add-item" style="margin-top: 35px; cursor: pointer" class="icon fas fa-plus" aria-hidden="false"></i>
