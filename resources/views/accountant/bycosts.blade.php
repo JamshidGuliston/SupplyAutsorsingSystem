@@ -263,6 +263,15 @@
                 </div>
                 <div class="modal-body">
                     <div class="mb-3">
+                        <label for="age_range_id" class="form-label">Yosh guruhi</label>
+                        <select class="form-select" id="age_range_id" name="age_range_id" required>
+                            <option value="">Yosh guruhini tanlang</option>
+                            @foreach($age_ranges as $age_range)
+                                <option value="{{ $age_range->id }}">{{ $age_range->age_name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="mb-3">
                         <label for="eater_cost" class="form-label">Ovqatlanish narxi</label>
                         <input type="number" step="0.01" class="form-control" id="eater_cost" name="eater_cost" required>
                     </div>
@@ -438,6 +447,7 @@
                 <thead>
                     <tr>
                         <th>ID</th>
+                        <th>Yosh guruhi</th>
                         <th>Ovqatlanish narxi</th>
                         <th>Boshlanish sanasi</th>
                         <th>Tugash sanasi</th>
@@ -453,6 +463,7 @@
                         @foreach($protsents as $protsent)
                         <tr>
                             <td>{{ $protsent->id }}</td>
+                            <td>{{ $protsent->ageRange ? $protsent->ageRange->age_name : '-' }}</td>
                             <td>{{ number_format($protsent->eater_cost, 0, '.', ' ') ?? '-' }} so'm</td>
                             <td>{{ $protsent->start_date ? $protsent->start_date->format('d.m.Y') : '-'}}</td>
                             <td>{{ $protsent->end_date ? $protsent->end_date->format('d.m.Y') : '-'}}</td>
@@ -474,7 +485,7 @@
                         @endforeach
                     @else
                         <tr>
-                            <td colspan="9" class="text-center">Ma'lumotlar topilmadi</td>
+                            <td colspan="10" class="text-center">Ma'lumotlar topilmadi</td>
                         </tr>
                     @endif
                 </tbody>

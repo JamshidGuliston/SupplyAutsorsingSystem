@@ -35,7 +35,7 @@ use App\Models\plus_multi_storage;
 use App\Models\Take_small_base;
 use App\Models\Product;
 use App\Models\Product_category;
-use App\Models\Protsents;
+use App\Models\Protsent;
 use App\Models\Groupweight;
 use App\Models\Weightproduct;
 use App\Models\Season;
@@ -883,12 +883,16 @@ class TestController extends Controller
 		$workerproducts = [];
 		$region_id = Kindgarden::where('id', $gid)->first()->region_id;
 		// kamchilik bor boshlangich qiymat berishda
-		$costs = bycosts::where('day_id', bycosts::where('day_id', '<=', $today)->where('region_name_id', Kindgarden::where('id', $gid)->first()->region_id)->orderBy('day_id', 'DESC')->first()->day_id)->where('region_name_id', $region_id)->orderBy('day_id', 'DESC')->get();
-		$narx = [];
+		$foundday = bycosts::where('day_id', '<=', $today)->where('region_name_id', Kindgarden::where('id', $gid)->first()->region_id)->orderBy('day_id', 'DESC')->first();
+		// dd($foundday);
+		$narx = array_fill(1, 500, 0);
+		if(empty($foundday)){
+			$costs = [];
+		}else{
+			$costs = bycosts::where('day_id', $foundday->day_id)->where('region_name_id', $region_id)->orderBy('day_id', 'DESC')->get();
+		}
 		foreach($costs as $row){
-			if(!isset($narx[$row->praduct_name_id])){
-				$narx[$row->praduct_name_id] = $row->price_cost;
-			}
+			$narx[$row->praduct_name_id] = $row->price_cost;
 		}
 		$workerproducts = array_fill(1, 500, 0);
 		$productallcount = array_fill(1, 500, 0);
@@ -929,7 +933,7 @@ class TestController extends Controller
 				->join('months', 'months.id', '=', 'days.month_id')
 				->join('years', 'years.id', '=', 'days.year_id')
 				->orderBy('days.id', 'DESC')
-				->first(['days.day_number','days.id as id', 'months.month_name', 'years.year_name']);
+				->first(['days.day_number','days.id as id', 'months.month_name', 'months.id as month_id', 'years.year_name']);
 			// dd($day);
 			$workerfood = titlemenu_food::where('day_id', ($today-1))
 						->where('worker_age_id', $age->id)
@@ -983,11 +987,22 @@ class TestController extends Controller
 			}
 		}
 		// % nds ustama
-		$protsent = Protsents::where('region_id', $region_id)->where('month_id', Day::where('id', $today)->first()->month_id)->first();
-		if(empty($protsent->nds)){
-			$protsent['raise'] = 0;
-			$protsent['nds'] = 0;
+		$dateString = sprintf(
+			'%04d-%02d-%02d',
+			$day->year_name,
+			($day->month_id % 12),
+			$day->day_number
+		);
+		
+		$protsent = Protsent::where('region_id', $region_id)->where('start_date', '<=', $dateString)->where('end_date', '>=', $dateString)->first();
+		
+		if(!$protsent){
+			$protsent = new Protsent();
+			$protsent->eater_cost = 0;
+			$protsent->raise = 0;
+			$protsent->nds = 0;
 		}
+
         $dompdf = new Dompdf('UTF-8');
 		$html = mb_convert_encoding(view('pdffile.technolog.activsecondmenu', ['narx' => $narx,'day' => $day, 'agesumm' => $allproductagesumm, 'productallcount' => $productallcount, 'workerproducts' => $workerproducts,'menu' => $menuage, 'menuitem' => $nextdaymenuitem, 'products' => $products, 'workerfood' => $workerfood, 'protsent' => $protsent]), 'HTML-ENTITIES', 'UTF-8');
 		$dompdf->loadHtml($html);

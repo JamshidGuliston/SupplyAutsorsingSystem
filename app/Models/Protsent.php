@@ -11,6 +11,7 @@ class Protsent extends Model
     
     protected $fillable = [
         'region_id',
+        'age_range_id',
         'eater_cost',
         'start_date',
         'end_date',
@@ -18,6 +19,14 @@ class Protsent extends Model
         'raise',
         'protsent'
     ];
+
+    /**
+     * Get the age range that owns the protsent.
+     */
+    public function ageRange()
+    {
+        return $this->belongsTo(Age_range::class, 'age_range_id');
+    }
 
     protected $casts = [
         'start_date' => 'date',

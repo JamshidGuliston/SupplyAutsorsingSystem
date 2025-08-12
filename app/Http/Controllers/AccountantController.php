@@ -114,7 +114,10 @@ class AccountantController extends Controller
                     ->orderBy('start_date', 'DESC')
                     ->get();
         
-        return view('accountant.bycosts', compact('region', 'minusproducts', 'costs', 'productall', 'id', 'days', 'protsents'));
+        // Age ranges ma'lumotlarini yuklash
+        $age_ranges = \App\Models\Age_range::all();
+        
+        return view('accountant.bycosts', compact('region', 'minusproducts', 'costs', 'productall', 'id', 'days', 'protsents', 'age_ranges'));
     }
 
     public function pluscosts(Request $request){
@@ -1611,6 +1614,7 @@ class AccountantController extends Controller
     public function addprotsent(Request $request){
         $request->validate([
             'region_id' => 'required|integer',
+            'age_range_id' => 'required|integer|exists:age_ranges,id',
             'eater_cost' => 'required|numeric|min:0',
             'start_date' => 'required|date',
             'end_date' => 'required|date|after_or_equal:start_date',
@@ -1627,9 +1631,21 @@ class AccountantController extends Controller
 
     public function getprotsent($id){
         $protsent = \App\Models\Protsent::findOrFail($id);
+        $age_ranges = \App\Models\Age_range::all();
         
         $html = '
             <input type="hidden" name="protsent_id" value="'.$protsent->id.'">
+            <div class="mb-3">
+                <label for="edit_age_range_id" class="form-label">Yosh guruhi</label>
+                <select class="form-select" id="edit_age_range_id" name="age_range_id" required>';
+        
+        foreach($age_ranges as $age_range) {
+            $selected = ($age_range->id == $protsent->age_range_id) ? 'selected' : '';
+            $html .= '<option value="'.$age_range->id.'" '.$selected.'>'.$age_range->age_name.'</option>';
+        }
+        
+        $html .= '</select>
+            </div>
             <div class="mb-3">
                 <label for="edit_eater_cost" class="form-label">Ovqatlanish narxi</label>
                 <input type="number" step="0.01" class="form-control" id="edit_eater_cost" name="eater_cost" value="'.$protsent->eater_cost.'" required>
@@ -1666,6 +1682,7 @@ class AccountantController extends Controller
     public function editprotsent(Request $request){
         $request->validate([
             'protsent_id' => 'required|integer|exists:protsents,id',
+            'age_range_id' => 'required|integer|exists:age_ranges,id',
             'eater_cost' => 'required|numeric|min:0',
             'start_date' => 'required|date',
             'end_date' => 'required|date|after_or_equal:start_date',

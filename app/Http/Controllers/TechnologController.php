@@ -35,6 +35,8 @@ use App\Models\order_product_structure;
 use App\Models\plus_multi_storage;
 use App\Models\Product;
 use App\Models\Product_category;
+use App\Models\Outside_product;
+use App\Models\Sale;
 use App\Models\Season;
 use App\Models\Shop;
 use App\Models\Take_group;
