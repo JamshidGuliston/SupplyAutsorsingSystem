@@ -18,7 +18,6 @@ class Sale extends Model
         'invoice_number',
         'total_amount',
         'paid_amount',
-        'debt_amount',
         'image',
         'status',
         'notes'

@@ -58,6 +58,26 @@
     </div>
 </div>
 
+<!-- Delete Sale Modal -->
+<div class="modal fade" id="deleteSaleModal" tabindex="-1" aria-labelledby="deleteSaleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-danger">
+                <h5 class="modal-title text-white" id="deleteSaleModalLabel">Sotuvni o'chirish</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>Ushbu sotuvni o'chirishni xohlaysizmi?</p>
+                <p><strong>Eslatma:</strong> Bu amal bilan bog'liq barcha ma'lumotlar (Qarzdorlik, maxsulotlar) ham o'chiriladi.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Bekor</button>
+                <button type="button" class="btn btn-danger" id="confirmDeleteSale">O'chirish</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <!-- AddModal -->
 <div class="modal editesmodal" id="addModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog">
@@ -130,10 +150,11 @@
                                 </select>
                             </div>
                             <div class="col-md-3">
-                                <input type="number" class="form-control mb-2" name="total_amount" placeholder="Jami summa" required>
+                                <input type="number" class="form-control mb-2" name="total_amount" id="total_amount" placeholder="Jami summa" required>
+                                <div id="total_display" class="form-text text-muted"></div>
                             </div>
                             <div class="col-md-3">
-                                <input type="number" class="form-control mb-2" name="paid_amount" placeholder="To'langan summa" value="0">
+                                <input type="number" class="form-control mb-2" name="paid_amount" placeholder="To'langan summa" value="0" disabled>
                             </div>
                         </div>
                         <div class="row">
@@ -205,6 +226,7 @@
                 <th scope="col">Jami summa</th>
                 <th scope="col">To'langan</th>
                 <th scope="col">Qarz</th>
+                <th scope="col">Status</th>
                 <th scope="col">Sana</th>
                 <th scope="col">Sotuvchi</th>
                 <th scope="col">Amallar</th>
@@ -219,6 +241,17 @@
                     <td>{{ number_format($row->total_amount, 0, ',', ' ') }} so'm</td>
                     <td>{{ number_format($row->paid_amount, 0, ',', ' ') }} so'm</td>
                     <td>{{ number_format($row->debt_amount, 0, ',', ' ') }} so'm</td>
+                    <td>
+                        @if($row->status == 'pending')
+                            <span class="badge bg-warning">Yaratildi</span>
+                        @elseif($row->status == 'paid')
+                            <span class="badge bg-success">To'langan</span>
+                        @elseif($row->status == 'partial')
+                            <span class="badge bg-danger">Qisman to'langan</span>
+                        @else
+                            <span class="badge bg-secondary">{{ $row->status }}</span>
+                        @endif
+                    </td>
                     <td>{{ $row->day_number.'.'.$row->month_name.'.'.$row->year_name}}</td>
                     <td>{{ $row->seller_name }}</td>
                     <td>
@@ -228,6 +261,11 @@
                         <a href="/storage/intakinglargebasepdf/{{ $row->sale_id }}" class="btn btn-sm btn-warning" target="_blank">
                             <i class="fa fa-file-pdf"></i> PDF
                         </a>
+                        @if($row->status == 'pending')
+                            <button class="btn btn-sm btn-danger delete-sale-btn" data-sale-id="{{ $row->sale_id }}">
+                                <i class="fa fa-trash"></i> O'chirish
+                            </button>
+                        @endif
                     </td>
                 </tr>
             @endforeach
@@ -254,6 +292,24 @@ let productCounter = 0;
 
 // Modal ochilganda birinchi maxsulot qatorini qo'shish
 document.getElementById('saleModal').addEventListener('show.bs.modal', function () {
+    // Modal ochilganda maxsulotlar konteynerini tozalash
+    document.getElementById('productsContainer').innerHTML = '';
+    productCounter = 0;
+    
+    // Jami summa maydonini qayta o'rnatish
+    const totalAmountField = document.getElementById('total_amount');
+    totalAmountField.value = '';
+    totalAmountField.disabled = false;
+    totalAmountField.placeholder = "Admin to'ldirishi kerak";
+    
+    // Checkbox va tugma holatini qayta o'rnatish
+    document.getElementById('confirmationCheckbox').checked = false;
+    document.getElementById('submitBtn').disabled = true;
+    
+    // Ko'rsatish maydonini tozalash
+    document.getElementById('total_display').textContent = '';
+    
+    // Birinchi maxsulot qatorini qo'shish (bu avtomatik disabled qiladi)
     addProductRow();
 });
 
@@ -279,34 +335,186 @@ function addProductRow() {
                 </select>
             </div>
             <div class="col-md-2">
-                <input type="number" step="0.001" class="form-control mb-2" name="products[${productCounter}][weight]" placeholder="Og'irlik (kg)" required>
+                <input type="number" step="0.001" class="form-control mb-2 product-weight" name="products[${productCounter}][weight]" placeholder="Og'irlik (kg)" required onchange="calculateTotal()" oninput="calculateTotal()">
             </div>
             <div class="col-md-2">
-                <input type="number" class="form-control mb-2" name="products[${productCounter}][cost]" placeholder="Narx" required>
+                <input type="number" class="form-control mb-2 product-cost" name="products[${productCounter}][cost]" placeholder="Narx" required onchange="calculateTotal()" oninput="calculateTotal()" onblur="formatCostInput(this)">
             </div>
         </div>
     `;
     
     container.appendChild(productRow);
+    
+    // Jami summani yangilash va ko'rsatish
+    const total = calculateTotal();
+    updateTotalDisplay(total);
+    
+    // Tugma holatini yangilash
+    const submitBtn = document.getElementById('submitBtn');
+    const checkbox = document.getElementById('confirmationCheckbox');
+    submitBtn.disabled = !checkbox.checked || total <= 0;
 }
 
 // Maxsulot qatorini o'chirish
 function removeProductRow(element) {
     if (document.querySelectorAll('.product-row').length > 0) {
         element.closest('.product-row').remove();
+        
+        // Jami summani yangilash va ko'rsatish
+        const total = calculateTotal();
+        updateTotalDisplay(total);
+        
+        // Tugma holatini yangilash
+        const submitBtn = document.getElementById('submitBtn');
+        const checkbox = document.getElementById('confirmationCheckbox');
+        submitBtn.disabled = !checkbox.checked || total <= 0;
+        
+        // Agar maxsulotlar qolmagan bo'lsa, jami summa maydonini enabled qilish
+        const remainingProducts = document.querySelectorAll('.product-row');
+        if (remainingProducts.length === 0) {
+            const totalAmountField = document.getElementById('total_amount');
+            totalAmountField.value = '';
+            totalAmountField.disabled = false;
+            totalAmountField.placeholder = "Summani to'ldiring";
+        }
+    }
+}
+
+// Narxni formatlash funksiyasi
+function formatPrice(price) {
+    return new Intl.NumberFormat('uz-UZ').format(price) + ' so\'m';
+}
+
+// Jami summani hisoblash
+function calculateTotal() {
+    let total = 0;
+    const weights = document.querySelectorAll('.product-weight');
+    const costs = document.querySelectorAll('.product-cost');
+    
+    for (let i = 0; i < weights.length; i++) {
+        const weight = parseFloat(weights[i].value) || 0;
+        const cost = parseFloat(costs[i].value) || 0;
+        total += weight * cost;
+    }
+    
+    // Jami summa input maydonini yangilash
+    const totalAmountField = document.getElementById('total_amount');
+    const productRows = document.querySelectorAll('.product-row');
+    
+    if (productRows.length > 0) {
+        totalAmountField.value = total;
+        totalAmountField.disabled = true;
+        totalAmountField.placeholder = "Avtomatik hisoblanadi";
+    } else {
+        // Maxsulotlar yo'q, admin to'ldirishi mumkin
+        totalAmountField.disabled = false;
+        totalAmountField.placeholder = "Admin to'ldirishi kerak";
+    }
+    
+    return total;
+}
+
+// Jami summa maydonini yangilash
+function updateTotalAmountField() {
+    const totalAmountField = document.getElementById('total_amount');
+    const productRows = document.querySelectorAll('.product-row');
+    const submitBtn = document.getElementById('submitBtn');
+    const checkbox = document.getElementById('confirmationCheckbox');
+    
+    let total = 0;
+    
+    if (productRows.length === 0) {
+        // Maxsulotlar yo'q, admin to'ldirishi mumkin
+        totalAmountField.disabled = false;
+        totalAmountField.placeholder = "Admin to'ldirishi kerak";
+        total = parseFloat(totalAmountField.value) || 0;
+    } else {
+        // Maxsulotlar bor, avtomatik hisoblanadi
+        total = calculateTotal();
+        totalAmountField.value = total;
+        totalAmountField.disabled = true;
+        totalAmountField.placeholder = "Avtomatik hisoblanadi";
+    }
+    
+    // Tugma holatini yangilash
+    const totalAmount = parseFloat(totalAmountField.value) || 0;
+    submitBtn.disabled = !checkbox.checked || totalAmount <= 0;
+    
+    // Jami summa ko'rsatish maydonini yangilash
+    updateTotalDisplay(total);
+}
+
+// Jami summa ko'rsatish maydonini yangilash
+function updateTotalDisplay(total) {
+    const displayElement = document.getElementById('total_display');
+    if (total > 0) {
+        displayElement.textContent = formatPrice(total);
+        displayElement.style.color = '#198754'; // Yashil rang
+    } else {
+        displayElement.textContent = '';
+    }
+}
+
+// Narx maydonini formatlash
+function formatCostInput(input) {
+    const value = parseFloat(input.value) || 0;
+    if (value > 0) {
+        // Formatlash uchun placeholder yoki title sifatida ko'rsatish
+        const formattedValue = new Intl.NumberFormat('uz-UZ').format(value);
+        
+        // Input maydoniga title qo'shish
+        input.title = formattedValue + ' so\'m';
+        
+        // Yoki input maydonining yonida formatlash ko'rsatish
+        let displayElement = input.parentNode.querySelector('.cost-display');
+        if (!displayElement) {
+            displayElement = document.createElement('small');
+            displayElement.className = 'cost-display text-muted';
+            displayElement.style.fontSize = '12px';
+            input.parentNode.appendChild(displayElement);
+        }
+        displayElement.textContent = formattedValue + ' so\'m';
     }
 }
 
 // Checkbox holatini tekshirish
 document.getElementById('confirmationCheckbox').addEventListener('change', function() {
     const submitBtn = document.getElementById('submitBtn');
-    submitBtn.disabled = !this.checked;
+    const totalAmount = parseFloat(document.getElementById('total_amount').value) || 0;
+    
+    // Checkbox belgilangan va jami summa 0 dan katta bo'lsa
+    submitBtn.disabled = !this.checked || totalAmount <= 0;
+});
+
+// Jami summa o'zgarganda tugma holatini tekshirish
+document.getElementById('total_amount').addEventListener('input', function() {
+    const submitBtn = document.getElementById('submitBtn');
+    const checkbox = document.getElementById('confirmationCheckbox');
+    const totalAmount = parseFloat(this.value) || 0;
+    
+    // Checkbox belgilangan va jami summa 0 dan katta bo'lsa
+    submitBtn.disabled = !checkbox.checked || totalAmount <= 0;
+    
+    // Jami summa ko'rsatish maydonini yangilash
+    updateTotalDisplay(totalAmount);
+});
+
+// Maxsulot maydonlari o'zgarganda jami summani yangilash
+document.addEventListener('input', function(e) {
+    if (e.target.classList.contains('product-weight') || e.target.classList.contains('product-cost')) {
+        const total = calculateTotal();
+        updateTotalDisplay(total);
+        
+        // Tugma holatini yangilash
+        const submitBtn = document.getElementById('submitBtn');
+        const checkbox = document.getElementById('confirmationCheckbox');
+        submitBtn.disabled = !checkbox.checked || total <= 0;
+    }
 });
 
 // Form yuborish
 document.getElementById('saleForm').addEventListener('submit', function(e) {
     e.preventDefault();
-    
     // Checkbox tekshirish
     if (!document.getElementById('confirmationCheckbox').checked) {
         alert('Iltimos, tasdiqlash chekboxini belgilang!');
@@ -320,7 +528,10 @@ document.getElementById('saleForm').addEventListener('submit', function(e) {
     document.querySelectorAll('.product-row').forEach((row, index) => {
         const productId = row.querySelector('select[name*="[product_id]"]').value;
         const weight = row.querySelector('input[name*="[weight]"]').value;
-        const cost = row.querySelector('input[name*="[cost]"]').value;
+        const costInput = row.querySelector('input[name*="[cost]"]');
+        
+        // Narx qiymatini olish
+        const cost = costInput.value;
         
         if (productId && weight && cost) {
             products.push({
@@ -331,18 +542,26 @@ document.getElementById('saleForm').addEventListener('submit', function(e) {
         }
     });
     
+    // Jami summa va to'langan summani to'g'ri olish
+    const totalAmountField = document.getElementById('total_amount');
+    const paidAmountField = document.querySelector('input[name="paid_amount"]');
+    
+    // Qiymatlarni to'g'ri olish (disabled bo'lsa ham)
+    const totalAmount = totalAmountField.value || '0';
+    const paidAmount = paidAmountField.value || '0';
+    
     // Form ma'lumotlarini tayyorlash
     const formDataObj = {
         buyer_shop_id: formData.get('buyer_shop_id'),
         day_id: formData.get('day_id'),
-        total_amount: formData.get('total_amount'),
-        paid_amount: formData.get('paid_amount'),
+        total_amount: totalAmount,
+        paid_amount: paidAmount,
         notes: formData.get('notes'),
-        user_id: formData.get('user_id'),
+        // user_id: formData.get('user_id'),
         outid: formData.get('outid'),
         products: products
     };
-    
+    // alert(JSON.stringify(formDataObj));
     fetch('/storage/createSaleWithTakeGroup', {
         method: 'POST',
         headers: {
@@ -355,6 +574,9 @@ document.getElementById('saleForm').addEventListener('submit', function(e) {
     .then(data => {
         if(data.success) {
             alert('Muvaffaqiyatli saqlandi!');
+            location.reload();
+        }else{
+            alert(data.message);
             location.reload();
         }
     })
@@ -370,6 +592,43 @@ $(document).ready(function() {
         var gid = $(this).attr('data-group-id');
         var div = $('.grouptitle');
         div.html("<h3><b>"+title+"</b> maxsulotini o'chirish.</h3><input type='hidden' name='gid' value="+gid+">");
+    });
+    
+    // Sale o'chirish
+    let saleIdToDelete = null;
+    
+    $('.delete-sale-btn').click(function() {
+        saleIdToDelete = $(this).data('sale-id');
+        $('#deleteSaleModal').modal('show');
+    });
+    
+    $('#confirmDeleteSale').click(function() {
+        if (saleIdToDelete) {
+            fetch('/storage/deleteSale', {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    sale_id: saleIdToDelete
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if(data.success) {
+                    alert('Sotuv muvaffaqiyatli o\'chirildi!');
+                    location.reload();
+                } else {
+                    alert(data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Xatolik yuz berdi!');
+            });
+        }
+        $('#deleteSaleModal').modal('hide');
     });
 });
 

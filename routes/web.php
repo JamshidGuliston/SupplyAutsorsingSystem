@@ -123,6 +123,9 @@ Route::group(['prefix' => 'storage', 'middleware' => ['isStorage', 'auth']], fun
     Route::get('payment_history', [StorageController::class, 'paymentHistory'])->name('storage.payment_history');
     Route::post('delete_payment', [StorageController::class, 'deletePayment'])->name('storage.delete_payment');
     Route::post('createSaleWithTakeGroup', [StorageController::class, 'createSaleWithTakeGroup'])->name('storage.createSaleWithTakeGroup');
+    Route::post('deleteSale', [StorageController::class, 'deleteSale'])->name('storage.deleteSale');
+    Route::post('createSalePayment', [StorageController::class, 'createSalePayment'])->name('storage.createSalePayment');
+    Route::get('getShopSales/{shopId}', [StorageController::class, 'getShopSales'])->name('storage.getShopSales');
 });
 
 Route::group(['prefix' => 'technolog', 'middleware' => ['isTechnolog', 'auth']], function () {

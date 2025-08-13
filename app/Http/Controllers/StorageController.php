@@ -88,6 +88,7 @@ class StorageController extends Controller
         }
         $dayes = Day::orderby('id', 'DESC')->get();
         $month_days = $this->activmonth($il);
+        // kirim bo'lgan maxsulotlar
         $addlarch = Add_large_werehouse::where('add_groups.day_id', '>=', $month_days->first()->id)
                     ->where('add_groups.day_id', '<=', $month_days->last()->id)
                     ->join('add_groups', 'add_groups.id', '=', 'add_large_werehouses.add_group_id')
@@ -109,7 +110,7 @@ class StorageController extends Controller
             $alladd[$row->product_id]['weight'] += $row->weight; 
         }
 
-
+        // chiqim bo'lgan maxsulotlar
         $minuslarch = order_product_structure::where('order_products.day_id', '>=', $month_days->first()->id)
                     ->where('order_products.day_id', '<=', $month_days->last()->id)
                     ->join('order_products', 'order_products.id', '=', 'order_product_structures.order_product_name_id')
@@ -126,6 +127,25 @@ class StorageController extends Controller
                 $alladd[$row->product_name_id]['p_sort'] = $row->sort;
             }
             $alladd[$row->product_name_id]['minusweight'] += $row->product_weight;
+        }
+
+        // sotuv bo'lgan maxsulotlar
+        $sales = Sale::where('day_id', '>=', $month_days->first()->id)
+                    ->where('day_id', '<=', $month_days->last()->id)
+                    ->join('take_products', 'take_products.sale_id', '=', 'sales.id')
+                    ->join('products', 'products.id', '=', 'take_products.product_id')
+                    ->join('sizes', 'sizes.id', '=', 'products.size_name_id')
+                    ->get();
+        // dd($sales);
+        foreach($sales as $row){
+            if(!isset($alladd[$row->product_id])){
+                $alladd[$row->product_id]['weight'] = 0;
+                $alladd[$row->product_id]['minusweight'] = 0;
+                $alladd[$row->product_id]['p_name'] = $row->product_name;
+                $alladd[$row->product_id]['size_name'] = $row->size_name;
+                $alladd[$row->product_id]['p_sort'] = $row->sort;
+            }
+            $alladd[$row->product_id]['minusweight'] += $row->weight;
         }
 
         usort($alladd, function ($a, $b){
@@ -1017,32 +1037,33 @@ class StorageController extends Controller
             'shop_id' => $request->catid,
             'day_id' => $request->dayid,
             'total_amount' => $request->cash_amount + $request->card_amount + $request->transfer_amount,
-            'cash_amount' => $request->cash_amount, // Yoki alohida kiritish mumkin
+            'cash_amount' => $request->cash_amount,
             'card_amount' => $request->card_amount,
             'transfer_amount' => $request->transfer_amount,
             'paid_to_debts' => 0,
             'excess_amount' => 0,
+            'payment_type' => 'storage', // Kirim to'lovi
             'image' => $request->image ?? null,
-            'description' => $request->description ?? 'To\'lov'
+            'description' => $request->description ?? 'Kirim to\'lovi'
         ]);
         
-        // Firma bo'yicha barcha mavjud qarzlarni topish (faqat kun bilan cheklamasdan)
+        // Firma bo'yicha barcha mavjud qarzlarni topish (storage qarzlari)
         $existingDebts = debts::where('shop_id', $request->catid)
             ->where('loan', '>', 0)
-            ->orderBy('day_id', 'asc') // Avval eski kunlardagi qarzlarni to'lab chiqish
+            ->where('debt_type', 'storage')
+            ->orderBy('day_id', 'asc')
             ->get();
         
-        $remainingAmount = $request->cash_amount + $request->card_amount + $request->transfer_amount; // To'lanayotgan pul miqdori
-        $excessAmount = 0; // Ortiqcha pul
-        $totalPaidToDebts = 0; // Qarzlarni yopish uchun sarflangan pul
+        $remainingAmount = $request->cash_amount + $request->card_amount + $request->transfer_amount;
+        $excessAmount = 0;
+        $totalPaidToDebts = 0;
         
         // Mavjud qarzlarni to'lab chiqish
         foreach($existingDebts as $debt) {
             if($remainingAmount > 0) {
-                $debtAmount = $debt->loan; // Qarz miqdori
+                $debtAmount = $debt->loan;
                 
                 if($remainingAmount >= $debtAmount) {
-                    // To'liq qarz to'lanadi
                     $debt->update([
                         'pay' => $debt->pay + $debtAmount,
                         'loan' => 0,
@@ -1051,7 +1072,6 @@ class StorageController extends Controller
                     $remainingAmount -= $debtAmount;
                     $totalPaidToDebts += $debtAmount;
                 } else {
-                    // Qisman qarz to'lanadi
                     $debt->update([
                         'pay' => $debt->pay + $remainingAmount,
                         'loan' => $debtAmount - $remainingAmount,
@@ -1063,7 +1083,7 @@ class StorageController extends Controller
             }
         }
         
-        // Agar ortiqcha pul qolsa, uni hisloan ustuniga qo'shish
+        // Agar ortiqcha pul qolsa
         if($remainingAmount > 0) {
             $excessAmount = $remainingAmount;
         }
@@ -1073,20 +1093,181 @@ class StorageController extends Controller
             'excess_amount' => $excessAmount
         ]);
         
-        // Yangi to'lov yozuvini yaratish - faqat ortiqcha pul uchun
+        // Ortiqcha pul uchun yangi qarz yozuvi
         if($excessAmount > 0) {
             debts::create([
                 'shop_id' => $request->catid,
                 'day_id' => $request->dayid,
-                'pay' => $excessAmount, // Faqat ortiqcha pul
+                'pay' => $excessAmount,
                 'loan' => 0,
                 'hisloan' => $excessAmount,
+                'debt_type' => 'storage',
                 'row_id' => 0,
                 'payment_id' => $payment->id
             ]);
         }
 
-        return redirect()->route('storage.debts');
+        return redirect()->route('storage.payment_history');
+    }
+
+    public function createSalePayment(Request $request){
+        // validation
+        $request->validate([
+            'shop_id' => 'required|exists:shops,id',
+            'day_id' => 'required|exists:days,id',
+            'cash_amount' => 'required|numeric|min:0',
+            'card_amount' => 'required|numeric|min:0',
+            'transfer_amount' => 'required|numeric|min:0',
+        ]);
+
+        $payment = Payment::create([
+            'shop_id' => $request->shop_id,
+            'day_id' => $request->day_id,
+            'total_amount' => $request->cash_amount + $request->card_amount + $request->transfer_amount,
+            'cash_amount' => $request->cash_amount,
+            'card_amount' => $request->card_amount,
+            'transfer_amount' => $request->transfer_amount,
+            'paid_to_debts' => 0,
+            'excess_amount' => 0,
+            'payment_type' => 'sale', // Sotuv to'lovi
+            'image' => $request->image ?? null,
+            'description' => $request->description ?? 'Sotuv to\'lovi'
+        ]);
+        
+        $remainingAmount = $request->cash_amount + $request->card_amount + $request->transfer_amount;
+        $totalPaidToDebts = 0;
+        
+        // Agar aniq sotuv tanlangan bo'lsa
+        if($request->sale_id) {
+            $sale = Sale::find($request->sale_id);
+            $saleDebt = debts::where('sale_id', $request->sale_id)
+                ->where('debt_type', 'sale')
+                ->first();
+            
+            if($sale && $saleDebt && $saleDebt->hisloan > 0) {
+                $debtAmount = $saleDebt->hisloan;
+                
+                if($remainingAmount >= $debtAmount) {
+                    // To'liq qarz to'lanadi
+                    $sale->update([
+                        'paid_amount' => $sale->paid_amount + $debtAmount,
+                        'status' => 'paid'
+                    ]);
+                    
+                    // debts jadvalidagi qarzni yangilash
+                    $saleDebt->update([
+                        'pay' => $debtAmount,
+                        'hisloan' => 0,
+                        'payment_id' => $payment->id
+                    ]);
+                    
+                    $remainingAmount -= $debtAmount;
+                    $totalPaidToDebts += $debtAmount;
+                } else {
+                    // Qisman qarz to'lanadi
+                    $sale->update([
+                        'paid_amount' => $sale->paid_amount + $remainingAmount,
+                        'status' => 'partial'
+                    ]);
+                    
+                    // debts jadvalidagi qarzni yangilash
+                    $saleDebt->update([
+                        'pay' => $remainingAmount,
+                        'hisloan' => $debtAmount - $remainingAmount,
+                        'payment_id' => $payment->id
+                    ]);
+                    
+                    $totalPaidToDebts += $remainingAmount;
+                    $remainingAmount = 0;
+                }
+            }
+        } else {
+            // Avtomatik taqsimlash - eskiroq qarzlardan boshlab
+            $existingDebts = debts::where('shop_id', $request->shop_id)
+                ->where('hisloan', '>', 0)
+                ->where('debt_type', 'sale')
+                ->orderBy('day_id', 'asc')
+                ->get();
+            
+            foreach($existingDebts as $debt) {
+                if($remainingAmount > 0) {
+                    $debtAmount = $debt->hisloan;
+                    
+                    if($remainingAmount >= $debtAmount) {
+                        // To'liq qarz to'lanadi
+                        $debt->update([
+                            'pay' => $debt->pay + $debtAmount,
+                            'hisloan' => 0,
+                            'payment_id' => $payment->id
+                        ]);
+                        
+                        // Sale ni yangilash
+                        $sale = Sale::find($debt->sale_id);
+                        if($sale) {
+                            $sale->update([
+                                'paid_amount' => $sale->paid_amount + $debtAmount,
+                                'status' => 'paid'
+                            ]);
+                        }
+                        
+                        $remainingAmount -= $debtAmount;
+                        $totalPaidToDebts += $debtAmount;
+                    } else {
+                        // Qisman qarz to'lanadi
+                        $debt->update([
+                            'pay' => $debt->pay + $remainingAmount,
+                            'hisloan' => $debtAmount - $remainingAmount,
+                            'payment_id' => $payment->id
+                        ]);
+                        
+                        // Sale ni yangilash
+                        $sale = Sale::find($debt->sale_id);
+                        if($sale) {
+                            $sale->update([
+                                'paid_amount' => $sale->paid_amount + $remainingAmount,
+                                'status' => 'partial'
+                            ]);
+                        }
+                        
+                        $totalPaidToDebts += $remainingAmount;
+                        $remainingAmount = 0;
+                    }
+                }
+            }
+        }
+        
+        // Ortiqcha pul uchun yangi qarz yozuvi
+        if($remainingAmount > 0) {
+            debts::create([
+                'shop_id' => $request->shop_id,
+                'day_id' => $request->day_id,
+                'pay' => $remainingAmount,
+                'loan' => 0,
+                'hisloan' => 0,
+                'debt_type' => 'sale',
+                'row_id' => 0,
+                'payment_id' => $payment->id
+            ]);
+        }
+
+        $payment->update([
+            'paid_to_debts' => $totalPaidToDebts,
+            'excess_amount' => $remainingAmount
+        ]);
+
+        return redirect()->route('storage.payment_history');
+    }
+
+    public function getShopSales($shopId){
+        $sales = Sale::join('debts', 'sales.id', '=', 'debts.sale_id')
+            ->where('sales.buyer_shop_id', $shopId)
+            ->where('debts.hisloan', '>', 0)
+            ->where('debts.debt_type', 'sale')
+            ->select('sales.id', 'sales.invoice_number', 'debts.hisloan as debt_amount', 'sales.total_amount', 'sales.paid_amount')
+            ->orderBy('sales.created_at', 'asc')
+            ->get();
+        
+        return response()->json(['sales' => $sales]);
     }
 
     public function selectreport($id, $b, $e){
@@ -1098,7 +1279,7 @@ class StorageController extends Controller
         }
         
         if($id == 0){
-            $shops = Shop::where('type_id', 2)->get();
+            $shops = Shop::all();
         }
         else{
             $shops = Shop::where('id', $id)->get();
@@ -1109,70 +1290,161 @@ class StorageController extends Controller
 
         foreach($shops as $row){
             $name = $shops->find($row->id)->shop_name;
-            $oldpay = debts::where('shop_id', $row->id)->where('day_id', '<', $b)->sum('pay');
-            $oldloan = debts::where('shop_id', $row->id)->where('day_id', '<', $b)->sum('loan');
+            // $oldpay = debts::where('shop_id', $row->id)->where('day_id', '<', $b)->sum('pay');
+            // $oldloan = debts::where('shop_id', $row->id)->where('day_id', '<', $b)->sum('loan');
             
-            $deb = debts::where('shop_id', $row->id)
-                ->where('day_id', '>=', $b)
-                ->where('day_id', '<=', $e)
-                ->get()->toarray();
+            // Hisobot davriga qadar bo'lgan qarzdorliklar
+            $oldStoragePay = debts::where('shop_id', $row->id)
+                ->where('day_id', '<', $b)
+                ->where('debt_type', 'storage')
+                ->sum('pay');
+            $oldStorageLoan = debts::where('shop_id', $row->id)
+                ->where('day_id', '<', $b)
+                ->where('debt_type', 'storage')
+                ->sum('loan');
             
-            $deb["shop"] = array("name" => $name, "oldpay" => $oldpay, "oldloan" => $oldloan, "debt" => $oldpay-$oldloan);
+            $oldSalePay = debts::where('shop_id', $row->id)
+                ->where('day_id', '<', $b)
+                ->where('debt_type', 'sale')
+                ->sum('pay');
+            $oldSaleHisloan = debts::where('shop_id', $row->id)
+                ->where('day_id', '<', $b)
+                ->where('debt_type', 'sale')
+                ->sum('hisloan');
             
+            // Hisobot davridagi qarzdorliklar
+            $storageDebts = debts::where('debts.shop_id', $row->id)
+                ->where('debts.day_id', '>=', $b)
+                ->where('debts.day_id', '<=', $e)
+                ->where('debts.debt_type', 'storage')
+                ->leftjoin('add_large_werehouses', 'debts.row_id', '=', 'add_large_werehouses.id')
+                ->leftjoin('products', 'add_large_werehouses.product_id', '=', 'products.id')
+                ->leftjoin('payments', 'debts.payment_id', '=', 'payments.id')
+                ->select(
+                    'debts.*', 
+                    'add_large_werehouses.cost as cost', 
+                    'products.product_name as productName',
+                    'payments.total_amount as payment_amount',
+                    'payments.payment_type')
+                ->get();
+            $saleDebts = debts::where('debts.shop_id', $row->id)
+                ->where('debts.day_id', '>=', $b)
+                ->where('debts.day_id', '<=', $e)
+                ->where('debts.debt_type', 'sale')
+                ->leftjoin('sales', 'debts.sale_id', '=', 'sales.id')
+                ->leftjoin('payments', 'debts.payment_id', '=', 'payments.id')
+                ->select('debts.*', 'sales.invoice_number', 'sales.total_amount as sale_amount', 'payments.total_amount as payment_amount', 'payments.payment_type')
+                ->get();
+            
+            $deb = [
+                "shop" => [
+                    "name" => $name, 
+                    "oldStoragePay" => $oldStoragePay, 
+                    "oldStorageLoan" => $oldStorageLoan,
+                    "oldSalePay" => $oldSalePay,
+                    "oldSaleHisloan" => $oldSaleHisloan
+                ],
+                "storage_debts" => $storageDebts,
+                "sale_debts" => $saleDebts
+            ];
             array_push($report, $deb);
+            // dd($report);    
         }
 
         $html = "<table class='table table-light py-4 px-4'>
                     <thead>
                         <tr>
                             <th scope='col'>Tashkilot</th>
+                            <th scope='col'>To'lov turi</th>
                             <th scope='col'>To'langan</th>
                             <th scope='col'>Qarzdorlik</th>
-                            <th scope='col'>Firma qarzi</th>
+                            <th scope='col'>Ma'lumot</th>
                             <th scope='col'>Sana</th>
                         </tr>
                     </thead>
                     <tbody>";
-                    $total = 0;
-                    foreach($report as $shop){
-                        $total1 = 0;
-                        $total2 = 0;
-                        $html = $html."<tr>
-                                    <td><b>".$shop['shop']['name']."</b></td>
-                                    <td>".$shop['shop']['oldpay']."</td>
-                                    <td>".$shop['shop']['oldloan']."</td>
-                                    <td></td>
-                                    <td>Hisobot davriga qadar</td>
-                                </tr>";
-                        foreach($shop as $key => $row){
-                            if($key != 'shop'){
-                                $total1 = $total1 + $row['pay'];
-                                $total2 = $total2 + $row['loan'];
-                                $html = $html."<tr>
-                                        <td></td>
-                                        <td>".$row['pay']."</td>
-                                        <td>".$row['loan']."</td>
-                                        <td></td>
-                                        <td>".$days->find($row['day_id'])->day_number.".".$days->find($row['day_id'])->month_name.".".$days->find($row['day_id'])->year_name."</td>
-                                    </tr>";
-                            }
-                        }
+                    
+        $totalStoragePay = 0;
+        $totalStorageLoan = 0;
+        $totalSalePay = 0;
+        $totalSaleHisloan = 0;
+        
+        foreach($report as $shop){
+            // Storage qarzdorliklari
+            $html .= "<tr class='table-info'>
+                        <td><b>".$shop['shop']['name']."</b></td>
+                        <td><span class='badge bg-success'><i class='fa fa-arrow-up'></i> Kirim qarzi</span></td>
+                        <td><b>".number_format($shop['shop']['oldStoragePay'], 0, ',', ' ')." so'm</b></td>
+                        <td><b>".number_format($shop['shop']['oldStorageLoan'], 0, ',', ' ')." so'm</b></td>
+                        <td><i>Hisobot davriga qadar</i></td>
+                        <td>-</td>
+                    </tr>";
+            
+            foreach($shop['storage_debts'] as $debt){
+                $totalStoragePay += $debt->pay;
+                $totalStorageLoan += $debt->loan;
+                
+                $info = "";
+                if($debt->product_name) {
+                    $info = "<i class='fa fa-box'></i> ".$debt->product_name;
+                } elseif($debt->payment_amount) {
+                    $info = "<i class='fa fa-credit-card'></i> To'lov: ".number_format($debt->payment_amount, 0, ',', ' ')." so'm";
+                }
+                
+                $html .= "<tr>
+                            <td></td>
+                            <td><span class='badge bg-success'><i class='fa fa-arrow-up'></i> Kirim qarzi</span></td>
+                            <td>".number_format($debt->pay, 0, ',', ' ')." so'm</td>
+                            <td>".number_format($debt->loan, 0, ',', ' ')." so'm</td>
+                            <td>".$info."</td>
+                            <td>".$days->find($debt->day_id)->day_number.".".$days->find($debt->day_id)->month_name.".".$days->find($debt->day_id)->year_name."</td>
+                        </tr>";
+            }
+            
+            // Sale qarzdorliklari
+            $html .= "<tr class='table-primary'>
+                        <td><b>".$shop['shop']['name']."</b></td>
+                        <td><span class='badge bg-primary'><i class='fa fa-arrow-down'></i> Sotuv qarzi</span></td>
+                        <td><b>".number_format($shop['shop']['oldSalePay'], 0, ',', ' ')." so'm</b></td>
+                        <td><b>".number_format($shop['shop']['oldSaleHisloan'], 0, ',', ' ')." so'm</b></td>
+                        <td><i>Hisobot davriga qadar</i></td>
+                        <td>-</td>
+                    </tr>";
+            
+            foreach($shop['sale_debts'] as $debt){
+                $totalSalePay += $debt->pay;
+                $totalSaleHisloan += $debt->hisloan;
+                
+                $info = "";
+                if($debt->invoice_number) {
+                    $info = "<i class='fa fa-file-invoice'></i> Faktura #".$debt->invoice_number;
+                } elseif($debt->payment_amount) {
+                    $info = "<i class='fa fa-credit-card'></i> To'lov: ".number_format($debt->payment_amount, 0, ',', ' ')." so'm";
+                }
+                
+                $html .= "<tr>
+                            <td></td>
+                            <td><span class='badge bg-primary'><i class='fa fa-arrow-down'></i> Sotuv qarzi</span></td>
+                            <td>".number_format($debt->pay, 0, ',', ' ')." so'm</td>
+                            <td>".number_format($debt->hisloan, 0, ',', ' ')." so'm</td>
+                            <td>".$info."</td>
+                            <td>".$days->find($debt->day_id)->day_number.".".$days->find($debt->day_id)->month_name.".".$days->find($debt->day_id)->year_name."</td>
+                        </tr>";
+            }
+        }
 
-                        $html = $html."<tr>
-                                    <td><b>Yakunda Jami:</b></td>
-                                    <td><b>".$total1."</b></td>
-                                    <td><b>".$total2."</b></td>
-                                    <td><b></b></td>
-                                    <td></td>
-                                </tr>";
-                        $total = $total + $shop['shop']['debt'] + $total1-$total2;
-                    }
+        $html .= "<tr class='table-warning'>
+                    <td><b>JAMI:</b></td>
+                    <td><span class='badge bg-warning'><i class='fa fa-calculator'></i> Hisobot</span></td>
+                    <td><b>".number_format($totalStoragePay + $totalSalePay, 0, ',', ' ')." so'm</b></td>
+                    <td><b>".number_format($totalStorageLoan + $totalSaleHisloan, 0, ',', ' ')." so'm</b></td>
+                    <td><b>Hisobot davri</b></td>
+                    <td>-</td>
+                </tr>";
 
-        $html = $html."<tr><td><b>Jami:</b></td><td colspan='3'></td><td><b></b></td><td></td></tr></tbody>
-                </table>";
+        $html .= "</tbody></table>";
 
         return $html;
-
     }
 
     public function takinglargebase(){
@@ -1189,7 +1461,8 @@ class StorageController extends Controller
                         'sales.invoice_number',
                         'sales.total_amount',
                         'sales.paid_amount',
-                        'sales.debt_amount',
+                        'debts.hisloan as debt_amount',
+                        'sales.status',
                         'sales.created_at',
                         'shops.shop_name as buyer_shop_name',
                         'days.day_number',
@@ -1200,6 +1473,10 @@ class StorageController extends Controller
                     ->leftjoin('shops', 'shops.id', '=', 'sales.buyer_shop_id')
                     ->leftjoin('days', 'days.id', '=', 'sales.day_id')
                     ->leftjoin('users', 'users.id', '=', 'sales.user_id')
+                    ->leftjoin('debts', function($join) {
+                        $join->on('debts.sale_id', '=', 'sales.id')
+                             ->where('debts.debt_type', '=', 'sale');
+                    })
                     ->orderby('sales.id', 'DESC')
                     ->paginate(10);
 
@@ -1737,7 +2014,7 @@ class StorageController extends Controller
     public function deletePayment(Request $request){
         
         $payment = Payment::find($request->payment_id);
-        dd($payment);
+        // dd($payment);
         // Payment o'chirish (deleting event avtomatik ishlaydi)
         $payment->delete();
         
@@ -1745,10 +2022,13 @@ class StorageController extends Controller
     }
 
     public function createSaleWithTakeGroup(Request $request){
-        // create sale 
+        // return response()->json(['success' => false, 'data' => $request->all()]);
         $total_amount = 0;
         foreach($request->products as $product){
             $total_amount += $product['cost'] * $product['weight'];
+        }
+        if($total_amount != $request->total_amount){
+            return response()->json(['success' => false, 'message' => 'Jami summa to\'g\'ri kiritilmagan']);
         }
         try {
             DB::beginTransaction();
@@ -1762,7 +2042,7 @@ class StorageController extends Controller
             $takegroup = Take_group::create([
                 'contur_id' => 1,
                 'day_id' => $request->day_id,
-                'taker_id' => $request->user_id,
+                'taker_id' => $request->user_id ?? 0,
                 'outside_id' => $request->outid,
                 'title' => "Sotish".$request->buyer_shop_id."-".$request->day_id,
                 'description' => $request->notes,
@@ -1795,6 +2075,39 @@ class StorageController extends Controller
             DB::commit();
             
             return response()->json(['success' => true, 'sale_id' => $sale->id, 'takegroup_id' => $takegroup->id]);
+        } catch (\Exception $e) {
+            DB::rollback();
+            return response()->json(['success' => false, 'message' => 'Xatolik: ' . $e->getMessage()]);
+        }
+    }
+
+    public function deleteSale(Request $request){
+        try {
+            DB::beginTransaction();
+            
+            $sale = Sale::find($request->sale_id);
+            
+            if (!$sale) {
+                return response()->json(['success' => false, 'message' => 'Sotuv topilmadi']);
+            }
+            
+            // Faqat pending statusdagi sotuvlarni o'chirish mumkin
+            if ($sale->status != 'pending') {
+                return response()->json(['success' => false, 'message' => 'Faqat pending statusdagi sotuvlarni o\'chirish mumkin']);
+            }
+            
+            // Sale bilan bog'liq debts yozuvlarini o'chirish
+            debts::where('sale_id', $sale->id)->delete();
+            
+            // Sale bilan bog'liq take_products yozuvlarini o'chirish
+            Take_product::where('sale_id', $sale->id)->delete();
+            
+            // Sale ni o'chirish
+            $sale->delete();
+            
+            DB::commit();
+            
+            return response()->json(['success' => true, 'message' => 'Sotuv muvaffaqiyatli o\'chirildi']);
         } catch (\Exception $e) {
             DB::rollback();
             return response()->json(['success' => false, 'message' => 'Xatolik: ' . $e->getMessage()]);

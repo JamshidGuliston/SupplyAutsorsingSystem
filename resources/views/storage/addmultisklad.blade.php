@@ -259,7 +259,8 @@
                 <th scope="col">ID</th>
                 <th scope="col">Title</th>
                 <th scope="col">Date</th>
-                <th style="width: 40px;">Svod</th>
+                <th scope="col">Yaratilgan sana</th>
+                <th style="width: 80px;">Svod</th>
             </tr>
         </thead>
         <tbody>
@@ -273,7 +274,13 @@
                         <td>{{ $row->id }}</td>
                         <td><a href="/storage/onedaymulti/{{ $row->day_id }}">{{ $row->order_title }}</a></td>
                         <td>{{ $row->day_id }}</td>
-                        <td><a href="/storage/onedaysvod/{{ $row->day_id }}">PDF</a></td>
+                        <td>{{ $row->created_at ? $row->created_at->format('d.m.Y H:i') : '-' }}</td>
+                        <td>
+                            <a href="/storage/onedaysvodpdf/{{ $row->day_id }}" class="btn btn-sm btn-warning" target="_blank">
+                                <i class="fa fa-file-pdf"></i> PDF
+                            </a>
+                        </td>
+
                     </tr>
                 @endif
             @endforeach
