@@ -18,7 +18,8 @@ class debts extends Model
         'loan',
         'hisloan',
         'debt_type', // Yangi qo'shilgan
-        'row_id'
+        'row_id',
+        'payment_id'
 	];
 
     public function sale()

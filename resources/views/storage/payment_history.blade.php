@@ -59,6 +59,13 @@
 </div>
 
 <div class="py-4 px-4">
+    @if(session('success'))
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            {{ session('success') }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    @endif
+    
     <h3>To'lovlar</h3>
     
     <!-- To'lov turi tanlash -->
@@ -259,6 +266,9 @@
                     <td>{{ $payment->image }}</td>
                     <td>{{ $payment->description }}</td>
                     <td>
+                        <a href="{{ route('storage.edit_payment', $payment->id) }}" class="btn btn-sm btn-warning me-1" title="Tahrirlash">
+                            <i class="fa fa-edit"></i>
+                        </a>
                         <!-- <i class="fa fa-trash deletepay" data-bs-toggle="modal" data-bs-target="#deleteModal" style="cursor: pointer; color:crimson" data-payment-id="{{ $payment->id }}"></i> -->
                     </td>
                 </tr>

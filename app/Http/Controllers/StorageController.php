@@ -2021,6 +2021,256 @@ class StorageController extends Controller
         return redirect()->route('storage.payment_history')->with('success', 'To\'lov muvaffaqiyatli o\'chirildi');
     }
 
+    public function editPayment($id){
+        $payment = Payment::findOrFail($id);
+        $shops = Shop::where('id', $payment->shop_id)->get();
+        $days = $this->days();
+        
+        return view('storage.edit_payment', compact('payment', 'shops', 'days'));
+    }
+
+    public function updatePayment(Request $request, $id){
+        $request->validate([
+            'shop_id' => 'required|exists:shops,id',
+            'day_id' => 'required|exists:days,id',
+            'cash_amount' => 'required|numeric|min:0',
+            'card_amount' => 'required|numeric|min:0',
+            'transfer_amount' => 'required|numeric|min:0',
+        ]);
+
+        $payment = Payment::findOrFail($id);
+        $oldTotalAmount = $payment->total_amount;
+        $newTotalAmount = $request->cash_amount + $request->card_amount + $request->transfer_amount;
+
+        // Eski to'lovni orqaga qaytarish
+        if ($payment->paid_to_debts > 0) {
+            if ($payment->payment_type == 'storage') {
+                // Storage to'lovi uchun - loan qarzlarni orqaga qaytarish
+                $existingDebts = debts::where('shop_id', $payment->shop_id)
+                    ->where('loan', '>=', 0)
+                    ->where('debt_type', 'storage')
+                    ->where('payment_id', $payment->id)
+                    ->orderBy('day_id', 'desc')
+                    ->get();
+                
+                $remainingAmount = $payment->paid_to_debts;
+                
+                foreach ($existingDebts as $debt) {
+                    if ($remainingAmount > 0) {
+                        $currentPay = $debt->pay;
+                        
+                        if ($currentPay > 0) {
+                            if ($remainingAmount >= $currentPay) {
+                                $debt->update([
+                                    'pay' => 0,
+                                    'loan' => $debt->loan + $currentPay,
+                                    'payment_id' => null
+                                ]);
+                                $remainingAmount -= $currentPay;
+                            } else {
+                                $debt->update([
+                                    'pay' => $currentPay - $remainingAmount,
+                                    'loan' => $debt->loan + $remainingAmount
+                                ]);
+                                $remainingAmount = 0;
+                            }
+                        }
+                    }
+                }
+            } elseif ($payment->payment_type == 'sale') {
+                // Sale to'lovi uchun - hisloan qarzlarni orqaga qaytarish
+                $existingDebts = debts::where('shop_id', $payment->shop_id)
+                    ->where('hisloan', '>=', 0)
+                    ->where('debt_type', 'sale')
+                    ->where('payment_id', $payment->id)
+                    ->orderBy('day_id', 'desc')
+                    ->get();
+                
+                $remainingAmount = $payment->paid_to_debts;
+                
+                foreach ($existingDebts as $debt) {
+                    if ($remainingAmount > 0) {
+                        $currentPay = $debt->pay;
+                        
+                        if ($currentPay > 0) {
+                            if ($remainingAmount >= $currentPay) {
+                                $debt->update([
+                                    'pay' => 0,
+                                    'hisloan' => $debt->hisloan + $currentPay,
+                                    'payment_id' => null
+                                ]);
+                                
+                                // Sale ni ham yangilash
+                                $sale = Sale::find($debt->sale_id);
+                                if ($sale) {
+                                    $sale->update([
+                                        'paid_amount' => $sale->paid_amount - $currentPay,
+                                        'status' => $sale->paid_amount - $currentPay > 0 ? 'partial' : 'pending'
+                                    ]);
+                                }
+                                
+                                $remainingAmount -= $currentPay;
+                            } else {
+                                $debt->update([
+                                    'pay' => $currentPay - $remainingAmount,
+                                    'hisloan' => $debt->hisloan + $remainingAmount
+                                ]);
+                                
+                                // Sale ni ham yangilash
+                                $sale = Sale::find($debt->sale_id);
+                                if ($sale) {
+                                    $sale->update([
+                                        'paid_amount' => $sale->paid_amount - $remainingAmount,
+                                        'status' => $sale->paid_amount - $remainingAmount > 0 ? 'partial' : 'pending'
+                                    ]);
+                                }
+                                
+                                $remainingAmount = 0;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        
+        // Ortiqcha pulni orqaga qaytarish
+        if ($payment->excess_amount > 0) {
+            debts::where('shop_id', $payment->shop_id)
+                ->where('day_id', $payment->day_id)
+                ->where('hisloan', $payment->excess_amount)
+                ->where('loan', 0)
+                ->where('pay', $payment->excess_amount)
+                ->where('debt_type', $payment->payment_type)
+                ->where('payment_id', $payment->id)
+                ->delete();
+        }
+
+        // To'lovni yangilash
+        $payment->update([
+            'shop_id' => $request->shop_id,
+            'day_id' => $request->day_id,
+            'total_amount' => $newTotalAmount,
+            'cash_amount' => $request->cash_amount,
+            'card_amount' => $request->card_amount,
+            'transfer_amount' => $request->transfer_amount,
+            'paid_to_debts' => 0,
+            'excess_amount' => 0,
+            'image' => $request->image ?? $payment->image,
+            'description' => $request->description ?? $payment->description
+        ]);
+
+        // Yangi to'lovni qarzlarga taqsimlash
+        $remainingAmount = $newTotalAmount;
+        $totalPaidToDebts = 0;
+        $excessAmount = 0;
+
+        if ($payment->payment_type == 'storage') {
+            // Storage to'lovi uchun - loan qarzlarni to'lash
+            $existingDebts = debts::where('shop_id', $request->shop_id)
+                ->where('loan', '>', 0)
+                ->where('debt_type', 'storage')
+                ->orderBy('day_id', 'asc')
+                ->get();
+            
+            foreach($existingDebts as $debt) {
+                if($remainingAmount > 0) {
+                    $debtAmount = $debt->loan;
+                    
+                    if($remainingAmount >= $debtAmount) {
+                        $debt->update([
+                            'pay' => $debt->pay + $debtAmount,
+                            'loan' => 0,
+                            'payment_id' => $payment->id
+                        ]);
+                        $remainingAmount -= $debtAmount;
+                        $totalPaidToDebts += $debtAmount;
+                    } else {
+                        $debt->update([
+                            'pay' => $debt->pay + $remainingAmount,
+                            'loan' => $debtAmount - $remainingAmount,
+                            'payment_id' => $payment->id
+                        ]);
+                        $totalPaidToDebts += $remainingAmount;
+                        $remainingAmount = 0;
+                    }
+                }
+            }
+        } elseif ($payment->payment_type == 'sale') {
+            // Sale to'lovi uchun - hisloan qarzlarni to'lash
+            $existingDebts = debts::where('shop_id', $request->shop_id)
+                ->where('hisloan', '>', 0)
+                ->where('debt_type', 'sale')
+                ->orderBy('day_id', 'asc')
+                ->get();
+            
+            foreach($existingDebts as $debt) {
+                if($remainingAmount > 0) {
+                    $debtAmount = $debt->hisloan;
+                    
+                    if($remainingAmount >= $debtAmount) {
+                        $debt->update([
+                            'pay' => $debt->pay + $debtAmount,
+                            'hisloan' => 0,
+                            'payment_id' => $payment->id
+                        ]);
+                        
+                        // Sale ni yangilash
+                        $sale = Sale::find($debt->sale_id);
+                        if($sale) {
+                            $sale->update([
+                                'paid_amount' => $sale->paid_amount + $debtAmount,
+                                'status' => 'paid'
+                            ]);
+                        }
+                        
+                        $remainingAmount -= $debtAmount;
+                        $totalPaidToDebts += $debtAmount;
+                    } else {
+                        $debt->update([
+                            'pay' => $debt->pay + $remainingAmount,
+                            'hisloan' => $debtAmount - $remainingAmount,
+                            'payment_id' => $payment->id
+                        ]);
+                        
+                        // Sale ni yangilash
+                        $sale = Sale::find($debt->sale_id);
+                        if($sale) {
+                            $sale->update([
+                                'paid_amount' => $sale->paid_amount + $remainingAmount,
+                                'status' => 'partial'
+                            ]);
+                        }
+                        
+                        $totalPaidToDebts += $remainingAmount;
+                        $remainingAmount = 0;
+                    }
+                }
+            }
+        }
+
+        // Ortiqcha pul uchun yangi qarz yozuvi
+        if($remainingAmount > 0) {
+            $excessAmount = $remainingAmount;
+            debts::create([
+                'shop_id' => $request->shop_id,
+                'day_id' => $request->day_id,
+                'pay' => $excessAmount,
+                'loan' => 0,
+                'hisloan' => $payment->payment_type == 'storage' ? $excessAmount : 0,
+                'debt_type' => $payment->payment_type,
+                'row_id' => 0,
+                'payment_id' => $payment->id
+            ]);
+        }
+
+        $payment->update([
+            'paid_to_debts' => $totalPaidToDebts,
+            'excess_amount' => $excessAmount
+        ]);
+
+        return redirect()->route('storage.payment_history')->with('success', 'To\'lov muvaffaqiyatli yangilandi');
+    }
+
     public function createSaleWithTakeGroup(Request $request){
         // return response()->json(['success' => false, 'data' => $request->all()]);
         $total_amount = 0;

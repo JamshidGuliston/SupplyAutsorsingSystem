@@ -122,6 +122,8 @@ Route::group(['prefix' => 'storage', 'middleware' => ['isStorage', 'auth']], fun
     Route::post('ingroup/delete', [StorageController::class, 'deleteIngroupProduct'])->name('storage.ingroup.delete');
     Route::get('payment_history', [StorageController::class, 'paymentHistory'])->name('storage.payment_history');
     Route::post('delete_payment', [StorageController::class, 'deletePayment'])->name('storage.delete_payment');
+    Route::get('edit_payment/{id}', [StorageController::class, 'editPayment'])->name('storage.edit_payment');
+    Route::put('update_payment/{id}', [StorageController::class, 'updatePayment'])->name('storage.update_payment');
     Route::post('createSaleWithTakeGroup', [StorageController::class, 'createSaleWithTakeGroup'])->name('storage.createSaleWithTakeGroup');
     Route::post('deleteSale', [StorageController::class, 'deleteSale'])->name('storage.deleteSale');
     Route::post('createSalePayment', [StorageController::class, 'createSalePayment'])->name('storage.createSalePayment');
