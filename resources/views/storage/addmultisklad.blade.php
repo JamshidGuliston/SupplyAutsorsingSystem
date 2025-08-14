@@ -276,7 +276,7 @@
                         <td>{{ $row->day_id }}</td>
                         <td>{{ $row->created_at ? $row->created_at->format('d.m.Y H:i') : '-' }}</td>
                         <td>
-                            <a href="/storage/onedaysvodpdf/{{ $row->day_id }}" class="btn btn-sm btn-warning" target="_blank">
+                            <a href="/storage/onedaysvod/{{ $row->day_id }}" class="btn btn-sm btn-warning" target="_blank">
                                 <i class="fa fa-file-pdf"></i> PDF
                             </a>
                         </td>
