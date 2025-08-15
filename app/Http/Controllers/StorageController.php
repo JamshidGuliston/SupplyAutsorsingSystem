@@ -243,7 +243,18 @@ class StorageController extends Controller
     public function addmultisklad(Request $request){
         $season = Season::where('hide', 1)->first();
         $menus = Titlemenu::where('menu_season_id', $season->id)->get();
-        $gardens = Kindgarden::where('hide', 1)->get();
+        
+        $kinds = Kindgarden::where('hide', 1)->get();
+        $gardens = new Kindgarden();
+        foreach($kinds as $row){
+            $check = Nextday_namber::where('kingar_name_id', $row->id)->first();
+            if($check){
+                $gardens[$row->id] = $row;
+            }else{
+                $gardens[$row->id] = $row;
+            }
+        }
+
         $orders = order_product::orderby('id', 'DESC')->get();
         $days = $this->days();
         // dd($menus);
