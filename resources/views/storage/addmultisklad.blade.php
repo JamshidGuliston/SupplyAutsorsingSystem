@@ -71,8 +71,8 @@
                 <input type="number" name="maxday" class="form-control" placeholder="Сифати тез бузиладиганлар муддати" required>
                 Боғчаларни танлаш
                 <select id='testSelect1' name="gardens[]" class="form-select" aria-label="Default select example" multiple required>
-                    @foreach($gardens as $row)
-                        <option value='{{ $row->id }}'>{{ $row->kingar_name }}</option>
+                    @foreach($gardens as $key => $value)
+                        <option value='{{ $key }}'>{{ $value }}</option>
                     @endforeach
                 </select>
             </div>

@@ -249,9 +249,9 @@ class StorageController extends Controller
         foreach($kinds as $row){
             $check = Nextday_namber::where('kingar_name_id', $row->id)->first();
             if($check){
-                $gardens[$row->id] = $row;
+                $gardens[$row->id] = $row->kingar_name;
             }else{
-                $gardens[$row->id] = $row;
+                $gardens[$row->id] = $row->kingar_name;
             }
         }
 
