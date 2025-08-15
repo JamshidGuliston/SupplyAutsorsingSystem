@@ -71,8 +71,8 @@
                 <input type="number" name="maxday" class="form-control" placeholder="Сифати тез бузиладиганлар муддати" required>
                 Боғчаларни танлаш
                 <select id='testSelect1' name="gardens[]" class="form-select" aria-label="Default select example" multiple required>
-                    @foreach($gardens as $key => $value)
-                        <option value='{{ $key }}'>{{ $value }}</option>
+                    @foreach($gardens as $row)
+                        <option value='{{ $row->id }}'>{{ $row->kingar_name }}</option>
                     @endforeach
                 </select>
             </div>
@@ -99,8 +99,8 @@
                 @csrf
                 <div class="col-sm-4">
                     <select name="garden" class="form-select" aria-label="Default select example" required>
-                        @foreach($gardens as $key => $value)
-                            <option value='{{ $key }}'>{{ $value }}</option>
+                        @foreach($gardens as $row)
+                            <option value='{{ $row->id }}'>{{ $row->kingar_name }}</option>
                         @endforeach
                     </select>
                 </div>
@@ -150,8 +150,8 @@
                 @csrf
                 <div class="col-sm-4">
                     <select name="gardenID" class="form-select" aria-label="Default select example" required>
-                        @foreach($gardens as $key => $value)
-                            <option value='{{ $key }}'>{{ $value }}</option>
+                        @foreach($gardens as $row)
+                            <option value='{{ $row->id }}'>{{ $row->kingar_name }}</option>
                         @endforeach
                     </select>
                 </div>
@@ -203,8 +203,8 @@
                     <div class="mb-3">
                         <label for="kingar_name_id" class="form-label">Muassasalar</label>
                         <select class="form-select" id="testSelect2" name="kingar_name[]" aria-label="Default select example" required multiple>
-                            @foreach($gardens as $key => $value)
-                                <option value="{{$key}}">{{$value}}</option>
+                            @foreach($gardens as $row)
+                                <option value="{{$row->id}}">{{$row->kingar_name}}</option>
                             @endforeach
                         </select>
                     </div>
@@ -286,6 +286,15 @@
             @endforeach
         </tbody>
     </table>
+    <!-- Pagination -->
+    <div class="row">
+        <div class="col-md-6">
+            <p class="text-muted small">{{ $orders->firstItem() }} dan {{ $orders->lastItem() }} gacha, jami {{ $orders->total() }} yozuv</p>
+        </div>
+        <div class="col-md-6 d-flex justify-content-end">
+            {{ $orders->links('pagination::bootstrap-4') }}
+        </div>
+    </div>
     <a href="/storage/home/0/0">Orqaga</a>
 </div>
 

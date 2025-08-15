@@ -244,16 +244,7 @@ class StorageController extends Controller
         $season = Season::where('hide', 1)->first();
         $menus = Titlemenu::where('menu_season_id', $season->id)->get();
         
-        $kinds = Kindgarden::where('hide', 1)->get();
-        $gardens = new Kindgarden();
-        foreach($kinds as $row){
-            $check = Nextday_namber::where('kingar_name_id', $row->id)->first();
-            if($check){
-                $gardens[$row->id] = $row->kingar_name;
-            }else{
-                $gardens[$row->id] = $row->kingar_name;
-            }
-        }
+        $gardens = Kindgarden::where('hide', 1)->get();
 
         $orders = order_product::orderby('id', 'DESC')->get();
         $days = $this->days();
@@ -262,7 +253,7 @@ class StorageController extends Controller
     }
 
     public function report(Request $request){
-        dd($request->all());
+        // dd($request->all());
 
         $days = Day::where('days.id', '>=', $request->start)->where('days.id', '<=', $request->end)
                 ->join('months', 'months.id', '=', 'days.month_id')
@@ -684,6 +675,10 @@ class StorageController extends Controller
         $kindworkerproducts = [];
         // Hisobot qilinishi kerak bo'lgan bog'chalar sikli
         foreach($request->gardens as $garden){
+            $check = Nextday_namber::where('kingar_name_id', $garden)->first();
+            if(!$check){
+                continue;
+            }
             $dataOfWeight = [
                 'garden_id' => $garden,
                 'garden_name' => "",
