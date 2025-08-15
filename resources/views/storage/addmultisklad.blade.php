@@ -99,8 +99,8 @@
                 @csrf
                 <div class="col-sm-4">
                     <select name="garden" class="form-select" aria-label="Default select example" required>
-                        @foreach($gardens as $row)
-                            <option value='{{ $row->id }}'>{{ $row->kingar_name }}</option>
+                        @foreach($gardens as $key => $value)
+                            <option value='{{ $key }}'>{{ $value }}</option>
                         @endforeach
                     </select>
                 </div>
@@ -150,8 +150,8 @@
                 @csrf
                 <div class="col-sm-4">
                     <select name="gardenID" class="form-select" aria-label="Default select example" required>
-                        @foreach($gardens as $row)
-                            <option value='{{ $row->id }}'>{{ $row->kingar_name }}</option>
+                        @foreach($gardens as $key => $value)
+                            <option value='{{ $key }}'>{{ $value }}</option>
                         @endforeach
                     </select>
                 </div>
@@ -203,8 +203,8 @@
                     <div class="mb-3">
                         <label for="kingar_name_id" class="form-label">Muassasalar</label>
                         <select class="form-select" id="testSelect2" name="kingar_name[]" aria-label="Default select example" required multiple>
-                            @foreach($gardens as $row)
-                                <option value="{{$row->id}}">{{$row->kingar_name}}</option>
+                            @foreach($gardens as $key => $value)
+                                <option value="{{$key}}">{{$value}}</option>
                             @endforeach
                         </select>
                     </div>
