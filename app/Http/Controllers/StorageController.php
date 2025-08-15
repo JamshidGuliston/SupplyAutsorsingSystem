@@ -331,10 +331,14 @@ class StorageController extends Controller
         //     return redirect()->route('technolog.addproduct');
         // }
         // shu joyida hide ishlatishimiz kerak majbur
-        $newsproduct = Product::orderby('sort', 'ASC')->get();
+        $newsproduct = Product::orderby('sort', 'ASC')
+            ->join('sizes', 'sizes.id', '=', 'products.size_name_id')
+            ->select('products.id', 'products.product_name', 'sizes.size_name', 'products.div')
+            ->get();
         $items = order_product_structure::where('order_product_name_id', $id)
             ->join('products', 'products.id', '=', 'order_product_structures.product_name_id')
-            ->select('order_product_structures.id', 'order_product_structures.product_weight', 'order_product_structures.data_of_weight', 'products.product_name')
+            ->join('sizes', 'sizes.id', '=', 'products.size_name_id')
+            ->select('order_product_structures.id', 'order_product_structures.product_weight', 'order_product_structures.data_of_weight', 'products.product_name', 'sizes.size_name', 'products.div', 'order_product_structures.actual_weight')
             ->get();
         foreach($items as $item){
             $t = 0;
@@ -755,12 +759,18 @@ class StorageController extends Controller
                 }
                 // $mods[$key] bog'chada mavjud maxsulotlar qoldig'i                                                                        
                 if(($val / $prod->div) - $mods[$key] > 0){
-
+                    $actual_weight = ($val / $prod->div) - $mods[$key] ;
+                    $decimalPart = $actual_weight - floor($actual_weight);
+                    // agar kasr qismi 0.45 yoki undan katta bo'lsa, yuqoriga olinsin
+                    $result  = ($decimalPart >= 0.4444444)
+                                ? ceil($actual_weight)
+                                        : floor($actual_weight);
                     // joriy maxsulotning gramlarini qo'shib borish
                     order_product_structure::create([
                         'order_product_name_id' => $order->id,
                         'product_name_id' => $key,
-                        'product_weight' => ($val / $prod->div) - $mods[$key],
+                        'product_weight' => $result > 0 ? $result : 1,
+                        'actual_weight' => $actual_weight,
                         'data_of_weight' => json_encode($dataOfWeight, JSON_UNESCAPED_UNICODE)
                     ]);
                 }

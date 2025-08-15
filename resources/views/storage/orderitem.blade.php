@@ -61,6 +61,8 @@
                             <tr>
                                 <th scope="col">ID</th>
                                 <th scope="col">Maxsulot</th>
+                                <th scope="col">O'lchami</th>
+                                <th scope="col">gr</th>
                                 <th scope="col">Og'irligi</th>
                             </tr>
                         </thead>
@@ -70,6 +72,8 @@
                             <tr>
                                 <th scope="row">{{ ++$i }}</th>
                                 <td>{{ $all->product_name }}</td>
+                                <td>{{ $all->size_name }}</td>
+                                <td>{{ $all->div }}</td>
                                 <td><input type="text" onkeypress="javascript:return isNumber(event)" name="orders[{{ $all->id }}]"></td>
                             </tr>
                             @endforeach
@@ -136,7 +140,10 @@
                     <tr>
                         <th scope="col">ID</th>
                         <th scope="col">Maxsulot</th>
+                        <th scope="col">O'lchami</th>
+                        <th scope="col">gr</th>
                         <th scope="col">Og'irligi</th>
+                        <th scope="col">Haqiqiy og'irligi</th>
                         <th scope="col" style="text-align: end;">Tahrirlash</th>
                     </tr>
                 </thead>
@@ -146,7 +153,10 @@
                     <tr>
                         <th scope="row">{{ ++$i }}</th>
                         <td>{{ $item->product_name }}</td>
+                        <td>{{ $item->size_name }}</td>
+                        <td>{{ $item->div }}</td>
                         <td>{{ $item->product_weight }}</td>
+                        <td>{{ $item->actual_weight }}</td>
                         <td style="text-align: end;">
                             <i data-edites-id="{{ $item->id }}" class="editess far fa-edit text-info" data-bs-toggle="modal" data-bs-target="#exampleModal" data-kinid="" style="cursor: pointer; margin-right: 16px;"> </i>
                             <i class="detete  fa fa-trash" aria-hidden="true" data-delet-id="{{$item->id}}" data-bs-toggle="modal" style="cursor: pointer;" data-bs-target="#exampleModalss"></i>
