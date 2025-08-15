@@ -780,7 +780,7 @@ class TechnologController extends Controller
         $newsproduct = Product::orderby('sort', 'ASC')->get();
         $items = order_product_structure::where('order_product_name_id', $id)
             ->join('products', 'products.id', '=', 'order_product_structures.product_name_id')
-            ->select('order_product_structures.id', 'order_product_structures.product_weight', 'products.product_name')
+            ->select('order_product_structures.id', 'order_product_structures.product_weight', 'order_product_structures.data_of_weight', 'products.product_name')
             ->get();
         foreach($items as $item){
             $t = 0;
@@ -799,10 +799,30 @@ class TechnologController extends Controller
         // dd($request->all());
         foreach($request->orders as $key => $value){
             if($value != null){
+                // Maxsulot ma'lumotlarini olish
+                $product = Product::find($key);
+                $order = order_product::find($request->titleid);
+                
+                // data_of_weight uchun asosiy ma'lumotlarni to'plash
+                $dataOfWeight = [
+                    'product_id' => $key,
+                    'product_name' => $product ? $product->product_name : 'Noma\'lum maxsulot',
+                    'total_weight' => $value,
+                    'order_id' => $request->titleid,
+                    'order_title' => $order ? $order->order_title : '',
+                    'added_manually' => true,
+                    'added_at' => now()->toISOString(),
+                    'summary' => [
+                        'manual_addition' => true,
+                        'weight' => $value
+                    ]
+                ];
+                
                 order_product_structure::create([
                     'order_product_name_id' => $request->titleid,
                     'product_name_id' => $key,
                     'product_weight' => $value,
+                    'data_of_weight' => json_encode($dataOfWeight, JSON_UNESCAPED_UNICODE)
                 ]);
             }
         }
@@ -1267,9 +1287,24 @@ class TechnologController extends Controller
                     'menu_compositions.kcal'
                 ]);
         
+        // Maxsulotlar bo'yicha jami gramlarni hisoblash
+        $productTotals = [];
+        foreach ($menuitem as $item) {
+            $productId = $item->productid;
+            $weight = $item->weight;
+            
+            if (isset($productTotals[$productId])) {
+                $productTotals[$productId]['total_weight'] += $weight;
+            } else {
+                $productTotals[$productId] = [
+                    'product_name' => $item->product_name,
+                    'total_weight' => $weight
+                ];
+            }
+        }
         
-        // dd($menuitem);
-        return view('technolog.menuitem', compact('id', 'times', 'titlemenu', 'menuitem'));
+        // dd($productTotals);
+        return view('technolog.menuitem', compact('id', 'times', 'titlemenu', 'menuitem', 'productTotals'));
     }
     //  copy 
     public function copymenuitem(Request $request){

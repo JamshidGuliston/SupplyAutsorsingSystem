@@ -80,6 +80,7 @@ Route::group(['prefix' => 'storage', 'middleware' => ['isStorage', 'auth']], fun
     Route::get('getproduct', [StorageController::class, 'getproduct']);
     Route::get('editproduct', [StorageController::class, 'editproduct']);
     Route::get('deleteid', [StorageController::class, 'deleteid']);
+    Route::get('getDataOfWeight', [StorageController::class, 'getDataOfWeight'])->name('storage.getDataOfWeight');
     Route::get('getworkerfoods', [StorageController::class, 'getworkerfoods'])->name('storage.getworkerfoods');
     Route::get('onedaysvod/{id}', [StorageController::class, 'ordersvodpdf'])->name('storage.onedaysvod');
     Route::get('ingroup/{id}', [StorageController::class, 'ingroup'])->name('storage.ingroup');
@@ -155,6 +156,7 @@ Route::group(['prefix' => 'technolog', 'middleware' => ['isTechnolog', 'auth']],
     Route::get('getproduct', [TechnologController::class, 'getproduct']);
     Route::get('editproduct', [TechnologController::class, 'editproduct']);
     Route::get('deleteid', [TechnologController::class, 'deleteid']);
+    Route::get('getDataOfWeight', [TechnologController::class, 'getDataOfWeight'])->name('technolog.getDataOfWeight');
     Route::get('getbotusers', [TechnologController::class, 'getbotusers'])->name('technolog.getbotusers');
     Route::post('bindgarden', [TechnologController::class, 'bindgarden'])->name('technolog.bindgarden');
     Route::post('bindshop', [TechnologController::class, 'bindshop'])->name('technolog.bindshop');

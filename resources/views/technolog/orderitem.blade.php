@@ -92,6 +92,24 @@
 
 <!-- End -->
 
+<!-- Data of Weight Modal -->
+<div class="modal fade" id="dataOfWeightModal" tabindex="-1" aria-labelledby="dataOfWeightModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header bg-primary">
+                <h5 class="modal-title text-white" id="dataOfWeightModalLabel">Maxsulot ma'lumotlari</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" id="dataOfWeightContent">
+                <!-- Ma'lumotlar bu yerda ko'rsatiladi -->
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Yopish</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <div class="box-products py-4 px-4">
     <div class="row mb-3">
         <div class="col-md-12">
@@ -134,7 +152,13 @@
                         <th scope="row">{{ ++$i }}</th>
                         <td>{{ $item->product_name }}</td>
                         <td>{{ $item->product_weight }}</td>
-                        <td style="text-align: end;"><i data-edites-id="{{ $item->id }}" class="editess far fa-edit text-info" data-bs-toggle="modal" data-bs-target="#exampleModal" data-kinid="" style="cursor: pointer; margin-right: 16px;"> </i><i class="detete  fa fa-trash" aria-hidden="true" data-delet-id="{{$item->id}}" data-bs-toggle="modal" style="cursor: pointer;" data-bs-target="#exampleModalss"></i></td>
+                        <td style="text-align: end;">
+                            <i data-edites-id="{{ $item->id }}" class="editess far fa-edit text-info" data-bs-toggle="modal" data-bs-target="#exampleModal" data-kinid="" style="cursor: pointer; margin-right: 16px;"> </i>
+                            <i class="detete  fa fa-trash" aria-hidden="true" data-delet-id="{{$item->id}}" data-bs-toggle="modal" style="cursor: pointer;" data-bs-target="#exampleModalss"></i>
+                            @if($item->data_of_weight)
+                            <i class="fas fa-info-circle text-primary" data-bs-toggle="modal" data-bs-target="#dataOfWeightModal" data-item-id="{{ $item->id }}" style="cursor: pointer; margin-right: 8px;" title="Ma'lumotlarni ko'rish"></i>
+                            @endif
+                        </td>
                     </tr>
                     @endforeach
                 </tbody>
@@ -215,6 +239,28 @@
 
             })
         })
+
+        // data_of_weight ma'lumotlarini ko'rsatish
+        $('[data-bs-target="#dataOfWeightModal"]').click(function() {
+            var itemId = $(this).attr('data-item-id');
+            var modalContent = $('#dataOfWeightContent');
+            
+            modalContent.html('<div class="text-center"><i class="fas fa-spinner fa-spin"></i> Ma\'lumotlar yuklanmoqda...</div>');
+            
+            $.ajax({
+                method: "GET",
+                url: '/technolog/getDataOfWeight',
+                data: {
+                    'id': itemId,
+                },
+                success: function(response) {
+                    modalContent.html(response.html);
+                },
+                error: function(xhr) {
+                    modalContent.html('<div class="alert alert-danger">Ma\'lumotlarni yuklashda xatolik yuz berdi</div>');
+                }
+            });
+        });
 
     });
 </script>

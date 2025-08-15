@@ -23,6 +23,21 @@
         background-color: white;
     }
     tr:hover {background-color: aliceblue;}
+    
+    #productTotals {
+        margin-top: 20px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+    }
+    
+    #productTotals .table {
+        margin-bottom: 0;
+    }
+    
+    #productTotals th {
+        background-color: #f8f9fa;
+        font-weight: bold;
+    }
 </style>
 @endsection
 
@@ -269,7 +284,30 @@
                 </tbody>
             </table>
         </div>
-    
+
+        <div class="mt-3">
+            <h6>Maxsulotlar bo'yicha jami gramlar:</h6>
+            <table class="table table-bordered table-sm">
+                <thead class="table-light">
+                    <tr>
+                        <th>Maxsulot ID</th>
+                        <th>Maxsulot nomi</th>
+                        <th>Jami gramlar</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach($productTotals as $productId => $product)
+                    <tr>
+                        <td>{{ $productId }}</td>
+                        <td>{{ $product['product_name'] }}</td>
+                        <td>{{ number_format($product['total_weight'], 3) }} гр</td>
+                    </tr>
+                    @endforeach
+                </tbody>
+            </table>
+        </div>
+    </div>
+
     <div class="form-group row">
         <label for="inputPassword" class="col-sm-2 col-form-label"><a href="/technolog/seasons">Orqaga</a></label>
         <div class="col-sm-6">
