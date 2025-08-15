@@ -122,6 +122,7 @@
         <thead>
 
             <tr>
+                <th scope="col">№</th>
                 <th scope="col">MTM</th>
                 <th scope="col">Sarlavha</th>
                 <th scope="col">Mahsulotlar</th>
@@ -132,8 +133,9 @@
             </tr>
         </thead>
         <tbody>
-            @foreach($orders as $order)
+            @foreach($orders as $key => $order)
             <tr>
+                <td>{{ $key + 1 }}</td>
                 <td>{{$order['kingar_name']}}</td>
                 <td>
                     @if($order['document_processes_id'] == 3)
