@@ -244,7 +244,7 @@ class StorageController extends Controller
         $season = Season::where('hide', 1)->first();
         $menus = Titlemenu::where('menu_season_id', $season->id)->get();
         $gardens = Kindgarden::where('hide', 1)->get();
-        $orders = order_product::orderby('id', 'DESC')->paginate(10);
+        $orders = order_product::orderby('id', 'DESC')->get();
         $days = $this->days();
         // dd($menus);
         return view('storage.addmultisklad', compact('orders','gardens', 'menus', 'days'));
