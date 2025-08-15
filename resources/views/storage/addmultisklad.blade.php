@@ -286,15 +286,6 @@
             @endforeach
         </tbody>
     </table>
-    <!-- Pagination -->
-    <div class="row">
-        <div class="col-md-6">
-            <p class="text-muted small">{{ $orders->firstItem() }} dan {{ $orders->lastItem() }} gacha, jami {{ $orders->total() }} yozuv</p>
-        </div>
-        <div class="col-md-6 d-flex justify-content-end">
-            {{ $orders->links('pagination::bootstrap-4') }}
-        </div>
-    </div>
     <a href="/storage/home/0/0">Orqaga</a>
 </div>
 
