@@ -490,7 +490,9 @@
             </tr>
         </thead>
         <tbody>
-        <?php $t = 1;  ?>   
+        <?php 
+            $t = 1;
+        ?>   
         @foreach($nextdayitem as $row)
             <tr>
                 <td>{{ $t++ }}</td>
@@ -504,7 +506,11 @@
                         <i class="far fa-envelope" style="color: #c40c0c"></i> 
                        @endif
                        <i class="ch_countedit far fa-edit" data-nextrow-id="{{ $row[$age->id][0]; }}" data-child-count="{{ $row[$age->id][1]; }}" data-temprow-id="{{ $row[$age->id][2]; }}" data-tempchild-count="{{ $row[$age->id][3]; }}" data-kinga-name="{{ $row['kingar_name'] }}" data-bs-toggle="modal" data-bs-target="#chcountModal" style="color: #727213; font-size: 14px; cursor: pointer;"></i></td>
-                    <td><a href="/nextdaymenuPDF/{{ $row['kingar_name_id'] }}/{{ $age->id }}" target="_blank"><i class="far fa-file-pdf" style="color: dodgerblue; font-size: 18px;"></i></a>  <i class="next_menu far fa-edit" data-nextmenu-id="{{ $row[$age->id][4]; }}" data-nextrow-count="{{ $row[$age->id][0]; }}" data-king-name="{{ $row['kingar_name'] }}" data-bs-toggle="modal" data-bs-target="#editnextmenuModal" style="color: #727213; font-size: 14px; cursor: pointer; margin-left: 11px;"></i></td>
+                    <td>
+                        <p>{{ $row[$age->id][5] }}</p>
+                        <a href="/nextdaymenuPDF/{{ $row['kingar_name_id'] }}/{{ $age->id }}" target="_blank"><i class="far fa-file-pdf" style="color: dodgerblue; font-size: 18px;"></i></a> 
+                        <i class="next_menu far fa-edit" data-nextmenu-id="{{ $row[$age->id][4]; }}" data-nextrow-count="{{ $row[$age->id][0]; }}" data-king-name="{{ $row['kingar_name'] }}" data-bs-toggle="modal" data-bs-target="#editnextmenuModal" style="color: #727213; font-size: 14px; cursor: pointer; margin-left: 11px;"></i>
+                    </td>
                 @else
                     <td>{{ ' ' }}</td>
                     <td>{{ ' ' }}</td>
@@ -522,7 +528,7 @@
     @foreach($shops as $shop)
         <b>{{ $shop->shop_name }}</b>
         <a href="/technolog/nextdelivershop/{{ $shop->id }}" target="_blank">
-            <i class="fas fa-store-alt" style="color: dodgerblue; font-size: 18px;"></i>
+        <i class="fas fa-shipping-fast" style="color: dodgerblue; font-size: 18px;"></i>
         </a>
         <br>
     @endforeach

@@ -39,14 +39,14 @@
                 <i class="fas fa-utensils fs-1 primary-text border rounded-full secondary-bg p-2" style="color:chocolate"></i>
                 <div class="text-center">
                     <p class="fs-4" style="font-size: 18px !important;">{{$row['menu_name']}}</p>
-                    @if($row->us == "1111")
+                    @if($row->us == "1")
                         <i class="fas fa-bullseye" style="color: #22aa6b; margin-right: 6px; font-size: 20px;"></i>
+                        <a href="#" style="color: #959fa3; margin-right: 6px; font-size: 20px;"><i class="fas fa-cog"></i></a>
+                        <a href="#" style="color: #959fa3; margin-right: 6px; font-size: 20px;"><i class="fas fa-eye"></i></a>
+                        <a href="#" style="color: #959fa3; margin-right: 6px; font-size: 20px;"><i class="fas fa-minus-circle menudel" data-menu-id="{{ $row['id'] }}" data-menuname-id = "{{ $row['menu_name']}} " style="color: #da1313; cursor: pointer;" data-bs-toggle="modal" data-bs-target="#deleteModalas"></i></a>
                     @else
                         <a href="/technolog/menuitem/{{$row['id']}}" style="color: #959fa3; margin-right: 6px; font-size: 20px;"><i class="far fa-edit"></i></a>
                     @endif
-                    <a href="#" style="color: #959fa3; margin-right: 6px; font-size: 20px;"><i class="fas fa-cog"></i></a>
-                    <a href="#" style="color: #959fa3; margin-right: 6px; font-size: 20px;"><i class="fas fa-eye"></i></a>
-                    <a href="#" style="color: #959fa3; margin-right: 6px; font-size: 20px;"><i class="fas fa-minus-circle menudel" data-menu-id="{{ $row['id'] }}" data-menuname-id = "{{ $row['menu_name']}} " style="color: #da1313; cursor: pointer;" data-bs-toggle="modal" data-bs-target="#deleteModalas"></i></a>
                 </div>
             </div>
         </div>

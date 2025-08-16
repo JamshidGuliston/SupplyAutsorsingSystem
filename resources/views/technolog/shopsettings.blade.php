@@ -46,7 +46,7 @@
         <div class="form-group row">
             <label for="phone" class="col-sm-2 col-form-label">Telefon: </label>
             <div class="col-sm-10">
-                <input type="tel" name="phone" class="form-control" id="phone" value="{{ $shop->phone ?? '' }}" placeholder="+998901234567" pattern="[+]{1}[0-9]{12}">
+                <input type="tel" name="phone" class="form-control" id="phone" value="{{ $shop->phone ?? '' }}" placeholder="+998901234567">
             </div>
         </div>
         <div class="form-group row">

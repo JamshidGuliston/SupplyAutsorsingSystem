@@ -233,6 +233,7 @@ class TechnologController extends Controller
                                 $join->on('nextday_nambers.kingar_name_id', '=', 'temporaries.kingar_name_id');
                                 $join->on('nextday_nambers.king_age_name_id', '=', 'temporaries.age_id');
                             })
+                            ->leftjoin('titlemenus', 'nextday_nambers.kingar_menu_id', '=', 'titlemenus.id')
                             ->orderby('nextday_nambers.kingar_name_id', 'ASC')
                             ->get([
                                 'nextday_nambers.id',
@@ -240,13 +241,13 @@ class TechnologController extends Controller
                                 'nextday_nambers.kingar_children_number', 
                                 'nextday_nambers.workers_count', 
                                 'nextday_nambers.kingar_menu_id', 
+                                'titlemenus.menu_name',
                                 'nextday_nambers.kingar_name_id', 
                                 'kindgardens.id as kingarid',
                                 'kindgardens.kingar_name',
                                 'temporaries.id as tempid',
                                 'temporaries.age_number'
                             ]);
-            // dd($nextday);
             $nextdayitem = array();
             $loo = 0;
             for($i = 0; $i < count($nextday); $i++){
@@ -257,14 +258,14 @@ class TechnologController extends Controller
                 $nextdayitem[$loo]['id'] = $nextday[$i]->id;
                 $nextdayitem[$loo]['kingar_name_id'] = $nextday[$i]->kingar_name_id;
                 $nextdayitem[$loo]['kingar_name'] = $nextday[$i]->kingar_name;
-                $nextdayitem[$loo][$nextday[$i]->king_age_name_id] = array($nextday[$i]->id, $nextday[$i]->kingar_children_number, $nextday[$i]->tempid, $nextday[$i]->age_number, $nextday[$i]->kingar_menu_id);
+                $nextdayitem[$loo][$nextday[$i]->king_age_name_id] = array($nextday[$i]->id, $nextday[$i]->kingar_children_number, $nextday[$i]->tempid, $nextday[$i]->age_number, $nextday[$i]->kingar_menu_id, $nextday[$i]->menu_name);
                 $nextdayitem[$loo]['workers_count'] = $nextday[$i]->workers_count;
                 if ($i + 1 < count($nextday) and $nextday[$i + 1]->kingar_name_id != $nextdayitem[$loo]['kingar_name_id']) {
                     $loo++;
                 }
             }
 
-            $shops = Shop::where('hide', 1)->with('kindgarden')->with('product')->get();
+            $shops = Shop::where('hide', 1)->where('type_id', 1)->with('kindgarden')->with('product')->get();
 
             // dd($nextdayitem);
             $endday = Day::orderBy('id', 'DESC')->first();
@@ -972,7 +973,17 @@ class TechnologController extends Controller
 
     public function allproducts(Request $request)
     {
-        $products = Product::with('shop')->get();
+        $products = Product::leftjoin('product_categories', 'product_categories.id', '=', 'products.category_name_id')
+            ->leftjoin('norm_categories', 'norm_categories.id', '=', 'products.norm_cat_id')
+            ->leftjoin('sizes', 'sizes.id', '=', 'products.size_name_id')
+            ->with('shop')
+            ->get([
+                'products.*',
+                'product_categories.pro_cat_name',
+                'product_categories.id as pro_cat_id',
+                'norm_categories.norm_name',
+                'sizes.size_name'
+            ]);
         // dd($products);
         return view('technolog.allproducts', compact('products'));
     }

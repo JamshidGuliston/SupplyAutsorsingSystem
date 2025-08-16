@@ -166,6 +166,7 @@ Route::group(['prefix' => 'technolog', 'middleware' => ['isTechnolog', 'auth']],
     Route::get('shops', [TechnologController::class, 'shops'])->name('technolog.shops');
     Route::get('shopsettings/{id}', [TechnologController::class, 'shopsettings'])->name('technolog.shopsettings');
     Route::post('updateshop', [TechnologController::class, 'updateshop'])->name('updateshop');
+    Route::delete('deleteshop/{id}', [TechnologController::class, 'deleteshop'])->name('technolog.deleteshop');
     Route::get('addshop', [TechnologController::class, 'addshop'])->name('addshop');
     Route::post('createshop', [TechnologController::class, 'createshop'])->name('createshop');
     Route::get('reportinout', [TechnologController::class, 'reportinout'])->name('technolog.reportinout');
