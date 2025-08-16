@@ -1318,6 +1318,58 @@ class TechnologController extends Controller
         return view('technolog.menuitem', compact('id', 'times', 'titlemenu', 'menuitem', 'productTotals'));
     }
     //  copy 
+    public function menuitemshow(Request $request, $id)
+    {
+        $times = Meal_time::all();
+        $titlemenu = Titlemenu::where('id', $id)->with('age_range')->first();        
+    
+        $menuitem = Menu_composition::where('title_menu_id', $id)
+                ->leftJoin('titlemenus', 'titlemenus.id', '=', 'menu_compositions.title_menu_id')
+                ->leftJoin('meal_times', 'meal_times.id', '=', 'menu_compositions.menu_meal_time_id')
+                ->leftJoin('food', 'food.id', '=', 'menu_compositions.menu_food_id')
+                ->leftJoin('products', 'products.id', '=', 'menu_compositions.product_name_id')
+                ->leftJoin('age_ranges', 'age_ranges.id', '=', 'menu_compositions.age_range_id')
+                ->orderby('menu_compositions.menu_meal_time_id', 'ASC')
+                ->orderby('menu_compositions.id', 'ASC')
+                ->get([
+                    'titlemenus.menu_name', 
+                    'titlemenus.menu_season_id', 
+                    'titlemenus.id as menuid', 
+                    'meal_times.meal_time_name', 
+                    'meal_times.id as meal_timeid', 
+                    'food.food_name', 
+                    'food.id as foodid', 
+                    'products.product_name', 
+                    'products.id as productid', 
+                    'age_ranges.id as ageid', 
+                    'menu_compositions.weight',
+                    'menu_compositions.id',
+                    'menu_compositions.waste_free',
+                    'menu_compositions.proteins',
+                    'menu_compositions.fats',
+                    'menu_compositions.carbohydrates',
+                    'menu_compositions.kcal'
+                ]);
+        
+        // Maxsulotlar bo'yicha jami gramlarni hisoblash
+        $productTotals = [];
+        foreach ($menuitem as $item) {
+            $productId = $item->productid;
+            $weight = $item->weight;
+            
+            if (isset($productTotals[$productId])) {
+                $productTotals[$productId]['total_weight'] += $weight;
+            } else {
+                $productTotals[$productId] = [
+                    'product_name' => $item->product_name,
+                    'total_weight' => $weight
+                ];
+            }
+        }
+        
+        // dd($productTotals);
+        return view('technolog.menuitemshow', compact('id', 'times', 'titlemenu', 'menuitem', 'productTotals'));
+    }
     public function copymenuitem(Request $request){
         $titlemenu = Titlemenu::where('id', $request->menuid)->with('age_range')->first();
         $ages = array();
