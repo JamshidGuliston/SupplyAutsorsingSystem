@@ -84,7 +84,7 @@
 						</a>
 						<center>
 							<b>Юк хати    &nbsp;&nbsp;&nbsp;&nbsp;    № {{ $document->docid }}</b>
-							<b>&nbsp;&nbsp;&nbsp;&nbsp;  {{ "   Cана: ".$document->order_title }}</b>
+							<b>&nbsp;&nbsp;&nbsp;&nbsp;  {{ "   Cана: ".explode(' ', $document->order_title)[0] }}</b>
 						</center>
 						Кимдан:<b> {{ env('COMPANY_NAME') }} </b><br>  
 						Кимга: <b> {{ $document->kingar_name }}</b>
@@ -124,7 +124,11 @@
             </div>
             <div class="row" style="margin-top: 15px;">
 				<div class="column">
-					<img src="images/qrmanzil.jpg" alt="QR-code" width="140">
+				@php
+					$qrImage = base64_encode(file_get_contents(public_path('images/qrmanzil.jpg')));
+				@endphp
+				<img src="data:image/jpeg;base64,{{ $qrImage }}" 
+					style="width:120; position:absolute; left:10px;">
 				</div>
 				<div class="column">
 					<p style="text-align: right;">Қабул қилувчи: __________________;</p>

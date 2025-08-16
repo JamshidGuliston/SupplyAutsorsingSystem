@@ -746,7 +746,7 @@ class StorageController extends Controller
             $order = order_product::create([
                 'kingar_name_id' => $garden,
                 'day_id' => $today->id,
-                'order_title' => date("H-d-m-Y"),
+                'order_title' => date("d-m-Y H"),
                 'document_processes_id' => 3,
             ]);
             // joriy bog'cha  maxsulotlari bo'yicha sikl

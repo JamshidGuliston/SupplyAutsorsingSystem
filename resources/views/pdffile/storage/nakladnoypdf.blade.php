@@ -136,7 +136,11 @@
             </div>
             <div class="row" style="margin-top: 15px;">
 				<div class="column">
-					<img src="images/qrmanzil.jpg" alt="QR-code" width="140">
+					@php
+						$qrImage = base64_encode(file_get_contents(public_path('images/qrmanzil.jpg')));
+					@endphp
+				<img src="data:image/jpeg;base64,{{ $qrImage }}" 
+					style="width:120; position:absolute; left:10px;">
 				</div>
 				<div class="column">
 					<p style="text-align: right;"><strong>Қабул қилувчи: </strong> __________________;</p>
