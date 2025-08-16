@@ -160,9 +160,7 @@
                         <td style="text-align: end;">
                             <i data-edites-id="{{ $item->id }}" class="editess far fa-edit text-info" data-bs-toggle="modal" data-bs-target="#exampleModal" data-kinid="" style="cursor: pointer; margin-right: 16px;"> </i>
                             <i class="detete  fa fa-trash" aria-hidden="true" data-delet-id="{{$item->id}}" data-bs-toggle="modal" style="cursor: pointer;" data-bs-target="#exampleModalss"></i>
-                            @if($item->data_of_weight)
-                            <i class="fas fa-info-circle text-primary" data-bs-toggle="modal" data-bs-target="#dataOfWeightModal" data-item-id="{{ $item->id }}" style="cursor: pointer; margin-right: 8px;" title="Ma'lumotlarni ko'rish"></i>
-                            @endif
+                            
                         </td>
                     </tr>
                     @endforeach
@@ -250,6 +248,8 @@
             var itemId = $(this).attr('data-item-id');
             var modalContent = $('#dataOfWeightContent');
             
+            console.log('Item ID:', itemId); // Debug uchun
+            
             modalContent.html('<div class="text-center"><i class="fas fa-spinner fa-spin"></i> Ma\'lumotlar yuklanmoqda...</div>');
             
             $.ajax({
@@ -259,13 +259,33 @@
                     'id': itemId,
                 },
                 success: function(response) {
-                    modalContent.html(response.html);
+                    console.log('Response:', response); // Debug uchun
+                    if (response.html) {
+                        modalContent.html(response.html);
+                    } else {
+                        modalContent.html('<div class="alert alert-warning">Ma\'lumotlar topilmadi</div>');
+                    }
                 },
-                error: function(xhr) {
-                    modalContent.html('<div class="alert alert-danger">Ma\'lumotlarni yuklashda xatolik yuz berdi</div>');
+                error: function(xhr, status, error) {
+                    console.log('Error:', xhr.responseText); // Debug uchun
+                    modalContent.html('<div class="alert alert-danger">Ma\'lumotlarni yuklashda xatolik yuz berdi: ' + error + '</div>');
                 }
             });
         });
+        
+        // Ma'lumotlarni yopib ochish funksiyasi
+        window.toggleSection = function(sectionId) {
+            var section = document.getElementById(sectionId);
+            var icon = document.getElementById(sectionId + '-icon');
+            
+            if (section.style.display === 'none') {
+                section.style.display = 'block';
+                icon.className = 'fas fa-chevron-up float-end';
+            } else {
+                section.style.display = 'none';
+                icon.className = 'fas fa-chevron-down float-end';
+            }
+        };
 
     });
 </script>

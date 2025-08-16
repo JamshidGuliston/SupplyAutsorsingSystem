@@ -35,6 +35,15 @@
         border-bottom-color: currentColor;
         border-right: 1px solid #c2b8b8;
     }
+    
+    .phone-icon {
+        transition: all 0.3s ease;
+    }
+    
+    .phone-icon:hover {
+        transform: scale(1.2);
+        color: #28a745 !important;
+    }
     /* Safari */
     @-webkit-keyframes spin {
         0% {
@@ -280,7 +289,18 @@
             @foreach($temps as $temp)
             <tr>
                 <th scope="row"><input type="checkbox" id="bike" name="vehicle" value="gentra"></th>
-                <td>{{ $temp['name'] }}</td>
+                <td>
+                    {{ $temp['name'] }}
+                    @php
+                        $kindgarden = \App\Models\Kindgarden::find($temp['id']);
+                        $user = $kindgarden ? $kindgarden->user->first() : null;
+                    @endphp
+                    @if($user && $user->phone)
+                        <i class="fas fa-phone text-success phone-icon" style="cursor: pointer; margin-left: 8px;" 
+                           data-bs-toggle="tooltip" data-bs-placement="top" 
+                           title="Telefon raqam: {{ $user->phone }}"></i>
+                    @endif
+                </td>
                 <td>{{ $temp['workers'] }}</td>
                 @foreach($ages as $age)
                 @if(isset($temp[$age->id]))
@@ -496,7 +516,18 @@
         @foreach($nextdayitem as $row)
             <tr>
                 <td>{{ $t++ }}</td>
-                <td>{{ $row['kingar_name'] }}</td>
+                <td>
+                    {{ $row['kingar_name'] }}
+                    @php
+                        $kindgarden = \App\Models\Kindgarden::find($row['kingar_name_id']);
+                        $user = $kindgarden ? $kindgarden->user->first() : null;
+                    @endphp
+                    @if($user && $user->phone)
+                        <i class="fas fa-phone text-success phone-icon" style="cursor: pointer; margin-left: 8px;" 
+                           data-bs-toggle="tooltip" data-bs-placement="top" 
+                           title="Telefon raqam: {{ $user->phone }}"></i>
+                    @endif
+                </td>
                 <td>{{ $row['workers_count'] }} <i class="w_countedit far fa-edit" data-menu-id="{{ $row['kingar_name_id'] }}" data-wor-count="{{ $row['workers_count'] }}" data-king-name="{{ $row['kingar_name'] }}" data-bs-toggle="modal" data-bs-target="#wcountModal" style="color: #727213; font-size: 14px; cursor: pointer;"></i></td>
                 @foreach($ages as $age)
                 @if(isset($row[$age->id]))
@@ -539,6 +570,14 @@
 @section('script')
 @if($sendmenu == 0)
 <script>
+    // Tooltip funksionalligini ishga tushirish
+    $(document).ready(function() {
+        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+        var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+            return new bootstrap.Tooltip(tooltipTriggerEl);
+        });
+    });
+
     document.getElementById('select-all').onclick = function() {
         var checkboxes = document.getElementsByName('vehicle');
         for (var checkbox of checkboxes) {
@@ -736,6 +775,12 @@
 @else
 <script>
     $(document).ready(function() {
+        // Tooltip funksionalligini ishga tushirish
+        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+        var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+            return new bootstrap.Tooltip(tooltipTriggerEl);
+        });
+
         $('.deletegarden2').click(function() {
             var gardenId = $(this).attr('data-garden-id');
             var gardenName = $(this).attr('data-garden-name');

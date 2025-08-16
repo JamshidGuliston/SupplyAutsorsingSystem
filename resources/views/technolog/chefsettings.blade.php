@@ -83,6 +83,13 @@
             </div>
         </div>
 
+        <div class="form-group row">
+            <label for="phone" class="col-sm-2 col-form-label">Telefon raqam: </label>
+            <div class="col-sm-10">
+                <input type="tel" name="phone" class="form-control" id="phone" value="{{ $user->phone ?? '' }}" placeholder="+998 XX XXX XX XX">
+            </div>
+        </div>
+
         <div class="password-section">
             <h5><i class="fas fa-lock"></i> Parolni o'zgartirish</h5>
             

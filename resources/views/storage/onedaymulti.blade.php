@@ -112,6 +112,25 @@
         </div>
     </div>
 </div>
+
+<!-- Data of Weight Modal -->
+<div class="modal fade" id="dataOfWeightModal" tabindex="-1" aria-labelledby="dataOfWeightModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header bg-primary">
+                <h5 class="modal-title text-white" id="dataOfWeightModalLabel">Maxsulot ma'lumotlari</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" id="dataOfWeightContent">
+                <!-- Ma'lumotlar bu yerda ko'rsatiladi -->
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Yopish</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <!-- DELET -->
 <div class="py-4 px-4">
     <!-- @if(isset($orders[0]->day_number))
@@ -145,11 +164,12 @@
                     @endif
                 </td>
                 <td>
-                    <!-- @foreach($products as $item)
-                    @if($item->order_product_name_id == $order->id)
-                    {{ $item->product_name."-".$item->product_weight.", " }}
+                    @if($order['data_of_weight'])
+                        <i class="fas fa-info-circle text-primary" data-bs-toggle="modal" data-bs-target="#dataOfWeightModal" data-order-id="{{ $order['id'] }}" style="cursor: pointer;" title="Ma'lumotlarni ko'rish"></i>
+                        <span class="ms-2">Ma'lumotlar mavjud</span>
+                    @else
+                        <span class="text-muted">Ma'lumotlar yo'q</span>
                     @endif
-                    @endforeach -->
                 </td>
                 <td>
                     <a href="/storage/orderskladpdf/{{ $order->id }}" target="__blank">pdf</a>
@@ -258,6 +278,46 @@
                 }
             })
         });
+        
+        // data_of_weight ma'lumotlarini ko'rsatish
+        $('[data-bs-target="#dataOfWeightModal"]').click(function() {
+            var orderId = $(this).attr('data-order-id');
+            var modalContent = $('#dataOfWeightContent');
+            
+            modalContent.html('<div class="text-center"><i class="fas fa-spinner fa-spin"></i> Ma\'lumotlar yuklanmoqda...</div>');
+            
+            $.ajax({
+                method: "GET",
+                url: '/storage/getDataOfWeight',
+                data: {
+                    'id': orderId,
+                },
+                success: function(response) {
+                    if (response.html) {
+                        modalContent.html(response.html);
+                    } else {
+                        modalContent.html('<div class="alert alert-warning">Ma\'lumotlar topilmadi</div>');
+                    }
+                },
+                error: function(xhr, status, error) {
+                    modalContent.html('<div class="alert alert-danger">Ma\'lumotlarni yuklashda xatolik yuz berdi: ' + error + '</div>');
+                }
+            });
+        });
+        
+        // Ma'lumotlarni yopib ochish funksiyasi
+        window.toggleSection = function(sectionId) {
+            var section = document.getElementById(sectionId);
+            var icon = document.getElementById(sectionId + '-icon');
+            
+            if (section.style.display === 'none') {
+                section.style.display = 'block';
+                icon.className = 'fas fa-chevron-up float-end';
+            } else {
+                section.style.display = 'none';
+                icon.className = 'fas fa-chevron-down float-end';
+            }
+        };
     });
 </script>
 @if(session('status'))

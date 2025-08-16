@@ -15,6 +15,5 @@ class order_product_structure extends Model
         'product_name_id',
         'product_weight',
         'actual_weight',
-        'data_of_weight',
     ];
 }

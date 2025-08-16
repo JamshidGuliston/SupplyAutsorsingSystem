@@ -310,7 +310,7 @@ class StorageController extends Controller
     public function onedaymulti(Request $request, $dayid){
         $orederproduct = order_product::where('day_id', $dayid)
             ->join('kindgardens', 'kindgardens.id', '=', 'order_products.kingar_name_id')
-            ->select('order_products.id', 'order_products.order_title', 'order_products.document_processes_id', 'kindgardens.kingar_name') 
+            ->select('order_products.id', 'order_products.order_title', 'order_products.data_of_weight', 'order_products.document_processes_id', 'kindgardens.kingar_name') 
             ->orderby('order_products.id', 'DESC')
             ->get();
         // $orederitems = order_product_structure::join('products', 'products.id', '=', 'order_product_structures.product_name_id')
@@ -340,7 +340,7 @@ class StorageController extends Controller
         $items = order_product_structure::where('order_product_name_id', $id)
             ->join('products', 'products.id', '=', 'order_product_structures.product_name_id')
             ->join('sizes', 'sizes.id', '=', 'products.size_name_id')
-            ->select('order_product_structures.id', 'order_product_structures.product_weight', 'order_product_structures.data_of_weight', 'products.product_name', 'sizes.size_name', 'products.div', 'order_product_structures.actual_weight')
+            ->select('order_product_structures.id', 'order_product_structures.product_weight', 'products.product_name', 'sizes.size_name', 'products.div', 'order_product_structures.actual_weight')
             ->get();
         foreach($items as $item){
             $t = 0;
@@ -386,67 +386,233 @@ class StorageController extends Controller
     // data_of_weight ma'lumotlarini olish
     public function getDataOfWeight(Request $request)
     {
-        $item = order_product_structure::where('id', $request->id)->first();
+        // order_products jadvalidan to'g'ridan-to'g'ri ma'lumotlarni olish
+        $orderProduct = order_product::where('id', $request->id)->first();
         
-        if (!$item || !$item->data_of_weight) {
+        if (!$orderProduct || !$orderProduct->data_of_weight) {
             return response()->json(['error' => 'Ma\'lumot topilmadi'], 404);
         }
         
-        $data = json_decode($item->data_of_weight, true);
+        $data = json_decode($orderProduct->data_of_weight, true);
         
+        // JSON ma'lumotlarni chiroyli formatda ko'rsatish
         $html = '<div class="container-fluid">';
+        $html .= '<h5 class="mb-3">Maxsulot ma\'lumotlari</h5>';
         
         // Asosiy ma'lumotlar
-        $html .= '<div class="row mb-3">';
-        $html .= '<div class="col-md-6"><strong>Maxsulot:</strong> ' . ($data['product_name'] ?? 'Noma\'lum') . '</div>';
-        $html .= '<div class="col-md-6"><strong>Jami og\'irlik:</strong> ' . ($data['total_weight'] ?? 0) . ' гр</div>';
-        $html .= '</div>';
+        if (isset($data['product_name']) || isset($data['total_weight'])) {
+            $html .= '<div class="card mb-3">';
+            $html .= '<div class="card-header bg-primary text-white" style="cursor: pointer;" onclick="toggleSection(\'basic-info\')">';
+            $html .= '<i class="fas fa-info-circle me-2"></i>Asosiy ma\'lumotlar <i class="fas fa-chevron-down float-end" id="basic-info-icon"></i>';
+            $html .= '</div>';
+            $html .= '<div class="card-body" id="basic-info">';
+            $html .= '<div class="row">';
+            if (isset($data['product_name'])) {
+                $productName = $data['product_name'];
+                if (is_array($productName)) $productName = json_encode($productName);
+                $html .= '<div class="col-md-6"><strong>Maxsulot:</strong> ' . htmlspecialchars($productName) . '</div>';
+            }
+            if (isset($data['total_weight'])) {
+                $totalWeight = $data['total_weight'];
+                if (is_array($totalWeight)) $totalWeight = json_encode($totalWeight);
+                $html .= '<div class="col-md-6"><strong>Jami og\'irlik:</strong> ' . htmlspecialchars($totalWeight) . ' гр</div>';
+            }
+            $html .= '</div>';
+            $html .= '</div></div>';
+        }
         
-        if (isset($data['added_manually']) && $data['added_manually']) {
-            $html .= '<div class="alert alert-info">Bu maxsulot qo\'lda qo\'shilgan</div>';
-        } else {
-            // Menyular ma'lumotlari
-            if (isset($data['menus']) && is_array($data['menus'])) {
-                $html .= '<h6>Menyular bo\'yicha ma\'lumotlar:</h6>';
-                $html .= '<div class="table-responsive">';
-                $html .= '<table class="table table-sm table-bordered">';
-                $html .= '<thead><tr><th>Kun</th><th>Yosh guruhi</th><th>O\'quvchilar soni</th><th>Og\'irlik (гр)</th></tr></thead>';
-                $html .= '<tbody>';
+        // Menyular ma'lumotlari
+        if (isset($data['menus']) && is_array($data['menus'])) {
+            $html .= '<div class="card mb-3">';
+            $html .= '<div class="card-header bg-success text-white" style="cursor: pointer;" onclick="toggleSection(\'menus-info\')">';
+            $html .= '<i class="fas fa-utensils me-2"></i>Menyular ma\'lumotlari <i class="fas fa-chevron-down float-end" id="menus-info-icon"></i>';
+            $html .= '</div>';
+            $html .= '<div class="card-body" id="menus-info" style="display: none;">';
+            $html .= '<div class="table-responsive">';
+            $html .= '<table class="table table-sm table-bordered">';
+            $html .= '<thead><tr><th>Kun</th><th>Yosh guruhi</th><th>O\'quvchilar soni</th><th>Og\'irlik (гр)</th></tr></thead><tbody>';
+            
+            foreach ($data['menus'] as $menu) {
+                if (isset($menu['children_menus']) && is_array($menu['children_menus'])) {
+                    foreach ($menu['children_menus'] as $childMenu) {
+                        $html .= '<tr>';
+                        
+                        // Barcha maydonlarni string ga o'tkazish
+                        $dayNumber = $menu['day_number'] ?? '';
+                        $ageGroupName = $childMenu['age_group_name'] ?? '';
+                        $childrenCount = $childMenu['children_count'] ?? 0;
+                        $weight = $childMenu['weight'] ?? 0;
+                        
+                        // Array bo'lsa string ga o'tkazish
+                        if (is_array($dayNumber)) $dayNumber = json_encode($dayNumber);
+                        if (is_array($ageGroupName)) $ageGroupName = json_encode($ageGroupName);
+                        if (is_array($childrenCount)) $childrenCount = json_encode($childrenCount);
+                        if (is_array($weight)) $weight = json_encode($weight);
+                        
+                        $html .= '<td>' . htmlspecialchars($dayNumber) . '</td>';
+                        $html .= '<td>' . htmlspecialchars($ageGroupName) . '</td>';
+                        $html .= '<td>' . htmlspecialchars($childrenCount) . '</td>';
+                        $html .= '<td>' . htmlspecialchars($weight) . '</td>';
+                        
+                        $html .= '</tr>';
+                    }
+                }
+            }
+            $html .= '</tbody></table></div>';
+            $html .= '</div></div>';
+        }
+        
+        // Xodimlar ma'lumotlari
+        if (isset($data['summary']['total_workers']) && $data['summary']['total_workers'] > 0) {
+            $html .= '<div class="card mb-3">';
+            $html .= '<div class="card-header bg-warning text-dark" style="cursor: pointer;" onclick="toggleSection(\'workers-info\')">';
+            $html .= '<i class="fas fa-users me-2"></i>Xodimlar ma\'lumotlari <i class="fas fa-chevron-down float-end" id="workers-info-icon"></i>';
+            $html .= '</div>';
+            $html .= '<div class="card-body" id="workers-info" style="display: none;">';
+            
+            $totalWorkers = $data['summary']['total_workers'];
+            $totalWeightByWorkers = $data['summary']['total_weight_by_workers'];
+            
+            if (is_array($totalWorkers)) $totalWorkers = json_encode($totalWorkers);
+            if (is_array($totalWeightByWorkers)) $totalWeightByWorkers = json_encode($totalWeightByWorkers);
+            
+            $html .= '<p><strong>Xodimlar soni:</strong> ' . htmlspecialchars($totalWorkers) . '</p>';
+            $html .= '<p><strong>Xodimlar uchun og\'irlik:</strong> ' . htmlspecialchars($totalWeightByWorkers) . ' гр</p>';
+            $html .= '</div></div>';
+        }
+        
+        // Umumiy ma'lumotlar
+        if (isset($data['summary'])) {
+            $html .= '<div class="card mb-3">';
+            $html .= '<div class="card-header bg-info text-white" style="cursor: pointer;" onclick="toggleSection(\'summary-info\')">';
+            $html .= '<i class="fas fa-chart-bar me-2"></i>Umumiy ma\'lumotlar <i class="fas fa-chevron-down float-end" id="summary-info-icon"></i>';
+            $html .= '</div>';
+            $html .= '<div class="card-body" id="summary-info" style="display: none;">';
+            
+            $totalChildren = $data['summary']['total_children'] ?? 0;
+            $totalWeightByChildren = $data['summary']['total_weight_by_children'] ?? 0;
+            
+            if (is_array($totalChildren)) $totalChildren = json_encode($totalChildren);
+            if (is_array($totalWeightByChildren)) $totalWeightByChildren = json_encode($totalWeightByChildren);
+            
+            $html .= '<p><strong>Jami o\'quvchilar:</strong> ' . htmlspecialchars($totalChildren) . '</p>';
+            $html .= '<p><strong>O\'quvchilar uchun og\'irlik:</strong> ' . htmlspecialchars($totalWeightByChildren) . ' гр</p>';
+            $html .= '</div></div>';
+        }
+        
+        // To'liq JSON ma'lumotlari
+        $html .= '<div class="card mb-3">';
+        $html .= '<div class="card-header bg-secondary text-white" style="cursor: pointer;" onclick="toggleSection(\'json-info\')">';
+        $html .= '<i class="fas fa-code me-2"></i>To\'liq JSON ma\'lumotlari <i class="fas fa-chevron-down float-end" id="json-info-icon"></i>';
+        $html .= '</div>';
+        $html .= '<div class="card-body" id="json-info" style="display: none;">';
+        
+        // JSON ma'lumotlarni alohida bo'limlarga ajratish
+        if (isset($data['menus']) && is_array($data['menus'])) {
+            foreach ($data['menus'] as $menuKey => $menu) {
+                $html .= '<div class="card mb-2">';
+                $html .= '<div class="card-header bg-light text-dark" style="cursor: pointer; padding: 8px 12px;" onclick="toggleSection(\'menu-' . $menuKey . '\')">';
+                $html .= '<i class="fas fa-list me-2"></i>Menyu ' . $menuKey . ' <i class="fas fa-chevron-down float-end" id="menu-' . $menuKey . '-icon"></i>';
+                $html .= '</div>';
+                $html .= '<div class="card-body p-2" id="menu-' . $menuKey . '" style="display: none;">';
                 
-                foreach ($data['menus'] as $menu) {
-                    if (isset($menu['children_menus']) && is_array($menu['children_menus'])) {
-                        foreach ($menu['children_menus'] as $childMenu) {
-                            $html .= '<tr>';
-                            $html .= '<td>' . ($menu['day_number'] ?? '') . '</td>';
-                            $html .= '<td>' . ($childMenu['age_group_name'] ?? '') . '</td>';
-                            $html .= '<td>' . ($childMenu['children_count'] ?? 0) . '</td>';
-                            $html .= '<td>' . ($childMenu['weight'] ?? 0) . '</td>';
-                            $html .= '</tr>';
+                // Menyu asosiy ma'lumotlari
+                $menuData = array_diff_key($menu, ['children_menus' => '', 'remainder' => '']);
+                if (!empty($menuData)) {
+                    $html .= '<div class="card mb-2">';
+                    $html .= '<div class="card-header bg-info text-white" style="cursor: pointer; padding: 6px 10px; font-size: 12px;" onclick="toggleSection(\'menu-' . $menuKey . '-main\')">';
+                    $html .= '<i class="fas fa-info-circle me-2"></i>Asosiy ma\'lumotlar <i class="fas fa-chevron-down float-end" id="menu-' . $menuKey . '-main-icon"></i>';
+                    $html .= '</div>';
+                    $html .= '<div class="card-body p-2" id="menu-' . $menuKey . '-main" style="display: none;">';
+                    $html .= '<div class="bg-light p-2 rounded">';
+                    $html .= '<pre class="mb-0" style="white-space: pre-wrap; font-family: monospace; font-size: 10px;">';
+                    $html .= htmlspecialchars(json_encode($menuData, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
+                    $html .= '</pre>';
+                    $html .= '</div>';
+                    $html .= '</div></div>';
+                }
+                
+                // Children menus ma'lumotlari
+                if (isset($menu['children_menus']) && is_array($menu['children_menus'])) {
+                    foreach ($menu['children_menus'] as $childKey => $childMenu) {
+                        $html .= '<div class="card mb-2">';
+                        $html .= '<div class="card-header bg-success text-white" style="cursor: pointer; padding: 6px 10px; font-size: 12px;" onclick="toggleSection(\'menu-' . $menuKey . '-child-' . $childKey . '\')">';
+                        $html .= '<i class="fas fa-child me-2"></i>Yosh guruhi: ' . ($childMenu['age_group_name'] ?? 'Noma\'lum') . ' <i class="fas fa-chevron-down float-end" id="menu-' . $menuKey . '-child-' . $childKey . '-icon"></i>';
+                        $html .= '</div>';
+                        $html .= '<div class="card-body p-2" id="menu-' . $menuKey . '-child-' . $childKey . '" style="display: none;">';
+                        
+                        // Weight ma'lumotlari
+                        if (isset($childMenu['weight']) && is_array($childMenu['weight'])) {
+                            $html .= '<div class="card mb-2">';
+                            $html .= '<div class="card-header bg-warning text-dark" style="cursor: pointer; padding: 4px 8px; font-size: 11px;" onclick="toggleSection(\'menu-' . $menuKey . '-child-' . $childKey . '-weight\')">';
+                            $html .= '<i class="fas fa-weight-hanging me-2"></i>Maxsulot og\'irliklari <i class="fas fa-chevron-down float-end" id="menu-' . $menuKey . '-child-' . $childKey . '-weight-icon"></i>';
+                            $html .= '</div>';
+                            $html .= '<div class="card-body p-2" id="menu-' . $menuKey . '-child-' . $childKey . '-weight" style="display: none;">';
+                            
+                            // Maxsulot nomlari bilan ko'rsatish
+                            $html .= '<div class="table-responsive">';
+                            $html .= '<table class="table table-sm table-bordered">';
+                            $html .= '<thead><tr><th>Maxsulot</th><th>Og\'irlik (гр)</th></tr></thead><tbody>';
+                            
+                            foreach ($childMenu['weight'] as $productId => $weight) {
+                                if ($productId === 'k') {
+                                    $html .= '<tr><td><strong>Xodimlar</strong></td><td>' . htmlspecialchars($weight) . '</td></tr>';
+                                } else {
+                                    // Maxsulot nomini olish
+                                    $product = \App\Models\Product::find($productId);
+                                    $productName = $product ? $product->product_name : 'Noma\'lum maxsulot';
+                                    
+                                    $html .= '<tr>';
+                                    $html .= '<td>' . htmlspecialchars($productName) . '</td>';
+                                    $html .= '<td>' . htmlspecialchars($weight) . '</td>';
+                                    $html .= '</tr>';
+                                }
+                            }
+                            
+                            $html .= '</tbody></table></div>';
+                            $html .= '</div></div>';
                         }
+                        
+                        // Remainder ma'lumotlari
+                        if (isset($childMenu['remainder']) && !empty($childMenu['remainder'])) {
+                            $html .= '<div class="card mb-2">';
+                            $html .= '<div class="card-header bg-danger text-white" style="cursor: pointer; padding: 4px 8px; font-size: 11px;" onclick="toggleSection(\'menu-' . $menuKey . '-child-' . $childKey . '-remainder\')">';
+                            $html .= '<i class="fas fa-boxes me-2"></i>Qoldiq maxsulotlar <i class="fas fa-chevron-down float-end" id="menu-' . $menuKey . '-child-' . $childKey . '-remainder-icon"></i>';
+                            $html .= '</div>';
+                            $html .= '<div class="card-body p-2" id="menu-' . $menuKey . '-child-' . $childKey . '-remainder" style="display: none;">';
+                            $html .= '<div class="bg-light p-2 rounded">';
+                            $html .= '<pre class="mb-0" style="white-space: pre-wrap; font-family: monospace; font-size: 10px;">';
+                            $html .= htmlspecialchars(json_encode($childMenu['remainder'], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
+                            $html .= '</pre>';
+                            $html .= '</div>';
+                            $html .= '</div></div>';
+                        }
+                        
+                        $html .= '</div></div>';
                     }
                 }
                 
-                $html .= '</tbody></table></div>';
-            }
-            
-            // Xodimlar ma'lumotlari
-            if (isset($data['summary']['total_workers']) && $data['summary']['total_workers'] > 0) {
-                $html .= '<div class="mt-3">';
-                $html .= '<h6>Xodimlar bo\'yicha ma\'lumotlar:</h6>';
-                $html .= '<p><strong>Xodimlar soni:</strong> ' . $data['summary']['total_workers'] . '</p>';
-                $html .= '<p><strong>Xodimlar uchun og\'irlik:</strong> ' . $data['summary']['total_weight_by_workers'] . ' гр</p>';
-                $html .= '</div>';
-            }
-            
-            // Umumiy ma'lumotlar
-            if (isset($data['summary'])) {
-                $html .= '<div class="mt-3">';
-                $html .= '<h6>Umumiy ma\'lumotlar:</h6>';
-                $html .= '<p><strong>Jami o\'quvchilar:</strong> ' . ($data['summary']['total_children'] ?? 0) . '</p>';
-                $html .= '<p><strong>O\'quvchilar uchun og\'irlik:</strong> ' . ($data['summary']['total_weight_by_children'] ?? 0) . ' гр</p>';
-                $html .= '</div>';
+                $html .= '</div></div>';
             }
         }
+        
+        // Boshqa ma'lumotlarni ham alohida ko'rsatish
+        $otherData = array_diff_key($data, ['menus' => '']);
+        if (!empty($otherData)) {
+            $html .= '<div class="card mb-2">';
+            $html .= '<div class="card-header bg-light text-dark" style="cursor: pointer; padding: 8px 12px;" onclick="toggleSection(\'other-data\')">';
+            $html .= '<i class="fas fa-database me-2"></i>Boshqa ma\'lumotlar <i class="fas fa-chevron-down float-end" id="other-data-icon"></i>';
+            $html .= '</div>';
+            $html .= '<div class="card-body p-2" id="other-data" style="display: none;">';
+            $html .= '<div class="bg-light p-2 rounded">';
+            $html .= '<pre class="mb-0" style="white-space: pre-wrap; font-family: monospace; font-size: 11px;">';
+            $html .= htmlspecialchars(json_encode($otherData, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
+            $html .= '</pre>';
+            $html .= '</div>';
+            $html .= '</div></div>';
+        }
+        
+        $html .= '</div></div>';
         
         $html .= '</div>';
         
@@ -716,9 +882,8 @@ class StorageController extends Controller
                     $dataOfWeight['menus'][$tr]['children_menus'][] = [
                         'age_group_id' => $age->id,
                         'age_group_name' => $age->age_name,
-                        'children_count' => $ch['king_age_children_number'],
+                        'children_count' => $ch['kingar_children_number'],
                         'weight' => $kindproducts[$garden],
-                        'remainder' => []
                     ];
                 }
                 // Xodimlar uchun joriy menyu va yosh toifalari bo'yicha maxsulotlar hisobini olish
@@ -735,19 +900,15 @@ class StorageController extends Controller
             // dd($kindworkerproducts[$garden]);
             // Bog'chalar uchun maxsulotlar kesimida joriy qoldiq larni olish (remainde)
             $mods = $this->productsmod($garden);
-            foreach($mods as $key => $val){
-                $dataOfWeight['remainder'][] = [
-                    'product_id' => $key,
-                    'product_name' => "",
-                    'weight' => $val
-                ];
-            }
+            $dataOfWeight['summary']['remainder'] = $mods;
+
             date_default_timezone_set('Asia/Tashkent');
             $order = order_product::create([
                 'kingar_name_id' => $garden,
                 'day_id' => $today->id,
                 'order_title' => date("d-m-Y H"),
                 'document_processes_id' => 3,
+                'data_of_weight' => json_encode($dataOfWeight),
             ]);
             // joriy bog'cha  maxsulotlari bo'yicha sikl
             foreach($kindproducts[$garden] as $key => $val){
@@ -777,7 +938,6 @@ class StorageController extends Controller
                         'product_name_id' => $key,
                         'product_weight' => $result > 0 ? $result : 1,
                         'actual_weight' => $actual_weight,
-                        'data_of_weight' => json_encode($dataOfWeight, JSON_UNESCAPED_UNICODE)
                     ]);
                 }
                 // }

@@ -13,5 +13,6 @@ class order_product extends Model
         'day_id',
         'order_title',
         'document_processes_id',
+        'data_of_weight',
     ];
 }

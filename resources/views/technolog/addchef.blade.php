@@ -52,6 +52,13 @@
         </div>
 
         <div class="form-group row">
+            <label for="phone" class="col-sm-2 col-form-label">Telefon raqam:</label>
+            <div class="col-sm-10">
+                <input type="tel" name="phone" class="form-control" id="phone" placeholder="+998 XX XXX XX XX">
+            </div>
+        </div>
+
+        <div class="form-group row">
             <label for="inputPassword" class="col-sm-2 col-form-label">Боғча:</label>
             <div class="col-sm-10">
                 <select required id='testSelect1' name="kinid" class="form-select" >

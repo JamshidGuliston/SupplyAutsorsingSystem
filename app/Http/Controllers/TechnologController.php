@@ -1717,6 +1717,7 @@ class TechnologController extends Controller
             'role_id' => 6,
             'name' => $request->name,
             'email' => $request->email,
+            'phone' => $request->phone,
             'avatar' => "users/default.png",
             'email_verified_at' => NULL,
             'password' => bcrypt($request->password),
@@ -1744,6 +1745,7 @@ class TechnologController extends Controller
         $updateData = [
             'name' => $request->chefname,
             'email' => $request->chefemail,
+            'phone' => $request->phone,
         ];
 
         // Parol validatsiyasi va yangilash
