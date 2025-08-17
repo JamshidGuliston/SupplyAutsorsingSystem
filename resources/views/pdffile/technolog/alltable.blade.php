@@ -54,6 +54,27 @@
 			transform: rotate(-90deg);
 			white-space: nowrap;
 		}
+		
+		/* Maxsulot nomlari uchun ikki qatorlik ko'rsatish */
+		.product-name-header {
+			word-wrap: break-word;
+			word-break: break-word;
+			hyphens: auto;
+			line-height: 1.2;
+			max-width: 100%;
+			overflow-wrap: break-word;
+			vertical-align: middle;
+		}
+		
+		.product-name-header span {
+			display: block;
+			text-align: center;
+			line-height: 1.1;
+			font-size: 7px;
+			padding: 2px;
+			white-space: normal;
+			word-spacing: 0;
+		}
 	</style>
 </head>
 <body>
@@ -79,7 +100,7 @@
 							 @foreach($products as $product)
 							 	@if(isset($product['yes']))
 								 <?php $col++; ?>
-                          	 		<th class='vrt-header' style="padding: 0px; width: 3%; height: 95px"><?php echo '<span>'.$product['product_name']. '</span>';?></th>
+								 <th class='vrt-header product-name-header' style="padding: 0px; width: 3%; height: 95px"><?php echo '<span>'.$product['product_name']. '</span>';?></th>
 								@endif
 							 @endforeach
                           </tr>
@@ -88,12 +109,12 @@
 							$boolmeal = [];
                         	@foreach($menuitem as $row)
 								@foreach($row as $item)
-								@if($loop->index == 0))
+								@if($loop->index == 0)
 									@continue;
 									<?php $time = $item['mealtime']; ?>
 								@endif
 			                        <tr>
-			                        	@if($loop->index == 1))
+			                        	@if($loop->index == 1)
 												<th scope="row" rowspan="<?php echo 2 * (count($row)-1); ?>" class='vrt-header' style="padding: 0px; height: 60px;"><?php echo '<span>'. $row[0]['mealtime'] .'</span>'; ?></th>
 			                            @endif
 			                            <td scope="row" rowspan="2" class="align-baseline" style="padding: 2px;"><?php echo $item['foodname'] ?></td>

@@ -94,13 +94,15 @@ class HomeController extends Controller
     //     $this->middleware('auth');
     // }
 	public function nextdayshoppdf(Request $request, $id){
-        $shop = Shop::where('id', $id)->with('kindgarden')->with('product')->first();
+        $shop = Shop::where('id', $id)->with('kindgarden.region')->with('product')->first();
         // dd($shop);
         $nextday = Nextday_namber::all();
 
         $shopproducts = array();
         foreach($shop->kindgarden as $row){
-            $shopproducts[$row->id]['name'] = $row->kingar_name;    
+            $shopproducts[$row->id]['name'] = $row->kingar_name;
+            $shopproducts[$row->id]['region_name'] = $row->region ? $row->region->region_name : '';
+            $shopproducts[$row->id]['region_id'] = $row->region_id;
             $day = Day::orderBy('id', 'DESC')->first();
             foreach($shop->product as $prod){
                 $allsum = 0;
@@ -129,6 +131,25 @@ class HomeController extends Controller
                 $shopproducts[$row->id][$prod->id] = ($allsum + $woe * $workers) / $prdiv->div; 
             }
         }
+        
+        // Muassasa nomlarini region nomi va raqamiga qarab saralash
+        uasort($shopproducts, function($a, $b) {
+            // Avval region nomiga qarab saralash
+            if ($a['region_name'] !== $b['region_name']) {
+                return strcmp($a['region_name'], $b['region_name']);
+            }
+            
+            // Region nomi bir xil bo'lsa, muassasa nomidagi raqamga qarab saralash
+            $a_number = preg_replace('/[^0-9]/', '', $a['name']);
+            $b_number = preg_replace('/[^0-9]/', '', $b['name']);
+            
+            if ($a_number && $b_number) {
+                return intval($a_number) - intval($b_number);
+            }
+            
+            // Raqam topilmasa, to'liq nomga qarab saralash
+            return strcmp($a['name'], $b['name']);
+        });
 
         $dompdf = new Dompdf('UTF-8');
 		$html = mb_convert_encoding(view('technolog.nextdayshoppdf', compact('shopproducts', 'shop')), 'HTML-ENTITIES', 'UTF-8');

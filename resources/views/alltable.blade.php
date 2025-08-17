@@ -54,6 +54,27 @@
 			transform: rotate(-90deg);
 			white-space: nowrap;
 		}
+		
+		/* Maxsulot nomlari uchun ikki qatorlik ko'rsatish */
+		.product-name-header {
+			word-wrap: break-word;
+			word-break: break-word;
+			hyphens: auto;
+			line-height: 1.2;
+			max-width: 100%;
+			overflow-wrap: break-word;
+			vertical-align: middle;
+		}
+		
+		.product-name-header span {
+			display: block;
+			text-align: center;
+			line-height: 1.1;
+			font-size: 7px;
+			padding: 2px;
+			white-space: normal;
+			word-spacing: 0;
+		}
 	</style>
 </head>
 <body>
@@ -78,7 +99,7 @@
 							 @foreach($products as $product)
 							 	@if(isset($product['yes']))
 								 <?php $col++; ?>
-                          	 		<th class='vrt-header' style="padding: 0px; width: 3%; height: 95px"><?php echo '<span>'.$product['product_name']. '</span>';?></th>
+                          	 		<th class='vrt-header product-name-header' style="padding: 0px; width: 3%; height: 95px"><?php echo '<span>'.$product['product_name']. '</span>';?></th>
 								@endif
 							 @endforeach
                           </tr>

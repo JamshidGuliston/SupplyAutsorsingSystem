@@ -33,7 +33,7 @@
                 <th scope="col">ID</th>
                 <th scope="col">MTT-nomi</th>
                 @foreach($shop->product as $age)
-                <th scope="col">{{ $age->product_name}}</th>
+                <th scope="col" colspan="2">{{ $age->product_name}}</th>
                 @endforeach
             </tr>
         </thead>
@@ -47,7 +47,22 @@
                 <th scope="row">{{ $tr++ }}</th>
                 <td>{{ $row['name'] }}</td>
                 @foreach($shop->product as $age)
-                    <td scope="col"><?php printf("%01.3f", $row[$age->id]); ?></td>
+                <?php
+                    if($row[$age->id] > 0){
+                        $weight = $row[$age->id];
+                        $decimalPart = $weight - floor($weight);
+                        // agar kasr qismi 0.45 yoki undan katta bo'lsa, yuqoriga olinsin
+                        $result  = ($decimalPart >= 0.4444444)
+                                    ? ceil($weight)
+                                            : floor($weight);
+                        $result = $result > 0 ? $result : 1;
+                    }else{
+                        $result = 0;
+                        $weight = 0;
+                    }
+                ?>
+                    <td scope="col"><?php printf("%01.1f", $result); ?></td>
+                    <td scope="col"><?php printf("%01.3f", $weight); ?></td>
                 @endforeach
             </tr>
             @endforeach

@@ -26,7 +26,7 @@
                             <select id="onemenu" class="form-select" onchange="changeFunc();" aria-label="Default select example">
                                 <option value="">3-7 ёш меню</option>
                                 @foreach($menus as $row)
-                                <option value="{{$row['id']}}">{{$row['menu_name']}}</option>
+                                <option value="{{$row['id']}}">{{$row['menu_name']}} ({{$row['season_name']}})</option>
                                 @endforeach
                             </select>
                         </div>
@@ -36,7 +36,7 @@
                             <select id="twomenu" class="form-select" aria-label="Default select example">
                                 <option value="">Қисқа гурух меню</option>
                                 @foreach($menus as $row)
-                                <option value="{{$row['id']}}">{{$row['menu_name']}}</option>
+                                <option value="{{$row['id']}}">{{$row['menu_name']}} ({{$row['season_name']}})</option>
                                 @endforeach
                             </select>
                         </div>

@@ -242,8 +242,7 @@ class StorageController extends Controller
     }
 
     public function addmultisklad(Request $request){
-        $season = Season::where('hide', 1)->first();
-        $menus = Titlemenu::where('menu_season_id', $season->id)->get();
+        $menus = Titlemenu::join('seasons', 'seasons.id', '=', 'titlemenus.menu_season_id')->get(['titlemenus.id', 'titlemenus.menu_name', 'seasons.season_name']);
         
         $gardens = Kindgarden::where('hide', 1)->get();
         $product_categories = Product_category::all();
@@ -836,7 +835,7 @@ class StorageController extends Controller
     }
 
     public function newordersklad(Request $request){
-        dd($request->all());    
+        // dd($request->all());    
         $today = Day::join('months', 'months.id', '=', 'days.month_id')
                 ->join('years', 'years.id', '=', 'days.year_id')
                 ->orderBy('id', 'DESC')->first(['days.id', 'days.day_number', 'months.month_name', 'years.year_name']);

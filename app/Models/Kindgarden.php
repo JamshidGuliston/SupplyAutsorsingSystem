@@ -40,4 +40,8 @@ class Kindgarden extends Model
     public function user(){
         return $this->belongsToMany(User::class, 'user_kindgardens');
     }
+
+    public function region(){
+        return $this->belongsTo(Region::class);
+    }
 }
