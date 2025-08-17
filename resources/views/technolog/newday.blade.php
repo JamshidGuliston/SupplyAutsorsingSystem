@@ -44,6 +44,38 @@
         transform: scale(1.2);
         color: #28a745 !important;
     }
+    
+    .chef-name {
+        font-size: 12px;
+        color: #6c757d;
+        margin-left: 5px;
+        font-style: italic;
+    }
+    
+    .filter-section {
+        background-color: #f8f9fa;
+        border-radius: 8px;
+        padding: 20px;
+        margin-bottom: 20px;
+        border: 1px solid #dee2e6;
+    }
+    
+    .filter-section .form-label {
+        font-weight: 600;
+        color: #495057;
+        margin-bottom: 8px;
+    }
+    
+    .filter-section .form-control,
+    .filter-section .form-select {
+        border-radius: 6px;
+        border: 1px solid #ced4da;
+    }
+    
+    .filter-section .btn {
+        border-radius: 6px;
+        font-weight: 500;
+    }
     /* Safari */
     @-webkit-keyframes spin {
         0% {
@@ -248,7 +280,30 @@
         <!--@endif-->
     </div>
     </form>
-    <table class="table table-light py-4 px-4">
+    <!-- Filter va qidiruv qismi -->
+    <div class="row mb-3 filter-section">
+        <div class="col-md-4">
+            <label for="regionFilter" class="form-label">Hudud bo'yicha filter:</label>
+            <select class="form-select" id="regionFilter">
+                <option value="">Barcha hududlar</option>
+                @foreach(\App\Models\Region::all() as $region)
+                    <option value="{{ $region->id }}">{{ $region->region_name }}</option>
+                @endforeach
+            </select>
+        </div>
+        <div class="col-md-4">
+            <label for="searchInput" class="form-label">Qidiruv:</label>
+            <input type="text" class="form-control" id="searchInput" placeholder="Bog'cha nomi yoki oshpaz nomi...">
+        </div>
+        <div class="col-md-4 d-flex align-items-end">
+            <button class="btn btn-secondary me-2" id="clearFilters">Filterlarni tozalash</button>
+            <button class="btn btn-info p-0" style="padding: 3px 16px !important;" data-bs-toggle="modal" data-bs-target="#exampleModalsadd">
+                <i class="fas fa-plus-square text-white"></i>
+            </button>
+        </div>
+    </div>
+
+    <table class="table table-light py-4 px-4" id="firstTable">
         <thead>
             <tr>
                 <th style="width: 14px;">
@@ -262,8 +317,7 @@
                     
                 </th>
 	
-                <th> <button class="btn btn-info p-0" style="
-                    padding: 3px 16px !important;" data-bs-toggle="modal" data-bs-target="#exampleModalsadd"> <i class="fas fa-plus-square text-white "></i></button> </th>
+                <th></th>
             </tr>
             <tr>
                 <th scope="col">ID</th>
@@ -287,7 +341,11 @@
         </thead>
         <tbody>
             @foreach($temps as $temp)
-            <tr>
+            @php
+                $kindgarden = \App\Models\Kindgarden::find($temp['id']);
+                $user = $kindgarden ? $kindgarden->user->first() : null;
+            @endphp
+            <tr data-region-id="{{ $kindgarden ? $kindgarden->region_id : '' }}" data-user-name="{{ $user ? $user->name : '' }}">
                 <th scope="row"><input type="checkbox" id="bike" name="vehicle" value="gentra"></th>
                 <td>
                     {{ $temp['name'] }}
@@ -298,7 +356,7 @@
                     @if($user && $user->phone)
                         <i class="fas fa-phone text-success phone-icon" style="cursor: pointer; margin-left: 8px;" 
                            data-bs-toggle="tooltip" data-bs-placement="top" 
-                           title="Telefon raqam: {{ $user->phone }}"></i>
+                           title="Telefon raqam: {{ $user->phone }}'\n' Oshpaz: {{ $user->name }}"></i>
                     @endif
                 </td>
                 <td>{{ $temp['workers'] }}</td>
@@ -484,11 +542,36 @@
             
         </div>
         <div class="col-md-3">
-        <button class="btn btn-info p-0" style="padding: 3px 16px !important; text-align:end" data-bs-toggle="modal" data-bs-target="#exampleModalsadd"> <i class="fas fa-plus-square text-white "></i></button>
+        
         </div>
     </div>
     <hr>
-    <table class="table table-light py-4 px-4">
+    <!-- Filter va qidiruv qismi -->
+    <div class="row mb-3 filter-section">
+        <div class="col-md-4">
+            <label for="regionFilter2" class="form-label">Hudud bo'yicha filter:</label>
+            <select class="form-select" id="regionFilter2">
+                <option value="">Barcha hududlar</option>
+                @foreach(\App\Models\Region::all() as $region)
+                    <option value="{{ $region->id }}">{{ $region->region_name }}</option>
+                @endforeach
+            </select>
+        </div>
+        <div class="col-md-4">
+            <label for="searchInput2" class="form-label">Qidiruv:</label>
+            <input type="text" class="form-control" id="searchInput2" placeholder="Bog'cha nomi yoki oshpaz nomi...">
+        </div>
+        <div class="col-md-2">
+            <label for="clearFilters2" class="form-label">Filterlarni tozalash</label><br>
+            <button class="btn btn-secondary me-2" id="clearFilters2"> <i class="fas fa-trash-alt text-white "></i></button>
+        </div>
+        <div class="col-md-2">
+            <label for="exampleModalsadd" class="form-label">Bog'cha qo'shish</label><br>
+            <button class="btn btn-info" style="text-align:end" data-bs-toggle="modal" data-bs-target="#exampleModalsadd"> <i class="fas fa-plus-square text-white "></i></button>
+        </div>      
+    </div>
+
+    <table class="table table-light py-4 px-4" id="secondTable">
         <thead>
             <tr>
                 <th scope="col" rowspan="2">ID</th>
@@ -514,7 +597,11 @@
             $t = 1;
         ?>   
         @foreach($nextdayitem as $row)
-            <tr>
+            @php
+                $kindgarden = \App\Models\Kindgarden::find($row['kingar_name_id']);
+                $user = $kindgarden ? $kindgarden->user->first() : null;
+            @endphp
+            <tr data-region-id="{{ $kindgarden ? $kindgarden->region_id : '' }}" data-user-name="{{ $user ? $user->name : '' }}">
                 <td>{{ $t++ }}</td>
                 <td>
                     {{ $row['kingar_name'] }}
@@ -525,7 +612,7 @@
                     @if($user && $user->phone)
                         <i class="fas fa-phone text-success phone-icon" style="cursor: pointer; margin-left: 8px;" 
                            data-bs-toggle="tooltip" data-bs-placement="top" 
-                           title="Telefon raqam: {{ $user->phone }}"></i>
+                           title="Oshpaz: {{ $user->name }}         Telefon raqam: {{ $user->phone }} "></i>
                     @endif
                 </td>
                 <td>{{ $row['workers_count'] }} <i class="w_countedit far fa-edit" data-menu-id="{{ $row['kingar_name_id'] }}" data-wor-count="{{ $row['workers_count'] }}" data-king-name="{{ $row['kingar_name'] }}" data-bs-toggle="modal" data-bs-target="#wcountModal" style="color: #727213; font-size: 14px; cursor: pointer;"></i></td>
@@ -585,6 +672,41 @@
         }
     }
     $(document).ready(function() {
+        // Filter va qidiruv funksionalligi
+        function filterTable() {
+            var regionFilter = $('#regionFilter').val();
+            var searchText = $('#searchInput').val().toLowerCase();
+            var table = $('#firstTable tbody tr');
+            
+            table.each(function() {
+                var row = $(this);
+                var gardenName = row.find('td:eq(1)').text().toLowerCase();
+                var regionId = row.attr('data-region-id');
+                var user = row.attr('data-user-name');
+                
+                var showByRegion = !regionFilter || regionId == regionFilter;
+                var showBySearch = !searchText || 
+                    gardenName.includes(searchText) || 
+                    (user && user.toLowerCase().includes(searchText));
+                
+                if (showByRegion && showBySearch) {
+                    row.show();
+                } else {
+                    row.hide();
+                }
+            });
+        }
+        
+        // Filter va qidiruv eventlari
+        $('#regionFilter, #searchInput').on('change keyup', filterTable);
+        
+        // Filterlarni tozalash
+        $('#clearFilters').click(function() {
+            $('#regionFilter').val('');
+            $('#searchInput').val('');
+            filterTable();
+        });
+        
         var menuinp = $('.menucounts');
         if(menuinp.length == ''){
             var button = document.getElementsByClassName("yuborish");
@@ -779,6 +901,41 @@
         var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
         var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
             return new bootstrap.Tooltip(tooltipTriggerEl);
+        });
+
+        // Filter va qidiruv funksionalligi - ikkinchi jadval
+        function filterTable2() {
+            var regionFilter = $('#regionFilter2').val();
+            var searchText = $('#searchInput2').val().toLowerCase();
+            var table = $('#secondTable tbody tr');
+            
+            table.each(function() {
+                var row = $(this);
+                var gardenName = row.find('td:eq(1)').text().toLowerCase();
+                var regionId = row.attr('data-region-id');
+                var user = row.attr('data-user-name');
+                
+                var showByRegion = !regionFilter || regionId == regionFilter;
+                var showBySearch = !searchText || 
+                    gardenName.includes(searchText) || 
+                    (user && user.toLowerCase().includes(searchText));
+                
+                if (showByRegion && showBySearch) {
+                    row.show();
+                } else {
+                    row.hide();
+                }
+            });
+        }
+        
+        // Filter va qidiruv eventlari - ikkinchi jadval
+        $('#regionFilter2, #searchInput2').on('change keyup', filterTable2);
+        
+        // Filterlarni tozalash - ikkinchi jadval
+        $('#clearFilters2').click(function() {
+            $('#regionFilter2').val('');
+            $('#searchInput2').val('');
+            filterTable2();
         });
 
         $('.deletegarden2').click(function() {

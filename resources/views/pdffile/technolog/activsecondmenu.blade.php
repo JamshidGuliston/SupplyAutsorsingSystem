@@ -261,129 +261,105 @@
 										<tr>
 											<td scope="row" class="align-baseline" style="padding: 0px;"><?php echo $age['age_name'] ?></td>
 											<!-- <td scope="row" class="align-baseline" style="padding: 0px;"></td> -->
+											@foreach($products as $product)
+											@if(isset($product['yes']) and isset($age[$product['id']]))
 											<?php
-											for($t = 0; $t < count($products); $t++){
-												if(isset($products[$t]['yes']) and isset($age[$products[$t]['id']])){
 													if(!isset($oneEater[$akey])){
 														$oneEater[$akey] = array_fill(1, 500, 0);
 														$oneEater[$akey]['age_name'] = $age['age_name'];
 														$oneEater[$akey]['number'] = $countch[$akey];
 													}
-													$oneEater[$akey][$t] += $age[$products[$t]['id']]['one'];
+													$oneEater[$akey][$product['id']] += $age[$product['id']]['one'];
 											?>	
-													<td style="padding: 0px;">{{ $age[$products[$t]['id']]['one'] }}</td>
-											<?php
-												}
-												elseif(isset($products[$t]['yes'])){
-											?>
+													<td style="padding: 0px;">{{ $age[$product['id']]['one'] }}</td>
+												@elseif(isset($product['yes']))
 													<td style="padding: 0px;"></td>
-											<?php	
-												}
-											}
-											?>
+											@endif
+											@endforeach
 										</tr>
 										@endif
 									@endforeach
 								@endforeach
 							@endforeach
+							@foreach($oneEater as $key => $value)
 							<tr>
-								<th scope="row" rowspan="{{7 + count($oneEater) }}" class='vrt-header' style="padding: 0px; border-top: 2px solid black"><span>Болалар</span></th>
-
-								<td scope="row" class="align-baseline" style="padding: 0px; border-top: 2px solid black"><?php echo "1та бола учун"; ?></td>
-								<td style="padding: 0px; border-top: 2px solid black"></td>
-								<?php
-									for($t = 0; $t < count($products); $t++){
-								?>
-										<td style="padding: 0px; font-size: 5px; border-top: 2px solid black"></td>
-								<?php
-									}
-								?>
-							</tr>
-							
-								<?php
-									foreach($oneEater as $key => $value){
-								?>
-									<tr>
-										<td scope="row" class="align-baseline" style="padding: 0px;"><?php echo $value['age_name']; ?></td>
-										<td style="padding: 0px;"></td>
-										<?php
-											for($t = 0; $t < count($products); $t++){
-												if(isset($products[$t]['yes']) and isset($value[$t])){
-										?>
-													<td style="padding: 0px; font-size: 5px;"><?= round($value[$t], 2); ?></td>
-										<?php
-												}
-											}
-										?>
-									</tr>
-								<?php
-									}
-								?>
+                                <th scope="row" rowspan="8" class='vrt-header' style="padding: 0px; border-top: solid black"><span>{{ $value['age_name'] }}</span></th>
+								<td style="padding: 0px; font-size: 5px;">1 та бола учун гр</td>
+								<td style="padding: 0px; font-size: 5px;"></td>
+								@foreach($products as $product)
+							 	@if(isset($product['yes']) and isset($value[$product['id']]))
+											<td style="padding: 0px; font-size: 5px;"><?= round($value[$product['id']], 2); ?></td>
+								@endif
+								@endforeach
 							</tr>
 							<tr>
-								<td scope="row" class="align-baseline" style="padding: 0px;">Жами миқдор</td>
-								<td style="padding: 0px;"></td>
-								<?php
-								for($t = 0; $t < count($products); $t++){
-									if(isset($products[$t]['yes']) and isset($productallcount[$products[$t]['id']])){
-								?>
-									<td style="padding: 0px; font-size: 5px;"><?= round($productallcount[$products[$t]['id']], 2); ?></td>
-								<?php	
-									}
-									elseif(isset($products[$t]['yes'])){
-									?>
-										<td style="padding: 0px;"></td>
-									<?php	
-									}
-								}
-								?>
+								<td style="padding: 0px; font-size: 5px;">Жами микдори</td>
+								<td style="padding: 0px; font-size: 5px;"></td>
+								@foreach($products as $product)
+							 	@if(isset($product['yes']) and isset($value[$product['id']]))
+												<td style="padding: 0px; font-size: 5px;"><?= round(($value[$product['id']] * $value['number']) / $product['div'], 2); ?></td>
+								@endif
+								@endforeach
 							</tr>
 							<tr>
-								<td scope="row" class="align-baseline" style="padding: 0px;">Нархи</td>
+								<td style="padding: 0px; font-size: 5px;">Нархи</td>
+                                <td></td>
+                                @foreach($products as $product)
+							 	@if(isset($product['yes']) and isset($value[$product['id']]))
+											<td style="padding: 0px; font-size: 5px;"><?= round($narx[$product['id']], 2); ?></td>
+								@endif
+								@endforeach
+                            </tr>
+							<tr>
+								<td style="padding: 0px; font-size: 5px;">Суммаси</td>
 								<td></td>
+								@foreach($products as $product)
+							 	@if(isset($product['yes']) and isset($value[$product['id']]))
+											<td style="padding: 0px; font-size: 5px;"><?= round(($value[$product['id']] * $value['number']) / $product['div'] * $narx[$product['id']], 2); ?></td>
+								@endif
+								@endforeach
+                            </tr>
+							<tr>
+								<td style="padding: 0px; font-size: 5px;">Хокимят нархида жами харажат</td>
+								<td style="padding: 0px; font-size: 5px;"></td>
 								<?php
-								for($t = 0; $t < count($products); $t++){
-									if(isset($products[$t]['yes']) and isset($productallcount[$products[$t]['id']])){
+									$summa = 0;
 								?>
-									<td style="padding: 0px; font-size: 5px;"><?php printf($narx[$products[$t]['id']]); ?></td>
-								<?php	
-									}
-									elseif(isset($products[$t]['yes'])){
-									?>
-										<td style="padding: 0px;"></td>
-									<?php	
-									}
-								}
-								?>
-							</tr>
-							<tr>
-								<td scope="row" class="align-baseline" style="padding: 0px;">Хокимят нархида жами харажат</td>
-								<td></td>
+								@foreach($products as $product)
+							 	@if(isset($product['yes']) and isset($value[$product['id']]))
 								<?php
-								$chcost = 0;
-								for($t = 0; $t < count($products); $t++){
-									if(isset($products[$t]['yes']) and isset($productallcount[$products[$t]['id']])){
-										$chcost += $productallcount[$products[$t]['id']] * $narx[$products[$t]['id']];	
-									}
-								}
+									$summa += ($value[$product['id']] * $value['number']) / $product['div'] * $narx[$product['id']];
 								?>
-								<td colspan="{{ count($products) }}" style="padding: 0px;"><?php printf("%01.2f", $chcost); ?></td>
-							</tr>
+								@endif
+								@endforeach
+								 <td colspan="{{ count($products) }}" style="padding: 0px; font-size: 5px;"><?= round($summa, 2); ?></td>
+                            </tr>
 							<tr>
-								<td scope="row" class="align-baseline" style="padding: 0px;">Хокимят нархида 1 бола харажати</td>
-								<td></td>
-								<td colspan="{{ count($products) }}" style="padding: 0px;"><?php printf("%01.2f", $chcost / $countch[4]); ?></td>
-							</tr>
+								<td style="padding: 0px; font-size: 5px;">Хокимят нархида 1 бола харажати</td>
+								<td style="padding: 0px; font-size: 5px;"></td>
+								<?php
+									$summa = 0;
+								?>
+								@foreach($products as $product)
+							 	@if(isset($product['yes']) and isset($value[$product['id']]))
+								<?php
+									$summa += ($value[$product['id']] * $value['number']) / $product['div'] * $narx[$product['id']];
+								?>
+								@endif
+								@endforeach
+								 <td colspan="{{ count($products) }}" style="padding: 0px; font-size: 5px;"><?= round($summa / $value['number'], 2); ?></td>
+                            </tr>
 							<tr>
-								<td scope="row" class="align-baseline" style="padding: 0px;">Шартнома бўйича тасдиқланган 1 бола харажати</td>
-								<td></td>
-								<td colspan="{{ count($products) }}" style="padding: 0px;"><?php printf("%01.2f", $protsent->eater_cost); ?></td>
-							</tr>
+								<td style="padding: 0px; font-size: 5px;">Шартнома бўйича тасдиқланган 1 бола харажати</td>
+								<td style="padding: 0px; font-size: 5px;"></td>
+								 <td colspan="{{ count($products) }}" style="padding: 0px; font-size: 5px;"><?= round($protsent->where('age_range_id', $key)->first()->eater_cost, 2); ?></td>
+                            </tr>
 							<tr>
-								<td scope="row" class="align-baseline" style="padding: 0px;">Шартнома бўйича жами сарфланган маблаг</td>
-								<td></td>
-								<td colspan="{{ count($products) }}" style="padding: 0px;"><?php printf("%01.2f", $protsent->eater_cost * $countch[4]); ?></td>
-							</tr>
+								<td style="padding: 0px; font-size: 5px;">Шартнома бўйича жами сарфланган маблаг</td>
+								<td style="padding: 0px; font-size: 5px;"></td>
+								 <td colspan="{{ count($products) }}" style="padding: 0px; font-size: 5px;"><?= round($protsent->where('age_range_id', $key)->first()->eater_cost * $value['number'], 2); ?></td>
+                            </tr>
+							@endforeach
 							<tr style="border-top: 2px solid black;">
 								<th scope="row" rowspan="5" class='vrt-header' style="padding: 0px; border-top: 2px solid black"><span>Ходимлар</span></th>
 								<td scope="row" class="align-baseline" style="padding: 0px; border-top: 2px solid black">1 та ходимга</td>
@@ -407,6 +383,7 @@
 								<td scope="row" class="align-baseline" style="padding: 0px;">Жами миқдори</td>
 								<td></td>
 								<?php
+								$chcost = 0;
 								for($t = 0; $t < count($products); $t++){
 									if(isset($products[$t]['yes']) and isset($workerproducts[$products[$t]['id']])){
 										$chcost += ($workers * $workerproducts[$products[$t]['id']]) / $products[$t]['div'];

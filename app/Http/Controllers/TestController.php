@@ -882,6 +882,8 @@ class TestController extends Controller
 		$nextdaymenuitem = [];
 		$workerproducts = [];
 		$region_id = Kindgarden::where('id', $gid)->first()->region_id;
+		$ages = Kindgarden::where('id', $gid)->with('age_range')->first();
+		// dd($ages);
 		// kamchilik bor boshlangich qiymat berishda
 		$foundday = bycosts::where('day_id', '<=', $today)->where('region_name_id', Kindgarden::where('id', $gid)->first()->region_id)->orderBy('day_id', 'DESC')->first();
 		// dd($foundday);
@@ -994,7 +996,7 @@ class TestController extends Controller
 			$day->day_number
 		);
 		
-		$protsent = Protsent::where('region_id', $region_id)->where('start_date', '<=', $dateString)->where('end_date', '>=', $dateString)->first();
+		$protsent = Protsent::where('region_id', $region_id)->where('start_date', '<=', $dateString)->where('end_date', '>=', $dateString)->get();
 		
 		if(!$protsent){
 			$protsent = new Protsent();

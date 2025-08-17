@@ -21,6 +21,7 @@ use App\Models\Season;
 use App\Models\Shop;
 use App\Models\Shop_product;
 use App\Models\Take_group;
+use App\Models\Product_category;
 use App\Models\Take_product;
 use App\Models\Take_small_base;
 use App\Models\Titlemenu;
@@ -245,11 +246,12 @@ class StorageController extends Controller
         $menus = Titlemenu::where('menu_season_id', $season->id)->get();
         
         $gardens = Kindgarden::where('hide', 1)->get();
-
+        $product_categories = Product_category::all();
+        
         $orders = order_product::orderby('id', 'DESC')->get();
         $days = $this->days();
         // dd($menus);
-        return view('storage.addmultisklad', compact('orders','gardens', 'menus', 'days'));
+        return view('storage.addmultisklad', compact('orders','gardens', 'menus', 'days', 'product_categories'));
     }
 
     public function report(Request $request){
@@ -834,6 +836,7 @@ class StorageController extends Controller
     }
 
     public function newordersklad(Request $request){
+        dd($request->all());    
         $today = Day::join('months', 'months.id', '=', 'days.month_id')
                 ->join('years', 'years.id', '=', 'days.year_id')
                 ->orderBy('id', 'DESC')->first(['days.id', 'days.day_number', 'months.month_name', 'years.year_name']);
@@ -867,7 +870,7 @@ class StorageController extends Controller
             $dataOfWeight['garden_name'] = $kind->kingar_name;
             // O'quvchilar uchun menyu sikli
             foreach($request->onemenu as $tr => $day){
-                if($tr > $request->maxday){ // agar kunlar soni o'tgan bo'lsa, Maxsulotlarning category_name_id 0 bo'lgan maxsulotlarni hisobga olmaslik uchun
+                if( $tr > $request->maxday){ // agar kunlar soni o'tgan bo'lsa, Maxsulotlarning category_name_id 0 bo'lgan maxsulotlarni hisobga olmaslik uchun
                     $stop = 1;
                 }
                 // Bog'cha yosh toifalari bo'yicha sikl
