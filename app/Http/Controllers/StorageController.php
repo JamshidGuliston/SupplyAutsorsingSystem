@@ -835,10 +835,7 @@ class StorageController extends Controller
     }
 
     public function newordersklad(Request $request){
-        // dd($request->all());    
-        $today = Day::join('months', 'months.id', '=', 'days.month_id')
-                ->join('years', 'years.id', '=', 'days.year_id')
-                ->orderBy('id', 'DESC')->first(['days.id', 'days.day_number', 'months.month_name', 'years.year_name']);
+        
         $kindproducts = [];
         $kindworkerproducts = [];
         // Hisobot qilinishi kerak bo'lgan bog'chalar sikli
@@ -907,7 +904,7 @@ class StorageController extends Controller
             date_default_timezone_set('Asia/Tashkent');
             $order = order_product::create([
                 'kingar_name_id' => $garden,
-                'day_id' => $today->id,
+                'day_id' => $request->day,
                 'order_title' => date("d-m-Y H"),
                 'document_processes_id' => 3,
                 'data_of_weight' => json_encode($dataOfWeight),
@@ -917,32 +914,32 @@ class StorageController extends Controller
                 if($key == 'k') continue;
                 // joriy maxsulotni olish
                 $prod = Product::where('id', $key)->with('shop')->first();
-                // if($prod->shop->count() == 0){
-                // agar maxsulotning category_name_id 0 bo'lsa va kunlar soni o'tgan bo'lsa, maxsulotni hisobga olmaslik uchun
-                if(!isset($mods[$key]) or $mods[$key] <= 0){
-                    $mods[$key] = 0;
+                if($prod->shop->count() == 0){
+                    // agar maxsulotning category_name_id 0 bo'lsa va kunlar soni o'tgan bo'lsa, maxsulotni hisobga olmaslik uchun
+                    if(!isset($mods[$key]) or $mods[$key] <= 0){
+                        $mods[$key] = 0;
+                    }
+                    // xodimlar uchun maxsulotlar gramlarini qo'shib borish
+                    if(isset($kindworkerproducts[$garden][$key])){
+                        $val = $val + $kindworkerproducts[$garden][$key];
+                    }
+                    // $mods[$key] bog'chada mavjud maxsulotlar qoldig'i                                                                        
+                    if(($val / $prod->div) - $mods[$key] > 0){
+                        $actual_weight = ($val / $prod->div) - $mods[$key] ;
+                        $decimalPart = $actual_weight - floor($actual_weight);
+                        // agar kasr qismi 0.45 yoki undan katta bo'lsa, yuqoriga olinsin
+                        $result  = ($decimalPart >= 0.4444444)
+                                    ? ceil($actual_weight)
+                                            : floor($actual_weight);
+                        // joriy maxsulotning gramlarini qo'shib borish
+                        order_product_structure::create([
+                            'order_product_name_id' => $order->id,
+                            'product_name_id' => $key,
+                            'product_weight' => $result > 0 ? $result : 1,
+                            'actual_weight' => $actual_weight,
+                        ]);
+                    }
                 }
-                // xodimlar uchun maxsulotlar gramlarini qo'shib borish
-                if(isset($kindworkerproducts[$garden][$key])){
-                    $val = $val + $kindworkerproducts[$garden][$key];
-                }
-                // $mods[$key] bog'chada mavjud maxsulotlar qoldig'i                                                                        
-                if(($val / $prod->div) - $mods[$key] > 0){
-                    $actual_weight = ($val / $prod->div) - $mods[$key] ;
-                    $decimalPart = $actual_weight - floor($actual_weight);
-                    // agar kasr qismi 0.45 yoki undan katta bo'lsa, yuqoriga olinsin
-                    $result  = ($decimalPart >= 0.4444444)
-                                ? ceil($actual_weight)
-                                        : floor($actual_weight);
-                    // joriy maxsulotning gramlarini qo'shib borish
-                    order_product_structure::create([
-                        'order_product_name_id' => $order->id,
-                        'product_name_id' => $key,
-                        'product_weight' => $result > 0 ? $result : 1,
-                        'actual_weight' => $actual_weight,
-                    ]);
-                }
-                // }
             }
 
         }

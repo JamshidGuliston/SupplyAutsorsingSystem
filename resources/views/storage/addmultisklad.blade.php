@@ -79,6 +79,13 @@
                         <option value='{{ $row->id }}'>{{ $row->kingar_name }}</option>
                     @endforeach
                 </select>
+                <br>
+                Kun tanlang
+                <select name="day" class="form-select" aria-label="Default select example" required>
+                    @foreach($days as $row)
+                        <option value="{{$row['id']}}">{{ $row['day_number'].".".$row['month_name'].".".$row['year_name']; }}</option>
+                    @endforeach
+                </select>
             </div>
             <div class="modal-footer">
                 <!-- <button type="button" class="btn btn-warning" data-bs-dismiss="modal">Close</button> -->
