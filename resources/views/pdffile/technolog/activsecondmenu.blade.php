@@ -94,6 +94,58 @@
 			-o-transform: rotate(-90deg);
 			transform: rotate(-90deg);
 			white-space: nowrap;
+			font-size: 6px;
+			line-height: 1.2;
+		}
+		
+		/* Ikki qatorlik yozish uchun */
+		.vrt-header .two-line {
+			display: inline-block;
+			text-align: center;
+			transform: rotate(-90deg);
+			white-space: nowrap;
+			width: 100%;
+		}
+		
+		.vrt-header .two-line .line1 {
+			font-size: 6px;
+			line-height: 1.1;
+			display: block;
+			margin-bottom: 1px;
+			white-space: nowrap;
+		}
+		
+		.vrt-header .two-line .line2 {
+			font-size: 6px;
+			line-height: 1.1;
+			display: block;
+			white-space: nowrap;
+		}
+		
+		/* Yacheyka balandligini oshirish */
+		.vrt-header {
+			height: 80px !important;
+			min-height: 80px;
+			vertical-align: middle;
+		}
+		.vrt-header-weight span{
+			display: inline-block;
+			text-align: center;
+			-webkit-transform: rotate(-90deg);
+			-moz-transform: rotate(-90deg);
+			-ms-transform: rotate(-90deg);
+			-o-transform: rotate(-90deg);
+			transform: rotate(-90deg);
+			white-space: nowrap;
+			font-size: 6px;
+			line-height: 1.1;
+			display: block;
+			white-space: nowrap;
+		}
+		.vrt-header-weight {
+			height: 40px !important;
+			min-height: 40px;
+			vertical-align: middle;
 		}
 	</style>
 </head>
@@ -151,7 +203,21 @@
 								 	$col++;
 									$shortname=substr($product['product_name'],0,21);
 								?>
-                          	 		<th class='vrt-header' style="padding: 0px; width: 4%; height: 69px"><?php echo '<span>'.$shortname. '</span>';?></th>
+                          	 		<th class='vrt-header' style="padding: 0px; width: 4%; height: 80px">
+                          	 	<?php 
+                          	 		$productName = $product['product_name'];
+                          	 		$words = explode(' ', $productName);
+                          	 		if (count($words) > 2) {
+                          	 			// So'zlarni ikki qatorga taqsimlash
+                          	 			$mid = ceil(count($words) / 2);
+                          	 			$line1 = implode(' ', array_slice($words, 0, $mid));
+                          	 			$line2 = implode(' ', array_slice($words, $mid));
+                          	 			echo '<span class="two-line"><div class="line1">'.$line1.'</div><div class="line2">'.$line2.'</div></span>';
+                          	 		} else {
+                          	 			echo '<span>'.$productName.'</span>';
+                          	 		}
+                          	 	?>
+                          	 </th>
 								@endif
 							 @endforeach
                           </tr>
@@ -171,10 +237,10 @@
 									@endif
 									<tr style="background-color: rgb(236, 243, 243)">
 										@if($loop->index == 0)
-										<th scope="row" rowspan="<?php echo $mealtime['rows']; ?>" class='vrt-header' style="padding: 0px; height: 60px;"><?php echo '<span>'. $mealtime['mealtime'] .'</span>'; ?></th>
+										<td scope="row" rowspan="<?php echo $mealtime['rows']; ?>" class='vrt-header'  style="padding: 0px; height: 60px;"><?php echo '<span><b>'. $mealtime['mealtime'] .'</b></span>'; ?></td>
 										@endif
-										<th class="" style="padding-left: 4px; text-align:left"><?php echo $food['foodname'] ?></td>
-										<th class='vrt-header' rowspan="{{ count($food)-2 }}" style="padding: 0px; font-family: 5px"><?php echo '<span>'.$food['foodweight'].'</span>'; ?></td>
+										<td class="" style="padding-left: 4px; text-align:left"><?php echo $food['foodname'] ?></td>
+										<td rowspan="{{ count($food)-2 }}" class='vrt-header-weight'  style="padding: 0px; font-family: 5px"><?php echo '<span>'.$food['foodweight'].'</span>'; ?></td>
 										<?php
 										for($t = 0; $t < count($products); $t++){
 											if(isset($products[$t]['yes']) and isset($food['product'][$products[$t]['id']])){
@@ -201,6 +267,7 @@
 													if(!isset($oneEater[$akey])){
 														$oneEater[$akey] = array_fill(1, 500, 0);
 														$oneEater[$akey]['age_name'] = $age['age_name'];
+														$oneEater[$akey]['number'] = $countch[$akey];
 													}
 													$oneEater[$akey][$t] += $age[$products[$t]['id']]['one'];
 											?>	
