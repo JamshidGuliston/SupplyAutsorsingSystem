@@ -278,7 +278,7 @@
                 $bool = []
             @endphp
             @foreach($orders as $row)
-                @if(!isset($bool[$row->order_title]))
+            @if(!isset($bool[$row->order_title]))
                     @php $bool[$row->order_title] = 1 @endphp
                     <tr>
                         <td>{{ $row->id }}</td>

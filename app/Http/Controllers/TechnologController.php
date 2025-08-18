@@ -500,7 +500,7 @@ class TechnologController extends Controller
                     $result = round($result, 1);
                 }
                 // order_product_structure ga qo'shish
-                order_product_structure::create([
+                Order_product_structure::create([
                     'order_product_name_id' => $orderProduct[$row->id]->id,
                     'product_name_id' => $prod->id,
                     'product_weight' => $result,
