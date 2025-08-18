@@ -51,13 +51,12 @@
                 </div>  
             </div>
             <div class="modal-body">
-                 
                 <div class="table">
                     <table style="width:100%">
                         <thead style="background-color: floralwhite;">
                             <tr>
                                 <th scope="col">...</th>
-                                <th scope="col" style="text-align: center;">3-4; 4-7 ёш</th>
+                                <th scope="col" style="text-align: center;">3-7 ёш</th>
                                 <th scope="col" style="text-align: center;">Ходимлар</th>
                                 <th scope="col" style="text-align: center;">Қисқа гурух</th>
                             </tr>
@@ -68,10 +67,10 @@
                 </div>
             </div>
             <div class="modal-body foodcomposition"> 
-                <!-- @foreach($product_categories as $row)
+                @foreach($product_categories as $row)
                     <label for="maxdays[{{$row->id}}]">{{ $row->pro_cat_name }}</label>
                     <input type="number" name="maxdays[{{$row->id}}]" class="form-control" required>
-                @endforeach -->
+                @endforeach
                 <input type="number" name="maxday" placeholder="2-3 кунлик" class="form-control" required>
                 Боғчаларни танлаш
                 <select id='testSelect1' name="gardens[]" class="form-select" aria-label="Default select example" multiple required>

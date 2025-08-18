@@ -55,9 +55,11 @@ class TestController extends Controller
 		$menu = Nextday_namber::where([
 			['kingar_name_id', '=', $gid],
 			['king_age_name_id', '=', $ageid]
-		])->join('kindgardens', 'nextday_nambers.kingar_name_id', '=', 'kindgardens.id')
+		])
+		->join('kindgardens', 'nextday_nambers.kingar_name_id', '=', 'kindgardens.id')
         ->join('age_ranges', 'nextday_nambers.king_age_name_id', '=', 'age_ranges.id')->get();
-		// dd($menu);  
+		$taomnoma = Titlemenu::where('id', $menu[0]['kingar_menu_id'])->first();
+	
 		$products = Product::where('hide', 1)
 			->orderBy('sort', 'ASC')->get();
 		
@@ -71,7 +73,9 @@ class TestController extends Controller
 
         // dd($menuitem);
         // xodimlar ovqati uchun
-        $day = Day::join('months', 'months.id', '=', 'days.month_id')->orderBy('days.id', 'DESC')->first(['days.day_number','days.id as id', 'months.month_name']);
+        $day = Day::join('months', 'months.id', '=', 'days.month_id')
+				->join('years', 'years.id', '=', 'days.year_id')
+				->orderBy('days.id', 'DESC')->first(['days.day_number','days.id as id', 'months.month_name', 'years.year_name']);
         // dd($day);
         $workerfood = titlemenu_food::where('day_id', $day->id)
                     ->where('worker_age_id', $ageid)
@@ -102,7 +106,7 @@ class TestController extends Controller
         }
         
         $dompdf = new Dompdf('UTF-8');
-		$html = mb_convert_encoding(view('pdffile.technolog.alltable', ['narx' => $narx,'day' => $day,'productallcount' => $productallcount, 'workerproducts' => $workerproducts,'menu' => $menu, 'menuitem' => $nextdaymenuitem, 'products' => $products, 'workerfood' => $workerfood]), 'HTML-ENTITIES', 'UTF-8');
+		$html = mb_convert_encoding(view('pdffile.technolog.alltable', ['narx' => $narx,'day' => $day,'productallcount' => $productallcount, 'workerproducts' => $workerproducts,'menu' => $menu, 'menuitem' => $nextdaymenuitem, 'products' => $products, 'workerfood' => $workerfood, 'taomnoma' => $taomnoma]), 'HTML-ENTITIES', 'UTF-8');
 		$dompdf->loadHtml($html);
 		$dompdf->setPaper('A4', 'landscape');
 		$name = $day['id'].'-'.$gid.'-'.$ageid."nextmenu.pdf";

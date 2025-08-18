@@ -924,18 +924,19 @@ class StorageController extends Controller
                         $val = $val + $kindworkerproducts[$garden][$key];
                     }
                     // $mods[$key] bog'chada mavjud maxsulotlar qoldig'i                                                                        
-                    if(($val / $prod->div) - $mods[$key] > 0){
-                        $actual_weight = ($val / $prod->div) - $mods[$key] ;
-                        $decimalPart = $actual_weight - floor($actual_weight);
-                        // agar kasr qismi 0.45 yoki undan katta bo'lsa, yuqoriga olinsin
-                        $result  = ($decimalPart >= 0.4444444)
-                                    ? ceil($actual_weight)
-                                            : floor($actual_weight);
-                        // joriy maxsulotning gramlarini qo'shib borish
+                    if(($val / $prod->div) - $mods[$key] > 0){  
+                        $actual_weight = ($val / $prod->div) - $mods[$key];
+                        $result = $actual_weight;
+                        if($prod->size_name_id == 3){ 
+                            $actual_weight = round($actual_weight);
+                        }
+                        else{
+                            $actual_weight = round($actual_weight, 1);
+                        }
                         order_product_structure::create([
                             'order_product_name_id' => $order->id,
                             'product_name_id' => $key,
-                            'product_weight' => $result > 0 ? $result : 1,
+                            'product_weight' => $result,
                             'actual_weight' => $actual_weight,
                         ]);
                     }
