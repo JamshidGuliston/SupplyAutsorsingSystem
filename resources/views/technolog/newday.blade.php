@@ -45,6 +45,30 @@
         color: #28a745 !important;
     }
     
+    /* Envelope ikon uchun yonib o'chish animatsiyasi */
+    .envelope-notification {
+        animation: blink 2s infinite;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+    
+    .envelope-notification:hover {
+        animation: none;
+        transform: scale(1.3);
+        color: #ff0000 !important;
+    }
+    
+    @keyframes blink {
+        0%, 50% {
+            opacity: 1;
+            color: #c40c0c;
+        }
+        51%, 100% {
+            opacity: 0.3;
+            color: #ff6b6b;
+        }
+    }
+    
     .chef-name {
         font-size: 12px;
         color: #6c757d;
@@ -595,6 +619,8 @@
         <tbody>
         <?php 
             $t = 1;
+
+            // dd($nextdayitem);
         ?>   
         @foreach($nextdayitem as $row)
             @php
@@ -618,10 +644,17 @@
                 <td>{{ $row['workers_count'] }} <i class="w_countedit far fa-edit" data-menu-id="{{ $row['kingar_name_id'] }}" data-wor-count="{{ $row['workers_count'] }}" data-king-name="{{ $row['kingar_name'] }}" data-bs-toggle="modal" data-bs-target="#wcountModal" style="color: #727213; font-size: 14px; cursor: pointer;"></i></td>
                 @foreach($ages as $age)
                 @if(isset($row[$age->id]))
-                    <td>
+                    @php
+                        $status = '#f8f882';
+                        $st = $temp->where('kingar_name_id', $row['kingar_name_id'])->where('age_id', $age->id)->first();
+                        if(isset($st->age_number) and $st->age_number == $row[$age->id][1]){
+                            $status = '#93ff93';
+                        }
+                    @endphp
+                    <td style="background-color: {{ $status }};">
                       {{ $row[$age->id][1]."  " }}
-                       @if($row[$age->id][2] != null)
-                        <i class="far fa-envelope" style="color: #c40c0c"></i> 
+                       @if($row[$age->id][2] != null and $st->age_number != $row[$age->id][1])
+                        <i class="far fa-envelope envelope-notification" title="Yangi xabarnoma mavjud!"></i> 
                        @endif
                        <i class="ch_countedit far fa-edit" data-nextrow-id="{{ $row[$age->id][0]; }}" data-child-count="{{ $row[$age->id][1]; }}" data-temprow-id="{{ $row[$age->id][2]; }}" data-tempchild-count="{{ $row[$age->id][3]; }}" data-kinga-name="{{ $row['kingar_name'] }}" data-bs-toggle="modal" data-bs-target="#chcountModal" style="color: #727213; font-size: 14px; cursor: pointer;"></i></td>
                     <td>
@@ -872,27 +905,59 @@
         var title = $('.childrentitle');
         title.html("<p>"+kn+"</p><input type='hidden' name='nextrow' class='' value="+nextrow+"><input type='hidden' name='temprow' class='' value="+temprow+">");
         div1.html("<input type='number' name='agecount' class='form-control' value="+chc+">");
-        div2.html("<br><p style='color: red'>Xabarnoma: <i class='far fa-envelope' style='color: #c40c0c'></i> "+tempchild+"</p>");
+        if(tempchild != null){
+            div2.html("<br><p style='color: red'>Xabarnoma: <i class='far fa-envelope' style='color: #c40c0c'></i> "+tempchild+"</p>");
+        }
     });
 
-    $('.next_menu').click(function() {
-        var nextmenu = $(this).attr('data-nextmenu-id');
-        var nextrow = $(this).attr('data-nextrow-count');
-        var king = $(this).attr('data-king-name');
-        var div = $('.menutitle');
-        var select = $('.menu_select');
-        div.html("<p>"+king+"</p><input type='hidden' name='nextrow' class='' value="+nextrow+">");
-        $.ajax({
-            method: "GET",
-            url: '/technolog/fornextmenuselect',
-            data: {
-                'menuid': nextmenu,
-            },
-            success: function(data) {
-                select.html(data);
-            }
-        })
-    });
+            $('.next_menu').click(function() {
+            var nextmenu = $(this).attr('data-nextmenu-id');
+            var nextrow = $(this).attr('data-nextrow-count');
+            var king = $(this).attr('data-king-name');
+            var div = $('.menutitle');
+            var select = $('.menu_select');
+            div.html("<p>"+king+"</p><input type='hidden' name='nextrow' class='' value="+nextrow+">");
+            $.ajax({
+                method: "GET",
+                url: '/technolog/fornextmenuselect',
+                data: {
+                    'menuid': nextmenu,
+                },
+                success: function(data) {
+                    select.html(data);
+                }
+            })
+        });
+        
+        // Envelope ikon uchun qo'shimcha funksionallik - ikkinchi jadval
+        $('.envelope-notification').click(function() {
+            // Xabarnoma ko'rsatish
+            var notificationText = $(this).attr('title');
+            alert(notificationText);
+            
+            // Ikonni to'xtatish (animatsiyani o'chirish)
+            $(this).removeClass('envelope-notification').addClass('envelope-read');
+            $(this).css({
+                'animation': 'none',
+                'color': '#666',
+                'opacity': '0.7'
+            });
+        });
+        
+        // Envelope ikon uchun qo'shimcha funksionallik
+        $('.envelope-notification').click(function() {
+            // Xabarnoma ko'rsatish
+            var notificationText = $(this).attr('title');
+            alert(notificationText);
+            
+            // Ikonni to'xtatish (animatsiyani o'chirish)
+            $(this).removeClass('envelope-notification').addClass('envelope-read');
+            $(this).css({
+                'animation': 'none',
+                'color': '#666',
+                'opacity': '0.7'
+            });
+        });
 </script>
 @else
 <script>
@@ -965,7 +1030,9 @@
             var title = $('.childrentitle');
             title.html("<p>"+kn+"</p><input type='hidden' name='nextrow' class='' value="+nextrow+"><input type='hidden' name='temprow' class='' value="+temprow+">");
             div1.html("<input type='number' name='agecount' class='form-control' value="+chc+">");
-            div2.html("<br><p style='color: red'>Xabarnoma: <i class='far fa-envelope' style='color: #c40c0c'></i> "+tempchild+"</p>");
+            if (parseInt(tempchild) > 0) {  
+                div2.html("<br><p style='color: red'>Xabarnoma: <i class='far fa-envelope' style='color: #c40c0c'></i> "+tempchild+"</p>");
+            }
         });
 
         $('.next_menu').click(function() {

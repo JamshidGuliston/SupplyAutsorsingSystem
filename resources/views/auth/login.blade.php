@@ -127,7 +127,48 @@
             }
 
             .error{
-                color: red;
+                color: #d32f2f;
+                background-color: #ffebee;
+                border: 1px solid #ffcdd2;
+                border-radius: 4px;
+                padding: 8px 12px;
+                margin-top: 5px;
+                font-size: 13px;
+                display: block;
+                animation: fadeIn 0.3s ease-in;
+            }
+            
+            @keyframes fadeIn {
+                from { opacity: 0; transform: translateY(-10px); }
+                to { opacity: 1; transform: translateY(0); }
+            }
+            
+            .alert {
+                background-color: #fff3cd;
+                border: 1px solid #ffeaa7;
+                color: #856404;
+                padding: 12px 16px;
+                border-radius: 6px;
+                margin-bottom: 15px;
+                font-size: 14px;
+                animation: slideIn 0.4s ease-out;
+            }
+            
+            .alert-danger {
+                background-color: #f8d7da;
+                border: 1px solid #f5c6cb;
+                color: #721c24;
+            }
+            
+            .alert-success {
+                background-color: #d4edda;
+                border: 1px solid #c3e6cb;
+                color: #155724;
+            }
+            
+            @keyframes slideIn {
+                from { opacity: 0; transform: translateX(-20px); }
+                to { opacity: 1; transform: translateX(0); }
             }
 
             .login-text {
@@ -148,7 +189,7 @@
             <div class="col-lg-3 col-md-2"></div>
             <div class="col-lg-6 col-md-8 login-box">
                 <div class="col-lg-12 login-title">
-                    {{ __('Login') }}
+                    Tizimga kirish...
                 </div>
 
                 <div class="col-lg-12 login-form">
@@ -156,7 +197,7 @@
                         <form method="POST" action="{{ route('login') }}">
                             @csrf
                             <div class="form-group">
-                                <label class="form-control-label">{{ __('E-Mail Address') }}</label>
+                                <label class="form-control-label">Elektron pochta manzili</label>
                                 <input type="email" class="form-control" name="email" value="{{ old('email') }}" required autocomplete="email" autofocus>
                                 @error('email')
                                     <span class="error">
@@ -165,7 +206,7 @@
                                 @enderror
                             </div>
                             <div class="form-group">
-                                <label class="form-control-label">{{ __('Password') }}</label>
+                                <label class="form-control-label">Parol</label>
                                 <input type="password" class="form-control" name="password" required autocomplete="current-password">
                                 @error('password')
                                     <span class="error">
@@ -176,6 +217,18 @@
 
                             <div class="col-lg-12 loginbttm">
                                 <!-- <div class="g-recaptcha" data-sitekey="6LfD7ScjAAAAACSAMyR8hhDpviT55YzQU9TRru9q"></div> -->
+                                @if (session('error'))
+                                    <div class="alert alert-danger">
+                                        <i class="fa fa-exclamation-triangle" style="margin-right: 8px;"></i>
+                                        {{ session('error') }}
+                                    </div>
+                                @endif
+                                @if (session('status'))
+                                    <div class="alert alert-success">
+                                        <i class="fa fa-check-circle" style="margin-right: 8px;"></i>
+                                        {{ session('status') }}
+                                    </div>
+                                @endif
                                 @if (isset($messages))
                                     <div class="alert">{!! $messages !!}</div>
                                 @endif
@@ -183,7 +236,7 @@
                             </div>
                             
                             <div class="col-lg-12 login-btm">
-                                <button type="submit" class="btn btn-outline-primary login-button">{{ __('Kirish') }}</button>
+                                <button type="submit" class="btn btn-outline-primary login-button">Kirish</button>
                             </div>
                             </div>
                             

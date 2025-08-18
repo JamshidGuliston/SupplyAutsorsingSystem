@@ -196,7 +196,7 @@ class TechnologController extends Controller
         if ($day == date("d-F-Y", $d)) {
             $gr = Temporary::join('kindgardens', 'temporaries.kingar_name_id', '=', 'kindgardens.id')
                 ->orderby('kindgardens.id', 'ASC')->get();
-
+            
             $gar = Kindgarden::where('hide', 1)->with('age_range')->get();
             // unset($gar[0]);
             // dd($gar);
@@ -227,7 +227,7 @@ class TechnologController extends Controller
                 }
             }
             $activ = Kindgarden::where('hide', 1)->get();
-            // dd($activ);
+            $temp = Temporary::all();
             $nextday = Nextday_namber::join('kindgardens', 'nextday_nambers.kingar_name_id', '=', 'kindgardens.id')
                             ->leftjoin('temporaries', function($join){
                                 $join->on('nextday_nambers.kingar_name_id', '=', 'temporaries.kingar_name_id');
@@ -271,12 +271,12 @@ class TechnologController extends Controller
             $endday = Day::orderBy('id', 'DESC')->first();
             $mf = titlemenu_food::orderBy('day_id', 'DESC')->first();
             $sendmenu = 0;
-            // dd($mf);
+            
             if(isset($mf->day_id) and $endday->id == $mf->day_id){
                 $sendmenu = 1;
             }
             $nextday = 1;
-            return view('technolog.newday', ['sendmenu' => $sendmenu, 'nextdayitem' => $nextdayitem, 'shops' => $shops, 'ages' => $ages, 'menus' => $menus, 'temps' => $mass, 'gardens' => $gar, 'activ'=>$activ]);
+            return view('technolog.newday', ['temp' => $temp, 'sendmenu' => $sendmenu, 'nextdayitem' => $nextdayitem, 'shops' => $shops, 'ages' => $ages, 'menus' => $menus, 'temps' => $mass, 'gardens' => $gar, 'activ'=>$activ]);
         }
     }
 
@@ -1690,7 +1690,7 @@ class TechnologController extends Controller
         $d = strtotime("-8 hours 30 minutes");
         Nextday_namber::where('id', $request->nextrow)
                     ->update(['kingar_children_number' => $request->agecount]);
-        Temporary::where('id', $request->temprow)->update(['age_number' => $request->agecount]);
+
         return redirect()->route('technolog.sendmenu', ['day' => date("d-F-Y", $d)]);
     }
     public function fornextmenuselect(Request $request){

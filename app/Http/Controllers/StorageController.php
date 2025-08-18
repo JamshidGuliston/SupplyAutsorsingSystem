@@ -309,7 +309,7 @@ class StorageController extends Controller
     }
 
     public function onedaymulti(Request $request, $dayid){
-        $orederproduct = order_product::where('day_id', $dayid)
+        $orederproduct = order_product::where('order_title', $dayid)
             ->join('kindgardens', 'kindgardens.id', '=', 'order_products.kingar_name_id')
             ->select('order_products.id', 'order_products.order_title', 'order_products.data_of_weight', 'order_products.document_processes_id', 'kindgardens.kingar_name') 
             ->orderby('order_products.id', 'DESC')

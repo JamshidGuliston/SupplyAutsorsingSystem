@@ -14,5 +14,6 @@ class order_product extends Model
         'order_title',
         'document_processes_id',
         'data_of_weight',
+        'to_menus',       
     ];
 }

@@ -282,7 +282,7 @@
                     @php $bool[$row->day_id] = 1 @endphp
                     <tr>
                         <td>{{ $row->id }}</td>
-                        <td><a href="/storage/onedaymulti/{{ $row->day_id }}">{{ $row->order_title }}</a></td>
+                        <td><a href="/storage/onedaymulti/{{ $row->order_title }}">{{ $row->order_title }}</a></td>
                         <td>{{ $row->day_id }}</td>
                         <td>{{ $row->created_at ? $row->created_at->format('d.m.Y H:i') : '-' }}</td>
                         <td>
