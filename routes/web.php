@@ -117,7 +117,7 @@ Route::group(['prefix' => 'storage', 'middleware' => ['isStorage', 'auth']], fun
     
     Route::get('changesome', [StorageController::class, 'changesome']);
 
-    Route::post('confirmorder', [ChefController::class, 'right'])->name('storage.confirmorder');
+    Route::post('confirmorder', [StorageController::class, 'right'])->name('storage.confirmorder');
     Route::post('ingroup/add', [StorageController::class, 'addIngroupProduct'])->name('storage.ingroup.add');
     Route::post('ingroup/edit', [StorageController::class, 'editIngroupProduct'])->name('storage.ingroup.edit');
     Route::post('ingroup/delete', [StorageController::class, 'deleteIngroupProduct'])->name('storage.ingroup.delete');

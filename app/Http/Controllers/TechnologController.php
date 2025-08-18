@@ -451,7 +451,7 @@ class TechnologController extends Controller
             $orderProduct[$row->id] = order_product::create([
                 'kingar_name_id' => $row->id, // Shop uchun 0
                 'day_id' => $day->id,
-                'order_title' => date("d-m-Y H")."Yetkazuvchi",
+                'order_title' => date("d-m-Y H:i")."Yetkazuvchi",
                 'document_processes_id' => 4, // Default qiymat
                 'data_of_weight' => json_encode(now()),
                 'to_menus' => json_encode([]), // Shop uchun 0

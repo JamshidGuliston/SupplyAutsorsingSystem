@@ -278,8 +278,8 @@
                 $bool = []
             @endphp
             @foreach($orders as $row)
-                @if(!isset($bool[$row->day_id]))
-                    @php $bool[$row->day_id] = 1 @endphp
+                @if(!isset($bool[$row->order_title]))
+                    @php $bool[$row->order_title] = 1 @endphp
                     <tr>
                         <td>{{ $row->id }}</td>
                         <td><a href="/storage/onedaymulti/{{ $row->order_title }}">{{ $row->order_title }}</a></td>

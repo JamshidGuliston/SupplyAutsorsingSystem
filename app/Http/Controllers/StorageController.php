@@ -322,6 +322,37 @@ class StorageController extends Controller
         return view('storage.onedaymulti', ['gardens' => $kingar, 'orders' => $orederproduct, 'products'=>$orederitems, 'dayid' => $dayid]);
     }
 
+    public function right(Request $request)
+    {
+        $day = Day::orderby('id', 'DESC')->first();
+        order_product::where('id', $request->orderid)->update([
+            'document_processes_id' => 5
+        ]);
+        DB::transaction(function () use ($request, $day) {
+            $order = order_product::where('id', $request->orderid)->first();
+            $product = order_product_structure::where('order_product_name_id', $request->orderid)->get();
+            foreach ($product as $row) {
+                $exists = plus_multi_storage::where('order_product_id', $order['id'])
+                                    ->where('kingarden_name_d', $order['kingar_name_id'])
+                                    ->where('product_name_id', $row['product_name_id'])
+                                    ->exists();
+                if(!$exists){
+                    plus_multi_storage::create([
+                        'day_id' => $day->id,
+                        'shop_id' => $order['shop_id'],
+                        'kingarden_name_d' => $order['kingar_name_id'],
+                        'order_product_id' => $order['id'],
+                        'residual' => 0,
+                        'product_name_id' => $row['product_name_id'],
+                        'product_weight' => $row['product_weight'],
+                    ]);
+                }
+            }
+        });
+
+        return redirect()->route('storage.addmultisklad');
+    }
+
     public function orderitem(Request $request, $id)
     {
         $orederproduct = order_product::where('order_products.id', $id)
