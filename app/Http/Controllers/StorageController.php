@@ -930,10 +930,10 @@ class StorageController extends Controller
                         $actual_weight = ($val / $prod->div) - $mods[$key];
                         $result = $actual_weight;
                         if($prod->size_name_id == 3 or $prod->size_name_id == 2){ 
-                            $actual_weight = round($actual_weight);
+                            $result = round($actual_weight);
                         }
                         else{
-                            $actual_weight = round($actual_weight, 1);
+                            $result = round($actual_weight, 1);
                         }
                         order_product_structure::create([
                             'order_product_name_id' => $order->id,
