@@ -15,6 +15,15 @@ class order_product_structure extends Model
         'product_name_id',
         'product_weight',
         'actual_weight',
-        'shop_id',
     ];
+    
+    public function orderProduct()
+    {
+        return $this->belongsTo(order_product::class, 'order_product_name_id');
+    }
+    
+    public function product()
+    {
+        return $this->belongsTo(Product::class, 'product_name_id');
+    }
 }

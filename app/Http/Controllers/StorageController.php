@@ -908,6 +908,8 @@ class StorageController extends Controller
                 'order_title' => date("d-m-Y H"),
                 'document_processes_id' => 3,
                 'data_of_weight' => json_encode($dataOfWeight),
+                'to_menus' => json_encode([]),
+                'shop_id' => 0
             ]);
             // joriy bog'cha  maxsulotlari bo'yicha sikl
             foreach($kindproducts[$garden] as $key => $val){
@@ -927,7 +929,7 @@ class StorageController extends Controller
                     if(($val / $prod->div) - $mods[$key] > 0){  
                         $actual_weight = ($val / $prod->div) - $mods[$key];
                         $result = $actual_weight;
-                        if($prod->size_name_id == 3){ 
+                        if($prod->size_name_id == 3 or $prod->size_name_id == 2){ 
                             $actual_weight = round($actual_weight);
                         }
                         else{

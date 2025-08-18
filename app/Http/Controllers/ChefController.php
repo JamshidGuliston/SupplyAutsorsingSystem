@@ -134,7 +134,7 @@ class ChefController extends Controller
                 if(!$exists){
                     plus_multi_storage::create([
                         'day_id' => $day->id,
-                        'shop_id' => 0,
+                        'shop_id' => $order['shop_id'],
                         'kingarden_name_d' => $order['kingar_name_id'],
                         'order_product_id' => $order['id'],
                         'residual' => 0,

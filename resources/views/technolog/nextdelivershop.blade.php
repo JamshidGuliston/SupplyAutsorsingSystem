@@ -6,6 +6,21 @@
 
 @section('content')
 <div class="py-4 px-4">
+    @if(session('success'))
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="fas fa-check-circle" style="margin-right: 8px;"></i>
+            {{ session('success') }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    @endif
+    
+    @if(session('error'))
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <i class="fas fa-exclamation-triangle" style="margin-right: 8px;"></i>
+            {{ session('error') }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    @endif
     <div class="row">
         <div class="col-md-6">
             <a href="#">
@@ -14,10 +29,13 @@
             <b>{{ $shop['shop_name'] }}</b>
         </div>
         <div class="col-md-3">
-            <b>Telegram orqali yuborish</b>
-            <a href="/technolog/sendordertooneshop/{{ $shop['id'] }}">
-                <i class="far fa-paper-plane" style="color: dodgerblue; font-size: 18px;"></i>
-            </a>
+            <b>Maxsulotlarni yuborish</b>
+            <form action="/technolog/createShopOrder/{{ $shop['id'] }}" method="POST" style="display: inline;" id="orderForm">
+                @csrf
+                <button type="submit" class="btn btn-success btn-sm" style="border: none; background: none; padding: 0;" onclick="return confirmOrder()">
+                    <i class="fas fa-paper-plane" style="color: #28a745; font-size: 18px;"></i>
+                </button>
+            </form>
         </div>
         <div class="col-md-3" style="text-align: center;">
             <b>PDF </b>
@@ -49,7 +67,7 @@
                 @foreach($shop->product as $age)
                 <?php
                     $result = $row[$age->id];
-                    if($age->size_name_id == 3){ 
+                    if($age->size_name_id == 3 or $age->size_name_id == 2){ 
                         $result = round($result);
                     }
                     else{
@@ -75,5 +93,48 @@
 @endsection
 
 @section('script')
+<script>
+function confirmOrder() {
+    var shopName = "{{ $shop['shop_name'] }}";
+    var message = "Siz " + shopName + " uchun order yaratmoqchimisiz?\n\n" +
+                  "Bu amal:\n" +
+                  "• order_product jadvaliga yangi yozuv qo'shadi\n" +
+                  "• order_product_structure jadvaliga barcha maxsulotlarni qo'shadi\n" +
+                  "• Hozirgi kundagi barcha maxsulotlar hisoblanadi\n\n" +
+                  "Davom etishni xohlaysizmi?";
+    
+    return confirm(message);
+}
 
+// Form submit oldidan qo'shimcha tekshirish
+document.getElementById('orderForm').addEventListener('submit', function(e) {
+    var shopName = "{{ $shop['shop_name'] }}";
+    var finalMessage = "⚠️ OGOHLANTIRISH ⚠️\n\n" +
+                       "Siz " + shopName + " uchun order yaratmoqdasiz!\n\n" +
+                       "Bu amalni bekor qilish mumkin emas.\n" +
+                       "Order yaratilgandan keyin uni tahrirlash yoki o'chirish mumkin emas.\n\n" +
+                       "Rostdan ham davom etmoqchimisiz?";
+    
+    if (!confirm(finalMessage)) {
+        e.preventDefault();
+        return false;
+    }
+    
+    // Loading ko'rsatish
+    var button = e.target.querySelector('button[type="submit"]');
+    var icon = button.querySelector('i');
+    var originalIcon = icon.className;
+    
+    button.disabled = true;
+    icon.className = 'fas fa-spinner fa-spin';
+    button.innerHTML = '<i class="fas fa-spinner fa-spin" style="color: #28a745; font-size: 18px;"></i>';
+    
+    // 2 soniyadan keyin form yuborish
+    setTimeout(function() {
+        button.disabled = false;
+        icon.className = originalIcon;
+        button.innerHTML = '<i class="fas fa-paper-plane" style="color: #28a745; font-size: 18px;"></i>';
+    }, 2000);
+});
+</script>
 @endsection

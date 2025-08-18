@@ -15,6 +15,7 @@ class AddToMenusToOrderProducts extends Migration
     {
         Schema::table('order_products', function (Blueprint $table) {
             $table->json('to_menus')->nullable()->after('data_of_weight');
+            $table->integer('shop_id')->nullable()->after('to_menus');
         });
     }
 
@@ -27,6 +28,7 @@ class AddToMenusToOrderProducts extends Migration
     {
         Schema::table('order_products', function (Blueprint $table) {
             $table->dropColumn('to_menus');
+            $table->dropColumn('shop_id');
         });
     }
 }

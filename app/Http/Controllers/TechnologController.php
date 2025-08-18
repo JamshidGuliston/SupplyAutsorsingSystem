@@ -26,12 +26,12 @@ use App\Models\Menu_composition;
 use App\Models\Number_children;
 use App\Models\Titlemenu;
 use App\Models\order_product;
+use App\Models\Order_product_structure;
 use App\Models\history_process;
 use App\Models\Meal_time;
 use App\Models\minus_multi_storage;
 use App\Models\Nextday_namber;
 use App\Models\Norm_category;
-use App\Models\order_product_structure;
 use App\Models\plus_multi_storage;
 use App\Models\Product;
 use App\Models\Product_category;
@@ -424,7 +424,94 @@ class TechnologController extends Controller
         });
 
         // dd($shopproducts);
-        return view('technolog.nextdelivershop', compact('shopproducts', 'shop'));
+        
+        // Order yaratish uchun ma'lumotlarni tayyorlash
+        $day = Day::orderBy('id', 'DESC')->first();
+        $orderData = [
+            'shopproducts' => $shopproducts,
+            'shop' => $shop,
+            'day' => $day
+        ];
+        
+        return view('technolog.nextdelivershop', compact('shopproducts', 'shop', 'orderData'));
+    }
+
+    public function createShopOrder(Request $request, $id){
+        $shop = Shop::where('id', $id)->with('kindgarden.region')->with('product')->first();
+        
+        if (!$shop) {
+            return redirect()->back()->with('error', 'Shop topilmadi');
+        }
+        
+        $day = Day::orderBy('id', 'DESC')->first();
+        
+        // order_product yaratish
+        $orderProduct = array();
+        foreach($shop->kindgarden as $row){
+            $orderProduct[$row->id] = order_product::create([
+                'kingar_name_id' => $row->id, // Shop uchun 0
+                'day_id' => $day->id,
+                'order_title' => date("d-m-Y H")."Yetkazuvchi",
+                'document_processes_id' => 4, // Default qiymat
+                'data_of_weight' => json_encode(now()),
+                'to_menus' => json_encode([]), // Shop uchun 0
+                'shop_id' => $shop->id,
+            ]);
+        }
+        
+        // order_product_structure ga maxsulotlarni qo'shish
+        $shopproducts = array();
+        foreach($shop->kindgarden as $row){
+            $shopproducts[$row->id]['name'] = $row->kingar_name;
+            $shopproducts[$row->id]['region_id'] = $row->region_id;
+            
+            foreach($shop->product as $prod){
+                $weight = 0;
+                $nextday = Nextday_namber::orderBy('kingar_name_id', 'ASC')->orderBy('king_age_name_id', 'ASC')->get();
+                
+                foreach($nextday as $next){
+                    if($row->id == $next->kingar_name_id){
+                        $workeat = titlemenu_food::where('day_id', $day->id)->get();
+                        $prlar = Menu_composition::where('title_menu_id', $next->kingar_menu_id)
+                            ->where('age_range_id', $next->king_age_name_id)
+                            ->where('product_name_id', $prod->id)
+                            ->get();
+                            
+                        foreach($prlar as $prw){
+                            $weight += $prw->weight * $next->kingar_children_number;
+                            if($next->king_age_name_id == 4){
+                                $workeat = titlemenu_food::where('day_id', $day->id)
+                                    ->where('food_id', $prw->menu_food_id)
+                                    ->get();
+                                if($workeat->count() > 0){
+                                    $weight += $prw->weight * $next->workers_count;
+                                }
+                            }
+                        }
+                    }
+                }
+                
+                $calculatedWeight = $weight / $prod->div;
+                $result = $calculatedWeight;
+                if($prod->size_name_id == 3 or $prod->size_name_id == 2){ 
+                    $result = round($result);
+                }
+                else{
+                    $result = round($result, 1);
+                }
+                // order_product_structure ga qo'shish
+                order_product_structure::create([
+                    'order_product_name_id' => $orderProduct[$row->id]->id,
+                    'product_name_id' => $prod->id,
+                    'product_weight' => $result,
+                    'actual_weight' => $calculatedWeight, // Boshlang'ich qiymat
+                ]);
+                
+                $shopproducts[$row->id][$prod->id] = $calculatedWeight;
+            }
+        }
+        
+        return redirect()->back()->with('success', 'Order muvaffaqiyatli yaratildi!');
     }
 
     public function nextdayshoppdf(Request $request, $id){

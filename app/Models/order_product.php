@@ -14,6 +14,22 @@ class order_product extends Model
         'order_title',
         'document_processes_id',
         'data_of_weight',
-        'to_menus',       
+        'to_menus', 
+        'shop_id',      
     ];
+    
+    public function orderProductStructures()
+    {
+        return $this->hasMany(order_product_structure::class, 'order_product_name_id');
+    }
+    
+    public function shop()
+    {
+        return $this->belongsTo(Shop::class, 'shop_id');
+    }
+    
+    public function day()
+    {
+        return $this->belongsTo(Day::class, 'day_id');
+    }
 }

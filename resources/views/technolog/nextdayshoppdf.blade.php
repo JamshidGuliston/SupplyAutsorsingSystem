@@ -100,19 +100,16 @@
                             	@endif
 								<?php
 								if($row[$age->id] > 0){
-									$weight = $row[$age->id];
-									$decimalPart = $weight - floor($weight);
-									// agar kasr qismi 0.45 yoki undan katta bo'lsa, yuqoriga olinsin
-									$result  = ($decimalPart >= 0.4444444)
-										? ceil($weight)
-										: floor($weight);
-									$result = $result > 0 ? $result : 1;
-								}else{
-									$result = 0;
-									$weight = 0;
+									$result = $row[$age->id];
+									if($age->size_name_id == 3 or $age->size_name_id == 2){ 
+										$result = round($result);
+									}
+									else{
+										$result = round($result, 1);
+									}
 								}
 								?>
-                                <td scope="col"><?php printf("%01.2f", $result); ?></td>
+                                <td scope="col"><?php echo $result; ?></td>
                                 <?php $counts[$age->id] += $row[$age->id] ?>
                             @endforeach
                         </tr>
