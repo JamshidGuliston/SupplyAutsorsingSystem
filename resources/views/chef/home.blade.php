@@ -209,17 +209,11 @@
                 <!-- <form action="/activsecondmenuPDF/{{ $day->id }}/{{ $kindgarden->id }}" method="get"> -->
                     <p><b>Haqiqiy Menyu: </b>sana: {{ $day->day_number.".".$day->month_name.".".$day->year_name }}</p>
                     <p><i>Eslatma: menyu har kuni soat 10 dan keyin yangilanadi</i></p>
-                    <p><small class="text-muted"><i class="fas fa-info-circle"></i> Share tugmasi orqali Telegram ochadi va fayl URL ni yuboradi</small></p>
+                    <p><small class="text-muted"><i class="fas fa-info-circle"></i> Share tugmasi orqali Telegram ochadi va fayl URL ni yuboradi (fayl yuklanmaydi)</small></p>
                     <div class="d-flex gap-2">
-                        <a href="/activsecondmenuPDF/{{ $day->id }}/{{ $kindgarden->id }}" 
-                            class="btn btn-success d-flex align-items-center justify-content-center gap-2" 
-                            style="width: 50%;" 
-                            download>
-                                <i class="fas fa-download"></i> Yuklab olish
-                        </a>
                         <button type="button" 
                             class="btn btn-info d-flex align-items-center justify-content-center gap-2 share-btn" 
-                            style="width: 50%;"
+                            style="width: 100%;"
                             onclick="shareToTelegram('/activsecondmenuPDF/{{ $day->id }}/{{ $kindgarden->id }}', 'Haqiqiy Menyu - {{ $day->day_number }}.{{ $day->month_name }}.{{ $day->year_name }}')">
                             <i class="fab fa-telegram"></i> <span class="share-text">Share</span>
                         </button>
@@ -234,17 +228,11 @@
             <div class="p-3 bg-white shadow-sm align-items-center rounded">
                 <!-- <form action="/nextdaysecondmenuPDF/{{ $kindgarden->id }}" method="get" download> -->
                     <p><b>Taxminiy menyu: </b></p>
-                    <p><small class="text-muted"><i class="fas fa-info-circle"></i> Share tugmasi orqali Telegram ochadi va fayl URL ni yuboradi</small></p>
+                    <p><small class="text-muted"><i class="fas fa-info-circle"></i> Share tugmasi orqali Telegram ochadi va fayl URL ni yuboradi (fayl yuklanmaydi)</small></p>
                     <div class="d-flex gap-2 mt-2">
-                        <a href="/nextdaysecondmenuPDF/{{ $kindgarden->id }}" 
-                            class="btn btn-primary d-flex align-items-center justify-content-center gap-2" 
-                            style="width: 50%;" 
-                            download>
-                                <i class="fas fa-download"></i> Yuklab olish
-                        </a>
                         <button type="button" 
                             class="btn btn-info d-flex align-items-center justify-content-center gap-2 share-btn" 
-                            style="width: 50%;"
+                            style="width: 100%;"
                             onclick="shareToTelegram('/nextdaysecondmenuPDF/{{ $kindgarden->id }}', 'Taxminiy Menyu - {{ $kindgarden->kingar_name }}')">
                             <i class="fab fa-telegram"></i> <span class="share-text">Share</span>
                         </button>
@@ -259,17 +247,11 @@
                 @endif
                 <p></p>
                 <p><b>Nakladnoy, non va sud maxsulotlari </b></p>
-                <p><small class="text-muted"><i class="fas fa-info-circle"></i> Share tugmasi orqali Telegram ochadi va fayl URL ni yuboradi</small></p>
+                <p><small class="text-muted"><i class="fas fa-info-circle"></i> Share tugmasi orqali Telegram ochadi va fayl URL ni yuboradi (fayl yuklanmaydi)</small></p>
                 <div class="d-flex gap-2 mt-2">
-                    <a href="/nextdaysomenakladnoyPDF/{{ $kindgarden->id }}" 
-                        class="btn btn-warning d-flex align-items-center justify-content-center gap-2" 
-                        style="width: 50%;" 
-                        download>
-                            <i class="fas fa-file-invoice"></i> Yuklab olish
-                    </a>
                     <button type="button" 
                         class="btn btn-info d-flex align-items-center justify-content-center gap-2 share-btn" 
-                        style="width: 50%;"
+                        style="width: 100%;"
                         onclick="shareToTelegram('/nextdaysomenakladnoyPDF/{{ $kindgarden->id }}', 'Nakladnoy - {{ $kindgarden->kingar_name }}')">
                         <i class="fab fa-telegram"></i> <span class="share-text">Share</span>
                     </button>
