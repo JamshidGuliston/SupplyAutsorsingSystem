@@ -121,7 +121,7 @@
                         	<th scope="row"></th>
                         	<td><b>Жами:</b></td>
                         	@foreach($shop->product as $age)
-                        		<td><b><?php printf("%01.2f", $counts[$age->id]); ?></b></td>
+                        		<td><b><?php printf("%01.0f", $counts[$age->id]); ?></b></td>
                         	@endforeach
                         </tr>
                     </tbody>
