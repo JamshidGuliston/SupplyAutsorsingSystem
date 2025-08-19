@@ -91,7 +91,7 @@
             <div class="form-group row">
                 <label for="worker_count" class="col-sm-3 col-form-label"><strong>Xodimlar soni *</strong></label>
                 <div class="col-sm-9">
-                    <input type="number" name="worker_count" class="form-control" id="worker_count" required min="1" value="{{ $kindgarden->worker_count }}" placeholder="Xodimlar sonini kiriting">
+                    <input type="number" name="worker_count" class="form-control" id="worker_count" required min="0" value="{{ $kindgarden->worker_count }}" placeholder="Xodimlar sonini kiriting">
                 </div>
             </div>
 

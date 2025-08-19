@@ -104,6 +104,8 @@ class TestController extends Controller
                 }
             }
         }
+
+		// saytni o'zida ko'rish
         
         $dompdf = new Dompdf('UTF-8');
 		$html = mb_convert_encoding(view('pdffile.technolog.alltable', ['narx' => $narx,'day' => $day,'productallcount' => $productallcount, 'workerproducts' => $workerproducts,'menu' => $menu, 'menuitem' => $nextdaymenuitem, 'products' => $products, 'workerfood' => $workerfood, 'taomnoma' => $taomnoma]), 'HTML-ENTITIES', 'UTF-8');

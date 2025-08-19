@@ -46,34 +46,28 @@
 		}
 		.vrt-header span{
 			display: inline-block;
-			text-align: center;
 			-webkit-transform: rotate(-90deg);
 			-moz-transform: rotate(-90deg);
 			-ms-transform: rotate(-90deg);
 			-o-transform: rotate(-90deg);
 			transform: rotate(-90deg);
-			white-space: nowrap;
+			/* white-space: nowrap; */
 		}
 		
 		/* Maxsulot nomlari uchun ikki qatorlik ko'rsatish */
 		.product-name-header {
-			word-wrap: break-word;
-			word-break: break-word;
 			hyphens: auto;
-			line-height: 1.2;
+			line-height: 1.8;
 			max-width: 100%;
-			overflow-wrap: break-word;
-			vertical-align: middle;
 		}
 		
 		.product-name-header span {
 			display: block;
-			text-align: center;
 			line-height: 1.1;
-			font-size: 7px;
+			font-size: 9px;
 			padding: 2px;
 			white-space: normal;
-			word-spacing: 0;
+			word-spacing: 5;
 		}
 	</style>
 </head>
@@ -100,13 +94,19 @@
 							 @foreach($products as $product)
 							 	@if(isset($product['yes']))
 								 <?php $col++; ?>
-								 <th class='vrt-header product-name-header' style="padding: 0px; width: 3%; height: 95px"><?php echo '<span>'.$product['product_name']. '</span>';?></th>
+								 <th class='vrt-header product-name-header' style="padding: 0px; width: 15px; height: 100px"><?php 
+									$words = explode(' ', $product['product_name']);
+									$firstThreeWords = array_slice($words, 0, 3);
+									echo '<span>'.implode(' ', $firstThreeWords).'</span>';
+									?></th>
 								@endif
 							 @endforeach
                           </tr>
                         </thead>
                         <tbody>
-							$boolmeal = [];
+							@php
+								$boolmeal = [];
+							@endphp
                         	@foreach($menuitem as $row)
 								@foreach($row as $item)
 								@if($loop->index == 0)
@@ -174,6 +174,20 @@
 										$narx[95] = 2400; $narx[96] = 0; $narx[97] = 0; $narx[98] = 0; $narx[99] = 0;
 										$narx[100] = 2400; $narx[101] = 0; $narx[102] = 0; $narx[103] = 0; $narx[104] = 0;
 										$narx[105] = 2400; $narx[106] = 0; $narx[107] = 0; $narx[108] = 0; $narx[109] = 0;
+										$narx[110] = 2400; $narx[111] = 0; $narx[112] = 0; $narx[113] = 0; $narx[114] = 0;
+										$narx[115] = 2400; $narx[116] = 0; $narx[117] = 0; $narx[118] = 0; $narx[119] = 0;
+										$narx[120] = 2400; $narx[121] = 0; $narx[122] = 0; $narx[123] = 0; $narx[124] = 0;
+										$narx[125] = 2400; $narx[126] = 0; $narx[127] = 0; $narx[128] = 0; $narx[129] = 0;
+										$narx[130] = 2400; $narx[131] = 0; $narx[132] = 0; $narx[133] = 0; $narx[134] = 0;
+										$narx[135] = 2400; $narx[136] = 0; $narx[137] = 0; $narx[138] = 0; $narx[139] = 0;
+										$narx[140] = 2400; $narx[141] = 0; $narx[142] = 0; $narx[143] = 0; $narx[144] = 0;
+										$narx[145] = 2400; $narx[146] = 0; $narx[147] = 0; $narx[148] = 0; $narx[149] = 0;
+										$narx[150] = 2400; $narx[151] = 0; $narx[152] = 0; $narx[153] = 0; $narx[154] = 0;
+										$narx[155] = 2400; $narx[156] = 0; $narx[157] = 0; $narx[158] = 0; $narx[159] = 0;
+										$narx[160] = 2400; $narx[161] = 0; $narx[162] = 0; $narx[163] = 0; $narx[164] = 0;
+										$narx[165] = 2400; $narx[166] = 0; $narx[167] = 0; $narx[168] = 0; $narx[169] = 0;
+										$narx[170] = 2400; $narx[171] = 0; $narx[172] = 0; $narx[173] = 0; $narx[174] = 0;
+										$narx[175] = 2400; $narx[176] = 0; $narx[177] = 0; $narx[178] = 0; $narx[179] = 0;
 			                            for($t = 0; $t < count($products); $t++){
 											if(isset($products[$t]['yes']) and isset($productallcount[$products[$t]['id']])){
 			                            ?>
