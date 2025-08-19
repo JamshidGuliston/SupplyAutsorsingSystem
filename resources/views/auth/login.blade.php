@@ -189,7 +189,7 @@
             <div class="col-lg-3 col-md-2"></div>
             <div class="col-lg-6 col-md-8 login-box">
                 <div class="col-lg-12 login-title">
-                    Tizimga kirish...
+                    Tizimga kirish
                 </div>
 
                 <div class="col-lg-12 login-form">
