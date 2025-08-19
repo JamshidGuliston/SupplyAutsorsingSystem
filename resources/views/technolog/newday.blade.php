@@ -100,6 +100,38 @@
         border-radius: 6px;
         font-weight: 500;
     }
+    
+    /* Filter notification uchun */
+    .filter-notification,
+    .filter-notification1 {
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        border: none;
+        border-radius: 8px;
+        animation: slideInRight 0.3s ease-out;
+    }
+    
+    @keyframes slideInRight {
+        from {
+            transform: translateX(100%);
+            opacity: 0;
+        }
+        to {
+            transform: translateX(0);
+            opacity: 1;
+        }
+    }
+    
+    /* Filter section yaxshilash */
+    .filter-section {
+        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+        border: 1px solid #dee2e6;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    }
+    
+    .filter-section .form-label small {
+        font-size: 11px;
+        opacity: 0.7;
+    }
     /* Safari */
     @-webkit-keyframes spin {
         0% {
@@ -307,7 +339,10 @@
     <!-- Filter va qidiruv qismi -->
     <div class="row mb-3 filter-section">
         <div class="col-md-4">
-            <label for="regionFilter" class="form-label">Hudud bo'yicha filter:</label>
+            <label for="regionFilter" class="form-label">
+                <i class="fas fa-filter me-1"></i>Hudud bo'yicha filter:
+                <small class="text-muted d-block">Filter avtomatik saqlanadi</small>
+            </label>
             <select class="form-select" id="regionFilter">
                 <option value="">Barcha hududlar</option>
                 @foreach(\App\Models\Region::all() as $region)
@@ -316,11 +351,16 @@
             </select>
         </div>
         <div class="col-md-4">
-            <label for="searchInput" class="form-label">Qidiruv:</label>
+            <label for="searchInput" class="form-label">
+                <i class="fas fa-search me-1"></i>Qidiruv:
+                <small class="text-muted d-block">Qidiruv avtomatik saqlanadi</small>
+            </label>
             <input type="text" class="form-control" id="searchInput" placeholder="Bog'cha nomi yoki oshpaz nomi...">
         </div>
         <div class="col-md-4 d-flex align-items-end">
-            <button class="btn btn-secondary me-2" id="clearFilters">Filterlarni tozalash</button>
+            <button class="btn btn-secondary me-2" id="clearFilters" title="Filterlarni tozalash va saqlangan ma'lumotlarni o'chirish">
+                <i class="fas fa-trash-alt me-1"></i>Filterlarni tozalash
+            </button>
             <button class="btn btn-info p-0" style="padding: 3px 16px !important;" data-bs-toggle="modal" data-bs-target="#exampleModalsadd">
                 <i class="fas fa-plus-square text-white"></i>
             </button>
@@ -573,7 +613,10 @@
     <!-- Filter va qidiruv qismi -->
     <div class="row mb-3 filter-section">
         <div class="col-md-4">
-            <label for="regionFilter2" class="form-label">Hudud bo'yicha filter:</label>
+            <label for="regionFilter2" class="form-label">
+                <i class="fas fa-filter me-1"></i>Hudud bo'yicha filter:
+                <small class="text-muted d-block">Filter avtomatik saqlanadi</small>
+            </label>
             <select class="form-select" id="regionFilter2">
                 <option value="">Barcha hududlar</option>
                 @foreach(\App\Models\Region::all() as $region)
@@ -582,12 +625,17 @@
             </select>
         </div>
         <div class="col-md-4">
-            <label for="searchInput2" class="form-label">Qidiruv:</label>
+            <label for="searchInput2" class="form-label">
+                <i class="fas fa-search me-1"></i>Qidiruv:
+                <small class="text-muted d-block">Qidiruv avtomatik saqlanadi</small>
+            </label>
             <input type="text" class="form-control" id="searchInput2" placeholder="Bog'cha nomi yoki oshpaz nomi...">
         </div>
         <div class="col-md-2">
             <label for="clearFilters2" class="form-label">Filterlarni tozalash</label><br>
-            <button class="btn btn-secondary me-2" id="clearFilters2"> <i class="fas fa-trash-alt text-white "></i></button>
+            <button class="btn btn-secondary me-2" id="clearFilters2" title="Filterlarni tozalash va saqlangan ma'lumotlarni o'chirish"> 
+                <i class="fas fa-trash-alt text-white"></i>
+            </button>
         </div>
         <div class="col-md-2">
             <label for="exampleModalsadd" class="form-label">Bog'cha qo'shish</label><br>
@@ -728,7 +776,32 @@
                     row.hide();
                 }
             });
+            
+            // Filter qiymatlarini localStorage ga saqlash
+            localStorage.setItem('newday_regionFilter1', regionFilter);
+            localStorage.setItem('newday_searchInput1', searchText);
         }
+        
+        // Sahifa yuklanganda filter qiymatlarini tiklash
+        function restoreFilters1() {
+            var savedRegionFilter = localStorage.getItem('newday_regionFilter1');
+            var savedSearchText = localStorage.getItem('newday_searchInput1');
+            
+            if (savedRegionFilter) {
+                $('#regionFilter').val(savedRegionFilter);
+            }
+            if (savedSearchText) {
+                $('#searchInput').val(savedSearchText);
+            }
+            
+            // Agar filter qiymatlari mavjud bo'lsa, jadvalni filterlash
+            if (savedRegionFilter || savedSearchText) {
+                filterTable();
+            }
+        }
+        
+        // Sahifa yuklanganda filterlarni tiklash
+        restoreFilters1();
         
         // Filter va qidiruv eventlari
         $('#regionFilter, #searchInput').on('change keyup', filterTable);
@@ -737,8 +810,39 @@
         $('#clearFilters').click(function() {
             $('#regionFilter').val('');
             $('#searchInput').val('');
+            
+            // localStorage dan ham o'chirish
+            localStorage.removeItem('newday_regionFilter1');
+            localStorage.removeItem('newday_searchInput1');
+            
             filterTable();
+            
+            // Tozalash haqida xabar berish
+            var clearMessage = 'Filterlar muvaffaqiyatli tozalandi!';
+            showNotification1(clearMessage, 'success');
         });
+        
+        // Xabar ko'rsatish funksiyasi - birinchi jadval uchun
+        function showNotification1(message, type) {
+            // Mavjud xabarni o'chirish
+            $('.filter-notification1').remove();
+            
+            var alertClass = type === 'success' ? 'alert-success' : 'alert-info';
+            var icon = type === 'success' ? 'fas fa-check-circle' : 'fas fa-info-circle';
+            
+            var notification = $('<div class="alert ' + alertClass + ' alert-dismissible fade show filter-notification1" role="alert" style="position: fixed; top: 20px; right: 20px; z-index: 9999; min-width: 300px;">' +
+                '<i class="' + icon + '" style="margin-right: 8px;"></i>' +
+                message +
+                '<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>' +
+                '</div>');
+            
+            $('body').append(notification);
+            
+            // 3 soniyadan keyin xabarni yashirish
+            setTimeout(function() {
+                notification.fadeOut();
+            }, 3000);
+        }
         
         var menuinp = $('.menucounts');
         if(menuinp.length == ''){
@@ -991,7 +1095,32 @@
                     row.hide();
                 }
             });
+            
+            // Filter qiymatlarini localStorage ga saqlash
+            localStorage.setItem('newday_regionFilter2', regionFilter);
+            localStorage.setItem('newday_searchInput2', searchText);
         }
+        
+        // Sahifa yuklanganda filter qiymatlarini tiklash
+        function restoreFilters() {
+            var savedRegionFilter = localStorage.getItem('newday_regionFilter2');
+            var savedSearchText = localStorage.getItem('newday_searchInput2');
+            
+            if (savedRegionFilter) {
+                $('#regionFilter2').val(savedRegionFilter);
+            }
+            if (savedSearchText) {
+                $('#searchInput2').val(savedSearchText);
+            }
+            
+            // Agar filter qiymatlari mavjud bo'lsa, jadvalni filterlash
+            if (savedRegionFilter || savedSearchText) {
+                filterTable2();
+            }
+        }
+        
+        // Sahifa yuklanganda filterlarni tiklash
+        restoreFilters();
         
         // Filter va qidiruv eventlari - ikkinchi jadval
         $('#regionFilter2, #searchInput2').on('change keyup', filterTable2);
@@ -1000,8 +1129,39 @@
         $('#clearFilters2').click(function() {
             $('#regionFilter2').val('');
             $('#searchInput2').val('');
+            
+            // localStorage dan ham o'chirish
+            localStorage.removeItem('newday_regionFilter2');
+            localStorage.removeItem('newday_searchInput2');
+            
             filterTable2();
+            
+            // Tozalash haqida xabar berish
+            var clearMessage = 'Filterlar muvaffaqiyatli tozalandi!';
+            showNotification(clearMessage, 'success');
         });
+        
+        // Xabar ko'rsatish funksiyasi
+        function showNotification(message, type) {
+            // Mavjud xabarni o'chirish
+            $('.filter-notification').remove();
+            
+            var alertClass = type === 'success' ? 'alert-success' : 'alert-info';
+            var icon = type === 'success' ? 'fas fa-check-circle' : 'fas fa-info-circle';
+            
+            var notification = $('<div class="alert ' + alertClass + ' alert-dismissible fade show filter-notification" role="alert" style="position: fixed; top: 20px; right: 20px; z-index: 9999; min-width: 300px;">' +
+                '<i class="' + icon + '" style="margin-right: 8px;"></i>' +
+                message +
+                '<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>' +
+                '</div>');
+            
+            $('body').append(notification);
+            
+            // 3 soniyadan keyin xabarni yashirish
+            setTimeout(function() {
+                notification.fadeOut();
+            }, 3000);
+        }
 
         $('.deletegarden2').click(function() {
             var gardenId = $(this).attr('data-garden-id');
