@@ -209,7 +209,7 @@
                 <!-- <form action="/activsecondmenuPDF/{{ $day->id }}/{{ $kindgarden->id }}" method="get"> -->
                     <p><b>Haqiqiy Menyu: </b>sana: {{ $day->day_number.".".$day->month_name.".".$day->year_name }}</p>
                     <p><i>Eslatma: menyu har kuni soat 10 dan keyin yangilanadi</i></p>
-                    <p><small class="text-muted"><i class="fas fa-info-circle"></i> Share tugmasi orqali Telegram ochadi va fayl URL ni yuboradi (fayl yuklanmaydi)</small></p>
+                    <p><small class="text-muted"><i class="fas fa-info-circle"></i> Share tugmasi orqali Telegram ochadi va fayl URL ni yuboradi (telefon va kompyuter uchun)</small></p>
                     <div class="d-flex gap-2">
                         <button type="button" 
                             class="btn btn-info d-flex align-items-center justify-content-center gap-2 share-btn" 
@@ -228,7 +228,7 @@
             <div class="p-3 bg-white shadow-sm align-items-center rounded">
                 <!-- <form action="/nextdaysecondmenuPDF/{{ $kindgarden->id }}" method="get" download> -->
                     <p><b>Taxminiy menyu: </b></p>
-                    <p><small class="text-muted"><i class="fas fa-info-circle"></i> Share tugmasi orqali Telegram ochadi va fayl URL ni yuboradi (fayl yuklanmaydi)</small></p>
+                    <p><small class="text-muted"><i class="fas fa-info-circle"></i> Share tugmasi orqali Telegram ochadi va fayl URL ni yuboradi (telefon va kompyuter uchun)</small></p>
                     <div class="d-flex gap-2 mt-2">
                         <button type="button" 
                             class="btn btn-info d-flex align-items-center justify-content-center gap-2 share-btn" 
@@ -247,7 +247,7 @@
                 @endif
                 <p></p>
                 <p><b>Nakladnoy, non va sud maxsulotlari </b></p>
-                <p><small class="text-muted"><i class="fas fa-info-circle"></i> Share tugmasi orqali Telegram ochadi va fayl URL ni yuboradi (fayl yuklanmaydi)</small></p>
+                <p><small class="text-muted"><i class="fas fa-info-circle"></i> Share tugmasi orqali Telegram ochadi va fayl URL ni yuboradi (telefon va kompyuter uchun)</small></p>
                 <div class="d-flex gap-2 mt-2">
                     <button type="button" 
                         class="btn btn-info d-flex align-items-center justify-content-center gap-2 share-btn" 
@@ -281,20 +281,55 @@
         // Fayl URL ni to'liq URL ga o'tkazish
         var fullUrl = window.location.origin + fileUrl;
         
-        // Telegram share URL
-        var telegramUrl = 'https://t.me/share/url?url=' + encodeURIComponent(fullUrl) + '&text=' + encodeURIComponent(fileName);
+        // Foydalanuvchi agent ni tekshirish
+        var isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
         
-        // Yangi oynada ochish
-        var telegramWindow = window.open(telegramUrl, '_blank', 'width=600,height=400');
+        if (isMobile) {
+            // Mobile qurilmalarda Telegram app ni ochishga urinish
+            try {
+                // Telegram app ni ochish uchun turli URL larni sinab ko'rish
+                var telegramUrls = [
+                    'https://t.me/share/url?url=' + encodeURIComponent(fullUrl) + '&text=' + encodeURIComponent(fileName),
+                    'https://telegram.me/share/url?url=' + encodeURIComponent(fullUrl) + '&text=' + encodeURIComponent(fileName),
+                    'tg://msg?text=' + encodeURIComponent(fileName + ' ' + fullUrl),
+                    'telegram://msg?text=' + encodeURIComponent(fileName + ' ' + fullUrl)
+                ];
+                
+                // Birinchi URL ni sinab ko'rish (Web App)
+                var telegramWindow = window.open(telegramUrls[0], '_blank');
+                
+                // Agar Web App ochilmagan bo'lsa, app protocol ni sinab ko'rish
+                if (!telegramWindow) {
+                    // Telegram app ni ochishga urinish
+                    window.location.href = telegramUrls[2];
+                    
+                    // 2 soniya kechikish bilan natijani tekshirish
+                    setTimeout(function() {
+                        if (!document.hidden && !document.webkitHidden) {
+                            // App ochilmadi, Web App ga qaytish
+                            window.open(telegramUrls[0], '_blank');
+                        }
+                    }, 2000);
+                }
+                
+            } catch (error) {
+                // Xatolik bo'lsa, Web App ga o'tish
+                window.open('https://t.me/share/url?url=' + encodeURIComponent(fullUrl) + '&text=' + encodeURIComponent(fileName), '_blank');
+            }
+        } else {
+            // Desktop qurilmalarda Web App ochish
+            var telegramUrl = 'https://t.me/share/url?url=' + encodeURIComponent(fullUrl) + '&text=' + encodeURIComponent(fileName);
+            var telegramWindow = window.open(telegramUrl, '_blank', 'width=600,height=400');
+        }
         
         // Share tugmasini normal holatga qaytarish
         setShareButtonLoading(false);
         
         // Foydalanuvchiga ma'lumot berish
-        if (telegramWindow) {
+        if (isMobile) {
             showNotification('Telegram ochildi! Faylni yuborish uchun chat tanlang.', 'info');
         } else {
-            showNotification('Telegram ochilmadi. Qaytadan urinib ko\'ring.', 'error');
+            showNotification('Telegram Web App ochildi! Faylni yuborish uchun chat tanlang.', 'info');
         }
     }
     
