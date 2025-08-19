@@ -1067,6 +1067,7 @@ class TechnologController extends Controller
 			$workers = Kindgarden::where('id', $child->kingar_name_id)->first();
 			// dd($workers['worker_count']);
 			$menusi = $request['manuone'];
+            // dd($request->all());
 			if($child->age_id == 3){
 				$menusi = $request['two'];
 			}
@@ -1074,7 +1075,7 @@ class TechnologController extends Controller
                 'kingar_name_id' => $child->kingar_name_id,
                 'king_age_name_id' => $child->age_id,
                 'kingar_children_number' => $child->age_number,
-                'workers_count' => 10,
+                'workers_count' => $workers->worker_count,
                 'kingar_menu_id' => $menuages[$child->age_id],
             ]);
 
