@@ -122,12 +122,12 @@
 			                            for($t = 0; $t < count($products); $t++){
 			                            	if(isset($products[$t]['yes']) and isset($item[$products[$t]['id']])){
 			                            ?>
-			                            		<td style="padding: 0px;">{{ $item[$products[$t]['id']] }}</td>
+			                            		<td style="padding: 0px; background-color: #e6f3ff;"><?php printf("%01.3f", (($menu[0]['kingar_children_number'])*$item[$products[$t]['id']]) / $products[$t]['div']); ?></td>
 			                            <?php
 				                            }
 			                            	elseif(isset($products[$t]['yes'])){
 			                            ?>
-			                            		<td style="padding: 0px;"></td>
+			                            		<td style="padding: 0px; background-color: #e6f3ff;"></td>
 			                            <?php	
 			                            	}
                     					}
@@ -138,7 +138,7 @@
 			                            for($t = 0; $t < count($products); $t++){
 			                            	if(isset($products[$t]['yes']) and isset($item[$products[$t]['id']])){
 			                            ?>	
-			                            		<td style="padding: 0px;"><?php printf("%01.3f", (($menu[0]['kingar_children_number'])*$item[$products[$t]['id']]) / $products[$t]['div']); ?></td>
+			                            		<td style="padding: 0px;">{{ $item[$products[$t]['id']] }}</td>
 			                            	
 			                            <?php
 				                            }
@@ -155,7 +155,7 @@
 							@endforeach
 									<tr>
 										<th scope="row" rowspan="5" class='vrt-header' style="padding: 0px; border-top: 2px solid black"><span>Болалар</span></th>
-										<td scope="row" class="align-baseline" style="padding: 0px; border-top: 2px solid black">1 та бола учун гр</td>
+										<td scope="row" class="align-baseline" style="padding: 0px; border-top: 2px solid black">Жами миқдори</td>
 										<?php
 										
 										$narx = [];
@@ -191,25 +191,25 @@
 			                            for($t = 0; $t < count($products); $t++){
 											if(isset($products[$t]['yes']) and isset($productallcount[$products[$t]['id']])){
 			                            ?>
-			                            	<td style="padding: 0px; font-size: 5px; border-top: 2px solid black"><?= $productallcount[$products[$t]['id']]; ?></td>
+			                            	<td style="padding: 0px; font-size: 5px; border-top: 2px solid black; background-color: #e6f3ff;"><?php printf("%01.3f", (($menu[0]['kingar_children_number'])*$productallcount[$products[$t]['id']]) / $products[$t]['div'] ); ?></td>
 			                            <?php	
 											}
 											elseif(isset($products[$t]['yes'])){
 											?>
-												<td style="padding: 0px;"></td>
+												<td style="padding: 0px; background-color: #e6f3ff;"></td>
 											<?php	
 											}
                     					}
 			                            ?>
 									</tr>
 									<tr>
-										<td scope="row" class="align-baseline" style="padding: 0px;">Жами миқдори</td>
+										<td scope="row" class="align-baseline" style="padding: 0px;">1 та бола учун гр</td>
 										<?php
 			                            for($t = 0; $t < count($products); $t++){
 											if(isset($products[$t]['yes']) and isset($productallcount[$products[$t]['id']])){
 			                            ?>
 			                            <!---->
-			                            	<td style="padding: 0px; font-size: 5px"><?php printf("%01.3f", (($menu[0]['kingar_children_number'])*$productallcount[$products[$t]['id']]) / $products[$t]['div'] ); ?></td>
+			                            	<td style="padding: 0px; font-size: 5px"><?= $productallcount[$products[$t]['id']]; ?></td>
 			                            <?php	
 											}
 											elseif(isset($products[$t]['yes'])){
@@ -262,29 +262,29 @@
 									</tr>
 									<tr style="border-top: 2px solid black;">
 										<th scope="row" rowspan="5" class='vrt-header' style="padding: 0px; border-top: 2px solid black"><span>Ходимлар</span></th>
-										<td scope="row" class="align-baseline" style="padding: 0px; border-top: 2px solid black">1 та ходим учун гр</td>
+										<td scope="row" class="align-baseline" style="padding: 0px; border-top: 2px solid black">Жами миқдори</td>
 										<?php
 			                            for($t = 0; $t < count($products); $t++){
 											if(isset($products[$t]['yes']) and isset($workerproducts[$products[$t]['id']])){
 			                            ?>
-			                            	<td style="padding: 0px; font-size: 5px; border-top: 2px solid black"><?= $workerproducts[$products[$t]['id']]; ?></td>
+			                            	<td style="padding: 0px; font-size: 5px; border-top: 2px solid black; background-color: #e6f3ff;"><?php printf("%01.3f", (($menu[0]['workers_count'])*$workerproducts[$products[$t]['id']]) / $products[$t]['div']); ?></td>
 			                            <?php	
 											}
 											elseif(isset($products[$t]['yes'])){
 											?>
-												<td style="padding: 0px;"></td>
+												<td style="padding: 0px; background-color: #e6f3ff;"></td>
 											<?php	
 											}
                     					}
 			                            ?>
 									</tr>
 									<tr>
-										<td scope="row" class="align-baseline" style="padding: 0px;">Жами миқдори</td>
+										<td scope="row" class="align-baseline" style="padding: 0px;">1 та ходим учун гр</td>
 										<?php
 			                            for($t = 0; $t < count($products); $t++){
 											if(isset($products[$t]['yes']) and isset($workerproducts[$products[$t]['id']])){
 			                            ?>
-			                            	<td style="padding: 0px; font-size: 5px"><?php printf("%01.3f", (($menu[0]['workers_count'])*$workerproducts[$products[$t]['id']]) / $products[$t]['div']); ?></td>
+			                            	<td style="padding: 0px; font-size: 5px"><?= $workerproducts[$products[$t]['id']]; ?></td>
 			                            <?php	
 											}
 											elseif(isset($products[$t]['yes'])){

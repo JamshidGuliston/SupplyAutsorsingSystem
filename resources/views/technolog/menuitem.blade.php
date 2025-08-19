@@ -151,6 +151,33 @@
 
 <div class="py-5 px-5">
         <input type="hidden" name="menuid" value="{{ $id }}" />
+        
+        <!-- Nusxa yaratish qismi tepada -->
+        @if(isset($menuitem[0]['menu_season_id']))
+        <div class="row mb-4">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="mb-0"><i class="fas fa-copy"></i> Menyu nusxasini yaratish</h5>
+                    </div>
+                    <div class="card-body">
+                        <form action="{{route('technolog.copymenuitem')}}" method="POST" class="d-flex align-items-center gap-3">
+                            @csrf
+                            <input type="hidden" name="seasonid" value="{{ $menuitem[0]['menu_season_id'] }}" >
+                            <input type="hidden" name="menuid" value="{{ $menuitem[0]['menuid'] }}" >
+                            <div class="flex-grow-1">
+                                <input type="text" name="newmenuname" class="form-control" placeholder="{{ $menuitem[0]['menu_name'] }} nusxasi" required>
+                            </div>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-copy"></i> Nusxa yaratish
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        @endif
+        
         <div class="row">
             <div class="col-md-6">
                 <div class="product-select">
@@ -165,14 +192,6 @@
             <div class="col-md-6">
                 <div class="sub" style="display: flex;justify-content: space-between;">
                     <button class="btn btn-dark" data-bs-toggle="modal" data-bs-target="#addModal">Taom qo'shish</button>
-                    <form action="{{route('technolog.copymenuitem')}}" method="POST">
-                        @csrf
-                        @if(isset($menuitem[0]['menu_season_id']))
-                        <input type="hidden" name="seasonid" value="{{ $menuitem[0]['menu_season_id'] }}" >
-                        <input type="hidden" name="menuid" value="{{ $menuitem[0]['menuid'] }}" >
-                        <span> <input type="text" name="newmenuname" placeholder="{{ $menuitem[0]['menu_name'] }} nusxasi" required>  <button type="submit"><i style="cursor: pointer;"  class="fas fa-copy"></i></button></span>
-                        @endif
-                    </form>
                 </div>
             </div>
         </div>

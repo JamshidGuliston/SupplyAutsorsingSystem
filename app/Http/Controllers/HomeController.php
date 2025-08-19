@@ -51,6 +51,9 @@ class HomeController extends Controller
 		])->join('kindgardens', 'nextday_nambers.kingar_name_id', '=', 'kindgardens.id')
         ->join('age_ranges', 'nextday_nambers.king_age_name_id', '=', 'age_ranges.id')->get();
 		// dd($menu);
+		$products = Product::where('hide', 1)
+			->orderBy('sort', 'ASC')->get();
+		
 		$menuitem = Menu_composition::where('title_menu_id', $menu[0]['kingar_menu_id'])
                         ->where('age_range_id', $ageid)
                         ->join('meal_times', 'menu_compositions.menu_meal_time_id', '=', 'meal_times.id')
@@ -60,14 +63,48 @@ class HomeController extends Controller
                         ->get();
         // dd($menuitem);
         // xodimlar ovqati uchun
-        $day = Day::orderBy('id', 'DESC')->first();
+        $day = Day::join('months', 'months.id', '=', 'days.month_id')
+				->join('years', 'years.id', '=', 'days.year_id')
+				->orderBy('days.id', 'DESC')->first(['days.day_number','days.id as id', 'months.month_name', 'years.year_name']);
+        // dd($day);
         $workerfood = titlemenu_food::where('day_id', $day->id)
                     ->where('worker_age_id', $ageid)
                     ->where('titlemenu_id', $menu[0]['kingar_menu_id'])
                     ->get();
         // dd($workerfood);
+        $nextdaymenuitem = [];
+        $workerproducts = [];
+        // kamchilik bor boshlangich qiymat berishda
+        $productallcount = array_fill(1, 500, 0);
+        foreach($menuitem as $item){
+            $nextdaymenuitem[$item->menu_meal_time_id][0]['mealtime'] = $item->meal_time_name; 
+            $nextdaymenuitem[$item->menu_meal_time_id][$item->menu_food_id][$item->product_name_id] = $item->weight;
+            $nextdaymenuitem[$item->menu_meal_time_id][$item->menu_food_id]['foodname'] = $item->food_name; 
+            $productallcount[$item->product_name_id] += $item->weight;
+            for($i = 0; $i<count($products); $i++){
+                if(empty($products[$i]['yes']) and $products[$i]['id'] == $item->product_name_id){
+                    $products[$i]['yes'] = 1;
+                }
+            }
+        }
+
+        // Xodimlar uchun ovqat gramajlarini hisoblash
+        $workerproducts = array_fill(1, 500, 0);
+        foreach($workerfood as $tr){
+            // Tushlikdagi birinchi ovqat va nondan yeyishadi
+            if(isset($nextdaymenuitem[3][$tr->food_id])){
+                foreach($nextdaymenuitem[3][$tr->food_id] as $key => $value){
+                    if($key != 'foodname' and $key != 'foodweight'){
+                        $workerproducts[$key] += $value; 
+                        // Xodimlar gramajini ham productallcount ga qo'shish
+                        $productallcount[$key] += $value;
+                    }
+                }
+            }
+        }
+        
         $dompdf = new Dompdf('UTF-8');
-		$html = mb_convert_encoding(view('alltable', ['menu' => $menu, 'menuitem' => $menuitem, 'workerfood' => $workerfood]), 'HTML-ENTITIES', 'UTF-8');
+		$html = mb_convert_encoding(view('pdffile.technolog.alltable', ['day' => $day,'productallcount' => $productallcount, 'workerproducts' => $workerproducts,'menu' => $menu, 'menuitem' => $nextdaymenuitem, 'products' => $products, 'workerfood' => $workerfood]), 'HTML-ENTITIES', 'UTF-8');
 		$dompdf->loadHtml($html);
 
 		// (Optional) Setup the paper size and orientation
@@ -108,27 +145,38 @@ class HomeController extends Controller
                 $allsum = 0;
                 $onesum = 0;
                 $workers = 0;
+                $weight = 0;
                 foreach($nextday as $next){
                     if($row->id == $next->kingar_name_id){
-                        $weight =  Menu_composition::where('title_menu_id', $next->kingar_menu_id)->where('product_name_id', $prod->id)->sum('weight');
-                        $allsum += $weight * $next->kingar_children_number;
-                        $onesum += $weight; 
-                        $workers = $next->workers_count;
+                        $prlar = Menu_composition::where('title_menu_id', $next->kingar_menu_id)->where('age_range_id', $next->king_age_name_id)->where('product_name_id', $prod->id)->get();
+                        foreach($prlar as $prw){
+                            $weight += $prw->weight * $next->kingar_children_number;
+                        }
+                        
+                        // Xodimlar uchun ovqat gramajlarini hisoblash
+                        $workerfood = titlemenu_food::where('day_id', $day->id)
+                                    ->where('worker_age_id', $next->king_age_name_id)
+                                    ->where('titlemenu_id', $next->kingar_menu_id)
+                                    ->get();
+                        
+                        foreach($workerfood as $tr){
+                            // Tushlikdagi birinchi ovqat va nondan yeyishadi
+                            $workerprlar = Menu_composition::where('title_menu_id', $next->kingar_menu_id)
+                                            ->where('age_range_id', $next->king_age_name_id)
+                                            ->where('menu_food_id', $tr->food_id)
+                                            ->where('product_name_id', $prod->id)
+                                            ->get();
+                            
+                            foreach($workerprlar as $wpr){
+                                $weight += $wpr->weight * $next->workers_count;
+                            }
+                        }
                     }
-                }
-                $workeat = titlemenu_food::where('day_id', $day->id)->get();
-
-                foreach($workeat as $wo){
-                        $woe = Menu_composition::where('title_menu_id', $wo->titlemenu_id)
-                                ->where('menu_food_id', $wo->food_id)
-                                ->where('age_range_id', $wo->worker_age_id)
-                                ->where('product_name_id', $prod->id)
-                                ->sum('weight');
                 }
 
                 $prdiv = Product::where('id', $prod->id)->first();
                 
-                $shopproducts[$row->id][$prod->id] = ($allsum + $woe * $workers) / $prdiv->div; 
+                $shopproducts[$row->id][$prod->id] = $weight / $prdiv->div; 
             }
         }
         

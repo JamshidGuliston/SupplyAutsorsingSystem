@@ -105,6 +105,21 @@ class TestController extends Controller
             }
         }
 
+        // Xodimlar uchun ovqat gramajlarini hisoblash
+        $workerproducts = array_fill(1, 500, 0);
+        foreach($workerfood as $tr){
+            // Tushlikdagi birinchi ovqat va nondan yeyishadi
+            if(isset($nextdaymenuitem[3][$tr->food_id])){
+                foreach($nextdaymenuitem[3][$tr->food_id] as $key => $value){
+                    if($key != 'foodname' and $key != 'foodweight'){
+                        $workerproducts[$key] += $value; 
+                        // Xodimlar gramajini ham productallcount ga qo'shish
+                        $productallcount[$key] += $value;
+                    }
+                }
+            }
+        }
+
 		// saytni o'zida ko'rish
         
         $dompdf = new Dompdf('UTF-8');
@@ -175,9 +190,14 @@ class TestController extends Controller
         }
         $workerproducts = array_fill(1, 500, 0);
         foreach($workerfood as $tr){
-            foreach($nextdaymenuitem[3][$tr->food_id] as $key => $value){
-                if($key != 'foodname' and $key != 'foodweight'){
-                    $workerproducts[$key] += $value; 
+            // Tushlikdagi birinchi ovqat va nondan yeyishadi
+            if(isset($nextdaymenuitem[3][$tr->food_id])){
+                foreach($nextdaymenuitem[3][$tr->food_id] as $key => $value){
+                    if($key != 'foodname' and $key != 'foodweight'){
+                        $workerproducts[$key] += $value; 
+                        // Xodimlar gramajini ham productallcount ga qo'shish
+                        $productallcount[$key] += $value;
+                    }
                 }
             }
         }
@@ -476,14 +496,18 @@ class TestController extends Controller
             }
         }
         // dd($productallcount);
-        // kamchilik bor boshlangich qiymat berishda
+        // Xodimlar uchun ovqat gramajlarini hisoblash
         $workerproducts = array_fill(1, 500, 0);
         foreach($workerfood as $tr){
-            foreach($nextdaymenuitem[3][$tr->food_id] as $key => $value){
-                if($key != 'foodname'){
-                    $workerproducts[$key] += $value; 
+            // Tushlikdagi birinchi ovqat va nondan yeyishadi
+            if(isset($nextdaymenuitem[3][$tr->food_id])){
+                foreach($nextdaymenuitem[3][$tr->food_id] as $key => $value){
+                    if($key != 'foodname'){
+                        $workerproducts[$key] += $value; 
+                        // Xodimlar gramajini ham productallcount ga qo'shish
+                        $productallcount[$key] += $value;
+                    }
                 }
-                // array_push($workerproducts, $nextdaymenuitem[3][$tr->food_id]);
             }
         }
         // dd($workerproducts);    
@@ -560,14 +584,18 @@ class TestController extends Controller
             }
         }
         // dd($productallcount);
-        // kamchilik bor boshlangich qiymat berishda
+        // Xodimlar uchun ovqat gramajlarini hisoblash
         $workerproducts = array_fill(1, 500, 0);
         foreach($workerfood as $tr){
-            foreach($nextdaymenuitem[3][$tr->food_id] as $key => $value){
-                if($key != 'foodname'){
-                    $workerproducts[$key] += $value; 
+            // Tushlikdagi birinchi ovqat va nondan yeyishadi
+            if(isset($nextdaymenuitem[3][$tr->food_id])){
+                foreach($nextdaymenuitem[3][$tr->food_id] as $key => $value){
+                    if($key != 'foodname'){
+                        $workerproducts[$key] += $value; 
+                        // Xodimlar gramajini ham productallcount ga qo'shish
+                        $productallcount[$key] += $value;
+                    }
                 }
-                // array_push($workerproducts, $nextdaymenuitem[3][$tr->food_id]);
             }
         }
         // dd($menuitem);
@@ -717,22 +745,30 @@ class TestController extends Controller
         		// dd($nextday);
                 foreach($nextday as $next){
                     if($row->id == $next->kingar_name_id){
-                    	$workeat = titlemenu_food::where('day_id', $day->id)->get();
                         $prlar =  Menu_composition::where('title_menu_id', $next->kingar_menu_id)->where('age_range_id', $next->king_age_name_id)->where('product_name_id', $prod->id)->get();
                         foreach($prlar as $prw){
                         	$itempr = $itempr . "+".$prw->weight." * ". $next->kingar_children_number;
                         	$weight += $prw->weight * $next->kingar_children_number;
-                        	if($next->king_age_name_id == 1){
-                        		$workeat = titlemenu_food::where('day_id', $day->id)->where('food_id', $prw->menu_food_id)->get();
-                        		if($workeat->count() > 0){
-                        			$weight += $prw->weight * $next->workers_count;
-                        		}
-                        		
-                        	}
                         }
-                        // $allsum += $weight * $next->kingar_children_number;
-                        // $onesum += $weight; 
-                        // $workers = $next->workers_count;
+                        
+                        // Xodimlar uchun ovqat gramajlarini hisoblash
+                        $workerfood = titlemenu_food::where('day_id', $day->id)
+                                    ->where('worker_age_id', $next->king_age_name_id)
+                                    ->where('titlemenu_id', $next->kingar_menu_id)
+                                    ->get();
+                        
+                        foreach($workerfood as $tr){
+                            // Tushlikdagi birinchi ovqat va nondan yeyishadi
+                            $workerprlar = Menu_composition::where('title_menu_id', $next->kingar_menu_id)
+                                            ->where('age_range_id', $next->king_age_name_id)
+                                            ->where('menu_food_id', $tr->food_id)
+                                            ->where('product_name_id', $prod->id)
+                                            ->get();
+                            
+                            foreach($workerprlar as $wpr){
+                                $weight += $wpr->weight * $next->workers_count;
+                            }
+                        }
                     }
                 }
                 // foreach($workeat as $wo){
