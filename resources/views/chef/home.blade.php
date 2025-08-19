@@ -209,7 +209,7 @@
                 <!-- <form action="/activsecondmenuPDF/{{ $day->id }}/{{ $kindgarden->id }}" method="get"> -->
                     <p><b>Haqiqiy Menyu: </b>sana: {{ $day->day_number.".".$day->month_name.".".$day->year_name }}</p>
                     <p><i>Eslatma: menyu har kuni soat 10 dan keyin yangilanadi</i></p>
-                    <p><small class="text-muted"><i class="fas fa-info-circle"></i> Share tugmasi orqali PDF faylni yuklab olib, Telegram ochadi</small></p>
+                    <p><small class="text-muted"><i class="fas fa-info-circle"></i> Share tugmasi orqali Telegram ochadi va fayl URL ni yuboradi</small></p>
                     <div class="d-flex gap-2">
                         <a href="/activsecondmenuPDF/{{ $day->id }}/{{ $kindgarden->id }}" 
                             class="btn btn-success d-flex align-items-center justify-content-center gap-2" 
@@ -234,7 +234,7 @@
             <div class="p-3 bg-white shadow-sm align-items-center rounded">
                 <!-- <form action="/nextdaysecondmenuPDF/{{ $kindgarden->id }}" method="get" download> -->
                     <p><b>Taxminiy menyu: </b></p>
-                    <p><small class="text-muted"><i class="fas fa-info-circle"></i> Share tugmasi orqali PDF faylni yuklab olib, Telegram ochadi</small></p>
+                    <p><small class="text-muted"><i class="fas fa-info-circle"></i> Share tugmasi orqali Telegram ochadi va fayl URL ni yuboradi</small></p>
                     <div class="d-flex gap-2 mt-2">
                         <a href="/nextdaysecondmenuPDF/{{ $kindgarden->id }}" 
                             class="btn btn-primary d-flex align-items-center justify-content-center gap-2" 
@@ -259,7 +259,7 @@
                 @endif
                 <p></p>
                 <p><b>Nakladnoy, non va sud maxsulotlari </b></p>
-                <p><small class="text-muted"><i class="fas fa-info-circle"></i> Share tugmasi orqali PDF faylni yuklab olib, Telegram ochadi</small></p>
+                <p><small class="text-muted"><i class="fas fa-info-circle"></i> Share tugmasi orqali Telegram ochadi va fayl URL ni yuboradi</small></p>
                 <div class="d-flex gap-2 mt-2">
                     <a href="/nextdaysomenakladnoyPDF/{{ $kindgarden->id }}" 
                         class="btn btn-warning d-flex align-items-center justify-content-center gap-2" 
@@ -293,48 +293,27 @@
     
     // Telegram orqali share qilish funksiyasi
     function shareToTelegram(fileUrl, fileName) {
-        // Loading state ni ko'rsatish
-        showNotification('Fayl yuklanmoqda...', 'info');
-        
         // Share tugmasini loading holatiga o'tkazish
         setShareButtonLoading(true);
         
         // Fayl URL ni to'liq URL ga o'tkazish
         var fullUrl = window.location.origin + fileUrl;
         
-        // PDF faylni yuklab olish
-        fetch(fullUrl)
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Fayl yuklanmadi');
-                }
-                return response.blob();
-            })
-            .then(blob => {
-                // Loading xabarini yangilash
-                showNotification('Fayl yuklandi! Telegram ochilmoqda...', 'info');
-                
-                // Blob dan File object yaratish
-                var file = new File([blob], fileName + '.pdf', { type: 'application/pdf' });
-                
-                // Faylni yuklab olish va Telegram ga yuborish
-                return downloadAndOpenTelegram(file, fileName);
-            })
-            .then(() => {
-                // Share tugmasini normal holatga qaytarish
-                setShareButtonLoading(false);
-                
-                // Kichik kechikish bilan success xabarini ko'rsatish
-                setTimeout(() => {
-                    showNotification('Fayl yuklandi! Endi uni Telegram ga yuborishingiz mumkin.', 'success');
-                }, 1000);
-            })
-            .catch(error => {
-                console.error('Share xatosi:', error);
-                // Share tugmasini normal holatga qaytarish
-                setShareButtonLoading(false);
-                showNotification('Fayl yuklab olishda xatolik yuz berdi. Qaytadan urinib ko\'ring.', 'error');
-            });
+        // Telegram share URL
+        var telegramUrl = 'https://t.me/share/url?url=' + encodeURIComponent(fullUrl) + '&text=' + encodeURIComponent(fileName);
+        
+        // Yangi oynada ochish
+        var telegramWindow = window.open(telegramUrl, '_blank', 'width=600,height=400');
+        
+        // Share tugmasini normal holatga qaytarish
+        setShareButtonLoading(false);
+        
+        // Foydalanuvchiga ma'lumot berish
+        if (telegramWindow) {
+            showNotification('Telegram ochildi! Faylni yuborish uchun chat tanlang.', 'info');
+        } else {
+            showNotification('Telegram ochilmadi. Qaytadan urinib ko\'ring.', 'error');
+        }
     }
     
     // Telegram Web App orqali yuborish
@@ -389,64 +368,7 @@
         reader.readAsDataURL(file);
     }
     
-    // Faylni yuklab olish va Telegram ochish
-    function downloadAndOpenTelegram(file, fileName) {
-        return new Promise((resolve, reject) => {
-            try {
-                // Faylni yuklab olish
-                var url = URL.createObjectURL(file);
-                var a = document.createElement('a');
-                a.href = url;
-                a.download = fileName + '.pdf';
-                document.body.appendChild(a);
-                a.click();
-                document.body.removeChild(a);
-                URL.revokeObjectURL(url);
-                
-                // Kichik kechikish bilan Telegram ochish
-                setTimeout(() => {
-                    // Telegram ochish
-                    openTelegramApp();
-                    resolve();
-                }, 500);
-                
-            } catch (error) {
-                reject(error);
-            }
-        });
-    }
-    
-    // Telegram ilovasini ochish
-    function openTelegramApp() {
-        // Telegram Web App URL
-        var telegramUrl = 'https://web.telegram.org/';
-        
-        // Yangi oynada ochish
-        var telegramWindow = window.open(telegramUrl, '_blank', 'width=800,height=600');
-        
-        // Agar oyna ochilmasa, fallback
-        if (!telegramWindow) {
-            showNotification('Telegram ochilmadi. Telegram ilovasini ochib, faylni yuboring.', 'info');
-        } else {
-            // Oynani oldinga olib kelish
-            telegramWindow.focus();
-        }
-    }
-    
-    // Faylni yuklab olish va share qilish (eski funksiya)
-    function downloadAndShare(file, fileName) {
-        // Faylni yuklab olish
-        var url = URL.createObjectURL(file);
-        var a = document.createElement('a');
-        a.href = url;
-        a.download = fileName + '.pdf';
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        URL.revokeObjectURL(url);
-        
-        showNotification('Fayl yuklandi! Endi uni Telegram ga yuborishingiz mumkin.', 'info');
-    }
+
     
     // Share tugmasini loading holatiga o'tkazish
     function setShareButtonLoading(isLoading) {
