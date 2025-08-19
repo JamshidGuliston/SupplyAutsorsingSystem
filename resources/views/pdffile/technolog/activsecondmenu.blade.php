@@ -347,7 +347,7 @@
 								?>
 								@endif
 								@endforeach
-								 <td colspan="{{ count($products) }}" style="padding: 0px; font-size: 5px;"><?= round($summa / $value['number'], 2); ?></td>
+								 <td colspan="{{ count($products) }}" style="padding: 0px; font-size: 5px;"><?= round($value['number'] > 0 ? $summa / $value['number'] : 0, 2); ?></td>
                             </tr>
 							<tr>
 								<td style="padding: 0px; font-size: 5px;">Шартнома бўйича тасдиқланган 1 бола харажати</td>

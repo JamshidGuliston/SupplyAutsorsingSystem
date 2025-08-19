@@ -104,12 +104,12 @@
 							$boolmeal = [];
                         	@foreach($menuitem as $row)
 								@foreach($row as $item)
-								@if($loop->index == 0))
+								@if($loop->index == 0)
 									@continue;
 									<?php $time = $item['mealtime']; ?>
 								@endif
 			                        <tr>
-			                        	@if($loop->index == 1))
+			                        	@if($loop->index == 1)
 												<th scope="row" rowspan="<?php echo 2 * (count($row)-1); ?>" class='vrt-header' style="padding: 0px; height: 60px;"><?php echo '<span>'. $row[0]['mealtime'] .'</span>'; ?></th>
 			                            @endif
 			                            <td scope="row" rowspan="2" class="align-baseline" style="padding: 2px;"><?php echo $item['foodname'] ?></td>
