@@ -110,7 +110,10 @@
 								}
 								?>
                                 <td scope="col"><?php echo $result; ?></td>
-                                <?php $counts[$age->id] += $row[$age->id] ?>
+                                <?php
+								   $result = 0;
+								   $counts[$age->id] += $row[$age->id]; 
+								?>
                             @endforeach
                         </tr>
                         @endforeach
