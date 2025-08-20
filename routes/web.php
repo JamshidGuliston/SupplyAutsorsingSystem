@@ -82,6 +82,7 @@ Route::group(['prefix' => 'storage', 'middleware' => ['isStorage', 'auth']], fun
     Route::get('deleteid', [StorageController::class, 'deleteid']);
     Route::get('getDataOfWeight', [StorageController::class, 'getDataOfWeight'])->name('storage.getDataOfWeight');
     Route::get('getworkerfoods', [StorageController::class, 'getworkerfoods'])->name('storage.getworkerfoods');
+    Route::get('get-category-products', [StorageController::class, 'getCategoryProducts'])->name('storage.getCategoryProducts');
     Route::get('onedaysvod/{id}', [StorageController::class, 'ordersvodpdf'])->name('storage.onedaysvod');
     Route::get('ingroup/{id}', [StorageController::class, 'ingroup'])->name('storage.ingroup');
     Route::get('deleteproduct', [StorageController::class, 'deleteproduct'])->name('storage.deleteproduct');

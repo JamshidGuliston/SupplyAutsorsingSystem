@@ -3,6 +3,56 @@
 @section('css')
 <link href="/css/multiselect.css" rel="stylesheet"/>
 <script src="/js/multiselect.min.js"></script>
+<style>
+    .multiselect-container {
+        margin-bottom: 15px;
+    }
+    
+    .multiselect-container .multiselect {
+        min-height: 100px;
+        max-height: 200px;
+        overflow-y: auto;
+    }
+    
+    .multiselect-container .multiselect .multiselect-option {
+        padding: 8px 12px;
+        border-bottom: 1px solid #eee;
+    }
+    
+    .multiselect-container .multiselect .multiselect-option:hover {
+        background-color: #f8f9fa;
+    }
+    
+    .multiselect-container .multiselect .multiselect-option.selected {
+        background-color: #007bff;
+        color: white;
+    }
+    
+    .multiselect-container .multiselect .multiselect-option.optgroup {
+        font-weight: bold;
+        background-color: #e9ecef;
+        padding: 10px 12px;
+    }
+    
+    .multiselect-container .multiselect .multiselect-option.optgroup + .multiselect-option {
+        padding-left: 20px;
+    }
+    
+    .share-button {
+        transition: all 0.3s ease;
+        border-radius: 8px;
+        font-weight: 500;
+    }
+    
+    .share-button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    }
+    
+    .share-button i {
+        margin-right: 5px;
+    }
+</style>
 @endsection
 @section('leftmenu')
     @include('storage.sidemenu'); 
@@ -67,11 +117,31 @@
                 </div>
             </div>
             <div class="modal-body foodcomposition"> 
-                <!-- @foreach($product_categories as $row)
-                    <label for="maxdays[{{$row->id}}]">{{ $row->pro_cat_name }}</label>
-                    <input type="number" name="maxdays[{{$row->id}}]" class="form-control" required>
-                @endforeach -->
-                <input type="number" name="maxday" placeholder="2-3 кунлик" class="form-control" required>
+                <div class="mb-3">
+                    <label for="products_select" class="form-label">Mahsulot kategoriyalarini tanlang</label>
+                    <div class="multiselect-container">
+                        <select id="products_select" name="selected_products[]" class="form-select" multiple required>
+                            @foreach($product_categories as $category)
+                                <option value="cat-{{ $category->id }}" data-type="category" data-category-id="{{ $category->id }}" data-category-name="{{ $category->pro_cat_name }}">{{ $category->pro_cat_name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                </div>
+                
+                <div id="selected_products_container">
+                    <!-- Tanlangan mahsulotlar bu yerda ko'rsatiladi -->
+                </div>
+                
+                <div class="row">
+                    <div class="col-md-8">
+                        <input type="number" name="maxday" placeholder="2-3 кунлик" class="form-control" required>
+                    </div>
+                    <div class="col-md-4">
+                        <button type="button" class="btn btn-info btn-sm w-100" onclick="shareToTelegram()">
+                            <i class="fab fa-telegram"></i> Telegram
+                        </button>
+                    </div>
+                </div>
                 Боғчаларни танлаш
                 <select id='testSelect1' name="gardens[]" class="form-select" aria-label="Default select example" multiple required>
                     @foreach($gardens as $row)
@@ -344,6 +414,8 @@
             
         });
     });
+    
+    // Bo'g'chalar multiselect
     document.multiselect('#testSelect1')
 		.setCheckBoxClick("checkboxAll", function(target, args) {
 			console.log("Checkbox 'Select All' was clicked and got value ", args.checked);
@@ -351,6 +423,8 @@
 		.setCheckBoxClick("1", function(target, args) {
 			console.log("Checkbox for item with value '1' was clicked and got value ", args.checked);
 		});
+    
+    // Muassasalar multiselect
     document.multiselect('#testSelect2')
 		.setCheckBoxClick("checkboxAll", function(target, args) {
 			console.log("Checkbox 'Select All' was clicked and got value ", args.checked);
@@ -358,6 +432,177 @@
 		.setCheckBoxClick("1", function(target, args) {
 			console.log("Checkbox for item with value '1' was clicked and got value ", args.checked);
 		});
+    
+    // Mahsulotlar multiselect
+    document.multiselect('#products_select')
+        .setCheckBoxClick("checkboxAll", function(target, args) {
+            console.log("Mahsulotlar Select All clicked: ", args.checked);
+            updateSelectedProducts();
+        })
+        .setCheckBoxClick("category", function(target, args) {
+            console.log("Kategoriya clicked: ", target.value, args.checked);
+            updateSelectedProducts();
+        });
+    
+    function updateSelectedProducts() {
+        var selectedCategories = [];
+        var options = document.querySelectorAll('#products_select option:checked');
+        
+        options.forEach(function(option) {
+            var type = option.getAttribute('data-type');
+            
+            if (type === 'category') {
+                var categoryId = option.getAttribute('data-category-id');
+                var categoryName = option.getAttribute('data-category-name');
+                
+                selectedCategories.push({
+                    id: categoryId,
+                    name: categoryName
+                });
+            }
+        });
+        
+        // Tanlangan mahsulotlarni ko'rsatish
+        var container = document.getElementById('selected_products_container');
+        container.innerHTML = '';
+        
+        var html = '';
+        
+        // Kategoriyalar ko'rsatiladi
+        if (selectedCategories.length > 0) {
+            html += '<div class="mt-3"><h6>Tanlangan kategoriyalar:</h6>';
+            
+            selectedCategories.forEach(function(category) {
+                html += '<div class="card mb-2"><div class="card-header">' + category.name + '</div><div class="card-body">';
+                
+                // Kategoriyaga tegishli mahsulotlarni AJAX orqali olish
+                $.ajax({
+                    method: "GET",
+                    url: '/storage/get-category-products',
+                    data: {
+                        'category_id': category.id,
+                    },
+                    async: false,
+                    success: function(data) {
+                        if (data.products && data.products.length > 0) {
+                            data.products.forEach(function(product) {
+                                html += '<div class="row mb-2">';
+                                html += '<div class="col-md-6">' + product.product_name + '</div>';
+                                html += '<div class="col-md-4">';
+                                html += '<input type="number" name="product_quantity[' + product.id + ']" class="form-control form-control-sm" placeholder="Miqdori" required>';
+                                html += '</div>';
+                                html += '<div class="col-md-2">';
+                                html += '<button type="button" class="btn btn-sm btn-danger" onclick="removeProduct(' + product.id + ')">O\'chir</button>';
+                                html += '</div>';
+                                html += '</div>';
+                            });
+                        } else {
+                            html += '<div class="row mb-2">';
+                            html += '<div class="col-md-6">Barcha mahsulotlar</div>';
+                            html += '<div class="col-md-4">';
+                            html += '<input type="number" name="category_quantity[' + category.id + ']" class="form-control form-control-sm" placeholder="Miqdori" required>';
+                            html += '</div>';
+                            html += '<div class="col-md-2">';
+                            html += '<button type="button" class="btn btn-sm btn-danger" onclick="removeCategory(' + category.id + ')">O\'chir</button>';
+                            html += '</div>';
+                            html += '</div>';
+                        }
+                    },
+                    error: function() {
+                        html += '<div class="row mb-2">';
+                        html += '<div class="col-md-6">Barcha mahsulotlar</div>';
+                        html += '<div class="col-md-4">';
+                        html += '<input type="number" name="category_quantity[' + category.id + ']" class="form-control form-control-sm" placeholder="Miqdori" required>';
+                        html += '</div>';
+                        html += '<div class="col-md-2">';
+                        html += '<button type="button" class="btn btn-sm btn-danger" onclick="removeCategory(' + category.id + ')">O\'chir</button>';
+                        html += '</div>';
+                        html += '</div>';
+                    }
+                });
+                
+                html += '</div></div>';
+            });
+            
+            html += '</div>';
+        }
+        
+        container.innerHTML = html;
+    }
+    
+    function removeProduct(productId) {
+        // Mahsulotni o'chirish logikasi
+        console.log("Mahsulot o'chirildi: ", productId);
+    }
+    
+    function removeCategory(categoryId) {
+        var option = document.querySelector('#products_select option[value="cat-' + categoryId + '"]');
+        if (option) {
+            option.selected = false;
+            updateSelectedProducts();
+        }
+    }
+    
+    function shareToTelegram() {
+        var selectedCategories = [];
+        var options = document.querySelectorAll('#products_select option:checked');
+        
+        options.forEach(function(option) {
+            var type = option.getAttribute('data-type');
+            
+            if (type === 'category') {
+                var categoryId = option.getAttribute('data-category-id');
+                var categoryName = option.getAttribute('data-category-name');
+                
+                selectedCategories.push({
+                    id: categoryId,
+                    name: categoryName
+                });
+            }
+        });
+        
+        if (selectedCategories.length === 0) {
+            alert('Iltimos, kamida bitta kategoriyani tanlang!');
+            return;
+        }
+        
+        // Telegram uchun xabar tayyorlash
+        var message = '🛒 *Mahsulot buyurtmasi*\n\n';
+        message += '📅 Sana: ' + new Date().toLocaleDateString('uz-UZ') + '\n\n';
+        
+        selectedCategories.forEach(function(category, index) {
+            message += (index + 1) + '. *' + category.name + '*\n';
+            
+            // Kategoriyaga tegishli mahsulotlarni olish
+            $.ajax({
+                method: "GET",
+                url: '/storage/get-category-products',
+                data: {
+                    'category_id': category.id,
+                },
+                async: false,
+                success: function(data) {
+                    if (data.products && data.products.length > 0) {
+                        data.products.forEach(function(product, productIndex) {
+                            message += '   • ' + product.product_name + '\n';
+                        });
+                    }
+                }
+            });
+            message += '\n';
+        });
+        
+        message += '📞 Bog\'lanish uchun: +998 XX XXX XX XX';
+        
+        // Telegram share URL yaratish
+        var telegramUrl = 'https://t.me/share/url?url=' + encodeURIComponent(window.location.href) + '&text=' + encodeURIComponent(message);
+        
+        // Yangi oynada ochish
+        window.open(telegramUrl, '_blank', 'width=600,height=400');
+    }
+    
+
+    
     function enable() {
 		document.multiselect('#testSelect1').setIsEnabled(true);
 	}

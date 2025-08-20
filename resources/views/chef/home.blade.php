@@ -41,6 +41,28 @@
         transition: all 0.2s ease;
     }
     
+    .btn-success:hover {
+        background-color: #28a745;
+        border-color: #28a745;
+        transform: translateY(-1px);
+        transition: all 0.2s ease;
+    }
+    
+    /* Share button uchun maxsus stillar */
+    .btn-info {
+        background-color: #17a2b8;
+        border-color: #17a2b8;
+        color: white;
+        font-weight: 500;
+        border-radius: 6px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    
+    .btn-info:active {
+        transform: translateY(0);
+        box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+    }
+    
 
     
     /* Gap responsive */
@@ -199,6 +221,12 @@
                             download>
                                 <i class="fas fa-download"></i> Yuklab olish
                         </a>
+                        <button type="button" 
+                            class="btn btn-info d-flex align-items-center justify-content-center gap-2" 
+                            style="width: 100%;" 
+                            onclick="shareMenuToTelegram('{{ $day->day_number.".".$day->month_name.".".$day->year_name }}', '/activsecondmenuPDF/{{ $day->id }}/{{ $kindgarden->id }}')">
+                            <i class="fab fa-telegram"></i> Share
+                        </button>
                     </div>
                 <!-- </form> -->
             </div>
@@ -366,6 +394,39 @@
         } else {
             // Web Share API mavjud emas bo'lsa, Telegram ga yuborish
             shareToTelegram(fileUrl, fileName);
+        }
+    }
+    
+    // Menyu share funksiyasi
+    function shareMenuToTelegram(menuDate, fileUrl) {
+        // Menyu uchun xabar tayyorlash
+        var message = '🍽️ *Oshpazlar uchun menyu*\n\n';
+        message += '📅 Sana: ' + menuDate + '\n';
+        message += '🏫 Bog\'cha: ' + '{{ $kindgarden->kingar_name }}' + '\n\n';
+        message += '📋 *Menyu tarkibi:*\n';
+        message += '• Non va sut mahsulotlari\n';
+        message += '• Sabzavotlar va mevalar\n';
+        message += '• Go\'sht va baliq mahsulotlari\n';
+        message += '• Yog\'lar va qandolat mahsulotlari\n\n';
+        message += '📞 Bog\'lanish: +998 XX XXX XX XX\n';
+        message += '🔗 Fayl: ' + window.location.origin + fileUrl;
+        
+        // Telegram share URL yaratish
+        var telegramUrl = 'https://t.me/share/url?url=' + encodeURIComponent(window.location.origin + fileUrl) + '&text=' + encodeURIComponent(message);
+        
+        // Yangi oynada ochish
+        var newWindow = window.open(telegramUrl, '_blank', 'width=600,height=400');
+        
+        if (newWindow) {
+            showNotification('Telegram ochildi! Menyuni yuborish uchun "Send" tugmasini bosing.', 'success');
+        } else {
+            // Agar popup bloklangan bo'lsa
+            showNotification('Popup bloklangan! Iltimos, brauzer sozlamalarini tekshiring.', 'error');
+            
+            // Fallback: faylni yuklab olish
+            setTimeout(() => {
+                window.open(window.location.origin + fileUrl, '_blank');
+            }, 2000);
         }
     }
 </script>

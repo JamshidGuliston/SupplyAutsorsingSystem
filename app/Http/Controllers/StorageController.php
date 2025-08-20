@@ -245,12 +245,22 @@ class StorageController extends Controller
         $menus = Titlemenu::join('seasons', 'seasons.id', '=', 'titlemenus.menu_season_id')->get(['titlemenus.id', 'titlemenus.menu_name', 'seasons.season_name']);
         
         $gardens = Kindgarden::where('hide', 1)->get();
-        $product_categories = Product_category::all();
+        $product_categories = Product_category::with('products')->get();
+        $products = Product::with('category')->get();
         
         $orders = order_product::orderby('id', 'DESC')->get();
         $days = $this->days();
         // dd($menus);
-        return view('storage.addmultisklad', compact('orders','gardens', 'menus', 'days', 'product_categories'));
+        return view('storage.addmultisklad', compact('orders','gardens', 'menus', 'days', 'product_categories', 'products'));
+    }
+    
+    public function getCategoryProducts(Request $request){
+        $categoryId = $request->category_id;
+        $products = Product::where('category_name_id', $categoryId)->get(['id', 'product_name']);
+        
+        return response()->json([
+            'products' => $products
+        ]);
     }
 
     public function report(Request $request){
