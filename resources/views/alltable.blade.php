@@ -13,7 +13,7 @@
 		@page { margin: 0.2in 0.8in 0in 0.3in; }
 		body{
 			font-family: DejaVu Sans;
-			font-size:8px;
+			font-size:10px;
 			background-image: url(images/bg.jpg);
 			background-position: top left;
 			background-repeat: no-repeat;
@@ -58,22 +58,27 @@
 		/* Maxsulot nomlari uchun ikki qatorlik ko'rsatish */
 		.product-name-header {
 			word-wrap: break-word;
-			word-break: break-word;
+			word-break: normal;
 			hyphens: auto;
-			line-height: 1.2;
+			line-height: 1.0;
 			max-width: 100%;
 			overflow-wrap: break-word;
 			vertical-align: middle;
+			width: 3%;
 		}
 		
 		.product-name-header span {
 			display: block;
 			text-align: center;
-			line-height: 1.1;
-			font-size: 7px;
-			padding: 2px;
+			line-height: 0.9;
+			font-size: 6px;
+			padding: 1px;
 			white-space: normal;
-			word-spacing: 0;
+			word-spacing: normal;
+			width: 100%;
+			height: 100%;
+			overflow: hidden;
+			word-break: keep-all;
 		}
 	</style>
 </head>
@@ -99,7 +104,23 @@
 							 @foreach($products as $product)
 							 	@if(isset($product['yes']))
 								 <?php $col++; ?>
-                          	 		<th class='vrt-header product-name-header' style="padding: 0px; width: 3%; height: 95px"><?php echo '<span>'.$product['product_name']. '</span>';?></th>
+                          	 		<th class='vrt-header product-name-header' style="padding: 0px; width: 3%; height: 95px"><?php 
+                          	 			$productName = $product['product_name'];
+                          	 			// Agar mahsulot nomi juda uzun bo'lsa, uni qisqartirish
+                          	 			if (strlen($productName) > 15) {
+                          	 				$words = explode(' ', $productName);
+                          	 				$shortName = '';
+                          	 				foreach ($words as $word) {
+                          	 					if (strlen($shortName . $word) <= 15) {
+                          	 						$shortName .= ($shortName ? ' ' : '') . $word;
+                          	 					} else {
+                          	 						break;
+                          	 					}
+                          	 				}
+                          	 				$productName = $shortName;
+                          	 			}
+                          	 			echo '<span>'.$productName.'</span>';
+                          	 		?></th>
 								@endif
 							 @endforeach
                           </tr>
