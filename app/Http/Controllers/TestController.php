@@ -120,8 +120,14 @@ class TestController extends Controller
             }
         }
 
-		// saytni o'zida ko'rish
-        
+		$day->day_number = $day->day_number + 1;
+		// oy va yilni o'zgartirish
+		if($day->day_number > date('d', strtotime('+1 day'))){
+			$day->month_name = date('F', strtotime('+1 month'));
+			$day->year_name = date('Y', strtotime('+1 year'));
+		}
+		// $day->save();
+		// yuqoridagii
         $dompdf = new Dompdf('UTF-8');
 		$html = mb_convert_encoding(view('pdffile.technolog.alltable', ['narx' => $narx,'day' => $day,'productallcount' => $productallcount, 'workerproducts' => $workerproducts,'menu' => $menu, 'menuitem' => $nextdaymenuitem, 'products' => $products, 'workerfood' => $workerfood, 'taomnoma' => $taomnoma]), 'HTML-ENTITIES', 'UTF-8');
 		$dompdf->loadHtml($html);

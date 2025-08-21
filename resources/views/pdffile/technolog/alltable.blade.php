@@ -77,8 +77,9 @@
             <div class="col-md-12">
                 <div class="table" id="table_with_data">
                 	<?php
+					// dd($day);
 						echo "Боғча номи: <b>".$menu[0]['kingar_name']."</b>    Таомнома: <b>".$taomnoma['menu_name']."</b> <br/>";
-                		echo  'Ҳужжат берилган сана: <b>'.$day['day_number'].'.'.$day['month_name'].'.'.$day['year_name'].'-й;</b>    <b>' . $menu[0]['age_name'] . "</b>ли болалар сони: <b>" . $menu[0]['kingar_children_number'].";</b>";
+                		echo  'Cана: <b>'.$day['day_number'].'.'.$day['month_name'].'.'.$day['year_name'].'-й учун;<br>' . $menu[0]['age_name'] . "</b>ли болалар сони: <b>" . $menu[0]['kingar_children_number'].";</b>";
                 		if($menu[0]['worker_age_id'] == $menu[0]['king_age_name_id']){
                 			echo "  ходимлар сони: <b>".$menu[0]['worker_count'].";</b>  ";	
                 		}
