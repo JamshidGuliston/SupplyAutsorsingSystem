@@ -246,7 +246,9 @@ class TechnologController extends Controller
                                 'kindgardens.id as kingarid',
                                 'kindgardens.kingar_name',
                                 'temporaries.id as tempid',
-                                'temporaries.age_number'
+                                'temporaries.age_number',
+                                'nextday_nambers.created_at',
+                                'nextday_nambers.updated_at'
                             ]);
             $nextdayitem = array();
             $loo = 0;
@@ -257,6 +259,8 @@ class TechnologController extends Controller
                 }
                 $nextdayitem[$loo]['id'] = $nextday[$i]->id;
                 $nextdayitem[$loo]['kingar_name_id'] = $nextday[$i]->kingar_name_id;
+                $nextdayitem[$loo]['created_at'] = $nextday[$i]->created_at;
+                $nextdayitem[$loo]['updated_at'] = $nextday[$i]->updated_at;
                 $nextdayitem[$loo]['kingar_name'] = $nextday[$i]->kingar_name;
                 $nextdayitem[$loo][$nextday[$i]->king_age_name_id] = array($nextday[$i]->id, $nextday[$i]->kingar_children_number, $nextday[$i]->tempid, $nextday[$i]->age_number, $nextday[$i]->kingar_menu_id, $nextday[$i]->menu_name);
                 $nextdayitem[$loo]['workers_count'] = $nextday[$i]->workers_count;
@@ -267,7 +271,6 @@ class TechnologController extends Controller
 
             $shops = Shop::where('hide', 1)->where('type_id', 1)->with('kindgarden')->with('product')->get();
 
-            // dd($nextdayitem);
             $endday = Day::orderBy('id', 'DESC')->first();
             $mf = titlemenu_food::orderBy('day_id', 'DESC')->first();
             $sendmenu = 0;

@@ -76,6 +76,27 @@
         font-style: italic;
     }
     
+    /* Status icon container uchun */
+    .status-icon-container {
+        position: relative;
+        display: inline-block;
+        width: 100%;
+        height: 100%;
+    }
+    
+    .status-icon-container i {
+        position: absolute;
+        bottom: 2px;
+        right: 2px;
+        font-size: 12px;
+        z-index: 10;
+    }
+    
+    /* Table cell uchun relative positioning */
+    .table td {
+        position: relative;
+    }
+    
     .filter-section {
         background-color: #f8f9fa;
         border-radius: 8px;
@@ -694,9 +715,18 @@
                 @if(isset($row[$age->id]))
                     @php
                         $status = '#f8f882';
+                        $status_icon = "<i class='fas fa-question' style='color:rgb(238, 65, 65); font-size: 14px; cursor: pointer;'></i>";
                         $st = $temp->where('kingar_name_id', $row['kingar_name_id'])->where('age_id', $age->id)->first();
                         if(isset($st->age_number) and $st->age_number == $row[$age->id][1]){
                             $status = '#93ff93';
+                            $status_icon = "<i class='fas fa-check' style='color:rgb(18, 141, 13); font-size: 14px; cursor: pointer;'></i>";
+                        }
+                        
+                        if(isset($row['created_at']) and isset($row['updated_at'])){
+                            if($row['created_at']->format('Y-m-d H:i:s') != $row['updated_at']->format('Y-m-d H:i:s')){
+                                $status = '#c2f6dc';
+                                $status_icon = "<i class='fas fa-check' style='color:rgb(18, 141, 13); font-size: 14px; cursor: pointer;'></i>";
+                            }
                         }
                     @endphp
                     <td style="background-color: {{ $status }};">
@@ -704,7 +734,11 @@
                        @if($row[$age->id][2] != null and $st->age_number != $row[$age->id][1])
                         <i class="far fa-envelope envelope-notification" title="Yangi xabarnoma mavjud!"></i> 
                        @endif
-                       <i class="ch_countedit far fa-edit" data-nextrow-id="{{ $row[$age->id][0]; }}" data-child-count="{{ $row[$age->id][1]; }}" data-temprow-id="{{ $row[$age->id][2]; }}" data-tempchild-count="{{ $row[$age->id][3]; }}" data-kinga-name="{{ $row['kingar_name'] }}" data-bs-toggle="modal" data-bs-target="#chcountModal" style="color: #727213; font-size: 14px; cursor: pointer;"></i></td>
+                       <i class="ch_countedit far fa-edit" data-nextrow-id="{{ $row[$age->id][0]; }}" data-child-count="{{ $row[$age->id][1]; }}" data-temprow-id="{{ $row[$age->id][2]; }}" data-tempchild-count="{{ $row[$age->id][3]; }}" data-kinga-name="{{ $row['kingar_name'] }}" data-bs-toggle="modal" data-bs-target="#chcountModal" style="color: #727213; font-size: 14px; cursor: pointer;"></i>
+                       <div class="status-icon-container">
+                           {!! $status_icon !!}
+                       </div>
+                    </td>
                     <td>
                         <p>{{ $row[$age->id][5] }}</p>
                         <a href="/nextdaymenuPDF/{{ $row['kingar_name_id'] }}/{{ $age->id }}" target="_blank"><i class="far fa-file-pdf" style="color: dodgerblue; font-size: 18px;"></i></a> 
