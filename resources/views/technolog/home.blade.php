@@ -73,6 +73,9 @@
         <a href="/technolog/showdate/{{ $day->year_id }}/{{ $day->month_id }}/{{ $day->id }}" class="day__item">{{ $day->day_number }}</a>
         @endforeach
         <div id="timeline">
+            @php
+                $nextDay = $tomm;
+            @endphp
             <!-- //date -->
             <!-- @if(!empty($date) and count($date)>2)
             <div class="dot" id="one">
@@ -104,12 +107,12 @@
             <!-- $date[0]->day_number == date("d", $tomm) -->
             @if($date[count($date)-1]->day_number == date("d", $tomm))
                 @php
-                $tomm = strtotime("+1 day", $tomm);
+                $nextDay = strtotime("+1 day", $tomm);
                 @endphp
             @endif
             <div class="dot" id="four2">
-                <a href="{{ route('technolog.sendmenu', ['day'=> date('d-F-Y', $tomm)]); }}"><span>{{ date("d", $tomm) }}</span></a>
-                <date>{{ date("F", $tomm) }}<b style="color: red;">{{ " Taxminiy" }}</b></date>
+                <a href="{{ route('technolog.sendmenu', ['day'=> date('d-F-Y', $tomm)]); }}"><span>{{ date("d", $nextDay) }}</span></a>
+                <date>{{ date("F", $nextDay) }}<b style="color: red;">{{ " Taxminiy" }}</b></date>
             </div>
             <div class="inside"></div>
         </div>
