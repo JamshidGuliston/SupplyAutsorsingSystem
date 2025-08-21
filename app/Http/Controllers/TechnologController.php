@@ -280,48 +280,150 @@ class TechnologController extends Controller
         }
     }
 
-    public function showdate($y_id, $m_id, $day)
+    public function showdate(Request $request, $year_id, $month_id, $day_id)
     {
-        $year = Year::where('id', $y_id)->first();
-        if($m_id == 0){
-            $m_id = Month::where('yearid', $y_id)->first()->id;
-        }
-        if($day == 0){
-            $day = Day::where('month_id', $m_id)->first()->id;
-        }
-        // dd($day);
-        $months = Month::where('yearid', $y_id)->get();
+        $year = Year::where('id', $year_id)->first();
+        $months = Month::where('yearid', $year->id)->get();
+        $days = Day::where('month_id', $month_id)->where('year_id', $year->id)
+                ->join('months', 'months.id', '=', 'days.month_id')
+                ->join('years', 'years.id', '=', 'days.year_id')
+                ->get(['days.id', 'days.day_number', 'months.month_name', 'days.month_id', 'years.year_name', 'days.year_id']);
+        
         $ages = Age_range::all();
-        $nextday = Number_children::where('day_id', $day)->join('kindgardens', 'number_childrens.kingar_name_id', '=', 'kindgardens.id')
-                        ->orderby('number_childrens.kingar_name_id', 'ASC')
-                        ->get();
-        $nextdayitem = array();
-        $loo = 0;
-        $days = Day::where('month_id', $m_id)
-            ->join('months', 'months.id', '=', 'days.month_id')
-            ->join('years', 'years.id', '=', 'days.year_id')
-            ->select('days.id', 'days.day_number', 'days.month_id', 'months.month_name', 'years.year_name', 'days.year_id')
-            ->get();
-
-        // Har bir kun uchun mahsulotlar ishlatilganligini tekshirish
+        $nextdayitem = [];
         $usage_status = [];
-        foreach($nextday as $kindgarden){
-            $has_usage = minus_multi_storage::where('day_id', $day)
-                ->where('kingarden_name_id', $kindgarden->kingar_name_id)
-                ->exists();
-            $usage_status[$kindgarden->kingar_name_id] = $has_usage ? 'Sarflangan' : 'Sarflanmagan';
+        
+        $kingar = Kindgarden::where('hide', 1)->get();
+        
+        foreach($kingar as $row){
+            $nextdayitem[] = [
+                'kingar_name_id' => $row->id,
+                'kingar_name' => $row->kingar_name,
+                'workers_count' => $row->workers_count,
+            ];
         }
         
-        for($i = 0; $i < count($nextday); $i++){
-            $nextdayitem[$loo]['kingar_name_id'] = $nextday[$i]->kingar_name_id;
-            $nextdayitem[$loo]['kingar_name'] = $nextday[$i]->kingar_name;
-            $nextdayitem[$loo][$nextday[$i]->king_age_name_id] = array($nextday[$i]->id, $nextday[$i]->kingar_children_number, $nextday[$i]->tempid, $nextday[$i]->age_number, $nextday[$i]->kingar_menu_id);
-            $nextdayitem[$loo]['workers_count'] = $nextday[$i]->workers_count;
-            if ($i + 1 < count($nextday) and $nextday[$i + 1]->kingar_name_id != $nextdayitem[$loo]['kingar_name_id']) {
-                $loo++;
+        // Har bir bog'cha va yosh guruhi uchun ma'lumotlarni olish
+        foreach($nextdayitem as $key => $item){
+            foreach($ages as $age){
+                $number_children = Number_children::where('day_id', $day_id)
+                    ->where('kingar_name_id', $item['kingar_name_id'])
+                    ->where('king_age_name_id', $age->id)
+                    ->first();
+                
+                if($number_children){
+                    $nextdayitem[$key][$age->id] = [
+                        1 => $number_children->kingar_children_number,
+                        2 => $number_children->workers_count
+                    ];
+                }
             }
+            
+            // Mahsulotlar ishlatilganligi statusini olish
+            $usage_status[$item['kingar_name_id']] = 'Sarflanmagan'; // Boshlang'ich holat
         }
-        return view('technolog.showdate', ['year' => $year, 'y_id' => $y_id, 'm_id' => $m_id, 'aday' => $day, 'months' => $months,'days' => $days, 'ages' => $ages, 'nextdayitem' => $nextdayitem, 'usage_status' => $usage_status]);
+        
+        return view('technolog.showdate', compact('year', 'months', 'days', 'ages', 'nextdayitem', 'usage_status', 'day_id', 'month_id', 'year_id'));
+    }
+    
+    // O'tgan kunlar uchun ma'lumot qo'shish
+    public function addPastDaysData(Request $request)
+    {
+        try {
+            $daysBack = $request->input('days_back', 30); // Default 30 kun
+            $addedCount = Number_children::addPastDaysData($daysBack);
+            
+            return response()->json([
+                'success' => true,
+                'message' => $addedCount . ' ta yangi ma\'lumot qo\'shildi',
+                'added_count' => $addedCount
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Xatolik yuz berdi: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+    
+    // Bog'chalar ro'yxatini olish
+    public function getKindergartens()
+    {
+        $kindergartens = Kindgarden::where('hide', 1)->get(['id', 'kingar_name']);
+        
+        return response()->json([
+            'kindergartens' => $kindergartens
+        ]);
+    }
+    
+    // Yosh guruhlari ro'yxatini olish
+    public function getAgeRanges()
+    {
+        $ageRanges = Age_range::all(['id', 'age_name']);
+        
+        return response()->json([
+            'age_ranges' => $ageRanges
+        ]);
+    }
+    
+    // O'tgan kunlarga bog'chalarni biriktirish
+    public function assignPastDays(Request $request)
+    {
+        try {
+            $startDate = $request->input('start_date');
+            $endDate = $request->input('end_date');
+            $kindergartens = $request->input('kindergartens', []);
+            $ageRanges = $request->input('age_ranges', []);
+            
+            if (empty($kindergartens) || empty($ageRanges)) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Bog\'cha va yosh guruhlari tanlanmagan'
+                ]);
+            }
+            
+            // Kunlarni olish
+            $days = Day::whereBetween('created_at', [$startDate, $endDate])->get();
+            
+            $addedCount = 0;
+            
+            foreach ($days as $day) {
+                foreach ($kindergartens as $kindergartenId) {
+                    foreach ($ageRanges as $ageRangeId) {
+                        // Mavjud ma'lumotni tekshirish
+                        $existing = Number_children::where('day_id', $day->id)
+                            ->where('kingar_name_id', $kindergartenId)
+                            ->where('king_age_name_id', $ageRangeId)
+                            ->first();
+                        
+                        if (!$existing) {
+                            // Yangi ma'lumot qo'shish
+                            Number_children::create([
+                                'kingar_name_id' => $kindergartenId,
+                                'day_id' => $day->id,
+                                'king_age_name_id' => $ageRangeId,
+                                'kingar_children_number' => 0,
+                                'workers_count' => 0,
+                                'kingar_menu_id' => null,
+                            ]);
+                            $addedCount++;
+                        }
+                    }
+                }
+            }
+            
+            return response()->json([
+                'success' => true,
+                'message' => $addedCount . ' ta yangi ma\'lumot qo\'shildi',
+                'added_count' => $addedCount
+            ]);
+            
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Xatolik yuz berdi: ' . $e->getMessage()
+            ], 500);
+        }
     }
 
     public function deleteGarden(Request $request){

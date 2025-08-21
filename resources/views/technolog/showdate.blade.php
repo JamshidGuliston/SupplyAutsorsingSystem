@@ -64,23 +64,76 @@
     </div>
 </div>
 
+<!-- O'tgan kunlarga bog'chalarni biriktirish Modal -->
+<div class="modal fade" id="assignPastDaysModal" tabindex="-1" aria-labelledby="assignPastDaysModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header bg-primary">
+                <h5 class="modal-title text-white" id="assignPastDaysModalLabel">O'tgan kunlarga bog'chalarni biriktirish</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="assign-past-days-form">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="start_date" class="form-label">Boshlanish sanasi</label>
+                                <input type="date" class="form-control" id="start_date" name="start_date" required>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="end_date" class="form-label">Tugash sanasi</label>
+                                <input type="date" class="form-control" id="end_date" name="end_date" required>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label">Bog'chalarni tanlang</label>
+                        <div class="row" id="kindergartens-list">
+                            <!-- Bog'chalar ro'yxati bu yerda yuklanadi -->
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label">Yosh guruhlarini tanlang</label>
+                        <div class="row" id="age-ranges-list">
+                            <!-- Yosh guruhlari ro'yxati bu yerda yuklanadi -->
+                        </div>
+                    </div>
+                    
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle"></i>
+                        <strong>Eslatma:</strong> Tanlangan kunlar va bog'chalar uchun Number_children jadvaliga ma'lumot qo'shiladi.
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Bekor qilish</button>
+                <button type="button" class="btn btn-primary" id="assign-past-days">Biriktirish</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <div class="date">
     <!-- <div class="lline"></div> -->
     <div class = "year first-text fw-bold">
         {{ $year->year_name }}
     </div>
     <div class="month">
-        @if($y_id != 1)
-            <a href="/technolog/showdate/{{ $y_id-1 }}/0/0" class="month__item">{{ $year->year_name - 1 }}</a>
+        @if($year_id != 1)
+            <a href="/technolog/showdate/{{ $year_id-1 }}/0/0" class="month__item">{{ $year->year_name - 1 }}</a>
         @endif
         @foreach($months as $month)
-            <a href="/technolog/showdate/{{ $y_id }}/{{ $month->id }}/0" class="month__item {{ ( $month->id == $m_id) ? 'active first-text' : 'second-text' }} fw-bold">{{ $month->month_name }}</a>
+            <a href="/technolog/showdate/{{ $year_id }}/{{ $month->id }}/0" class="month__item {{ ( $month->id == $month_id) ? 'active first-text' : 'second-text' }} fw-bold">{{ $month->month_name }}</a>
         @endforeach
         <a href="/technolog/showdate/{{ $year->id+1 }}/0/0" class="month__item">{{ $year->year_name + 1 }}</a>
     </div>
     <div class="day">
         @foreach($days as $day)
-            <a href="/technolog/showdate/{{ $day->year_id }}/{{ $day->month_id }}/{{ $day->id }}" class="day__item {{ ( $day->id == $aday) ? 'active' : null }}">{{ $day->day_number }}</a>
+            <a href="/technolog/showdate/{{ $day->year_id }}/{{ $day->month_id }}/{{ $day->id }}" class="day__item {{ ( $day->id == $day_id) ? 'active' : null }}">{{ $day->day_number }}</a>
         @endforeach
     </div>
     <!-- <div class="lline"></div> -->
@@ -89,7 +142,7 @@
 <div class="row">
     <div class="col-md-6">
         @foreach($days as $day)
-        @if($day->id == $aday)
+        @if($day->id == $day_id)
             <b>{{ $day->day_number.":".$day->month_name.":".$day->year_name }}</b>
         @endif
         @endforeach
@@ -98,9 +151,15 @@
         </a> -->
     </div>
     <div class="col-md-3">
-        
+        <!-- <button type="button" class="btn btn-warning btn-sm" onclick="addPastDaysData()">
+            <i class="fas fa-plus"></i> O'tgan kunlar ma'lumoti
+        </button>
+        <button type="button" class="btn btn-primary btn-sm ms-2" onclick="openAssignPastDaysModal()">
+            <i class="fas fa-link"></i> Bog'chalarni biriktirish
+        </button> -->
     </div>
     <div class="col-md-3">
+        <div id="past-days-status"></div>
     </div>
 </div>
 <hr>
@@ -133,30 +192,30 @@
             <td>{{ $t++ }}</td>
             <td>{{ $row['kingar_name'] }}</td>
             <td>{{ $row['workers_count'] }} </td>
-            <td><a href="/activsecondmenuPDF/{{ $aday }}/{{ $row['kingar_name_id'] }}" target="_blank"><i class="far fa-file-pdf" style="color: dodgerblue; font-size: 18px;"></i></a></td>
+            <td><a href="/activsecondmenuPDF/{{ $day_id }}/{{ $row['kingar_name_id'] }}" target="_blank"><i class="far fa-file-pdf" style="color: dodgerblue; font-size: 18px;"></i></a></td>
             @foreach($ages as $age)
             @if(isset($row[$age->id]))
                 <td>
                     {{ $row[$age->id][1]."  " }}
-                    <i class="edites far fa-edit text-info" data-bs-toggle="modal" data-bs-target="#exampleModal" data-agecount="{{ $row[$age->id][1] }}" data-dayid="{{ $aday }}" data-monthid = "{{ $day->month_id }}" data-yearid = "{{ $day->year_id }}" data-ageid="{{ $age->id }}" data-kinid="{{ $row['kingar_name_id'] }}" style="cursor: pointer; margin-right: 16px;"> </i>
+                    <i class="edites far fa-edit text-info" data-bs-toggle="modal" data-bs-target="#exampleModal" data-agecount="{{ $row[$age->id][1] }}" data-dayid="{{ $day_id }}" data-monthid = "{{ $month_id }}" data-yearid = "{{ $year_id }}" data-ageid="{{ $age->id }}" data-kinid="{{ $row['kingar_name_id'] }}" style="cursor: pointer; margin-right: 16px;"> </i>
                     @if($row[$age->id][2] != null)
                     <i class="far fa-envelope" style="color: #c40c0c"></i> 
                     @endif
                 </td>
-                <td><a href="/activmenuPDF/{{ $aday }}/{{ $row['kingar_name_id'] }}/{{ $age->id }}" target="_blank"><i class="far fa-file-pdf" style="color: dodgerblue; font-size: 18px;"></i></a></td>
+                <td><a href="/activmenuPDF/{{ $day_id }}/{{ $row['kingar_name_id'] }}/{{ $age->id }}" target="_blank"><i class="far fa-file-pdf" style="color: dodgerblue; font-size: 18px;"></i></a></td>
             @else
                 <td>{{ ' ' }}</td>
                 <td>{{ ' ' }}</td>
             @endif
             @endforeach
-            <!-- <td><a href="/activnakladPDF/{{ $aday }}/{{ $row['kingar_name_id'] }}" target="_blank"><i class="far fa-file-pdf" style="color: dodgerblue; font-size: 18px;"></i></a></td> -->
+            <!-- <td><a href="/activnakladPDF/{{ $day_id }}/{{ $row['kingar_name_id'] }}" target="_blank"><i class="far fa-file-pdf" style="color: dodgerblue; font-size: 18px;"></i></a></td> -->
             <td>
                 @if($usage_status[$row['kingar_name_id']] == 'Sarflangan')
                     <i class="fas fa-check-circle" style="color: green;"></i>
                 @else
                     <i class="fas fa-times-circle" style="color: red;"></i>
                     <i class="fas fa-carrot expense-btn" style="color: dodgerblue; font-size: 18px; margin-left: 10px; cursor: pointer;" 
-                       data-dayid="{{ $aday }}" 
+                       data-dayid="{{ $day_id }}" 
                        data-kingardenid="{{ $row['kingar_name_id'] }}" 
                        data-toggle="modal" 
                        data-target="#expenseModal" 
@@ -289,6 +348,164 @@
                 }
             });
         });
+    });
+    
+    // O'tgan kunlar uchun ma'lumot qo'shish
+    function addPastDaysData() {
+        if (confirm('O\'tgan 30 kun uchun ma\'lumot qo\'shishni xohlaysizmi?')) {
+            // Tugmani o'chirish
+            $('button[onclick="addPastDaysData()"]').prop('disabled', true).html('<i class="fas fa-spinner fa-spin"></i> Qo\'shilmoqda...');
+            
+            $.ajax({
+                url: '/technolog/add-past-days-data',
+                method: 'POST',
+                data: {
+                    _token: $('meta[name="csrf-token"]').attr('content'),
+                    days_back: 30
+                },
+                success: function(response) {
+                    if (response.success) {
+                        $('#past-days-status').html('<div class="alert alert-success alert-sm">' + response.message + '</div>');
+                        setTimeout(() => {
+                            location.reload(); // Sahifani yangilash
+                        }, 2000);
+                    } else {
+                        $('#past-days-status').html('<div class="alert alert-danger alert-sm">Xatolik: ' + response.message + '</div>');
+                    }
+                },
+                error: function(xhr) {
+                    var message = 'Xatolik yuz berdi!';
+                    if (xhr.responseJSON && xhr.responseJSON.message) {
+                        message = xhr.responseJSON.message;
+                    }
+                    $('#past-days-status').html('<div class="alert alert-danger alert-sm">' + message + '</div>');
+                },
+                complete: function() {
+                    // Tugmani qayta yoqish
+                    $('button[onclick="addPastDaysData()"]').prop('disabled', false).html('<i class="fas fa-plus"></i> O\'tgan kunlar ma\'lumoti');
+                }
+            });
+        }
+    }
+
+    // Bog'chalarni biriktirish modalini ochish
+    function openAssignPastDaysModal() {
+        $('#assignPastDaysModal').modal('show');
+        loadModalData();
+    }
+    
+    // Modal ma'lumotlarini yuklash
+    function loadModalData() {
+        // Bog'chalar ro'yxatini yuklash
+        $.ajax({
+            url: '/technolog/get-kindergartens',
+            method: 'GET',
+            success: function(response) {
+                var kindergartensHtml = '';
+                response.kindergartens.forEach(function(kindergarten) {
+                    kindergartensHtml += `
+                        <div class="col-md-6 mb-2">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="kindergartens[]" value="${kindergarten.id}" id="kg_${kindergarten.id}">
+                                <label class="form-check-label" for="kg_${kindergarten.id}">
+                                    ${kindergarten.kingar_name}
+                                </label>
+                            </div>
+                        </div>
+                    `;
+                });
+                $('#kindergartens-list').html(kindergartensHtml);
+            }
+        });
+        
+        // Yosh guruhlari ro'yxatini yuklash
+        $.ajax({
+            url: '/technolog/get-age-ranges',
+            method: 'GET',
+            success: function(response) {
+                var ageRangesHtml = '';
+                response.age_ranges.forEach(function(ageRange) {
+                    ageRangesHtml += `
+                        <div class="col-md-6 mb-2">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="age_ranges[]" value="${ageRange.id}" id="age_${ageRange.id}">
+                                <label class="form-check-label" for="age_${ageRange.id}">
+                                    ${ageRange.age_name}
+                                </label>
+                            </div>
+                        </div>
+                    `;
+                });
+                $('#age-ranges-list').html(ageRangesHtml);
+            }
+        });
+    }
+    
+    // Bog'chalarni biriktirish
+    $('#assign-past-days').click(function() {
+        var form = $('#assign-past-days-form');
+        var startDate = $('#start_date').val();
+        var endDate = $('#end_date').val();
+        
+        if (!startDate || !endDate) {
+            alert('Iltimos, boshlanish va tugash sanalarini kiriting!');
+            return;
+        }
+        
+        var selectedKindergartens = [];
+        form.find('input[name="kindergartens[]"]:checked').each(function() {
+            selectedKindergartens.push($(this).val());
+        });
+        
+        var selectedAgeRanges = [];
+        form.find('input[name="age_ranges[]"]:checked').each(function() {
+            selectedAgeRanges.push($(this).val());
+        });
+        
+        if (selectedKindergartens.length === 0) {
+            alert('Iltimos, kamida bitta bog\'chani tanlang!');
+            return;
+        }
+        
+        if (selectedAgeRanges.length === 0) {
+            alert('Iltimos, kamida bitta yosh guruhini tanlang!');
+            return;
+        }
+        
+        if (confirm('Tanlangan kunlar va bog\'chalar uchun ma\'lumot qo\'shishni xohlaysizmi?')) {
+            $(this).prop('disabled', true).html('<i class="fas fa-spinner fa-spin"></i> Biriktirilmoqda...');
+            
+            $.ajax({
+                url: '/technolog/assign-past-days',
+                method: 'POST',
+                data: {
+                    _token: $('meta[name="csrf-token"]').attr('content'),
+                    start_date: startDate,
+                    end_date: endDate,
+                    kindergartens: selectedKindergartens,
+                    age_ranges: selectedAgeRanges
+                },
+                success: function(response) {
+                    if (response.success) {
+                        alert(response.message);
+                        $('#assignPastDaysModal').modal('hide');
+                        location.reload();
+                    } else {
+                        alert('Xatolik: ' + response.message);
+                    }
+                },
+                error: function(xhr) {
+                    var message = 'Xatolik yuz berdi!';
+                    if (xhr.responseJSON && xhr.responseJSON.message) {
+                        message = xhr.responseJSON.message;
+                    }
+                    alert(message);
+                },
+                complete: function() {
+                    $('#assign-past-days').prop('disabled', false).html('Biriktirish');
+                }
+            });
+        }
     });
 </script>
 @endsection

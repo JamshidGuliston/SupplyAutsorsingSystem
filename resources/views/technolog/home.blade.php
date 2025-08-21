@@ -102,12 +102,15 @@
             </div>
             @endif 
             <!-- $date[0]->day_number == date("d", $tomm) -->
-            @if(1)
-            <div class="dot" id="four2">
-                <a href="{{ route('technolog.sendmenu', ['day'=> date('d-F-Y', $tomm)]); }}"><span>{{ "T" }}</span></a>
-                <date>{{ "Taxminiy" }}</date>
-            </div>
+            @if($date[count($date)-1]->day_number == date("d", $tomm))
+                @php
+                    $nextDay = strtotime("+1 day", $tomm);
+                @endphp
             @endif
+            <div class="dot" id="four2">
+                <a href="{{ route('technolog.sendmenu', ['day'=> date('d-F-Y', $tomm)]); }}"><span>{{ date("d", $nextDay) }}</span></a>
+                <date>{{ date("F", $nextDay) }}<b style="color: red;">{{ " Taxminiy" }}</b></date>
+            </div>
             <div class="inside"></div>
         </div>
     </div>

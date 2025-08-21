@@ -140,6 +140,10 @@ Route::group(['prefix' => 'technolog', 'middleware' => ['isTechnolog', 'auth']],
     Route::post('newday', [TechnologController::class, 'newday'])->name('technolog.newday');
     Route::get('sendmenu/{day}', [TechnologController::class, 'sendmenu'])->name('technolog.sendmenu');
     Route::get('showdate/{year}/{month}/{day}', [TechnologController::class, 'showdate'])->name('technolog.showdate');
+    Route::post('add-past-days-data', [TechnologController::class, 'addPastDaysData'])->name('technolog.addPastDaysData');
+    Route::get('get-kindergartens', [TechnologController::class, 'getKindergartens'])->name('technolog.getKindergartens');
+    Route::get('get-age-ranges', [TechnologController::class, 'getAgeRanges'])->name('technolog.getAgeRanges');
+    Route::post('assign-past-days', [TechnologController::class, 'assignPastDays'])->name('technolog.assignPastDays');
     Route::get('settings/{id}', [TechnologController::class, 'settings'])->name('technolog.settings');
     Route::post('updategarden', [TechnologController::class, 'updategarden'])->name('updategarden');
     Route::get('ageranges/{id}', [TechnologController::class, 'ageranges']);
