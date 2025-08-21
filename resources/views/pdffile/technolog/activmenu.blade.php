@@ -94,8 +94,13 @@
 							   <?php $col = 0; ?>
 							 @foreach($products as $product)
 							 	@if(isset($product['yes']))
-								 <?php $col++; ?>
-                          	 		<th class='vrt-header' style="padding: 0px; width: 3%; height: 85px"><?php echo '<span>'.$product['product_name']. '</span>';?></th>
+								 @php
+									$col++;
+									$parts = explode(' ', $product['product_name']);
+									$first = $parts[0];
+									$second = isset($parts[1]) ? $parts[1] : '';
+								@endphp
+                          	 		<th class='vrt-header' style="padding: 0px; width: 3%; height: 85px"><?php echo '<span>'.$first.' '.$second.'</span>';?></th>
 								@endif
 							 @endforeach
                           </tr>

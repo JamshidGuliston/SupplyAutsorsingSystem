@@ -323,11 +323,13 @@
 									<tr style="border-top: 2px solid black;">
 										<th scope="row" colspan="2" class='vrt-header' style="padding: 0px; border-top: 2px solid black"><b>Жами махсулот оғирлиги</b></th>
 										<?php
-			                            for($t = 0; $t < $col; $t++){
+			                            for($t = 0; $t < count($products); $t++){
+											if(isset($products[$t]['yes']) and isset($productallcount[$products[$t]['id']])){
 			                            ?>
-			                            	<td style="padding: 0px; font-size: 5px; border-top: 2px solid black"></td>
+			                            	<td style="padding: 0px; font-size: 8px; border-top: 2px solid black"><?php printf("%01.2f", ($productallcount[$products[$t]['id']]*$menu[0]['kingar_children_number']+$workerproducts[$products[$t]['id']]*$menu[0]['workers_count'])/$products[$t]['div']); ?></td>
 			                            <?php
-                    					}
+											}
+										}
 			                            ?>
 									</tr>
 									<tr>

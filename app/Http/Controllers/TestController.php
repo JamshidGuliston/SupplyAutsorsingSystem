@@ -114,7 +114,7 @@ class TestController extends Controller
                     if($key != 'foodname' and $key != 'foodweight'){
                         $workerproducts[$key] += $value; 
                         // Xodimlar gramajini ham productallcount ga qo'shish
-                        $productallcount[$key] += $value;
+                        // $productallcount[$key] += $value;
                     }
                 }
             }

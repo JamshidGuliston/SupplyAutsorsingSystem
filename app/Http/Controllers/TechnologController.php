@@ -778,7 +778,7 @@ class TechnologController extends Controller
                     if($key != 'foodname'){
                         $workerproducts[$key] += $value; 
                         // Xodimlar gramajini ham productallcount ga qo'shish
-                        $productallcount[$key] += $value;
+                        // $productallcount[$key] += $value;
                     }
                 }
             }
