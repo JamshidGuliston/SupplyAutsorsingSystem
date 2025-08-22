@@ -652,22 +652,22 @@
     // Bo'g'chalar multiselect
     document.multiselect('#testSelect1')
 		.setCheckBoxClick("checkboxAll", function(target, args) {
-			console.log("Checkbox 'Select All' was clicked and got value ", args.checked);
+			console.log("Bog'cha 'Select All' was clicked and got value ", args.checked);
 		})
 		.setCheckBoxClick("1", function(target, args) {
-			console.log("Checkbox for item with value '1' was clicked and got value ", args.checked);
+			console.log("Bog'cha checkbox for item with value '1' was clicked and got value ", args.checked);
 		});
     
     // Muassasalar multiselect
     document.multiselect('#testSelect2')
 		.setCheckBoxClick("checkboxAll", function(target, args) {
-			console.log("Checkbox 'Select All' was clicked and got value ", args.checked);
+			console.log("Muassasa 'Select All' was clicked and got value ", args.checked);
 		})
 		.setCheckBoxClick("1", function(target, args) {
-			console.log("Checkbox for item with value '1' was clicked and got value ", args.checked);
+			console.log("Muassasa checkbox for item with value '1' was clicked and got value ", args.checked);
 		});
     
-    // Mahsulotlar multiselect
+    // Mahsulotlar multiselect - faqat bu updateSelectedProducts() ni chaqiradi
     document.multiselect('#products_select')
         .setCheckBoxClick("checkboxAll", function(target, args) {
             console.log("Mahsulotlar Select All clicked: ", args.checked);
@@ -683,15 +683,16 @@
             updateSelectedProducts();
         });
     
-    // Multiselect change event-ni ham qo'shamiz
+    // Faqat mahsulotlar multiselect o'zgarishida updateSelectedProducts() chaqiriladi
     $('#products_select').on('change', function() {
-        console.log('Multiselect o\'zgarish event');
+        console.log('Mahsulotlar multiselect o\'zgarish event');
         updateSelectedProducts();
     });
     
     function updateSelectedProducts() {
         console.log('=== updateSelectedProducts() ishga tushdi ===');
         
+        // Faqat mahsulot kategoriyalari multiselect-dan olinadi
         var selectedCategories = [];
         var options = document.querySelectorAll('#products_select option:checked');
         

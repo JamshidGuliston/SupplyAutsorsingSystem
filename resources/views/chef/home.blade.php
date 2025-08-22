@@ -171,6 +171,8 @@
 <div class="container-fluid px-4">
     <a href="/chef/home" ><i class="fas fa-tachometer-alt me-3"></i>Qayta yuklash</a>
     <br>
+    <!-- Bog'cha nomini ko'rsatish -->
+    <p><b>Bog'cha: {{ $kindgarden->kingar_name }}</b></p>
     <div class="row g-3 my-2">
     @if(intval(date("H")) >= 8 and intval(date("H")) < 16 and $sendchildcount->count() == 0)
     <form method="POST" action="{{route('chef.sendnumbers')}}">

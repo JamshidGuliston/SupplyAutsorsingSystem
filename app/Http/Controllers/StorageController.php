@@ -811,46 +811,55 @@ class StorageController extends Controller
         return $mods;
     }
     
-    public function menuproduct($stop, $menuid, $ageid, $child_count, $kindproducts){
+    public function menuproduct($tr, $category_quantity, $menuid, $ageid, $child_count, $kindproducts){
         // O'quvchilar uchun joriy menyu va yosh toifalari bo'yicha maxsulotlar hisobini olish
         $menuitem = Menu_composition::where('title_menu_id', $menuid)->where('age_range_id', $ageid)->get();
         // Menyu Maxsulotlari bo'yicha sikl
         foreach($menuitem as $row){
-            // Bog'cha maxsulotlari massivida maxsulotlar hisobini boshlash
-            if(!isset($kindproducts[$row['product_name_id']])){
-                $kindproducts[$row['product_name_id']] = 0;
-            }
+            // dd($row);
             // joriy maxsulotni olish
             $product = Product::where('id', $row['product_name_id'])->first();
+            // Bog'cha maxsulotlari massivida maxsulotlar hisobini boshlash
+            if(!isset($kindproducts[$row['product_name_id']]) and isset($category_quantity[$product->category_name_id][$product->id])){
+                $kindproducts[$row['product_name_id']] = 0;
+            }
+            
             // agar maxsulotning category_name_id 0 bo'lsa va kunlar soni o'tgan bo'lsa, maxsulotni hisobga olmaslik uchun
-            if($product->category_name_id == 0 and $stop == 1){
+            if(isset($category_quantity[$product->category_name_id]['total']) and $category_quantity[$product->category_name_id]['total'] < $tr){
                 // dd($product, $stop, $child_count);
                 continue;
             }
             // joriy maxsulotning gramlarini qo'shib borish
-            $kindproducts[$row['product_name_id']] += $row['weight'] * $child_count;
+            if(isset($category_quantity[$product->category_name_id][$product->id])){
+                // dd($row['weight'], $child_count);
+                $kindproducts[$row['product_name_id']] += $row['weight'] * $child_count;
+            }
         }
         // dd($kindproducts);
         return $kindproducts;
     }
 
-    public function workermenuproduct($stop, $menuid, $foodid, $worker_count, $kindproducts){
+    public function workermenuproduct($tr, $category_quantity, $menuid, $foodid, $worker_count, $kindproducts){
         // Xodimlar uchun joriy menyu va yosh toifalari bo'yicha maxsulotlar hisobini olish
         $menuitem = Menu_composition::where('title_menu_id', $menuid)->where('menu_meal_time_id', 3)->where('menu_food_id', $foodid)->where('age_range_id', 4)->get();
         // Menyu Maxsulotlari bo'yicha sikl
         foreach($menuitem as $row){
-            // Bog'cha maxsulotlari massivida maxsulotlar hisobini boshlash
-            if(!isset($kindproducts[$row['product_name_id']])){
-                $kindproducts[$row['product_name_id']] = 0;
-            }
             // joriy maxsulotni olish
             $product = Product::where('id', $row['product_name_id'])->first();
+            
+            // Bog'cha maxsulotlari massivida maxsulotlar hisobini boshlash
+            if(!isset($kindproducts[$row['product_name_id']]) and isset($category_quantity[$product->category_name_id][$product->id])){
+                $kindproducts[$row['product_name_id']] = 0;
+            }
+            
             // agar maxsulotning category_name_id 0 bo'lsa va kunlar soni o'tgan bo'lsa, maxsulotni hisobga olmaslik uchun
-            if($product->category_name_id == 0 and $stop == 1){
+            if(isset($category_quantity[$product->category_name_id]['total']) and $category_quantity[$product->category_name_id]['total'] > $tr){
                 continue;
             }
             // joriy maxsulotning gramlarini qo'shib borish
-            $kindproducts[$row['product_name_id']] += $row['weight'] * $worker_count;
+            if(isset($category_quantity[$product->category_name_id][$product->id])){
+                $kindproducts[$row['product_name_id']] += $row['weight'] * $worker_count;
+            }
         }
         
         return $kindproducts;
@@ -876,7 +885,6 @@ class StorageController extends Controller
     }
 
     public function newordersklad(Request $request){
-        dd($request->all());
         $kindproducts = [];
         $kindworkerproducts = [];
         // Hisobot qilinishi kerak bo'lgan bog'chalar sikli
@@ -903,13 +911,9 @@ class StorageController extends Controller
             // xodimlar uchun maxsulotlar hisobini boshlash
             $kindworkerproducts[$garden]['k'] = '*';
             $kind = Kindgarden::where('id', $garden)->with('age_range')->first(); // joriy bog'cha yosh toifalari bilan
-            $stop = 0;
             $dataOfWeight['garden_name'] = $kind->kingar_name;
             // O'quvchilar uchun menyu sikli
             foreach($request->onemenu as $tr => $day){
-                if( $tr > $request->maxday){ // agar kunlar soni o'tgan bo'lsa, Maxsulotlarning category_name_id 0 bo'lgan maxsulotlarni hisobga olmaslik uchun
-                    $stop = 1;
-                }
                 // Bog'cha yosh toifalari bo'yicha sikl
                 foreach($kind->age_range as $age){
                     // $ch = Number_children::where('kingar_name_id', $garden)->where('king_age_name_id', $age->id)->orderby('day_id', 'DESC')->first();
@@ -918,7 +922,8 @@ class StorageController extends Controller
                     $ch = Nextday_namber::where('kingar_name_id', $garden)->where('king_age_name_id', $age->id)->first();
                     // }
                     // O'quvchilar uchun joriy menyu va yosh toifalari bo'yicha maxsulotlar hisobini olish
-                    $kindproducts[$garden] = $this->menuproduct($stop, $day[$ch['king_age_name_id']], $ch['king_age_name_id'], $ch['kingar_children_number'], $kindproducts[$garden]);
+                    $kindproducts[$garden] = $this->menuproduct($tr, $request->category_quantity, $day[$ch['king_age_name_id']], $ch['king_age_name_id'], $ch['kingar_children_number'], $kindproducts[$garden]);
+                    
                     $dataOfWeight['menus'][$tr]['children_menus'][] = [
                         'age_group_id' => $age->id,
                         'age_group_name' => $age->age_name,
@@ -929,7 +934,7 @@ class StorageController extends Controller
                 // Xodimlar uchun joriy menyu va yosh toifalari bo'yicha maxsulotlar hisobini olish
                 foreach($request->workerfoods[$tr] as $key => $val){
                     // Xodimlar uchun joriy menyu va yosh toifalari bo'yicha maxsulotlar hisobini olish
-                    $kindworkerproducts[$garden] = $this->workermenuproduct($stop, $val, $key, $kind->worker_count, $kindworkerproducts[$garden]);
+                    $kindworkerproducts[$garden] = $this->workermenuproduct($tr, $request->category_quantity, $val, $key, $kind->worker_count, $kindworkerproducts[$garden]);
                     $dataOfWeight['workers'][$tr]['worker_menus'][] = [
                         'worker_type_id' => $key,
                         'worker_count' => $kind->worker_count,
@@ -938,7 +943,7 @@ class StorageController extends Controller
                 }
             }
             // dd($kindworkerproducts[$garden]);
-            // Bog'chalar uchun maxsulotlar kesimida joriy qoldiq larni olish (remainde)
+            // Bog'chalar uchun maxsulotlar kesimida joriy qoldiq larni olish (remainder)
             $mods = $this->productsmod($garden);
             $dataOfWeight['summary']['remainder'] = $mods;
 
@@ -959,13 +964,14 @@ class StorageController extends Controller
                 $prod = Product::where('id', $key)->with('shop')->first();
                 if($prod->shop->count() == 0){
                     // agar maxsulotning category_name_id 0 bo'lsa va kunlar soni o'tgan bo'lsa, maxsulotni hisobga olmaslik uchun
-                    if(!isset($mods[$key]) or $mods[$key] <= 0){
+                    if(!isset($mods[$key]) or $mods[$key] <= 0 or !isset($request->category_quantity[$prod->category_name_id]['qoldiq'])){
                         $mods[$key] = 0;
                     }
                     // xodimlar uchun maxsulotlar gramlarini qo'shib borish
                     if(isset($kindworkerproducts[$garden][$key])){
                         $val = $val + $kindworkerproducts[$garden][$key];
                     }
+                    // dd($mods[$key], $val, $prod, $request->category_quantity[$prod->category_name_id]['qoldiq']);
                     // $mods[$key] bog'chada mavjud maxsulotlar qoldig'i                                                                        
                     if(($val / $prod->div) - $mods[$key] > 0){  
                         $actual_weight = ($val / $prod->div) - $mods[$key];
