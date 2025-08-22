@@ -248,6 +248,12 @@
                             download>
                                 <i class="fas fa-download"></i> Yuklab olish
                         </a>
+                        <button type="button" 
+                            class="btn btn-info d-flex align-items-center justify-content-center gap-2" 
+                            style="width: 100%;" 
+                            onclick="shareTaxminiyMenuToTelegram('{{ $kindgarden->kingar_name }}', '/nextdaysecondmenuPDF/{{ $kindgarden->id }}')">
+                            <i class="fab fa-telegram"></i> Share
+                        </button>
                     </div>
                 <!-- </form> -->
                 @if($bool->count() == 0)
@@ -399,10 +405,10 @@
         }
     }
     
-    // Menyu share funksiyasi
+    // Haqiqiy menyu share funksiyasi
     function shareMenuToTelegram(menuDate, fileUrl) {
         // Menyu uchun xabar tayyorlash
-        var message = '🍽️ *Oshpazlar uchun menyu*\n\n';
+        var message = '🍽️ *Oshpazlar uchun haqiqiy menyu*\n\n';
         message += '📅 Sana: ' + menuDate + '\n';
         message += '🏫 Bog\'cha: ' + '{{ $kindgarden->kingar_name }}' + '\n\n';
         message += '📋 *Menyu tarkibi:*\n';
@@ -420,7 +426,41 @@
         var newWindow = window.open(telegramUrl, '_blank', 'width=600,height=400');
         
         if (newWindow) {
-            showNotification('Telegram ochildi! Menyuni yuborish uchun "Send" tugmasini bosing.', 'success');
+            showNotification('Telegram ochildi! Haqiqiy menyuni yuborish uchun "Send" tugmasini bosing.', 'success');
+        } else {
+            // Agar popup bloklangan bo'lsa
+            showNotification('Popup bloklangan! Iltimos, brauzer sozlamalarini tekshiring.', 'error');
+            
+            // Fallback: faylni yuklab olish
+            setTimeout(() => {
+                window.open(window.location.origin + fileUrl, '_blank');
+            }, 2000);
+        }
+    }
+    
+    // Taxminiy menyu share funksiyasi
+    function shareTaxminiyMenuToTelegram(bogchaName, fileUrl) {
+        // Taxminiy menyu uchun xabar tayyorlash
+        var message = '📋 *Oshpazlar uchun taxminiy menyu*\n\n';
+        message += '🏫 Bog\'cha: ' + bogchaName + '\n';
+        message += '📅 Keyingi kun uchun\n\n';
+        message += '📋 *Taxminiy menyu tarkibi:*\n';
+        message += '• Non va sut mahsulotlari\n';
+        message += '• Sabzavotlar va mevalar\n';
+        message += '• Go\'sht va baliq mahsulotlari\n';
+        message += '• Yog\'lar va qandolat mahsulotlari\n\n';
+        message += '⚠️ *Eslatma:* Bu taxminiy menyu, haqiqiy menyu kun boshida tasdiqlanadi\n';
+        message += '📞 Bog\'lanish: +998 XX XXX XX XX\n';
+        message += '🔗 Fayl: ' + window.location.origin + fileUrl;
+        
+        // Telegram share URL yaratish
+        var telegramUrl = 'https://t.me/share/url?url=' + encodeURIComponent(window.location.origin + fileUrl) + '&text=' + encodeURIComponent(message);
+        
+        // Yangi oynada ochish
+        var newWindow = window.open(telegramUrl, '_blank', 'width=600,height=400');
+        
+        if (newWindow) {
+            showNotification('Telegram ochildi! Taxminiy menyuni yuborish uchun "Send" tugmasini bosing.', 'success');
         } else {
             // Agar popup bloklangan bo'lsa
             showNotification('Popup bloklangan! Iltimos, brauzer sozlamalarini tekshiring.', 'error');
