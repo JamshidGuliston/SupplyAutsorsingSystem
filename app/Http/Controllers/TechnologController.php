@@ -1989,7 +1989,7 @@ class TechnologController extends Controller
         $dompdf = new Dompdf('UTF-8');
 		$html = mb_convert_encoding(view('pdffile.technolog.orderskladpdf', compact('items', 'document')), 'HTML-ENTITIES', 'UTF-8');
 		$dompdf->loadHtml($html);
-		$dompdf->setPaper('A4',  'landscape');
+		$dompdf->setPaper('A4', 'portrait');
 		$dompdf->render();
 		$dompdf->stream('demo.pdf', ['Attachment' => 0]);
     }
