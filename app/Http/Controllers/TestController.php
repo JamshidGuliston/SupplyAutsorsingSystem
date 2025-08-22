@@ -1086,7 +1086,7 @@ class TestController extends Controller
 		$dompdf->render();
 
 		// Output the generated PDF to Browser ['Attachment' => 0]
-		if (auth()->user()->id < 6){
+		if (isset(auth()->user()->id) and auth()->user()->id < 6){
 			$dompdf->stream($name, ['Attachment' => 0]);
 		}
 		else{
