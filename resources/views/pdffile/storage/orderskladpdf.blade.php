@@ -35,11 +35,12 @@
             color: #7f8c8d;
             margin: 0px 0;
         }
-	table{
-		border-collapse: collapse;
-		border: 2px solid black;
-		width: 100%;	
-	}
+		table {
+			border-collapse: collapse;
+			border: 2px solid black;
+			width: 100%;    
+			table-layout: auto; /* fixed emas */
+		}
 	thead{
 		border: 2px solid black;
 	}
