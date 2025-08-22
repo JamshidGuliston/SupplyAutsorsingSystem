@@ -19,7 +19,7 @@
 		background-repeat: no-repeat;
 		background-size: 100%;
 		/* padding: 300px 100px 10px 100px; */
-		width: 45%;
+		width: 100%;
 	}
 	.header {
             text-align: center;
