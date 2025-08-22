@@ -71,6 +71,7 @@
     .category-products {
         border-top: 1px solid #dee2e6;
         background-color: #fafafa;
+        padding: 8px 0;
     }
     
     .category-products .table {
@@ -83,42 +84,34 @@
         font-size: 0.875rem;
     }
     
-    /* Mahsulotlar jadvali uchun yaxshilangan stillar */
+    /* Mahsulotlar jadvali uchun oddiy stillar */
     .category-products .table {
         border: 1px solid #dee2e6;
-        border-radius: 8px;
-        overflow: hidden;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        border-radius: 4px;
+        margin-bottom: 0;
     }
     
     .category-products .table thead th {
-        background: linear-gradient(135deg, #6c757d 0%, #495057 100%);
-        color: white;
+        background-color: #f8f9fa;
+        color: #495057;
         font-weight: 600;
-        text-align: center;
-        padding: 12px 8px;
-        border: none;
+        text-align: left;
+        padding: 8px 12px;
+        border-bottom: 2px solid #dee2e6;
         font-size: 0.875rem;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
     }
     
     .category-products .table tbody tr {
-        transition: background-color 0.3s ease;
+        border-bottom: 1px solid #dee2e6;
     }
     
     .category-products .table tbody tr:hover {
         background-color: #f8f9fa;
     }
     
-    .category-products .table tbody tr:nth-child(even) {
-        background-color: #f8f9fa;
-    }
-    
     .category-products .table tbody td {
-        padding: 10px 8px;
+        padding: 6px 12px;
         vertical-align: middle;
-        border-top: 1px solid #dee2e6;
         font-size: 0.875rem;
     }
     
@@ -129,7 +122,7 @@
     
     .category-products .table tbody td:last-child {
         text-align: center;
-        width: 80px;
+        width: 60px;
     }
     
     /* Mahsulot o'chirish tugmasi uchun */
@@ -163,56 +156,14 @@
         overflow: hidden;
     }
     
-    /* Mahsulot qatorlari uchun qo'shimcha stillar */
+    /* Mahsulot qatorlari uchun oddiy stillar */
     .product-row {
-        transition: all 0.3s ease;
+        transition: background-color 0.2s ease;
     }
     
     .product-row:hover {
-        background-color: #e3f2fd !important;
-        transform: translateX(2px);
+        background-color: #f8f9fa !important;
     }
-    
-    .product-row td:first-child {
-        position: relative;
-    }
-    
-    .product-row td:first-child::before {
-        content: '';
-        position: absolute;
-        left: 0;
-        top: 0;
-        bottom: 0;
-        width: 3px;
-        background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
-        opacity: 0;
-        transition: opacity 0.3s ease;
-    }
-    
-    .product-row:hover td:first-child::before {
-        opacity: 1;
-    }
-    
-    /* Jadval animatsiyasi */
-    .table-hover tbody tr {
-        animation: fadeInUp 0.5s ease forwards;
-        opacity: 0;
-        transform: translateY(10px);
-    }
-    
-    @keyframes fadeInUp {
-        to {
-            opacity: 1;
-            transform: translateY(0);
-        }
-    }
-    
-    /* Har bir qator uchun kechikish */
-    .product-row:nth-child(1) { animation-delay: 0.1s; }
-    .product-row:nth-child(2) { animation-delay: 0.2s; }
-    .product-row:nth-child(3) { animation-delay: 0.3s; }
-    .product-row:nth-child(4) { animation-delay: 0.4s; }
-    .product-row:nth-child(5) { animation-delay: 0.5s; }
     
     /* Input maydonlari uchun stillar */
     .category-products input[type="number"] {
@@ -229,6 +180,102 @@
     
     .category-products input[type="number"]:hover {
         border-color: #6c757d;
+    }
+    
+    /* Kategoriya card header uchun qo'shimcha stillar */
+    .category-card .card-header {
+        padding: 15px 20px;
+    }
+    
+    .category-card .card-header input[type="number"] {
+        border: 2px solid #e9ecef;
+        border-radius: 8px;
+        transition: all 0.3s ease;
+        font-weight: 500;
+    }
+    
+    .category-card .card-header input[type="number"]:focus {
+        border-color: #007bff;
+        box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.15);
+        outline: none;
+        transform: translateY(-1px);
+    }
+    
+    .category-card .card-header input[type="number"]:hover {
+        border-color: #007bff;
+    }
+    
+    .category-card .card-header .toggle-icon {
+        transition: all 0.3s ease;
+        padding: 8px;
+        border-radius: 6px;
+        cursor: pointer;
+    }
+    
+    .category-card .card-header .toggle-icon:hover {
+        background-color: #f8f9fa;
+        color: #495057 !important;
+        transform: scale(1.1);
+    }
+    
+    .category-card .card-header .toggle-icon:active {
+        transform: scale(0.95);
+    }
+    
+    /* Kategoriya nomi uchun stillar */
+    .category-card .card-header span:first-child {
+        transition: all 0.3s ease;
+        padding: 5px 10px;
+        border-radius: 6px;
+    }
+    
+    .category-card .card-header span:first-child:hover {
+        background-color: #f8f9fa;
+        color: #007bff !important;
+    }
+    
+    .category-card .card-header .btn-danger {
+        transition: all 0.3s ease;
+        border-radius: 8px;
+        font-weight: 500;
+    }
+    
+    .category-card .card-header .btn-danger:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(220, 53, 69, 0.3);
+    }
+    
+    /* Toggle switch uchun stillar */
+    .form-check-input {
+        background-color: #e9ecef;
+        border-color: #ced4da;
+        transition: all 0.3s ease;
+    }
+    
+    .form-check-input:checked {
+        background-color: #28a745;
+        border-color: #28a745;
+        box-shadow: 0 0 0 0.2rem rgba(40, 167, 69, 0.25);
+    }
+    
+    .form-check-input:focus {
+        box-shadow: 0 0 0 0.2rem rgba(40, 167, 69, 0.25);
+        border-color: #28a745;
+    }
+    
+    .form-check-input:hover {
+        transform: scale(1.05);
+    }
+    
+    /* Qoldiq yozuvi uchun stillar */
+    .category-card .card-header .d-flex .d-flex span {
+        font-weight: 500;
+        color: #6c757d;
+        transition: color 0.3s ease;
+    }
+    
+    .category-card .card-header .d-flex .d-flex:hover span {
+        color: #495057;
     }
     
     /* Miqdori va Amal ustuni uchun */
@@ -309,7 +356,7 @@
                     <div class="multiselect-container">
                         <select id="products_select" name="selected_products[]" class="form-select" multiple required>
                             @foreach($product_categories as $category)
-                                <option value="cat-{{ $category->id }}" data-type="category" data-category-id="{{ $category->id }}" data-category-name="{{ $category->pro_cat_name }}">{{ $category->pro_cat_name }}</option>
+                                <option value="cat-{{ $category->id }}" data-type="category" data-category-id="{{ $category->id }}" data-category-name="{{ $category->pro_cat_name }}" data-limit-quantity="{{ $category->limit_quantity ?? 0 }}">{{ $category->pro_cat_name }}</option>
                             @endforeach
                         </select>
                     </div>
@@ -660,8 +707,9 @@
             if (value.startsWith('cat-')) {
                 var categoryId = option.getAttribute('data-category-id');
                 var categoryName = option.getAttribute('data-category-name');
+                var limitQuantity = option.getAttribute('data-limit-quantity') || 0;
                 
-                console.log('Kategoriya topildi:', categoryId, categoryName);
+                console.log('Kategoriya topildi:', categoryId, categoryName, 'Limit:', limitQuantity);
                 
                 // Duplikat kategoriyalarni oldini olish
                 var exists = selectedCategories.find(function(cat) {
@@ -671,7 +719,8 @@
                 if (!exists) {
                     selectedCategories.push({
                         id: categoryId,
-                        name: categoryName
+                        name: categoryName,
+                        limitQuantity: limitQuantity
                     });
                 }
             }
@@ -693,12 +742,22 @@
             
             selectedCategories.forEach(function(category, index) {
                 html += '<div class="card mb-2 category-card" data-category-id="' + category.id + '">';
-                html += '<div class="card-header d-flex justify-content-between align-items-center" style="cursor: pointer;" onclick="toggleCategory(' + category.id + ')">';
-                html += '<span>' + category.name + '</span>';
-                html += '<div class="d-flex align-items-center">';
-                html += '<input type="number" name="category_quantity[' + category.id + '][total]" class="form-control form-control-sm me-2" style="width: 100px;" placeholder="Umumiy miqdori" required>';
-                html += '<i class="fas fa-chevron-down toggle-icon" id="toggle-icon-' + category.id + '"></i>';
-                html += '<button type="button" class="btn btn-sm btn-danger ms-2" onclick="removeCategory(' + category.id + ')">O\'chir</button>';
+                html += '<div class="card-header d-flex justify-content-between align-items-center">';
+                html += '<span style="cursor: pointer;" onclick="toggleCategory(' + category.id + ')">' + category.name + '</span>';
+                html += '<div class="d-flex align-items-center" style="gap: 15px;">';
+                html += '<span style="font-weight: 500; color: #495057;">kun</span>';
+                html += '<input type="number" name="category_quantity[' + category.id + '][total]" class="form-control" style="width: 150px; height: 40px; font-size: 14px;" placeholder="Umumiy miqdori" value="' + category.limitQuantity + '" required>';
+                
+                // Qoldiqni hisobga olish toggle switch (default active)
+                html += '<div class="d-flex align-items-center" style="gap: 8px;">';
+                html += '<span style="font-size: 12px; color: #28a745; white-space: nowrap; font-weight: 600;">Qoldiq</span>';
+                html += '<div class="form-check form-switch" style="margin: 0;">';
+                html += '<input class="form-check-input" type="checkbox" id="qoldiq_' + category.id + '" name="category_quantity[' + category.id + '][qoldiq]" style="width: 40px; height: 20px; cursor: pointer;" checked onchange="updateQoldiqStatus(' + category.id + ', this.checked)">';
+                html += '</div>';
+                html += '</div>';
+                
+                html += '<i class="fas fa-chevron-down toggle-icon" id="toggle-icon-' + category.id + '" style="font-size: 16px; color: #6c757d; cursor: pointer;" onclick="toggleCategory(' + category.id + ')"></i>';
+                html += '<button type="button" class="btn btn-danger" style="height: 40px; padding: 8px 16px; font-size: 14px;" onclick="removeCategory(' + category.id + ')">O\'chir</button>';
                 html += '</div>';
                 html += '</div>';
                 html += '<div class="card-body category-products" id="category-products-' + category.id + '" style="display: none;">';
@@ -715,14 +774,14 @@
                         if (data.products && data.products.length > 0) {
                             html += '<div class="table-responsive">';
                             html += '<table class="table table-sm table-hover">';
-                            html += '<thead><tr><th><i class="fas fa-box me-2"></i>Mahsulot nomi</th><th><i class="fas fa-cogs me-2"></i>Miqdori va Amal</th></tr></thead>';
+                            html += '<thead><tr><th><i class="fas fa-box me-2"></i>Mahsulot nomi</th><th><i class="fas fa-cogs me-2"></i></th></tr></thead>';
                             html += '<tbody>';
                             data.products.forEach(function(product, index) {
                                 html += '<tr class="product-row" data-product-id="' + product.id + '">';
                                 html += '<td><i class="fas fa-circle me-2" style="color: #28a745; font-size: 8px;"></i>' + product.product_name + '</td>';
                                 html += '<td>';
                                 html += '<div class="d-flex align-items-center justify-content-between">';
-                                html += '<input type="number" name="category_quantity[' + category.id + '][' + product.id + ']" class="form-control form-control-sm me-2" placeholder="Miqdori" style="width: 80px;" min="0" step="0.01">';
+                                html += '<input type="hidden" name="category_quantity[' + category.id + '][' + product.id + ']" class="form-control form-control-sm me-2" placeholder="Miqdori" style="width: 80px;" min="0" value="1">';
                                 html += '<button type="button" class="btn btn-sm btn-outline-danger" onclick="removeProduct(' + product.id + ', ' + category.id + ')" title="Mahsulotni o\'chirish">';
                                 html += '<i class="fas fa-trash-alt"></i>';
                                 html += '</button>';
@@ -754,40 +813,26 @@
         console.log("Mahsulot o'chirilmoqda: ", productId, "Kategoriya:", categoryId);
         
         // Mahsulot qatorini topish va o'chirish
-        var productInput = document.querySelector('input[name="product_quantity[' + productId + ']"]');
-        if (productInput) {
-            var tableRow = productInput.closest('tr');
-            if (tableRow) {
-                tableRow.remove();
-                console.log('Mahsulot qatori o\'chirildi');
-            }
+        var productRow = document.querySelector('.product-row[data-product-id="' + productId + '"]');
+        if (productRow) {
+            productRow.remove();
+            console.log('Mahsulot qatori o\'chirildi');
         }
         
         // Kategoriyada qolgan mahsulotlarni tekshirish
         var categoryCard = document.querySelector('.category-card[data-category-id="' + categoryId + '"]');
         if (categoryCard) {
-            var remainingProducts = categoryCard.querySelectorAll('input[name^="product_quantity["]');
+            var remainingProducts = categoryCard.querySelectorAll('.product-row');
             console.log('Kategoriyada qolgan mahsulotlar soni:', remainingProducts.length);
             
             // Agar kategoriyada mahsulot qolmagan bo'lsa
             if (remainingProducts.length === 0) {
-                console.log('Kategoriyada mahsulot qolmagan, kategoriya ham o\'chiriladi');
+                console.log('Kategoriyada mahsulot qolmagan, mahsulotlar jadvali yashiriladi');
                 
-                // Kategoriyani multiselect-dan o'chirish
-                var option = document.querySelector('#products_select option[value="cat-' + categoryId + '"]');
-                if (option) {
-                    option.selected = false;
-                }
-                
-                // Kategoriya card-ini o'chirish
-                categoryCard.remove();
-                
-                // Agar boshqa kategoriyalar qolmagan bo'lsa, container-ni tozalash
-                var remainingCards = document.querySelectorAll('.category-card');
-                if (remainingCards.length === 0) {
-                    var container = document.getElementById('selected_products_container');
-                    container.innerHTML = '';
-                    console.log('Barcha kategoriyalar o\'chirildi, container tozalandi');
+                // Mahsulotlar jadvalini yashirish
+                var productsDiv = categoryCard.querySelector('.category-products');
+                if (productsDiv) {
+                    productsDiv.innerHTML = '<p class="text-muted mb-0">Bu kategoriyada mahsulot mavjud emas</p>';
                 }
             }
         }
@@ -844,10 +889,12 @@
             if (type === 'category') {
                 var categoryId = option.getAttribute('data-category-id');
                 var categoryName = option.getAttribute('data-category-name');
+                var limitQuantity = option.getAttribute('data-limit-quantity') || 0;
                 
                 selectedCategories.push({
                     id: categoryId,
-                    name: categoryName
+                    name: categoryName,
+                    limitQuantity: limitQuantity
                 });
             }
         });
@@ -893,6 +940,35 @@
     }
     
 
+    
+    function updateQoldiqStatus(categoryId, isChecked) {
+        console.log('Kategoriya', categoryId, 'uchun qoldiq holati:', isChecked ? 'yoqildi' : 'o\'chirildi');
+        
+        // Toggle switch holatini saqlash
+        var qoldiqInput = document.querySelector('input[name="category_quantity[' + categoryId + '][qoldiq]"]');
+        if (qoldiqInput) {
+            qoldiqInput.checked = isChecked;
+        }
+        
+        // Visual feedback
+        var qoldiqLabel = qoldiqInput ? qoldiqInput.closest('.d-flex').querySelector('span') : null;
+        if (qoldiqLabel) {
+            if (isChecked) {
+                qoldiqLabel.style.color = '#28a745';
+                qoldiqLabel.style.fontWeight = '600';
+            } else {
+                qoldiqLabel.style.color = '#6c757d';
+                qoldiqLabel.style.fontWeight = '500';
+            }
+        }
+        
+        // Form data-ga qoldiq holatini yozish
+        var formData = {
+            categoryId: categoryId,
+            qoldiq: isChecked ? 1 : 0
+        };
+        console.log('Form data:', formData);
+    }
     
     function enable() {
 		document.multiselect('#testSelect1').setIsEnabled(true);

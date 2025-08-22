@@ -876,7 +876,7 @@ class StorageController extends Controller
     }
 
     public function newordersklad(Request $request){
-        
+        dd($request->all());
         $kindproducts = [];
         $kindworkerproducts = [];
         // Hisobot qilinishi kerak bo'lgan bog'chalar sikli

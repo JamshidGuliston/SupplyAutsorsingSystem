@@ -11,7 +11,8 @@ class Product_category extends Model
     
     protected $fillable = [
         'pro_cat_name',
-        'pro_cat_image'
+        'pro_cat_image',
+        'limit_quantity'
     ];
     
     public function products()
