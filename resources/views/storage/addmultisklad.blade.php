@@ -52,6 +52,193 @@
     .share-button i {
         margin-right: 5px;
     }
+    
+    /* Kategoriya card stillari */
+    .category-card .card-header {
+        background-color: #f8f9fa;
+        border-bottom: 1px solid #dee2e6;
+        transition: background-color 0.3s ease;
+    }
+    
+    .category-card .card-header:hover {
+        background-color: #e9ecef;
+    }
+    
+    .toggle-icon {
+        transition: transform 0.3s ease;
+    }
+    
+    .category-products {
+        border-top: 1px solid #dee2e6;
+        background-color: #fafafa;
+    }
+    
+    .category-products .table {
+        margin-bottom: 0;
+    }
+    
+    .category-products .table th {
+        background-color: #e9ecef;
+        border-top: none;
+        font-size: 0.875rem;
+    }
+    
+    /* Mahsulotlar jadvali uchun yaxshilangan stillar */
+    .category-products .table {
+        border: 1px solid #dee2e6;
+        border-radius: 8px;
+        overflow: hidden;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    
+    .category-products .table thead th {
+        background: linear-gradient(135deg, #6c757d 0%, #495057 100%);
+        color: white;
+        font-weight: 600;
+        text-align: center;
+        padding: 12px 8px;
+        border: none;
+        font-size: 0.875rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+    
+    .category-products .table tbody tr {
+        transition: background-color 0.3s ease;
+    }
+    
+    .category-products .table tbody tr:hover {
+        background-color: #f8f9fa;
+    }
+    
+    .category-products .table tbody tr:nth-child(even) {
+        background-color: #f8f9fa;
+    }
+    
+    .category-products .table tbody td {
+        padding: 10px 8px;
+        vertical-align: middle;
+        border-top: 1px solid #dee2e6;
+        font-size: 0.875rem;
+    }
+    
+    .category-products .table tbody td:first-child {
+        font-weight: 500;
+        color: #495057;
+    }
+    
+    .category-products .table tbody td:last-child {
+        text-align: center;
+        width: 80px;
+    }
+    
+    /* Mahsulot o'chirish tugmasi uchun */
+    .btn-outline-danger {
+        border-color: #dc3545;
+        color: #dc3545;
+        transition: all 0.3s ease;
+        border-radius: 6px;
+        padding: 6px 10px;
+        min-width: 32px;
+        height: 32px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    .btn-outline-danger:hover {
+        background-color: #dc3545;
+        color: white;
+        transform: scale(1.1);
+        box-shadow: 0 2px 8px rgba(220, 53, 69, 0.3);
+    }
+    
+    .btn-outline-danger i {
+        font-size: 12px;
+    }
+    
+    /* Table responsive uchun */
+    .table-responsive {
+        border-radius: 8px;
+        overflow: hidden;
+    }
+    
+    /* Mahsulot qatorlari uchun qo'shimcha stillar */
+    .product-row {
+        transition: all 0.3s ease;
+    }
+    
+    .product-row:hover {
+        background-color: #e3f2fd !important;
+        transform: translateX(2px);
+    }
+    
+    .product-row td:first-child {
+        position: relative;
+    }
+    
+    .product-row td:first-child::before {
+        content: '';
+        position: absolute;
+        left: 0;
+        top: 0;
+        bottom: 0;
+        width: 3px;
+        background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+        opacity: 0;
+        transition: opacity 0.3s ease;
+    }
+    
+    .product-row:hover td:first-child::before {
+        opacity: 1;
+    }
+    
+    /* Jadval animatsiyasi */
+    .table-hover tbody tr {
+        animation: fadeInUp 0.5s ease forwards;
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    
+    @keyframes fadeInUp {
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+    
+    /* Har bir qator uchun kechikish */
+    .product-row:nth-child(1) { animation-delay: 0.1s; }
+    .product-row:nth-child(2) { animation-delay: 0.2s; }
+    .product-row:nth-child(3) { animation-delay: 0.3s; }
+    .product-row:nth-child(4) { animation-delay: 0.4s; }
+    .product-row:nth-child(5) { animation-delay: 0.5s; }
+    
+    /* Input maydonlari uchun stillar */
+    .category-products input[type="number"] {
+        border: 1px solid #ced4da;
+        border-radius: 4px;
+        transition: all 0.3s ease;
+    }
+    
+    .category-products input[type="number"]:focus {
+        border-color: #007bff;
+        box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+        outline: none;
+    }
+    
+    .category-products input[type="number"]:hover {
+        border-color: #6c757d;
+    }
+    
+    /* Miqdori va Amal ustuni uchun */
+    .category-products .table tbody td:last-child {
+        min-width: 150px;
+    }
+    
+    .category-products .d-flex.justify-content-between {
+        gap: 8px;
+    }
 </style>
 @endsection
 @section('leftmenu')
@@ -60,7 +247,7 @@
 @section('content')
 <!-- AddModal -->
 <div class="modal editesmodal fade" id="addModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
+    <div class="modal-dialog modal-xl">
         <div class="modal-content">
         <form action="{{route('storage.newordersklad')}}" method="POST">
             @csrf
@@ -134,13 +321,13 @@
                 
                 <div class="row">
                     <div class="col-md-8">
-                        <input type="number" name="maxday" placeholder="2-3 кунлик" class="form-control" required>
+                        <!-- <input type="number" name="maxday" placeholder="2-3 кунлик" class="form-control" required> -->
                     </div>
-                    <div class="col-md-4">
+                    <!-- <div class="col-md-4">
                         <button type="button" class="btn btn-info btn-sm w-100" onclick="shareToTelegram()">
                             <i class="fab fa-telegram"></i> Telegram
                         </button>
-                    </div>
+                    </div> -->
                 </div>
                 Боғчаларни танлаш
                 <select id='testSelect1' name="gardens[]" class="form-select" aria-label="Default select example" multiple required>
@@ -442,29 +629,61 @@
         .setCheckBoxClick("category", function(target, args) {
             console.log("Kategoriya clicked: ", target.value, args.checked);
             updateSelectedProducts();
+        })
+        .setCheckBoxClick("product", function(target, args) {
+            console.log("Mahsulot clicked: ", target.value, args.checked);
+            // Mahsulot tanlanganda ham update qilish
+            updateSelectedProducts();
         });
     
+    // Multiselect change event-ni ham qo'shamiz
+    $('#products_select').on('change', function() {
+        console.log('Multiselect o\'zgarish event');
+        updateSelectedProducts();
+    });
+    
     function updateSelectedProducts() {
+        console.log('=== updateSelectedProducts() ishga tushdi ===');
+        
         var selectedCategories = [];
         var options = document.querySelectorAll('#products_select option:checked');
         
+        console.log('Tanlangan option-lar soni:', options.length);
+        
         options.forEach(function(option) {
             var type = option.getAttribute('data-type');
+            var value = option.value;
             
-            if (type === 'category') {
+            console.log('Option value:', value, 'Type:', type);
+            
+            // Agar bu kategoriya bo'lsa (cat- bilan boshlansa)
+            if (value.startsWith('cat-')) {
                 var categoryId = option.getAttribute('data-category-id');
                 var categoryName = option.getAttribute('data-category-name');
                 
-                selectedCategories.push({
-                    id: categoryId,
-                    name: categoryName
+                console.log('Kategoriya topildi:', categoryId, categoryName);
+                
+                // Duplikat kategoriyalarni oldini olish
+                var exists = selectedCategories.find(function(cat) {
+                    return cat.id === categoryId;
                 });
+                
+                if (!exists) {
+                    selectedCategories.push({
+                        id: categoryId,
+                        name: categoryName
+                    });
+                }
             }
         });
+        
+        console.log('Tanlangan kategoriyalar:', selectedCategories);
         
         // Tanlangan mahsulotlarni ko'rsatish
         var container = document.getElementById('selected_products_container');
         container.innerHTML = '';
+        
+        console.log('Container tozalandi');
         
         var html = '';
         
@@ -472,8 +691,17 @@
         if (selectedCategories.length > 0) {
             html += '<div class="mt-3"><h6>Tanlangan kategoriyalar:</h6>';
             
-            selectedCategories.forEach(function(category) {
-                html += '<div class="card mb-2"><div class="card-header">' + category.name + '</div><div class="card-body">';
+            selectedCategories.forEach(function(category, index) {
+                html += '<div class="card mb-2 category-card" data-category-id="' + category.id + '">';
+                html += '<div class="card-header d-flex justify-content-between align-items-center" style="cursor: pointer;" onclick="toggleCategory(' + category.id + ')">';
+                html += '<span>' + category.name + '</span>';
+                html += '<div class="d-flex align-items-center">';
+                html += '<input type="number" name="category_quantity[' + category.id + '][total]" class="form-control form-control-sm me-2" style="width: 100px;" placeholder="Umumiy miqdori" required>';
+                html += '<i class="fas fa-chevron-down toggle-icon" id="toggle-icon-' + category.id + '"></i>';
+                html += '<button type="button" class="btn btn-sm btn-danger ms-2" onclick="removeCategory(' + category.id + ')">O\'chir</button>';
+                html += '</div>';
+                html += '</div>';
+                html += '<div class="card-body category-products" id="category-products-' + category.id + '" style="display: none;">';
                 
                 // Kategoriyaga tegishli mahsulotlarni AJAX orqali olish
                 $.ajax({
@@ -485,39 +713,31 @@
                     async: false,
                     success: function(data) {
                         if (data.products && data.products.length > 0) {
-                            data.products.forEach(function(product) {
-                                html += '<div class="row mb-2">';
-                                html += '<div class="col-md-6">' + product.product_name + '</div>';
-                                html += '<div class="col-md-4">';
-                                html += '<input type="number" name="product_quantity[' + product.id + ']" class="form-control form-control-sm" placeholder="Miqdori" required>';
+                            html += '<div class="table-responsive">';
+                            html += '<table class="table table-sm table-hover">';
+                            html += '<thead><tr><th><i class="fas fa-box me-2"></i>Mahsulot nomi</th><th><i class="fas fa-cogs me-2"></i>Miqdori va Amal</th></tr></thead>';
+                            html += '<tbody>';
+                            data.products.forEach(function(product, index) {
+                                html += '<tr class="product-row" data-product-id="' + product.id + '">';
+                                html += '<td><i class="fas fa-circle me-2" style="color: #28a745; font-size: 8px;"></i>' + product.product_name + '</td>';
+                                html += '<td>';
+                                html += '<div class="d-flex align-items-center justify-content-between">';
+                                html += '<input type="number" name="category_quantity[' + category.id + '][' + product.id + ']" class="form-control form-control-sm me-2" placeholder="Miqdori" style="width: 80px;" min="0" step="0.01">';
+                                html += '<button type="button" class="btn btn-sm btn-outline-danger" onclick="removeProduct(' + product.id + ', ' + category.id + ')" title="Mahsulotni o\'chirish">';
+                                html += '<i class="fas fa-trash-alt"></i>';
+                                html += '</button>';
                                 html += '</div>';
-                                html += '<div class="col-md-2">';
-                                html += '<button type="button" class="btn btn-sm btn-danger" onclick="removeProduct(' + product.id + ')">O\'chir</button>';
-                                html += '</div>';
-                                html += '</div>';
+                                html += '</td>';
+                                html += '</tr>';
                             });
+                            html += '</tbody></table>';
+                            html += '</div>';
                         } else {
-                            html += '<div class="row mb-2">';
-                            html += '<div class="col-md-6">Barcha mahsulotlar</div>';
-                            html += '<div class="col-md-4">';
-                            html += '<input type="number" name="category_quantity[' + category.id + ']" class="form-control form-control-sm" placeholder="Miqdori" required>';
-                            html += '</div>';
-                            html += '<div class="col-md-2">';
-                            html += '<button type="button" class="btn btn-sm btn-danger" onclick="removeCategory(' + category.id + ')">O\'chir</button>';
-                            html += '</div>';
-                            html += '</div>';
+                            html += '<p class="text-muted">Bu kategoriyada mahsulot mavjud emas</p>';
                         }
                     },
                     error: function() {
-                        html += '<div class="row mb-2">';
-                        html += '<div class="col-md-6">Barcha mahsulotlar</div>';
-                        html += '<div class="col-md-4">';
-                        html += '<input type="number" name="category_quantity[' + category.id + ']" class="form-control form-control-sm" placeholder="Miqdori" required>';
-                        html += '</div>';
-                        html += '<div class="col-md-2">';
-                        html += '<button type="button" class="btn btn-sm btn-danger" onclick="removeCategory(' + category.id + ')">O\'chir</button>';
-                        html += '</div>';
-                        html += '</div>';
+                        html += '<p class="text-danger">Mahsulotlarni yuklashda xatolik yuz berdi</p>';
                     }
                 });
                 
@@ -530,16 +750,87 @@
         container.innerHTML = html;
     }
     
-    function removeProduct(productId) {
-        // Mahsulotni o'chirish logikasi
-        console.log("Mahsulot o'chirildi: ", productId);
+    function removeProduct(productId, categoryId) {
+        console.log("Mahsulot o'chirilmoqda: ", productId, "Kategoriya:", categoryId);
+        
+        // Mahsulot qatorini topish va o'chirish
+        var productInput = document.querySelector('input[name="product_quantity[' + productId + ']"]');
+        if (productInput) {
+            var tableRow = productInput.closest('tr');
+            if (tableRow) {
+                tableRow.remove();
+                console.log('Mahsulot qatori o\'chirildi');
+            }
+        }
+        
+        // Kategoriyada qolgan mahsulotlarni tekshirish
+        var categoryCard = document.querySelector('.category-card[data-category-id="' + categoryId + '"]');
+        if (categoryCard) {
+            var remainingProducts = categoryCard.querySelectorAll('input[name^="product_quantity["]');
+            console.log('Kategoriyada qolgan mahsulotlar soni:', remainingProducts.length);
+            
+            // Agar kategoriyada mahsulot qolmagan bo'lsa
+            if (remainingProducts.length === 0) {
+                console.log('Kategoriyada mahsulot qolmagan, kategoriya ham o\'chiriladi');
+                
+                // Kategoriyani multiselect-dan o'chirish
+                var option = document.querySelector('#products_select option[value="cat-' + categoryId + '"]');
+                if (option) {
+                    option.selected = false;
+                }
+                
+                // Kategoriya card-ini o'chirish
+                categoryCard.remove();
+                
+                // Agar boshqa kategoriyalar qolmagan bo'lsa, container-ni tozalash
+                var remainingCards = document.querySelectorAll('.category-card');
+                if (remainingCards.length === 0) {
+                    var container = document.getElementById('selected_products_container');
+                    container.innerHTML = '';
+                    console.log('Barcha kategoriyalar o\'chirildi, container tozalandi');
+                }
+            }
+        }
     }
     
     function removeCategory(categoryId) {
+        console.log('Kategoriya o\'chirilmoqda:', categoryId);
+        
+        // Multiselect-dan kategoriyani o'chirish
         var option = document.querySelector('#products_select option[value="cat-' + categoryId + '"]');
         if (option) {
             option.selected = false;
-            updateSelectedProducts();
+            console.log('Kategoriya multiselect-dan o\'chirildi');
+        }
+        
+        // Kategoriya card-ini o'chirish
+        var categoryCard = document.querySelector('.category-card[data-category-id="' + categoryId + '"]');
+        if (categoryCard) {
+            categoryCard.remove();
+            console.log('Kategoriya card o\'chirildi');
+        }
+        
+        // Agar boshqa kategoriyalar qolmagan bo'lsa, container-ni tozalash
+        var remainingCards = document.querySelectorAll('.category-card');
+        if (remainingCards.length === 0) {
+            var container = document.getElementById('selected_products_container');
+            container.innerHTML = '';
+            console.log('Barcha kategoriyalar o\'chirildi, container tozalandi');
+        }
+    }
+    
+    function toggleCategory(categoryId) {
+        var productsDiv = document.getElementById('category-products-' + categoryId);
+        var toggleIcon = document.getElementById('toggle-icon-' + categoryId);
+        
+        if (productsDiv.style.display === 'none') {
+            productsDiv.style.display = 'block';
+            toggleIcon.classList.remove('fa-chevron-down');
+            toggleIcon.classList.add('fa-chevron-up');
+        } else {
+            productsDiv.style.display = 'none';
+            toggleIcon.classList.remove('fa-chevron-up');
+            toggleIcon.classList.add('fa-chevron-down');
         }
     }
     
