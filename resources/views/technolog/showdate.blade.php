@@ -123,17 +123,17 @@
         {{ $year->year_name }}
     </div>
     <div class="month">
-        @if($year_id != 1)
-            <a href="/technolog/showdate/{{ $year_id-1 }}/0/0" class="month__item">{{ $year->year_name - 1 }}</a>
+        @if($y_id != 1)
+            <a href="/technolog/showdate/{{ $y_id-1 }}/0/0" class="month__item">{{ $year->year_name - 1 }}</a>
         @endif
         @foreach($months as $month)
-            <a href="/technolog/showdate/{{ $year_id }}/{{ $month->id }}/0" class="month__item {{ ( $month->id == $month_id) ? 'active first-text' : 'second-text' }} fw-bold">{{ $month->month_name }}</a>
+            <a href="/technolog/showdate/{{ $y_id }}/{{ $month->id }}/0" class="month__item {{ ( $month->id == $m_id) ? 'active first-text' : 'second-text' }} fw-bold">{{ $month->month_name }}</a>
         @endforeach
         <a href="/technolog/showdate/{{ $year->id+1 }}/0/0" class="month__item">{{ $year->year_name + 1 }}</a>
     </div>
     <div class="day">
         @foreach($days as $day)
-            <a href="/technolog/showdate/{{ $day->year_id }}/{{ $day->month_id }}/{{ $day->id }}" class="day__item {{ ( $day->id == $day_id) ? 'active' : null }}">{{ $day->day_number }}</a>
+            <a href="/technolog/showdate/{{ $day->year_id }}/{{ $day->month_id }}/{{ $day->id }}" class="day__item {{ ( $day->id == $aday) ? 'active' : null }}">{{ $day->day_number }}</a>
         @endforeach
     </div>
     <!-- <div class="lline"></div> -->
@@ -142,7 +142,7 @@
 <div class="row">
     <div class="col-md-6">
         @foreach($days as $day)
-        @if($day->id == $day_id)
+        @if($day->id == $aday)
             <b>{{ $day->day_number.":".$day->month_name.":".$day->year_name }}</b>
         @endif
         @endforeach
@@ -186,36 +186,38 @@
         </tr>
     </thead>
     <tbody>
-    <?php $t = 1;  ?>   
+    <?php $t = 1; 
+        // dd($nextdayitem);
+    ?>   
     @foreach($nextdayitem as $row)
         <tr>
             <td>{{ $t++ }}</td>
             <td>{{ $row['kingar_name'] }}</td>
             <td>{{ $row['workers_count'] }} </td>
-            <td><a href="/activsecondmenuPDF/{{ $day_id }}/{{ $row['kingar_name_id'] }}" target="_blank"><i class="far fa-file-pdf" style="color: dodgerblue; font-size: 18px;"></i></a></td>
+            <td><a href="/activsecondmenuPDF/{{ $aday }}/{{ $row['kingar_name_id'] }}" target="_blank"><i class="far fa-file-pdf" style="color: dodgerblue; font-size: 18px;"></i></a></td>
             @foreach($ages as $age)
             @if(isset($row[$age->id]))
                 <td>
                     {{ $row[$age->id][1]."  " }}
-                    <i class="edites far fa-edit text-info" data-bs-toggle="modal" data-bs-target="#exampleModal" data-agecount="{{ $row[$age->id][1] }}" data-dayid="{{ $day_id }}" data-monthid = "{{ $month_id }}" data-yearid = "{{ $year_id }}" data-ageid="{{ $age->id }}" data-kinid="{{ $row['kingar_name_id'] }}" style="cursor: pointer; margin-right: 16px;"> </i>
+                    <i class="edites far fa-edit text-info" data-bs-toggle="modal" data-bs-target="#exampleModal" data-agecount="{{ $row[$age->id][1] }}" data-dayid="{{ $aday }}" data-monthid = "{{ $day->month_id }}" data-yearid = "{{ $day->year_id }}" data-ageid="{{ $age->id }}" data-kinid="{{ $row['kingar_name_id'] }}" style="cursor: pointer; margin-right: 16px;"> </i>
                     @if($row[$age->id][2] != null)
                     <i class="far fa-envelope" style="color: #c40c0c"></i> 
                     @endif
                 </td>
-                <td><a href="/activmenuPDF/{{ $day_id }}/{{ $row['kingar_name_id'] }}/{{ $age->id }}" target="_blank"><i class="far fa-file-pdf" style="color: dodgerblue; font-size: 18px;"></i></a></td>
+                <td><a href="/activmenuPDF/{{ $aday }}/{{ $row['kingar_name_id'] }}/{{ $age->id }}" target="_blank"><i class="far fa-file-pdf" style="color: dodgerblue; font-size: 18px;"></i></a></td>
             @else
                 <td>{{ ' ' }}</td>
                 <td>{{ ' ' }}</td>
             @endif
             @endforeach
-            <!-- <td><a href="/activnakladPDF/{{ $day_id }}/{{ $row['kingar_name_id'] }}" target="_blank"><i class="far fa-file-pdf" style="color: dodgerblue; font-size: 18px;"></i></a></td> -->
+            <!-- <td><a href="/activnakladPDF/{{ $aday }}/{{ $row['kingar_name_id'] }}" target="_blank"><i class="far fa-file-pdf" style="color: dodgerblue; font-size: 18px;"></i></a></td> -->
             <td>
                 @if($usage_status[$row['kingar_name_id']] == 'Sarflangan')
                     <i class="fas fa-check-circle" style="color: green;"></i>
                 @else
                     <i class="fas fa-times-circle" style="color: red;"></i>
                     <i class="fas fa-carrot expense-btn" style="color: dodgerblue; font-size: 18px; margin-left: 10px; cursor: pointer;" 
-                       data-dayid="{{ $day_id }}" 
+                       data-dayid="{{ $aday }}" 
                        data-kingardenid="{{ $row['kingar_name_id'] }}" 
                        data-toggle="modal" 
                        data-target="#expenseModal" 
