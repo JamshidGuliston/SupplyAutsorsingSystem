@@ -932,6 +932,7 @@ class StorageController extends Controller
                     ];
                 }
                 // Xodimlar uchun joriy menyu va yosh toifalari bo'yicha maxsulotlar hisobini olish
+                // dd($request->workerfoods[$tr]);
                 foreach($request->workerfoods[$tr] as $key => $val){
                     // Xodimlar uchun joriy menyu va yosh toifalari bo'yicha maxsulotlar hisobini olish
                     $kindworkerproducts[$garden] = $this->workermenuproduct($tr, $request->category_quantity, $val, $key, $kind->worker_count, $kindworkerproducts[$garden]);
