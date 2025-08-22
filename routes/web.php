@@ -137,6 +137,10 @@ Route::group(['prefix' => 'technolog', 'middleware' => ['isTechnolog', 'auth']],
     Route::get('funtest', [TechnologController::class, 'funtest']);
     Route::get('asdf', [TechnologController::class, 'asdf'] );
     Route::get('home', [TechnologController::class, 'index'])->name('technolog.home');
+    Route::get('bolalar-qatnovi', [TechnologController::class, 'bolalarQatnovi'])->name('technolog.bolalar_qatnovi');
+    Route::post('get-bolalar-qatnovi-data', [TechnologController::class, 'getBolalarQatnoviData'])->name('technolog.getBolalarQatnoviData');
+    Route::post('download-bolalar-qatnovi-pdf', [TechnologController::class, 'downloadBolalarQatnoviPDF'])->name('technolog.downloadBolalarQatnoviPDF');
+    Route::post('download-bolalar-qatnovi-excel', [TechnologController::class, 'downloadBolalarQatnoviExcel'])->name('technolog.downloadBolalarQatnoviExcel');
     Route::post('newday', [TechnologController::class, 'newday'])->name('technolog.newday');
     Route::get('sendmenu/{day}', [TechnologController::class, 'sendmenu'])->name('technolog.sendmenu');
     Route::get('showdate/{year}/{month}/{day}', [TechnologController::class, 'showdate'])->name('technolog.showdate');

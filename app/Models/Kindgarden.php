@@ -18,6 +18,7 @@ class Kindgarden extends Model
         'telegram_user_id',
         'worker_count',
         'worker_age_id',
+        'number_of_org',
         'hide'
     ];
 
@@ -27,6 +28,7 @@ class Kindgarden extends Model
         return [
             'kingar_name' => 'required|string|max:255',
             'short_name' => 'required|string|max:50|unique:kindgardens,short_name,' . $id,
+            'number_of_org' => 'required|string|max:50',
             'region_id' => 'required|exists:regions,id',
             'worker_count' => 'nullable|integer|min:0',
             'kingar_password' => 'nullable|string|min:6',

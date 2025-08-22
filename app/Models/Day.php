@@ -13,4 +13,14 @@ class Day extends Model
 	    'month_id',
         'year_id'
 	];
+    
+    public function month()
+    {
+        return $this->belongsTo(Month::class);
+    }
+    
+    public function year()
+    {
+        return $this->belongsTo(Year::class);
+    }
 }

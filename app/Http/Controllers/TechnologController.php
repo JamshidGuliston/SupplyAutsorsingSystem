@@ -3034,6 +3034,289 @@ class TechnologController extends Controller
         return $data;
     }
 
+    // Bolalar qatnovi
+    public function bolalarQatnovi(Request $request)
+    {
+        $year = Year::where('year_active', 1)->first();
+        $months = Month::where('yearid', $year->id)->get();
+        $days = $this->days();
+        
+        return view('technolog.bolalar_qatnovi', compact('year', 'months', 'days'));
+    }
+    
+    public function getBolalarQatnoviData(Request $request)
+    {
+        $startDate = $request->input('start_date');
+        $endDate = $request->input('end_date');
+        $regionId = $request->input('region_id');
+        
+        // Kunlarni olish
+        $selectedDays = Day::where('days.id', '>=', $startDate)
+            ->where('days.id', '<=', $endDate)
+            ->join('months', 'months.id', '=', 'days.month_id')
+            ->join('years', 'years.id', '=', 'days.year_id')
+            ->orderBy('days.id', 'ASC')
+            ->get(['days.id', 'days.day_number', 'months.month_name', 'years.year_name']);
+        
+        // Bog'chalarni tuman bo'yicha guruhlash
+        $kindgardens = Kindgarden::where('hide', 1)
+            ->with('region')
+            ->when($regionId, function($query) use ($regionId) {
+                return $query->where('region_id', $regionId);
+            })
+            ->orderBy('region_id')
+            ->orderBy('number_of_org')
+            ->get();
+        
+        // Har bir tuman uchun ma'lumotlarni tayyorlash
+        $regions = Region::all();
+        $attendanceData = [];
+        
+        foreach ($regions as $region) {
+            $regionKindgardens = $kindgardens->where('region_id', $region->id);
+            
+            if ($regionKindgardens->count() > 0) {
+                $attendanceData[$region->id] = [
+                    'region_name' => $region->region_name,
+                    'kindgardens' => []
+                ];
+                
+                $regionTotalChildren = []; // Har bir kun uchun tuman bo'yicha jami bolalar
+                
+                foreach ($regionKindgardens as $kindgarden) {
+                    $kindgardenData = [
+                        'id' => $kindgarden->id,
+                        'name' => $kindgarden->kingar_name,
+                        'number_of_org' => $kindgarden->number_of_org,
+                        'days' => []
+                    ];
+                    
+                    $kindgardenTotal = 0; // Bog'cha bo'yicha jami bolalar
+                    
+                    // Har bir kun uchun bolalar sonini olish
+                    foreach ($selectedDays as $day) {
+                        $childrenCount = Number_children::where('day_id', $day->id)
+                            ->where('kingar_name_id', $kindgarden->id)
+                            ->sum('kingar_children_number');
+                        
+                        $kindgardenData['days'][$day->id] = [
+                            'day_number' => $day->day_number,
+                            'month_name' => $day->month_name,
+                            'year_name' => $day->year_name,
+                            'children_count' => $childrenCount
+                        ];
+                        
+                        // Bog'cha bo'yicha jami bolalar sonini hisoblash
+                        $kindgardenTotal += $childrenCount;
+                        
+                        // Tuman bo'yicha jami bolalar sonini hisoblash
+                        if (!isset($regionTotalChildren[$day->id])) {
+                            $regionTotalChildren[$day->id] = 0;
+                        }
+                        $regionTotalChildren[$day->id] += $childrenCount;
+                    }
+                    
+                    // Bog'cha bo'yicha jami qo'shish
+                    $kindgardenData['total'] = $kindgardenTotal;
+                    
+                    $attendanceData[$region->id]['kindgardens'][] = $kindgardenData;
+                }
+                
+                // Tuman bo'yicha jami qatorini qo'shish
+                $attendanceData[$region->id]['total_row'] = [
+                    'name' => 'JAMI',
+                    'number_of_org' => '',
+                    'days' => $regionTotalChildren
+                ];
+            }
+        }
+        
+        // Ustun bo'yicha jami hisoblash (har bir kun uchun barcha bog'chalar bo'yicha)
+        $columnTotals = [];
+        foreach ($selectedDays as $day) {
+            $columnTotals[$day->id] = 0;
+            foreach ($attendanceData as $regionData) {
+                if (isset($regionData['total_row']['days'][$day->id])) {
+                    $columnTotals[$day->id] += $regionData['total_row']['days'][$day->id];
+                }
+            }
+        }
+        
+        return response()->json([
+            'success' => true,
+            'data' => $attendanceData,
+            'days' => $selectedDays,
+            'column_totals' => $columnTotals
+        ]);
+    }
+    
+    // PDF ga yuklab olish
+    public function downloadBolalarQatnoviPDF(Request $request)
+    {
+        $startDate = $request->input('start_date');
+        $endDate = $request->input('end_date');
+        $regionId = $request->input('region_id');
+        
+        // Kunlarni olish
+        $selectedDays = Day::where('days.id', '>=', $startDate)
+            ->where('days.id', '<=', $endDate)
+            ->join('months', 'months.id', '=', 'days.month_id')
+            ->join('years', 'years.id', '=', 'days.year_id')
+            ->orderBy('days.id', 'ASC')
+            ->get(['days.id', 'days.day_number', 'months.month_name', 'years.year_name']);
+        
+        // Bog'chalarni tuman bo'yicha guruhlash
+        $kindgardens = Kindgarden::where('hide', 1)
+            ->with('region')
+            ->when($regionId, function($query) use ($regionId) {
+                return $query->where('region_id', $regionId);
+            })
+            ->orderBy('region_id')
+            ->orderBy('number_of_org')
+            ->get();
+        
+        // Har bir tuman uchun ma'lumotlarni tayyorlash
+        $regions = Region::all();
+        $attendanceData = [];
+        
+        foreach ($regions as $region) {
+            $regionKindgardens = $kindgardens->where('region_id', $region->id);
+            
+            if ($regionKindgardens->count() > 0) {
+                $attendanceData[$region->id] = [
+                    'region_name' => $region->region_name,
+                    'kindgardens' => []
+                ];
+                
+                foreach ($regionKindgardens as $kindgarden) {
+                    $kindgardenData = [
+                        'id' => $kindgarden->id,
+                        'name' => $kindgarden->kingar_name,
+                        'number_of_org' => $kindgarden->number_of_org,
+                        'days' => []
+                    ];
+                    
+                    // Har bir kun uchun bolalar sonini olish
+                    foreach ($selectedDays as $day) {
+                        $childrenCount = Number_children::where('day_id', $day->id)
+                            ->where('kingar_name_id', $kindgarden->id)
+                            ->sum('kingar_children_number');
+                        
+                        $kindgardenData['days'][$day->id] = [
+                            'day_number' => $day->day_number,
+                            'month_name' => $day->month_name,
+                            'year_name' => $day->year_name,
+                            'children_count' => $childrenCount
+                        ];
+                    }
+                    
+                    $attendanceData[$region->id]['kindgardens'][] = $kindgardenData;
+                }
+            }
+        }
+        
+        $dompdf = new Dompdf('UTF-8');
+        $html = mb_convert_encoding(view('technolog.bolalar_qatnovi_pdf', compact('attendanceData', 'selectedDays')), 'HTML-ENTITIES', 'UTF-8');
+        $dompdf->loadHtml($html);
+        $dompdf->setPaper('A4', 'landscape');
+        $dompdf->render();
+        
+        $regionName = $regionId ? Region::find($regionId)->region_name : 'Barcha_tumanlar';
+        $startDay = Day::with('month')->find($startDate);
+        $endDay = Day::with('month')->find($endDate);
+        
+        if ($startDay && $endDay && $startDay->month && $endDay->month) {
+            $filename = "Bolalar_qatnovi_{$regionName}_{$startDay->day_number}.{$startDay->month->month_name}-{$endDay->day_number}.{$endDay->month->month_name}.pdf";
+        } else {
+            $filename = "Bolalar_qatnovi_{$regionName}_" . date('Y-m-d') . ".pdf";
+        }
+        
+        $dompdf->stream($filename, ['Attachment' => 1]);
+    }
+    
+    // Excel ga yuklab olish
+    public function downloadBolalarQatnoviExcel(Request $request)
+    {
+        $startDate = $request->input('start_date');
+        $endDate = $request->input('end_date');
+        $regionId = $request->input('region_id');
+        
+        // Kunlarni olish
+        $selectedDays = Day::where('days.id', '>=', $startDate)
+            ->where('days.id', '<=', $endDate)
+            ->join('months', 'months.id', '=', 'days.month_id')
+            ->join('years', 'years.id', '=', 'days.year_id')
+            ->orderBy('days.id', 'ASC')
+            ->get(['days.id', 'days.day_number', 'months.month_name', 'years.year_name']);
+        
+        // Bog'chalarni tuman bo'yicha guruhlash
+        $kindgardens = Kindgarden::where('hide', 1)
+            ->with('region')
+            ->when($regionId, function($query) use ($regionId) {
+                return $query->where('region_id', $regionId);
+            })
+            ->orderBy('region_id')
+            ->orderBy('number_of_org')
+            ->get();
+        
+        // Har bir tuman uchun ma'lumotlarni tayyorlash
+        $regions = Region::all();
+        $attendanceData = [];
+        
+        foreach ($regions as $region) {
+            $regionKindgardens = $kindgardens->where('region_id', $region->id);
+            
+            if ($regionKindgardens->count() > 0) {
+                $attendanceData[$region->id] = [
+                    'region_name' => $region->region_name,
+                    'kindgardens' => []
+                ];
+                
+                foreach ($regionKindgardens as $kindgarden) {
+                    $kindgardenData = [
+                        'id' => $kindgarden->id,
+                        'name' => $kindgarden->kingar_name,
+                        'number_of_org' => $kindgarden->number_of_org,
+                        'days' => []
+                    ];
+                    
+                    // Har bir kun uchun bolalar sonini olish
+                    foreach ($selectedDays as $day) {
+                        $childrenCount = Number_children::where('day_id', $day->id)
+                            ->where('kingar_name_id', $kindgarden->id)
+                            ->sum('kingar_children_number');
+                        
+                        $kindgardenData['days'][$day->id] = [
+                            'day_number' => $day->day_number,
+                            'month_name' => $day->month_name,
+                            'year_name' => $day->year_name,
+                            'children_count' => $childrenCount
+                        ];
+                    }
+                    
+                    $attendanceData[$region->id]['kindgardens'][] = $kindgardenData;
+                }
+            }
+        }
+        
+        $regionName = $regionId ? Region::find($regionId)->region_name : 'Barcha_tumanlar';
+        $startDay = Day::with('month')->find($startDate);
+        $endDay = Day::with('month')->find($endDate);
+        
+        if ($startDay && $endDay && $startDay->month && $endDay->month) {
+            $filename = "Bolalar_qatnovi_{$regionName}_{$startDay->day_number}.{$startDay->month->month_name}-{$endDay->day_number}.{$endDay->month->month_name}.xlsx";
+        } else {
+            $filename = "Bolalar_qatnovi_{$regionName}_" . date('Y-m-d') . ".xlsx";
+        }
+        
+        return response()->json([
+            'success' => true,
+            'data' => $attendanceData,
+            'days' => $selectedDays,
+            'filename' => $filename
+        ]);
+    }
+    
     // Muassasalar (Bog'chalar) boshqaruvi
     public function muassasalar(Request $request)
     {
@@ -3058,6 +3341,7 @@ class TechnologController extends Controller
             'region_id' => $request->region_id,
             'kingar_name' => $request->kingar_name,
             'short_name' => $request->short_name,
+            'number_of_org' => $request->number_of_org,
             'kingar_password' => $request->kingar_password ?? "123456",
             'telegram_user_id' => 0,
             'worker_count' => $request->worker_count,
@@ -3092,6 +3376,7 @@ class TechnologController extends Controller
             'region_id' => $request->region_id,
             'kingar_name' => $request->kingar_name,
             'short_name' => $request->short_name,
+            'number_of_org' => $request->number_of_org,
             'kingar_password' => $request->kingar_password ?? "123456",
             'worker_count' => $request->worker_count,
             'worker_age_id' => $request->worker_age_id ?? 1,

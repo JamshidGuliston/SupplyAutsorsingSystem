@@ -59,7 +59,7 @@ class TestController extends Controller
 		->join('kindgardens', 'nextday_nambers.kingar_name_id', '=', 'kindgardens.id')
         ->join('age_ranges', 'nextday_nambers.king_age_name_id', '=', 'age_ranges.id')->get();
 		$taomnoma = Titlemenu::where('id', $menu[0]['kingar_menu_id'])->first();
-	
+		
 		$products = Product::where('hide', 1)
 			->orderBy('sort', 'ASC')->get();
 		

@@ -69,6 +69,13 @@
             </div>
 
             <div class="form-group row">
+                <label for="number_of_org" class="col-sm-3 col-form-label"><strong>Tashkilot № *</strong></label>
+                <div class="col-sm-9">
+                    <input type="text" name="number_of_org" class="form-control" id="number_of_org" required placeholder="Tashkilot raqamini kiriting">
+                </div>
+            </div>
+
+            <div class="form-group row">
                 <label for="region_id" class="col-sm-3 col-form-label"><strong>Tuman *</strong></label>
                 <div class="col-sm-9">
                     <select class="form-select" name="region_id" required>
