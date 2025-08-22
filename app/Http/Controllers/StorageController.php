@@ -853,7 +853,7 @@ class StorageController extends Controller
             }
             
             // agar maxsulotning category_name_id 0 bo'lsa va kunlar soni o'tgan bo'lsa, maxsulotni hisobga olmaslik uchun
-            if(isset($category_quantity[$product->category_name_id]['total']) and $category_quantity[$product->category_name_id]['total'] > $tr){
+            if(isset($category_quantity[$product->category_name_id]['total']) and $category_quantity[$product->category_name_id]['total'] < $tr){
                 continue;
             }
             // joriy maxsulotning gramlarini qo'shib borish
