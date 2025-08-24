@@ -10,7 +10,7 @@
 	@page { margin: 0.1in 0.1in 0in 0.1in; }
 	body{
 		font-family: DejaVu Sans;
-		font-size:8px;
+		font-size:7px;
 		width: 100%;
 	}
 	table{
