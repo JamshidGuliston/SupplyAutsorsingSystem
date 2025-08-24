@@ -58,14 +58,14 @@
 						<thead>
 							<tr>
 								<th style="width: 5%;">ТР</th>
-								<th style="width: 25%;">Махсулотлар</th>
+								<th style="width: 20%;">Махсулотлар</th>
 								<th style="width: 7%;">шт</th>
 								@foreach($kindergartens as $kID => $kindergarten)
 									@if($kindergarten['region_id'] == $key)
-										<th style="width: 5%;">{{ $kindergarten['number_of_org'] }}</th>
+										<th style="width: 9%;">{{ $kindergarten['number_of_org'] }}</th>
 									@endif
 								@endforeach
-								<th style="width: 15%;">Жами</th>
+								<th style="width: 10%;">Жами</th>
 							</tr>
 						</thead>
 						<tbody>
@@ -77,7 +77,7 @@
 							@foreach($productData as $row)
 								@php $summ = 0; @endphp
 								<tr>
-									<th>{{ $tr++ }}</th>
+									<td>{{ $tr++ }}</td>
 									<td><b>{{ mb_substr($row['name'], 0, 15) }}</b></td>
 									<td>{{ $row['unit'] }}</td>
 
@@ -101,10 +101,10 @@
 							@endforeach
 
 							<tr>
-								<td colspan="3">Jami</td>
+								<td colspan="3"><b>Jami</b></td>
 								@foreach($kindergartens as $kID => $kindergarten)
 									@if($kindergarten['region_id'] == $key)
-										<td>{{ number_format($counts[$kID] ?? 0, 1) }}</td>
+										<td><b>{{ number_format($counts[$kID] ?? 0, 1) }}</b></td>
 									@endif
 								@endforeach
 								<td></td>
