@@ -73,6 +73,8 @@ Route::group(['prefix' => 'storage', 'middleware' => ['isStorage', 'auth']], fun
     Route::get('increasedreport', [StorageController::class, 'increasedreport'])->name('storage.increasedreport');
 
     Route::get('addmultisklad', [StorageController::class, 'addmultisklad'])->name('storage.addmultisklad');
+    Route::get('get-order-title-details/{orderTitle}', [StorageController::class, 'getOrderTitleDetails'])->name('storage.getOrderTitleDetails');
+    Route::get('generate-order-title-pdf/{orderTitle}', [StorageController::class, 'generateOrderTitlePDF'])->name('storage.generateOrderTitlePDF');
     Route::post('newordersklad', [StorageController::class, 'newordersklad'])->name('storage.newordersklad');
     Route::get('onedaymulti/{id}', [StorageController::class, 'onedaymulti'])->name('storage.onedaymulti');
     Route::get('orderskladpdf/{id}', [TechnologController::class, 'orderskladpdf'])->name('technolog.orderskladpdf');
@@ -84,6 +86,7 @@ Route::group(['prefix' => 'storage', 'middleware' => ['isStorage', 'auth']], fun
     Route::get('getworkerfoods', [StorageController::class, 'getworkerfoods'])->name('storage.getworkerfoods');
     Route::get('get-category-products', [StorageController::class, 'getCategoryProducts'])->name('storage.getCategoryProducts');
     Route::get('onedaysvod/{id}', [StorageController::class, 'ordersvodpdf'])->name('storage.onedaysvod');
+    Route::get('ordersvodAllRegions/{id}', [StorageController::class, 'ordersvodAllRegions'])->name('storage.ordersvodAllRegions');
     Route::get('ingroup/{id}', [StorageController::class, 'ingroup'])->name('storage.ingroup');
     Route::get('deleteproduct', [StorageController::class, 'deleteproduct'])->name('storage.deleteproduct');
     Route::get('takecategories', [StorageController::class, 'takecategories'])->name('storage.takecategories');

@@ -9,6 +9,7 @@ use App\Models\debts;
 use App\Models\Kindgarden;
 use App\Models\Menu_composition;
 use App\Models\minus_multi_storage;
+use App\Models\Region;
 use App\Models\Month;
 use App\Models\Nextday_namber;
 use App\Models\Number_children;
@@ -252,6 +253,164 @@ class StorageController extends Controller
         $days = $this->days();
         // dd($menus);
         return view('storage.addmultisklad', compact('orders','gardens', 'menus', 'days', 'product_categories', 'products'));
+    }
+    
+    // order_title bo'yicha guruhlangan ma'lumotlarni olish
+    public function getOrderTitleDetails($orderTitle){
+        $orders = order_product::where('order_title', $orderTitle)
+            ->with(['kinggarden.region', 'orderProductStructures.product.size'])
+            ->get();
+            
+        if($orders->isEmpty()) {
+            return response()->json(['error' => 'Ma\'lumot topilmadi'], 404);
+        }
+        
+        // Barcha maxsulotlarni olish
+        $allProducts = [];
+        $regions = [];
+        
+        foreach($orders as $order) {
+            $region = $order->kinggarden->region;
+            $regions[$region->id] = $region->region_name;
+            
+            foreach($order->orderProductStructures as $structure) {
+                $productId = $structure->product_name_id;
+                $product = $structure->product;
+                
+                if(!isset($allProducts[$productId])) {
+                    $allProducts[$productId] = [
+                        'id' => $productId,
+                        'name' => $product->product_name,
+                        'unit' => $product->size->size_name,
+                        'sort' => $product->sort ?? 0
+                    ];
+                }
+            }
+        }
+        
+        // Maxsulotlarni sort bo'yicha saralash
+        usort($allProducts, function($a, $b) {
+            return $a['sort'] - $b['sort'];
+        });
+        
+        // Har bir maxsulot uchun har bir bog'cha bo'yicha miqdorni olish
+        $productData = [];
+        foreach($allProducts as $product) {
+            $productData[$product['id']] = [
+                'name' => $product['name'],
+                'unit' => $product['unit'],
+                'kindergartens' => [],
+                'total' => 0
+            ];
+            
+            foreach($orders as $order) {
+                $structure = $order->orderProductStructures
+                    ->where('product_name_id', $product['id'])
+                    ->first();
+                
+                $weight = $structure ? $structure->product_weight : 0;
+                $productData[$product['id']]['kindergartens'][$order->kingar_name_id] = $weight;
+                $productData[$product['id']]['total'] += $weight;
+            }
+        }
+        
+        return response()->json([
+            'order_title' => $orderTitle,
+            'regions' => $regions,
+            'orders' => $orders,
+            'products' => $productData
+        ]);
+    }
+    
+    // PDF generatsiya qilish
+    public function generateOrderTitlePDF($orderTitle){
+        $orders = order_product::where('order_title', $orderTitle)
+            ->join('kindgardens', 'kindgardens.id', '=', 'order_products.kingar_name_id')
+            ->join('regions', 'regions.id', '=', 'kindgardens.region_id')
+            ->get(['order_products.id', 'regions.id as region_id', 'regions.region_name', 'regions.short_name', 'kindgardens.kingar_name', 'kindgardens.number_of_org', 'kindgardens.id as kingar_name_id']);
+        
+        if($orders->isEmpty()){
+            abort(404, 'Ma\'lumot topilmadi');
+        }
+        
+        // Barcha maxsulotlarni olish
+        $allProducts = [];
+        $regions = [];
+        $kindergartens = [];
+        
+        foreach($orders as $order) {
+            $regions[$order->region_id] = $order->region_name;
+            
+            $kindergartens[$order->kingar_name_id] = [
+                'id' => $order->kingar_name_id,
+                'name' => $order->kingar_name,
+                'number_of_org' => $order->number_of_org,
+                'region_id' => $order->region_id
+            ];
+            $orderProductStructures = order_product_structure::where('order_product_name_id', $order->id)
+                ->join('products', 'products.id', '=', 'order_product_structures.product_name_id')
+                ->join('sizes', 'sizes.id', '=', 'products.size_name_id')
+                ->get(['order_product_structures.id', 'order_product_structures.product_name_id', 'order_product_structures.product_weight', 'products.product_name', 'sizes.size_name', 'products.div', 'order_product_structures.actual_weight', 'products.sort']);
+            // dd($orderProductStructures);
+            foreach($orderProductStructures as $structure) {
+                $productId = $structure->product_name_id;
+                
+                if(!isset($allProducts[$productId])) {
+                    $allProducts[$productId] = [
+                        'id' => $productId,
+                        'name' => $structure->product_name,
+                        'unit' => $structure->size_name,
+                        'sort' => $structure->sort ?? 0
+                    ];
+                }
+            }
+        }
+        
+        // Maxsulotlarni sort bo'yicha saralash
+        usort($allProducts, function($a, $b) {
+            return $a['sort'] - $b['sort'];
+        });
+        
+        // Bog'chalarni region bo'yicha saralash
+        usort($kindergartens, function($a, $b) use ($regions) {
+            if($a['region_id'] != $b['region_id']) {
+                return $a['region_id'] - $b['region_id'];
+            }
+            return strcmp($a['number_of_org'], $b['number_of_org']);
+        });
+        
+        // Har bir maxsulot uchun har bir bog'cha bo'yicha miqdorni olish
+        $productData = [];
+        foreach($allProducts as $product) {
+            $productData[$product['id']] = [
+                'name' => $product['name'],
+                'unit' => $product['unit'],
+                'kindergartens' => [],
+                'total' => 0
+            ];
+            
+            foreach($kindergartens as $kindergarten) {
+                $order = $orders->where('kingar_name_id', $kindergarten['id'])->first();
+                $structure = null;
+                if($order) {
+                    $structure = order_product_structure::where('order_product_name_id', $order->id)
+                        ->where('product_name_id', $product['id'])
+                        ->first();
+                }
+                
+                $weight = $structure ? $structure->product_weight : 0;
+                $productData[$product['id']]['kindergartens'][$kindergarten['id']] = $weight;
+                $productData[$product['id']]['total'] += $weight;
+            }
+        }
+        // dd($regions, $kindergartens, $productData);
+        
+        $dompdf = new Dompdf('UTF-8');
+		$html = mb_convert_encoding(view('pdffile.storage.orderTitlePdf', compact('orderTitle', 'regions', 'kindergartens', 'productData')), 'HTML-ENTITIES', 'UTF-8');
+		$dompdf->loadHtml($html);
+		$dompdf->setPaper('A4', 'landscape');
+		$dompdf->render();
+		$dompdf->stream('demo.pdf', ['Attachment' => 0]);
     }
     
     public function getCategoryProducts(Request $request){
@@ -1086,7 +1245,7 @@ class StorageController extends Controller
     }
     // svod sklad
     public function ordersvodpdf(Request $request, $id){
-        $document = order_product::where('order_products.day_id', $id)->get();
+        $document = order_product::where('order_products.order_title', $id)->get();
         $items = [];
         foreach($document as $row){
             $item = order_product_structure::where('order_product_name_id', $row->id)
@@ -1112,6 +1271,44 @@ class StorageController extends Controller
 
         $dompdf = new Dompdf('UTF-8');
 		$html = mb_convert_encoding(view('pdffile.storage.ordersvodpdf', compact('items', 'document')), 'HTML-ENTITIES', 'UTF-8');
+		$dompdf->loadHtml($html);
+		$dompdf->setPaper('A4');
+		$dompdf->render();
+		$dompdf->stream('demo.pdf', ['Attachment' => 0]);
+    }
+
+    public function ordersvodAllRegions(Request $request, $id){
+        $document = order_product::where('order_products.order_title', $id)
+            ->join('kindgardens', 'kindgardens.id', '=', 'order_products.kingar_name_id')
+            ->join('regions', 'regions.id', '=', 'kindgardens.region_id')
+            ->get(['order_products.id', 'regions.id as region_id', 'regions.region_name', 'regions.short_name']);
+        $regions = [];
+        $items = [];
+        foreach($document as $row){
+            $item = order_product_structure::where('order_product_name_id', $row->id)
+                ->join('products', 'products.id', '=', 'order_product_structures.product_name_id')
+                ->join('sizes', 'sizes.id', '=', 'products.size_name_id')
+                ->get();
+            foreach($item as $in){
+                if(!isset($items[$in->product_name_id][$row->region_id])){
+                    $items[$in->product_name_id][$row->region_id]['product_weight'] = 0;
+                    $items[$in->product_name_id]['product_name'] = $in->product_name;
+                    $items[$in->product_name_id]['size_name'] = $in->size_name;
+                    $items[$in->product_name_id]['p_sort'] = $in->sort;
+                }
+                $items[$in->product_name_id][$row->region_id]['product_weight'] += $in->product_weight;
+            }  
+            $regions[$row->region_id]['short_name'] = $row->short_name;   
+        }
+
+        usort($items, function ($a, $b){
+            if(isset($a["p_sort"]) and isset($b["p_sort"])){
+                return $a["p_sort"] > $b["p_sort"];
+            }
+        });
+
+        $dompdf = new Dompdf('UTF-8');
+		$html = mb_convert_encoding(view('pdffile.storage.ordersvodAllRegions', compact('items', 'document', 'regions')), 'HTML-ENTITIES', 'UTF-8');
 		$dompdf->loadHtml($html);
 		$dompdf->setPaper('A4');
 		$dompdf->render();

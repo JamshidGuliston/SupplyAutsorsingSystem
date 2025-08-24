@@ -32,4 +32,9 @@ class Product extends Model
     {
         return $this->belongsTo(Product_category::class, 'category_name_id');
     }
+    
+    public function size()
+    {
+        return $this->belongsTo(\App\Models\Size::class, 'size_name_id');
+    }
 }

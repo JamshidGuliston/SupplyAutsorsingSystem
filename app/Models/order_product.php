@@ -32,4 +32,9 @@ class order_product extends Model
     {
         return $this->belongsTo(Day::class, 'day_id');
     }
+    
+    public function kinggarden()
+    {
+        return $this->belongsTo(Kindgarden::class, 'kingar_name_id');
+    }
 }

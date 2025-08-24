@@ -574,7 +574,9 @@
                 <th scope="col">Title</th>
                 <th scope="col">Date</th>
                 <th scope="col">Yaratilgan sana</th>
-                <th style="width: 80px;">Svod</th>
+                <th style="width: 80px;">Umumiy</th>
+                <th style="width: 80px;">Tumanlar</th>
+                <th style="width: 80px;">Bog'chalar</th>
             </tr>
         </thead>
         <tbody>
@@ -587,20 +589,54 @@
                     <tr>
                         <td>{{ $row->id }}</td>
                         <td><a href="/storage/onedaymulti/{{ $row->order_title }}">{{ $row->order_title }}</a></td>
+                        <!-- <td>
+                            <a href="#" class="order-title-link" data-order-title="{{ $row->order_title }}" style="text-decoration: none; color: #007bff;">
+                                {{ $row->order_title }}
+                            </a>
+                        </td> -->
                         <td>{{ $row->day_id }}</td>
                         <td>{{ $row->created_at ? $row->created_at->format('d.m.Y H:i') : '-' }}</td>
                         <td>
-                            <a href="/storage/onedaysvod/{{ $row->day_id }}" class="btn btn-sm btn-warning" target="_blank">
+                            <a href="/storage/onedaysvod/{{ $row->order_title }}" class="btn btn-sm btn-warning" target="_blank">
                                 <i class="fa fa-file-pdf"></i> PDF
                             </a>
                         </td>
-
+                        <td>
+                            <a href="/storage/ordersvodAllRegions/{{ $row->order_title }}" class="btn btn-sm btn-warning" target="_blank">
+                                <i class="fa fa-file-pdf"></i> PDF
+                            </a>
+                        </td>
+                        <td>
+                            <a href="/storage/generate-order-title-pdf/{{ $row->order_title }}" class="btn btn-sm btn-warning" target="_blank">
+                                <i class="fa fa-file-pdf"></i> PDF
+                            </a>
+                        </td>
                     </tr>
                 @endif
             @endforeach
         </tbody>
     </table>
     <a href="/storage/home/0/0">Orqaga</a>
+</div>
+
+<!-- Order Title Details Modal -->
+<div class="modal fade" id="orderTitleModal" tabindex="-1" aria-labelledby="orderTitleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="orderTitleModalLabel">Order Title Details</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div id="orderTitleDetailsContent">
+                    <!-- Content will be loaded here -->
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Yopish</button>
+            </div>
+        </div>
+    </div>
 </div>
 
 @endsection
@@ -971,12 +1007,160 @@
         console.log('Form data:', formData);
     }
     
-    function enable() {
+    	function enable() {
 		document.multiselect('#testSelect1').setIsEnabled(true);
 	}
 
 	function disable() {
 		document.multiselect('#testSelect1').setIsEnabled(false);
+	}
+	
+	// Order title link click event
+	$(document).on('click', '.order-title-link', function(e) {
+		e.preventDefault();
+		var orderTitle = $(this).data('order-title');
+		loadOrderTitleDetails(orderTitle);
+	});
+	
+	function loadOrderTitleDetails(orderTitle) {
+		$.ajax({
+			url: '/storage/get-order-title-details/' + encodeURIComponent(orderTitle),
+			method: 'GET',
+			success: function(response) {
+				displayOrderTitleDetails(response);
+				$('#orderTitleModal').modal('show');
+			},
+			error: function(xhr) {
+				alert('Ma\'lumotlarni yuklashda xatolik yuz berdi');
+			}
+		});
+	}
+	
+	function displayOrderTitleDetails(data) {
+		var html = '<div class="container-fluid">';
+		html += '<h4 class="mb-3">' + data.order_title + '</h4>';
+		
+		// Regions
+		html += '<div class="mb-3">';
+		html += '<h6>Regions:</h6>';
+		html += '<ul>';
+		Object.values(data.regions).forEach(function(region) {
+			html += '<li>' + region + '</li>';
+		});
+		html += '</ul>';
+		html += '</div>';
+		
+		// Products table
+		html += '<div class="table-responsive">';
+		html += '<table class="table table-sm table-bordered">';
+		html += '<thead><tr>';
+		html += '<th>Maxsulot nomi</th>';
+		html += '<th>Birligi</th>';
+		
+		// Bog'cha ustunlari
+		data.orders.forEach(function(order) {
+			html += '<th>' + (order.kinggarden.number_of_org || order.kinggarden.kingar_name) + '</th>';
+		});
+		
+		html += '<th>JAMI</th>';
+		html += '</tr></thead><tbody>';
+		
+		// Maxsulot qatorlari
+		Object.values(data.products).forEach(function(product) {
+			html += '<tr>';
+			html += '<td>' + product.name + '</td>';
+			html += '<td>' + product.unit + '</td>';
+			
+			// Har bir bog'cha uchun miqdor
+			data.orders.forEach(function(order) {
+				var weight = product.kindergartens[order.kingar_name_id] || 0;
+				html += '<td>' + weight + '</td>';
+			});
+			
+			html += '<td><strong>' + product.total + '</strong></td>';
+			html += '</tr>';
+		});
+		
+		html += '</tbody></table>';
+		html += '</div>';
+		
+		html += '</div>';
+		
+		$('#orderTitleDetailsContent').html(html);
+	}
+	
+	// Order title link click event
+	$(document).on('click', '.order-title-link', function(e) {
+		e.preventDefault();
+		var orderTitle = $(this).data('order-title');
+		loadOrderTitleDetails(orderTitle);
+	});
+	
+	function loadOrderTitleDetails(orderTitle) {
+		$.ajax({
+			url: '/storage/get-order-title-details/' + encodeURIComponent(orderTitle),
+			method: 'GET',
+			success: function(response) {
+				displayOrderTitleDetails(response);
+				$('#orderTitleModal').modal('show');
+			},
+			error: function(xhr) {
+				alert('Ma\'lumotlarni yuklashda xatolik yuz berdi');
+			}
+		});
+	}
+	
+	function displayOrderTitleDetails(data) {
+		var html = '<div class="container-fluid">';
+		html += '<h4 class="mb-3">' + data.order_title + '</h4>';
+		
+		// Regions
+		html += '<div class="mb-3">';
+		html += '<h6>Regions:</h6>';
+		html += '<ul>';
+		Object.values(data.regions).forEach(function(region) {
+			html += '<li>' + region + '</li>';
+		});
+		html += '</ul>';
+		html += '</div>';
+		
+		// Products table
+		html += '<div class="table-responsive">';
+		html += '<table class="table table-sm table-bordered">';
+		html += '<thead><tr>';
+		html += '<th>Maxsulot nomi</th>';
+		html += '<th>Birligi</th>';
+		
+		// Bog'cha ustunlari
+		data.orders.forEach(function(order) {
+			html += '<th>' + (order.kinggarden.number_of_org || order.kinggarden.kingar_name) + '</th>';
+		});
+		
+		html += '<th>JAMI</th>';
+		html += '</tr></thead><tbody>';
+		
+		// Maxsulot qatorlari
+		Object.values(data.products).forEach(function(product) {
+			html += '<tr>';
+			html += '<td>' + product.name + '</td>';
+			html += '<td>' + product.unit + '</td>';
+			
+			// Har bir bog'cha uchun miqdor
+			data.orders.forEach(function(order) {
+				var weight = product.kindergartens[order.kingar_name_id] || 0;
+				html += '<td>' + weight + '</td>';
+			});
+			
+			html += '<td><strong>' + product.total + '</strong></td>';
+			html += '</tr>';
+		});
+		
+		html += '</tbody></table>';
+		html += '</div>';
+		
+		html += '</div>';
+		
+		$('#orderTitleDetailsContent').html(html);
 	}
 </script>
 @endsection
