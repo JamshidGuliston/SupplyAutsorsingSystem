@@ -122,7 +122,6 @@
 								@endif
                                 <td><?php printf("%01.1f", $row['kindergartens'][$kID] ?? 0); ?></td>
                                 @php $summ += $row['kindergartens'][$kID] ?? 0; @endphp
-								@endif
 							@endif
                             @endforeach
 							<td><b><?php printf("%01.1f", $summ); ?></b></td>
