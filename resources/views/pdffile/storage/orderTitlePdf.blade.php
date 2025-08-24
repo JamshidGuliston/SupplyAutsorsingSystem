@@ -7,7 +7,7 @@
 <meta http-equiv="X-UA-Compatible" content="ie=edge">
 <title>Title</title>
 <style>
-	@page { margin: 0.1in 0.2in 02in 0.1in; }
+	@page { margin: 0.1in 0.2in 0.2in 0.1in; }
 	body{
 		font-family: DejaVu Sans;
 		font-size:7px;
@@ -20,11 +20,19 @@
 	}
 	thead{
 		border: 0.5px solid black;
+		background-color: #f0f0f0;
 	}
 	td, th{
 		text-align: center;
 		border: 0.5px solid black;
-		padding: 0px;
+		padding: 2px;
+	}
+	/* Qatorlarni navbat bilan ranglash */
+	tbody tr:nth-child(odd) {
+		background-color: #ffffff; /* oq */
+	}
+	tbody tr:nth-child(even) {
+		background-color: #e6f2ff; /* och ko'k */
 	}
 	.vrt-header span{
 		display: inline-block;
@@ -100,11 +108,11 @@
 								</tr>
 							@endforeach
 
-							<tr>
-								<td colspan="3"><b>Jami</b></td>
+							<tr style="background-color: #d9edf7; font-weight: bold;">
+								<td colspan="3">Jami</td>
 								@foreach($kindergartens as $kID => $kindergarten)
 									@if($kindergarten['region_id'] == $key)
-										<td><b>{{ number_format($counts[$kID] ?? 0, 0) }}</b></td>
+										<td>{{ number_format($counts[$kID] ?? 0, 0) }}</td>
 									@endif
 								@endforeach
 								<td></td>
