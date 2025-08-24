@@ -7,7 +7,7 @@
 <meta http-equiv="X-UA-Compatible" content="ie=edge">
 <title>Title</title>
 <style>
-	@page { margin: 0.1in 0.1in 0in 0.1in; }
+	@page { margin: 0.1in 0.2in 02in 0.1in; }
 	body{
 		font-family: DejaVu Sans;
 		font-size:7px;
