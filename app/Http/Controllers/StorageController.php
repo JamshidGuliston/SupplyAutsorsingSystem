@@ -350,7 +350,7 @@ class StorageController extends Controller
             $orderProductStructures = order_product_structure::where('order_product_name_id', $order->id)
                 ->join('products', 'products.id', '=', 'order_product_structures.product_name_id')
                 ->join('sizes', 'sizes.id', '=', 'products.size_name_id')
-                ->get(['order_product_structures.id', 'order_product_structures.product_name_id', 'order_product_structures.product_weight', 'products.product_name', 'sizes.size_name', 'products.div', 'order_product_structures.actual_weight', 'products.sort']);
+                ->get(['order_product_structures.id', 'products.size_name_id', 'order_product_structures.product_name_id', 'order_product_structures.product_weight', 'products.product_name', 'sizes.size_name', 'products.div', 'order_product_structures.actual_weight', 'products.sort']);
             // dd($orderProductStructures);
             foreach($orderProductStructures as $structure) {
                 $productId = $structure->product_name_id;
@@ -360,6 +360,7 @@ class StorageController extends Controller
                         'id' => $productId,
                         'name' => $structure->product_name,
                         'unit' => $structure->size_name,
+                        'unit_id' => $structure->size_name_id,
                         'sort' => $structure->sort ?? 0
                     ];
                 }
@@ -373,8 +374,8 @@ class StorageController extends Controller
         
         // Bog'chalarni region bo'yicha saralash
         usort($kindergartens, function($a, $b) use ($regions) {
-            if($a['region_id'] != $b['region_id']) {
-                return $a['region_id'] - $b['region_id'];
+            if($a['number_of_org'] != $b['number_of_org']) {
+                return $a['number_of_org'] - $b['number_of_org'];
             }
             return strcmp($a['number_of_org'], $b['number_of_org']);
         });
@@ -385,6 +386,7 @@ class StorageController extends Controller
             $productData[$product['id']] = [
                 'name' => $product['name'],
                 'unit' => $product['unit'],
+                'unit_id' => $product['unit_id'],
                 'kindergartens' => [],
                 'total' => 0
             ];

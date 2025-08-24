@@ -115,13 +115,26 @@
 							<td>{{ $row['unit'] }}</td>
                             @foreach($kindergartens as $kID => $kindergarten)
 							@if($kindergarten['region_id'] == $key)
+								@if(isset($counts[$kID]) && $row['unit_id'] != 3)
+									@php $counts[$kID] += $row['kindergartens'][$kID] ?? 0; @endphp
+								@elseif($row['unit_id'] != 3)
+									@php $counts[$kID] = $row['kindergartens'][$kID] ?? 0; @endphp
+								@endif
                                 <td><?php printf("%01.1f", $row['kindergartens'][$kID] ?? 0); ?></td>
                                 @php $summ += $row['kindergartens'][$kID] ?? 0; @endphp
+								@endif
 							@endif
                             @endforeach
 							<td><b><?php printf("%01.1f", $summ); ?></b></td>
                         </tr>
                         @endforeach
+						<tr>
+							<td colspan="3">Jami</td>
+							@foreach($kindergartens as $kID => $kindergarten)
+								@if($kindergarten['region_id'] == $key)
+								<td><?php printf("%01.1f", $counts[$kID] ?? 0); ?></td>
+							@endif
+						</tr>
                     </tbody>
                 </table>
             </div>
