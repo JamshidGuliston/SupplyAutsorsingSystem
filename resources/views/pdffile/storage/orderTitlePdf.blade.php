@@ -83,7 +83,7 @@
             <div class="col-md-6">
                 <div class="table" id="table_with_data">
 					<div class="col-md-12">
-					<h2 style="text-align: center; background-color: #f0f0f0; padding: 1px; border-radius: 5px;"> {{ $region }}</h2>
+					<h2 style="text-align: center; background-color: #f0f0f0; padding: 1px; border-radius: 5px;"> {{ $region }} {{ $orderTitle }}</h2>
 					</div>
                 </div>
                 <table style="width:100%; table-layout: fixed;">
