@@ -96,7 +96,7 @@
 										@endif
 									@endforeach
 
-									<td><b>{{ number_format($summ, 1) }}</b></td>
+									<td><b>{{ number_format($summ, 0) }}</b></td>
 								</tr>
 							@endforeach
 
@@ -104,7 +104,7 @@
 								<td colspan="3"><b>Jami</b></td>
 								@foreach($kindergartens as $kID => $kindergarten)
 									@if($kindergarten['region_id'] == $key)
-										<td><b>{{ number_format($counts[$kID] ?? 0, 1) }}</b></td>
+										<td><b>{{ number_format($counts[$kID] ?? 0, 0) }}</b></td>
 									@endif
 								@endforeach
 								<td></td>
