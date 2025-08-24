@@ -117,8 +117,10 @@
 							@if($kindergarten['region_id'] == $key)
 								@if(isset($counts[$kID]) && $row['unit_id'] != 3)
 									@php $counts[$kID] += $row['kindergartens'][$kID] ?? 0; @endphp
-								@elseif($row['unit_id'] != 3)
-									@php $counts[$kID] = $row['kindergartens'][$kID] ?? 0; @endphp
+								@else
+									@if($row['unit_id'] != 3)
+										@php $counts[$kID] = $row['kindergartens'][$kID] ?? 0; @endphp
+									@endif
 								@endif
                                 <td><?php printf("%01.1f", $row['kindergartens'][$kID] ?? 0); ?></td>
                                 @php $summ += $row['kindergartens'][$kID] ?? 0; @endphp
@@ -143,5 +145,5 @@
         </div>
     </div>
 	@endforeach
-</bod>
+</body>
 <html>
