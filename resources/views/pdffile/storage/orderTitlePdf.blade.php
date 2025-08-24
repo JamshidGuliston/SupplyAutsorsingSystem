@@ -91,16 +91,16 @@
 
 									@foreach($kindergartens as $kID => $kindergarten)
 										@if($kindergarten['region_id'] == $key)
-											@if(isset($counts[$kID]) && ($row['unit_id'] ?? null) != 3)
-												@php $counts[$kID] += $row['kindergartens'][$kID] ?? 0; @endphp
+											@if(isset($counts[$kindergarten['id']]) && ($row['unit_id'] ?? null) != 3)
+												@php $counts[$kindergarten['id']] += $row['kindergartens'][$kindergarten['id']] ?? 0; @endphp
 											@else
 												@if(($row['unit_id'] ?? null) != 3)
-													@php $counts[$kID] = $row['kindergartens'][$kID] ?? 0; @endphp
+													@php $counts[$kindergarten['id']] = $row['kindergartens'][$kindergarten['id']] ?? 0; @endphp
 												@endif
 											@endif
 
-											<td>{{ number_format($row['kindergartens'][$kID] ?? 0, 1) }}</td>
-											@php $summ += $row['kindergartens'][$kID] ?? 0; @endphp
+											<td>{{ number_format($row['kindergartens'][$kindergarten['id']] ?? 0, 1) }}</td>
+											@php $summ += $row['kindergartens'][$kindergarten['id']] ?? 0; @endphp
 										@endif
 									@endforeach
 
@@ -112,7 +112,7 @@
 								<td colspan="3">Jami</td>
 								@foreach($kindergartens as $kID => $kindergarten)
 									@if($kindergarten['region_id'] == $key)
-										<td>{{ number_format($counts[$kID] ?? 0, 0) }}</td>
+										<td>{{ number_format($counts[$kindergarten['id']] ?? 0, 0) }}</td>
 									@endif
 								@endforeach
 								<td></td>
