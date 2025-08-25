@@ -13,7 +13,7 @@
 	 @page { margin: 0.2in 0.8in 0in 0.3in; }
 	body{
 		font-family: DejaVu Sans;
-		font-size:12px;
+		font-size:14px;
 		/* background-image: url(images/bg.jpg); */
 		background-position: top left;
 		background-repeat: no-repeat;
@@ -23,11 +23,11 @@
 	}
 	table{
 		border-collapse: collapse;
-		border: 2px solid black;
+		border: 1px solid black;
 		width: 100%;	
 	}
 	thead{
-		border: 2px solid black;
+		border: 1px solid black;
 	}
 	td {
 		text-align: center;
@@ -40,7 +40,7 @@
 		padding: 0px;
 	}
 	td{
-		border-right: 1px dashed black;
+		border-right: 1px solid black;
 		border-bottom: 1px solid black;
 		padding: 0px;
 	}
@@ -90,7 +90,6 @@
 						Кимга: <b> {{ $document->kingar_name }}</b>
 					</div>
                 </div>
-                <hr>
                 <table style="width:100%; table-layout: fixed;">
                     <thead>
                         <tr style="width: 15%;">
