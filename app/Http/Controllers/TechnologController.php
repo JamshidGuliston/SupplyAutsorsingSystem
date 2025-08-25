@@ -1989,6 +1989,7 @@ class TechnologController extends Controller
         $dompdf = new Dompdf('UTF-8');
         if(env('ISECONOMY') == 'true'){
 	        $html = mb_convert_encoding(view('pdffile.technolog.orderskladpdf', compact('items', 'document')), 'HTML-ENTITIES', 'UTF-8');
+        }
         else{
             $html = mb_convert_encoding(view('pdffile.storage.orderTitleKid', compact('items', 'document')), 'HTML-ENTITIES', 'UTF-8');
         }
