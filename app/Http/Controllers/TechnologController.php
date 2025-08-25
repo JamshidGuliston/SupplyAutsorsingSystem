@@ -1987,7 +1987,7 @@ class TechnologController extends Controller
             ->get();
         // dd($items);
         $dompdf = new Dompdf('UTF-8');
-        if(env('ISECONOMY') == 'true'){
+        if(env('ISECONOMY')){
 	        $html = mb_convert_encoding(view('pdffile.technolog.orderskladpdf', compact('items', 'document')), 'HTML-ENTITIES', 'UTF-8');
         }
         else{

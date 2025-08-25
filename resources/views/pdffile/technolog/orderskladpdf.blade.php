@@ -97,7 +97,6 @@
                             <th scope="col" style="width: 35%;">Maxsulotlar</th>
                             <th scope="col" style="width: 15%;">O'lcham</th>
                             <th scope="col" style="width: 15%;">Miqdori</th>
-                            <th scope="col" style="width: 10%;">Narx</th>
                             <th scope="col" style="width: 10%;">...</th>
                         </tr>
                     </thead>
@@ -113,7 +112,6 @@
                             <td style="text-align:  left; padding-left: 2px">{{ $row->product_name }}</td>
 							<td>{{ $row->size_name }}</td>
 							<td><?php printf("%01.2f", $row->product_weight); ?></td>
-							<td></td>
 							<td></td>
                         </tr>
                         @endforeach
