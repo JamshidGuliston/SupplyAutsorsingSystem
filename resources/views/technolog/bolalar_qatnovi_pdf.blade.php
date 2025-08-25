@@ -127,17 +127,38 @@
                 </thead>
                 <tbody>
                     @foreach($region['kindgardens'] as $kindgarden)
-                        <tr>
-                            <td class="kindgarden-name">{{ $kindgarden['name'] }}</td>
-                            <td class="org-number">{{ $kindgarden['number_of_org'] ?? '-' }}</td>
+                        @foreach($kindgarden['age_groups'] as $ageGroup)
+                            <tr>
+                                <td class="kindgarden-name">{{ $kindgarden['name'] }} - {{ $ageGroup['age_name'] }}</td>
+                                <td class="org-number">{{ $kindgarden['number_of_org'] ?? '-' }}</td>
+                                @foreach($selectedDays as $day)
+                                    @php
+                                        $dayData = $ageGroup['days'][$day->id] ?? null;
+                                        $childrenCount = $dayData ? $dayData['children_count'] : 0;
+                                    @endphp
+                                    <td class="children-count">{{ $childrenCount }}</td>
+                                @endforeach
+                                <td class="children-count" style="background-color: #f8f9fa; font-weight: bold; color: #000;">{{ $ageGroup['total'] ?? 0 }}</td>
+                            </tr>
+                        @endforeach
+                        
+                        <!-- Bog'cha bo'yicha jami qatorini qo'shish -->
+                        <tr style="background-color: #e3f2fd; font-weight: bold;">
+                            <td class="kindgarden-name">{{ $kindgarden['name'] }} - JAMI</td>
+                            <td class="org-number" style="background-color: #e3f2fd;"></td>
                             @foreach($selectedDays as $day)
                                 @php
-                                    $dayData = $kindgarden['days'][$day->id] ?? null;
-                                    $childrenCount = $dayData ? $dayData['children_count'] : 0;
+                                    $kindgardenDayTotal = 0;
+                                    foreach($kindgarden['age_groups'] as $ageGroup) {
+                                        $dayData = $ageGroup['days'][$day->id] ?? null;
+                                        if ($dayData) {
+                                            $kindgardenDayTotal += $dayData['children_count'];
+                                        }
+                                    }
                                 @endphp
-                                <td class="children-count">{{ $childrenCount }}</td>
+                                <td class="children-count" style="background-color: #e3f2fd; color: #000; font-weight: bold;">{{ $kindgardenDayTotal }}</td>
                             @endforeach
-                            <td class="children-count" style="background-color: #f8f9fa; font-weight: bold; color: #000;">{{ $kindgarden['total'] ?? 0 }}</td>
+                            <td class="children-count" style="background-color: #e3f2fd; color: #000; font-weight: bold;">{{ $kindgarden['total'] ?? 0 }}</td>
                         </tr>
                     @endforeach
                     

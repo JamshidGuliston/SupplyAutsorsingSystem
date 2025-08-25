@@ -13,13 +13,13 @@
 	 @page { margin: 0.2in 0.8in 0in 0.3in; }
 	body{
 		font-family: DejaVu Sans;
-		font-size:11px;
+		font-size:12px;
 		/* background-image: url(images/bg.jpg); */
 		background-position: top left;
 		background-repeat: no-repeat;
 		background-size: 100%;
 		/* padding: 300px 100px 10px 100px; */
-		width: 45%;
+		width: 100%;
 	}
 	table{
 		border-collapse: collapse;
@@ -57,7 +57,7 @@
 	.column {
 		float: left;
 		text-align: center;
-		width: 50%;
+		width: 33%;
 	}
 
 	/* Clear floats after the columns */
@@ -79,7 +79,7 @@
             <div class="col-md-6">
                 <div class="table" id="table_with_data">
 					<div class="col-md-6">
-						<a href="#">
+                    <a href="#">
 							<i class="fas fa-store-alt" style="color: dodgerblue; font-size: 18px;"></i>
 						</a>
 						<center>
@@ -90,14 +90,15 @@
 						Кимга: <b> {{ $document->kingar_name }}</b>
 					</div>
                 </div>
+                <hr>
                 <table style="width:100%; table-layout: fixed;">
                     <thead>
                         <tr style="width: 15%;">
-                            <th scope="col" style="width: 6%;">TR</th>
-                            <th scope="col" style="width: 35%;">Maxsulotlar</th>
-                            <th scope="col" style="width: 15%;">O'lcham</th>
-                            <th scope="col" style="width: 15%;">Miqdori</th>
-                            <th scope="col" style="width: 10%;">Narx</th>
+                            <!-- keill o'zbek tilida bo'lsin  hammasi-->
+                            <th scope="col" style="width: 6%;">ТР</th>
+                            <th scope="col" style="width: 30%;">Маҳсулотлар</th>
+                            <th scope="col" style="width: 15%;">Бирлик</th>
+                            <th scope="col" style="width: 15%;">Миқдори</th>
                             <th scope="col" style="width: 10%;">...</th>
                         </tr>
                     </thead>
@@ -114,22 +115,18 @@
 							<td>{{ $row->size_name }}</td>
 							<td><?php printf("%01.2f", $row->product_weight); ?></td>
 							<td></td>
-							<td></td>
                         </tr>
                         @endforeach
                     </tbody>
                 </table>
             </div>
             <div class="row" style="margin-top: 15px;">
-				<div class="column">
+                <div class="column">
 				@php
-					$qrImage = base64_encode(file_get_contents(public_path('images/qrmanzil.jpg')));
+					$qrImage = base64_encode(file_get_contents(public_path('images/nakladnoy.jpg')));
 				@endphp
 				<img src="data:image/jpeg;base64,{{ $qrImage }}" 
-					style="width:120; position:absolute; left:10px;">
-				</div>
-				<div class="column">
-					<p style="text-align: right;">Қабул қилувчи: __________________;</p>
+					style="width:100%; position:absolute; left:10px;">
 				</div>
 			</div>
         </div>

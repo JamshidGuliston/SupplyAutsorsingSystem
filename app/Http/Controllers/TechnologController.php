@@ -1987,7 +1987,11 @@ class TechnologController extends Controller
             ->get();
         // dd($items);
         $dompdf = new Dompdf('UTF-8');
-		$html = mb_convert_encoding(view('pdffile.technolog.orderskladpdf', compact('items', 'document')), 'HTML-ENTITIES', 'UTF-8');
+        if(env('ISECONOMY') == 'true'){
+	        $html = mb_convert_encoding(view('pdffile.technolog.orderskladpdf', compact('items', 'document')), 'HTML-ENTITIES', 'UTF-8');
+        else{
+            $html = mb_convert_encoding(view('pdffile.storage.orderTitleKid', compact('items', 'document')), 'HTML-ENTITIES', 'UTF-8');
+        }
 		$dompdf->loadHtml($html);
 		$dompdf->setPaper('A4', 'portrait');
 		$dompdf->render();
@@ -3068,6 +3072,9 @@ class TechnologController extends Controller
             ->orderBy('number_of_org')
             ->get();
         
+        // Yosh guruhlarini olish
+        $ageRanges = Age_range::all();
+        
         // Har bir tuman uchun ma'lumotlarni tayyorlash
         $regions = Region::all();
         $attendanceData = [];
@@ -3088,32 +3095,51 @@ class TechnologController extends Controller
                         'id' => $kindgarden->id,
                         'name' => $kindgarden->kingar_name,
                         'number_of_org' => $kindgarden->number_of_org,
-                        'days' => []
+                        'age_groups' => [] // Yosh guruhlari uchun
                     ];
                     
                     $kindgardenTotal = 0; // Bog'cha bo'yicha jami bolalar
                     
-                    // Har bir kun uchun bolalar sonini olish
-                    foreach ($selectedDays as $day) {
-                        $childrenCount = Number_children::where('day_id', $day->id)
-                            ->where('kingar_name_id', $kindgarden->id)
-                            ->sum('kingar_children_number');
-                        
-                        $kindgardenData['days'][$day->id] = [
-                            'day_number' => $day->day_number,
-                            'month_name' => $day->month_name,
-                            'year_name' => $day->year_name,
-                            'children_count' => $childrenCount
+                    // Har bir yosh guruhi uchun ma'lumotlarni olish
+                    foreach ($ageRanges as $ageRange) {
+                        $ageGroupData = [
+                            'age_id' => $ageRange->id,
+                            'age_name' => $ageRange->age_name,
+                            'days' => []
                         ];
                         
-                        // Bog'cha bo'yicha jami bolalar sonini hisoblash
-                        $kindgardenTotal += $childrenCount;
+                        $ageGroupTotal = 0; // Yosh guruhi bo'yicha jami bolalar
                         
-                        // Tuman bo'yicha jami bolalar sonini hisoblash
-                        if (!isset($regionTotalChildren[$day->id])) {
-                            $regionTotalChildren[$day->id] = 0;
+                        // Har bir kun uchun yosh guruhi bo'yicha bolalar sonini olish
+                        foreach ($selectedDays as $day) {
+                            $childrenCount = Number_children::where('day_id', $day->id)
+                                ->where('kingar_name_id', $kindgarden->id)
+                                ->where('king_age_name_id', $ageRange->id)
+                                ->sum('kingar_children_number');
+                            
+                            $ageGroupData['days'][$day->id] = [
+                                'day_number' => $day->day_number,
+                                'month_name' => $day->month_name,
+                                'year_name' => $day->year_name,
+                                'children_count' => $childrenCount
+                            ];
+                            
+                            // Yosh guruhi bo'yicha jami bolalar sonini hisoblash
+                            $ageGroupTotal += $childrenCount;
+                            
+                            // Tuman bo'yicha jami bolalar sonini hisoblash
+                            if (!isset($regionTotalChildren[$day->id])) {
+                                $regionTotalChildren[$day->id] = 0;
+                            }
+                            $regionTotalChildren[$day->id] += $childrenCount;
                         }
-                        $regionTotalChildren[$day->id] += $childrenCount;
+                        
+                        // Yosh guruhi bo'yicha jami qo'shish
+                        $ageGroupData['total'] = $ageGroupTotal;
+                        $kindgardenData['age_groups'][] = $ageGroupData;
+                        
+                        // Bog'cha bo'yicha jami bolalar sonini hisoblash
+                        $kindgardenTotal += $ageGroupTotal;
                     }
                     
                     // Bog'cha bo'yicha jami qo'shish
@@ -3146,7 +3172,8 @@ class TechnologController extends Controller
             'success' => true,
             'data' => $attendanceData,
             'days' => $selectedDays,
-            'column_totals' => $columnTotals
+            'column_totals' => $columnTotals,
+            'age_ranges' => $ageRanges
         ]);
     }
     
@@ -3175,6 +3202,9 @@ class TechnologController extends Controller
             ->orderBy('number_of_org')
             ->get();
         
+        // Yosh guruhlarini olish
+        $ageRanges = Age_range::all();
+        
         // Har bir tuman uchun ma'lumotlarni tayyorlash
         $regions = Region::all();
         $attendanceData = [];
@@ -3188,35 +3218,77 @@ class TechnologController extends Controller
                     'kindgardens' => []
                 ];
                 
+                $regionTotalChildren = []; // Har bir kun uchun tuman bo'yicha jami bolalar
+                
                 foreach ($regionKindgardens as $kindgarden) {
                     $kindgardenData = [
                         'id' => $kindgarden->id,
                         'name' => $kindgarden->kingar_name,
                         'number_of_org' => $kindgarden->number_of_org,
-                        'days' => []
+                        'age_groups' => [] // Yosh guruhlari uchun
                     ];
                     
-                    // Har bir kun uchun bolalar sonini olish
-                    foreach ($selectedDays as $day) {
-                        $childrenCount = Number_children::where('day_id', $day->id)
-                            ->where('kingar_name_id', $kindgarden->id)
-                            ->sum('kingar_children_number');
-                        
-                        $kindgardenData['days'][$day->id] = [
-                            'day_number' => $day->day_number,
-                            'month_name' => $day->month_name,
-                            'year_name' => $day->year_name,
-                            'children_count' => $childrenCount
+                    $kindgardenTotal = 0; // Bog'cha bo'yicha jami bolalar
+                    
+                    // Har bir yosh guruhi uchun ma'lumotlarni olish
+                    foreach ($ageRanges as $ageRange) {
+                        $ageGroupData = [
+                            'age_id' => $ageRange->id,
+                            'age_name' => $ageRange->age_name,
+                            'days' => []
                         ];
+                        
+                        $ageGroupTotal = 0; // Yosh guruhi bo'yicha jami bolalar
+                        
+                        // Har bir kun uchun yosh guruhi bo'yicha bolalar sonini olish
+                        foreach ($selectedDays as $day) {
+                            $childrenCount = Number_children::where('day_id', $day->id)
+                                ->where('kingar_name_id', $kindgarden->id)
+                                ->where('king_age_name_id', $ageRange->id)
+                                ->sum('kingar_children_number');
+                            
+                            $ageGroupData['days'][$day->id] = [
+                                'day_number' => $day->day_number,
+                                'month_name' => $day->month_name,
+                                'year_name' => $day->year_name,
+                                'children_count' => $childrenCount
+                            ];
+                            
+                            // Yosh guruhi bo'yicha jami bolalar sonini hisoblash
+                            $ageGroupTotal += $childrenCount;
+                            
+                            // Tuman bo'yicha jami bolalar sonini hisoblash
+                            if (!isset($regionTotalChildren[$day->id])) {
+                                $regionTotalChildren[$day->id] = 0;
+                            }
+                            $regionTotalChildren[$day->id] += $childrenCount;
+                        }
+                        
+                        // Yosh guruhi bo'yicha jami qo'shish
+                        $ageGroupData['total'] = $ageGroupTotal;
+                        $kindgardenData['age_groups'][] = $ageGroupData;
+                        
+                        // Bog'cha bo'yicha jami bolalar sonini hisoblash
+                        $kindgardenTotal += $ageGroupTotal;
                     }
+                    
+                    // Bog'cha bo'yicha jami qo'shish
+                    $kindgardenData['total'] = $kindgardenTotal;
                     
                     $attendanceData[$region->id]['kindgardens'][] = $kindgardenData;
                 }
+                
+                // Tuman bo'yicha jami qatorini qo'shish
+                $attendanceData[$region->id]['total_row'] = [
+                    'name' => 'JAMI',
+                    'number_of_org' => '',
+                    'days' => $regionTotalChildren
+                ];
             }
         }
         
         $dompdf = new Dompdf('UTF-8');
-        $html = mb_convert_encoding(view('technolog.bolalar_qatnovi_pdf', compact('attendanceData', 'selectedDays')), 'HTML-ENTITIES', 'UTF-8');
+        $html = mb_convert_encoding(view('technolog.bolalar_qatnovi_pdf', compact('attendanceData', 'selectedDays', 'ageRanges')), 'HTML-ENTITIES', 'UTF-8');
         $dompdf->loadHtml($html);
         $dompdf->setPaper('A4', 'landscape');
         $dompdf->render();
@@ -3259,6 +3331,9 @@ class TechnologController extends Controller
             ->orderBy('number_of_org')
             ->get();
         
+        // Yosh guruhlarini olish
+        $ageRanges = Age_range::all();
+        
         // Har bir tuman uchun ma'lumotlarni tayyorlash
         $regions = Region::all();
         $attendanceData = [];
@@ -3272,30 +3347,72 @@ class TechnologController extends Controller
                     'kindgardens' => []
                 ];
                 
+                $regionTotalChildren = []; // Har bir kun uchun tuman bo'yicha jami bolalar
+                
                 foreach ($regionKindgardens as $kindgarden) {
                     $kindgardenData = [
                         'id' => $kindgarden->id,
                         'name' => $kindgarden->kingar_name,
                         'number_of_org' => $kindgarden->number_of_org,
-                        'days' => []
+                        'age_groups' => [] // Yosh guruhlari uchun
                     ];
                     
-                    // Har bir kun uchun bolalar sonini olish
-                    foreach ($selectedDays as $day) {
-                        $childrenCount = Number_children::where('day_id', $day->id)
-                            ->where('kingar_name_id', $kindgarden->id)
-                            ->sum('kingar_children_number');
-                        
-                        $kindgardenData['days'][$day->id] = [
-                            'day_number' => $day->day_number,
-                            'month_name' => $day->month_name,
-                            'year_name' => $day->year_name,
-                            'children_count' => $childrenCount
+                    $kindgardenTotal = 0; // Bog'cha bo'yicha jami bolalar
+                    
+                    // Har bir yosh guruhi uchun ma'lumotlarni olish
+                    foreach ($ageRanges as $ageRange) {
+                        $ageGroupData = [
+                            'age_id' => $ageRange->id,
+                            'age_name' => $ageRange->age_name,
+                            'days' => []
                         ];
+                        
+                        $ageGroupTotal = 0; // Yosh guruhi bo'yicha jami bolalar
+                        
+                        // Har bir kun uchun yosh guruhi bo'yicha bolalar sonini olish
+                        foreach ($selectedDays as $day) {
+                            $childrenCount = Number_children::where('day_id', $day->id)
+                                ->where('kingar_name_id', $kindgarden->id)
+                                ->where('king_age_name_id', $ageRange->id)
+                                ->sum('kingar_children_number');
+                            
+                            $ageGroupData['days'][$day->id] = [
+                                'day_number' => $day->day_number,
+                                'month_name' => $day->month_name,
+                                'year_name' => $day->year_name,
+                                'children_count' => $childrenCount
+                            ];
+                            
+                            // Yosh guruhi bo'yicha jami bolalar sonini hisoblash
+                            $ageGroupTotal += $childrenCount;
+                            
+                            // Tuman bo'yicha jami bolalar sonini hisoblash
+                            if (!isset($regionTotalChildren[$day->id])) {
+                                $regionTotalChildren[$day->id] = 0;
+                            }
+                            $regionTotalChildren[$day->id] += $childrenCount;
+                        }
+                        
+                        // Yosh guruhi bo'yicha jami qo'shish
+                        $ageGroupData['total'] = $ageGroupTotal;
+                        $kindgardenData['age_groups'][] = $ageGroupData;
+                        
+                        // Bog'cha bo'yicha jami bolalar sonini hisoblash
+                        $kindgardenTotal += $ageGroupTotal;
                     }
+                    
+                    // Bog'cha bo'yicha jami qo'shish
+                    $kindgardenData['total'] = $kindgardenTotal;
                     
                     $attendanceData[$region->id]['kindgardens'][] = $kindgardenData;
                 }
+                
+                // Tuman bo'yicha jami qatorini qo'shish
+                $attendanceData[$region->id]['total_row'] = [
+                    'name' => 'JAMI',
+                    'number_of_org' => '',
+                    'days' => $regionTotalChildren
+                ];
             }
         }
         
@@ -3313,7 +3430,8 @@ class TechnologController extends Controller
             'success' => true,
             'data' => $attendanceData,
             'days' => $selectedDays,
-            'filename' => $filename
+            'filename' => $filename,
+            'age_ranges' => $ageRanges
         ]);
     }
     

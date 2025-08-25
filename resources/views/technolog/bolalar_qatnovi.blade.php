@@ -302,7 +302,7 @@ $(document).ready(function() {
             },
             success: function(response) {
                 if (response.success) {
-                    displayReport(response.data, response.days);
+                    displayReport(response.data, response.days, response.age_ranges);
                     $('#download_buttons').show();
                 } else {
                     $('#report_container').html(`
@@ -324,7 +324,7 @@ $(document).ready(function() {
         });
     }
     
-    function displayReport(data, days) {
+    function displayReport(data, days, ageRanges) {
         if (Object.keys(data).length === 0) {
             $('#report_container').html(`
                 <div class="no-data">
@@ -379,24 +379,52 @@ $(document).ready(function() {
                             <tbody>
             `;
             
-            // Har bir bog'cha uchun qator
+            // Har bir bog'cha uchun qatorlar
             region.kindgardens.forEach(function(kindgarden) {
+                // Har bir yosh guruhi uchun alohida qator
+                kindgarden.age_groups.forEach(function(ageGroup) {
+                    html += `
+                        <tr>
+                            <td class="kindgarden-name">${kindgarden.name} - ${ageGroup.age_name}</td>
+                            <td>${kindgarden.number_of_org || '-'}</td>
+                    `;
+                    
+                    // Har bir kun uchun bolalar soni
+                    days.forEach(function(day) {
+                        var dayData = ageGroup.days[day.id];
+                        var childrenCount = dayData ? dayData.children_count : 0;
+                        html += `<td class="children-count">${childrenCount}</td>`;
+                    });
+                    
+                    // Yosh guruhi bo'yicha jami
+                    var ageGroupTotal = ageGroup.total || 0;
+                    html += `<td class="children-count" style="background-color: #f8f9fa; font-weight: bold; color: #000;">${ageGroupTotal}</td>`;
+                    
+                    html += `</tr>`;
+                });
+                
+                // Bog'cha bo'yicha jami qatorini qo'shish
                 html += `
-                    <tr>
-                        <td class="kindgarden-name">${kindgarden.name}</td>
-                        <td>${kindgarden.number_of_org || '-'}</td>
+                    <tr style="background-color: #e3f2fd; font-weight: bold;">
+                        <td class="kindgarden-name">${kindgarden.name} - JAMI</td>
+                        <td style="background-color: #e3f2fd;"></td>
                 `;
                 
-                // Har bir kun uchun bolalar soni
+                // Har bir kun uchun bog'cha bo'yicha jami bolalar soni
                 days.forEach(function(day) {
-                    var dayData = kindgarden.days[day.id];
-                    var childrenCount = dayData ? dayData.children_count : 0;
-                    html += `<td class="children-count">${childrenCount}</td>`;
+                    var kindgardenDayTotal = 0;
+                    kindgarden.age_groups.forEach(function(ageGroup) {
+                        var dayData = ageGroup.days[day.id];
+                        if (dayData) {
+                            kindgardenDayTotal += dayData.children_count;
+                        }
+                    });
+                    html += `<td class="children-count" style="background-color: #e3f2fd; color: #000; font-weight: bold;">${kindgardenDayTotal}</td>`;
                 });
                 
                 // Bog'cha bo'yicha jami
                 var kindgardenTotal = kindgarden.total || 0;
-                html += `<td class="children-count" style="background-color: #f8f9fa; font-weight: bold; color: #000;">${kindgardenTotal}</td>`;
+                html += `<td class="children-count" style="background-color: #e3f2fd; color: #000; font-weight: bold;">${kindgardenTotal}</td>`;
                 
                 html += `</tr>`;
             });
