@@ -125,7 +125,7 @@
 					$qrImage = base64_encode(file_get_contents(public_path('images/nakladnoy.jpg')));
 				@endphp
 				<img src="data:image/jpeg;base64,{{ $qrImage }}" 
-					style="width:100%; position:absolute; left:10px;">
+					style="width:100%; position:absolute;">
 				</div>
 			</div>
         </div>
