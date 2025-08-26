@@ -61,7 +61,8 @@ class TestController extends Controller
 		$taomnoma = Titlemenu::where('id', $menu[0]['kingar_menu_id'])->first();
 		
 		$products = Product::where('hide', 1)
-			->orderBy('sort', 'ASC')->get();
+		    ->leftjoin('sizes', 'sizes.id', '=', 'products.size_name_id')
+			->orderBy('sort', 'ASC')->get(['products.*', 'sizes.size_name']);
 		
 		$menuitem = Menu_composition::where('title_menu_id', $menu[0]['kingar_menu_id'])
                         ->where('age_range_id', $ageid)
@@ -99,7 +100,6 @@ class TestController extends Controller
             $nextdaymenuitem[$item->menu_meal_time_id][0]['mealtime'] = $item->meal_time_name; 
             $nextdaymenuitem[$item->menu_meal_time_id][$item->menu_food_id][$item->product_name_id] = $item->weight;
             $nextdaymenuitem[$item->menu_meal_time_id][$item->menu_food_id]['foodname'] = $item->food_name; 
-            $nextdaymenuitem[$item->menu_meal_time_id][$item->menu_food_id][$item->product_name_id]['size_name'] = $item->size_name;
             $productallcount[$item->product_name_id] += $item->weight;
             for($i = 0; $i<count($products); $i++){
                 if(empty($products[$i]['yes']) and $products[$i]['id'] == $item->product_name_id){
@@ -107,8 +107,6 @@ class TestController extends Controller
                 }
             }
         }
-
-		dd($nextdaymenuitem);
 
         // Xodimlar uchun ovqat gramajlarini hisoblash
         $workerproducts = array_fill(1, 500, 0);

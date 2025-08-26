@@ -88,14 +88,14 @@
                     <table style="width:100%; table-layout: fixed;">
                         <thead>
                           <tr>
-                          	 <th style="width:2%;"></th>
-                          	 <th style="width:11%;">Махсулотлар номи</th>
+                          	 <th style="width:2%;" rowspan="3"></th>
+                          	 <th style="width:11%;" rowspan="3">Махсулотлар номи</th>
                           	 <!--<th style="width:8%;">Таом вазни</th>-->
 							   <?php $col = 0; ?>
 							 @foreach($products as $product)
 							 	@if(isset($product['yes']))
 								 <?php $col++; ?>
-								 <th class='vrt-header product-name-header' style="padding: 0px; width: 15px; height: 100px"><?php 
+								 <th class='vrt-header product-name-header' style="padding: 0px; width: 15px; height: 90px"><?php 
 									$words = explode(' ', $product['product_name']);
 									$firstThreeWords = array_slice($words, 0, 2);
 									echo '<span>'.implode(' ', $firstThreeWords).'</span>';
@@ -103,6 +103,20 @@
 								@endif
 							 @endforeach
                           </tr>
+						  <tr>
+							@foreach($products as $product)
+								@if(isset($product['yes']))
+									<td scope="row" class="align-baseline" style="padding: 0px; font-size: 7px;">{{ $product['size_name'] }}</td>
+								@endif
+							@endforeach
+						   </tr>
+						   <tr>
+							@foreach($products as $product)
+								@if(isset($product['yes']))
+									<td scope="row" class="align-baseline" style="padding: 0px; font-size: 7px;">{{ $product['div'] }}</td>
+								@endif
+							@endforeach
+						   </tr>
                         </thead>
                         <tbody>
 							@php
@@ -155,8 +169,8 @@
 								@endforeach
 							@endforeach
 									<tr>
-										<th scope="row" rowspan="5" class='vrt-header' style="padding: 0px; border-top: 2px solid black"><span>Болалар</span></th>
-										<td scope="row" class="align-baseline" style="padding: 0px; border-top: 2px solid black">Жами миқдори</td>
+									<th scope="row" rowspan="5" class='vrt-header' style="padding: 0px; border-top: 2px solid black"><span>Болалар</span></th>
+									<td scope="row" class="align-baseline" style="padding: 0px; border-top: 2px solid black">Жами миқдори</td>
 										<?php
 										
 										$narx = [];
@@ -331,30 +345,6 @@
 			                            <?php
 											}
 										}
-			                            ?>
-									</tr>
-									<tr>
-										<th scope="row" colspan="2" class="align-baseline" style="padding: 0px;">Жами сарфланган маблағ</th>
-			                            <td style="padding: 0px; font-size: 5px" colspan="<?= $col; ?>">0</td>
-									</tr>
-									<tr>
-										<th scope="row" colspan="2" class="align-baseline" style="padding: 0px;">1 нафар бола учун</th>
-										<?php
-			                            for($t = 0; $t < $col; $t++){
-			                            ?>
-			                            	<td style="padding: 0px; font-size: 5px"></td>
-			                            <?php
-                    					}
-			                            ?>
-									</tr>
-									<tr>
-										<th scope="row" colspan="2" class="align-baseline" style="padding: 0px;">1 нафар ходим учун</th>
-										<?php
-			                            for($t = 0; $t < $col; $t++){
-			                            ?>
-			                            	<td style="padding: 0px; font-size: 5px"></td>
-			                            <?php
-                    					}
 			                            ?>
 									</tr>
                         </tbody>
