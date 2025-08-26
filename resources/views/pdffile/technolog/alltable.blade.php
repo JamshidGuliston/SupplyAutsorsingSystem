@@ -40,7 +40,7 @@
 			padding: 0px;
 		}
 		td{
-			border-right: 1px dashed black;
+			border-right: 1px solid black;
 			border-bottom: 1px solid black;
 			padding: 0px;
 		}
