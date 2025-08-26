@@ -35,6 +35,7 @@ use App\Models\Sale;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
 use Dompdf\Dompdf;
 use TCG\Voyager\Models\MenuItem;
 use DB;
@@ -75,8 +76,17 @@ class StorageController extends Controller
 
     public function index(Request $request, $yearid=0, $id = 0)
     {
+        // Log boshlanishi
+        Log::info('Storage index funksiyasi ishga tushdi', [
+            'user_id' => Auth::id(),
+            'yearid' => $yearid,
+            'id' => $id,
+            'request_data' => $request->all()
+        ]);
+
         if($yearid == 0){
             $yearid = Year::where('year_active', 1)->first()->id;
+            Log::info('Faol yil topildi', ['yearid' => $yearid]);
         }
         $year = Year::where('id', $yearid)->first();
         $months = Month::where('yearid', $yearid)->get();
@@ -87,9 +97,17 @@ class StorageController extends Controller
             if($il == null){
                 $il = Month::where('yearid', $yearid)->first()->id;
             }
+            Log::info('Faol oy topildi', ['month_id' => $il]);
         }
         $dayes = Day::orderby('id', 'DESC')->get();
         $month_days = $this->activmonth($il);
+        
+        Log::info('Oy kunlari olingan', [
+            'month_id' => $il,
+            'days_count' => $month_days->count(),
+            'first_day_id' => $month_days->first()->id ?? null,
+            'last_day_id' => $month_days->last()->id ?? null
+        ]);
         // kirim bo'lgan maxsulotlar
         $addlarch = Add_large_werehouse::where('add_groups.day_id', '>=', $month_days->first()->id)
                     ->where('add_groups.day_id', '<=', $month_days->last()->id)
@@ -97,6 +115,11 @@ class StorageController extends Controller
                     ->join('products', 'products.id', '=', 'add_large_werehouses.product_id')
                     ->join('sizes', 'sizes.id', '=', 'products.size_name_id')
                     ->get();
+        
+        Log::info('Kirim maxsulotlari olingan', [
+            'kirim_count' => $addlarch->count(),
+            'day_range' => $month_days->first()->id . ' - ' . $month_days->last()->id
+        ]);
         
         $alladd = [];
         $t = 0;
@@ -111,6 +134,10 @@ class StorageController extends Controller
             }
             $alladd[$row->product_id]['weight'] += $row->weight; 
         }
+        
+        Log::info('Kirim maxsulotlari hisoblandi', [
+            'unique_products_count' => count($alladd)
+        ]);
 
         // chiqim bo'lgan maxsulotlar
         $minuslarch = order_product_structure::where('order_products.day_id', '>=', $month_days->first()->id)
@@ -119,6 +146,10 @@ class StorageController extends Controller
                     ->join('products', 'products.id', '=', 'order_product_structures.product_name_id')
                     ->join('sizes', 'sizes.id', '=', 'products.size_name_id')
                     ->get();
+
+        Log::info('Chiqim maxsulotlari olingan', [
+            'chiqim_count' => $minuslarch->count()
+        ]);
 
         foreach($minuslarch as $row){
             if(!isset($alladd[$row->product_name_id])){
@@ -130,6 +161,10 @@ class StorageController extends Controller
             }
             $alladd[$row->product_name_id]['minusweight'] += $row->product_weight;
         }
+        
+        Log::info('Chiqim maxsulotlari hisoblandi', [
+            'total_products_count' => count($alladd)
+        ]);
 
         // sotuv bo'lgan maxsulotlar
         $sales = Sale::where('day_id', '>=', $month_days->first()->id)
@@ -138,7 +173,11 @@ class StorageController extends Controller
                     ->join('products', 'products.id', '=', 'take_products.product_id')
                     ->join('sizes', 'sizes.id', '=', 'products.size_name_id')
                     ->get();
-        // dd($sales);
+        
+        Log::info('Sotuv maxsulotlari olingan', [
+            'sales_count' => $sales->count()
+        ]);
+        
         foreach($sales as $row){
             if(!isset($alladd[$row->product_id])){
                 $alladd[$row->product_id]['weight'] = 0;
@@ -149,12 +188,22 @@ class StorageController extends Controller
             }
             $alladd[$row->product_id]['minusweight'] += $row->weight;
         }
+        
+        Log::info('Sotuv maxsulotlari hisoblandi', [
+            'final_products_count' => count($alladd)
+        ]);
 
         usort($alladd, function ($a, $b){
             if(isset($a["p_sort"]) and isset($b["p_sort"])){
                 return $a["p_sort"] > $b["p_sort"];
             }
         });
+        
+        Log::info('Storage index funksiyasi tugadi', [
+            'sorted_products_count' => count($alladd),
+            'year' => $year->year_name ?? 'N/A',
+            'month_id' => $il
+        ]);
         
         return view('storage.home', ['year' => $year, 'months' => $months, 'products' => $alladd, 'id' => $il]);
     }
