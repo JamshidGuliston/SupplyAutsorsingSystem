@@ -68,6 +68,7 @@ class TestController extends Controller
                         ->join('meal_times', 'menu_compositions.menu_meal_time_id', '=', 'meal_times.id')
                         ->join('food', 'menu_compositions.menu_food_id', '=', 'food.id')
                         ->join('products', 'menu_compositions.product_name_id', '=', 'products.id')
+                        ->join('sizes', 'sizes.id', '=', 'products.size_name_id')
                         ->orderBy('menu_meal_time_id')
                         ->get();
 
@@ -93,10 +94,12 @@ class TestController extends Controller
         $workerproducts = [];
         // kamchilik bor boshlangich qiymat berishda
         $productallcount = array_fill(1, 500, 0);
+		// dd($menuitem);
         foreach($menuitem as $item){
             $nextdaymenuitem[$item->menu_meal_time_id][0]['mealtime'] = $item->meal_time_name; 
             $nextdaymenuitem[$item->menu_meal_time_id][$item->menu_food_id][$item->product_name_id] = $item->weight;
             $nextdaymenuitem[$item->menu_meal_time_id][$item->menu_food_id]['foodname'] = $item->food_name; 
+            $nextdaymenuitem[$item->menu_meal_time_id][$item->menu_food_id][$item->product_name_id]['size_name'] = $item->size_name;
             $productallcount[$item->product_name_id] += $item->weight;
             for($i = 0; $i<count($products); $i++){
                 if(empty($products[$i]['yes']) and $products[$i]['id'] == $item->product_name_id){
@@ -104,6 +107,8 @@ class TestController extends Controller
                 }
             }
         }
+
+		dd($nextdaymenuitem);
 
         // Xodimlar uchun ovqat gramajlarini hisoblash
         $workerproducts = array_fill(1, 500, 0);
