@@ -74,6 +74,15 @@ class StorageController extends Controller
         return $days;
     }
 
+    public function daysthisyear($id){
+        $days = Day::where('years.id', $id)
+                ->join('months', 'months.id', '=', 'days.month_id')
+                ->join('years', 'years.id', '=', 'days.year_id')
+                ->orderBy('days.id', 'DESC')
+                ->get(['days.id', 'days.day_number', 'months.month_name', 'years.year_name']);
+        return $days;
+    }
+
     public function index(Request $request, $yearid=0, $id = 0)
     {
         // Log boshlanishi
@@ -2984,5 +2993,247 @@ class StorageController extends Controller
             DB::rollback();
             return response()->json(['success' => false, 'message' => 'Xatolik: ' . $e->getMessage()]);
         }
+    }
+
+    public function modsofproducts(Request $request){
+        $yearid = Year::where('year_active', 1)->first()->id;
+        $days = $this->daysthisyear($yearid);
+        
+        return view('storage.modsofproducts', ['days' => $days]);
+    }
+
+    public function getreportlargebase(Request $request){    
+        $yearid = Year::where('year_active', 1)->first()->id;
+        $start = $this->daysthisyear($yearid)->last()->id;
+        $addlarch = Add_large_werehouse::where('add_groups.day_id', '>=', $start)
+                    ->where('add_groups.day_id', '<=', $request->lastid)
+                    ->join('add_groups', 'add_groups.id', '=', 'add_large_werehouses.add_group_id')
+                    ->join('products', 'products.id', '=', 'add_large_werehouses.product_id')
+                    ->join('sizes', 'sizes.id', '=', 'products.size_name_id')
+                    ->get();
+        
+        $alladd = [];
+        $t = 0;
+        foreach($addlarch as $row){
+            if(!isset($alladd[$row->product_id])){
+                $alladd[$row->product_id]['middlecost'] = 0;
+                $mc = Add_large_werehouse::where('add_large_werehouses.product_id', $row->product_id)
+                        ->where('add_groups.day_id', '>=', $start)
+                        ->where('add_groups.day_id', '<=', $request->lastid)
+                        ->join('add_groups', 'add_groups.id', '=', 'add_large_werehouses.add_group_id')
+                        ->avg('cost');
+                $alladd[$row->product_id]['weight'] = 0;
+                $alladd[$row->product_id]['minusweight'] = 0;
+                $alladd[$row->product_id]['p_name'] = $row->product_name;
+                $alladd[$row->product_id]['size_name'] = $row->size_name;
+                $alladd[$row->product_id]['p_sort'] = $row->sort;
+                $alladd[$row->product_id]['middlecost'] = $mc;
+            }
+            $alladd[$row->product_id]['weight'] += $row->weight; 
+        }
+        $minuslarch = order_product_structure::where('order_products.day_id', '>=', $start)
+                    ->where('order_products.day_id', '<=', $request->lastid)
+                    ->join('order_products', 'order_products.id', '=', 'order_product_structures.order_product_name_id')
+                    ->join('products', 'products.id', '=', 'order_product_structures.product_name_id')
+                    ->join('sizes', 'sizes.id', '=', 'products.size_name_id')
+                    ->get(["order_product_structures.product_name_id", "order_product_structures.product_weight", "products.product_name", "products.sort", "sizes.size_name" ]);
+        
+        foreach($minuslarch as $row){
+            if(empty($alladd[$row->product_name_id])){
+                $alladd[$row->product_name_id]['middlecost'] = 0;
+                $alladd[$row->product_name_id]['weight'] = 0;
+                $alladd[$row->product_name_id]['minusweight'] = 0;
+                $alladd[$row->product_name_id]['p_name'] = $row->product_name;
+                $alladd[$row->product_name_id]['size_name'] = $row->size_name;
+                $alladd[$row->product_name_id]['p_sort'] = $row->sort;
+            }
+            $alladd[$row->product_name_id]['minusweight'] += $row->product_weight;
+        }
+        
+        // $nochs = Number_children::where('day_id', '>=', $start)
+        //             ->join('kindgardens', 'kindgardens.id', '=', 'number_childrens.kingar_name_id')
+        //             ->where('day_id', '<=', $request->lastid)
+        //             ->get();
+        // $bymenus = Active_menu::where('day_id', '>=', $start)
+        //                     ->where('day_id', '<=', $request->lastid)->get();
+                            
+        // $ages = Age_range::all();
+        // $products = Product::all();
+        // $totalproducts = [];
+        // foreach($ages as $age){
+        //     $foundmenu = $bymenus->where('age_range_id', $age->id);
+        //     foreach($products as $prd){
+        //     	if(!isset($totalproducts[$prd->id])){
+        //               $totalproducts[$prd->id] = 0;
+        //         } 
+        //     	$w = $foundmenu->where('product_name_id', $prd->id)->sum('weight');
+        //     	$totalproducts[$prd->id] += ($w * $nochs->where('king_age_name_id', $age->id)->sum('kingar_children_number')) / $prd->div;
+        //     }
+            // foreach($foundmenu as $menu){
+            //     if(!isset($totalproducts[$menu->product_name_id])){
+            //         $totalproducts[$menu->product_name_id] = 0;
+            //     }               
+            //     $totalproducts[$menu->product_name_id] += ($menu->weight * $noch->kingar_children_number) / $products->find($menu->product_name_id)->div;
+            // }
+        // }
+        // return json_encode($totalproducts);
+        
+                            
+        usort($alladd, function ($a, $b){
+            if(isset($a["p_sort"]) and isset($b["p_sort"])){
+                return $a["p_sort"] > $b["p_sort"];
+            }
+        });
+        
+        $html = "<table style='background-color: white' class='table'>
+                <thead>
+                    <tr>
+                        <th rowspan='2'>Махсулот номи</th>
+                        <th rowspan='2'>Ул.бир</th>
+                        <th colspan='3'>Кирим</th>
+                        <th colspan='3'>Чиқим</th>
+                        <th colspan='3'>Қолдиқ</th>
+                    </tr>
+                    <tr>
+                        <th>Микдори</th>
+                        <th>Уртача нархи</th>
+                        <th>Суммаси</th>
+                        <th>Микдори</th>
+                        <th>Нархи</th>
+                        <th>Суммаси</th>
+                        <th>Микдори</th>
+                        <th>Нархи</th>
+                        <th>Суммаси</th>
+                    </tr>
+                </thead>
+                <tbody>";
+        $taking = 0;
+        $giving = 0;
+        $mod = 0;
+        foreach($alladd as $key => $row){
+            $taking = $taking + $row["weight"] * $row["middlecost"];
+            $giving = $giving + $row["minusweight"] * $row["middlecost"];
+            $mod = $mod + ($row["weight"]-$row["minusweight"]) * $row["middlecost"];
+            $html = $html."
+                <tr>
+                    <td>".$row["p_name"]."</td>
+                    <td>".$row["size_name"]."</td>
+                    <td>".sprintf('%0.2f', $row["weight"])."</td>
+                    <td>".sprintf('%0.2f', $row["middlecost"])."</td>   
+                    <td>".sprintf('%0.2f', $row["weight"] * $row["middlecost"])."</td>
+                    <td>".sprintf('%0.2f', $row["minusweight"])."</td>
+                    <td>".sprintf('%0.2f', $row["middlecost"])."</td>   
+                    <td>".sprintf('%0.2f', $row["minusweight"] * $row["middlecost"])."</td>
+                    <td>".sprintf('%0.2f', $row["weight"]-$row["minusweight"])."</td>
+                    <td>".sprintf('%0.2f', $row["middlecost"])."</td>   
+                    <td>".sprintf('%0.2f', ($row["weight"]-$row["minusweight"]) * $row["middlecost"])."</td>    
+                </tr>
+            ";  
+        }
+
+
+        $html = $html."
+            <tr>
+                <td><b>Jami:</b></td>
+                <td></td>
+                <td></td>
+                <td></td>   
+                <td><b>".sprintf('%0.2f', $taking)."</b></td>
+                <td></td>
+                <td></td>   
+                <td><b>".sprintf('%0.2f', $giving)."</b></td>
+                <td></td>
+                <td></td>   
+                <td><b>".sprintf('%0.2f',$mod)."</b></td>    
+            </tr>
+        ";
+        $html = $html."</tbody>
+                </table>
+                ";
+            
+        return $html;
+    }
+    
+    public function getreportlargebasePDF(Request $request){    
+        $yearid = Year::where('year_active', 1)->first()->id;
+        $start = $this->daysthisyear($yearid)->last()->id;
+        $addlarch = Add_large_werehouse::where('add_groups.day_id', '>=', $start)
+                    ->where('add_groups.day_id', '<=', $request->lastid)
+                    ->join('add_groups', 'add_groups.id', '=', 'add_large_werehouses.add_group_id')
+                    ->join('products', 'products.id', '=', 'add_large_werehouses.product_id')
+                    ->join('sizes', 'sizes.id', '=', 'products.size_name_id')
+                    ->get();
+        
+        $alladd = [];
+        $t = 0;
+        foreach($addlarch as $row){
+            if(!isset($alladd[$row->product_id])){
+                $alladd[$row->product_id]['middlecost'] = 0;
+                $mc = Add_large_werehouse::where('add_large_werehouses.product_id', $row->product_id)
+                        ->where('add_groups.day_id', '>=', $start)
+                        ->where('add_groups.day_id', '<=', $request->lastid)
+                        ->join('add_groups', 'add_groups.id', '=', 'add_large_werehouses.add_group_id')
+                        ->avg('cost');
+                $alladd[$row->product_id]['weight'] = 0;
+                $alladd[$row->product_id]['minusweight'] = 0;
+                $alladd[$row->product_id]['p_name'] = $row->product_name;
+                $alladd[$row->product_id]['size_name'] = $row->size_name;
+                $alladd[$row->product_id]['p_sort'] = $row->sort;
+                $alladd[$row->product_id]['middlecost'] = $mc;
+            }
+            $alladd[$row->product_id]['weight'] += $row->weight; 
+        }
+        $minuslarch = order_product_structure::where('order_products.day_id', '>=', $start)
+                    ->where('order_products.day_id', '<=', $request->lastid)
+                    ->join('order_products', 'order_products.id', '=', 'order_product_structures.order_product_name_id')
+                    ->join('products', 'products.id', '=', 'order_product_structures.product_name_id')
+                    ->join('sizes', 'sizes.id', '=', 'products.size_name_id')
+                    ->get(["order_product_structures.product_name_id", "order_product_structures.product_weight", "products.product_name", "products.sort", "sizes.size_name" ]);
+        
+        foreach($minuslarch as $row){
+            if(empty($alladd[$row->product_name_id])){
+                $alladd[$row->product_name_id]['middlecost'] = 0;
+                $alladd[$row->product_name_id]['weight'] = 0;
+                $alladd[$row->product_name_id]['minusweight'] = 0;
+                $alladd[$row->product_name_id]['p_name'] = $row->product_name;
+                $alladd[$row->product_name_id]['size_name'] = $row->size_name;
+                $alladd[$row->product_name_id]['p_sort'] = $row->sort;
+            }
+            $alladd[$row->product_name_id]['minusweight'] += $row->product_weight;
+        }
+        
+        usort($alladd, function ($a, $b){
+            if(isset($a["p_sort"]) and isset($b["p_sort"])){
+                return $a["p_sort"] > $b["p_sort"];
+            }
+        });
+        
+        // Sana ma'lumotlarini olish
+        $days = $this->daysthisyear($yearid);
+        $startDay = $days->last();
+        $endDay = $days->where('id', $request->lastid)->first();
+        
+        $reportData = [
+            'products' => $alladd,
+            'start_date' => $startDay->day_number . '.' . $startDay->month_name . '.' . $startDay->year_name,
+            'end_date' => $endDay->day_number . '.' . $endDay->month_name . '.' . $endDay->year_name,
+            'total_taking' => 0,
+            'total_giving' => 0,
+            'total_mod' => 0
+        ];
+        
+        // Jami summalarni hisoblash
+        foreach($alladd as $row){
+            $reportData['total_taking'] += $row["weight"] * $row["middlecost"];
+            $reportData['total_giving'] += $row["minusweight"] * $row["middlecost"];
+            $reportData['total_mod'] += ($row["weight"]-$row["minusweight"]) * $row["middlecost"];
+        }
+        
+        $dompdf = new Dompdf('UTF-8');
+        $html = mb_convert_encoding(view('pdffile.storage.modsofproductsPdf', compact('reportData')), 'HTML-ENTITIES', 'UTF-8');
+        $dompdf->loadHtml($html);
+        $dompdf->setPaper('A4', 'landscape');
+        $dompdf->render();
+        $dompdf->stream('maxsulotlar_hisoboti.pdf', ['Attachment' => 0]);
     }
 }

@@ -71,7 +71,9 @@ Route::group(['prefix' => 'storage', 'middleware' => ['isStorage', 'auth']], fun
     Route::get('backcontrolpassword', [StorageController::class, 'backcontrolpassword']);
     Route::get('allreport', [StorageController::class, 'allreport'])->name('storage.allreport');
     Route::get('increasedreport', [StorageController::class, 'increasedreport'])->name('storage.increasedreport');
-
+    Route::get('modsofproducts', [StorageController::class, 'modsofproducts'])->name('storage.modsofproducts');
+    Route::get('getreportlargebase', [StorageController::class, 'getreportlargebase'])->name('storage.getreportlargebase');
+    Route::get('getreportlargebasePDF', [StorageController::class, 'getreportlargebasePDF'])->name('storage.getreportlargebasePDF');
     Route::get('addmultisklad', [StorageController::class, 'addmultisklad'])->name('storage.addmultisklad');
     Route::get('get-order-title-details/{orderTitle}', [StorageController::class, 'getOrderTitleDetails'])->name('storage.getOrderTitleDetails');
     Route::get('generate-order-title-pdf/{orderTitle}', [StorageController::class, 'generateOrderTitlePDF'])->name('storage.generateOrderTitlePDF');

@@ -63,6 +63,7 @@ class AccountantController extends Controller
         $days = Day::where('years.id', $id)
                 ->join('months', 'months.id', '=', 'days.month_id')
                 ->join('years', 'years.id', '=', 'days.year_id')
+                ->orderBy('days.id', 'DESC')
                 ->get(['days.id', 'days.day_number', 'months.month_name', 'years.year_name']);
         return $days;
     }
