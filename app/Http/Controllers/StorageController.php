@@ -147,10 +147,6 @@ class StorageController extends Controller
         //             ->join('sizes', 'sizes.id', '=', 'products.size_name_id')
         //             ->get();
 
-        Log::info('Chiqim maxsulotlari olingan', [
-            'chiqim_count' => $minuslarch->count()
-        ]);
-
         // foreach($minuslarch as $row){
         //     if(!isset($alladd[$row->product_name_id])){
         //         $alladd[$row->product_name_id]['weight'] = 0;
