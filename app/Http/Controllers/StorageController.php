@@ -140,27 +140,27 @@ class StorageController extends Controller
         ]);
 
         // chiqim bo'lgan maxsulotlar
-        $minuslarch = order_product_structure::where('order_products.day_id', '>=', $month_days->first()->id)
-                    ->where('order_products.day_id', '<=', $month_days->last()->id)
-                    ->join('order_products', 'order_products.id', '=', 'order_product_structures.order_product_name_id')
-                    ->join('products', 'products.id', '=', 'order_product_structures.product_name_id')
-                    ->join('sizes', 'sizes.id', '=', 'products.size_name_id')
-                    ->get();
+        // $minuslarch = order_product_structure::where('order_products.day_id', '>=', $month_days->first()->id)
+        //             ->where('order_products.day_id', '<=', $month_days->last()->id)
+        //             ->join('order_products', 'order_products.id', '=', 'order_product_structures.order_product_name_id')
+        //             ->join('products', 'products.id', '=', 'order_product_structures.product_name_id')
+        //             ->join('sizes', 'sizes.id', '=', 'products.size_name_id')
+        //             ->get();
 
         Log::info('Chiqim maxsulotlari olingan', [
             'chiqim_count' => $minuslarch->count()
         ]);
 
-        foreach($minuslarch as $row){
-            if(!isset($alladd[$row->product_name_id])){
-                $alladd[$row->product_name_id]['weight'] = 0;
-                $alladd[$row->product_name_id]['minusweight'] = 0;
-                $alladd[$row->product_name_id]['p_name'] = $row->product_name;
-                $alladd[$row->product_name_id]['size_name'] = $row->size_name;
-                $alladd[$row->product_name_id]['p_sort'] = $row->sort;
-            }
-            $alladd[$row->product_name_id]['minusweight'] += $row->product_weight;
-        }
+        // foreach($minuslarch as $row){
+        //     if(!isset($alladd[$row->product_name_id])){
+        //         $alladd[$row->product_name_id]['weight'] = 0;
+        //         $alladd[$row->product_name_id]['minusweight'] = 0;
+        //         $alladd[$row->product_name_id]['p_name'] = $row->product_name;
+        //         $alladd[$row->product_name_id]['size_name'] = $row->size_name;
+        //         $alladd[$row->product_name_id]['p_sort'] = $row->sort;
+        //     }
+        //     $alladd[$row->product_name_id]['minusweight'] += $row->product_weight;
+        // }
         
         Log::info('Chiqim maxsulotlari hisoblandi', [
             'total_products_count' => count($alladd)
