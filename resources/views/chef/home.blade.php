@@ -239,10 +239,11 @@
         <div class="col-md-3">
             <div class="p-3 bg-white shadow-sm align-items-center rounded">
                 <!-- <form action="/nextdaysecondmenuPDF/{{ $kindgarden->id }}" method="get" download> -->
-                    <p><b>Taxminiy menyu: </b></p>
+                @foreach($kindgarden->age_range as $row)
+                    <p><b>Keyingi {{$row->age_name}} uchun taomnoma: </b></p>
                     <p><small class="text-muted"><i class="fas fa-info-circle"></i> PDF faylni yuklab olish uchun tugmani bosing</small></p>
                     <div class="d-flex gap-2 mt-2">
-                        <a href="/nextdaymenuPDF/{{ $kindgarden->id }}" 
+                        <a href="/nextdaymenuPDF/{{ $kindgarden->id }}/{{ $row->id }}" 
                             class="btn btn-primary d-flex align-items-center justify-content-center gap-2" 
                             style="width: 100%;" 
                             download>
@@ -255,6 +256,7 @@
                             <i class="fab fa-telegram"></i> Share
                         </button>
                     </div>
+                @endforeach
                 <!-- </form> -->
                 @if($bool->count() == 0)
                 <!-- <form action="#" method="get"> -->
