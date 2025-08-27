@@ -336,7 +336,7 @@
 			                            <td style="padding: 0px; font-size: 5px" colspan="<?= $col; ?>">0</td>
 									</tr>
 									<tr style="border-top: 2px solid black;">
-										<th scope="row" colspan="2" class='vrt-header' style="padding: 0px; border-top: 2px solid black"><b>Жами махсулот оғирлиги</b></th>
+										<th scope="row" colspan="2" class='vrt-header' style="padding: 0px; border-top: 2px solid black"><b>Жами махсулот миқдори</b></th>
 										<?php
 			                            for($t = 0; $t < count($products); $t++){
 											if(isset($products[$t]['yes']) and isset($productallcount[$products[$t]['id']])){
