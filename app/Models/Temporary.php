@@ -10,6 +10,7 @@ class Temporary extends Model
     use HasFactory;
     protected $fillable = [
         	'kingar_name_id',
+            'workers',
     		'age_id',
     		'age_number'
     ];

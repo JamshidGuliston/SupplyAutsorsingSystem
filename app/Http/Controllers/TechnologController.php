@@ -148,6 +148,7 @@ class TechnologController extends Controller
         	if(isset($king->id)){
 	        	Temporary::create([
 	        		'kingar_name_id' => $nextrow->kingar_name_id,
+                    'workers' => $nextrow->workers_count,
 		    		'age_id' => $nextrow->king_age_name_id,
 		    		'age_number' => $nextrow->kingar_children_number
 	        	]);
@@ -192,7 +193,8 @@ class TechnologController extends Controller
         $bool = array();
         $ages = Age_range::all();
         $sid = Season::where('hide', 1)->first();
-        $menus = Titlemenu::all();
+        $menus = Titlemenu::leftjoin('seasons', 'titlemenus.menu_season_id', '=', 'seasons.id')
+                    ->get(['titlemenus.id', 'titlemenus.menu_name', 'seasons.season_name']);
         if ($day == date("d-F-Y", $d)) {
             $gr = Temporary::join('kindgardens', 'temporaries.kingar_name_id', '=', 'kindgardens.id')
                 ->orderby('kindgardens.id', 'ASC')->get();
@@ -867,13 +869,14 @@ class TechnologController extends Controller
     {
         $results = Kindgarden::where('id', $id)->with('age_range')->get();
         // dd($results[0]->age_range);
-        $menus = Titlemenu::orderby('id', 'DESC')->get();
+        $menus = Titlemenu::leftjoin('seasons', 'titlemenus.menu_season_id', '=', 'seasons.id')
+                    ->get(['titlemenus.id', 'titlemenus.menu_name', 'seasons.season_name']);
         $html = [];
         foreach ($results[0]->age_range as $rows) {
             $option="<select id='tommenu' class='form-control' name='menuids[". $rows['id'] ."]' required>
             <option value=''>-----</option>";
             foreach($menus as $menu){
-                $option = $option . "<option value=".$menu->id.">".$menu->menu_name."</option>";
+                $option = $option . "<option value=".$menu->id.">".$menu->menu_name." - ".$menu->season_name."</option>";
             }
             $option = $option . "</select>";
             // $html = $html + "<input type='text' value='salom'>";
@@ -1243,7 +1246,7 @@ class TechnologController extends Controller
                 'kingar_name_id' => $child->kingar_name_id,
                 'king_age_name_id' => $child->age_id,
                 'kingar_children_number' => $child->age_number,
-                'workers_count' => $workers->worker_count,
+                'workers_count' => $child->workers,
                 'kingar_menu_id' => $menuages[$child->age_id],
             ]);
 
@@ -1524,9 +1527,10 @@ class TechnologController extends Controller
 
     public function menus(Request $request, $id)
     {
-        $menus = Titlemenu::where('menu_season_id', $id)
-            ->orderBy('id', 'DESC')
-            ->get();
+        $menus = Titlemenu::leftjoin('seasons', 'titlemenus.menu_season_id', '=', 'seasons.id')
+                    ->where('titlemenus.menu_season_id', $id)
+                    ->orderBy('titlemenus.id', 'DESC')
+                    ->get(['titlemenus.id', 'titlemenus.menu_name', 'seasons.season_name']);
         $works = Nextday_namber::all();
         for($i = 0; $i < count($menus); $i++){
             $menus[$i]['us'] = 0;

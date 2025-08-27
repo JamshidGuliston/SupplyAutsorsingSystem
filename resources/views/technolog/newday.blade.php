@@ -217,7 +217,7 @@
                 <select id="tommenu" class="form-control" required>
                     <option value="" selected>Bugungi menyu</option>
                     @foreach($menus as $menu)
-                        <option data-menu-id="{{ $menu->id }}" value="{{ $menu->id }}">{{ $menu->menu_name }}</option>
+                        <option data-menu-id="{{ $menu->id }}" value="{{ $menu->id }}">{{ $menu->menu_name }} - {{ $menu->season_name }}</option>
                     @endforeach
                 </select>
                 <br>
