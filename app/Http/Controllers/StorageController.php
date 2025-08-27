@@ -1276,20 +1276,21 @@ class StorageController extends Controller
         $products = Add_large_werehouse::where('add_group_id', $request->id)
                 ->join('products', 'products.id', '=', 'add_large_werehouses.product_id')
                 ->join('sizes', 'sizes.id', '=', 'products.size_name_id')->get();
-        $document = []; 
-        foreach($products as $row){
-            $document[$row->product_id]['add_group_id'] = $row->add_group_id;
-            $document[$row->product_id]['product_name'] = $row->product_name;
-            $document[$row->product_id]['size_name'] = $row->size_name;
-            $document[$row->product_id]['sort'] = $row->sort;
-            $document[$row->product_id]['weight'] = $row->weight;
-            $document[$row->product_id]['cost'] = $row->cost;
-            $document[$row->product_id]['created_at'] = $row->created_at;
+        $document = [];
+        foreach ($products as $row) {
+            $document[] = [
+                'add_group_id' => $row->add_group_id,
+                'product_name' => $row->product_name,
+                'size_name'    => $row->size_name,
+                'sort'         => $row->sort,
+                'weight'       => $row->weight,
+                'cost'         => $row->cost,
+                'created_at'   => $row->created_at,
+            ];
         }
-        usort($document, function ($a, $b){
-            if(isset($a["sort"]) and isset($b["sort"])){
-                return $a["sort"] > $b["sort"];
-            }
+        
+        usort($document, function ($a, $b) {
+            return $a['sort'] <=> $b['sort'];
         });
         // dd($document);
         $dompdf = new Dompdf('UTF-8');
