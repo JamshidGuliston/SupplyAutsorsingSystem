@@ -249,12 +249,12 @@
                             download>
                                 <i class="fas fa-download"></i> Yuklab olish
                         </a>
-                        <button type="button" 
+                        <!-- <button type="button" 
                             class="btn btn-info d-flex align-items-center justify-content-center gap-2" 
                             style="width: 100%;" 
                             onclick="shareTaxminiyMenuToTelegram('{{ $kindgarden->kingar_name }}', '/nextdaysecondmenuPDF/{{ $kindgarden->id }}')">
                             <i class="fab fa-telegram"></i> Share
-                        </button>
+                        </button> -->
                     </div>
                 @endforeach
                 <!-- </form> -->
