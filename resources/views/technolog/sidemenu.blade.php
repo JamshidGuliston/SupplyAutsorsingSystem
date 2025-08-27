@@ -9,5 +9,6 @@
     <a href="/technolog/shops" class="list-group-item list-group-item-action bg-transparent second-text fw-bold {{Request::is('technolog/shops') ? 'active' : null }}"><i class="fas fa-store-alt"></i> Do'konlar</a>
     <a href="/technolog/chefgetproducts" class="list-group-item list-group-item-action bg-transparent second-text fw-bold {{Request::is('technolog/chefgetproducts') ? 'active' : null }}"><i class="fas fa-project-diagram me-2"></i>Ishlatilgan</a>
     <a href="/technolog/allchefs" class="list-group-item list-group-item-action bg-transparent second-text fw-bold {{Request::is('technolog/allchefs') ? 'active' : null }}"><i class="fas fa-user"></i> Oshpazlar</a>
+    <a href="{{ route('technolog.certificates.index') }}" class="list-group-item list-group-item-action bg-transparent second-text fw-bold {{Request::is('technolog/certificates*') ? 'active' : null }}"><i class="fas fa-certificate"></i> Sertifikatlar</a>
     <!-- <a href="#" class="list-group-item list-group-item-action bg-transparent text-danger fw-bold"><i class="fas fa-power-off me-2"></i>Logout</a> -->
 </div>

@@ -8,6 +8,7 @@ use App\Http\Controllers\ChefController;
 use App\Http\Controllers\AccountantController;
 use App\Http\Controllers\ApiControllers\TelegramController;
 use App\Http\Controllers\BossController;
+use App\Http\Controllers\CertificateController;
 use App\Http\Controllers\CasherController;
 use App\Http\Controllers\HomeController;
 use Illuminate\Support\Facades\Auth;
@@ -267,6 +268,17 @@ Route::group(['prefix' => 'technolog', 'middleware' => ['isTechnolog', 'auth']],
     
     Route::get('pagecreateproduct', [TechnologController::class, 'pageCreateProduct']);
     Route::post('createproduct', [TechnologController::class, 'createproduct'])->name('createproduct');
+
+    // Sertifikatlar
+    Route::prefix('certificates')->name('technolog.certificates.')->group(function () {
+        Route::get('/', [CertificateController::class, 'index'])->name('index');
+        Route::get('/create', [CertificateController::class, 'create'])->name('create');
+        Route::post('/', [CertificateController::class, 'store'])->name('store');
+        Route::get('/{id}', [CertificateController::class, 'show'])->name('show');
+        Route::get('/{id}/edit', [CertificateController::class, 'edit'])->name('edit');
+        Route::put('/{id}', [CertificateController::class, 'update'])->name('update');
+        Route::delete('/{id}', [CertificateController::class, 'destroy'])->name('destroy');
+    });
     
     // Muassasalar (Bog'chalar) boshqaruvi
     Route::get('muassasalar', [TechnologController::class, 'muassasalar'])->name('technolog.muassasalar');
@@ -282,6 +294,7 @@ Route::group(['prefix' => 'technolog', 'middleware' => ['isTechnolog', 'auth']],
 
 Route::group(['prefix' => 'chef', 'middleware' => ['isChef', 'auth']], function () {
     Route::get('home', [ChefController::class, 'index'])->name('chef.home');
+    Route::get('certificates', [ChefController::class, 'certificates'])->name('chef.certificates');
     Route::post('sendnumbers', [ChefController::class, 'sendnumbers'])->name('chef.sendnumbers');
     Route::post('minusproducts', [ChefController::class, 'minusproducts'])->name('chef.minusproducts');
     Route::post('right', [ChefController::class, 'right'])->name('chef.right');

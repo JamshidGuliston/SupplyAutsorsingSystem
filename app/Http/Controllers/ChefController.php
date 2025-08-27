@@ -20,6 +20,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use App\Models\Certificate;
 
 class ChefController extends Controller
 {
@@ -146,5 +147,19 @@ class ChefController extends Controller
         });
 
         return redirect()->route('home');
+    }
+
+    public function certificates()
+    {
+        // Faqat faol va muddati o'tmagan sertifikatlarni olish
+        $certificates = Certificate::with('products')
+            ->where('is_active', true)
+            ->where('end_date', '>=', now())
+            ->get();
+
+        // Muddati yaqinlashgan sertifikatlarni olish
+        $expiringCertificates = Certificate::expiringSoon()->get();
+        
+        return view('chef.certificates', compact('certificates', 'expiringCertificates'));
     }
 }

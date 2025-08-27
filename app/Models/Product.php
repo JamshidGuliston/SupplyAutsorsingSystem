@@ -9,7 +9,6 @@ class Product extends Model
 {
     use HasFactory;
     protected $fillable = [
-        'id',
         'product_name',
         'size_name_id',
         'category_name_id',
@@ -21,7 +20,8 @@ class Product extends Model
         'proteins',
         'fats',
         'carbohydrates',
-        'kcal'
+        'kcal',
+        'certificate_id'
     ];
 
     public function shop(){
@@ -36,5 +36,11 @@ class Product extends Model
     public function size()
     {
         return $this->belongsTo(\App\Models\Size::class, 'size_name_id');
+    }
+
+    // Sertifikat bilan bog'lanish
+    public function certificate()
+    {
+        return $this->belongsTo(Certificate::class);
     }
 }
