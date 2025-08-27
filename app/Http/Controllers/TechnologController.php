@@ -3637,4 +3637,197 @@ class TechnologController extends Controller
         
         return response()->json(['success' => true, 'message' => 'Mahsulotlar muvaffaqiyatli sarflandi!']);
     }
+
+    // Taxminiy menyular uchun alohida PDF fayllarini yaratish va ZIP arxiv qilish
+    public function downloadAllKindergartensMenusPDF(Request $request)
+    {
+        try {
+            // Barcha bog'chalarni olish
+            $kindergartens = Kindgarden::where('hide', 1)->get();
+            
+            // Vaqtinchalik papka yaratish
+            $tempDir = storage_path('app/temp_menus_' . time());
+            if (!file_exists($tempDir)) {
+                mkdir($tempDir, 0755, true);
+            }
+            
+            $pdfFiles = [];
+            
+            foreach ($kindergartens as $kindergarten) {
+                // Har bir bog'cha uchun PDF yaratish
+                $pdfPath = $this->createKindergartenMenuPDF($kindergarten, $tempDir);
+                if ($pdfPath) {
+                    $pdfFiles[] = $pdfPath;
+                }
+            }
+            
+            if (empty($pdfFiles)) {
+                return redirect()->back()->with('error', 'Hech qanday PDF fayl yaratilmadi!');
+            }
+            
+            // ZIP fayl yaratish
+            $zipFileName = 'Taxminiy_menular_' . date('Y-m-d_H-i-s') . '.zip';
+            $zipPath = storage_path('app/' . $zipFileName);
+            
+            $zip = new \ZipArchive();
+            if ($zip->open($zipPath, \ZipArchive::CREATE) === TRUE) {
+                foreach ($pdfFiles as $pdfFile) {
+                    $zip->addFile($pdfFile, basename($pdfFile));
+                }
+                $zip->close();
+                
+                // Vaqtinchalik papkani tozalash
+                $this->deleteDirectory($tempDir);
+                
+                // ZIP faylni yuklab olish
+                return response()->download($zipPath)->deleteFileAfterSend();
+            } else {
+                // Vaqtinchalik papkani tozalash
+                $this->deleteDirectory($tempDir);
+                return redirect()->back()->with('error', 'ZIP fayl yaratishda xatolik yuz berdi!');
+            }
+            
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'Xatolik yuz berdi: ' . $e->getMessage());
+        }
+    }
+    
+    // Har bir bog'cha uchun alohida PDF yaratish
+    private function createKindergartenMenuPDF($kindergarten, $tempDir)
+    {
+        try {
+            // Bog'cha uchun ma'lumotlarni olish
+            $nextday = Nextday_namber::where('kingar_name_id', $kindergarten->id)->get();
+            
+            if ($nextday->isEmpty()) {
+                return null; // Agar bog'cha uchun ma'lumot yo'q bo'lsa
+            }
+            
+            $products = Product::where('hide', 1)->orderBy('sort', 'ASC')->get();
+            $day = Day::join('months', 'months.id', '=', 'days.month_id')->orderBy('days.id', 'DESC')->first();
+            
+            // Barcha yosh guruhlari uchun umumiy ma'lumotlarni to'plash
+            $allMenuitem = [];
+            $allWorkerproducts = array_fill(1, 500, 0);
+            $allProductallcount = array_fill(1, 500, 0);
+            
+            foreach ($nextday as $menuItem) {
+                $ageRange = Age_range::find($menuItem->king_age_name_id);
+                if (!$ageRange) continue;
+                
+                // Menyu ma'lumotlarini olish
+                $menuitem = Menu_composition::where('title_menu_id', $menuItem->kingar_menu_id)
+                    ->where('age_range_id', $menuItem->king_age_name_id)
+                    ->join('meal_times', 'menu_compositions.menu_meal_time_id', '=', 'meal_times.id')
+                    ->join('food', 'menu_compositions.menu_food_id', '=', 'food.id')
+                    ->join('products', 'menu_compositions.product_name_id', '=', 'products.id')
+                    ->orderBy('menu_meal_time_id')
+                    ->get();
+                
+                if ($menuitem->isEmpty()) continue;
+                
+                // Xodimlar ovqati uchun
+                $workerfood = titlemenu_food::where('day_id', $day->id)
+                    ->where('worker_age_id', $menuItem->king_age_name_id)
+                    ->where('titlemenu_id', $menuItem->kingar_menu_id)
+                    ->get();
+                
+                // Menyu ma'lumotlarini tayyorlash
+                $nextdaymenuitem = [];
+                $workerproducts = [];
+                $productallcount = array_fill(1, 500, 0);
+                
+                foreach ($menuitem as $item) {
+                    $nextdaymenuitem[$item->menu_meal_time_id][0]['mealtime'] = $item->meal_time_name;
+                    $nextdaymenuitem[$item->menu_meal_time_id][$item->menu_food_id][$item->product_name_id] = $item->weight;
+                    $nextdaymenuitem[$item->menu_meal_time_id][$item->menu_food_id]['foodname'] = $item->food_name;
+                    $productallcount[$item->product_name_id] += $item->weight;
+                }
+                
+                // Xodimlar uchun ovqat gramajlarini hisoblash
+                $workerproducts = array_fill(1, 500, 0);
+                foreach ($workerfood as $tr) {
+                    if (isset($nextdaymenuitem[3][$tr->food_id])) {
+                        foreach ($nextdaymenuitem[3][$tr->food_id] as $key => $value) {
+                            if ($key != 'foodname') {
+                                $workerproducts[$key] += $value;
+                            }
+                        }
+                    }
+                }
+                
+                // Umumiy ma'lumotlarga qo'shish
+                $allMenuitem = array_merge($allMenuitem, $nextdaymenuitem);
+                
+                // Xodimlar va mahsulotlar sonini qo'shish
+                foreach ($workerproducts as $key => $value) {
+                    $allWorkerproducts[$key] += $value;
+                }
+                
+                foreach ($productallcount as $key => $value) {
+                    $allProductallcount[$key] += $value;
+                }
+            }
+            
+            // PDF yaratish
+            $dompdf = new Dompdf('UTF-8');
+            $html = mb_convert_encoding(view('pdffile.technolog.alltable', [
+                'day' => $day,
+                'productallcount' => $allProductallcount,
+                'workerproducts' => $allWorkerproducts,
+                'menu' => $nextday,
+                'menuitem' => $allMenuitem,
+                'products' => $products,
+                'workerfood' => []
+            ]), 'HTML-ENTITIES', 'UTF-8');
+            
+            $dompdf->loadHtml($html);
+            $dompdf->setPaper('A4', 'landscape');
+            $dompdf->render();
+            
+            // Fayl nomini yaratish (maxsus belgilarni tozalash)
+            $fileName = $this->cleanFileName($kindergarten->kingar_name) . '_' . 
+                       date('Y-m-d') . '.pdf';
+            
+            $pdfPath = $tempDir . '/' . $fileName;
+            file_put_contents($pdfPath, $dompdf->output());
+            
+            $pdfFiles[] = $pdfPath;
+            
+            return $pdfFiles;
+            
+        } catch (\Exception $e) {
+            \Log::error('PDF yaratishda xatolik: ' . $e->getMessage());
+            return null;
+        }
+    }
+    
+    // Fayl nomini tozalash
+    private function cleanFileName($fileName)
+    {
+        // Maxsus belgilarni olib tashlash
+        $fileName = preg_replace('/[^a-zA-Z0-9а-яА-Я\s\-_]/u', '', $fileName);
+        // Bo'shliqlarni tire bilan almashtirish
+        $fileName = preg_replace('/\s+/', '_', $fileName);
+        return trim($fileName, '_');
+    }
+    
+    // Papkani o'chirish
+    private function deleteDirectory($dir)
+    {
+        if (!is_dir($dir)) {
+            return;
+        }
+        
+        $files = array_diff(scandir($dir), array('.', '..'));
+        foreach ($files as $file) {
+            $path = $dir . '/' . $file;
+            if (is_dir($path)) {
+                $this->deleteDirectory($path);
+            } else {
+                unlink($path);
+            }
+        }
+        rmdir($dir);
+    }
 }

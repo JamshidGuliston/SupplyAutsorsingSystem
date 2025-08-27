@@ -242,7 +242,7 @@
                     <p><b>Taxminiy menyu: </b></p>
                     <p><small class="text-muted"><i class="fas fa-info-circle"></i> PDF faylni yuklab olish uchun tugmani bosing</small></p>
                     <div class="d-flex gap-2 mt-2">
-                        <a href="/nextdaysecondmenuPDF/{{ $kindgarden->id }}" 
+                        <a href="/nextdaymenuPDF/{{ $kindgarden->id }}" 
                             class="btn btn-primary d-flex align-items-center justify-content-center gap-2" 
                             style="width: 100%;" 
                             download>

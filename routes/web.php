@@ -275,6 +275,9 @@ Route::group(['prefix' => 'technolog', 'middleware' => ['isTechnolog', 'auth']],
     Route::get('editmuassasa/{id}', [TechnologController::class, 'editmuassasa'])->name('technolog.editmuassasa');
     Route::post('updatemuassasa', [TechnologController::class, 'updatemuassasa'])->name('technolog.updatemuassasa');
     Route::delete('deletemuassasa', [TechnologController::class, 'deletemuassasa'])->name('technolog.deletemuassasa');
+    
+    // Taxminiy menyular uchun barcha bog'chalarni ZIP arxiv qilish
+    Route::get('download-all-kindergartens-menus-pdf', [TechnologController::class, 'downloadAllKindergartensMenusPDF'])->name('technolog.downloadAllKindergartensMenusPDF');
 });
 
 Route::group(['prefix' => 'chef', 'middleware' => ['isChef', 'auth']], function () {

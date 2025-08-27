@@ -616,13 +616,16 @@
 <!-- DELETE Modal 2 -->
 
 <div class="py-4 px-4">
-    <div class="row">
+    <div class="row mb-3">
         <div class="col-md-6">
             <b>Taxminiy menyular</b>
-            <!-- <a href="/technolog/createnextdaypdf">
-                <i class="far fa-file-pdf" style="color: dodgerblue; font-size: 18px;"></i>
-            </a> -->
         </div>
+        <div class="col-md-6 text-end">
+            <a href="{{ route('technolog.downloadAllKindergartensMenusPDF') }}" class="btn btn-success" title="Barcha bog'chalar uchun alohida PDF fayllarini ZIP arxiv qilish">
+                <i class="fas fa-download me-1"></i>Barcha menyularni ZIP arxiv qilish
+            </a>
+        </div>
+    </div>
         <div class="col-md-3">
             
         </div>
