@@ -84,7 +84,7 @@
 						</a>
 						<center>
 							<b>Юк хати    &nbsp;&nbsp;&nbsp;&nbsp;    № {{ $document->docid }}</b>
-							@if(env('WITHOUTDATE') == 'false')
+							@if(!env('WITHOUTDATE'))
 								<b>&nbsp;&nbsp;&nbsp;&nbsp;  {{ "   Cана: ".explode(' ', $document->order_title)[0] }}</b>
 							@else
 								<b>&nbsp;&nbsp;&nbsp;&nbsp;  {{ "   Cана: ____-____-".substr(explode(' ', $document->order_title)[0], -4) }}</b>
