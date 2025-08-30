@@ -84,7 +84,11 @@
 						</a>
 						<center>
 							<b>Юк хати    &nbsp;&nbsp;&nbsp;&nbsp;    № {{ $document->docid }}</b>
-							<b>&nbsp;&nbsp;&nbsp;&nbsp;  {{ "   Cана: ".explode(' ', $document->order_title)[0] }}</b>
+							@if(env('WITHOUTDATE') == 'false')
+								<b>&nbsp;&nbsp;&nbsp;&nbsp;  {{ "   Cана: ".explode(' ', $document->order_title)[0] }}</b>
+							@else
+								<b>&nbsp;&nbsp;&nbsp;&nbsp;  {{ "   Cана: ____-____-".substr(explode(' ', $document->order_title)[0], -4) }}</b>
+							@endif
 						</center>
 						Кимдан:<b> {{ env('COMPANY_NAME') }} </b><br>  
 						Кимга: <b> {{ $document->kingar_name }}</b>
