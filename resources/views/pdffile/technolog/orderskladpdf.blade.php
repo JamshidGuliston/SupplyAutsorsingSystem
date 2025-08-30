@@ -85,7 +85,7 @@
 						<center>
 							<b>Юк хати    &nbsp;&nbsp;&nbsp;&nbsp;    № {{ $document->docid }}</b>
 							@php
-							  if(!env('WITHOUTDATE')){
+							  if(env('WITHOUTDATE') == 'false'){
 								 echo  "   Cана: ".explode(' ', $document->order_title)[0];
 							  }else{
 								 echo  "   Cана: ____-____-".substr(explode(' ', $document->order_title)[0], -4);
