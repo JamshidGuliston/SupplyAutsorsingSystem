@@ -563,16 +563,18 @@ class StorageController extends Controller
         ]);
         DB::transaction(function () use ($request, $day) {
             $order = order_product::where('id', $request->orderid)->first();
+            // dd($order);
             $product = order_product_structure::where('order_product_name_id', $request->orderid)->get();
             foreach ($product as $row) {
                 $exists = plus_multi_storage::where('order_product_id', $order['id'])
                                     ->where('kingarden_name_d', $order['kingar_name_id'])
                                     ->where('product_name_id', $row['product_name_id'])
                                     ->exists();
+                // dd($exists);
                 if(!$exists){
                     plus_multi_storage::create([
                         'day_id' => $day->id,
-                        'shop_id' => $order['shop_id'],
+                        'shop_id' => $order['shop_id'] ?? 0,
                         'kingarden_name_d' => $order['kingar_name_id'],
                         'order_product_id' => $order['id'],
                         'residual' => 0,
@@ -2586,6 +2588,7 @@ class StorageController extends Controller
                 'day_id' => $request->date_id,
                 'order_title' => $request->group_name,
                 'document_processes_id' => 3,
+                'shop_id' => 0,
             ]);
         }
 
