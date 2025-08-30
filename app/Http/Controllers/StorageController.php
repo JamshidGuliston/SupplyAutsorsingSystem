@@ -303,7 +303,7 @@ class StorageController extends Controller
         $product_categories = Product_category::with('products')->get();
         $products = Product::with('category')->get();
         
-        $orders = order_product::orderby('id', 'DESC')->get();
+        $orders = order_product::where('shop_id', 0)->where('parent_id', null)->orderby('id', 'DESC')->get();
         $days = $this->days();
         // dd($menus);
         return view('storage.addmultisklad', compact('orders','gardens', 'menus', 'days', 'product_categories', 'products'));
@@ -533,18 +533,26 @@ class StorageController extends Controller
         }
     }
 
-    public function onedaymulti(Request $request, $dayid){
-        $orederproduct = order_product::where('order_title', $dayid)
-            ->join('kindgardens', 'kindgardens.id', '=', 'order_products.kingar_name_id')
-            ->select('order_products.id', 'order_products.order_title', 'order_products.data_of_weight', 'order_products.document_processes_id', 'kindgardens.kingar_name') 
-            ->orderby('order_products.id', 'DESC')
-            ->get();
+    public function onedaymulti(Request $request, $dayid, $haschild = null){
+        if($haschild){
+            $orederproduct = order_product::where('parent_id', $dayid)
+                ->join('kindgardens', 'kindgardens.id', '=', 'order_products.kingar_name_id')
+                ->select('order_products.id', 'order_products.order_title', 'order_products.data_of_weight', 'order_products.document_processes_id', 'kindgardens.kingar_name', 'order_products.parent_id') 
+                ->orderby('order_products.id', 'DESC')
+                ->get();
+        }else{  
+            $orederproduct = order_product::where('order_title', $dayid)
+                ->join('kindgardens', 'kindgardens.id', '=', 'order_products.kingar_name_id')
+                ->select('order_products.id', 'order_products.order_title', 'order_products.data_of_weight', 'order_products.document_processes_id', 'kindgardens.kingar_name', 'order_products.parent_id') 
+                ->orderby('order_products.id', 'DESC')
+                ->get();
+        }
         // $orederitems = order_product_structure::join('products', 'products.id', '=', 'order_product_structures.product_name_id')
             // ->get();
         $orederitems = [];
         $kingar = Kindgarden::all();
 
-        return view('storage.onedaymulti', ['gardens' => $kingar, 'orders' => $orederproduct, 'products'=>$orederitems, 'dayid' => $dayid]);
+        return view('storage.onedaymulti', ['gardens' => $kingar, 'orders' => $orederproduct, 'products'=>$orederitems, 'dayid' => $dayid, 'haschild' => $haschild]);
     }
 
     public function right(Request $request)
@@ -580,6 +588,13 @@ class StorageController extends Controller
 
     public function orderitem(Request $request, $id)
     {
+
+        $child = order_product::where('parent_id', $id)->first();
+        if($child){
+            // dd($child);
+            return redirect()->route('storage.onedaymulti', ['id' => $id, 'haschild' => $child->id]);
+        }
+
         $orederproduct = order_product::where('order_products.id', $id)
             ->join('kindgardens', 'kindgardens.id', '=', 'order_products.kingar_name_id')
             ->join('days', 'days.id', '=', 'order_products.day_id')
@@ -3236,5 +3251,62 @@ class StorageController extends Controller
         $dompdf->setPaper('A4', 'landscape');
         $dompdf->render();
         $dompdf->stream('maxsulotlar_hisoboti.pdf', ['Attachment' => 0]);
+    }
+
+    public function separateOrders(Request $request)
+    {
+        // dd($request->all());
+        try {
+            DB::beginTransaction();
+            
+            // Asosiy buyurtmani olish
+            $parentOrder = order_product::findOrFail($request->order_id);
+            
+            // Buyurtma maxsulotlarini olish
+            $orderStructures = order_product_structure::where('order_product_name_id', $parentOrder->id)
+                ->join('products', 'products.id', '=', 'order_product_structures.product_name_id')
+                ->join('product_categories', 'product_categories.id', '=', 'products.category_name_id')
+                ->select('order_product_structures.*', 'products.category_name_id', 'product_categories.pro_cat_name')
+                ->get();
+                
+            // Kategoriyalar bo'yicha guruhlash
+            $groupedProducts = $orderStructures->groupBy('category_name_id');
+            // dd($groupedProducts);
+            foreach($groupedProducts as $categoryId => $products) {
+                // Har bir kategoriya uchun yangi buyurtma yaratish
+                // agar buyurtma mavjud bo'lmasa, uni yaratish
+                // dd($products);
+                $existingOrder = order_product::where('parent_id', $parentOrder->id)->get();
+
+                if($existingOrder->count() != $groupedProducts->count()){
+                    $newOrder = order_product::create([
+                        'kingar_name_id' => $parentOrder->kingar_name_id,
+                        'day_id' => $parentOrder->day_id,
+                        'order_title' => $parentOrder->order_title . " (Kategoriya: " . $products[0]->pro_cat_name . ")",
+                        'document_processes_id' => $parentOrder->document_processes_id,
+                        'data_of_weight' => $parentOrder->data_of_weight,
+                        'to_menus' => $parentOrder->to_menus,
+                        'shop_id' => 0,
+                        'parent_id' => $parentOrder->id
+                    ]);
+                }else{
+                    $newOrder = $existingOrder;
+                }
+    
+                // Kategoriyaga tegishli maxsulotlarni yangi buyurtmaga o'tkazish
+                foreach($products as $product) {
+                    order_product_structure::where('id', $product->id)
+                        ->update(['order_product_name_id' => $newOrder->id]);
+                }
+            }
+            
+            DB::commit();
+            return redirect()->back()->with('status', 'Buyurtma muvaffaqiyatli ajratildi!');
+            dd($e);
+        } catch (\Exception $e) {
+            dd($e);
+            DB::rollback();
+            return redirect()->back()->with('error', 'Xatolik yuz berdi: ' . $e->getMessage());
+        }
     }
 }

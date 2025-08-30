@@ -15,7 +15,8 @@ class order_product extends Model
         'document_processes_id',
         'data_of_weight',
         'to_menus', 
-        'shop_id',      
+        'shop_id',
+        'parent_id',      
     ];
     
     public function orderProductStructures()
@@ -36,5 +37,10 @@ class order_product extends Model
     public function kinggarden()
     {
         return $this->belongsTo(Kindgarden::class, 'kingar_name_id');
+    }
+
+    public function childs()
+    {
+        return $this->hasMany(order_product::class, 'parent_id');
     }
 }

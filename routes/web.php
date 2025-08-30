@@ -80,6 +80,7 @@ Route::group(['prefix' => 'storage', 'middleware' => ['isStorage', 'auth']], fun
     Route::get('generate-order-title-pdf/{orderTitle}', [StorageController::class, 'generateOrderTitlePDF'])->name('storage.generateOrderTitlePDF');
     Route::post('newordersklad', [StorageController::class, 'newordersklad'])->name('storage.newordersklad');
     Route::get('onedaymulti/{id}', [StorageController::class, 'onedaymulti'])->name('storage.onedaymulti');
+    Route::get('onedaymulti/{id}/{haschild}', [StorageController::class, 'onedaymulti'])->name('storage.onedaymulti');
     Route::get('orderskladpdf/{id}', [TechnologController::class, 'orderskladpdf'])->name('technolog.orderskladpdf');
     Route::get('orderitem/{id}', [StorageController::class, 'orderitem'])->name('storage.orderitem');
     Route::get('getproduct', [StorageController::class, 'getproduct']);
@@ -136,6 +137,7 @@ Route::group(['prefix' => 'storage', 'middleware' => ['isStorage', 'auth']], fun
     Route::post('deleteSale', [StorageController::class, 'deleteSale'])->name('storage.deleteSale');
     Route::post('createSalePayment', [StorageController::class, 'createSalePayment'])->name('storage.createSalePayment');
     Route::get('getShopSales/{shopId}', [StorageController::class, 'getShopSales'])->name('storage.getShopSales');
+    Route::post('separate-orders', [StorageController::class, 'separateOrders'])->name('storage.separateOrders');
 });
 
 Route::group(['prefix' => 'technolog', 'middleware' => ['isTechnolog', 'auth']], function () {
@@ -379,3 +381,5 @@ Route::group(['prefix' => 'boss', 'middleware' => ['isBoss', 'auth']], function 
 Route::get('/minusp', [TestController::class, 'minusproduct']);
 Route::get('/modproducts', [TestController::class, 'modproducts']);
 Route::get('/deletemod', [TestController::class, 'deletemod']);
+
+

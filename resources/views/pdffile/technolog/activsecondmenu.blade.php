@@ -463,7 +463,9 @@
 							<p style="text-align: center;"><strong> Бош ошпаз:</strong> __________________;</p>
 						</div>
 						<div class="column">
-							<p style="text-align: right;"><strong>ДМТТ директори: </strong> __________________;</p>
+							@if(env('MENU_SIGN'))
+								<p style="text-align: right;"><strong>ДМТТ директори: </strong> __________________;</p>
+							@endif
 						</div>
 				</div>
             </div>

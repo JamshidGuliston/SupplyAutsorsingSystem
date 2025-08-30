@@ -131,6 +131,29 @@
     </div>
 </div>
 
+<!-- Separate Orders Modal -->
+<div class="modal fade" id="modalIncreased" tabindex="-1" aria-labelledby="modalIncreasedLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalIncreasedLabel">Buyurtmani ajratish</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form action="{{ route('storage.separateOrders') }}" method="POST">
+                @csrf
+                <input type="hidden" name="order_id" id="separateOrderId">
+                <div class="modal-body">
+                    <p>Ushbu buyurtmani maxsulot kategoriyalari bo'yicha ajratishni xohlaysizmi?</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Bekor qilish</button>
+                    <button type="submit" class="btn btn-primary">Tasdiqlash</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
 <!-- DELET -->
 <div class="py-4 px-4">
     <!-- @if(isset($orders[0]->day_number))
@@ -145,6 +168,7 @@
                 <th scope="col">MTM</th>
                 <th scope="col">Sarlavha</th>
                 <th scope="col">Mahsulotlar</th>
+                <th scope="col">Ajratish</th>
                 <th style="width: 40px;">PDF</th>
                 <th style="width: 70px;">Holati</th>
                 <th style="width: 70px;">...</th>
@@ -172,7 +196,14 @@
                     @endif
                 </td>
                 <td>
+                @if($order['document_processes_id'] == 3 && $order->childs->count() == 0 && $haschild == null)
+                    <button class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#modalIncreased">Yuklashni ajratish</button>
+                @endif
+                </td>
+                <td>
+                @if($order->childs->count() == 0)
                     <a href="/storage/orderskladpdf/{{ $order->id }}" target="__blank">pdf</a>
+                @endif
                 </td>
                 <td>
                     @if($order['document_processes_id'] == 1)
@@ -192,14 +223,14 @@
                     <i class="far fa-paper-plane" data-produc-id="{{$order['id']}}" data-bs-toggle="modal" data-bs-target="#Modaldelete" style="cursor: pointer; margin-left: 16px; color: deepskyblue"></i>
                     @elseif($order['document_processes_id'] == 2)
                     <i class="fas fa-check" style="color: #1a61aa;"></i>
-                    @elseif($order['document_processes_id'] == 3)
+                    @elseif($order['document_processes_id'] == 3 and $order->childs->count() == 0)
                         <i class="far fa-paper-plane" data-produc-id="{{$order['id']}}" data-bs-toggle="modal" data-bs-target="#Modaldelete" style="cursor: pointer; margin-left: 16px; color: deepskyblue"></i>
                     @elseif($order['document_processes_id'] == 4)
                         <i class="fas fa-undo" data-produc-id="{{$order['id']}}" data-bs-toggle="modal" data-bs-target="#Modalback" style="cursor: pointer; margin-left: 16px; color: deepskyblue"></i>
                     @endif
                 </td>
                 <td>
-                    @if($order['document_processes_id'] == 3)
+                    @if($order['document_processes_id'] == 3 and $haschild == null)
                         <i class="far fa-trash-alt" data-title-id="{{$order['kingar_name']}}" data-produc-id="{{$order['id']}}" data-day-id="{{$dayid}}" data-bs-toggle="modal" data-bs-target="#ModalTrash" style="cursor: pointer; margin-left: 16px; color: deepskyblue"></i>
                     @elseif($order['document_processes_id'] == 4)
                         <form action="{{route('storage.confirmorder')}}" method="POST">
@@ -318,6 +349,12 @@
                 icon.className = 'fas fa-chevron-down float-end';
             }
         };
+
+        // Add this new script for handling separate orders button
+        $('.btn-secondary[data-bs-target="#modalIncreased"]').click(function() {
+            var orderId = $(this).closest('tr').find('[data-produc-id]').attr('data-produc-id');
+            $('#separateOrderId').val(orderId);
+        });
     });
 </script>
 @if(session('status'))
