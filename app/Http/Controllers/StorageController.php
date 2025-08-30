@@ -2981,6 +2981,16 @@ class StorageController extends Controller
         }
     }
 
+    public function deleteOrderProduct($order_title){
+        $order_product = order_product::where('order_title', $order_title)->get();
+        foreach($order_product as $row){
+            if($row->document_processes_id == 3){
+                $row->delete();
+            }
+        }
+        return redirect()->back()->with('success', $order_title.' buyurtmasi muvaffaqiyatli o\'chirildi');
+    }
+
     public function deleteSale(Request $request){
         try {
             DB::beginTransaction();

@@ -577,6 +577,7 @@
                 <th style="width: 80px;">Umumiy</th>
                 <th style="width: 80px;">Tumanlar</th>
                 <th style="width: 80px;">Bog'chalar</th>
+                <th style="width: 80px;">...</th>
             </tr>
         </thead>
         <tbody>
@@ -610,6 +611,16 @@
                             <a href="/storage/generate-order-title-pdf/{{ $row->order_title }}" class="btn btn-sm btn-warning" target="_blank">
                                 <i class="fa fa-file-pdf"></i> PDF
                             </a>
+                        </td>
+                        <td>
+                            <div class="dropdown">
+                                <button class="btn btn-sm btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
+                                    <i class="fa fa-ellipsis-v"></i>
+                                </button>
+                                <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                    <li><a class="dropdown-item" href="/storage/delete-order-product/{{ $row->order_title }}">O'chirish</a></li>
+                                </ul>
+                            </div>
                         </td>
                     </tr>
                 @endif
