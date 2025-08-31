@@ -1381,6 +1381,8 @@ class StorageController extends Controller
             }
         });
 
+        return view('pdffile.storage.ordersvodAllRegions', compact('items', 'document', 'regions'));
+
         $dompdf = new Dompdf('UTF-8');
 		$html = mb_convert_encoding(view('pdffile.storage.ordersvodAllRegions', compact('items', 'document', 'regions')), 'HTML-ENTITIES', 'UTF-8');
 		$dompdf->loadHtml($html);
