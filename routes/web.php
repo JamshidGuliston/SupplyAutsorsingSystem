@@ -242,6 +242,7 @@ Route::group(['prefix' => 'technolog', 'middleware' => ['isTechnolog', 'auth']],
     Route::post('editegroup', [TechnologController::class, 'editegroup'])->name('technolog.editegroup');
     // end telegram
     Route::post('editnextworkers', [TechnologController::class, 'editnextworkers'])->name('technolog.editnextworkers');
+    Route::post('editnextallworkers', [TechnologController::class, 'editnextallworkers'])->name('technolog.editnextallworkers');
     Route::post('editnextcheldren', [TechnologController::class, 'editnextcheldren'])->name('technolog.editnextcheldren');
     Route::post('editnextmenu', [TechnologController::class, 'editnextmenu'])->name('technolog.editnextmenu');
     Route::get('fornextmenuselect', [TechnologController::class, 'fornextmenuselect'])->name('technolog.fornextmenuselect');
@@ -290,10 +291,14 @@ Route::group(['prefix' => 'technolog', 'middleware' => ['isTechnolog', 'auth']],
     Route::get('editmuassasa/{id}', [TechnologController::class, 'editmuassasa'])->name('technolog.editmuassasa');
     Route::post('updatemuassasa', [TechnologController::class, 'updatemuassasa'])->name('technolog.updatemuassasa');
     Route::delete('deletemuassasa', [TechnologController::class, 'deletemuassasa'])->name('technolog.deletemuassasa');
-    
+    Route::post('update-bulk-age-menu', [TechnologController::class, 'updateBulkAgeMenu'])->name('technolog.updateBulkAgeMenu');
     // Taxminiy menyular uchun barcha bog'chalarni ZIP arxiv qilish
+    Route::get('share-menu-telegram/{garden_id}/{age_id}', [TechnologController::class, 'shareMenuTelegram'])->name('technolog.shareMenuTelegram');
+    Route::get('create-share-pdf/{garden_id}/{age_id}', [TechnologController::class, 'createSharePdf'])->name('technolog.createSharePdf');
+    Route::post('delete-temp-file', [TechnologController::class, 'deleteTempFile'])->name('technolog.deleteTempFile');
     Route::get('download-all-kindergartens-menus-pdf', [TechnologController::class, 'downloadAllKindergartensMenusPDF'])->name('technolog.downloadAllKindergartensMenusPDF');
 });
+
 
 Route::group(['prefix' => 'chef', 'middleware' => ['isChef', 'auth']], function () {
     Route::get('home', [ChefController::class, 'index'])->name('chef.home');

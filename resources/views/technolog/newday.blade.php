@@ -173,6 +173,66 @@
             transform: rotate(360deg);
         }
     }
+
+    .share-menu {
+        transition: all 0.3s ease;
+    }
+
+    .share-menu:hover {
+        transform: scale(1.2);
+        color: #1e7e34 !important;
+    }
+
+    .fa-spinner {
+        animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+
+    .container-fluid {
+        max-width: 1800px;
+        margin: 0 auto;
+    }
+
+    .table-responsive {
+        overflow-x: auto;
+    }
+
+    .filter-section {
+        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+        border: 1px solid #dee2e6;
+        border-radius: 8px;
+        padding: 15px;
+        margin-bottom: 20px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    }
+
+    #secondTable {
+        width: 100%;
+        margin-bottom: 1rem;
+        background-color: #fff;
+        border-collapse: collapse;
+    }
+
+    #secondTable th,
+    #secondTable td {
+        padding: .75rem;
+        vertical-align: middle;
+        border: 1px solid #dee2e6;
+    }
+
+    #secondTable thead th {
+        background-color: #f8f9fa;
+        border-bottom: 2px solid #dee2e6;
+    }
+
+    .mx-2 {
+        margin-left: 1rem !important;
+        margin-right: 1rem !important;
+    }
 </style>
 @endsection
 @section('leftmenu')
@@ -575,7 +635,12 @@
             <div class="modal-body">
                 <h5 class="menutitle"></h5>
                 <div class="menu_select">
-
+                    <select name="menuid" class="form-select" required>
+                        <option value="">Menyu tanlang</option>
+                        @foreach($allmenus as $menu)
+                            <option value="{{ $menu->id }}">{{ $menu->menu_name }} - {{ $menu->season_name }}</option>
+                        @endforeach
+                    </select>
                 </div>
             </div>
             <div class="modal-footer">
@@ -583,6 +648,60 @@
                 <button type="submit" class="btn btn-success">Saqlash</button>
             </div>
         </form>
+        </div>
+    </div>
+</div>
+<!-- EDIT -->
+<!-- all Menu edit -->
+<div class="modal editesmodal fade" id="editnextmenuModalAll" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+        <form action="/technolog/update-bulk-age-menu" method="post">
+		    @csrf
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Barcha menyularni o'zgartirish</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <h5 class="menutitle"></h5>
+                <div class="menu_select">
+                    <input type="hidden" name="age_id" id="bulk_age_id">
+                    <select name="menu_id" class="form-select" required>
+                        <option value="">Menyu tanlang</option>
+                        @foreach($allmenus as $menu)
+                            <option value="{{ $menu->id }}">{{ $menu->menu_name }} - {{ $menu->season_name }}</option>
+                        @endforeach
+                    </select>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <!-- <button type="button" class="btn btn-warning" data-bs-dismiss="modal">Close</button> -->
+                <button type="submit" class="btn btn-success">Saqlash</button>
+            </div>
+        </form>
+        </div>
+    </div>
+</div>
+<!-- EDIT -->
+<!-- Edit number of employees -->
+<!-- Modal -->
+<div class="modal fade" id="editModalForEmployees" tabindex="-1" aria-labelledby="editModalForEmployeesLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form action="{{ route('technolog.editnextallworkers') }}" method="post">
+                @csrf
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editModalForEmployeesLabel">Xodimlar sonini o'zgartirish</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <h5 class="employees-title">Oxirgi ish kunidagi xodimlar soni olib o'zgartirish</h5>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Bekor qilish</button>
+                    <button type="submit" class="btn btn-success">Bajarish</button>
+                </div>
+            </form>
         </div>
     </div>
 </div>
@@ -635,131 +754,161 @@
     </div>
     <hr>
     <!-- Filter va qidiruv qismi -->
-    <div class="row mb-3 filter-section">
-        <div class="col-md-4">
-            <label for="regionFilter2" class="form-label">
-                <i class="fas fa-filter me-1"></i>Hudud bo'yicha filter:
-                <small class="text-muted d-block">Filter avtomatik saqlanadi</small>
-            </label>
-            <select class="form-select" id="regionFilter2">
-                <option value="">Barcha hududlar</option>
-                @foreach(\App\Models\Region::all() as $region)
-                    <option value="{{ $region->id }}">{{ $region->region_name }}</option>
-                @endforeach
-            </select>
+    <div class="container-fluid">
+        <div class="row mb-3 filter-section mx-2">
+            <div class="col-md-4">
+                <label for="regionFilter2" class="form-label">
+                    <i class="fas fa-filter me-1"></i>Hudud bo'yicha filter:
+                    <small class="text-muted d-block">Filter avtomatik saqlanadi</small>
+                </label>
+                <select class="form-select" id="regionFilter2">
+                    <option value="">Barcha hududlar</option>
+                    @foreach(\App\Models\Region::all() as $region)
+                        <option value="{{ $region->id }}">{{ $region->region_name }}</option>
+                    @endforeach
+                </select>
+            </div>
+            <div class="col-md-4">
+                <label for="searchInput2" class="form-label">
+                    <i class="fas fa-search me-1"></i>Qidiruv:
+                    <small class="text-muted d-block">Qidiruv avtomatik saqlanadi</small>
+                </label>
+                <input type="text" class="form-control" id="searchInput2" placeholder="Bog'cha nomi yoki oshpaz nomi...">
+            </div>
+            <div class="col-md-2">
+                <label for="clearFilters2" class="form-label">Filterlarni tozalash</label><br>
+                <button class="btn btn-secondary me-2" id="clearFilters2" title="Filterlarni tozalash va saqlangan ma'lumotlarni o'chirish"> 
+                    <i class="fas fa-trash-alt text-white"></i>
+                </button>
+            </div>
+            <div class="col-md-2">
+                <label for="exampleModalsadd" class="form-label">Bog'cha qo'shish</label><br>
+                <button class="btn btn-info" style="text-align:end" data-bs-toggle="modal" data-bs-target="#exampleModalsadd"> <i class="fas fa-plus-square text-white "></i></button>
+            </div>      
         </div>
-        <div class="col-md-4">
-            <label for="searchInput2" class="form-label">
-                <i class="fas fa-search me-1"></i>Qidiruv:
-                <small class="text-muted d-block">Qidiruv avtomatik saqlanadi</small>
-            </label>
-            <input type="text" class="form-control" id="searchInput2" placeholder="Bog'cha nomi yoki oshpaz nomi...">
-        </div>
-        <div class="col-md-2">
-            <label for="clearFilters2" class="form-label">Filterlarni tozalash</label><br>
-            <button class="btn btn-secondary me-2" id="clearFilters2" title="Filterlarni tozalash va saqlangan ma'lumotlarni o'chirish"> 
-                <i class="fas fa-trash-alt text-white"></i>
-            </button>
-        </div>
-        <div class="col-md-2">
-            <label for="exampleModalsadd" class="form-label">Bog'cha qo'shish</label><br>
-            <button class="btn btn-info" style="text-align:end" data-bs-toggle="modal" data-bs-target="#exampleModalsadd"> <i class="fas fa-plus-square text-white "></i></button>
-        </div>      
     </div>
 
-    <table class="table table-light py-4 px-4" id="secondTable">
-        <thead>
-            <tr>
-                <th scope="col" rowspan="2">ID</th>
-                <th scope="col" rowspan="2">MTT-nomi</th>
-                <th scope="col" rowspan="2">Xodimlar 
-                @foreach($ages as $age)
-                <th scope="col" colspan="2"> 
-                    <span class="age_name{{ $age->id }}">{{ $age->age_name }} </span>
-                </th>
-                @endforeach
-                <th style="width: 70px;" rowspan="2">Накладной</th>
-                <th style="width: 70px;" rowspan="2">Amallar</th>
-            </tr>
-            <tr style="color: #888888;">
-                @foreach($ages as $age)
-                <th><i class="fas fa-users"></i></th>
-                <th><i class="fas fa-book-open"></i></th>
-                @endforeach
-            </tr>
-        </thead>
-        <tbody>
-        <?php 
-            $t = 1;
+    <div class="container-fluid">
+        <div class="table-responsive mx-2">
+            <table class="table table-light table-bordered table-striped table-hover" id="secondTable">
+                <thead>
+                    <tr>
+                        <th scope="col" rowspan="2">ID</th>
+                        <th scope="col" rowspan="2">MTT-nomi</th>
+                        <th scope="col" rowspan="2">Xodimlar<br>
+                            <i class="fas fa-users"></i>
+                            <i class="next_allmenu fas fa-edit" style="color: #727213; font-size: 14px; cursor: pointer;" data-bs-toggle="modal" data-bs-target="#editModalForEmployees"></i>
+                        </th>
+                        @foreach($ages as $age)
+                        <th scope="col" colspan="2"> 
+                            <span class="age_name{{ $age->id }}">{{ $age->age_name }} </span>
+                        </th>
+                        @endforeach
+                        <th style="width: 70px;" rowspan="2">Накладной</th>
+                        <th style="width: 70px;" rowspan="2">Amallar</th>
+                    </tr>
+                    <tr style="color: #888888;">
+                        @foreach($ages as $age)
+                        <th><i class="fas fa-users"></i></th>
+                        <th>
+                            <i class="fas fa-book-open"></i>
+                            <i class="next_allmenu fas fa-edit" style="color: #727213; font-size: 14px; cursor: pointer;" data-bs-toggle="modal" data-bs-target="#editnextmenuModalAll" data-age-id="{{ $age->id }}"></i>
+                        </th>
+                        @endforeach
+                    </tr>
+                </thead>
+                <tbody>
+                <?php 
+                    $t = 1;
 
-            // dd($nextdayitem);
-        ?>   
-        @foreach($nextdayitem as $row)
-            @php
-                $kindgarden = \App\Models\Kindgarden::find($row['kingar_name_id']);
-                $user = $kindgarden ? $kindgarden->user->first() : null;
-            @endphp
-            <tr data-region-id="{{ $kindgarden ? $kindgarden->region_id : '' }}" data-user-name="{{ $user ? $user->name : '' }}">
-                <td>{{ $t++ }}</td>
-                <td>
-                    {{ $row['kingar_name'] }}
+                    // dd($nextdayitem);
+                ?>   
+                @foreach($nextdayitem as $row)
                     @php
                         $kindgarden = \App\Models\Kindgarden::find($row['kingar_name_id']);
                         $user = $kindgarden ? $kindgarden->user->first() : null;
                     @endphp
-                    @if($user && $user->phone)
-                        <i class="fas fa-phone text-success phone-icon" style="cursor: pointer; margin-left: 8px;" 
-                           data-bs-toggle="tooltip" data-bs-placement="top" 
-                           title="Oshpaz: {{ $user->name }}         Telefon raqam: {{ $user->phone }} "></i>
-                    @endif
-                </td>
-                <td>{{ $row['workers_count'] }} <i class="w_countedit far fa-edit" data-menu-id="{{ $row['kingar_name_id'] }}" data-wor-count="{{ $row['workers_count'] }}" data-king-name="{{ $row['kingar_name'] }}" data-bs-toggle="modal" data-bs-target="#wcountModal" style="color: #727213; font-size: 14px; cursor: pointer;"></i></td>
-                @foreach($ages as $age)
-                @if(isset($row[$age->id]))
-                    @php
-                        $status = '#f8f882';
-                        $status_icon = "<i class='fas fa-question' style='color:rgb(238, 65, 65); font-size: 14px; cursor: pointer;'></i>";
-                        $st = $temp->where('kingar_name_id', $row['kingar_name_id'])->where('age_id', $age->id)->first();
-                        if(isset($st->age_number) and $st->age_number == $row[$age->id][1]){
-                            $status = '#93ff93';
-                            $status_icon = "<i class='fas fa-check' style='color:rgb(18, 141, 13); font-size: 14px; cursor: pointer;'></i>";
-                        }
-                        
-                        if(isset($row['created_at']) and isset($row['updated_at'])){
-                            if($row['created_at']->format('Y-m-d H:i:s') != $row['updated_at']->format('Y-m-d H:i:s')){
-                                $status = '#c2f6dc';
-                                $status_icon = "<i class='fas fa-check' style='color:rgb(18, 141, 13); font-size: 14px; cursor: pointer;'></i>";
-                            }
-                        }
-                    @endphp
-                    <td style="background-color: {{ $status }};">
-                      {{ $row[$age->id][1]."  " }}
-                       @if($row[$age->id][2] != null and $st->age_number != $row[$age->id][1])
-                        <i class="far fa-envelope envelope-notification" title="Yangi xabarnoma mavjud!"></i> 
-                       @endif
-                       <i class="ch_countedit far fa-edit" data-nextrow-id="{{ $row[$age->id][0]; }}" data-child-count="{{ $row[$age->id][1]; }}" data-temprow-id="{{ $row[$age->id][2]; }}" data-tempchild-count="{{ $row[$age->id][3]; }}" data-kinga-name="{{ $row['kingar_name'] }}" data-bs-toggle="modal" data-bs-target="#chcountModal" style="color: #727213; font-size: 14px; cursor: pointer;"></i>
-                       <div class="status-icon-container">
-                           {!! $status_icon !!}
-                       </div>
-                    </td>
-                    <td>
-                        <p>{{ $row[$age->id][5] }}</p>
-                        <a href="/nextdaymenuPDF/{{ $row['kingar_name_id'] }}/{{ $age->id }}" target="_blank"><i class="far fa-file-pdf" style="color: dodgerblue; font-size: 18px;"></i></a> 
-                        <i class="next_menu far fa-edit" data-nextmenu-id="{{ $row[$age->id][4]; }}" data-nextrow-count="{{ $row[$age->id][0]; }}" data-king-name="{{ $row['kingar_name'] }}" data-bs-toggle="modal" data-bs-target="#editnextmenuModal" style="color: #727213; font-size: 14px; cursor: pointer; margin-left: 11px;"></i>
-                    </td>
-                @else
-                    <td>{{ ' ' }}</td>
-                    <td>{{ ' ' }}</td>
-                @endif
+                    <tr data-region-id="{{ $kindgarden ? $kindgarden->region_id : '' }}" data-user-name="{{ $user ? $user->name : '' }}">
+                        <td>{{ $t++ }}</td>
+                        <td>
+                            {{ $row['kingar_name'] }}
+                            @php
+                                $kindgarden = \App\Models\Kindgarden::find($row['kingar_name_id']);
+                                $user = $kindgarden ? $kindgarden->user->first() : null;
+                            @endphp
+                            @if($user && $user->phone)
+                                <i class="fas fa-phone text-success phone-icon" style="cursor: pointer; margin-left: 8px;" 
+                                   data-bs-toggle="tooltip" data-bs-placement="top" 
+                                   title="Oshpaz: {{ $user->name }}         Telefon raqam: {{ $user->phone }} "></i>
+                            @endif
+                        </td>
+                        <td>{{ $row['workers_count'] }} <i class="w_countedit far fa-edit" data-menu-id="{{ $row['kingar_name_id'] }}" data-wor-count="{{ $row['workers_count'] }}" data-king-name="{{ $row['kingar_name'] }}" data-bs-toggle="modal" data-bs-target="#wcountModal" style="color: #727213; font-size: 14px; cursor: pointer;"></i></td>
+                        @foreach($ages as $age)
+                        @if(isset($row[$age->id]))
+                            @php
+                                $status = '#f8f882';
+                                $status_icon = "<i class='fas fa-question' style='color:rgb(238, 65, 65); font-size: 14px; cursor: pointer;'></i>";
+                                $st = $temp->where('kingar_name_id', $row['kingar_name_id'])->where('age_id', $age->id)->first();
+                                if(isset($st->age_number) and $st->age_number == $row[$age->id][1]){
+                                    $status = '#93ff93';
+                                    $status_icon = "<i class='fas fa-check' style='color:rgb(18, 141, 13); font-size: 14px; cursor: pointer;'></i>";
+                                }
+                                
+                                if(isset($row['created_at']) and isset($row['updated_at'])){
+                                    if($row['created_at']->format('Y-m-d H:i:s') != $row['updated_at']->format('Y-m-d H:i:s')){
+                                        $status = '#c2f6dc';
+                                        $status_icon = "<i class='fas fa-check' style='color:rgb(18, 141, 13); font-size: 14px; cursor: pointer;'></i>";
+                                    }
+                                }
+                            @endphp
+                            <td style="background-color: {{ $status }};">
+                              {{ $row[$age->id][1]."  " }}
+                               @if($row[$age->id][2] != null and $st->age_number != $row[$age->id][1])
+                                <i class="far fa-envelope envelope-notification" title="Yangi xabarnoma mavjud!"></i> 
+                               @endif
+                               <i class="ch_countedit far fa-edit" data-nextrow-id="{{ $row[$age->id][0]; }}" data-child-count="{{ $row[$age->id][1]; }}" data-temprow-id="{{ $row[$age->id][2]; }}" data-tempchild-count="{{ $row[$age->id][3]; }}" data-kinga-name="{{ $row['kingar_name'] }}" data-bs-toggle="modal" data-bs-target="#chcountModal" style="color: #727213; font-size: 14px; cursor: pointer;"></i>
+                               <div class="status-icon-container">
+                                   {!! $status_icon !!}
+                               </div>
+                            </td>
+                            <td>
+                                <p>{{ $row[$age->id][5] }}</p>
+                                <div class="d-flex align-items-center justify-content-center gap-2">
+                                    <a href="/nextdaymenuPDF/{{ $row['kingar_name_id'] }}/{{ $age->id }}" target="_blank" title="PDF ko'rish">
+                                        <i class="far fa-file-pdf" style="color: dodgerblue; font-size: 18px;"></i>
+                                    </a>
+                                    <a href="#" class="share-menu" style="text-decoration: none;"
+                                       data-garden-id="{{ $row['kingar_name_id'] }}"
+                                       data-age-id="{{ $age->id }}"
+                                       data-garden-name="{{ $row['kingar_name'] }}"
+                                       data-age-name="{{ $age->age_name }}"
+                                       title="Telegramga yuborish">
+                                        <i class="fas fa-share-alt" style="color: #28a745; font-size: 18px; cursor: pointer;"></i>
+                                    </a>
+                                    <i class="next_menu far fa-edit" 
+                                       data-nextmenu-id="{{ $row[$age->id][4]; }}" 
+                                       data-nextrow-count="{{ $row[$age->id][0]; }}" 
+                                       data-king-name="{{ $row['kingar_name'] }}" 
+                                       data-bs-toggle="modal" 
+                                       data-bs-target="#editnextmenuModal" 
+                                       style="color: #727213; font-size: 14px; cursor: pointer;"></i>
+                                </div>
+                            </td>
+                        @else
+                            <td>{{ ' ' }}</td>
+                            <td>{{ ' ' }}</td>
+                        @endif
+                        @endforeach
+                        <td><a href="/nextnakladnoyPDF/{{ $row['kingar_name_id'] }}" target="_blank"><i class="far fa-file-pdf" style="color: dodgerblue; font-size: 18px;"></i></a></td>
+                        <td>
+                            <i class="deletegarden2 far fa-trash-alt text-danger" data-bs-toggle="modal" data-bs-target="#deleteModal2" data-garden-id="{{$row['kingar_name_id']}}" data-garden-name="{{$row['kingar_name']}}" style="cursor: pointer;" title="O'chirish"></i>
+                        </td>
+                    </tr>
                 @endforeach
-                <td><a href="/nextnakladnoyPDF/{{ $row['kingar_name_id'] }}" target="_blank"><i class="far fa-file-pdf" style="color: dodgerblue; font-size: 18px;"></i></a></td>
-                <td>
-                    <i class="deletegarden2 far fa-trash-alt text-danger" data-bs-toggle="modal" data-bs-target="#deleteModal2" data-garden-id="{{$row['kingar_name_id']}}" data-garden-name="{{$row['kingar_name']}}" style="cursor: pointer;" title="O'chirish"></i>
-                </td>
-            </tr>
-        @endforeach
-        </tbody>
-    </table>
+                </tbody>
+            </table>
+        </div>
+    </div>
     <?php $tr = 1 ?>
     @foreach($shops as $shop)
         <b>{{ $shop->shop_name }}</b>
@@ -1070,6 +1219,7 @@
             })
         });
         
+
         // Envelope ikon uchun qo'shimcha funksionallik - ikkinchi jadval
         $('.envelope-notification').click(function() {
             // Xabarnoma ko'rsatish
@@ -1251,6 +1401,72 @@
             })
         });
         
+        $('.next_allmenu').click(function() {
+            var ageId = $(this).attr('data-age-id');
+            $('#bulk_age_id').val(ageId);
+            var ageName = $('.age_name' + ageId).text();
+            $('.menutitle').html("<p>" + ageName + " yosh guruhi uchun barcha menyularni o'zgartirish</p>");
+        });
+
+        // Share menu funksiyasi
+        $('.share-menu').click(function(e) {
+            e.preventDefault();
+            var gardenId = $(this).data('garden-id');
+            var ageId = $(this).data('age-id');
+            var gardenName = $(this).data('garden-name');
+            var ageName = $(this).data('age-name');
+            
+            var icon = $(this).find('i');
+            icon.removeClass('fa-share-alt').addClass('fa-spinner fa-spin');
+            
+            // Avval PDF yaratib olamiz
+            $.ajax({
+                url: '/technolog/create-share-pdf/' + gardenId + '/' + ageId,
+                method: 'GET',
+                success: function(response) {
+                    if (response.success) {
+                        // PDF muvaffaqiyatli yaratildi, endi uni yuklab olamiz
+                        var fileUrl = response.file_url;
+                        var caption = gardenName + " - " + ageName + " yosh guruhi uchun menyu";
+                        
+                        // PDF ni yuklab olish
+                        var link = document.createElement('a');
+                        link.href = fileUrl;
+                        link.download = gardenName + '_' + ageName + '_menyusi.pdf';
+                        document.body.appendChild(link);
+                        link.click();
+                        document.body.removeChild(link);
+                        
+                        // Telegram Desktop ni ochish va faylni yuborish
+                        var telegramUrl = "tg://msg?text=" + encodeURIComponent(caption + "\n\nFayl yuklab olindi va endi uni Telegram orqali yuborishingiz mumkin.");
+                        window.location.href = telegramUrl;
+                        
+                        showNotification('PDF yuklab olindi! Endi uni Telegram orqali yuborishingiz mumkin.', 'success');
+                        
+                        // 5 soniyadan keyin vaqtinchalik faylni o'chiramiz
+                        setTimeout(function() {
+                            $.ajax({
+                                url: '/technolog/delete-temp-file',
+                                method: 'POST',
+                                data: {
+                                    _token: '{{ csrf_token() }}',
+                                    file_path: fileUrl
+                                }
+                            });
+                        }, 5000);
+                    } else {
+                        showNotification('PDF yaratishda xatolik: ' + response.message, 'error');
+                    }
+                },
+                error: function(xhr) {
+                    showNotification('Xatolik yuz berdi. Iltimos qaytadan urinib ko\'ring.', 'error');
+                },
+                complete: function() {
+                    icon.removeClass('fa-spinner fa-spin').addClass('fa-share-alt');
+                }
+            });
+        });
+
         $('#selectadd').change(function() {
             g = $(this).val();
             hn = $('.yangages');
@@ -1267,6 +1483,38 @@
             })
         });
 
+        // Share menu funksiyasi
+        // $('.share-menu').click(function() {
+        //     var gardenId = $(this).data('garden-id');
+        //     var ageId = $(this).data('age-id');
+        //     var gardenName = $(this).data('garden-name');
+        //     var ageName = $(this).data('age-name');
+            
+        //     if (!confirm(gardenName + ' - ' + ageName + ' yosh guruhi menyusini telegramga yuborishni xohlaysizmi?')) {
+        //         return;
+        //     }
+            
+        //     var icon = $(this);
+        //     icon.removeClass('fa-share-alt').addClass('fa-spinner fa-spin');
+            
+        //     $.ajax({
+        //         url: '/technolog/share-menu-telegram/' + gardenId + '/' + ageId,
+        //         method: 'GET',
+        //         success: function(response) {
+        //             if (response.success) {
+        //                 showNotification(response.message, 'success');
+        //             } else {
+        //                 showNotification(response.message, 'error');
+        //             }
+        //         },
+        //         error: function(xhr) {
+        //             showNotification('Xatolik yuz berdi. Iltimos qaytadan urinib ko\'ring.', 'error');
+        //         },
+        //         complete: function() {
+        //             icon.removeClass('fa-spinner fa-spin').addClass('fa-share-alt');
+        //         }
+        //     });
+        // });
         
     });
 </script>

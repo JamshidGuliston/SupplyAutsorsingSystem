@@ -1375,11 +1375,11 @@ class StorageController extends Controller
             $regions[$row->region_id]['short_name'] = $row->short_name;   
         }
 
-        usort($items, function ($a, $b){
-            if(isset($a["p_sort"]) and isset($b["p_sort"])){
-                return $a["p_sort"] > $b["p_sort"];
-            }
-        });
+        // usort($items, function ($a, $b){
+        //     if(isset($a["p_sort"]) and isset($b["p_sort"])){
+        //         return $a["p_sort"] > $b["p_sort"];
+        //     }
+        // });
 
         return view('pdffile.storage.ordersvodAllRegions', compact('items', 'document', 'regions'));
 
