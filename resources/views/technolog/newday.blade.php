@@ -1419,47 +1419,26 @@
             var icon = $(this).find('i');
             icon.removeClass('fa-share-alt').addClass('fa-spinner fa-spin');
             
-            // Avval PDF yaratib olamiz
+            // Bot orqali Telegram guruhiga yuborish
+            var groupId = "{{ config('services.telegram.group_id') }}";
+            var url = '/technolog/share-menu-telegram/' + gardenId + '/' + ageId;
+            if (groupId) {
+                url += '?group_id=' + encodeURIComponent(groupId);
+            }
+            
             $.ajax({
-                url: '/technolog/create-share-pdf/' + gardenId + '/' + ageId,
+                url: url,
                 method: 'GET',
                 success: function(response) {
                     if (response.success) {
-                        // PDF muvaffaqiyatli yaratildi, endi uni yuklab olamiz
-                        var fileUrl = response.file_url;
-                        var caption = gardenName + " - " + ageName + " yosh guruhi uchun menyu";
-                        
-                        // PDF ni yuklab olish
-                        var link = document.createElement('a');
-                        link.href = fileUrl;
-                        link.download = gardenName + '_' + ageName + '_menyusi.pdf';
-                        document.body.appendChild(link);
-                        link.click();
-                        document.body.removeChild(link);
-                        
-                        // Telegram Desktop ni ochish va faylni yuborish
-                        var telegramUrl = "tg://msg?text=" + encodeURIComponent(caption + "\n\nFayl yuklab olindi va endi uni Telegram orqali yuborishingiz mumkin.");
-                        window.location.href = telegramUrl;
-                        
-                        showNotification('PDF yuklab olindi! Endi uni Telegram orqali yuborishingiz mumkin.', 'success');
-                        
-                        // 5 soniyadan keyin vaqtinchalik faylni o'chiramiz
-                        setTimeout(function() {
-                            $.ajax({
-                                url: '/technolog/delete-temp-file',
-                                method: 'POST',
-                                data: {
-                                    _token: '{{ csrf_token() }}',
-                                    file_path: fileUrl
-                                }
-                            });
-                        }, 5000);
+                        showNotification('Menyu Telegram guruhiga yuborildi!', 'success');
                     } else {
-                        showNotification('PDF yaratishda xatolik: ' + response.message, 'error');
+                        showNotification(response.message || 'Yuborishda xatolik.', 'error');
                     }
                 },
                 error: function(xhr) {
-                    showNotification('Xatolik yuz berdi. Iltimos qaytadan urinib ko\'ring.', 'error');
+                    var msg = (xhr.responseJSON && xhr.responseJSON.message) ? xhr.responseJSON.message : 'Xatolik yuz berdi. Iltimos qaytadan urinib ko\'ring.';
+                    showNotification(msg, 'error');
                 },
                 complete: function() {
                     icon.removeClass('fa-spinner fa-spin').addClass('fa-share-alt');

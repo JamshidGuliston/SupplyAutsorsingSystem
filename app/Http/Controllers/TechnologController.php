@@ -47,6 +47,7 @@ use App\Models\titlemenu_food;
 use App\Models\typeofwork;
 use App\Models\User;
 use Database\Seeders\TypeOfWorkSeeder;
+use Telegram\Bot\Api;
 use Illuminate\Support\Str;
 use Dompdf\Dompdf;
 use TCG\Voyager\Models\Category;
@@ -3963,6 +3964,7 @@ class TechnologController extends Controller
 
             // PDF ni vaqtinchalik faylga saqlash
             $pdfPath = storage_path('app/public/temp/menu_' . uniqid() . '.pdf');
+            if (!file_exists(dirname($pdfPath))) { @mkdir(dirname($pdfPath), 0755, true); }
             file_put_contents($pdfPath, $dompdf->output());
             // PDF ni JPG ga o'tkazish
             $imagick = new \Imagick();
@@ -3979,16 +3981,30 @@ class TechnologController extends Controller
             $telegram = new \Telegram\Bot\Api(config('services.telegram.bot_token'));
             
             $caption = $menu[0]['kingar_name'] . " - " . $menu[0]['age_name'] . " yosh guruhi uchun menyu";
-            $garden = Kindgarden::where('id', $garden_id)->first();
+
+            // Guruh ID GET parametridan yoki configdan olinadi, bo'lmasa bog'cha telegram_user_id ishlatiladi
+            $groupId = request()->get('group_id', config('services.telegram.group_id'));
+            $chatId = $groupId ?: Kindgarden::where('id', $garden_id)->value('telegram_user_id');
+
+            if (empty($chatId)) {
+                // Fayllarni tozalashdan oldin xatoni qaytaramiz
+                @unlink($pdfPath);
+                @unlink($jpgPath);
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Telegram chat_id topilmadi. Iltimos group_id ni sozlamalarda belgilang.'
+                ], 422);
+            }
+
             $telegram->sendPhoto([
-                'chat_id' => $garden->telegram_user_id,
+                'chat_id' => $chatId,
                 'photo' => fopen($jpgPath, 'r'),
                 'caption' => $caption
             ]);
 
             // Vaqtinchalik fayllarni o'chirish
-            unlink($pdfPath);
-            unlink($jpgPath);
+            @unlink($pdfPath);
+            @unlink($jpgPath);
 
             return response()->json([
                 'success' => true,
