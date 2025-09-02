@@ -1277,7 +1277,7 @@ class TechnologController extends Controller
                 'kingar_name_id' => $child->kingar_name_id,
                 'king_age_name_id' => $child->age_id,
                 'kingar_children_number' => $child->age_number,
-                'workers_count' => $child->workers,
+                'workers_count' => $child->workers ?? 0,
                 'kingar_menu_id' => $menuages[$child->age_id],
             ]);
 
