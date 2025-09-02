@@ -297,6 +297,7 @@ Route::group(['prefix' => 'technolog', 'middleware' => ['isTechnolog', 'auth']],
     Route::get('create-share-pdf/{garden_id}/{age_id}', [TechnologController::class, 'createSharePdf'])->name('technolog.createSharePdf');
     Route::post('delete-temp-file', [TechnologController::class, 'deleteTempFile'])->name('technolog.deleteTempFile');
     Route::get('download-all-kindergartens-menus-pdf', [TechnologController::class, 'downloadAllKindergartensMenusPDF'])->name('technolog.downloadAllKindergartensMenusPDF');
+    Route::post('moveremainder', [TechnologController::class, 'moveremainder'])->name('technolog.moveremainder');
 });
 
 

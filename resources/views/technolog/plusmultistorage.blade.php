@@ -165,6 +165,27 @@
     </div>
 </div>
 <!-- EDIT -->
+<!-- Qoldiqni shu oyga ko'chirish -->
+<div class="modal editesmodal fade" id="qoldiqModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form action="{{ route('technolog.moveremainder') }}" method="post">
+                @csrf
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Qoldiqni ko'chirish</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <h5>O'tgan oydan qoldiqni shu oyga ko'chirish</h5>
+                    <input type="hidden" name="kind" value="{{ $kingar->id }}">
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-success">Ko'chirish</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
 <!-- Menu edit -->
 <!-- Modal -->
 <div class="modal editesmodal fade" id="editnextmenuModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -222,7 +243,8 @@
         <thead>
             <tr>
                 <th style="width: 30px;">Махсулотлар</th>
-                <th scope="col">{{ "O'tgan oydan Qoldiq" }}</th>
+                <!-- o'tgan oydan qoldiq va Qoldiqni shu oyga ko'chirish -->
+                <th scope="col">{{ "O'tgan oydan Qoldiq" }} <i class="fa fa-plus" style="color: #23b242; font-size: 18px; cursor: pointer;" data-bs-toggle="modal" data-bs-target="#qoldiqModal"></i></th>
                 @foreach($days as $day)
                 <th scope="col">{{ $day->day_number }}</th>
                 @endforeach
