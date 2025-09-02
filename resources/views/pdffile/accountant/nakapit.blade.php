@@ -13,7 +13,7 @@
 	 @page { margin: 0.2in 0.2in 0.2in 0.2in; }
 	body{
 		font-family: DejaVu Sans;
-		font-size:8px;
+		font-size:7px;
 		/* background-image: url(images/bg.jpg); */
 		background-position: top left;
 		background-repeat: no-repeat;
@@ -83,6 +83,9 @@
 							<i class="fas fa-store-alt" style="color: dodgerblue; font-size: 18px;"></i>
 						</a>
 						<?php
+
+						    $numberofchildren = 0;
+
 							if($days[0]->month_id % 12 == 0){
 								$mth = 12;
 							}else{
@@ -95,14 +98,13 @@
                 <table style="width:100%; table-layout: fixed;">
                     <thead>
                         <tr>
-                            <th scope="col" style="width: 10%;">Махсулотлар</th>
-                            <th style="width: 10px;">...</th>
-                            <th style="width: 30px; font-size: 7px"><bold>Нарх</bold></th>
+                            <th scope="col" style="width: 10%;" rowspan="2">Махсулотлар</th>
+                            <th style="width: 10px;">Сана</th>
+                            <!-- <th style="width: 30px; font-size: 7px"><bold>Нарх</bold></th> -->
                             @foreach($days as $day)
 								<th scope="col">{{ $day->day_number; }}</th>
 							@endforeach
 							<th>Жами</th>
-							<th style="width: 6%;">Сумма</th>
 							<!--<th>Устама {{ $ust }}%</th>-->
 							<!--<th>Сумма</th>-->
 							<!--<th>ҚҚС {{ $nds }}%</th>-->
@@ -116,15 +118,12 @@
 						$ndssumm = 0;
 					?>
 					@foreach($nakproducts as $key => $row)
-					<?php 
-						$str = $row['product_name'];
-						if (strlen($str) > 15)
-							$str = substr($row['product_name'], 0, 13);
-					?>
 					<tr>
-						<td style="text-align: left; padding-left: 2px">{{ $row['product_name'] }}</td>
-						<td>{{ $row['size_name'] }}</td>
-						<td>{{ $row[0] }}</td>
+						<td style="text-align: left; padding-left: 2px">{{ implode(' ', array_slice(explode(' ', $row['product_name']), 0, 3)) }}</td>
+						@if($row['product_name'] != "Болалар сони")
+							<td>{{ $row['size_name'] }}</td>
+						@endif
+						<!-- <td>{{ $row[0] }}</td> -->
 						<?php 
 							$summ = 0;
 						?>
@@ -135,6 +134,7 @@
 									<strong>{{ $row[$day['id']]; }}</strong>
 								<?php  
 									$summ += $row[$day['id']];
+									$numberofchildren += $row[$day['id']];
 								?>
 								@else
                                 	@if($row['size_name'] == "дона")
@@ -159,29 +159,42 @@
                         @if($row['product_name'] != "Болалар сони")
                       		<?php $kgsumm += $summ; ?>
                         @endif
-						<td ><?php printf("%01.3f", $summ) ?></td>
-						<td ><?php $costsumm += $summ*$row[0]; printf("%01.2f", $summ*$row[0]) ?></td>
-						<!--<td ><?php printf("%01.2f", ($summ*$row[0]*$ust)/100) ?></td>-->
-						<!--<td ><?php printf("%01.2f", $summ*$row[0] + ($summ*$row[0]*$ust)/100) ?></td>-->
-						<!--<td ><?php printf("%01.2f", (($summ*$row[0] + ($summ*$row[0]*$ust)/100)*$nds)/100) ?></td>-->
-						<!--<td ><?php printf("%01.2f", $summ*$row[0] + ($summ*$row[0]*$ust)/100 + (($summ*$row[0] + ($summ*$row[0]*$ust)/100)*$nds)/100) ?></td>-->
+						@if($row['product_name'] == "Болалар сони")
+							<td>{{ $summ }}</td>
+						@else
+							<td ><?php printf("%01.3f", $summ) ?></td>
+						@endif
+						
 					</tr>
 					@endforeach
 					<tr>
-						<td colspan="3">Жами:</td>
+						 <td colspan="2" style="border-top: 1px solid black;">1 болани бир куник харажати</td> 
 						<td colspan="{{ count($days) }}"></td>
-						<td><?php printf("%01.2f", $kgsumm); ?></td>
-						<td><?php printf("%01.2f", $costsumm); ?></td>
-						<!--<td><?php printf("%01.2f", ($costsumm * $ust)/100); ?></td>-->
-						<!--<td><?php printf("%01.2f", $costsumm + ($costsumm * $ust)/100); ?></td>-->
-						<!--<td><?php printf("%01.2f", ($costsumm + ($costsumm * $ust)/100)*$nds/100); ?></td>-->
-						<!--<td><?php printf("%01.2f", $costsumm + ($costsumm * $ust)/100 + ($costsumm + ($costsumm * $ust)/100)*$nds/100); ?></td>-->
+						<td><?php printf("%01.2f", $protsent->protsent_price); ?></td>
 					</tr>
-                    </tbody>
-                </table>
-				<div class="row">
+					<tr>
+						 <td colspan="2">Ko'rsatilgan xizmat summasi QQS bilan</td> 
+						<td colspan="{{ count($days) }}"></td>
+						<td><?php printf("%01.2f", $protsent->protsent_price*$numberofchildren); ?></td>
+					</tr>
+					<tr>
+						<td colspan="2">Белгиланган устама</td> 
+						<td colspan="{{ count($days) }}"></td>
+						<td><?php printf("%01.2f", $protsent->protsent_price*$numberofchildren*$protsent->nds) / 100; ?></td>
+					</tr>
+					<tr>
+						<td colspan="2">1 ойлик жами харажат</td> 
+						<td colspan="{{ count($days) }}"></td>
+						<td><?php printf("%01.2f", $protsent->protsent_price*$numberofchildren*$protsent->nds) / 100 + $protsent->protsent_price*$numberofchildren; ?></td>
+					</tr>
+				</tbody>
+			</table>
 					<div class="column">
-						<img src="images/qrmanzil.jpg" alt="QR-code" width="140">
+					    @php
+							$qrImage = base64_encode(file_get_contents(public_path('images/qrmanzil.jpg')));
+						@endphp
+						<img src="data:image/jpeg;base64,{{ $qrImage }}" 
+							style="width:120; position:absolute; left:10px;">
 					</div>
 					<div class="column">
 						<p></p>

@@ -12,6 +12,7 @@ use App\Models\Kindgarden;
 use App\Models\Month;
 use App\Models\Number_children;
 use App\Models\Product;
+use App\Models\Protsent;
 use App\Models\Region;
 use App\Models\titlemenu_food;
 use Maatwebsite\Excel\Facades\Excel;
@@ -270,6 +271,7 @@ class AccountantController extends Controller
 
             $costs = bycosts::where('day_id', bycosts::where('day_id', '<=', $first)->where('region_name_id', Kindgarden::where('id', $id)->first()->region_id)->first()->day_id)->where('region_name_id', Kindgarden::where('id', $id)->first()->region_id)
                     ->orderBy('day_id', 'DESC')->get();
+            $protsent = Protsent::where('region_id', Kindgarden::where('id', $id)->first()->region_id)->first();
             
             foreach($costs as $cost){
                 $nakproducts[0][0] = 0;
@@ -294,7 +296,7 @@ class AccountantController extends Controller
         }
 
         // dd($days);
-        return view('accountant.kindreport', compact('days', 'nakproducts', 'yeardays', 'costsdays', 'costs', 'ages', 'kindgar'));
+        return view('accountant.kindreport', compact('days', 'nakproducts', 'yeardays', 'costsdays', 'costs', 'ages', 'kindgar', 'protsent'));
     }
 
     public function kindreportworker(Request $request, $id){
@@ -442,6 +444,8 @@ class AccountantController extends Controller
             // dd($nakproducts);
             $costs = bycosts::where('day_id', $costid)->where('region_name_id', Kindgarden::where('id', $id)->first()->region_id)
                     ->orderBy('day_id', 'DESC')->get();
+
+            $protsent = Protsent::where('region_id', Kindgarden::where('id', $id)->first()->region_id)->first();
             
             foreach($costs as $cost){
                 $nakproducts[0][0] = 0;
@@ -473,7 +477,7 @@ class AccountantController extends Controller
         });
         // dd($nakproducts);
         $dompdf = new Dompdf('UTF-8');
-		$html = mb_convert_encoding(view('pdffile.accountant.nakapit', compact('age', 'days', 'nakproducts', 'costsdays', 'costs', 'kindgar', 'nds', 'ust')), 'HTML-ENTITIES', 'UTF-8');
+		$html = mb_convert_encoding(view('pdffile.accountant.nakapit', compact('age', 'days', 'nakproducts', 'costsdays', 'costs', 'kindgar', 'nds', 'ust', 'protsent')), 'HTML-ENTITIES', 'UTF-8');
 		$dompdf->loadHtml($html);
         
 		// (Optional) Setup the paper size and orientation
