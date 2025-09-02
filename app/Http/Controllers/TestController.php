@@ -123,11 +123,14 @@ class TestController extends Controller
             }
         }
 
-		$day->day_number = $day->day_number + 1;
 		// oy va yilni o'zgartirish
-		if($day->day_number > date('d', strtotime('+1 day'))){
-			$day->month_name = date('F', strtotime('+1 month'));
-			$day->year_name = date('Y', strtotime('+1 year'));
+		if($day->day_number > date('d')){
+			$day->day_number = date('d')+1;
+			$day->month_name = date('F');
+			$day->year_name = date('Y');
+		}
+		else{
+			$day->day_number = $day->day_number + 1;
 		}
 		// $day->save();
 		// yuqoridagii
