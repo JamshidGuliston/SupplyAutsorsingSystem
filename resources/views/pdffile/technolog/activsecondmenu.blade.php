@@ -352,12 +352,12 @@
 							<tr>
 								<td style="padding: 0px; font-size: 5px;">Шартнома бўйича тасдиқланган 1 бола харажати</td>
 								<td style="padding: 0px; font-size: 5px;"></td>
-								 <td colspan="{{ count($products) }}" style="padding: 0px; font-size: 5px;"><?= round($protsent->where('age_range_id', $key)->first()->eater_cost, 2); ?></td>
+								 <td colspan="{{ count($products) }}" style="padding: 0px; font-size: 5px;"><?= round($protsent->where('age_range_id', $key)->first()->eater_cost ?? 0, 2); ?></td>
                             </tr>
 							<tr>
 								<td style="padding: 0px; font-size: 5px;">Шартнома бўйича жами сарфланган маблаг</td>
 								<td style="padding: 0px; font-size: 5px;"></td>
-								 <td colspan="{{ count($products) }}" style="padding: 0px; font-size: 5px;"><?= round($protsent->where('age_range_id', $key)->first()->eater_cost * $value['number'], 2); ?></td>
+								 <td colspan="{{ count($products) }}" style="padding: 0px; font-size: 5px;"><?= round(($protsent->where('age_range_id', $key)->first()->eater_cost ?? 0) * $value['number'], 2); ?></td>
                             </tr>
 							@endforeach
 							<tr style="border-top: 2px solid black;">

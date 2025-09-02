@@ -1074,9 +1074,10 @@ class TestController extends Controller
 		
 		if(!$protsent){
 			$protsent = new Protsent();
-			$protsent->eater_cost = 0;
-			$protsent->raise = 0;
-			$protsent->nds = 0;
+			// age_range_id 3 va 4 uchun
+			$protsent->where('age_range_id', 3)->eater_cost = 0;
+			$protsent->where('age_range_id', 4)->eater_cost = 0;
+			
 		}
 
         $dompdf = new Dompdf('UTF-8');
