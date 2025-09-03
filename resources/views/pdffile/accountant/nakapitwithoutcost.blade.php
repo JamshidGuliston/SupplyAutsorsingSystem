@@ -97,7 +97,7 @@
 					</div>
                 </div>
                 <table style="width:100%; table-layout: fixed;">
-                    <thead>
+				    <tbody>
                         <tr>
                             <th scope="col" style="width: 10%;" rowspan="2">Махсулотлар</th>
                             <th style="width: 10px;">Сана</th>
@@ -107,8 +107,6 @@
 							@endforeach
 							<th>Жами</th>
                         </tr>
-                    </thead>
-                    <tbody>
 					<?php 
 						$kgsumm = 0;
 						$costsumm = 0;
