@@ -156,7 +156,7 @@
 				<table style="border: none !important; width: 100%;">
 					<tbody>
 						<tr>
-							<td style="text-align: left; border: none !important; width: 50%;">
+							<td style="text-align: left; border: none !important; width: 33%;">
 								<div style="font-size: 12px; font-weight: bold; margin-bottom: 5px;">
 									Боғча номи: <span style="color: #2c3e50;">{{ $menu[0][0]['kingar_name'] }}</span>
 								</div>
@@ -164,7 +164,12 @@
 									Сана: <span style="color: #2c3e50; font-weight: bold;">{{ $day['day_number'].'.'.$day['month_name'].' '.$day['year_name'] }}й.</span>
 								</div>
 							</td>
-							<td style="text-align: right; border: none !important; width: 50%;">
+							<td style="text-align: center; border: none !important; width: 33%;">
+								<div style="font-size: 11px; margin-bottom: 3px;">
+								<b>Ташкилот:</b> <span style="color: #2c3e50;"><b>{{ env('COMPANY_NAME') }}</b></span>
+								</div>
+							</td>
+							<td style="text-align: right; border: none !important; width: 33%;">
 								<?php
 									$workers = 0;
 									$countch = [];
