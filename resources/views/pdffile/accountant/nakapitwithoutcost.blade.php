@@ -13,7 +13,7 @@
 	 @page { margin: 0.2in 0.2in 0.2in 0.2in; }
 	body{
 		font-family: DejaVu Sans;
-		font-size:6px;
+		font-size:8px;
 		/* background-image: url(images/bg.jpg); */
 		background-position: top left;
 		background-repeat: no-repeat;
@@ -91,8 +91,9 @@
 							}else{
 								$mth = $days[0]->month_id % 12;
 							}
+							$month = App\Models\Month::where('id', $days[0]->month_id)->first();
 						?>
-						<center><b>{{ env('COMPANY_NAME') }} хизмат кўрсатаётган  {{ $kindgar->kingar_name }} " <?php echo $days->last()->day_number ?> ". <?php printf('%02d', $mth) ?> . <?php printf('%02d', $costs[0]->year_name) ?> йил  {{ $age->age_name }} учун НАКАПИТЕЛ</b></center>
+						<center><b>{{ $kindgar->kingar_name }}   да <?php printf('%02d', $days->first()->year_name) ?> йил <?php echo $days->first()->day_number."-".$days->last()->day_number ?> <?php echo $month->month_name ?> кунлари {{ $age->age_name }} учун сарфланган озиқ-овқат маҳсулотлар тўғрисида маълумот</b></center>
 					</div>
                 </div>
                 <table style="width:100%; table-layout: fixed;">
@@ -162,26 +163,6 @@
 						
 					</tr>
 					@endforeach
-					<tr>
-						 <td colspan="2" style="border-top: 1px solid black;">1 болани бир куник харажати</td> 
-						<td colspan="{{ count($days) }}"></td>
-						<td><?php printf("%01.2f", $protsent->protsent_price); ?></td>
-					</tr>
-					<tr>
-						 <td colspan="2">Ko'rsatilgan xizmat summasi QQS bilan</td> 
-						<td colspan="{{ count($days) }}"></td>
-						<td><?php printf("%01.2f", $protsent->protsent_price*$numberofchildren); ?></td>
-					</tr>
-					<tr>
-						<td colspan="2">Белгиланган устама</td> 
-						<td colspan="{{ count($days) }}"></td>
-						<td><?php printf("%01.2f", $protsent->protsent_price*$numberofchildren*$protsent->nds) / 100; ?></td>
-					</tr>
-					<tr>
-						<td colspan="2">1 ойлик жами харажат</td> 
-						<td colspan="{{ count($days) }}"></td>
-						<td><?php printf("%01.2f", $protsent->protsent_price*$numberofchildren*$protsent->nds) / 100 + $protsent->protsent_price*$numberofchildren; ?></td>
-					</tr>
 				</tbody>
 			</table>
 					<div class="column">

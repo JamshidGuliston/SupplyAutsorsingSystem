@@ -320,8 +320,10 @@ Route::group(['prefix' => 'accountant', 'middleware' => ['isAccountant', 'auth']
     Route::post('editallcosts', [AccountantController::class, 'editallcosts'])->name('accountant.editallcosts');
     // hisobot
     Route::get('narxselect/{region_id}', [AccountantController::class, 'narxselect'])->name('accountant.narxselect');
-    Route::get('nakapit/{id}/{ageid}/{start}/{end}/{costid}/{nds}/{ust}', [AccountantController::class, 'nakapit'])->name('accountant.nakapit');
-    Route::get('nakapitexcel/{id}/{ageid}/{start}/{end}/{costid}/{nds}/{ust}', [AccountantController::class, 'nakapitexcel'])->name('accountant.nakapitexcel');
+    Route::get('nakapit/{id}/{ageid}/{start}/{end}/{costid}', [AccountantController::class, 'nakapit'])->name('accountant.nakapit');
+    Route::get('nakapitwithoutcost/{id}/{ageid}/{start}/{end}', [AccountantController::class, 'nakapitwithoutcost'])->name('accountant.nakapitwithoutcost');
+    Route::get('nakapitexcelwithoutcost/{id}/{ageid}/{start}/{end}', [AccountantController::class, 'nakapitexcelwithoutcost'])->name('accountant.nakapitexcelwithoutcost');
+    Route::get('nakapitexcel/{id}/{ageid}/{start}/{end}/{costid}', [AccountantController::class, 'nakapitexcel'])->name('accountant.nakapitexcel');
     Route::get('schotfaktur/{id}/{ageid}/{start}/{end}/{costid}/{nds}/{ust}', [AccountantController::class, 'schotfaktur'])->name('accountant.schotfaktur');
     Route::get('allschotfaktur/{id}/{start}/{end}/{costid}/{nds}/{ust}', [AccountantController::class, 'allschotfaktur'])->name('accountant.allschotfaktur');
     Route::get('schotfakturexcel/{id}/{ageid}/{start}/{end}/{costid}/{nds}/{ust}', [AccountantController::class, 'schotfakturexcel'])->name('accountant.schotfakturexcel');
