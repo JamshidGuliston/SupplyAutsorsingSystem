@@ -518,7 +518,7 @@ class AccountantController extends Controller
                     $nakproducts[$key]['size_name'] = $row['size_name'];
                 }
             }
-            
+
             $costs = bycosts::where('day_id', $costid)->where('region_name_id', Kindgarden::where('id', $id)->first()->region_id)
                     ->orderBy('day_id', 'DESC')->get();
 
@@ -668,7 +668,7 @@ class AccountantController extends Controller
 		$dompdf->stream($name, ['Attachment' => 0]);
     }
 
-    public function schotfaktur(Request $request, $id, $ageid, $start, $end, $costid, $nds, $ust){
+    public function schotfaktur(Request $request, $id, $ageid, $start, $end, $costid){
         $kindgar = Kindgarden::where('id', $id)->first();
         $nakproducts = [];
         $age = Age_range::where('id', $ageid)->first();
@@ -742,7 +742,7 @@ class AccountantController extends Controller
         });
 
         $dompdf = new Dompdf('UTF-8');
-		$html = mb_convert_encoding(view('pdffile.accountant.schotfaktur', compact('age', 'days', 'nakproducts', 'costs', 'kindgar', 'nds', 'ust')), 'HTML-ENTITIES', 'UTF-8');
+		$html = mb_convert_encoding(view('pdffile.accountant.schotfaktur', compact('age', 'days', 'nakproducts', 'costs', 'kindgar')), 'HTML-ENTITIES', 'UTF-8');
 		$dompdf->loadHtml($html);
 
 		// (Optional) Setup the paper size and orientation
@@ -754,6 +754,51 @@ class AccountantController extends Controller
 		$dompdf->render();
 
 		// Output the generated PDF to Browser
+		$dompdf->stream($name, ['Attachment' => 0]);
+    }
+
+    public function schotfaktursecond(Request $request, $id, $start, $end){
+        $kindgar = Kindgarden::where('id', $id)->with('age_range')->first();
+        // dd($kindgar);
+        $days = Day::where('id', '>=', $start)->where('id', '<=', $end)->get();
+        
+        foreach($kindgar->age_range as $age){
+            if(!isset($total_number_children[$age->id])){
+                $total_number_children[$age->id] = 0;
+            }
+            $total_number_children[$age->id] += Number_children::where('day_id', '>=', $start)->where('day_id', '<=', $end)->where('kingar_name_id', $id)->where('king_age_name_id', $age->id)->sum('kingar_children_number');
+        }
+
+        $costs = Protsent::where('region_id', $kindgar->region_id)->get();
+        
+        // Autsorser ma'lumotlari (kompaniya ma'lumotlari)
+        $autorser = config('company.autorser');
+        
+        // Buyurtmachi ma'lumotlari
+        $buyurtmachi = [
+            'company_name' => $kindgar->name ?? 'Chinoz tumani MMTBga tasarrufidagi 1-sonli DMTT',
+            'inn' => '1234567890',
+            'mfo' => 1234567890,
+            'account_number' => '1234567890',
+            'treasury_account' => 1234567890,
+            'treasury_inn' => 1234567890,
+            'bank' => 'Bank of America',
+            'phone' => '+998901234567'
+        ];
+        
+        // Hisob-faktura raqami va sanasi
+        $invoice_number = config('company.invoice.default_number');
+        $invoice_date = config('company.invoice.default_date');
+        
+
+        $dompdf = new Dompdf('UTF-8');
+		$html = mb_convert_encoding(view('pdffile.accountant.schotfaktursecond', compact('costs', 'days', 'kindgar', 'autorser', 'buyurtmachi', 'invoice_number', 'invoice_date', 'total_number_children')), 'HTML-ENTITIES', 'UTF-8');
+		$dompdf->loadHtml($html);
+
+		$dompdf->setPaper('A4');
+		$name = $start.$end.$id."schotfaktursecond.pdf";
+		
+		$dompdf->render();
 		$dompdf->stream($name, ['Attachment' => 0]);
     }
 
@@ -835,7 +880,7 @@ class AccountantController extends Controller
 		$dompdf->loadHtml($html);
 
 		$dompdf->setPaper('A4');
-		$name = $start.$end.$id.$ageid."schotfakturworker.pdf";
+		$name = $start.$end.$id."schotfakturworker.pdf";
 		
 		$dompdf->render();
 		$dompdf->stream($name, ['Attachment' => 0]);

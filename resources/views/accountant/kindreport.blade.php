@@ -294,7 +294,7 @@
             html += "<a href='/accountant/schotfakturexcel/"+kindid+"/"+4+"/"+start+"/"+end+"/"+cost+"' target='_blank' ><i class='far fa-file-excel text-info' style='cursor: pointer; margin-right: 16px;'></i></a>";
             html += "Меёр: <a href='/accountant/norm/"+kindid+"/"+4+"/"+start+"/"+end+"/"+cost+"' target='_blank' ><i class='far fa-file-pdf text-info' style='cursor: pointer; margin-right: 16px;'></i></a>";
             html += "<a href='/accountant/normexcel/"+kindid+"/"+4+"/"+start+"/"+end+"/"+cost+"' target='_blank' ><i class='far fa-file-excel text-info' style='cursor: pointer; margin-right: 16px;'></i></a>";
-            html += "Умумий фактура<br><p> Cчёт фактура: <a href='/accountant/allschotfaktur/"+kindid+"/"+start+"/"+end+"/"+cost+"' target='_blank' ><i class='far fa-file-pdf text-info' style='cursor: pointer; margin-right: 16px;'></i></a> <a href='/accountant/allschotfakturexcel/"+kindid+"/"+start+"/"+end+"/"+cost+"' target='_blank' ><i class='far fa-file-excel text-info' style='cursor: pointer; margin-right: 16px;'></i></a>";
+            html += "<br>Умумий фактура<br><p> Cчёт фактура: <a href='/accountant/schotfaktursecond/"+kindid+"/"+start+"/"+end+"' target='_blank' ><i class='far fa-file-pdf text-info' style='cursor: pointer; margin-right: 16px;'></i></a> <a href='/accountant/allschotfakturexcel/"+kindid+"/"+start+"/"+end+"/"+cost+"' target='_blank' ><i class='far fa-file-excel text-info' style='cursor: pointer; margin-right: 16px;'></i></a>";
 
             div.html(html);
         }
