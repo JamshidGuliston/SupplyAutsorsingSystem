@@ -89,6 +89,7 @@
                             $tr =1; 
                             $allm = array();
                             $counts = [];
+							$result = 0;
                         ?>
                         @foreach($shopproducts as $row)
                         <tr>
@@ -109,7 +110,7 @@
 									}
 								}
 								?>
-                                <td scope="col"><?php echo $result; ?></td>
+                                <td scope="col"><?php echo $result ?? 0; ?></td>
                                 <?php
 								   $result = 0;
 								   $counts[$age->id] += $row[$age->id]; 
