@@ -4099,6 +4099,13 @@ class TechnologController extends Controller
                 ]);
 
             // Fayl nomini yaratish (maxsus belgilarni tozalash)
+            // Fayl nomini yaratish
+            $fileName = $this->cleanFileName(
+                Kindgarden::where('id', $garden_id)->first()->kingar_name
+            ) . '_' . Age_range::where('id', $age_id)->first()->age_name . '_' . date('Y-m-d') . '.pdf';
+
+            // Brauzerda PDF ni ko‘rsatish
+            return $pdf->stream($fileName);
             $fileName = $this->cleanFileName(Kindgarden::where('id', $garden_id)->first()->kingar_name) . '_' .Age_range::where('id', $age_id)->first()->age_name. '_' . date('Y-m-d') . '.pdf';
             
             $pdfPath = $tempDir . '/' . $fileName;
