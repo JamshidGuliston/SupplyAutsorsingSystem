@@ -225,7 +225,7 @@
 							</div>
 						</th>
                         @endif
-                        <td class="food-name" rowspan="2" style="width: 60px;">{{ $item['foodname'] }}</td>
+                        <td class="food-name" rowspan="2" style="width: 40px;">{{ $item['foodname'] }}</td>
                         @foreach($products as $product)
                             @if(isset($product['yes']) && isset($item[$product['id']]))
                                 <td style="background-color: #e6f3ff;">
