@@ -132,24 +132,21 @@
         
         /* Alternativ vertikal matn usuli */
         .vertical-header {
-            width: 20px;
-            height: 80px;
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .vertical-header-content {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%) rotate(-90deg);
-            white-space: nowrap;
-            font-size: 6px;
-            line-height: 1.1;
-            text-align: center;
-            width: 80px;
-            height: 20px;
-        }
+			width: 20px;      /* ustun eni */
+			height: 80px;     /* ustun balandligi */
+			position: relative;
+		}
+
+		.vertical-header-content {
+			position: absolute;
+			top: 50%;
+			left: 50%;
+			transform: translate(-50%, -50%) rotate(-90deg);
+			transform-origin: center;
+			white-space: nowrap;
+			font-size: 6px;
+			text-align: center;
+		}
     </style>
 </head>
 <body>
