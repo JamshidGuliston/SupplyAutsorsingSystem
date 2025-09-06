@@ -4649,6 +4649,7 @@ class TechnologController extends Controller
             foreach ($kindergartens as $kindergarten) {
                 foreach($kindergarten->age_range as $age) {
                     $pdfPath = $this->createKindergartenMenuPDF($kindergarten->id, $age->id, $tempDir);
+                    dd($pdfPath, $pdfPath && file_exists($pdfPath));
                     if ($pdfPath && file_exists($pdfPath)) {
                         $pdfFiles[] = $pdfPath;
                         echo "PDF yaratildi: " . basename($pdfPath) . " (" . filesize($pdfPath) . " bytes)\n";
