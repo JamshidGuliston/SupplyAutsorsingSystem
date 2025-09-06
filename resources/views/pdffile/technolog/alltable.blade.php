@@ -130,21 +130,18 @@
         .col-2 { width: 12%; }
         .col-product { width: 20px; }
         
-        .vertical-header {
-			width: 20px;      /* ustun eni */
-			height: 80px;     /* ustun balandligi */
-			position: relative;
-		}
-
-		.vertical-header-content {
-			position: absolute;
-			top: 50%;
-			left: 50%;
-			transform: translate(-50%, -50%) rotate(-90deg); /* pastdan tepaga */
-			transform-origin: center;
-			white-space: nowrap;
+        .vertical-text {
+			display: flex;
+			flex-direction: column-reverse; /* pastdan yuqoriga chiqishi uchun */
+			align-items: center;
+			justify-content: center;
+			height: 80px;   /* ustun balandligi */
 			font-size: 8px;
 			text-align: center;
+		}
+		.vertical-text span {
+			display: block;
+			line-height: 1;
 		}
 
     </style>
@@ -169,10 +166,10 @@
                     @if(isset($product['yes']))
                         @php $col++; @endphp
                         <th class="col-product">
-							<div class="vertical-header">
-								<div class="vertical-header-content">
-									{{ implode(' ', array_slice(explode(' ', $product['product_name']), 0, 2)) }}
-								</div>
+							<div class="vertical-text">
+								@foreach(str_split(implode(' ', array_slice(explode(' ', $product['product_name']), 0, 2))) as $char)
+									<span>{{ $char }}</span>
+								@endforeach
 							</div>
 						</th>
                     @endif
