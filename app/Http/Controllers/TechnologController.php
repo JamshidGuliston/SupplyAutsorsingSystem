@@ -4632,4 +4632,71 @@ class TechnologController extends Controller
             return response()->json(['success' => false, 'message' => $e->getMessage()]);
         }
     }
+
+    public function testZipCreation()
+    {
+        try {
+            // Test PDF fayllar yaratish
+            $tempDir = storage_path('app/test_zip_' . time());
+            if (!file_exists($tempDir)) {
+                mkdir($tempDir, 0755, true);
+            }
+            
+            // Bir nechta test PDF fayl yaratish
+            $pdfFiles = [];
+            $kindergartens = Kindgarden::where('region_id', 1)->with('age_range')->limit(2)->get();
+            
+            foreach ($kindergartens as $kindergarten) {
+                foreach($kindergarten->age_range as $age) {
+                    $pdfPath = $this->createKindergartenMenuPDF($kindergarten->id, $age->id, $tempDir);
+                    if ($pdfPath && file_exists($pdfPath)) {
+                        $pdfFiles[] = $pdfPath;
+                        echo "PDF yaratildi: " . basename($pdfPath) . " (" . filesize($pdfPath) . " bytes)\n";
+                    }
+                }
+            }
+            
+            if (empty($pdfFiles)) {
+                echo "Hech qanday PDF fayl yaratilmadi!\n";
+                return;
+            }
+            
+            // ZIP yaratish
+            $zipFileName = 'test_menyular_' . date('Y-m-d\TH-i-s') . '.zip';
+            $zipPath = storage_path('app/' . $zipFileName);
+            
+            $zip = new \ZipArchive();
+            $result = $zip->open($zipPath, \ZipArchive::CREATE | \ZipArchive::OVERWRITE);
+            
+            if ($result === TRUE) {
+                foreach ($pdfFiles as $pdfFile) {
+                    if (file_exists($pdfFile)) {
+                        $fileName = basename($pdfFile);
+                        if ($zip->addFile($pdfFile, $fileName)) {
+                            echo "ZIP ga qo'shildi: " . $fileName . "\n";
+                        } else {
+                            echo "ZIP ga qo'shilmadi: " . $fileName . "\n";
+                        }
+                    }
+                }
+                
+                $zip->close();
+                
+                if (file_exists($zipPath)) {
+                    echo "ZIP yaratildi: " . $zipPath . "\n";
+                    echo "ZIP hajmi: " . filesize($zipPath) . " bytes\n";
+                } else {
+                    echo "ZIP yaratilmadi!\n";
+                }
+            } else {
+                echo "ZIP yaratishda xatolik: " . $result . "\n";
+            }
+            
+            // Test papkasini tozalash
+            $this->deleteDirectory($tempDir);
+            
+        } catch (\Exception $e) {
+            echo "Xatolik: " . $e->getMessage() . "\n";
+        }
+    }
 }

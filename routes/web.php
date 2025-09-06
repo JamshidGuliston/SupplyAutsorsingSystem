@@ -303,6 +303,8 @@ Route::group(['prefix' => 'technolog', 'middleware' => ['isTechnolog', 'auth']],
     Route::post('/updatetitlemenu', [TechnologController::class, 'updateTitlemenu'])->name('technolog.updateTitlemenu');
     Route::post('/deletetitlemenu', [TechnologController::class, 'deleteTitlemenu'])->name('technolog.deleteTitlemenu');
     Route::get('createKindergartenMenuPDF/{garden_id}/{age_id}/{temp}', [TechnologController::class, 'createKindergartenMenuPDF'])->name('technolog.createKindergartenMenuPDF');
+
+    Route::get('/test-zip-creation', [TechnologController::class, 'testZipCreation']);
 });
 
 
