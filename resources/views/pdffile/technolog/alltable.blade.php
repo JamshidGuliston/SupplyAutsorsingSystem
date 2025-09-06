@@ -12,7 +12,7 @@
         
         body {
             font-family: "DejaVu Sans", Arial, sans-serif;
-            font-size: 10px;
+            font-size: 8px;
             line-height: 1.2;
             margin: 0;
             padding: 0;
@@ -22,326 +22,378 @@
         
         .header-info {
             margin-bottom: 10px;
-            font-size: 9px;
-            line-height: 1.3;
+            text-align: center;
+            font-weight: bold;
         }
         
-        .main-table {
-            width: 100%;
+        table {
             border-collapse: collapse;
-            border: 2px solid #000;
+            border: 2px solid black;
+            width: 100%;
             table-layout: fixed;
-            font-size: 7px;
         }
         
-        .main-table th,
-        .main-table td {
-            border: 1px solid #000;
+        th, td {
+            border: 1px solid black;
             padding: 2px;
             text-align: center;
             vertical-align: middle;
-            word-wrap: break-word;
-            overflow: hidden;
         }
         
-        .main-table th {
-            background-color: #f0f0f0;
-            font-weight: bold;
-            font-size: 8px;
-        }
-        
-        .main-table td {
-            font-size: 10px;
-        }
-        
-        /* Vertikal matn uchun Snappy-optimized CSS */
+        /* Vertikal matn uchun maxsus CSS */
         .vertical-text {
-            display: block;
-            width: 20px;
-            height: 80px;
-            font-size: 8px;
-            line-height: 1.1;
-            text-align: center;
-            word-wrap: break-word;
-            overflow: hidden;
-            white-space: normal;
-        }
-        
-        .vertical-text span {
-            display: block;
-            transform: rotate(-90deg);
-            transform-origin: center;
-            width: 80px;
-            height: 20px;
-            margin-top: 30px;
-            margin-left: -30px;
-            font-size: 8px;
-            line-height: 1.1;
-            text-align: center;
-        }
-        
-        .product-name {
-            font-weight: bold;
-            text-align: left;
-            padding: 3px;
-        }
-        
-        .meal-time {
             writing-mode: vertical-rl;
             text-orientation: mixed;
             white-space: nowrap;
-            font-weight: bold;
-            background-color: #e0e0e0;
+            height: 120px;
+            width: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 7px;
+            line-height: 1.0;
+            word-break: break-all;
+            overflow: hidden;
         }
         
+        /* Snappy uchun alternativ yechim */
+        .vertical-text-alt {
+            transform: rotate(-90deg);
+            transform-origin: center;
+            white-space: nowrap;
+            height: 120px;
+            width: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 7px;
+            line-height: 1.0;
+            word-break: break-all;
+            overflow: hidden;
+        }
+        
+        /* Maxsulot nomlari uchun */
+        .product-header {
+            width: 25px;
+            height: 120px;
+            padding: 0;
+            vertical-align: middle;
+        }
+        
+        .product-name {
+            font-size: 6px;
+            line-height: 1.0;
+            word-break: break-word;
+            hyphens: auto;
+            text-align: center;
+            padding: 1px;
+        }
+        
+        /* Ovqat vaqti uchun vertikal matn */
+        .meal-time-header {
+            width: 30px;
+            height: 60px;
+            padding: 0;
+            vertical-align: middle;
+        }
+        
+        .meal-time-text {
+            writing-mode: vertical-rl;
+            text-orientation: mixed;
+            white-space: nowrap;
+            height: 60px;
+            width: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 8px;
+            font-weight: bold;
+        }
+        
+        /* Bolalar va xodimlar uchun */
+        .section-header {
+            width: 30px;
+            height: 100px;
+            padding: 0;
+            vertical-align: middle;
+        }
+        
+        .section-text {
+            writing-mode: vertical-rl;
+            text-orientation: mixed;
+            white-space: nowrap;
+            height: 100px;
+            width: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 8px;
+            font-weight: bold;
+        }
+        
+        /* Jadval qatorlari */
         .food-name {
+            width: 80px;
+            font-size: 7px;
             text-align: left;
             padding: 2px;
-            font-size: 8px;
         }
         
-        .summary-row {
-            background-color: #f5f5f5;
-            font-weight: bold;
+        .quantity-cell {
+            width: 25px;
+            font-size: 6px;
+            text-align: center;
+            padding: 1px;
         }
         
-        .total-row {
-            background-color: #e0e0e0;
-            font-weight: bold;
-            border-top: 2px solid #000;
+        /* Qalin chiziqlar */
+        .thick-border-top {
+            border-top: 2px solid black;
         }
         
-        .children-section {
-            background-color: #f8f9fa;
+        .thick-border-bottom {
+            border-bottom: 2px solid black;
         }
-        
-        .workers-section {
-            background-color: #fff3cd;
-        }
-        
-        .final-total {
-            background-color: #d4edda;
-            font-weight: bold;
-            border-top: 2px solid #000;
-        }
-        
-        /* Fixed column widths */
-        .col-1 { width: 2%; }
-        .col-2 { width: 12%; }
-        .col-product { width: 20px; }
-        
-        /* Alternativ vertikal matn usuli */
-        .vertical-header {
-			width: 20px;      /* ustun eni */
-			height: 80px;     /* ustun balandligi */
-			position: relative;
-		}
-
-		.vertical-header-content {
-			position: absolute;
-			top: 50%;
-			left: 50%;
-			transform: translate(-50%, -50%) rotate(-90deg);
-			transform-origin: center;
-			white-space: nowrap;
-			font-size: 6px;
-			text-align: center;
-		}
-
-		.vertical-text {
-			writing-mode: vertical-rl;   /* matnni vertikal qiladi (yuqoridan pastga) */
-			-webkit-writing-mode: vertical-rl;
-			-ms-writing-mode: tb-rl;
-
-			transform: rotate(180deg);   /* teskari qilib pastdan tepaga chiqaradi */
-			transform-origin: center center;
-
-			font-size: 8px;
-			text-align: center;
-			white-space: nowrap;
-			display: inline-block;
-		}
     </style>
 </head>
 <body>
     <div class="header-info">
-        <strong>Боғча номи: {{ $menu[0]['kingar_name'] }}</strong> | 
-        <strong>Таомнома: {{ $taomnoma['menu_name'] }}</strong><br>
-        <strong>Сана: {{ $day['day_number'] }}.{{ $day['month_name'] }}.{{ $day['year_name'] }}-й учун</strong> | 
-        <strong>{{ $menu[0]['age_name'] }}ли болалар сони: {{ $menu[0]['kingar_children_number'] }}</strong> | 
-        <strong>Ходимлар сони: {{ $menu[0]['workers_count'] }}</strong><br>
-        <strong style="color:red;">КЕЙИНГИ ИШ КУНИ УЧУН ТАХМИНИЙ ТАОМНОМА!</strong>
+        <strong>Боғча номи: {{ $menu[0]['kingar_name'] }}</strong><br>
+        <strong>Сана: {{ $day['day_number'] }}.{{ $day['month_name'] }} {{ $day['year_name'] }}й</strong><br>
+        <strong>{{ $menu[0]['age_name'] }}ли болалар сони: {{ $menu[0]['kingar_children_number'] }}</strong>
+        @if($menu[0]['worker_age_id'] == $menu[0]['king_age_name_id'])
+            <strong>Ходимлар сони: {{ $menu[0]['worker_count'] }}</strong>
+        @endif
+        <br><strong>КЕЙИНГИ ИШ КУНИ УЧУН ТАХМИНИЙ ТАОМНОМА!</strong>
     </div>
 
-    <table class="main-table">
+    <table>
         <thead>
             <tr>
-                <th class="col-1" rowspan="3"></th>
-                <th class="col-2" rowspan="3">Махсулотлар номи</th>
-                @php $col = 0; @endphp
+                <th style="width: 30px;"></th>
+                <th style="width: 80px;">Махсулотлар номи</th>
                 @foreach($products as $product)
                     @if(isset($product['yes']))
-                        @php $col++; @endphp
-                        <th class="col-product">
-							<div class="vertical-text">
-								{{ implode(' ', array_slice(explode(' ', $product['product_name']), 0, 2)) }}
-							</div>
-						</th>
-                    @endif
-                @endforeach
-            </tr>
-            <tr>
-                @foreach($products as $product)
-                    @if(isset($product['yes']))
-                        <th style="font-size: 6px;">{{ $product['size_name'] }}</th>
-                    @endif
-                @endforeach
-            </tr>
-            <tr>
-                @foreach($products as $product)
-                    @if(isset($product['yes']))
-                        <th style="font-size: 6px;">{{ $product['div'] }}</th>
+                        <th class="product-header">
+                            <div class="vertical-text-alt">
+                                {{ $product['product_name'] }}
+                            </div>
+                        </th>
                     @endif
                 @endforeach
             </tr>
         </thead>
         <tbody>
-            @php $boolmeal = []; @endphp
-            @foreach($menuitem as $row)
-                @foreach($row as $item)
+            @foreach($menuitem as $mealTimeId => $mealTimeData)
+                @foreach($mealTimeData as $foodId => $foodData)
                     @if($loop->index == 0)
                         @continue
-                        @php $time = $item['mealtime']; @endphp
                     @endif
-                    <tr>
-                        @if($loop->index == 1)
-                            <th class="meal-time" rowspan="{{ 2 * (count($row)-1) }}">
-                                {{ $row[0]['mealtime'] }}
+                    
+                    @if($loop->index == 1)
+                        <tr>
+                            <th class="meal-time-header" rowspan="{{ 2 * (count($mealTimeData) - 1) }}">
+                                <div class="meal-time-text">
+                                    {{ $mealTimeData[0]['mealtime'] }}
+                                </div>
                             </th>
-                        @endif
-                        <td class="food-name" rowspan="2">{{ $item['foodname'] }}</td>
-                        @foreach($products as $product)
-                            @if(isset($product['yes']) && isset($item[$product['id']]))
-                                <td style="background-color: #e6f3ff;">
-                                    {{ number_format((($menu[0]['kingar_children_number'])*$item[$product['id']]) / $product['div'], 2) }}
-                                </td>
-                            @elseif(isset($product['yes']))
-                                <td style="background-color: #e6f3ff;"></td>
-                            @endif
-                        @endforeach
-                    </tr>
-                    <tr>
-                        @foreach($products as $product)
-                            @if(isset($product['yes']) && isset($item[$product['id']]))
-                                <td>{{ $item[$product['id']] }}</td>
-                            @elseif(isset($product['yes']))
-                                <td></td>
-                            @endif
-                        @endforeach
-                    </tr>
+                            <td class="food-name" rowspan="2">{{ $foodData['foodname'] }}</td>
+                            @foreach($products as $product)
+                                @if(isset($product['yes']))
+                                    <td class="quantity-cell">
+                                        @if(isset($foodData[$product['id']]))
+                                            {{ $foodData[$product['id']] }}
+                                        @endif
+                                    </td>
+                                @endif
+                            @endforeach
+                        </tr>
+                        <tr>
+                            @foreach($products as $product)
+                                @if(isset($product['yes']))
+                                    <td class="quantity-cell">
+                                        @if(isset($foodData[$product['id']]))
+                                            {{ number_format(($menu[0]['kingar_children_number'] * $foodData[$product['id']]) / $product['div'], 3) }}
+                                        @endif
+                                    </td>
+                                @endif
+                            @endforeach
+                        </tr>
+                    @else
+                        <tr>
+                            <td class="food-name" rowspan="2">{{ $foodData['foodname'] }}</td>
+                            @foreach($products as $product)
+                                @if(isset($product['yes']))
+                                    <td class="quantity-cell">
+                                        @if(isset($foodData[$product['id']]))
+                                            {{ $foodData[$product['id']] }}
+                                        @endif
+                                    </td>
+                                @endif
+                            @endforeach
+                        </tr>
+                        <tr>
+                            @foreach($products as $product)
+                                @if(isset($product['yes']))
+                                    <td class="quantity-cell">
+                                        @if(isset($foodData[$product['id']]))
+                                            {{ number_format(($menu[0]['kingar_children_number'] * $foodData[$product['id']]) / $product['div'], 3) }}
+                                        @endif
+                                    </td>
+                                @endif
+                            @endforeach
+                        </tr>
+                    @endif
                 @endforeach
             @endforeach
             
             <!-- Bolalar bo'limi -->
-            <tr class="children-section">
-                <th class="meal-time" rowspan="5">Болалар</th>
-                <td class="summary-row">Жами миқдори</td>
+            <tr class="thick-border-top">
+                <th class="section-header" rowspan="5">
+                    <div class="section-text">Болалар</div>
+                </th>
+                <td class="food-name thick-border-top">1 та бола учун гр</td>
                 @foreach($products as $product)
-                    @if(isset($product['yes']) && isset($productallcount[$product['id']]))
-                        <td class="summary-row" style="background-color: #e6f3ff;">
-                            {{ number_format((($menu[0]['kingar_children_number'])*$productallcount[$product['id']]) / $product['div'], 2) }}
+                    @if(isset($product['yes']))
+                        <td class="quantity-cell thick-border-top">
+                            @if(isset($productallcount[$product['id']]))
+                                {{ $productallcount[$product['id']] - $workerproducts[$product['id']] }}
+                            @endif
                         </td>
-                    @elseif(isset($product['yes']))
-                        <td class="summary-row" style="background-color: #e6f3ff;"></td>
                     @endif
                 @endforeach
             </tr>
-            <tr class="children-section">
-                <td>1 та бола учун гр</td>
-                @foreach($products as $product)
-                    @if(isset($product['yes']) && isset($productallcount[$product['id']]))
-                        <td>{{ $productallcount[$product['id']] }}</td>
-                    @elseif(isset($product['yes']))
-                        <td></td>
-                    @endif
-                @endforeach
-            </tr>
-            <tr class="children-section">
-                <td>Нархи</td>
+            
+            <tr>
+                <td class="food-name">Жами миқдори</td>
                 @foreach($products as $product)
                     @if(isset($product['yes']))
-                        <td></td>
+                        <td class="quantity-cell">
+                            @if(isset($productallcount[$product['id']]))
+                                {{ number_format(($menu[0]['kingar_children_number'] * $productallcount[$product['id']]) / $product['div'], 3) }}
+                            @endif
+                        </td>
                     @endif
                 @endforeach
             </tr>
-            <tr class="children-section">
-                <td class="summary-row"><strong>Сумма жами:</strong></td>
+            
+            <tr>
+                <td class="food-name">Нархи</td>
                 @foreach($products as $product)
                     @if(isset($product['yes']))
-                        <td class="summary-row"></td>
+                        <td class="quantity-cell"></td>
                     @endif
                 @endforeach
             </tr>
-            <tr class="children-section">
-                <td>Жами харажат</td>
-                <td colspan="{{ $col }}">0</td>
+            
+            <tr>
+                <td class="food-name"><strong>Сумма жами:</strong></td>
+                @foreach($products as $product)
+                    @if(isset($product['yes']))
+                        <td class="quantity-cell"></td>
+                    @endif
+                @endforeach
+            </tr>
+            
+            <tr>
+                <td class="food-name">Жами харажат</td>
+                @foreach($products as $product)
+                    @if(isset($product['yes']))
+                        <td class="quantity-cell"></td>
+                    @endif
+                @endforeach
             </tr>
             
             <!-- Xodimlar bo'limi -->
-            <tr class="workers-section">
-                <th class="meal-time" rowspan="5">Ходимлар</th>
-                <td class="summary-row">Жами миқдори</td>
+            <tr class="thick-border-top">
+                <th class="section-header" rowspan="5">
+                    <div class="section-text">Ходимлар</div>
+                </th>
+                <td class="food-name thick-border-top">1 та ходим учун гр</td>
                 @foreach($products as $product)
-                    @if(isset($product['yes']) && isset($workerproducts[$product['id']]))
-                        <td class="summary-row" style="background-color: #e6f3ff;">
-                            {{ number_format((($menu[0]['workers_count'])*$workerproducts[$product['id']]) / $product['div'], 2) }}
+                    @if(isset($product['yes']))
+                        <td class="quantity-cell thick-border-top">
+                            @if(isset($workerproducts[$product['id']]))
+                                {{ $workerproducts[$product['id']] }}
+                            @endif
                         </td>
-                    @elseif(isset($product['yes']))
-                        <td class="summary-row" style="background-color: #e6f3ff;"></td>
                     @endif
                 @endforeach
-            </tr>
-            <tr class="workers-section">
-                <td>1 та ходим учун гр</td>
-                @foreach($products as $product)
-                    @if(isset($product['yes']) && isset($workerproducts[$product['id']]))
-                        <td>{{ $workerproducts[$product['id']] }}</td>
-                    @elseif(isset($product['yes']))
-                        <td></td>
-                    @endif
-                @endforeach
-            </tr>
-            <tr class="workers-section">
-                <td>Нархи</td>
-                @foreach($products as $product)
-                    @if(isset($product['yes']))
-                        <td></td>
-                    @endif
-                @endforeach
-            </tr>
-            <tr class="workers-section">
-                <td class="summary-row"><strong>Сумма жами</strong></td>
-                @foreach($products as $product)
-                    @if(isset($product['yes']))
-                        <td class="summary-row"></td>
-                    @endif
-                @endforeach
-            </tr>
-            <tr class="workers-section">
-                <td>Жами харажат</td>
-                <td colspan="{{ $col }}">0</td>
             </tr>
             
-            <!-- Umumiy jami -->
-            <tr class="final-total">
-                <th colspan="2"><strong>Жами махсулот миқдори</strong></th>
+            <tr>
+                <td class="food-name">Жами миқдори</td>
                 @foreach($products as $product)
-                    @if(isset($product['yes']) && isset($productallcount[$product['id']]))
-                        <td class="final-total">
-                            {{ number_format(($productallcount[$product['id']]*$menu[0]['kingar_children_number']+$workerproducts[$product['id']]*$menu[0]['workers_count'])/$product['div'], 2) }}
+                    @if(isset($product['yes']))
+                        <td class="quantity-cell">
+                            @if(isset($workerproducts[$product['id']]))
+                                {{ number_format(($menu[0]['workers_count'] * $workerproducts[$product['id']]) / $product['div'], 3) }}
+                            @endif
                         </td>
-                    @elseif(isset($product['yes']))
-                        <td class="final-total"></td>
+                    @endif
+                @endforeach
+            </tr>
+            
+            <tr>
+                <td class="food-name">Нархи</td>
+                @foreach($products as $product)
+                    @if(isset($product['yes']))
+                        <td class="quantity-cell"></td>
+                    @endif
+                @endforeach
+            </tr>
+            
+            <tr>
+                <td class="food-name"><strong>Сумма жами</strong></td>
+                @foreach($products as $product)
+                    @if(isset($product['yes']))
+                        <td class="quantity-cell"></td>
+                    @endif
+                @endforeach
+            </tr>
+            
+            <tr>
+                <td class="food-name">Жами харажат</td>
+                @foreach($products as $product)
+                    @if(isset($product['yes']))
+                        <td class="quantity-cell"></td>
+                    @endif
+                @endforeach
+            </tr>
+            
+            <!-- Yakuniy qatorlar -->
+            <tr class="thick-border-top">
+                <th colspan="2" class="food-name thick-border-top"><strong>Жами махсулот оғирлиги</strong></th>
+                @foreach($products as $product)
+                    @if(isset($product['yes']))
+                        <td class="quantity-cell thick-border-top"></td>
+                    @endif
+                @endforeach
+            </tr>
+            
+            <tr>
+                <th colspan="2" class="food-name">Жами сарфланган маблағ</th>
+                @foreach($products as $product)
+                    @if(isset($product['yes']))
+                        <td class="quantity-cell">0</td>
+                    @endif
+                @endforeach
+            </tr>
+            
+            <tr>
+                <th colspan="2" class="food-name">1 нафар бола учун</th>
+                @foreach($products as $product)
+                    @if(isset($product['yes']))
+                        <td class="quantity-cell"></td>
+                    @endif
+                @endforeach
+            </tr>
+            
+            <tr>
+                <th colspan="2" class="food-name">1 нафар ходим учун</th>
+                @foreach($products as $product)
+                    @if(isset($product['yes']))
+                        <td class="quantity-cell"></td>
                     @endif
                 @endforeach
             </tr>
