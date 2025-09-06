@@ -149,7 +149,7 @@
 		}
 
 		.vertical-text {
-			transform: rotate(0deg); /* text o‘ngdan chapga o‘qilmasligi uchun */
+			transform: rotate(-90deg); /* text o‘ngdan chapga o‘qilmasligi uchun */
 			font-size: 8px;
 			text-align: center;
 		}

@@ -172,7 +172,7 @@ class TestController extends Controller
 
 		$name = $day['id'].'-'.$gid.'-'.$ageid."taxminiy.pdf";
 		// PDF ni brauzerga yuborish
-		return $pdf->download($name);
+		return $pdf->stream($name);
 	}
 
 	public function activmenuPDF(Request $request, $today, $gid, $ageid)
