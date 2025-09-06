@@ -175,8 +175,8 @@
     <table class="main-table">
         <thead>
             <tr>
-                <th class="col-1" rowspan="3"></th>
-                <th class="col-2" rowspan="3">Махсулотлар номи</th>
+                <th rowspan="3"></th>
+                <th rowspan="3">Махсулотлар номи</th>
                 @php $col = 0; @endphp
                 @foreach($products as $product)
                     @if(isset($product['yes']))
