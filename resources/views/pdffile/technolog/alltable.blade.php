@@ -150,7 +150,7 @@
 
 		.vertical-text {
 			display: inline-block;
-			transform: rotate(-90deg);  /* chapdan o‘ngga */
+			transform: rotate(-180deg);  /* chapdan o‘ngga */
 			transform-origin: center center;
 			font-size: 8px;
 			white-space: nowrap;
