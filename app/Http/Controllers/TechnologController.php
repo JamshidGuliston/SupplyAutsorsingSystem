@@ -4108,6 +4108,7 @@ class TechnologController extends Controller
             $pdf->save($pdfPath);
             
             // Bitta PDF fayl qaytarish
+            dd($pdfPath);
             return $pdfPath;
             
         } catch (\Exception $e) {
