@@ -141,7 +141,7 @@
 			position: absolute;
 			top: 50%;
 			left: 50%;
-			transform: translate(-50%, -50%) rotate(90deg);
+			/* transform: translate(-50%, -50%) rotate(90deg); */
 			transform-origin: center;
 			white-space: nowrap;
 			font-size: 6px;
@@ -149,9 +149,6 @@
 		}
 
 		.vertical-text {
-			writing-mode: tb-rl; /* eski brauzerlar uchun */
-			-webkit-writing-mode: vertical-rl;
-			-ms-writing-mode: tb-rl;
 			transform: rotate(0deg); /* text o‘ngdan chapga o‘qilmasligi uchun */
 			font-size: 8px;
 			text-align: center;
