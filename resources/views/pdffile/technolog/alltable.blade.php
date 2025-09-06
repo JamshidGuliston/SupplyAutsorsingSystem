@@ -22,7 +22,7 @@
         
         .header-info {
             margin-bottom: 10px;
-            font-size: 9px;
+            font-size: 10px;
             line-height: 1.3;
         }
         
@@ -31,7 +31,6 @@
             border-collapse: collapse;
             border: 2px solid #000;
             table-layout: fixed;
-            font-size: 7px;
         }
         
         .main-table th,
@@ -47,7 +46,7 @@
         .main-table th {
             background-color: #f0f0f0;
             font-weight: bold;
-            font-size: 8px;
+            font-size: 10px;
         }
         
         .main-table td {
@@ -59,7 +58,7 @@
             display: block;
             width: 20px;
             height: 80px;
-            font-size: 8px;
+            font-size: 10px;
             line-height: 1.1;
             text-align: center;
             word-wrap: break-word;
@@ -75,7 +74,7 @@
             height: 20px;
             margin-top: 30px;
             margin-left: -30px;
-            font-size: 8px;
+            font-size: 10px;
             line-height: 1.1;
             text-align: center;
         }
@@ -98,7 +97,7 @@
 			width: 80px;
             text-align: left;
             padding: 2px;
-            font-size: 8px;
+            font-size: 10px;
         }
         
         .summary-row {
@@ -109,7 +108,7 @@
         .total-row {
             background-color: #e0e0e0;
             font-weight: bold;
-            border-top: 2px solid #000;
+            border-top: 1px solid #000;
         }
         
         .children-section {
@@ -145,7 +144,6 @@
 			transform: translate(-50%, -50%) rotate(-90deg);
 			transform-origin: center;
 			white-space: nowrap;
-			font-size: 6px;
 			text-align: center;
 		}
 
@@ -156,8 +154,6 @@
 
 			transform: rotate(180deg);   /* teskari qilib pastdan tepaga chiqaradi */
 			transform-origin: center center;
-
-			font-size: 8px;
 			text-align: center;
 			white-space: nowrap;
 			display: inline-block;
