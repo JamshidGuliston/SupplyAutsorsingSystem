@@ -4103,7 +4103,7 @@ class TechnologController extends Controller
             $fileName = $this->cleanFileName(
                 Kindgarden::where('id', $garden_id)->first()->kingar_name
             ) . '_' . Age_range::where('id', $age_id)->first()->age_name . '_' . date('Y-m-d') . '.pdf';
-
+            dd($fileName);
             // Brauzerda PDF ni ko‘rsatish
             return $pdf->stream($fileName);
             $fileName = $this->cleanFileName(Kindgarden::where('id', $garden_id)->first()->kingar_name) . '_' .Age_range::where('id', $age_id)->first()->age_name. '_' . date('Y-m-d') . '.pdf';
