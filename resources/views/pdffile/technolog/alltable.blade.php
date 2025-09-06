@@ -218,9 +218,12 @@
                     @endif
                     <tr>
                         @if($loop->index == 1)
-                            <th class="meal-time" rowspan="{{ 2 * (count($row)-1) }}">
-                                {{ $row[0]['mealtime'] }}
-                            </th>
+                            <th class="col-product meal-time" rowspan="{{ 2 * (count($row)-1) }}">
+								<div class="vertical-text">
+									{{ $row[0]['mealtime'] }}
+								</div>
+							</div>
+						</th>
                         @endif
                         <td class="food-name" rowspan="2">{{ $item['foodname'] }}</td>
                         @foreach($products as $product)
