@@ -12,7 +12,7 @@
         
         body {
             font-family: "DejaVu Sans", Arial, sans-serif;
-            font-size: 8px;
+            font-size: 10px;
             line-height: 1.2;
             margin: 0;
             padding: 0;
@@ -47,11 +47,11 @@
         .main-table th {
             background-color: #f0f0f0;
             font-weight: bold;
-            font-size: 7px;
+            font-size: 8px;
         }
         
         .main-table td {
-            font-size: 7px;
+            font-size: 9px;
         }
         
         /* Vertikal matn uchun Snappy-optimized CSS */
@@ -210,9 +210,11 @@
                     @endif
                     <tr>
                         @if($loop->index == 1)
-                            <th class="meal-time" rowspan="{{ 2 * (count($row)-1) }}">
-                                {{ $row[0]['mealtime'] }}
-                            </th>
+						<th class="col-product">
+							<div class="vertical-text">
+								{{ $row[0]['mealtime'] }}
+							</div>
+						</th>
                         @endif
                         <td class="food-name" rowspan="2">{{ $item['foodname'] }}</td>
                         @foreach($products as $product)
