@@ -4096,6 +4096,10 @@ class TechnologController extends Controller
                     'margin-right' => 10,
                     'margin-bottom' => 10,
                     'margin-left' => 10,
+                    'enable-local-file-access' => true,
+                    'load-error-handling' => 'ignore',
+                    'load-media-error-handling' => 'ignore',
+                    'load-error-handling' => 'ignore',
                 ]);
 			
       
@@ -4108,12 +4112,11 @@ class TechnologController extends Controller
             $pdf->save($pdfPath);
             
             // Bitta PDF fayl qaytarish
-            dd($pdfPath);
             return $pdfPath;
             
         } catch (\Exception $e) {
             \Log::error('PDF yaratishda xatolik: ' . $e->getMessage());
-            return null;
+            return $e->getMessage();
         }
     }
 
