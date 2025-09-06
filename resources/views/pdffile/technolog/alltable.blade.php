@@ -72,7 +72,7 @@
             font-size: 6px;
             line-height: 1.1;
             text-align: center;
-            transform: rotate(180deg);
+            transform: rotate(90deg);
             height: 100%;
             display: flex;
             align-items: center;
