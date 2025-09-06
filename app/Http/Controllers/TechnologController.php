@@ -3888,8 +3888,28 @@ class TechnologController extends Controller
     public function downloadAllKindergartensMenusPDF(Request $request)
     {
         try {
-            // Barcha bog'chalarni olish
-            $kindergartens = Kindgarden::where('region_id', 1)->with('age_range')->get();
+            // Region ID ni tekshirish
+            $regionId = $request->input('region_id');
+            
+            if (!$regionId) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Iltimos, hududni tanlang!'
+                ], 400);
+            }
+            
+            // Tanlangan region bo'yicha bog'chalarni olish
+            $kindergartens = Kindgarden::where('region_id', $regionId)
+                ->where('hide', 1)
+                ->with('age_range')
+                ->get();
+                
+            if ($kindergartens->isEmpty()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Tanlangan hududda hech qanday bog\'cha topilmadi!'
+                ], 404);
+            }
             
             // Vaqtinchalik papka yaratish
             $tempDir = storage_path('app/temp_menus_' . time());
@@ -3898,6 +3918,7 @@ class TechnologController extends Controller
             }
             
             $pdfFiles = [];
+            $createdCount = 0;
             
             foreach ($kindergartens as $kindergarten) {
                 // Har bir bog'cha uchun PDF yaratish
@@ -3905,6 +3926,7 @@ class TechnologController extends Controller
                     $pdfPath = $this->createKindergartenMenuPDF($kindergarten->id, $age->id, $tempDir);
                     if ($pdfPath && file_exists($pdfPath)) {
                         $pdfFiles[] = $pdfPath;
+                        $createdCount++;
                     }
                 }
             }
@@ -3912,11 +3934,15 @@ class TechnologController extends Controller
             if (empty($pdfFiles)) {
                 // Vaqtinchalik papkani tozalash
                 $this->deleteDirectory($tempDir);
-                return redirect()->back()->with('error', 'Hech qanday PDF fayl yaratilmadi!');
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Hech qanday PDF fayl yaratilmadi!'
+                ], 404);
             }
             
             // ZIP fayl yaratish
-            $zipFileName = 'barcha_menyular_' . date('Y-m-d\TH-i-s') . '.zip';
+            $regionName = \App\Models\Region::find($regionId)->region_name ?? 'region_' . $regionId;
+            $zipFileName = 'barcha_menyular_' . $regionName . '_' . date('Y-m-d\TH-i-s') . '.zip';
             $zipPath = storage_path('app/' . $zipFileName);
             
             // Eski ZIP faylni o'chirish
@@ -3945,7 +3971,10 @@ class TechnologController extends Controller
                 // ZIP fayl mavjudligini va hajmini tekshirish
                 if (!file_exists($zipPath) || filesize($zipPath) == 0) {
                     $this->deleteDirectory($tempDir);
-                    return redirect()->back()->with('error', 'ZIP fayl yaratilmadi yoki bo\'sh!');
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'ZIP fayl yaratilmadi yoki bo\'sh!'
+                    ], 500);
                 }
                 
                 // Vaqtinchalik papkani tozalash
@@ -3953,15 +3982,22 @@ class TechnologController extends Controller
                 
                 // ZIP faylni yuklab olish
                 return response()->download($zipPath, $zipFileName)->deleteFileAfterSend();
+                
             } else {
                 // Vaqtinchalik papkani tozalash
                 $this->deleteDirectory($tempDir);
-                return redirect()->back()->with('error', 'ZIP fayl yaratishda xatolik yuz berdi! Xatolik kodi: ' . $result);
+                return response()->json([
+                    'success' => false,
+                    'message' => 'ZIP fayl yaratishda xatolik yuz berdi! Xatolik kodi: ' . $result
+                ], 500);
             }
             
         } catch (\Exception $e) {
             \Log::error('ZIP yaratishda xatolik: ' . $e->getMessage());
-            return redirect()->back()->with('error', 'Xatolik yuz berdi: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Xatolik yuz berdi: ' . $e->getMessage()
+            ], 500);
         }
     }
 
@@ -4111,7 +4147,7 @@ class TechnologController extends Controller
             }
 
 
-            $fileName = $this->cleanFileName(Kindgarden::where('id', $garden_id)->first()->kingar_name) . 'DMTT_' . $age_name. '_Taxminiy' . $day->day_number .'.'.$day->month_name.'.'.$day->year_name . '.pdf';
+            $fileName = $this->cleanFileName(Kindgarden::where('id', $garden_id)->first()->kingar_name) . 'DMTT_' . $age_name. '_Taxminiy_' . $day->day_number .'.'.$day->month_name.'.'.$day->year_name . '.pdf';
             
             $pdfPath = $tempDir . '/' . $fileName;
        

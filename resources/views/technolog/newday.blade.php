@@ -1509,6 +1509,14 @@
         
         // Barcha menyularni ZIP arxiv qilish
         $('#downloadAllMenus').click(function() {
+            // Region tanlanganligini tekshirish
+            var selectedRegion = $('#regionFilter2').val();
+            
+            if (!selectedRegion) {
+                showNotification('Iltimos, avval hududni tanlang!', 'error');
+                return;
+            }
+            
             // Loading ko'rsatish
             $(this).html('<i class="fas fa-spinner fa-spin text-white"></i> Yuklanmoqda...');
             $(this).prop('disabled', true);
@@ -1517,23 +1525,52 @@
             $.ajax({
                 url: '{{ route("technolog.downloadAllKindergartensMenusPDF") }}',
                 method: 'GET',
+                data: {
+                    region_id: selectedRegion
+                },
                 xhrFields: {
                     responseType: 'blob'
                 },
-                success: function(data) {
+                success: function(data, status, xhr) {
                     // Faylni yuklab olish
                     var blob = new Blob([data]);
                     var link = document.createElement('a');
                     link.href = window.URL.createObjectURL(blob);
-                    link.download = 'barcha_menyular_' + new Date().toISOString().slice(0,19).replace(/:/g, '-') + '.zip';
+                    
+                    // Fayl nomini olish
+                    var contentDisposition = xhr.getResponseHeader('Content-Disposition');
+                    var fileName = 'barcha_menyular_' + new Date().toISOString().slice(0,19).replace(/:/g, '-') + '.zip';
+                    
+                    if (contentDisposition) {
+                        var fileNameMatch = contentDisposition.match(/filename="(.+)"/);
+                        if (fileNameMatch) {
+                            fileName = fileNameMatch[1];
+                        }
+                    }
+                    
+                    link.download = fileName;
                     link.click();
+                    
+                    // Muvaffaqiyat xabari
+                    showNotification('ZIP fayl muvaffaqiyatli yuklab olindi!', 'success');
                     
                     // Tugmani qayta tiklash
                     $('#downloadAllMenus').html('<i class="fas fa-file-archive text-white"></i>');
                     $('#downloadAllMenus').prop('disabled', false);
                 },
                 error: function(xhr, status, error) {
-                    alert('Xatolik yuz berdi: ' + error);
+                    var errorMessage = 'Xatolik yuz berdi!';
+                    
+                    // JSON xatolik xabarini olish
+                    if (xhr.responseJSON && xhr.responseJSON.message) {
+                        errorMessage = xhr.responseJSON.message;
+                    } else if (xhr.status === 400) {
+                        errorMessage = 'Iltimos, hududni tanlang!';
+                    } else if (xhr.status === 404) {
+                        errorMessage = 'Tanlangan hududda hech qanday bog\'cha topilmadi!';
+                    }
+                    
+                    showNotification(errorMessage, 'error');
                     
                     // Tugmani qayta tiklash
                     $('#downloadAllMenus').html('<i class="fas fa-file-archive text-white"></i>');
@@ -1541,6 +1578,28 @@
                 }
             });
         });
+        
+        // Xabar ko'rsatish funksiyasi (error turi uchun)
+        function showNotification(message, type) {
+            // Mavjud xabarni o'chirish
+            $('.filter-notification').remove();
+            
+            var alertClass = type === 'success' ? 'alert-success' : 'alert-danger';
+            var icon = type === 'success' ? 'fas fa-check-circle' : 'fas fa-exclamation-triangle';
+            
+            var notification = $('<div class="alert ' + alertClass + ' alert-dismissible fade show filter-notification" role="alert" style="position: fixed; top: 20px; right: 20px; z-index: 9999; min-width: 300px;">' +
+                '<i class="' + icon + '" style="margin-right: 8px;"></i>' +
+                message +
+                '<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>' +
+                '</div>');
+            
+            $('body').append(notification);
+            
+            // 5 soniyadan keyin xabarni yashirish
+            setTimeout(function() {
+                notification.fadeOut();
+            }, 5000);
+        }
     });
 </script>
 @endif
