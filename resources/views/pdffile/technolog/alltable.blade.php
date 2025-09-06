@@ -54,15 +54,30 @@
             font-size: 7px;
         }
         
-        /* Rotated text for product headers */
-        .rotated-header {
-            writing-mode: vertical-rl;
-            text-orientation: mixed;
-            white-space: nowrap;
-            height: 80px;
+        /* Vertikal matn uchun Snappy-optimized CSS */
+        .vertical-text {
+            display: block;
             width: 20px;
+            height: 80px;
             font-size: 6px;
             line-height: 1.1;
+            text-align: center;
+            word-wrap: break-word;
+            overflow: hidden;
+            white-space: normal;
+        }
+        
+        .vertical-text span {
+            display: block;
+            transform: rotate(-90deg);
+            transform-origin: center;
+            width: 80px;
+            height: 20px;
+            margin-top: 30px;
+            margin-left: -30px;
+            font-size: 6px;
+            line-height: 1.1;
+            text-align: center;
         }
         
         .product-name {
@@ -113,22 +128,27 @@
         /* Fixed column widths */
         .col-1 { width: 2%; }
         .col-2 { width: 12%; }
-        .col-product { width: 18px; }
+        .col-product { width: 20px; }
         
-        /* Remove problematic CSS for Snappy */
-        .vrt-header {
-            display: block;
+        /* Alternativ vertikal matn usuli */
+        .vertical-header {
+            width: 20px;
+            height: 80px;
+            position: relative;
+            overflow: hidden;
         }
         
-        .vrt-header span {
-            display: block;
-            writing-mode: vertical-rl;
-            text-orientation: mixed;
+        .vertical-header-content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) rotate(-90deg);
             white-space: nowrap;
-            height: 80px;
-            width: 18px;
             font-size: 6px;
             line-height: 1.1;
+            text-align: center;
+            width: 80px;
+            height: 20px;
         }
     </style>
 </head>
@@ -152,8 +172,10 @@
                     @if(isset($product['yes']))
                         @php $col++; @endphp
                         <th class="col-product">
-                            <div class="rotated-header">
-                                {{ implode(' ', array_slice(explode(' ', $product['product_name']), 0, 2)) }}
+                            <div class="vertical-header">
+                                <div class="vertical-header-content">
+                                    {{ implode(' ', array_slice(explode(' ', $product['product_name']), 0, 2)) }}
+                                </div>
                             </div>
                         </th>
                     @endif
