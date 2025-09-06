@@ -80,6 +80,7 @@
         }
         
         .product-name {
+			font-size: 8px;
             font-weight: bold;
             text-align: left;
             padding: 3px;
