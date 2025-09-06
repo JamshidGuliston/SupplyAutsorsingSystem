@@ -140,7 +140,7 @@
 			position: absolute;
 			bottom: 0;              /* pastdan boshlash */
 			left: 50%;              /* gorizontal markaz */
-			transform: translateX(-50%) rotate(-90deg); /* soatga qarshi 90° */
+			transform: translateX(-50%) rotate(90deg); /* soatga qarshi 90° */
 			transform-origin: bottom left; /* aylanish markazi */
 			white-space: nowrap;
 			font-size: 6px;
