@@ -147,6 +147,15 @@
 			font-size: 6px;
 			text-align: center;
 		}
+
+		.vertical-text {
+			writing-mode: tb-rl; /* eski brauzerlar uchun */
+			-webkit-writing-mode: vertical-rl;
+			-ms-writing-mode: tb-rl;
+			transform: rotate(180deg); /* text o‘ngdan chapga o‘qilmasligi uchun */
+			font-size: 6px;
+			text-align: center;
+		}
     </style>
 </head>
 <body>
