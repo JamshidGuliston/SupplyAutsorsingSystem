@@ -250,7 +250,11 @@
             
             <!-- Bolalar bo'limi -->
             <tr class="children-section">
-                <th class="meal-time" rowspan="5">Болалар</th>
+                <th class="meal-time col-product" rowspan="5">
+					<div class="vertical-text">
+						Болалар
+					</div>
+				</th>
                 <td class="summary-row">Жами миқдори</td>
                 @foreach($products as $product)
                     @if(isset($product['yes']) && isset($productallcount[$product['id']]))
@@ -295,7 +299,11 @@
             
             <!-- Xodimlar bo'limi -->
             <tr class="workers-section">
-                <th class="meal-time" rowspan="5">Ходимлар</th>
+                <th class="meal-time col-product" rowspan="5">
+					<div class="vertical-text">
+						Ходимлар
+					</div>
+				</th>
                 <td class="summary-row">Жами миқдори</td>
                 @foreach($products as $product)
                     @if(isset($product['yes']) && isset($workerproducts[$product['id']]))
