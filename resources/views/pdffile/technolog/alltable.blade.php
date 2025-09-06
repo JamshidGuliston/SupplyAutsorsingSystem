@@ -127,7 +127,7 @@
         
         /* Fixed column widths */
         .col-1 { width: 2%; }
-        .col-2 { width: 12%; }
+        .col-2 { width: 8%; font-size: 10px; }
         .col-product { width: 20px; }
         
         /* Alternativ vertikal matn usuli */
