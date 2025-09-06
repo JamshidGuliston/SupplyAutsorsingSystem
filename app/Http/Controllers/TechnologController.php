@@ -4111,7 +4111,7 @@ class TechnologController extends Controller
             }
 
 
-            $fileName = $this->cleanFileName(Kindgarden::where('id', $garden_id)->first()->kingar_name) . '-DMTT_' . $age_name. '_' . date('Y-m-d') . '.pdf';
+            $fileName = $this->cleanFileName(Kindgarden::where('id', $garden_id)->first()->kingar_name) . 'DMTT_' . $age_name. '_Taxminiy' . $day->day_number .'.'.$day->month_name.'.'.$day->year_name . '.pdf';
             
             $pdfPath = $tempDir . '/' . $fileName;
        
