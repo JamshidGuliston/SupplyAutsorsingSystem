@@ -178,12 +178,10 @@
                     @if(isset($product['yes']))
                         @php $col++; @endphp
                         <th class="col-product">
-                            <div class="vertical-header">
-                                <div class="vertical-header-content">
-                                    {{ implode(' ', array_slice(explode(' ', $product['product_name']), 0, 2)) }}
-                                </div>
-                            </div>
-                        </th>
+							<div class="vertical-text">
+								{{ implode(' ', array_slice(explode(' ', $product['product_name']), 0, 2)) }}
+							</div>
+						</th>
                     @endif
                 @endforeach
             </tr>
