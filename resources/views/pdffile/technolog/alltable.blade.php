@@ -152,7 +152,7 @@
 			writing-mode: tb-rl; /* eski brauzerlar uchun */
 			-webkit-writing-mode: vertical-rl;
 			-ms-writing-mode: tb-rl;
-			transform: rotate(-90deg); /* text o‘ngdan chapga o‘qilmasligi uchun */
+			transform: rotate(90deg); /* text o‘ngdan chapga o‘qilmasligi uchun */
 			font-size: 8px;
 			text-align: center;
 		}
