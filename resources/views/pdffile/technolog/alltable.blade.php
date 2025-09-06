@@ -138,10 +138,10 @@
 
 		.vertical-header-content {
 			position: absolute;
-			bottom: 0;              /* pastdan boshlash */
-			left: 50%;              /* gorizontal markaz */
-			transform: translateX(-50%) rotate(90deg); /* soatga qarshi 90° */
-			transform-origin: bottom left; /* aylanish markazi */
+			top: 50%;
+			left: 50%;
+			transform: translate(-50%, -50%) rotate(-90deg); /* pastdan tepaga */
+			transform-origin: center;
 			white-space: nowrap;
 			font-size: 6px;
 			text-align: center;
