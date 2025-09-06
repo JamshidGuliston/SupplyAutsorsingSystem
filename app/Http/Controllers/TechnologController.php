@@ -4637,9 +4637,9 @@ class TechnologController extends Controller
     {
         try {
             // Test PDF fayllar yaratish
-            $tempDir = storage_path('app/test_zip_' . time());
-            if (!file_exists($tempDir)) {
-                mkdir($tempDir, 0755, true);
+            $tempDir = 'test_zip_' . time();
+            if (!file_exists(storage_path('app/' . $tempDir))) {
+                mkdir(storage_path('app/' . $tempDir), 0755, true);
             }
             
             // Bir nechta test PDF fayl yaratish
