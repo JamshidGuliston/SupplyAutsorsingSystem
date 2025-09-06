@@ -149,12 +149,17 @@
 		}
 
 		.vertical-text {
-			writing-mode: tb-lr; /* eski brauzerlar uchun */
-			-webkit-writing-mode: vertical-lr;
-			-ms-writing-mode: tb-lr;
-			transform: rotate(180deg); /* text o‘ngdan chapga o‘qilmasligi uchun */
+			writing-mode: vertical-rl;   /* matnni vertikal qilish */
+			-webkit-writing-mode: vertical-rl;
+			-ms-writing-mode: tb-rl;
+
+			transform: rotate(180deg);   /* yo‘nalishni teskari qilish */
+			transform-origin: center center;
+
 			font-size: 8px;
 			text-align: center;
+			white-space: nowrap;
+			display: inline-block;
 		}
     </style>
 </head>
