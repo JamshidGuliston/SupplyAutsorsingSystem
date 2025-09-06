@@ -48,6 +48,54 @@
 
 @section('content')
 
+<!-- Titlemenu Edit Modal -->
+<div class="modal fade" id="editTitlemenuModal" tabindex="-1" aria-labelledby="editTitlemenuModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form action="{{route('technolog.updateTitlemenu')}}" method="POST">
+                @csrf
+                <input type="hidden" name="id" value="{{$titlemenu->id}}">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editTitlemenuModalLabel">Menyu ma'lumotlarini o'zgartirish</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="menu_name" class="form-label">Menyu nomi</label>
+                        <input type="text" class="form-control" id="menu_name" name="menu_name" value="{{$titlemenu->menu_name}}" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="short_name" class="form-label">Qisqa nomi</label>
+                        <input type="text" class="form-control" id="short_name" name="short_name" value="{{$titlemenu->short_name}}" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="order_number" class="form-label">Tartib raqami</label>
+                        <input type="number" class="form-control" id="order_number" name="order_number" value="{{$titlemenu->order_number}}" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="menu_season_id" class="form-label">Mavsum</label>
+                        <select class="form-select" id="menu_season_id" name="menu_season_id" required>
+                            @foreach(\App\Models\Season::all() as $season)
+                                <option value="{{$season->id}}" {{$titlemenu->menu_season_id == $season->id ? 'selected' : ''}}>
+                                    {{$season->season_name}}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="description" class="form-label">Tavsif</label>
+                        <textarea class="form-control" id="description" name="description" rows="3">{{$titlemenu->description ?? ''}}</textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Bekor qilish</button>
+                    <button type="submit" class="btn btn-primary">Saqlash</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
 <!-- AddModal -->
 <div class="modal editesmodal fade" id="addModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-xl">
@@ -151,7 +199,30 @@
 
 <div class="py-5 px-5">
         <input type="hidden" name="menuid" value="{{ $id }}" />
-        
+         <!-- Titlemenu ma'lumotlari va boshqaruv tugmalari -->
+        <div class="titlemenu-header">
+            <div class="row">
+                <div class="col-md-8">
+                    <h4 class="mb-1">{{$titlemenu->menu_name}}</h4>
+                    <p class="mb-0 text-muted">
+                        <strong>Mavsum:</strong> {{$titlemenu->season_name ?? 'Noma\'lum'}} | 
+                        <strong>Yaratilgan:</strong> {{ isset($titlemenu->created_at) ? $titlemenu->created_at->format('d.m.Y H:i') : 'Noma\'lum' }} |
+                        <strong>Tartib raqami:</strong> {{$titlemenu->order_number ?? 'Noma\'lum'}} |
+                        <strong>Qisqa nomi:</strong> {{$titlemenu->short_name ?? 'Noma\'lum'}}
+                    </p>
+                    @if($titlemenu->description)
+                        <p class="mb-0"><strong>Tavsif:</strong> {{$titlemenu->description}}</p>
+                    @endif
+                </div>
+                <div class="col-md-4 text-end">
+                    <div class="titlemenu-actions">
+                        <button class="btn btn-outline-primary btn-sm me-2" data-bs-toggle="modal" data-bs-target="#editTitlemenuModal">
+                            <i class="fas fa-edit"></i> O'zgartirish
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
         <!-- Nusxa yaratish qismi tepada -->
         @if(isset($menuitem[0]['menu_season_id']))
         <div class="row mb-4">
@@ -340,6 +411,10 @@
 @section('script')
 <script>
     $(document).ready(function() {
+        $('#editTitlemenuModal').on('show.bs.modal', function (event) {
+            // Modal ochilganda qo'shimcha sozlamalar
+        });
+
         $('.btn-dark').click(function() {
             var timeid = $('#mealtime').val();
             var div = $('.addfood');

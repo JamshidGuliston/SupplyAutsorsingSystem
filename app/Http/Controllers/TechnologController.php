@@ -1597,7 +1597,9 @@ class TechnologController extends Controller
     public function menuitem(Request $request, $id)
     {
         $times = Meal_time::all();
-        $titlemenu = Titlemenu::where('id', $id)->with('age_range')->first();        
+        $titlemenu = Titlemenu::where('titlemenus.id', $id)->with('age_range')
+            ->leftJoin('seasons', 'titlemenus.menu_season_id', '=', 'seasons.id')
+            ->first(['titlemenus.id', 'titlemenus.menu_name', 'titlemenus.menu_season_id', 'titlemenus.short_name', 'titlemenus.order_number', 'seasons.season_name']);        
     
         $menuitem = Menu_composition::where('title_menu_id', $id)
                 ->leftJoin('titlemenus', 'titlemenus.id', '=', 'menu_compositions.title_menu_id')
@@ -1646,11 +1648,35 @@ class TechnologController extends Controller
         // dd($productTotals);
         return view('technolog.menuitem', compact('id', 'times', 'titlemenu', 'menuitem', 'productTotals'));
     }
+
+    public function updateTitlemenu(Request $request)
+    {
+        $request->validate([
+            'menu_name' => 'required|string|max:255',
+            'menu_season_id' => 'required|integer|exists:seasons,id',
+            'description' => 'nullable|string',
+            'short_name' => 'nullable|string|max:255',
+            'order_number' => 'nullable|integer'
+        ]);
+
+        $titlemenu = Titlemenu::findOrFail($request->id);
+        $titlemenu->update([
+            'menu_name' => $request->menu_name,
+            'short_name' => $request->short_name,
+            'order_number' => $request->order_number,
+            'menu_season_id' => $request->menu_season_id
+        ]);
+
+        return redirect()->route('technolog.menuitem', $titlemenu->id)
+                        ->with('success', 'Menyu muvaffaqiyatli yangilandi!');
+    }
     //  copy 
     public function menuitemshow(Request $request, $id)
     {
         $times = Meal_time::all();
-        $titlemenu = Titlemenu::where('id', $id)->with('age_range')->first();        
+        $titlemenu = Titlemenu::where('titlemenus.id', $id)->with('age_range')
+            ->leftJoin('seasons', 'titlemenus.menu_season_id', '=', 'seasons.id')
+            ->first(['titlemenus.id', 'titlemenus.menu_name', 'titlemenus.menu_season_id', 'titlemenus.short_name', 'titlemenus.order_number', 'seasons.season_name']);        
     
         $menuitem = Menu_composition::where('title_menu_id', $id)
                 ->leftJoin('titlemenus', 'titlemenus.id', '=', 'menu_compositions.title_menu_id')
@@ -3856,12 +3882,14 @@ class TechnologController extends Controller
         return response()->json(['success' => true, 'message' => 'Mahsulotlar muvaffaqiyatli sarflandi!']);
     }
 
+    // ... existing code ...
+
     // Taxminiy menyular uchun alohida PDF fayllarini yaratish va ZIP arxiv qilish
     public function downloadAllKindergartensMenusPDF(Request $request)
     {
         try {
             // Barcha bog'chalarni olish
-            $kindergartens = Kindgarden::where('hide', 1)->get();
+            $kindergartens = Kindgarden::where('region_id', 1)->with('age_range')->get();
             
             // Vaqtinchalik papka yaratish
             $tempDir = storage_path('app/temp_menus_' . time());
@@ -3873,13 +3901,252 @@ class TechnologController extends Controller
             
             foreach ($kindergartens as $kindergarten) {
                 // Har bir bog'cha uchun PDF yaratish
-                $pdfPath = $this->createKindergartenMenuPDF($kindergarten, $tempDir);
-                if ($pdfPath) {
-                    $pdfFiles[] = $pdfPath;
+                foreach($kindergarten->age_range as $age){
+                    $pdfPath = $this->createKindergartenMenuPDF($kindergarten->id, $age->id, $tempDir);
+                    if ($pdfPath && file_exists($pdfPath)) {
+                        $pdfFiles[] = $pdfPath;
+                    }
                 }
             }
             
             if (empty($pdfFiles)) {
+                // Vaqtinchalik papkani tozalash
+                $this->deleteDirectory($tempDir);
+                return redirect()->back()->with('error', 'Hech qanday PDF fayl yaratilmadi!');
+            }
+            
+            // ZIP fayl yaratish
+            $zipFileName = 'barcha_menyular_' . date('Y-m-d\TH-i-s') . '.zip';
+            $zipPath = storage_path('app/' . $zipFileName);
+            
+            // Eski ZIP faylni o'chirish
+            if (file_exists($zipPath)) {
+                unlink($zipPath);
+            }
+            
+            $zip = new \ZipArchive();
+            $result = $zip->open($zipPath, \ZipArchive::CREATE | \ZipArchive::OVERWRITE);
+            
+            if ($result === TRUE) {
+                // Har bir PDF faylni ZIP ga qo'shish
+                foreach ($pdfFiles as $pdfFile) {
+                    if (file_exists($pdfFile)) {
+                        $fileName = basename($pdfFile);
+                        // Faylni ZIP ga qo'shish
+                        if (!$zip->addFile($pdfFile, $fileName)) {
+                            \Log::error("PDF fayl qo'shilmadi: " . $pdfFile);
+                        }
+                    }
+                }
+                
+                // ZIP faylni to'g'ri yopish
+                $zip->close();
+                
+                // ZIP fayl mavjudligini va hajmini tekshirish
+                if (!file_exists($zipPath) || filesize($zipPath) == 0) {
+                    $this->deleteDirectory($tempDir);
+                    return redirect()->back()->with('error', 'ZIP fayl yaratilmadi yoki bo\'sh!');
+                }
+                
+                // Vaqtinchalik papkani tozalash
+                $this->deleteDirectory($tempDir);
+                
+                // ZIP faylni yuklab olish
+                return response()->download($zipPath, $zipFileName)->deleteFileAfterSend();
+            } else {
+                // Vaqtinchalik papkani tozalash
+                $this->deleteDirectory($tempDir);
+                return redirect()->back()->with('error', 'ZIP fayl yaratishda xatolik yuz berdi! Xatolik kodi: ' . $result);
+            }
+            
+        } catch (\Exception $e) {
+            \Log::error('ZIP yaratishda xatolik: ' . $e->getMessage());
+            return redirect()->back()->with('error', 'Xatolik yuz berdi: ' . $e->getMessage());
+        }
+    }
+
+    // Har bir bog'cha uchun alohida PDF yaratish
+    // ... existing code ...
+
+    // Har bir bog'cha uchun alohida PDF yaratish
+    public function createKindergartenMenuPDF($garden_id, $age_id, $tempDir)
+    {
+        try {
+            $menu = Nextday_namber::where([
+                ['kingar_name_id', '=', $garden_id],
+                ['king_age_name_id', '=', $age_id]
+            ])
+            ->join('kindgardens', 'nextday_nambers.kingar_name_id', '=', 'kindgardens.id')
+            ->join('age_ranges', 'nextday_nambers.king_age_name_id', '=', 'age_ranges.id')->get();
+            
+            // Menu mavjudligini tekshirish
+            if ($menu->isEmpty()) {
+                \Log::info("Menu topilmadi: garden_id={$garden_id}, age_id={$age_id}");
+                return null;
+            }
+            
+            // Menu ma'lumotlarini olish
+            $menuData = $menu->first();
+            if (!$menuData || !isset($menuData->kingar_menu_id)) {
+                \Log::info("Menu ma'lumotlari to'liq emas: garden_id={$garden_id}, age_id={$age_id}");
+                return null;
+            }
+            
+            $taomnoma = Titlemenu::where('id', $menuData->kingar_menu_id)->first();
+            
+            $products = Product::where('hide', 1)
+                ->leftjoin('sizes', 'sizes.id', '=', 'products.size_name_id')
+                ->orderBy('sort', 'ASC')->get(['products.*', 'sizes.size_name']);
+            
+            $menuitem = Menu_composition::where('title_menu_id', $menuData->kingar_menu_id)
+                            ->where('age_range_id', $age_id)
+                            ->join('meal_times', 'menu_compositions.menu_meal_time_id', '=', 'meal_times.id')
+                            ->join('food', 'menu_compositions.menu_food_id', '=', 'food.id')
+                            ->join('products', 'menu_compositions.product_name_id', '=', 'products.id')
+                            ->join('sizes', 'sizes.id', '=', 'products.size_name_id')
+                            ->orderBy('menu_meal_time_id')
+                            ->get();
+
+            // xodimlar ovqati uchun
+            $day = Day::join('months', 'months.id', '=', 'days.month_id')
+                    ->join('years', 'years.id', '=', 'days.year_id')
+                    ->orderBy('days.id', 'DESC')->first(['days.day_number','days.id as id', 'months.month_name', 'years.year_name']);
+            
+            $workerfood = titlemenu_food::where('day_id', $day->id)
+                        ->where('worker_age_id', $age_id)
+                        ->where('titlemenu_id', $menuData->kingar_menu_id)
+                        ->get();
+            
+            $costs = bycosts::where('day_id', bycosts::where('region_name_id', Kindgarden::where('id', $garden_id)->first()->region_id)->orderBy('day_id', 'DESC')->first()->day_id)->where('region_name_id', Kindgarden::where('id', $garden_id)->first()->region_id)->orderBy('day_id', 'DESC')->get();
+            $narx = [];
+            foreach($costs as $row){
+                if(!isset($narx[$row->praduct_name_id])){
+                    $narx[$row->praduct_name_id] = $row->price_cost;
+                }
+            }
+            $nextdaymenuitem = [];
+            $workerproducts = [];
+            // kamchilik bor boshlangich qiymat berishda
+            $productallcount = array_fill(1, 500, 0);
+            
+            foreach($menuitem as $item){
+                $nextdaymenuitem[$item->menu_meal_time_id][0]['mealtime'] = $item->meal_time_name; 
+                $nextdaymenuitem[$item->menu_meal_time_id][$item->menu_food_id][$item->product_name_id] = $item->weight;
+                $nextdaymenuitem[$item->menu_meal_time_id][$item->menu_food_id]['foodname'] = $item->food_name; 
+                $productallcount[$item->product_name_id] += $item->weight;
+                for($i = 0; $i<count($products); $i++){
+                    if(empty($products[$i]['yes']) and $products[$i]['id'] == $item->product_name_id){
+                        $products[$i]['yes'] = 1;
+                    }
+                }
+            }
+
+            // Xodimlar uchun ovqat gramajlarini hisoblash
+            $workerproducts = array_fill(1, 500, 0);
+            foreach($workerfood as $tr){
+                // Tushlikdagi birinchi ovqat va nondan yeyishadi
+                if(isset($nextdaymenuitem[3][$tr->food_id])){
+                    foreach($nextdaymenuitem[3][$tr->food_id] as $key => $value){
+                        if($key != 'foodname' and $key != 'foodweight'){
+                            $workerproducts[$key] += $value; 
+                        }
+                    }
+                }
+            }
+
+            $today = new \DateTime();
+            $nextWorkDay = clone $today;
+            $nextWorkDay->modify('+1 day');
+
+            // dam olish kunlari: 6 = shanba, 7 = yakshanba
+            while (in_array($nextWorkDay->format('N'), [6, 7])) {
+                $nextWorkDay->modify('+1 day');
+            }
+
+            $day->day_number = $nextWorkDay->format('d');
+            $day->month_name = $nextWorkDay->format('F');
+            $day->year_name = $nextWorkDay->format('Y');
+
+            // Snappy bilan PDF yaratish
+            $pdf = \PDF::loadView('pdffile.technolog.alltable', [
+                'productallcount' => $productallcount,
+                'workerproducts' => $workerproducts,
+                'menu' => $menu,
+                'menuitem' => $nextdaymenuitem,
+                'products' => $products,
+                'workerfood' => $workerfood,
+                'taomnoma' => $taomnoma,
+                'narx' => $narx,
+                'day' => $day
+            ]);
+
+            // PDF sozlamalari
+            $pdf->setPaper('a4', 'landscape')
+                ->setOptions([
+                    'encoding' => 'UTF-8',
+                    'enable-javascript' => true,
+                    'javascript-delay' => 1000,
+                    'enable-smart-shrinking' => true,
+                    'no-stop-slow-scripts' => true,
+                    'disable-smart-shrinking' => false,
+                    'print-media-type' => true,
+                    'dpi' => 300,
+                    'image-quality' => 100,
+                    'margin-top' => 10,
+                    'margin-right' => 10,
+                    'margin-bottom' => 10,
+                    'margin-left' => 10,
+                ]);
+
+            // Fayl nomini yaratish (maxsus belgilarni tozalash)
+            $fileName = $this->cleanFileName(Kindgarden::where('id', $garden_id)->first()->kingar_name) . '_' .Age_range::where('id', $age_id)->first()->age_name. '_' . date('Y-m-d') . '.pdf';
+            
+            $pdfPath = $tempDir . '/' . $fileName;
+            
+            // PDF faylni saqlash
+            $pdf->save($pdfPath);
+            
+            // Bitta PDF fayl qaytarish
+            return $pdfPath;
+            
+        } catch (\Exception $e) {
+            \Log::error('PDF yaratishda xatolik: ' . $e->getMessage());
+            return null;
+        }
+    }
+
+    // ... existing code ...
+
+    // ... existing code ...
+
+    // Taxminiy menyular uchun alohida PDF fayllarini yaratish va ZIP arxiv qilish
+    public function downloadAllKindergartensMenusPDF2(Request $request)
+    {
+        try {
+            // Barcha bog'chalarni olish
+            $kindergartens = Kindgarden::where('hide', 1)->with('age_range')->get();
+            
+            // Vaqtinchalik papka yaratish
+            $tempDir = storage_path('app/temp_menus_' . time());
+            if (!file_exists($tempDir)) {
+                mkdir($tempDir, 0755, true);
+            }
+            
+            $pdfFiles = [];
+            
+            foreach ($kindergartens as $kindergarten) {
+                // Har bir bog'cha uchun PDF yaratish
+                foreach($kindergarten->age_range as $age){
+                    $pdfPath = $this->createKindergartenMenuPDF($kindergarten, $age, $tempDir);
+                    if ($pdfPath && file_exists($pdfPath)) {
+                        $pdfFiles[] = $pdfPath;
+                    }
+                }
+            }
+            
+            if (empty($pdfFiles)) {
+                // Vaqtinchalik papkani tozalash
+                $this->deleteDirectory($tempDir);
                 return redirect()->back()->with('error', 'Hech qanday PDF fayl yaratilmadi!');
             }
             
@@ -3888,146 +4155,173 @@ class TechnologController extends Controller
             $zipPath = storage_path('app/' . $zipFileName);
             
             $zip = new \ZipArchive();
-            if ($zip->open($zipPath, \ZipArchive::CREATE) === TRUE) {
+            $result = $zip->open($zipPath, \ZipArchive::CREATE | \ZipArchive::OVERWRITE);
+            
+            if ($result === TRUE) {
                 foreach ($pdfFiles as $pdfFile) {
-                    $zip->addFile($pdfFile, basename($pdfFile));
+                    if (file_exists($pdfFile)) {
+                        $fileName = basename($pdfFile);
+                        $zip->addFile($pdfFile, $fileName);
+                    }
                 }
+                
+                // ZIP faylni to'g'ri yopish
                 $zip->close();
                 
+                // ZIP fayl mavjudligini tekshirish
+                if (!file_exists($zipPath)) {
+                    $this->deleteDirectory($tempDir);
+                    return redirect()->back()->with('error', 'ZIP fayl yaratilmadi!');
+                }
+                
                 // Vaqtinchalik papkani tozalash
-                $this->deleteDirectory($tempDir);
+                // $this->deleteDirectory($tempDir);
                 
                 // ZIP faylni yuklab olish
-                return response()->download($zipPath)->deleteFileAfterSend();
+                return response()->download($zipPath, $zipFileName)->deleteFileAfterSend();
             } else {
                 // Vaqtinchalik papkani tozalash
                 $this->deleteDirectory($tempDir);
-                return redirect()->back()->with('error', 'ZIP fayl yaratishda xatolik yuz berdi!');
+                return redirect()->back()->with('error', 'ZIP fayl yaratishda xatolik yuz berdi! Xatolik kodi: ' . $result);
             }
             
         } catch (\Exception $e) {
+            \Log::error('ZIP yaratishda xatolik: ' . $e->getMessage());
             return redirect()->back()->with('error', 'Xatolik yuz berdi: ' . $e->getMessage());
         }
     }
     
     // Har bir bog'cha uchun alohida PDF yaratish
-    private function createKindergartenMenuPDF($kindergarten, $tempDir)
+    public function createKindergartenMenuPDF2($garden_id, $age_id, $tempDir)
     {
         try {
-            // Bog'cha uchun ma'lumotlarni olish
-            $nextday = Nextday_namber::where('kingar_name_id', $kindergarten->id)->get();
+            $menu = Nextday_namber::where([
+                ['kingar_name_id', '=', $garden_id],
+                ['king_age_name_id', '=', $age_id]
+            ])
+            ->join('kindgardens', 'nextday_nambers.kingar_name_id', '=', 'kindgardens.id')
+            ->join('age_ranges', 'nextday_nambers.king_age_name_id', '=', 'age_ranges.id')->get();
+            $taomnoma = Titlemenu::where('id', $menu[0]['kingar_menu_id'])->first();
             
-            if ($nextday->isEmpty()) {
-                return null; // Agar bog'cha uchun ma'lumot yo'q bo'lsa
-            }
+            $products = Product::where('hide', 1)
+                ->leftjoin('sizes', 'sizes.id', '=', 'products.size_name_id')
+                ->orderBy('sort', 'ASC')->get(['products.*', 'sizes.size_name']);
             
-            $products = Product::where('hide', 1)->orderBy('sort', 'ASC')->get();
-            $day = Day::join('months', 'months.id', '=', 'days.month_id')->orderBy('days.id', 'DESC')->first();
-            
-            // Barcha yosh guruhlari uchun umumiy ma'lumotlarni to'plash
-            $allMenuitem = [];
-            $allWorkerproducts = array_fill(1, 500, 0);
-            $allProductallcount = array_fill(1, 500, 0);
-            
-            foreach ($nextday as $menuItem) {
-                $ageRange = Age_range::find($menuItem->king_age_name_id);
-                if (!$ageRange) continue;
-                
-                // Menyu ma'lumotlarini olish
-                $menuitem = Menu_composition::where('title_menu_id', $menuItem->kingar_menu_id)
-                    ->where('age_range_id', $menuItem->king_age_name_id)
-                    ->join('meal_times', 'menu_compositions.menu_meal_time_id', '=', 'meal_times.id')
-                    ->join('food', 'menu_compositions.menu_food_id', '=', 'food.id')
-                    ->join('products', 'menu_compositions.product_name_id', '=', 'products.id')
-                    ->orderBy('menu_meal_time_id')
-                    ->get();
-                
-                if ($menuitem->isEmpty()) continue;
-                
-                // Xodimlar ovqati uchun
-                $workerfood = titlemenu_food::where('day_id', $day->id)
-                    ->where('worker_age_id', $menuItem->king_age_name_id)
-                    ->where('titlemenu_id', $menuItem->kingar_menu_id)
-                    ->get();
-                
-                // Menyu ma'lumotlarini tayyorlash
-                $nextdaymenuitem = [];
-                $workerproducts = [];
-                $productallcount = array_fill(1, 500, 0);
-                
-                foreach ($menuitem as $item) {
-                    $nextdaymenuitem[$item->menu_meal_time_id][0]['mealtime'] = $item->meal_time_name;
-                    $nextdaymenuitem[$item->menu_meal_time_id][$item->menu_food_id][$item->product_name_id] = $item->weight;
-                    $nextdaymenuitem[$item->menu_meal_time_id][$item->menu_food_id]['foodname'] = $item->food_name;
-                    $productallcount[$item->product_name_id] += $item->weight;
+            $menuitem = Menu_composition::where('title_menu_id', $menu[0]['kingar_menu_id'])
+                            ->where('age_range_id', $age_id)
+                            ->join('meal_times', 'menu_compositions.menu_meal_time_id', '=', 'meal_times.id')
+                            ->join('food', 'menu_compositions.menu_food_id', '=', 'food.id')
+                            ->join('products', 'menu_compositions.product_name_id', '=', 'products.id')
+                            ->join('sizes', 'sizes.id', '=', 'products.size_name_id')
+                            ->orderBy('menu_meal_time_id')
+                            ->get();
+    
+            // dd($menuitem);
+            // xodimlar ovqati uchun
+            $day = Day::join('months', 'months.id', '=', 'days.month_id')
+                    ->join('years', 'years.id', '=', 'days.year_id')
+                    ->orderBy('days.id', 'DESC')->first(['days.day_number','days.id as id', 'months.month_name', 'years.year_name']);
+            // dd($day);
+            $workerfood = titlemenu_food::where('day_id', $day->id)
+                        ->where('worker_age_id', $age_id)
+                        ->where('titlemenu_id', $menu[0]['kingar_menu_id'])
+                        ->get();
+            // dd($workerfood);
+            $costs = bycosts::where('day_id', bycosts::where('region_name_id', Kindgarden::where('id', $garden_id)->first()->region_id)->orderBy('day_id', 'DESC')->first()->day_id)->where('region_name_id', Kindgarden::where('id', $garden_id)->first()->region_id)->orderBy('day_id', 'DESC')->get();
+            $narx = [];
+            foreach($costs as $row){
+                if(!isset($narx[$row->praduct_name_id])){
+                    $narx[$row->praduct_name_id] = $row->price_cost;
                 }
-                
-                // Xodimlar uchun ovqat gramajlarini hisoblash
-                $workerproducts = array_fill(1, 500, 0);
-                foreach ($workerfood as $tr) {
-                    if (isset($nextdaymenuitem[3][$tr->food_id])) {
-                        foreach ($nextdaymenuitem[3][$tr->food_id] as $key => $value) {
-                            if ($key != 'foodname') {
-                                $workerproducts[$key] += $value;
-                            }
+            }
+            $nextdaymenuitem = [];
+            $workerproducts = [];
+            // kamchilik bor boshlangich qiymat berishda
+            $productallcount = array_fill(1, 500, 0);
+            // dd($menuitem);
+            foreach($menuitem as $item){
+                $nextdaymenuitem[$item->menu_meal_time_id][0]['mealtime'] = $item->meal_time_name; 
+                $nextdaymenuitem[$item->menu_meal_time_id][$item->menu_food_id][$item->product_name_id] = $item->weight;
+                $nextdaymenuitem[$item->menu_meal_time_id][$item->menu_food_id]['foodname'] = $item->food_name; 
+                $productallcount[$item->product_name_id] += $item->weight;
+                for($i = 0; $i<count($products); $i++){
+                    if(empty($products[$i]['yes']) and $products[$i]['id'] == $item->product_name_id){
+                        $products[$i]['yes'] = 1;
+                    }
+                }
+            }
+    
+            // Xodimlar uchun ovqat gramajlarini hisoblash
+            $workerproducts = array_fill(1, 500, 0);
+            foreach($workerfood as $tr){
+                // Tushlikdagi birinchi ovqat va nondan yeyishadi
+                if(isset($nextdaymenuitem[3][$tr->food_id])){
+                    foreach($nextdaymenuitem[3][$tr->food_id] as $key => $value){
+                        if($key != 'foodname' and $key != 'foodweight'){
+                            $workerproducts[$key] += $value; 
+                            // Xodimlar gramajini ham productallcount ga qo'shish
+                            // $productallcount[$key] += $value;
                         }
                     }
                 }
-                
-                // Umumiy ma'lumotlarga qo'shish
-                $allMenuitem = array_merge($allMenuitem, $nextdaymenuitem);
-                
-                // Xodimlar va mahsulotlar sonini qo'shish
-                foreach ($workerproducts as $key => $value) {
-                    $allWorkerproducts[$key] += $value;
-                }
-                
-                foreach ($productallcount as $key => $value) {
-                    $allProductallcount[$key] += $value;
-                }
             }
-            
+    
+            $today = new \DateTime();
+            $nextWorkDay = clone $today;
+            $nextWorkDay->modify('+1 day');
+
+            // dam olish kunlari: 6 = shanba, 7 = yakshanba
+            while (in_array($nextWorkDay->format('N'), [6, 7])) {
+                $nextWorkDay->modify('+1 day');
+            }
+
+            $day->day_number = $nextWorkDay->format('d');
+            $day->month_name = $nextWorkDay->format('F');
+            $day->year_name = $nextWorkDay->format('Y');
+
             // PDF yaratish
             $dompdf = new Dompdf('UTF-8');
+        
             $html = mb_convert_encoding(view('pdffile.technolog.alltable', [
-                'day' => $day,
-                'productallcount' => $allProductallcount,
-                'workerproducts' => $allWorkerproducts,
-                'menu' => $nextday,
-                'menuitem' => $allMenuitem,
+                'productallcount' => $productallcount,
+                'workerproducts' => $workerproducts,
+                'menu' => $menu,
+                'menuitem' => $nextdaymenuitem,
                 'products' => $products,
-                'workerfood' => []
+                'workerfood' => $workerfood,
+                'taomnoma' => $taomnoma,
+                'narx' => $narx,
+                'day' => $day
             ]), 'HTML-ENTITIES', 'UTF-8');
             
             $dompdf->loadHtml($html);
             $dompdf->setPaper('A4', 'landscape');
             $dompdf->render();
-            
+
             // Fayl nomini yaratish (maxsus belgilarni tozalash)
-            $fileName = $this->cleanFileName($kindergarten->kingar_name) . '_' . 
-                       date('Y-m-d') . '.pdf';
+            $fileName = $this->cleanFileName(Kindgarden::where('id', $garden_id)->first()->kingar_name) . '_' .Age_range::where('id', $age_id)->first()->age_name. '_' . date('Y-m-d') . '.pdf';
             
             $pdfPath = $tempDir . '/' . $fileName;
             file_put_contents($pdfPath, $dompdf->output());
             
-            $pdfFiles[] = $pdfPath;
-            
-            return $pdfFiles;
+            // Bitta PDF fayl qaytarish
+            return $pdfPath;
             
         } catch (\Exception $e) {
             \Log::error('PDF yaratishda xatolik: ' . $e->getMessage());
-            return null;
+            return $e->getMessage();
         }
     }
     
     // Fayl nomini tozalash
     private function cleanFileName($fileName)
     {
-        // Maxsus belgilarni olib tashlash
-        $fileName = preg_replace('/[^a-zA-Z0-9а-яА-Я\s\-_]/u', '', $fileName);
-        // Bo'shliqlarni tire bilan almashtirish
-        $fileName = preg_replace('/\s+/', '_', $fileName);
-        return trim($fileName, '_');
+        // Maxsus belgilarni tozalash
+        $fileName = preg_replace('/[^a-zA-Z0-9_-]/', '_', $fileName);
+        $fileName = preg_replace('/_+/', '_', $fileName);
+        $fileName = trim($fileName, '_');
+        
+        return $fileName ?: 'unnamed';
     }
     
     // Papkani o'chirish

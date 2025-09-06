@@ -298,6 +298,11 @@ Route::group(['prefix' => 'technolog', 'middleware' => ['isTechnolog', 'auth']],
     Route::post('delete-temp-file', [TechnologController::class, 'deleteTempFile'])->name('technolog.deleteTempFile');
     Route::get('download-all-kindergartens-menus-pdf', [TechnologController::class, 'downloadAllKindergartensMenusPDF'])->name('technolog.downloadAllKindergartensMenusPDF');
     Route::post('moveremainder', [TechnologController::class, 'moveremainder'])->name('technolog.moveremainder');
+    // Titlemenu boshqaruv route'lari
+    Route::get('/edittitlemenu/{id}', [TechnologController::class, 'editTitlemenu'])->name('technolog.edittitlemenu');
+    Route::post('/updatetitlemenu', [TechnologController::class, 'updateTitlemenu'])->name('technolog.updateTitlemenu');
+    Route::post('/deletetitlemenu', [TechnologController::class, 'deleteTitlemenu'])->name('technolog.deleteTitlemenu');
+    Route::get('createKindergartenMenuPDF/{garden_id}/{age_id}/{temp}', [TechnologController::class, 'createKindergartenMenuPDF'])->name('technolog.createKindergartenMenuPDF');
 });
 
 

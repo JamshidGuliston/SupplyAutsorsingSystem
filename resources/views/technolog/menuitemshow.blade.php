@@ -151,6 +151,21 @@
 
 <div class="py-5 px-5">
         <input type="hidden" name="menuid" value="{{ $id }}" />
+        <!-- Titlemenu ma'lumotlari va boshqaruv tugmalari -->
+        <div class="titlemenu-header">
+            <div class="row">
+                <div class="col-md-8">
+                    <h4 class="mb-1">{{$titlemenu->menu_name}}</h4>
+                    <p class="mb-0 text-muted">
+                        <strong>Mavsum:</strong> {{$titlemenu->season->season_name ?? 'Noma\'lum'}} | 
+                        <strong>Yaratilgan:</strong> {{$titlemenu->created_at->format('d.m.Y H:i')}}
+                    </p>
+                    @if($titlemenu->description)
+                        <p class="mb-0"><strong>Tavsif:</strong> {{$titlemenu->description}}</p>
+                    @endif
+                </div>
+            </div>
+        </div>
         <!-- Nusxa yaratish qismi tepada -->
         @if(isset($menuitem[0]['menu_season_id']))
         <div class="row mb-4">

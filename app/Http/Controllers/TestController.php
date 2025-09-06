@@ -124,14 +124,19 @@ class TestController extends Controller
         }
 
 		// oy va yilni o'zgartirish
-		if($day->day_number > date('d')){
-			$day->day_number = date('d')+1;
-			$day->month_name = date('F');
-			$day->year_name = date('Y');
+		$today = new \DateTime();
+		$nextWorkDay = clone $today;
+		$nextWorkDay->modify('+1 day');
+
+		// dam olish kunlari: 6 = shanba, 7 = yakshanba
+		while (in_array($nextWorkDay->format('N'), [6, 7])) {
+			$nextWorkDay->modify('+1 day');
 		}
-		else{
-			$day->day_number = $day->day_number + 1;
-		}
+
+		$day->day_number = $nextWorkDay->format('d');
+		$day->month_name = $nextWorkDay->format('F');
+		$day->year_name = $nextWorkDay->format('Y');
+
 		// $day->save();
 		// yuqoridagii
         $dompdf = new Dompdf('UTF-8');

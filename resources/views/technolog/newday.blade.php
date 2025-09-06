@@ -740,9 +740,9 @@
             <b>Taxminiy menyular</b>
         </div>
         <div class="col-md-6 text-end">
-            <a href="{{ route('technolog.downloadAllKindergartensMenusPDF') }}" class="btn btn-success" title="Barcha bog'chalar uchun alohida PDF fayllarini ZIP arxiv qilish">
+            <!-- <a href="{{ route('technolog.downloadAllKindergartensMenusPDF') }}" class="btn btn-success" title="Barcha bog'chalar uchun alohida PDF fayllarini ZIP arxiv qilish">
                 <i class="fas fa-download me-1"></i>Barcha menyularni ZIP arxiv qilish
-            </a>
+            </a> -->
         </div>
     </div>
         <div class="col-md-3">
@@ -756,7 +756,7 @@
     <!-- Filter va qidiruv qismi -->
     <div class="container-fluid">
         <div class="row mb-3 filter-section mx-2">
-            <div class="col-md-4">
+            <div class="col-md-3">
                 <label for="regionFilter2" class="form-label">
                     <i class="fas fa-filter me-1"></i>Hudud bo'yicha filter:
                     <small class="text-muted d-block">Filter avtomatik saqlanadi</small>
@@ -768,7 +768,7 @@
                     @endforeach
                 </select>
             </div>
-            <div class="col-md-4">
+            <div class="col-md-3">
                 <label for="searchInput2" class="form-label">
                     <i class="fas fa-search me-1"></i>Qidiruv:
                     <small class="text-muted d-block">Qidiruv avtomatik saqlanadi</small>
@@ -779,6 +779,12 @@
                 <label for="clearFilters2" class="form-label">Filterlarni tozalash</label><br>
                 <button class="btn btn-secondary me-2" id="clearFilters2" title="Filterlarni tozalash va saqlangan ma'lumotlarni o'chirish"> 
                     <i class="fas fa-trash-alt text-white"></i>
+                </button>
+            </div>
+            <div class="col-md-2">
+                <label for="downloadAllMenus" class="form-label">Menyular ZIP</label><br>
+                <button class="btn btn-success me-2" id="downloadAllMenus" title="Barcha bog'cha menyularini ZIP arxiv qilish">
+                    <i class="fas fa-file-archive text-white"></i>
                 </button>
             </div>
             <div class="col-md-2">
@@ -1495,6 +1501,46 @@
         //     });
         // });
         
+    });
+
+    // newday.blade.php ning script qismiga qo'shish kerak
+    $(document).ready(function() {
+        // Mavjud JavaScript kodlar...
+        
+        // Barcha menyularni ZIP arxiv qilish
+        $('#downloadAllMenus').click(function() {
+            // Loading ko'rsatish
+            $(this).html('<i class="fas fa-spinner fa-spin text-white"></i> Yuklanmoqda...');
+            $(this).prop('disabled', true);
+            
+            // AJAX so'rov
+            $.ajax({
+                url: '{{ route("technolog.downloadAllKindergartensMenusPDF") }}',
+                method: 'GET',
+                xhrFields: {
+                    responseType: 'blob'
+                },
+                success: function(data) {
+                    // Faylni yuklab olish
+                    var blob = new Blob([data]);
+                    var link = document.createElement('a');
+                    link.href = window.URL.createObjectURL(blob);
+                    link.download = 'barcha_menyular_' + new Date().toISOString().slice(0,19).replace(/:/g, '-') + '.zip';
+                    link.click();
+                    
+                    // Tugmani qayta tiklash
+                    $('#downloadAllMenus').html('<i class="fas fa-file-archive text-white"></i>');
+                    $('#downloadAllMenus').prop('disabled', false);
+                },
+                error: function(xhr, status, error) {
+                    alert('Xatolik yuz berdi: ' + error);
+                    
+                    // Tugmani qayta tiklash
+                    $('#downloadAllMenus').html('<i class="fas fa-file-archive text-white"></i>');
+                    $('#downloadAllMenus').prop('disabled', false);
+                }
+            });
+        });
     });
 </script>
 @endif

@@ -10,7 +10,9 @@ class Titlemenu extends Model
     use HasFactory;
     protected $fillable = [
         'menu_name',
-        'menu_season_id'
+        'menu_season_id',
+        'order_number',
+        'short_name'
     ];
 
     public function age_range(){
