@@ -73,7 +73,6 @@ class TestController extends Controller
                         ->orderBy('menu_meal_time_id')
                         ->get();
 
-        // dd($menuitem);
         // xodimlar ovqati uchun
         $day = Day::join('months', 'months.id', '=', 'days.month_id')
 				->join('years', 'years.id', '=', 'days.year_id')
@@ -137,18 +136,43 @@ class TestController extends Controller
 		$day->month_name = $nextWorkDay->format('F');
 		$day->year_name = $nextWorkDay->format('Y');
 
-		// $day->save();
-		// yuqoridagii
-        $dompdf = new Dompdf('UTF-8');
-		$html = mb_convert_encoding(view('pdffile.technolog.alltable', ['narx' => $narx,'day' => $day,'productallcount' => $productallcount, 'workerproducts' => $workerproducts,'menu' => $menu, 'menuitem' => $nextdaymenuitem, 'products' => $products, 'workerfood' => $workerfood, 'taomnoma' => $taomnoma]), 'HTML-ENTITIES', 'UTF-8');
-		$dompdf->loadHtml($html);
-		$dompdf->setPaper('A4', 'landscape');
-		$name = $day['id'].'-'.$gid.'-'.$ageid."nextmenu.pdf";
-		// Render the HTML as PDF
-		$dompdf->render();
-		
-		// Output the generated PDF to Browser
-		$dompdf->stream($name, ['Attachment' => 0]);
+		// Snappy bilan PDF yaratish
+		$pdf = \PDF::loadView('pdffile.technolog.alltable', [
+			'narx' => $narx,
+			'day' => $day,
+			'productallcount' => $productallcount,
+			'workerproducts' => $workerproducts,
+			'menu' => $menu,
+			'menuitem' => $nextdaymenuitem,
+			'products' => $products,
+			'workerfood' => $workerfood,
+			'taomnoma' => $taomnoma
+		]);
+
+		// PDF sozlamalari
+		$pdf->setPaper('a4', 'landscape')
+			->setOptions([
+				'encoding' => 'UTF-8',
+				'enable-javascript' => true,
+				'javascript-delay' => 1000,
+				'enable-smart-shrinking' => true,
+				'no-stop-slow-scripts' => true,
+				'disable-smart-shrinking' => false,
+				'print-media-type' => true,
+				'dpi' => 300,
+				'image-quality' => 100,
+				'margin-top' => 10,
+				'margin-right' => 10,
+				'margin-bottom' => 10,
+				'margin-left' => 10,
+				'enable-local-file-access' => true,
+				'load-error-handling' => 'ignore',
+				'load-media-error-handling' => 'ignore',
+			]);
+
+		$name = $day['id'].'-'.$gid.'-'.$ageid."taxminiy.pdf";
+		// PDF ni brauzerga yuborish
+		return $pdf->stream($name);
 	}
 
 	public function activmenuPDF(Request $request, $today, $gid, $ageid)
