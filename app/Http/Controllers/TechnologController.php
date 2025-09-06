@@ -4102,8 +4102,16 @@ class TechnologController extends Controller
                     'load-error-handling' => 'ignore',
                 ]);
 			
-      
-            $fileName = $this->cleanFileName(Kindgarden::where('id', $garden_id)->first()->number_of_org) . '-DMTT_' .Age_range::where('id', $age_id)->first()->age_name. '_' . date('Y-m-d') . '.pdf';
+            $age_id = Age_range::where('id', $age_id)->first()->id;
+            $age_name = '';
+            if($age_id == 3){
+                $age_name = 'Qisqa_guruh';
+            }elseif($age_id == 4){
+                $age_name = '3-7_yosh';
+            }
+
+
+            $fileName = $this->cleanFileName(Kindgarden::where('id', $garden_id)->first()->kingar_name) . '-DMTT_' . $age_name. '_' . date('Y-m-d') . '.pdf';
             
             $pdfPath = $tempDir . '/' . $fileName;
        
