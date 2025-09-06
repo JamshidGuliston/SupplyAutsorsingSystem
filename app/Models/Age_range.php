@@ -11,7 +11,8 @@ class Age_range extends Model
     use HasFactory;
 
     protected $fillable = [
-        'age_name'
+        'age_name',
+        'description'
     ];
 
     // public function kindgarden(){

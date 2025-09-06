@@ -297,6 +297,7 @@ Route::group(['prefix' => 'technolog', 'middleware' => ['isTechnolog', 'auth']],
     Route::get('create-share-pdf/{garden_id}/{age_id}', [TechnologController::class, 'createSharePdf'])->name('technolog.createSharePdf');
     Route::post('delete-temp-file', [TechnologController::class, 'deleteTempFile'])->name('technolog.deleteTempFile');
     Route::get('download-all-kindergartens-menus-pdf', [TechnologController::class, 'downloadAllKindergartensMenusPDF'])->name('technolog.downloadAllKindergartensMenusPDF');
+    Route::post('moveremainder', [TechnologController::class, 'moveremainder'])->name('technolog.moveremainder');
 });
 
 
@@ -319,9 +320,12 @@ Route::group(['prefix' => 'accountant', 'middleware' => ['isAccountant', 'auth']
     Route::post('editallcosts', [AccountantController::class, 'editallcosts'])->name('accountant.editallcosts');
     // hisobot
     Route::get('narxselect/{region_id}', [AccountantController::class, 'narxselect'])->name('accountant.narxselect');
-    Route::get('nakapit/{id}/{ageid}/{start}/{end}/{costid}/{nds}/{ust}', [AccountantController::class, 'nakapit'])->name('accountant.nakapit');
-    Route::get('nakapitexcel/{id}/{ageid}/{start}/{end}/{costid}/{nds}/{ust}', [AccountantController::class, 'nakapitexcel'])->name('accountant.nakapitexcel');
-    Route::get('schotfaktur/{id}/{ageid}/{start}/{end}/{costid}/{nds}/{ust}', [AccountantController::class, 'schotfaktur'])->name('accountant.schotfaktur');
+    Route::get('nakapit/{id}/{ageid}/{start}/{end}/{costid}', [AccountantController::class, 'nakapit'])->name('accountant.nakapit');
+    Route::get('nakapitwithoutcost/{id}/{ageid}/{start}/{end}', [AccountantController::class, 'nakapitwithoutcost'])->name('accountant.nakapitwithoutcost');
+    Route::get('nakapitexcelwithoutcost/{id}/{ageid}/{start}/{end}', [AccountantController::class, 'nakapitexcelwithoutcost'])->name('accountant.nakapitexcelwithoutcost');
+    Route::get('nakapitexcel/{id}/{ageid}/{start}/{end}/{costid}', [AccountantController::class, 'nakapitexcel'])->name('accountant.nakapitexcel');
+    Route::get('schotfaktur/{id}/{ageid}/{start}/{end}/{costid}', [AccountantController::class, 'schotfaktur'])->name('accountant.schotfaktur');
+    Route::get('schotfaktursecond/{id}/{start}/{end}', [AccountantController::class, 'schotfaktursecond'])->name('accountant.schotfaktursecond');
     Route::get('allschotfaktur/{id}/{start}/{end}/{costid}/{nds}/{ust}', [AccountantController::class, 'allschotfaktur'])->name('accountant.allschotfaktur');
     Route::get('schotfakturexcel/{id}/{ageid}/{start}/{end}/{costid}/{nds}/{ust}', [AccountantController::class, 'schotfakturexcel'])->name('accountant.schotfakturexcel');
     Route::get('norm/{id}/{ageid}/{start}/{end}/{costid}', [AccountantController::class, 'norm'])->name('accountant.norm');
