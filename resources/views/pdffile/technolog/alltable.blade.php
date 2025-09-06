@@ -131,17 +131,17 @@
         .col-product { width: 20px; }
         
         .vertical-header {
-			width: 20px;      
-			height: 80px;     
+			width: 20px;      /* ustun eni */
+			height: 80px;     /* ustun balandligi */
 			position: relative;
 		}
 
 		.vertical-header-content {
 			position: absolute;
-			bottom: 0;            /* pastdan boshlash */
-			left: 50%;            /* markazlashtirish */
-			transform: translateX(-50%) rotate(-90deg); /* pastdan tepaga, soatga qarshi */
-			transform-origin: left bottom;
+			bottom: 0;              /* pastdan boshlash */
+			left: 50%;              /* gorizontal markaz */
+			transform: translateX(-50%) rotate(-90deg); /* soatga qarshi 90° */
+			transform-origin: bottom left; /* aylanish markazi */
 			white-space: nowrap;
 			font-size: 6px;
 			text-align: center;
