@@ -112,8 +112,8 @@
 								?>
                                 <td scope="col"><?php echo $result ?? 0; ?></td>
                                 <?php
+								   $counts[$age->id] += $result ?? 0; 
 								   $result = 0;
-								   $counts[$age->id] += $row[$age->id]; 
 								?>
                             @endforeach
                         </tr>
