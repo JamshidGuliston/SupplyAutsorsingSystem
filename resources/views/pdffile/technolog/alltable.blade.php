@@ -51,7 +51,7 @@
         }
         
         .main-table td {
-            font-size: 9px;
+            font-size: 10px;
         }
         
         /* Vertikal matn uchun Snappy-optimized CSS */
@@ -59,7 +59,7 @@
             display: block;
             width: 20px;
             height: 80px;
-            font-size: 6px;
+            font-size: 8px;
             line-height: 1.1;
             text-align: center;
             word-wrap: break-word;
@@ -75,7 +75,7 @@
             height: 20px;
             margin-top: 30px;
             margin-left: -30px;
-            font-size: 6px;
+            font-size: 8px;
             line-height: 1.1;
             text-align: center;
         }
@@ -97,7 +97,7 @@
         .food-name {
             text-align: left;
             padding: 2px;
-            font-size: 7px;
+            font-size: 8px;
         }
         
         .summary-row {
@@ -210,11 +210,9 @@
                     @endif
                     <tr>
                         @if($loop->index == 1)
-						<th class="col-product">
-							<div class="vertical-text">
-								{{ $row[0]['mealtime'] }}
-							</div>
-						</th>
+                            <th class="meal-time" rowspan="{{ 2 * (count($row)-1) }}">
+                                {{ $row[0]['mealtime'] }}
+                            </th>
                         @endif
                         <td class="food-name" rowspan="2">{{ $item['foodname'] }}</td>
                         @foreach($products as $product)
