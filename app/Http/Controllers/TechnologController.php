@@ -4104,6 +4104,9 @@ class TechnologController extends Controller
             $pdfPath = $tempDir . '/' . $fileName;
        
             
+            // PDF faylni saqlash
+            $pdf->save($pdfPath);
+            
             // Bitta PDF fayl qaytarish
             return $pdfPath;
             
