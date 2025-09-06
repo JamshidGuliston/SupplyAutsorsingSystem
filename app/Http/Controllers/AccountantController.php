@@ -519,33 +519,35 @@ class AccountantController extends Controller
                 }
             }
 
-            $costs = bycosts::where('day_id', $costid)->where('region_name_id', Kindgarden::where('id', $id)->first()->region_id)
+        }
+
+        $costs = bycosts::where('day_id', $costid)->where('region_name_id', Kindgarden::where('id', $id)->first()->region_id)
                     ->orderBy('day_id', 'DESC')->get();
-
-            $protsent = Protsent::where('region_id', Kindgarden::where('id', $id)->first()->region_id)->first();
             
-            foreach($costs as $cost){
-                $nakproducts[0][0] = 0;
-                if(isset($nakproducts[$cost->praduct_name_id]['product_name'])){
-                    $nakproducts[$cost->praduct_name_id][0] = $cost->price_cost;
-                }
-            }
-
-            $costsdays = bycosts::where('day_id', $costid)
-                        ->where('region_name_id', Kindgarden::where('id', $id)->first()->region_id)
-                        ->join('days', 'bycosts.day_id', '=', 'days.id')
-                        ->join('years', 'days.year_id', '=', 'years.id')
-                        ->orderBy('day_id', 'DESC')
-                        ->get(['bycosts.day_id', 'days.day_number', 'days.month_id', 'years.year_name']);
-            $costs = [];
-            $bool = [];
-            foreach($costsdays as $row){
-                if(!isset($bool[$row->day_id])){
-                    array_push($costs, $row);
-                    $bool[$row->day_id] = 1;
-                }
+        foreach($costs as $cost){
+            $nakproducts[0][0] = 0;
+            if(isset($nakproducts[$cost->praduct_name_id]['product_name'])){
+                $nakproducts[$cost->praduct_name_id][0] = $cost->price_cost;
             }
         }
+
+        $costsdays = bycosts::where('day_id', $costid)
+                    ->where('region_name_id', Kindgarden::where('id', $id)->first()->region_id)
+                    ->join('days', 'bycosts.day_id', '=', 'days.id')
+                    ->join('years', 'days.year_id', '=', 'years.id')
+                    ->orderBy('day_id', 'DESC')
+                    ->get(['bycosts.day_id', 'days.day_number', 'days.month_id', 'years.year_name']);
+        $costs = [];
+        $bool = [];
+        foreach($costsdays as $row){
+            if(!isset($bool[$row->day_id])){
+                array_push($costs, $row);
+                $bool[$row->day_id] = 1;
+            }
+        }
+
+        $protsent = Protsent::where('region_id', Kindgarden::where('id', $id)->first()->region_id)->first();
+        // dd($protsent);
 
         usort($nakproducts, function ($a, $b){
             if(isset($a["sort"]) and isset($b["sort"])){

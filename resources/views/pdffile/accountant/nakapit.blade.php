@@ -165,22 +165,22 @@
 					<tr>
 						 <td colspan="2" style="border-top: 1px solid black;">1 болани бир куник харажати</td> 
 						<td colspan="{{ count($days) }}"></td>
-						<td><?php printf("%01.2f", $protsent->protsent_price); ?></td>
+						<td><?php printf("%01.2f", $protsent->eater_cost); ?></td>
 					</tr>
 					<tr>
 						 <td colspan="2">Ko'rsatilgan xizmat summasi QQS bilan</td> 
 						<td colspan="{{ count($days) }}"></td>
-						<td><?php printf("%01.2f", $protsent->protsent_price*$numberofchildren); ?></td>
+						<td><?php printf("%01.2f", $protsent->eater_cost*$numberofchildren); ?></td>
 					</tr>
 					<tr>
 						<td colspan="2">Белгиланган устама</td> 
 						<td colspan="{{ count($days) }}"></td>
-						<td><?php printf("%01.2f", $protsent->protsent_price*$numberofchildren*$protsent->nds) / 100; ?></td>
+						<td><?php printf("%01.2f", $protsent->eater_cost*$numberofchildren*$protsent->nds) / 100; ?></td>
 					</tr>
 					<tr>
 						<td colspan="2">1 ойлик жами харажат</td> 
 						<td colspan="{{ count($days) }}"></td>
-						<td><?php printf("%01.2f", $protsent->protsent_price*$numberofchildren*$protsent->nds) / 100 + $protsent->protsent_price*$numberofchildren; ?></td>
+						<td><?php printf("%01.2f", $protsent->eater_cost*$numberofchildren*$protsent->nds) / 100 + $protsent->eater_cost*$numberofchildren; ?></td>
 					</tr>
 				</tbody>
 			</table>
