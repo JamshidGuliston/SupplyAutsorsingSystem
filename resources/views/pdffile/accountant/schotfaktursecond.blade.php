@@ -208,10 +208,14 @@
     <!-- Kompaniya ma'lumotlari -->
     <div class="company-info">
         <div class="company-section">
-            <div class="section-title">АВТОРСЕР (Поставщик)</div>
+            <div class="section-title">Аутсорсер:</div>
             <div class="company-details">
-                <span class="label">Название:</span>
+                <span class="label">Ташкилот номи:</span>
                 <span class="value">{{ $autorser['company_name'] ?? 'IOS-Service MCHJ' }}</span>
+            </div>
+            <div class="company-details">
+                <span class="label">Манзил:</span>
+                <span class="value">{{ $autorser['address'] ?? 'Toshkent shahri, Olmazor tumani, 1' }}</span>
             </div>
             <div class="company-details">
                 <span class="label">ИНН:</span>
@@ -222,7 +226,7 @@
                 <span class="value">{{ $autorser['mfo'] ?? '12345' }}</span>
             </div>
             <div class="company-details">
-                <span class="label">Расчётный счёт:</span>
+                <span class="label">Хисоб рақам:</span>
                 <span class="value">{{ $autorser['account_number'] ?? '1234567890123456' }}</span>
             </div>
             <div class="company-details">
@@ -236,10 +240,14 @@
         </div>
 
         <div class="company-section">
-            <div class="section-title">БУЙРУТМАЧИ (Покупатель)</div>
+            <div class="section-title">Буйрутмачи:</div>
             <div class="company-details">
-                <span class="label">Название:</span>
+                <span class="label">Ташкилот номи:</span>
                 <span class="value">{{ $buyurtmachi['company_name'] ?? 'Chinoz tumani MMTBga tasarrufidagi 1-sonli DMTT' }}</span>
+            </div>
+            <div class="company-details">
+                <span class="label">Манзил:</span>
+                <span class="value">{{ $buyurtmachi['address'] ?? 'Toshkent shahri, Olmazor tumani, 1' }}</span>
             </div>
             <div class="company-details">
                 <span class="label">ИНН:</span>
@@ -250,7 +258,7 @@
                 <span class="value">{{ $buyurtmachi['mfo'] ?? '1234567890' }}</span>
             </div>
             <div class="company-details">
-                <span class="label">Расчётный счёт:</span>
+                <span class="label">Хисоб рақам:</span>
                 <span class="value">{{ $buyurtmachi['account_number'] ?? '1234567890' }}</span>
             </div>
             <div class="company-details">
@@ -269,12 +277,13 @@
         <table>
             <thead>
                 <tr>
-                    <th class="product-name">Наименование товара (работ, услуг)</th>
-                    <th class="unit">Ед. изм.</th>
-                    <th class="quantity">Кол-во</th>
-                    <th class="price">Цена</th>
-                    <th class="amount">Сумма</th>
-                    <th class="vat">НДС</th>
+                    <th class="order-number">№</th>
+                    <th class="product-name">Маҳсулот, иш, хизматлар номи</th>
+                    <th class="unit">Ўл.бир</th>
+                    <th class="quantity">Сони</th>
+                    <th class="price">Нархи</th>
+                    <th class="amount">Кўрсатилган хизмат суммаси (ҚҚС билан)</th>
+                    <th class="vat">Шундан ҚҚС</th>
                 </tr>
             </thead>
             <tbody>
@@ -283,30 +292,22 @@
                     $total_vat = 0;
                 @endphp
                 
-                @foreach($costs as $cost)
+                @foreach($kindgar->age_range as $age)
                 <tr>
-                    <td class="product-name">{{ $cost->product_name ?? 'Mahsulot' }}</td>
-                    <td class="unit">{{ $cost->unit ?? 'kg' }}</td>
-                    <td class="quantity">
-                        @php
-                            $total_quantity = 0;
-                            foreach($total_number_children as $age_id => $children_count) {
-                                $total_quantity += $children_count * ($cost->weight ?? 1);
-                            }
-                        @endphp
-                        {{ number_format($total_quantity, 2) }}
-                    </td>
-                    <td class="price">{{ number_format($cost->price ?? 0, 2) }}</td>
+                    <td class="product-name">{{ $age->description . "га кўрсатилган Аутсорсинг хизмати" }}</td>
+                    <td class="unit">{{ 'бола' }}</td>
+                    <td class="quantity">{{ $total_number_children[$age->id] }}</td>
+                    <td class="price">{{ number_format($costs[$age->id]->eater_cost ?? 0, 2) }}</td>
                     <td class="amount">
                         @php
-                            $amount = $total_quantity * ($cost->price ?? 0);
+                            $amount = $total_number_children[$age->id] * ($costs[$age->id]->eater_cost ?? 0);
                             $total_amount += $amount;
                         @endphp
                         {{ number_format($amount, 2) }}
                     </td>
                     <td class="vat">
                         @php
-                            $vat = $amount * 0.15; // 15% НДС
+                            $vat = $amount * ($costs[$age->id]->nds ?? 0); // 15% НДС
                             $total_vat += $vat;
                         @endphp
                         {{ number_format($vat, 2) }}

@@ -764,15 +764,18 @@ class AccountantController extends Controller
     public function schotfaktursecond(Request $request, $id, $start, $end){
         $kindgar = Kindgarden::where('id', $id)->with('age_range')->first();
         $days = Day::where('id', '>=', $start)->where('id', '<=', $end)->get();
-        
+        $costs = [];
         foreach($kindgar->age_range as $age){
+            $costs[$age->id] = Protsent::where('region_id', $kindgar->region_id)
+                        ->where('age_range_id', $age->id)
+                        ->where('start_date', '<=', date('Y-m-d'))
+                        ->where('end_date', '>=', date('Y-m-d'))->first();
             if(!isset($total_number_children[$age->id])){
                 $total_number_children[$age->id] = 0;
             }
             $total_number_children[$age->id] += Number_children::where('day_id', '>=', $start)->where('day_id', '<=', $end)->where('kingar_name_id', $id)->where('king_age_name_id', $age->id)->sum('kingar_children_number');
         }
 
-        $costs = Protsent::where('region_id', $kindgar->region_id)->get();
         
         // Autsorser ma'lumotlari (kompaniya ma'lumotlari)
         $autorser = config('company.autorser');
@@ -798,7 +801,7 @@ class AccountantController extends Controller
         
         // PDF sozlamalari
         $pdf->setOption('page-size', 'A4');
-        $pdf->setOption('orientation', 'Portrait');
+        $pdf->setOption('orientation', 'landscape');
         $pdf->setOption('margin-top', 10);
         $pdf->setOption('margin-bottom', 10);
         $pdf->setOption('margin-left', 10);
