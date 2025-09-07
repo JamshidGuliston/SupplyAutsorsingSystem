@@ -15,7 +15,7 @@
             font-family: 'DejaVu Sans', Arial, sans-serif;
             margin: 0;
             padding: 0;
-            font-size: 11px;
+            font-size: 14px;
             line-height: 1.3;
             color: #000;
         }
@@ -289,12 +289,13 @@
             <tbody>
                 @php
                     $total_amount = 0;
-                    $total_vat = 0;
+                    $total_nds = 0;
+                    $tr = 0;
                 @endphp
                 
                 @foreach($kindgar->age_range as $age)
                 <tr>
-                    <td class="order-number">{{ $loop->iteration }}</td>
+                    <td class="order-number">{{ $tr++ }}</td>
                     <td class="product-name">{{ $age->description . "га кўрсатилган Аутсорсинг хизмати" }}</td>
                     <td class="unit">{{ 'бола' }}</td>
                     <td class="quantity">{{ $total_number_children[$age->id] }}</td>
@@ -308,25 +309,31 @@
                     </td>
                     <td class="vat">
                         @php
-                            $vat = $amount * ($costs[$age->id]->nds ?? 0); // 15% НДС
-                            $total_vat += $vat;
+                            $vat = $amount * ($costs[$age->id]->nds/100 ?? 0); // 15% НДС
+                            $total_nds += $vat;
                         @endphp
                         {{ number_format($vat, 2) }}
                     </td>
                 </tr>
                 @endforeach
-                
+                <tr>
+                    <td>{{ $tr++ }}</td>
+                    <td>Аутсорсинг хизмати устамаси {{ $costs[4]->raise . "%" ?? 0 }}</td>
+                    <td>Хизмат</td>
+                    <td>1</td>
+                    <td></td>
+                    <td>{{ number_format($total_amount * ($costs[4]->raise/100 ?? 0), 2) }}</td>
+                    @php $total_amount += $total_amount * ($costs[4]->raise/100 ?? 0); @endphp
+                    <td>{{ $total_amount * ($costs[4]->raise/100) * ($costs[4]->nds/100) }}</td>
+                    @php $total_nds += $total_amount * ($costs[4]->raise/100) * ($costs[4]->nds/100); @endphp
+                </tr>
+
                 <!-- Jami qator -->
                 <tr class="total-row">
-                    <td colspan="4" class="text-right font-bold">ЖАМИ:</td>
+                    <td></td>
+                    <td colspan="4" class="text-right font-bold">Жами сумма:</td>
                     <td class="amount font-bold">{{ number_format($total_amount, 2) }}</td>
-                    <td class="vat font-bold">{{ number_format($total_vat, 2) }}</td>
-                </tr>
-                
-                <!-- НДС bilan jami -->
-                <tr class="total-row">
-                    <td colspan="4" class="text-right font-bold">ЖАМИ НДС билан:</td>
-                    <td colspan="2" class="font-bold">{{ number_format($total_amount + $total_vat, 2) }}</td>
+                    <td class="vat font-bold">{{ number_format($total_nds, 2) }}</td>
                 </tr>
             </tbody>
         </table>
