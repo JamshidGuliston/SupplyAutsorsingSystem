@@ -3912,13 +3912,19 @@ class TechnologController extends Controller
             
             public function columnWidths(): array
             {
-                return [
-                    'A' => 8,   // TR
-                    'B' => 15,  // DMTT
-                    'C' => 12,  // Bog'cha ustunlari
-                    'D' => 12,
-                    'E' => 12,
+                $widths = [
+                    'A' => 3,   // TR
+                    'B' => 10,  // DMTT
                 ];
+
+                // Bog'cha va jami ustunlarini dinamik aniqlash
+                $totalCols = 2 + (count($this->data[array_key_first($this->data)]['kindgardens']) * 3) + 3;
+
+                for ($i = 3; $i <= $totalCols; $i++) {
+                    $widths[$this->getColumnLetter($i)] = 5; // 3 xonali raqam sig‘adi
+                }
+
+                return $widths;
             }
             
             public function styles(\PhpOffice\PhpSpreadsheet\Worksheet\Worksheet $sheet)
@@ -3948,9 +3954,17 @@ class TechnologController extends Controller
                         ->getFont()->setBold(true);
                     $sheet->getStyle("A{$headerStartRow}:B{$headerStartRow}")
                         ->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)
-                        ->getStartColor()->setRGB('333333');
+                        ->getStartColor()->setRGB('FFFFFF');
                     $sheet->getStyle("A{$headerStartRow}:B{$headerStartRow}")
-                        ->getFont()->getColor()->setRGB('FFFFFF');
+                        ->getFont()->getColor()->setRGB('000000');
+
+                        // Har bir ustun uchun
+                    for ($col = 3; $col <= $colCount; $col++) {
+                        $sheet->getStyle($this->getColumnLetter($col) . $headerEndRow)
+                            ->getAlignment()->setTextRotation(90)  // 90 gradus burish
+                            ->setVertical(\PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER)
+                            ->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
+                    }
                     
                     // Bog'cha nomlari uchun qora rang (colspan=3)
                     $startCol = 3; // C ustuni
@@ -3960,9 +3974,9 @@ class TechnologController extends Controller
                             ->getFont()->setBold(true);
                         $sheet->getStyle("{$this->getColumnLetter($startCol)}{$headerStartRow}:{$this->getColumnLetter($endCol)}{$headerStartRow}")
                             ->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)
-                            ->getStartColor()->setRGB('333333');
+                            ->getStartColor()->setRGB('196189151');
                         $sheet->getStyle("{$this->getColumnLetter($startCol)}{$headerStartRow}:{$this->getColumnLetter($endCol)}{$headerStartRow}")
-                            ->getFont()->getColor()->setRGB('FFFFFF');
+                            ->getFont()->getColor()->setRGB('000000');
                         $startCol += 3;
                     }
                     
