@@ -2132,6 +2132,21 @@ class StorageController extends Controller
         return redirect()->route('storage.takinglargebase');
     }
 
+    public function shopsHistory(Request $request, $day=0){
+        if($day == 0){
+            $day = Day::orderBy('id', 'DESC')->first();
+        }else{
+            $day = Day::where('id', $day)->first();
+        }
+        $shops = Shop::where('type_id', 2)->get();
+        $orders = [];
+        $months = Month::where('yearid', $day->year->id)->get();
+        foreach($shops as $shop){
+            $orders[$shop->id] = order_product::where('shop_id', $shop->id)->where('day_id', $day)->get();
+        }
+        return view('storage.shopsHistory', compact('shops', 'orders', 'day', 'months'));
+    }
+
     public function intakinglargebase(Request $request, $id){
         $res = Take_product::select(
                         'take_products.id as tid',

@@ -560,8 +560,10 @@
         </div>
         <div class="col-md-3">
             <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#modalRasxod">+ Yaratish</button>
-            <!-- Yetkazib beruvchilar xisobotini ko'rish -->
-            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalYetkazibBeruvchi">Yetkazib beruvchilar</button>
+            <!-- Yetkazib beruvchilar linki -->
+            <a href="/storage/shopsHistory" class="btn btn-outline-primary ms-2" title="Yetkazib beruvchilar">
+                <i class="fas fa-truck me-1"></i>Yetkazib beruvchilar
+            </a>
         </div>
     </div>
     <hr>

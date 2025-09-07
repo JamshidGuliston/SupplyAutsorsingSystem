@@ -26,9 +26,11 @@ use App\Models\Season;
 use App\Models\Titlemenu;
 use App\Models\Year;
 use Dompdf\Dompdf;
+use Dompdf\Options;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use PhpParser\Node\Stmt\Foreach_;
+use Barryvdh\Snappy\Facades\SnappyPdf;
 
 class AccountantController extends Controller
 {
@@ -761,7 +763,6 @@ class AccountantController extends Controller
 
     public function schotfaktursecond(Request $request, $id, $start, $end){
         $kindgar = Kindgarden::where('id', $id)->with('age_range')->first();
-        // dd($kindgar);
         $days = Day::where('id', '>=', $start)->where('id', '<=', $end)->get();
         
         foreach($kindgar->age_range as $age){
@@ -792,16 +793,24 @@ class AccountantController extends Controller
         $invoice_number = config('company.invoice.default_number');
         $invoice_date = config('company.invoice.default_date');
         
-
-        $dompdf = new Dompdf('UTF-8');
-		$html = mb_convert_encoding(view('pdffile.accountant.schotfaktursecond', compact('costs', 'days', 'kindgar', 'autorser', 'buyurtmachi', 'invoice_number', 'invoice_date', 'total_number_children')), 'HTML-ENTITIES', 'UTF-8');
-		$dompdf->loadHtml($html);
-
-		$dompdf->setPaper('A4');
-		$name = $start.$end.$id."schotfaktursecond.pdf";
-		
-		$dompdf->render();
-		$dompdf->stream($name, ['Attachment' => 0]);
+        // Snappy PDF yaratish
+        $pdf = SnappyPdf::loadView('pdffile.accountant.schotfaktursecond', compact('costs', 'days', 'kindgar', 'autorser', 'buyurtmachi', 'invoice_number', 'invoice_date', 'total_number_children'));
+        
+        // PDF sozlamalari
+        $pdf->setOption('page-size', 'A4');
+        $pdf->setOption('orientation', 'Portrait');
+        $pdf->setOption('margin-top', 10);
+        $pdf->setOption('margin-bottom', 10);
+        $pdf->setOption('margin-left', 10);
+        $pdf->setOption('margin-right', 10);
+        $pdf->setOption('encoding', 'UTF-8');
+        $pdf->setOption('enable-local-file-access', true);
+        $pdf->setOption('print-media-type', true);
+        $pdf->setOption('disable-smart-shrinking', false);
+        
+        $name = $start.$end.$id."schotfaktursecond.pdf";
+        
+        return $pdf->stream($name);
     }
 
     public function schotfakturworker(Request $request, $id, $ageid, $start, $end, $costid){

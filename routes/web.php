@@ -137,6 +137,7 @@ Route::group(['prefix' => 'storage', 'middleware' => ['isStorage', 'auth']], fun
     Route::post('deleteSale', [StorageController::class, 'deleteSale'])->name('storage.deleteSale');
     Route::post('createSalePayment', [StorageController::class, 'createSalePayment'])->name('storage.createSalePayment');
     Route::get('getShopSales/{shopId}', [StorageController::class, 'getShopSales'])->name('storage.getShopSales');
+    Route::get('shopsHistory/{day?}', [StorageController::class, 'shopsHistory'])->name('storage.shopsHistory');
     Route::post('separate-orders', [StorageController::class, 'separateOrders'])->name('storage.separateOrders');
     Route::get('delete-order-product/{order_title}', [StorageController::class, 'deleteOrderProduct'])->name('storage.deleteOrderProduct');
 });

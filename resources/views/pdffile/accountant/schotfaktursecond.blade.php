@@ -5,264 +5,340 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Счет фактура</title>
     <style>
-        @font-face {
-            font-family: 'DejaVu Sans';
-            src: url('https://fonts.googleapis.com/css2?family=DejaVu+Sans:wght@400;700&display=swap');
+        /* Snappy uchun optimizatsiya qilingan CSS */
+        @page {
+            margin: 10mm;
+            size: A4;
         }
+        
         body {
-            font-family: Arial, sans-serif;
+            font-family: 'DejaVu Sans', Arial, sans-serif;
             margin: 0;
-            padding: 20px;
-            font-size: 12px;
-            line-height: 1.4;
+            padding: 0;
+            font-size: 11px;
+            line-height: 1.3;
+            color: #000;
         }
+        
         .header {
             text-align: center;
-            margin-bottom: 30px;
+            margin-bottom: 20px;
             border-bottom: 2px solid #000;
-            padding-bottom: 20px;
+            padding-bottom: 15px;
         }
+        
         .invoice-title {
-            font-size: 24px;
+            font-size: 20px;
             font-weight: bold;
-            margin-bottom: 10px;
-        }
-        .invoice-number {
-            font-size: 16px;
-            margin-bottom: 10px;
-        }
-        .invoice-date {
-            font-size: 14px;
-        }
-        .company-info {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 30px;
-        }
-        .company-section {
-            width: 48%;
-        }
-        .section-title {
-            font-weight: bold;
-            font-size: 14px;
-            margin-bottom: 15px;
-            text-decoration: underline;
-        }
-        .company-details {
             margin-bottom: 8px;
         }
+        
+        .invoice-number {
+            font-size: 14px;
+            margin-bottom: 8px;
+        }
+        
+        .invoice-date {
+            font-size: 12px;
+        }
+        
+        .company-info {
+            display: table;
+            width: 100%;
+            margin-bottom: 20px;
+        }
+        
+        .company-section {
+            display: table-cell;
+            width: 48%;
+            vertical-align: top;
+            padding-right: 2%;
+        }
+        
+        .section-title {
+            font-weight: bold;
+            font-size: 12px;
+            margin-bottom: 10px;
+            text-decoration: underline;
+        }
+        
+        .company-details {
+            margin-bottom: 6px;
+            font-size: 10px;
+        }
+        
         .label {
             font-weight: bold;
             display: inline-block;
-            width: 120px;
+            width: 100px;
         }
+        
         .value {
             display: inline-block;
         }
+        
         .table-container {
-            margin: 30px 0;
+            margin: 20px 0;
         }
+        
         table {
             width: 100%;
             border-collapse: collapse;
-            margin-bottom: 20px;
+            margin-bottom: 15px;
+            font-size: 10px;
         }
+        
         th, td {
             border: 1px solid #000;
-            padding: 8px;
+            padding: 4px;
             text-align: center;
             vertical-align: middle;
         }
+        
         th {
             background-color: #f0f0f0;
             font-weight: bold;
+            font-size: 10px;
         }
+        
         .product-name {
             text-align: left;
             width: 40%;
         }
+        
         .unit {
             width: 10%;
         }
+        
         .quantity {
             width: 10%;
         }
+        
         .price {
             width: 15%;
         }
+        
         .amount {
             width: 15%;
         }
+        
         .vat {
             width: 10%;
         }
+        
         .total-row {
             font-weight: bold;
-            background-color: #f9f9f9;
+            background-color: #f8f9fa;
         }
-        .signatures {
-            display: flex;
-            justify-content: space-between;
-            margin-top: 40px;
+        
+        .footer {
+            margin-top: 30px;
+            display: table;
+            width: 100%;
         }
-        .signature-section {
-            width: 45%;
+        
+        .footer-section {
+            display: table-cell;
+            width: 48%;
+            vertical-align: top;
+            padding-right: 2%;
         }
+        
         .signature-line {
             border-bottom: 1px solid #000;
-            height: 30px;
-            margin-bottom: 5px;
+            width: 200px;
+            margin: 20px 0 5px 0;
         }
+        
         .signature-label {
+            font-size: 10px;
+            text-align: center;
+        }
+        
+        /* Snappy uchun qo'shimcha sozlamalar */
+        .page-break {
+            page-break-before: always;
+        }
+        
+        .no-break {
+            page-break-inside: avoid;
+        }
+        
+        /* Matn ko'rinishi uchun */
+        .text-center {
+            text-align: center;
+        }
+        
+        .text-right {
+            text-align: right;
+        }
+        
+        .text-left {
+            text-align: left;
+        }
+        
+        .font-bold {
             font-weight: bold;
-            margin-bottom: 5px;
+        }
+        
+        /* Responsive uchun */
+        @media print {
+            body {
+                font-size: 10px;
+            }
+            
+            .header {
+                margin-bottom: 15px;
+            }
+            
+            .company-info {
+                margin-bottom: 15px;
+            }
         }
     </style>
 </head>
 <body>
+    <!-- Header qismi -->
     <div class="header">
-        <div class="invoice-title">СЧЕТ ФАКТУРА</div>
-        <div class="invoice-number">№ {{ time() }}</div>
-        <div class="invoice-date">{{ date('d.m.Y') }}</div>
-        <div style="margin-top: 10px; font-size: 12px;">
-            товарно-отгрузочным документам № {{ time() }} от {{ date('d.m.Y') }}
-        </div>
+        <div class="invoice-title">СЧЁТ-ФАКТУРА</div>
+        <div class="invoice-number">№ {{ $invoice_number ?? '001' }}</div>
+        <div class="invoice-date">Дата: {{ $invoice_date ?? date('d.m.Y') }}</div>
     </div>
 
+    <!-- Kompaniya ma'lumotlari -->
     <div class="company-info">
         <div class="company-section">
-            <div class="section-title">AUTSORSER</div>
+            <div class="section-title">АВТОРСЕР (Поставщик)</div>
             <div class="company-details">
-                <span class="label">Kompaniya:</span>
-                <span class="value">{{ $autorser['company_name'] }}</span>
+                <span class="label">Название:</span>
+                <span class="value">{{ $autorser['company_name'] ?? 'IOS-Service MCHJ' }}</span>
             </div>
             <div class="company-details">
-                <span class="label">Manzil:</span>
-                <span class="value">{{ $autorser['address'] }}</span>
+                <span class="label">ИНН:</span>
+                <span class="value">{{ $autorser['inn'] ?? '123456789' }}</span>
             </div>
             <div class="company-details">
-                <span class="label">P/c:</span>
-                <span class="value">{{ $autorser['bank_account'] }}</span>
+                <span class="label">МФО:</span>
+                <span class="value">{{ $autorser['mfo'] ?? '12345' }}</span>
             </div>
             <div class="company-details">
-                <span class="label">Bank:</span>
-                <span class="value">{{ $autorser['bank'] }}</span>
+                <span class="label">Расчётный счёт:</span>
+                <span class="value">{{ $autorser['account_number'] ?? '1234567890123456' }}</span>
             </div>
             <div class="company-details">
-                <span class="label">MFO:</span>
-                <span class="value">{{ $autorser['mfo'] }}</span>
+                <span class="label">Банк:</span>
+                <span class="value">{{ $autorser['bank'] ?? 'Асака банк' }}</span>
             </div>
             <div class="company-details">
-                <span class="label">INN:</span>
-                <span class="value">{{ $autorser['inn'] }}</span>
-            </div>
-            <div class="company-details">
-                <span class="label">Tel:</span>
-                <span class="value">{{ $autorser['phone'] }}</span>
+                <span class="label">Телефон:</span>
+                <span class="value">{{ $autorser['phone'] ?? '+998901234567' }}</span>
             </div>
         </div>
 
         <div class="company-section">
-            <div class="section-title">BUYURTMACHI</div>
+            <div class="section-title">БУЙРУТМАЧИ (Покупатель)</div>
             <div class="company-details">
-                <span class="label">Kompaniya:</span>
-                <span class="value">{{ $buyurtmachi['company_name'] }}</span>
+                <span class="label">Название:</span>
+                <span class="value">{{ $buyurtmachi['company_name'] ?? 'Chinoz tumani MMTBga tasarrufidagi 1-sonli DMTT' }}</span>
             </div>
             <div class="company-details">
-                <span class="label">INN:</span>
-                <span class="value">{{ $buyurtmachi['inn'] }}</span>
+                <span class="label">ИНН:</span>
+                <span class="value">{{ $buyurtmachi['inn'] ?? '1234567890' }}</span>
             </div>
             <div class="company-details">
-                <span class="label">MFO:</span>
-                <span class="value">{{ $buyurtmachi['mfo'] }}</span>
+                <span class="label">МФО:</span>
+                <span class="value">{{ $buyurtmachi['mfo'] ?? '1234567890' }}</span>
             </div>
             <div class="company-details">
-                <span class="label">Xisob raqami:</span>
-                <span class="value">{{ $buyurtmachi['account_number'] }}</span>
+                <span class="label">Расчётный счёт:</span>
+                <span class="value">{{ $buyurtmachi['account_number'] ?? '1234567890' }}</span>
             </div>
             <div class="company-details">
-                <span class="label">G'azna x/r:</span>
-                <span class="value">{{ $buyurtmachi['treasury_account'] }}</span>
+                <span class="label">Банк:</span>
+                <span class="value">{{ $buyurtmachi['bank'] ?? 'Bank of America' }}</span>
             </div>
             <div class="company-details">
-                <span class="label">INN:</span>
-                <span class="value">{{ $buyurtmachi['treasury_inn'] }}</span>
-            </div>
-            <div class="company-details">
-                <span class="label">Bank:</span>
-                <span class="value">{{ $buyurtmachi['bank'] }}</span>
-            </div>
-            <div class="company-details">
-                <span class="label">Tel:</span>
-                <span class="value">{{ $buyurtmachi['phone'] }}</span>
+                <span class="label">Телефон:</span>
+                <span class="value">{{ $buyurtmachi['phone'] ?? '+998901234567' }}</span>
             </div>
         </div>
     </div>
 
+    <!-- Mahsulotlar jadvali -->
     <div class="table-container">
         <table>
             <thead>
                 <tr>
-                    <th>№</th>
-                    <th class="product-name">Гуруҳлар</th>
-                    <th class="unit">Ўл. бир</th>
-                    <th class="quantity">Сони</th>
-                    <th class="price">Нархи</th>
-                    <th class="amount">Кўрсатилган хизмат суммаси (ҚҚС билан)</th>
-                    <th class="vat">Шундан ҚҚС</th>
+                    <th class="product-name">Наименование товара (работ, услуг)</th>
+                    <th class="unit">Ед. изм.</th>
+                    <th class="quantity">Кол-во</th>
+                    <th class="price">Цена</th>
+                    <th class="amount">Сумма</th>
+                    <th class="vat">НДС</th>
                 </tr>
             </thead>
             <tbody>
                 @php
-                    $counter = 1;
-                    $total_service_amount = 0;
-                    $total_vat_amount = 0;
+                    $total_amount = 0;
+                    $total_vat = 0;
                 @endphp
-                @foreach($kindgar->age_range as $age)
-                        <tr>
-                            <td>{{ $counter++ }}</td>
-                            <td class="product-name">{{ $age->description }}</td>
-                            <td class="unit">{{ "бола" }}</td>
-                            <td class="quantity">{{ number_format($total_number_children[$age->id], 0) }}</td>
-                            <td class="price">{{ number_format($costs->where('age_range_id', $age->id)->first()->eater_cost, 2) }}</td>
-                            <td class="amount">{{ number_format($total_number_children[$age->id] * $costs->where('age_range_id', $age->id)->first()->eater_cost, 2) }}</td>
-                            <td class="vat">{{ number_format($total_number_children[$age->id] * $costs->where('age_range_id', $age->id)->first()->eater_cost * $costs->where('age_range_id', $age->id)->first()->nds / 100, 2) }}</td>
-                        </tr>
+                
+                @foreach($costs as $cost)
+                <tr>
+                    <td class="product-name">{{ $cost->product_name ?? 'Mahsulot' }}</td>
+                    <td class="unit">{{ $cost->unit ?? 'kg' }}</td>
+                    <td class="quantity">
+                        @php
+                            $total_quantity = 0;
+                            foreach($total_number_children as $age_id => $children_count) {
+                                $total_quantity += $children_count * ($cost->weight ?? 1);
+                            }
+                        @endphp
+                        {{ number_format($total_quantity, 2) }}
+                    </td>
+                    <td class="price">{{ number_format($cost->price ?? 0, 2) }}</td>
+                    <td class="amount">
+                        @php
+                            $amount = $total_quantity * ($cost->price ?? 0);
+                            $total_amount += $amount;
+                        @endphp
+                        {{ number_format($amount, 2) }}
+                    </td>
+                    <td class="vat">
+                        @php
+                            $vat = $amount * 0.15; // 15% НДС
+                            $total_vat += $vat;
+                        @endphp
+                        {{ number_format($vat, 2) }}
+                    </td>
+                </tr>
                 @endforeach
+                
+                <!-- Jami qator -->
                 <tr class="total-row">
-                    <td colspan="5"><strong>Ҳисоб-фактура суммаси:</strong></td>
-                    <td class="amount"><strong>{{ number_format($total_service_amount, 2) }}</strong></td>
-                    <td class="vat"><strong>{{ number_format($total_vat_amount, 2) }}</strong></td>
+                    <td colspan="4" class="text-right font-bold">ЖАМИ:</td>
+                    <td class="amount font-bold">{{ number_format($total_amount, 2) }}</td>
+                    <td class="vat font-bold">{{ number_format($total_vat, 2) }}</td>
+                </tr>
+                
+                <!-- НДС bilan jami -->
+                <tr class="total-row">
+                    <td colspan="4" class="text-right font-bold">ЖАМИ НДС билан:</td>
+                    <td colspan="2" class="font-bold">{{ number_format($total_amount + $total_vat, 2) }}</td>
                 </tr>
             </tbody>
         </table>
     </div>
 
-    <div class="signatures">
-        <div class="signature-section">
-            <div class="signature-label">Директор</div>
+    <!-- Footer qismi -->
+    <div class="footer">
+        <div class="footer-section">
             <div class="signature-line"></div>
-            <div>Нишонов Қ</div>
+            <div class="signature-label">Авторсер директори</div>
         </div>
-        
-        <div class="signature-section">
-            <div class="signature-label">Bosh xisobchisi</div>
+        <div class="footer-section">
             <div class="signature-line"></div>
-            <div></div>
-        </div>
-    </div>
-
-    <div class="signatures" style="margin-top: 20px;">
-        <div class="signature-section">
-            <div class="signature-label">Директор</div>
-            <div class="signature-line"></div>
-            <div></div>
-        </div>
-        
-        <div class="signature-section">
-            <div class="signature-label">Bosh xisobchisi</div>
-            <div class="signature-line"></div>
-            <div></div>
+            <div class="signature-label">Буйрутмачи директори</div>
         </div>
     </div>
 </body>

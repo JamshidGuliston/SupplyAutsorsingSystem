@@ -40,12 +40,121 @@
         border-bottom-color: currentColor;
         border-right: 1px solid #c2b8b8;
     }
+    
+    /* Hisobot modeli uchun yangi stillar */
+    .report-section {
+        background-color: #f8f9fa;
+        border-radius: 8px;
+        padding: 15px;
+        margin-bottom: 15px;
+        border-left: 4px solid #007bff;
+    }
+    
+    .report-section h6 {
+        color: #495057;
+        font-weight: 600;
+        margin-bottom: 10px;
+        display: flex;
+        align-items: center;
+    }
+    
+    .report-section h6 i {
+        margin-right: 8px;
+        color: #007bff;
+    }
+    
+    .report-category {
+        background-color: #e9ecef;
+        border-radius: 6px;
+        padding: 10px;
+        margin-bottom: 10px;
+    }
+    
+    .report-category h6 {
+        color: #6c757d;
+        font-size: 0.9rem;
+        margin-bottom: 8px;
+        font-weight: 500;
+    }
+    
+    .report-links {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        align-items: center;
+    }
+    
+    .report-link {
+        display: inline-flex;
+        align-items: center;
+        padding: 4px 8px;
+        background-color: #fff;
+        border: 1px solid #dee2e6;
+        border-radius: 4px;
+        text-decoration: none;
+        color: #495057;
+        font-size: 0.85rem;
+        transition: all 0.2s ease;
+    }
+    
+    .report-link:hover {
+        background-color: #007bff;
+        color: white;
+        text-decoration: none;
+        transform: translateY(-1px);
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    
+    .report-link i {
+        margin-right: 4px;
+        font-size: 0.9rem;
+    }
+    
+    .report-link.pdf {
+        border-color: #dc3545;
+        color: #dc3545;
+    }
+    
+    .report-link.pdf:hover {
+        background-color: #dc3545;
+        color: white;
+    }
+    
+    .report-link.excel {
+        border-color: #198754;
+        color: #198754;
+    }
+    
+    .report-link.excel:hover {
+        background-color: #198754;
+        color: white;
+    }
+    
+    .age-group-header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 8px 12px;
+        border-radius: 6px;
+        margin-bottom: 10px;
+        font-weight: 600;
+        font-size: 0.95rem;
+    }
+    
+    .general-invoice {
+        background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        color: white;
+        padding: 8px 12px;
+        border-radius: 6px;
+        margin-bottom: 10px;
+        font-weight: 600;
+        font-size: 0.95rem;
+    }
+    
     /* Safari */
     @-webkit-keyframes spin {
         0% {
             -webkit-transform: rotate(0deg);
         }
-
         100% {
             -webkit-transform: rotate(360deg);
         }
@@ -55,7 +164,6 @@
         0% {
             transform: rotate(0deg);
         }
-
         100% {
             transform: rotate(360deg);
         }
@@ -267,35 +375,127 @@
         var cost = selectBox.options[selectBox.selectedIndex].value;
         var kindid = document.getElementById("kind").value; 
         var div = $('.urlpdf');
+        
         if(start != "" && end != "" && cost != ""){
-            var html = "Қисқа гурух<br>"; 
-            html += "<b>Накапител:</b> "; 
-            html += "Narx bilan <a href='/accountant/nakapit/"+kindid+"/"+3+"/"+start+"/"+end+"/"+cost+"' target='_blank' ><i class='far fa-file-pdf text-info' style='cursor: pointer; margin-right: 16px;'></i></a> "; 
-            html += "<a href='/accountant/nakapitexcel/"+kindid+"/"+3+"/"+start+"/"+end+"/"+cost+"' target='_blank' ><i class='far fa-file-excel text-info' style='cursor: pointer; margin-right: 16px;'></i></a> ";
-            html += "Narxsiz <a href='/accountant/nakapitwithoutcost/"+kindid+"/"+3+"/"+start+"/"+end+"' target='_blank' ><i class='far fa-file-pdf text-info' style='cursor: pointer; margin-right: 16px;'></i></a> "; 
-            html += "<a href='/accountant/nakapitexcelwithoutcost/"+kindid+"/"+3+"/"+start+"/"+end+"' target='_blank' ><i class='far fa-file-excel text-info' style='cursor: pointer; margin-right: 16px;'></i></a> ";
-            html += "<a href='/accountant/nakapitexcel/"+kindid+"/"+3+"/"+start+"/"+end+"/"+cost+"' target='_blank' ><i class='far fa-file-excel text-info' style='cursor: pointer; margin-right: 16px;'></i></a> ";
+            var html = '<div class="report-section">';
             
-            html += "<b>Cчёт фактура:</b> "; 
-            html += "<a href='/accountant/schotfaktur/"+kindid+"/"+3+"/"+start+"/"+end+"/"+cost+"' target='_blank' ><i class='far fa-file-pdf text-info' style='cursor: pointer; margin-right: 16px;'></i></a> "; 
-            html += "<a href='/accountant/schotfakturexcel/"+kindid+"/"+3+"/"+start+"/"+end+"/"+cost+"' target='_blank' ><i class='far fa-file-excel text-info' style='cursor: pointer; margin-right: 16px;'></i></a> ";
-            html += "<b>Меёр:</b> "; 
-            html += "<a href='/accountant/norm/"+kindid+"/"+3+"/"+start+"/"+end+"/"+cost+"' target='_blank' ><i class='far fa-file-pdf text-info' style='cursor: pointer; margin-right: 16px;'></i></a> "; 
-            html += "<a href='/accountant/normexcel/"+kindid+"/"+3+"/"+start+"/"+end+"/"+cost+"' target='_blank' ><i class='far fa-file-excel text-info' style='cursor: pointer; margin-right: 16px;'></i></a>";
-            html += "<br>3-7 ёшли<br><b>Накапител:</b>";
-            html += "Narx bilan <a href='/accountant/nakapit/"+kindid+"/"+4+"/"+start+"/"+end+"/"+cost+"' target='_blank' ><i class='far fa-file-pdf text-info' style='cursor: pointer; margin-right: 16px;'></i></a>";
-            html += "<a href='/accountant/nakapitexcel/"+kindid+"/"+4+"/"+start+"/"+end+"/"+cost+"' target='_blank' ><i class='far fa-file-excel text-info' style='cursor: pointer; margin-right: 16px;'></i></a>"; 
-            html += "Narxsiz <a href='/accountant/nakapitwithoutcost/"+kindid+"/"+4+"/"+start+"/"+end+"' target='_blank' ><i class='far fa-file-pdf text-info' style='cursor: pointer; margin-right: 16px;'></i></a>";
-            html += "<a href='/accountant/nakapitexcelwithoutcost/"+kindid+"/"+4+"/"+start+"/"+end+"' target='_blank' ><i class='far fa-file-excel text-info' style='cursor: pointer; margin-right: 16px;'></i></a>";
-            html += "<a href='/accountant/nakapitexcel/"+kindid+"/"+4+"/"+start+"/"+end+"/"+cost+"' target='_blank' ><i class='far fa-file-excel text-info' style='cursor: pointer; margin-right: 16px;'></i></a>";
-
-            html += "<b>Cчёт фактура:</b> "; 
-            html += "<a href='/accountant/schotfaktur/"+kindid+"/"+4+"/"+start+"/"+end+"/"+cost+"' target='_blank' ><i class='far fa-file-pdf text-info' style='cursor: pointer; margin-right: 16px;'></i></a>";
-            html += "<a href='/accountant/schotfakturexcel/"+kindid+"/"+4+"/"+start+"/"+end+"/"+cost+"' target='_blank' ><i class='far fa-file-excel text-info' style='cursor: pointer; margin-right: 16px;'></i></a>";
-            html += "Меёр: <a href='/accountant/norm/"+kindid+"/"+4+"/"+start+"/"+end+"/"+cost+"' target='_blank' ><i class='far fa-file-pdf text-info' style='cursor: pointer; margin-right: 16px;'></i></a>";
-            html += "<a href='/accountant/normexcel/"+kindid+"/"+4+"/"+start+"/"+end+"/"+cost+"' target='_blank' ><i class='far fa-file-excel text-info' style='cursor: pointer; margin-right: 16px;'></i></a>";
-            html += "<br>Умумий фактура<br><p> Cчёт фактура: <a href='/accountant/schotfaktursecond/"+kindid+"/"+start+"/"+end+"' target='_blank' ><i class='far fa-file-pdf text-info' style='cursor: pointer; margin-right: 16px;'></i></a> <a href='/accountant/allschotfakturexcel/"+kindid+"/"+start+"/"+end+"/"+cost+"' target='_blank' ><i class='far fa-file-excel text-info' style='cursor: pointer; margin-right: 16px;'></i></a>";
-
+            // Qisqa guruh
+            html += '<div class="age-group-header">';
+            html += '<i class="fas fa-child"></i>Қисқа гурух (3 yosh)';
+            html += '</div>';
+            
+            html += '<div class="report-category">';
+            html += '<h6><i class="fas fa-warehouse"></i>Накапител</h6>';
+            html += '<div class="report-links">';
+            html += '<span class="me-2">Narx bilan:</span>';
+            html += '<a href="/accountant/nakapit/'+kindid+'/3/'+start+'/'+end+'/'+cost+'" target="_blank" class="report-link pdf">';
+            html += '<i class="far fa-file-pdf"></i>PDF';
+            html += '</a>';
+            html += '<a href="/accountant/nakapitexcel/'+kindid+'/3/'+start+'/'+end+'/'+cost+'" target="_blank" class="report-link excel">';
+            html += '<i class="far fa-file-excel"></i>Excel';
+            html += '</a>';
+            html += '<span class="me-2 ms-3">Narxsiz:</span>';
+            html += '<a href="/accountant/nakapitwithoutcost/'+kindid+'/3/'+start+'/'+end+'" target="_blank" class="report-link pdf">';
+            html += '<i class="far fa-file-pdf"></i>PDF';
+            html += '</a>';
+            html += '<a href="/accountant/nakapitexcelwithoutcost/'+kindid+'/3/'+start+'/'+end+'" target="_blank" class="report-link excel">';
+            html += '<i class="far fa-file-excel"></i>Excel';
+            html += '</a>';
+            html += '</div>';
+            html += '</div>';
+            
+            html += '<div class="report-category">';
+            html += '<h6><i class="fas fa-file-invoice"></i>Счёт фактура</h6>';
+            html += '<div class="report-links">';
+            html += '<a href="/accountant/schotfaktur/'+kindid+'/3/'+start+'/'+end+'/'+cost+'" target="_blank" class="report-link pdf">';
+            html += '<i class="far fa-file-pdf"></i>PDF';
+            html += '</a>';
+            html += '<a href="/accountant/schotfakturexcel/'+kindid+'/3/'+start+'/'+end+'/'+cost+'" target="_blank" class="report-link excel">';
+            html += '<i class="far fa-file-excel"></i>Excel';
+            html += '</a>';
+            html += '</div>';
+            html += '</div>';
+            
+            html += '<div class="report-category">';
+            html += '<h6><i class="fas fa-ruler"></i>Меёр</h6>';
+            html += '<div class="report-links">';
+            html += '<a href="/accountant/norm/'+kindid+'/3/'+start+'/'+end+'/'+cost+'" target="_blank" class="report-link pdf">';
+            html += '<i class="far fa-file-pdf"></i>PDF';
+            html += '</a>';
+            html += '<a href="/accountant/normexcel/'+kindid+'/3/'+start+'/'+end+'/'+cost+'" target="_blank" class="report-link excel">';
+            html += '<i class="far fa-file-excel"></i>Excel';
+            html += '</a>';
+            html += '</div>';
+            html += '</div>';
+            
+            // 3-7 yoshli
+            html += '<div class="age-group-header">';
+            html += '<i class="fas fa-users"></i>3-7 ёшли (4 yosh)';
+            html += '</div>';
+            
+            html += '<div class="report-category">';
+            html += '<h6><i class="fas fa-warehouse"></i>Накапител</h6>';
+            html += '<div class="report-links">';
+            html += '<span class="me-2">Narx bilan:</span>';
+            html += '<a href="/accountant/nakapit/'+kindid+'/4/'+start+'/'+end+'/'+cost+'" target="_blank" class="report-link pdf">';
+            html += '<i class="far fa-file-pdf"></i>PDF';
+            html += '</a>';
+            html += '<a href="/accountant/nakapitexcel/'+kindid+'/4/'+start+'/'+end+'/'+cost+'" target="_blank" class="report-link excel">';
+            html += '<i class="far fa-file-excel"></i>Excel';
+            html += '</a>';
+            html += '<span class="me-2 ms-3">Narxsiz:</span>';
+            html += '<a href="/accountant/nakapitwithoutcost/'+kindid+'/4/'+start+'/'+end+'" target="_blank" class="report-link pdf">';
+            html += '<i class="far fa-file-pdf"></i>PDF';
+            html += '</a>';
+            html += '<a href="/accountant/nakapitexcelwithoutcost/'+kindid+'/4/'+start+'/'+end+'" target="_blank" class="report-link excel">';
+            html += '<i class="far fa-file-excel"></i>Excel';
+            html += '</a>';
+            html += '</div>';
+            html += '</div>';
+            
+            html += '<div class="report-category">';
+            html += '<h6><i class="fas fa-file-invoice"></i>Счёт фактура</h6>';
+            html += '<div class="report-links">';
+            html += '<a href="/accountant/schotfaktur/'+kindid+'/4/'+start+'/'+end+'/'+cost+'" target="_blank" class="report-link pdf">';
+            html += '<i class="far fa-file-pdf"></i>PDF';
+            html += '</a>';
+            html += '<a href="/accountant/schotfakturexcel/'+kindid+'/4/'+start+'/'+end+'/'+cost+'" target="_blank" class="report-link excel">';
+            html += '<i class="far fa-file-excel"></i>Excel';
+            html += '</a>';
+            html += '</div>';
+            html += '</div>';
+            
+            html += '<div class="report-category">';
+            html += '<h6><i class="fas fa-ruler"></i>Меёр</h6>';
+            html += '<div class="report-links">';
+            html += '<a href="/accountant/norm/'+kindid+'/4/'+start+'/'+end+'/'+cost+'" target="_blank" class="report-link pdf">';
+            html += '<i class="far fa-file-pdf"></i>PDF';
+            html += '</a>';
+            html += '<a href="/accountant/normexcel/'+kindid+'/4/'+start+'/'+end+'/'+cost+'" target="_blank" class="report-link excel">';
+            html += '<i class="far fa-file-excel"></i>Excel';
+            html += '</a>';
+            html += '</div>';
+            html += '</div>';
+            
+            // Umumiy faktura
+            html += '<div class="general-invoice">';
+            html += '<i class="fas fa-file-invoice-dollar"></i>Умумий фактура';
+            html += '</div>';
+            
+            html += '<div class="report-category">';
+            html += '<h6><i class="fas fa-file-invoice"></i>Счёт фактура</h6>';
+            html += '<div class="report-links">';
+            html += '<a href="/accountant/schotfaktursecond/'+kindid+'/'+start+'/'+end+'" target="_blank" class="report-link pdf">';
+            html += '<i class="far fa-file-pdf"></i>PDF';
+            html += '</a>';
+            html += '<a href="/accountant/allschotfakturexcel/'+kindid+'/'+start+'/'+end+'/'+cost+'" target="_blank" class="report-link excel">';
+            html += '<i class="far fa-file-excel"></i>Excel';
+            html += '</a>';
+            html += '</div>';
+            html += '</div>';
+            
+            html += '</div>';
+            
             div.html(html);
         }
     }
