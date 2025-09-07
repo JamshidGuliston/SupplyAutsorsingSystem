@@ -40,11 +40,11 @@
 		}
 		table{
 			border-collapse: collapse;
-			border: 2px solid black;
+			border: 1px solid black;
 			width: 100%;	
 		}
 		thead{
-			border: 2px solid black;
+			border: 1px solid black;
 		}
 		td {
 			text-align: center;
@@ -57,7 +57,7 @@
 			padding: 0px;
 		}
 		td{
-			border-right: 1px dashed black;
+			border-right: 1px solid black;
 			border-bottom: 1px solid black;
 			padding: 0px;
 		}
@@ -70,6 +70,58 @@
 			-o-transform: rotate(-90deg);
 			transform: rotate(-90deg);
 			white-space: nowrap;
+			overflow: hidden;
+			text-overflow: ellipsis;
+			max-width: 90px;
+		}
+		
+		/* Maxsulot nomlari uchun */
+		.product-name-short {
+			font-size: 8px;
+			line-height: 1.2;
+		}
+		
+		/* Qator balandligini kamaytirish */
+		tr {
+			height: 20px;
+		}
+		
+		/* Maxsulot ustunlari uchun */
+		.product-column {
+			width: 2.5% !important;
+			max-width: 2.5%;
+			overflow: hidden;
+		}
+		
+		/* Qatorlarni ajratish uchun ranglar - faqat ma'lumot qatorlari uchun */
+		tbody tr:nth-child(odd) {
+			background-color: #f5f5f5; /* Och kulrang */
+		}
+		tbody tr:nth-child(even) {
+			background-color: #ffffff; /* Oq rang */
+		}
+		
+		/* Maxsulotlar va taom nomlari uchun oq rang */
+		thead tr,
+		thead th,
+		thead td {
+			background-color: #ffffff !important; /* Oq rang */
+		}
+		
+		/* Ma'lumot qatorlarida maxsulot nomlari ustunini oq qoldirish */
+		td:first-child,
+		td:nth-child(2),
+		td:nth-child(3) {
+			background-color: #ffffff !important; /* Oq rang */
+		}
+		
+		/* Xulosa qatorlari uchun oq rang */
+		tr:has(th[scope="row"]) {
+			background-color: #ffffff !important;
+		}
+		
+		tr:has(th[scope="row"]) td {
+			background-color: #ffffff !important;
 		}
 	</style>
 </head>
@@ -80,7 +132,7 @@
                 <div class="table" id="table_with_data">
                 	<?php
 						echo "Боғча номи: <b>".$menu[0]['kingar_name']."</b><br/>";
-                		echo  'sana: <b>"'.$day['day_number'].'".'.$day['month_name'].' '.$day['year_name'].'й.</b>    <b>           ' . $menu[0]['age_name'] . "</b>ли болалар сони: <b>" . $menu[0]['kingar_children_number'].";</b>";
+                		echo  'Cана: <b>'.$day['day_number'].'.'.$day['month_name'].' '.$day['year_name'].'й.</b>    <b>           ' . $menu[0]['age_name'] . "</b>ли болалар сони: <b>" . $menu[0]['kingar_children_number'].";</b>";
                 		if($menu[0]['worker_age_id'] == $menu[0]['king_age_name_id']){
                 			echo "  ходимлар сони: <b>".$menu[0]['workers_count'].";</b>  ";	
                 		}
@@ -99,8 +151,25 @@
 									$parts = explode(' ', $product['product_name']);
 									$first = $parts[0];
 									$second = isset($parts[1]) ? $parts[1] : '';
+									$third = isset($parts[2]) ? $parts[2] : '';
+									
+									// Maxsulot nomini qisqartirish
+									$shortName = $first;
+									if($second && strlen($shortName . ' ' . $second) <= 16) {
+										$shortName .= ' ' . $second;
+									}
+									if($third && strlen($shortName . ' ' . $third) <= 16) {
+										$shortName .= ' ' . $third;
+									}
+									
+									// Agar juda uzun bo'lsa, faqat birinchi so'zni olish
+									if(strlen($shortName) > 8) {
+										$shortName = $first;
+									}
 								@endphp
-                          	 		<th class='vrt-header' style="padding: 0px; width: 3%; height: 85px"><?php echo '<span>'.$first.' '.$second.'</span>';?></th>
+                          	 		<th class='vrt-header product-column' style="padding: 0px; height: 100px">
+                          	 			<span class="product-name-short"><?php echo $first.' '.$second.' '.$third; ?></span>
+                          	 		</th>
 								@endif
 							 @endforeach
                           </tr>
@@ -155,14 +224,15 @@
 								@endforeach
 							@endforeach
 									<tr>
-										<th scope="row" rowspan="5" class='vrt-header' style="padding: 0px; border-top: 2px solid black"><span>Болалар</span></th>
-										<td scope="row" class="align-baseline" style="padding: 0px; border-top: 2px solid black">1 та бола учун гр</td>
-										<td style="padding: 0px; border-top: 2px solid black"></td>
+										<!-- <th scope="row" rowspan="5" class='vrt-header' style="padding: 0px; border-top: 2px solid black"><span>Болалар</span></th> -->
+										<td scope="row" colspan="3" class="align-baseline" style="padding: 0px; border-top: 1px solid black">{{ $menu[0]['age_name'].'ли'  }} бир бола учун гр</td>
 										<?php
+										$total_weight = [];
+
 			                            for($t = 0; $t < count($products); $t++){
 											if(isset($products[$t]['yes']) and isset($productallcount[$products[$t]['id']])){
 			                            ?>
-			                            	<td style="padding: 0px; font-size: 5px; border-top: 2px solid black"><?= $productallcount[$products[$t]['id']]; ?></td>
+			                            	<td style="padding: 0px; font-size: 5px; border-top: 1px solid black"><?= $productallcount[$products[$t]['id']]; ?></td>
 			                            <?php	
 											}
 											elseif(isset($products[$t]['yes'])){
@@ -174,25 +244,14 @@
 			                            ?>
 									</tr>
 									<tr>
-										<td scope="row" class="align-baseline" style="padding: 0px;">Жами миқдори</td>
-										<td></td>
+										<td scope="row" colspan="3" class="align-baseline" style="padding: 0px;">Жами миқдори(кг,хис)</td>
 										<?php
-										// $narx = [];
-										// $narx[1] = 0; $narx[2] = 8000; $narx[3] = 0; $narx[4] = 9000; $narx[10] = 58000; $narx[12] = 9500; $narx[13] = 0; $narx[14] = 2000; $narx[15] = 0; $narx[16] = 10000; $narx[17] = 0;
-										// $narx[18] = 0; $narx[19] = 0; $narx[21] = 69000; $narx[22] = 25000; $narx[23] = 2400; $narx[24] = 32000; $narx[25] = 0; $narx[26] = 23000; $narx[27] = 6000; $narx[28] = 25000; $narx[29] = 2800;
-										// $narx[30] = 1300; $narx[31] = 15000; $narx[32] = 45000; $narx[33] = 9000; $narx[34] = 39000; $narx[35] = 18000; $narx[36] = 22000; $narx[37] = 27000; $narx[38] = 44000; $narx[39] = 17000;
-										// $narx[40] = 0; $narx[41] = 13000; $narx[42] = 28000; $narx[43] = 3000; $narx[44] = 4000; $narx[45] = 12000; $narx[46] = 39000; $narx[47] = 49000; $narx[48] = 13000; $narx[49] = 3000;
-										// $narx[50] = 28000; $narx[51] = 22000; $narx[52] = 4000; $narx[53] = 9000; $narx[54] = 8000; $narx[55] = 18000; $narx[56] = 9000; $narx[57] = 13000; $narx[58] = 17000; $narx[59] = 28000;
-			                            // $narx[60] = 2400; $narx[61] = 0; 
-										// $narx = [];
-										// $narx[1] = 0; $narx[2] = 8000; $narx[3] = 0; $narx[4] = 9700; $narx[10] = 57000; $narx[12] = 9500; $narx[14] = 1600; $narx[15] = 0; $narx[16] = 9500; $narx[17] = 0;
-										// $narx[18] = 0; $narx[21] = 69000; $narx[22] = 25000; $narx[23] = 2400; $narx[24] = 32000; $narx[25] = 0; $narx[26] = 23000; $narx[27] = 6000; $narx[28] = 24500; $narx[29] = 2800;
-										// $narx[30] = 1300; $narx[31] = 15000; $narx[32] = 75000; $narx[33] = 8800; $narx[34] = 39000; $narx[35] = 19000; $narx[36] = 21500; $narx[37] = 28000; $narx[38] = 44000; $narx[39] = 17000;
-										// $narx[40] = 0; $narx[41] = 16000; $narx[42] = 34500; $narx[43] = 5000; $narx[44] = 4000; $narx[45] = 9000; $narx[46] = 39000; $narx[47] = 49000; $narx[48] = 16000; $narx[49] = 5000;
-										// $narx[50] = 29000; $narx[51] = 24000; $narx[52] = 4000; $narx[53] = 9700; $narx[54] = 8000; $narx[55] = 15000; $narx[56] = 8800; $narx[57] = 13000; $narx[58] = 18000; $narx[59] = 29000;
-			                            // $narx[60] = 2400; $narx[61] = 0;
 										for($t = 0; $t < count($products); $t++){
+											if(!isset($total_weight[$products[$t]['id']])){
+												$total_weight[$products[$t]['id']] = 0;
+											}
 											if(isset($products[$t]['yes']) and isset($productallcount[$products[$t]['id']])){
+												$total_weight[$products[$t]['id']] += (($menu[0]['kingar_children_number'])*$productallcount[$products[$t]['id']]) / $products[$t]['div'];
 			                            ?>
 			                            <!---->
 			                            	<td style="padding: 0px; font-size: 5px"><?php printf("%01.3f", (($menu[0]['kingar_children_number'])*$productallcount[$products[$t]['id']]) / $products[$t]['div'] ); ?></td>
@@ -206,59 +265,14 @@
                     					}
 			                            ?>
 									</tr>
-									<tr>
-										<td scope="row" class="align-baseline" style="padding: 0px;">Нархи</td>
-										<td></td>
-										<?php
-										for($t = 0; $t < count($products); $t++){
-											if(isset($products[$t]['yes']) and isset($productallcount[$products[$t]['id']])){
-			                            ?>
-			                            	<td style="padding: 0px; font-size: 5px;"><?php printf("%01.2f", $narx[$products[$t]['id']]); ?></td>
-			                            <?php	
-											}
-											elseif(isset($products[$t]['yes'])){
-											?>
-												<td style="padding: 0px;"></td>
-											<?php	
-											}
-                    					}
-			                            ?>
-									</tr>
-									<tr>
-										<td scope="row" class="align-baseline" style="padding: 0px;"><b>Сумма жами:</b></td>
-										<td></td>
-										<?php
-										$chcost = 0;
-			                            for($t = 0; $t < count($products); $t++){
-											if(isset($products[$t]['yes']) and isset($productallcount[$products[$t]['id']])){
-												$chcost += (($menu[0]['kingar_children_number'])*$productallcount[$products[$t]['id']]) / $products[$t]['div'] * $narx[$products[$t]['id']];
-			                            ?>
-			                            <!---->
-			                            	<td style="padding: 0px; font-size: 5px"><?php printf("%01.2f", (($menu[0]['kingar_children_number'])*$productallcount[$products[$t]['id']]) / $products[$t]['div'] * $narx[$products[$t]['id']]); ?></td>
-			                            <?php	
-											}
-											elseif(isset($products[$t]['yes'])){
-											?>
-												<td style="padding: 0px;"></td>
-											<?php	
-											}
-                    					}
-			                            ?>
-									</tr>
-									<tr>
-										<td scope="row" class="align-baseline" style="padding: 0px;">Жами харажат</td>
-										<td></td>
-			                            <td style="padding: 0px; font-size: 5px" colspan="<?= $col; ?>"><?php printf("%01.2f", $chcost); ?></td>
-									</tr>
-									<tr style="border-top: 2px solid black;">
-										<th scope="row" rowspan="5" class='vrt-header' style="padding: 0px; border-top: 2px solid black"><span>Ходимлар</span></th>
-										<td scope="row" class="align-baseline" style="padding: 0px; border-top: 2px solid black">1 та ходим учун гр</td>
-										<td style="padding: 0px; border-top: 2px solid black"></td>
+
+									<tr style="border-top: 1px solid black;">
+										<td scope="row" colspan="3" class="align-baseline" style="padding: 0px; border-top: 1px solid black">1 та ходим учун гр</td>
 										<?php
 			                            for($t = 0; $t < count($products); $t++){
 											if(isset($products[$t]['yes']) and isset($workerproducts[$products[$t]['id']])){
 			                            ?>
-			                            	<td style="padding: 0px; font-size: 5px; border-top: 2px solid black"><?= $workerproducts[$products[$t]['id']]; ?></td>
+			                            	<td style="padding: 0px; font-size: 5px; border-top: 1px solid black"><?= $workerproducts[$products[$t]['id']]; ?></td>
 			                            <?php	
 											}
 											elseif(isset($products[$t]['yes'])){
@@ -270,10 +284,15 @@
 			                            ?>
 									</tr>
 									<tr>
-										<td scope="row" class="align-baseline" style="padding: 0px;">Жами миқдори</td>
-										<td></td>
+										<td scope="row" colspan="3" class="align-baseline" style="padding: 0px;">Жами миқдори (кг.хис)</td>
 										<?php
 			                            for($t = 0; $t < count($products); $t++){
+											if(!isset($total_weight[$products[$t]['id']])){
+												$total_weight[$products[$t]['id']] = 0;
+											}
+											if(isset($products[$t]['yes']) and isset($workerproducts[$products[$t]['id']])){
+												$total_weight[$products[$t]['id']] += (($menu[0]['workers_count'])*$workerproducts[$products[$t]['id']]) / $products[$t]['div'];
+											}
 											if(isset($products[$t]['yes']) and isset($workerproducts[$products[$t]['id']])){
 			                            ?>
 			                            	<td style="padding: 0px; font-size: 5px"><?php printf("%01.3f", (($menu[0]['workers_count'])*$workerproducts[$products[$t]['id']]) / $products[$t]['div']); ?></td>
@@ -288,14 +307,13 @@
 			                            ?>
 									</tr>
 									<tr>
-										<td scope="row" class="align-baseline" style="padding: 0px;">Нархи</td>
-										<td></td>
+										<td scope="row" colspan="3" class="align-baseline" style="padding: 0px;">Жами миқдори (кг.хис)</td>
 										<?php
-			                            for($t = 0; $t < count($products); $t++){
-											if(isset($products[$t]['yes']) and isset($workerproducts[$products[$t]['id']])){
-			                            ?>
-			                            	<td style="padding: 0px; font-size: 5px;"><?php printf("%01.2f", ($narx[$products[$t]['id']])); ?></td>
-			                            <?php	
+										for($t = 0; $t < count($products); $t++){
+											if(isset($products[$t]['yes']) and isset($total_weight[$products[$t]['id']])){
+											?>
+												<td style="padding: 0px; font-size: 5px"><?php printf("%01.3f", $total_weight[$products[$t]['id']]); ?></td>
+											<?php	
 											}
 											elseif(isset($products[$t]['yes'])){
 											?>
@@ -304,51 +322,6 @@
 											}
                     					}
 			                            ?>
-									</tr>
-									<tr>
-										<td scope="row" class="align-baseline" style="padding: 0px;"><b>Сумма жами</b></td>
-										<td></td>
-										<?php
-										$xcost = 0;
-			                            for($t = 0; $t < count($products); $t++){
-											if(isset($products[$t]['yes']) and isset($workerproducts[$products[$t]['id']])){
-												$xcost += (($menu[0]['workers_count'])*$workerproducts[$products[$t]['id']]) / $products[$t]['div'] * $narx[$products[$t]['id']];
-			                            ?>
-			                            	<td style="padding: 0px; font-size: 5px"><?php printf("%01.2f", (($menu[0]['workers_count'])*$workerproducts[$products[$t]['id']]) / $products[$t]['div'] * $narx[$products[$t]['id']]); ?></td>
-			                            <?php	
-											}
-											elseif(isset($products[$t]['yes'])){
-											?>
-												<td style="padding: 0px;"></td>
-											<?php	
-											}
-                    					}
-			                            ?>
-									</tr>
-									<tr>
-										<td scope="row" class="align-baseline" style="padding: 0px;">Жами харажат</td>
-										<td></td>
-			                            <td style="padding: 0px; font-size: 5px" colspan="<?= $col; ?>"><?php printf("%01.2f",$xcost); ?></td>
-									</tr>
-									<!--<tr style="border-top: 2px solid black;">-->
-									<!--	<th scope="row" colspan="2" class='vrt-header' style="padding: 0px; border-top: 2px solid black"><b>Жами махсулот оғирлиги</b></th>-->
-									<!--	<td style="padding: 0px; border-top: 2px solid black"></td>-->
-										
-									<!--</tr>-->
-									<tr>
-										<th scope="row" colspan="2" class="align-baseline" style="padding: 0px;">1 нафар бола учун</th>
-										<td></td>
-										<td style="padding: 0px; font-size: 5px" colspan="<?= $col; ?>"><?php printf("%01.2f", $chcost / $menu[0]['kingar_children_number']); ?></td>
-									</tr>
-									<tr>
-										<th scope="row" colspan="2" class="align-baseline" style="padding: 0px;">1 нафар ходим учун</th>
-										<td></td>
-										<td style="padding: 0px; font-size: 5px" colspan="<?= $col; ?>"><?php if($menu[0]['worker_count'] > 0) printf("%01.2f", $xcost / $menu[0]['worker_count']); else printf("%01.2f", 0);?></td>
-									</tr>
-									<tr>
-										<th scope="row" colspan="2" class="align-baseline" style="padding: 0px;">Умумий маблағ</th>
-										<td></td>
-			                            <td style="padding: 0px; font-size: 5px" colspan="<?= $col; ?>"><?php printf("%01.2f", $chcost + $xcost); ?></td>
 									</tr>
                         </tbody>
                       </table>

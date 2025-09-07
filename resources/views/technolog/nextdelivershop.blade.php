@@ -22,7 +22,7 @@
         </div>
     @endif
     <div class="row">
-        <div class="col-md-6">
+        <div class="col-md-4">
             <a href="#">
                 <i class="fas fa-store-alt" style="color: dodgerblue; font-size: 18px;"></i>
             </a>
@@ -39,9 +39,19 @@
         </div>
         <div class="col-md-3" style="text-align: center;">
             <b>PDF </b>
-            <a href="/technolog/nextdayshoppdf/{{ $shop['id'] }}" target="_blank">
-                <i class="far fa-file-pdf" style="color: dodgerblue; font-size: 18px;"></i>
+            <a href="/technolog/nextdayshoppdf/{{ $shop['id'] }}" target="_blank" title="PDF ko'chirish">
+                <i class="far fa-file-pdf" style="color: #dc3545; font-size: 18px; margin-right: 10px;"></i>
             </a>
+            <b>CSV </b>
+            <a href="/technolog/nextdayshopexcel/{{ $shop['id'] }}" title="CSV ko'chirish (Excel da ochiladi)">
+                <i class="far fa-file-excel" style="color: #198754; font-size: 18px;"></i>
+            </a>
+        </div>
+        <div class="col-md-2" style="text-align: right;">
+            <small class="text-muted">
+                <i class="fas fa-info-circle"></i>
+                PDF va CSV fayllar regionlar bo'yicha guruhlangan
+            </small>
         </div>
     </div>
     <hr>
@@ -79,13 +89,6 @@
                 @endforeach
             </tr>
             @endforeach
-            <!-- <tr>
-                <th></th>
-                <td></td>
-                @foreach($shop->product as $age)
-                    <td scope="col"> <b>Jami:</td>
-                @endforeach
-            </tr> -->
         </tbody>
     </table>
 </div>
@@ -135,6 +138,20 @@ document.getElementById('orderForm').addEventListener('submit', function(e) {
         icon.className = originalIcon;
         button.innerHTML = '<i class="fas fa-paper-plane" style="color: #28a745; font-size: 18px;"></i>';
     }, 2000);
+});
+
+// Excel yuklash holatini kuzatish
+document.querySelector('a[href*="nextdayshopexcel"]').addEventListener('click', function(e) {
+    var icon = this.querySelector('i');
+    var originalClass = icon.className;
+    
+    // Loading animatsiyasi
+    icon.className = 'fas fa-spinner fa-spin';
+    
+    // 3 soniyadan keyin asl holatga qaytarish
+    setTimeout(function() {
+        icon.className = originalClass;
+    }, 3000);
 });
 </script>
 @endsection

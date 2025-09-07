@@ -383,7 +383,7 @@ class TechnologController extends Controller
 
 
 
-
+    
 
     
     // O'tgan kunlar uchun ma'lumot qo'shish
@@ -678,29 +678,40 @@ class TechnologController extends Controller
 
     public function nextdayshoppdf(Request $request, $id){
         $shop = Shop::where('id', $id)->with('kindgarden.region')->with('product')->first();
-        // dd($shop);
-
+        
         $shopproducts = array();
+        $regions = []; // Regionlar ro'yxati
+        
         foreach($shop->kindgarden as $row){
             $shopproducts[$row->id]['name'] = $row->kingar_name;
+            $shopproducts[$row->id]['region_name'] = $row->region ? $row->region->region_name : '';
             $shopproducts[$row->id]['region_id'] = $row->region_id;
+            
+            // Regionni ro'yxatga qo'shish
+            if (!in_array($row->region_id, $regions)) {
+                $regions[] = $row->region_id;
+            }
+            
             $day = Day::orderBy('id', 'DESC')->first();
             foreach($shop->product as $prod){
-            	// echo $prod->id;
-            	$shopproducts[$row->id][$prod->id] = "";
+                $shopproducts[$row->id][$prod->id] = "";
                 $allsum = 0;
                 $onesum = 0;
                 $workers = 0;
                 $weight = 0;
                 $itempr = "";
-        		$nextday = Nextday_namber::orderBy('kingar_name_id', 'ASC')->orderBy('king_age_name_id', 'ASC')->get();
-        		// dd($nextday);
+                
+                $nextday = Nextday_namber::orderBy('kingar_name_id', 'ASC')->orderBy('king_age_name_id', 'ASC')->get();
+                
                 foreach($nextday as $next){
                     if($row->id == $next->kingar_name_id){
-                        $prlar =  Menu_composition::where('title_menu_id', $next->kingar_menu_id)->where('age_range_id', $next->king_age_name_id)->where('product_name_id', $prod->id)->get();
+                        $prlar = Menu_composition::where('title_menu_id', $next->kingar_menu_id)
+                            ->where('age_range_id', $next->king_age_name_id)
+                            ->where('product_name_id', $prod->id)->get();
+                        
                         foreach($prlar as $prw){
-                        	$itempr = $itempr . "+".$prw->weight." * ". $next->kingar_children_number;
-                        	$weight += $prw->weight * $next->kingar_children_number;
+                            $itempr = $itempr . "+".$prw->weight." * ". $next->kingar_children_number;
+                            $weight += $prw->weight * $next->kingar_children_number;
                         }
                         
                         // Xodimlar uchun ovqat gramajlarini hisoblash
@@ -710,7 +721,6 @@ class TechnologController extends Controller
                                     ->get();
                         
                         foreach($workerfood as $tr){
-                            // Tushlikdagi birinchi ovqat va nondan yeyishadi
                             $workerprlar = Menu_composition::where('title_menu_id', $next->kingar_menu_id)
                                             ->where('age_range_id', $next->king_age_name_id)
                                             ->where('menu_food_id', $tr->food_id)
@@ -723,34 +733,18 @@ class TechnologController extends Controller
                         }
                     }
                 }
-                // foreach($workeat as $wo){
-                //         $woe = Menu_composition::where('title_menu_id', $wo->titlemenu_id)
-                //                 ->where('menu_food_id', $wo->food_id)
-                //                 ->where('age_range_id', $wo->worker_age_id)
-                //                 ->where('product_name_id', $prod->id)
-                //                 ->sum('weight');
-                //         dd($woe);
-                        // if($woe > 0){
-                        // 	$itempr = $itempr . 
-                        // }
-                // }
-
-
 
                 $prdiv = Product::where('id', $prod->id)->first();
-                // $itempr . "=" .
                 $shopproducts[$row->id][$prod->id] = $weight / $prod->div; 
             }
         }
         
         // Muassasa nomlarini region nomi va raqamiga qarab saralash
         uasort($shopproducts, function($a, $b) {
-            // Avval region nomiga qarab saralash
-            if ($a['region_id'] !== $b['region_id']) {
-                return strcmp($a['region_id'], $b['region_id']);
+            if ($a['region_name'] !== $b['region_name']) {
+                return strcmp($a['region_name'], $b['region_name']);
             }
             
-            // Region nomi bir xil bo'lsa, muassasa nomidagi raqamga qarab saralash
             $a_number = preg_replace('/[^0-9]/', '', $a['name']);
             $b_number = preg_replace('/[^0-9]/', '', $b['name']);
             
@@ -758,26 +752,203 @@ class TechnologController extends Controller
                 return intval($a_number) - intval($b_number);
             }
             
-            // Raqam topilmasa, to'liq nomga qarab saralash
             return strcmp($a['name'], $b['name']);
         });
         
         $day = Day::join('months', 'days.month_id', '=', 'months.id')->orderBy('days.id', 'DESC')->first();
         
-        // dd($day);
+        // Regionlar bo'yicha guruhlash
+        $groupedByRegions = [];
+        foreach($shopproducts as $kindergartenId => $kindergartenData) {
+            $regionId = $kindergartenData['region_id'];
+            if (!isset($groupedByRegions[$regionId])) {
+                $groupedByRegions[$regionId] = [
+                    'region_name' => $kindergartenData['region_name'],
+                    'kindergartens' => []
+                ];
+            }
+            $groupedByRegions[$regionId]['kindergartens'][$kindergartenId] = $kindergartenData;
+        }
 
         $dompdf = new Dompdf('UTF-8');
-		$html = mb_convert_encoding(view('technolog.nextdayshoppdf', compact('shopproducts', 'shop', 'day')), 'HTML-ENTITIES', 'UTF-8');
-		$dompdf->loadHtml($html);
-		$dompdf->setPaper('A4');
-		// $customPaper = array(0,0,360,360);
-		// $dompdf->setPaper($customPaper);
-
+        $html = mb_convert_encoding(view('technolog.nextdayshoppdf', compact('groupedByRegions', 'shop', 'day')), 'HTML-ENTITIES', 'UTF-8');
+        $dompdf->loadHtml($html);
 		// Render the HTML as PDF
 		$dompdf->render();
 
 		// Output the generated PDF to Browser
 		$dompdf->stream('demo.pdf', ['Attachment' => 0]);
+    }
+
+    // ... existing code ...
+
+    public function nextdayshopexcel(Request $request, $id){
+        $shop = Shop::where('id', $id)->with('kindgarden.region')->with('product')->first();
+        
+        $shopproducts = array();
+        $regions = []; // Regionlar ro'yxati
+        
+        foreach($shop->kindgarden as $row){
+            $shopproducts[$row->id]['name'] = $row->kingar_name;
+            $shopproducts[$row->id]['region_name'] = $row->region ? $row->region->region_name : '';
+            $shopproducts[$row->id]['region_id'] = $row->region_id;
+            
+            // Regionni ro'yxatga qo'shish
+            if (!in_array($row->region_id, $regions)) {
+                $regions[] = $row->region_id;
+            }
+            
+            $day = Day::orderBy('id', 'DESC')->first();
+            foreach($shop->product as $prod){
+                $shopproducts[$row->id][$prod->id] = "";
+                $allsum = 0;
+                $onesum = 0;
+                $workers = 0;
+                $weight = 0;
+                $itempr = "";
+                
+                $nextday = Nextday_namber::orderBy('kingar_name_id', 'ASC')->orderBy('king_age_name_id', 'ASC')->get();
+                
+                foreach($nextday as $next){
+                    if($row->id == $next->kingar_name_id){
+                        $prlar = Menu_composition::where('title_menu_id', $next->kingar_menu_id)
+                            ->where('age_range_id', $next->king_age_name_id)
+                            ->where('product_name_id', $prod->id)->get();
+                            
+                        foreach($prlar as $prw){
+                            $itempr = $itempr . "+".$prw->weight." * ". $next->kingar_children_number;
+                            $weight += $prw->weight * $next->kingar_children_number;
+                        }
+                        
+                        // Xodimlar uchun ovqat gramajlarini hisoblash
+                        $workerfood = titlemenu_food::where('day_id', $day->id)
+                                    ->where('worker_age_id', $next->king_age_name_id)
+                                    ->where('titlemenu_id', $next->kingar_menu_id)
+                                    ->get();
+                        
+                        foreach($workerfood as $tr){
+                            $workerprlar = Menu_composition::where('title_menu_id', $next->kingar_menu_id)
+                                            ->where('age_range_id', $next->king_age_name_id)
+                                            ->where('menu_food_id', $tr->food_id)
+                                            ->where('product_name_id', $prod->id)
+                                            ->get();
+                            
+                            foreach($workerprlar as $wpr){
+                                $weight += $wpr->weight * $next->workers_count;
+                            }
+                        }
+                    }
+                }
+
+                $prdiv = Product::where('id', $prod->id)->first();
+                $shopproducts[$row->id][$prod->id] = $weight / $prod->div; 
+            }
+        }
+        
+        // Muassasa nomlarini region nomi va raqamiga qarab saralash
+        uasort($shopproducts, function($a, $b) {
+            if ($a['region_name'] !== $b['region_name']) {
+                return strcmp($a['region_name'], $b['region_name']);
+            }
+            
+            $a_number = preg_replace('/[^0-9]/', '', $a['name']);
+            $b_number = preg_replace('/[^0-9]/', '', $b['name']);
+            
+            if ($a_number && $b_number) {
+                return intval($a_number) - intval($b_number);
+            }
+            
+            return strcmp($a['name'], $b['name']);
+        });
+        
+        $day = Day::join('months', 'days.month_id', '=', 'months.id')->orderBy('days.id', 'DESC')->first();
+        
+        // Regionlar bo'yicha guruhlash
+        $groupedByRegions = [];
+        foreach($shopproducts as $kindergartenId => $kindergartenData) {
+            $regionId = $kindergartenData['region_id'];
+            if (!isset($groupedByRegions[$regionId])) {
+                $groupedByRegions[$regionId] = [
+                    'region_name' => $kindergartenData['region_name'],
+                    'kindergartens' => []
+                ];
+            }
+            $groupedByRegions[$regionId]['kindergartens'][$kindergartenId] = $kindergartenData;
+        }
+
+        // CSV fayl yaratish (to'g'ri format)
+        $filename = $shop['shop_name'] . '_' . $day->day_number . '-' . $day->month_name . '.csv';
+        
+        $headers = [
+            'Content-Type' => 'text/csv; charset=UTF-8',
+            'Content-Disposition' => 'attachment; filename="' . $filename . '"',
+            'Cache-Control' => 'must-revalidate, post-check=0, pre-check=0',
+            'Pragma' => 'public'
+        ];
+        
+        $callback = function() use ($groupedByRegions, $shop, $day) {
+            $file = fopen('php://output', 'w');
+            
+            // BOM qo'shish UTF-8 uchun
+            fprintf($file, chr(0xEF).chr(0xBB).chr(0xBF));
+            
+            foreach($groupedByRegions as $regionId => $regionData) {
+                // Region header
+                fputcsv($file, [$regionData['region_name'] . ' ХУДУДИ'], ',');
+                fputcsv($file, [$shop['shop_name'] . '     sana: ' . $day->day_number . '-' . $day->month_name], ',');
+                fputcsv($file, [], ','); // Bo'sh qator
+                
+                // Jadval header
+                $headerRow = ['ID', 'MTT-номи'];
+                foreach($shop->product as $product) {
+                    $headerRow[] = $product->product_name;
+                }
+                fputcsv($file, $headerRow, ',');
+                
+                // Ma'lumotlar
+                $tr = 1;
+                $counts = [];
+                foreach($regionData['kindergartens'] as $kindergartenId => $kindergartenData) {
+                    $row = [$tr++, $kindergartenData['name']];
+                    
+                    foreach($shop->product as $product) {
+                        if(!isset($counts[$product->id])) {
+                            $counts[$product->id] = 0;
+                        }
+                        
+                        $result = 0;
+                        if(isset($kindergartenData[$product->id]) && $kindergartenData[$product->id] > 0){
+                            $result = $kindergartenData[$product->id];
+                            if($product->size_name_id == 3 || $product->size_name_id == 2){ 
+                                $result = round($result);
+                            } else {
+                                $result = round($result, 1);
+                            }
+                        }
+                        
+                        $row[] = $result;
+                        $counts[$product->id] += $result;
+                    }
+                    
+                    fputcsv($file, $row, ',');
+                }
+                
+                // Jami qator
+                $totalRow = ['', $regionData['region_name'] . ' ХУДУДИ ЖАМИ:'];
+                foreach($shop->product as $product) {
+                    $totalRow[] = $counts[$product->id];
+                }
+                fputcsv($file, $totalRow, ',');
+                
+                // Bo'sh qatorlar
+                fputcsv($file, [], ',');
+                fputcsv($file, [], ',');
+            }
+            
+            fclose($file);
+        };
+        
+        return response()->stream($callback, 200, $headers);
     }
 
     public function updateBulkAgeMenu(Request $request)
@@ -3312,8 +3483,7 @@ class TechnologController extends Controller
             ->get(['days.id', 'days.day_number', 'months.month_name', 'years.year_name']);
         
         // Bog'chalarni tuman bo'yicha guruhlash
-        $kindgardens = Kindgarden::where('hide', 1)
-            ->with('region')
+        $kindgardens = Kindgarden::with('region')
             ->when($regionId, function($query) use ($regionId) {
                 return $query->where('region_id', $regionId);
             })
@@ -3344,75 +3514,54 @@ class TechnologController extends Controller
                         'id' => $kindgarden->id,
                         'name' => $kindgarden->kingar_name,
                         'number_of_org' => $kindgarden->number_of_org,
-                        'age_groups' => [] // Yosh guruhlari uchun
+                        'days' => [], // Har bir kun uchun ma'lumotlar
+                        'total' => 0,
+                        'short_total' => 0,
+                        'workers_total' => 0
                     ];
                     
-                    $kindgardenTotal = 0; // Bog'cha bo'yicha jami bolalar
+                    $kindgardenTotal = 0;
+                    $kindgardenShortTotal = 0;
+                    $kindgardenWorkersTotal = 0;
                     
-                    // Har bir yosh guruhi uchun ma'lumotlarni olish
-                    foreach ($ageRanges as $ageRange) {
-                        $ageGroupData = [
-                            'age_id' => $ageRange->id,
-                            'age_name' => $ageRange->age_name,
-                            'days' => []
+                    // Har bir kun uchun ma'lumotlarni olish
+                    foreach ($selectedDays as $day) {
+                        // 3-7 yosh bolalar soni (age_id = 4)
+                        $childrenCount = Number_children::where('day_id', $day->id)
+                            ->where('kingar_name_id', $kindgarden->id)
+                            ->where('king_age_name_id', 4) // 3-7 yosh
+                            ->sum('kingar_children_number');
+                        
+                        // Qisqa guruh bolalar soni (age_id = 5)
+                        $shortGroupCount = Number_children::where('day_id', $day->id)
+                            ->where('kingar_name_id', $kindgarden->id)
+                            ->where('king_age_name_id', 5) // Qisqa guruh
+                            ->sum('kingar_children_number');
+                        
+                        // Xodimlar soni
+                        $workersCount = Number_children::where('day_id', $day->id)
+                            ->where('kingar_name_id', $kindgarden->id)
+                            ->where('king_age_name_id', 4) // 3-7 yosh uchun xodimlar
+                            ->sum('workers_count');
+                        
+                        $kindgardenData['days'][$day->id] = [
+                            'children_count' => $childrenCount,
+                            'short_group_count' => $shortGroupCount,
+                            'workers_count' => $workersCount
                         ];
                         
-                        $ageGroupTotal = 0; // Yosh guruhi bo'yicha jami bolalar
-                        
-                        // Har bir kun uchun yosh guruhi bo'yicha bolalar sonini olish
-                        foreach ($selectedDays as $day) {
-                            $childrenCount = Number_children::where('day_id', $day->id)
-                                ->where('kingar_name_id', $kindgarden->id)
-                                ->where('king_age_name_id', $ageRange->id)
-                                ->sum('kingar_children_number');
-                            
-                            $ageGroupData['days'][$day->id] = [
-                                'day_number' => $day->day_number,
-                                'month_name' => $day->month_name,
-                                'year_name' => $day->year_name,
-                                'children_count' => $childrenCount
-                            ];
-                            
-                            // Yosh guruhi bo'yicha jami bolalar sonini hisoblash
-                            $ageGroupTotal += $childrenCount;
-                            
-                            // Tuman bo'yicha jami bolalar sonini hisoblash
-                            if (!isset($regionTotalChildren[$day->id])) {
-                                $regionTotalChildren[$day->id] = 0;
-                            }
-                            $regionTotalChildren[$day->id] += $childrenCount;
-                        }
-                        
-                        // Yosh guruhi bo'yicha jami qo'shish
-                        $ageGroupData['total'] = $ageGroupTotal;
-                        $kindgardenData['age_groups'][] = $ageGroupData;
-                        
-                        // Bog'cha bo'yicha jami bolalar sonini hisoblash
-                        $kindgardenTotal += $ageGroupTotal;
+                        // Jami hisoblash
+                        $kindgardenTotal += $childrenCount;
+                        $kindgardenShortTotal += $shortGroupCount;
+                        $kindgardenWorkersTotal += $workersCount;
                     }
                     
                     // Bog'cha bo'yicha jami qo'shish
                     $kindgardenData['total'] = $kindgardenTotal;
+                    $kindgardenData['short_total'] = $kindgardenShortTotal;
+                    $kindgardenData['workers_total'] = $kindgardenWorkersTotal;
                     
                     $attendanceData[$region->id]['kindgardens'][] = $kindgardenData;
-                }
-                
-                // Tuman bo'yicha jami qatorini qo'shish
-                $attendanceData[$region->id]['total_row'] = [
-                    'name' => 'JAMI',
-                    'number_of_org' => '',
-                    'days' => $regionTotalChildren
-                ];
-            }
-        }
-        
-        // Ustun bo'yicha jami hisoblash (har bir kun uchun barcha bog'chalar bo'yicha)
-        $columnTotals = [];
-        foreach ($selectedDays as $day) {
-            $columnTotals[$day->id] = 0;
-            foreach ($attendanceData as $regionData) {
-                if (isset($regionData['total_row']['days'][$day->id])) {
-                    $columnTotals[$day->id] += $regionData['total_row']['days'][$day->id];
                 }
             }
         }
@@ -3420,9 +3569,7 @@ class TechnologController extends Controller
         return response()->json([
             'success' => true,
             'data' => $attendanceData,
-            'days' => $selectedDays,
-            'column_totals' => $columnTotals,
-            'age_ranges' => $ageRanges
+            'days' => $selectedDays
         ]);
     }
     
@@ -3442,17 +3589,13 @@ class TechnologController extends Controller
             ->get(['days.id', 'days.day_number', 'months.month_name', 'years.year_name']);
         
         // Bog'chalarni tuman bo'yicha guruhlash
-        $kindgardens = Kindgarden::where('hide', 1)
-            ->with('region')
+        $kindgardens = Kindgarden::with('region')
             ->when($regionId, function($query) use ($regionId) {
                 return $query->where('region_id', $regionId);
             })
             ->orderBy('region_id')
             ->orderBy('number_of_org')
             ->get();
-        
-        // Yosh guruhlarini olish
-        $ageRanges = Age_range::all();
         
         // Har bir tuman uchun ma'lumotlarni tayyorlash
         $regions = Region::all();
@@ -3467,92 +3610,72 @@ class TechnologController extends Controller
                     'kindgardens' => []
                 ];
                 
-                $regionTotalChildren = []; // Har bir kun uchun tuman bo'yicha jami bolalar
-                
                 foreach ($regionKindgardens as $kindgarden) {
                     $kindgardenData = [
                         'id' => $kindgarden->id,
-                        'name' => $kindgarden->kingar_name,
+                        'kingar_name' => $kindgarden->kingar_name,
                         'number_of_org' => $kindgarden->number_of_org,
-                        'age_groups' => [] // Yosh guruhlari uchun
+                        'days' => [], // Har bir kun uchun ma'lumotlar
+                        'total' => 0,
+                        'short_total' => 0,
+                        'workers_total' => 0
                     ];
                     
-                    $kindgardenTotal = 0; // Bog'cha bo'yicha jami bolalar
+                    $kindgardenTotal = 0;
+                    $kindgardenShortTotal = 0;
+                    $kindgardenWorkersTotal = 0;
                     
-                    // Har bir yosh guruhi uchun ma'lumotlarni olish
-                    foreach ($ageRanges as $ageRange) {
-                        $ageGroupData = [
-                            'age_id' => $ageRange->id,
-                            'age_name' => $ageRange->age_name,
-                            'days' => []
+                    // Har bir kun uchun ma'lumotlarni olish
+                    foreach ($selectedDays as $day) {
+                        // 3-7 yosh bolalar soni (age_id = 4)
+                        $childrenCount = Number_children::where('day_id', $day->id)
+                            ->where('kingar_name_id', $kindgarden->id)
+                            ->where('king_age_name_id', 4) // 3-7 yosh
+                            ->sum('kingar_children_number');
+                        
+                        // Qisqa guruh bolalar soni (age_id = 5)
+                        $shortGroupCount = Number_children::where('day_id', $day->id)
+                            ->where('kingar_name_id', $kindgarden->id)
+                            ->where('king_age_name_id', 5) // Qisqa guruh
+                            ->sum('kingar_children_number');
+                        
+                        // Xodimlar soni
+                        $workersCount = Number_children::where('day_id', $day->id)
+                            ->where('kingar_name_id', $kindgarden->id)
+                            ->where('king_age_name_id', 4) // 3-7 yosh uchun xodimlar
+                            ->sum('workers_count');
+                        
+                        $kindgardenData['days'][$day->id] = [
+                            'children_count' => $childrenCount,
+                            'short_group_count' => $shortGroupCount,
+                            'workers_count' => $workersCount
                         ];
                         
-                        $ageGroupTotal = 0; // Yosh guruhi bo'yicha jami bolalar
-                        
-                        // Har bir kun uchun yosh guruhi bo'yicha bolalar sonini olish
-                        foreach ($selectedDays as $day) {
-                            $childrenCount = Number_children::where('day_id', $day->id)
-                                ->where('kingar_name_id', $kindgarden->id)
-                                ->where('king_age_name_id', $ageRange->id)
-                                ->sum('kingar_children_number');
-                            
-                            $ageGroupData['days'][$day->id] = [
-                                'day_number' => $day->day_number,
-                                'month_name' => $day->month_name,
-                                'year_name' => $day->year_name,
-                                'children_count' => $childrenCount
-                            ];
-                            
-                            // Yosh guruhi bo'yicha jami bolalar sonini hisoblash
-                            $ageGroupTotal += $childrenCount;
-                            
-                            // Tuman bo'yicha jami bolalar sonini hisoblash
-                            if (!isset($regionTotalChildren[$day->id])) {
-                                $regionTotalChildren[$day->id] = 0;
-                            }
-                            $regionTotalChildren[$day->id] += $childrenCount;
-                        }
-                        
-                        // Yosh guruhi bo'yicha jami qo'shish
-                        $ageGroupData['total'] = $ageGroupTotal;
-                        $kindgardenData['age_groups'][] = $ageGroupData;
-                        
-                        // Bog'cha bo'yicha jami bolalar sonini hisoblash
-                        $kindgardenTotal += $ageGroupTotal;
+                        // Jami hisoblash
+                        $kindgardenTotal += $childrenCount;
+                        $kindgardenShortTotal += $shortGroupCount;
+                        $kindgardenWorkersTotal += $workersCount;
                     }
                     
                     // Bog'cha bo'yicha jami qo'shish
                     $kindgardenData['total'] = $kindgardenTotal;
+                    $kindgardenData['short_total'] = $kindgardenShortTotal;
+                    $kindgardenData['workers_total'] = $kindgardenWorkersTotal;
                     
                     $attendanceData[$region->id]['kindgardens'][] = $kindgardenData;
                 }
-                
-                // Tuman bo'yicha jami qatorini qo'shish
-                $attendanceData[$region->id]['total_row'] = [
-                    'name' => 'JAMI',
-                    'number_of_org' => '',
-                    'days' => $regionTotalChildren
-                ];
             }
         }
         
-        $dompdf = new Dompdf('UTF-8');
-        $html = mb_convert_encoding(view('technolog.bolalar_qatnovi_pdf', compact('attendanceData', 'selectedDays', 'ageRanges')), 'HTML-ENTITIES', 'UTF-8');
-        $dompdf->loadHtml($html);
-        $dompdf->setPaper('A4', 'landscape');
-        $dompdf->render();
+        // PDF yaratish
+        $pdf = \PDF::loadView('technolog.bolalar_qatnovi_pdf', [
+            'attendanceData' => $attendanceData,
+            'selectedDays' => $selectedDays
+        ]);
         
-        $regionName = $regionId ? Region::find($regionId)->region_name : 'Barcha_tumanlar';
-        $startDay = Day::with('month')->find($startDate);
-        $endDay = Day::with('month')->find($endDate);
+        $fileName = 'bolalar_qatnovi_' . date('Y-m-d_H-i-s') . '.pdf';
         
-        if ($startDay && $endDay && $startDay->month && $endDay->month) {
-            $filename = "Bolalar_qatnovi_{$regionName}_{$startDay->day_number}.{$startDay->month->month_name}-{$endDay->day_number}.{$endDay->month->month_name}.pdf";
-        } else {
-            $filename = "Bolalar_qatnovi_{$regionName}_" . date('Y-m-d') . ".pdf";
-        }
-        
-        $dompdf->stream($filename, ['Attachment' => 1]);
+        return $pdf->download($fileName);
     }
     
     // Excel ga yuklab olish
@@ -3571,17 +3694,13 @@ class TechnologController extends Controller
             ->get(['days.id', 'days.day_number', 'months.month_name', 'years.year_name']);
         
         // Bog'chalarni tuman bo'yicha guruhlash
-        $kindgardens = Kindgarden::where('hide', 1)
-            ->with('region')
+        $kindgardens = Kindgarden::with('region')
             ->when($regionId, function($query) use ($regionId) {
                 return $query->where('region_id', $regionId);
             })
             ->orderBy('region_id')
             ->orderBy('number_of_org')
             ->get();
-        
-        // Yosh guruhlarini olish
-        $ageRanges = Age_range::all();
         
         // Har bir tuman uchun ma'lumotlarni tayyorlash
         $regions = Region::all();
@@ -4748,4 +4867,254 @@ class TechnologController extends Controller
             echo "Xatolik: " . $e->getMessage() . "\n";
         }
     }
+
+    public function downloadShowdateMenusPDF(Request $request)
+    {
+        try {
+            // Region ID ni tekshirish
+            $regionId = $request->input('region_id');
+            
+            if (!$regionId) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Iltimos, hududni tanlang!'
+                ], 400);
+            }
+            
+            // Tanlangan region bo'yicha bog'chalarni olish
+            $kindergartens = Kindgarden::where('region_id', $regionId)
+                ->with('age_range')
+                ->get();
+                
+            if ($kindergartens->isEmpty()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Tanlangan hududda hech qanday bog\'cha topilmadi!'
+                ], 404);
+            }
+            
+            // Vaqtinchalik papka yaratish
+            $tempDir = storage_path('app/temp_zip_' . time());
+            if (!file_exists($tempDir)) {
+                mkdir($tempDir, 0755, true);
+            }
+            
+            $pdfFiles = [];
+            $dayId = $request->input('day_id'); // Kun ID sini olish
+            
+            foreach ($kindergartens as $kindergarten) {
+                // Har bir bog'cha uchun har bir yosh guruhida PDF yaratish
+                $ageRanges = Age_range::all();
+                
+                foreach ($ageRanges as $ageRange) {
+                    // Number_childrens jadvalidan ma'lumotlarni olish
+                    $numberChildren = Number_children::where([
+                        ['kingar_name_id', '=', $kindergarten->id],
+                        ['day_id', '=', $dayId],
+                        ['king_age_name_id', '=', $ageRange->id]
+                    ])->first();
+                    
+                    if ($numberChildren) {
+                        $pdfPath = $this->createShowdateMenuPDF($numberChildren, $kindergarten, $ageRange, $dayId, $tempDir);
+                        if ($pdfPath) {
+                            $pdfFiles[] = $pdfPath;
+                        }
+                    }
+                }
+            }
+            
+            if (empty($pdfFiles)) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Hech qanday PDF fayl yaratilmadi!'
+                ], 404);
+            }
+            
+            // ZIP fayl yaratish
+            $zipFileName = 'showdate_menus_' . $regionId . '_' . date('Y-m-d_H-i-s') . '.zip';
+            $zipPath = storage_path('app/' . $zipFileName);
+            
+            $zip = new \ZipArchive();
+            if ($zip->open($zipPath, \ZipArchive::CREATE) !== TRUE) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'ZIP fayl yaratishda xatolik!'
+                ], 500);
+            }
+            
+            foreach ($pdfFiles as $pdfFile) {
+                $zip->addFile($pdfFile, basename($pdfFile));
+            }
+            
+            $zip->close();
+            
+            // Temporary fayllarni o'chirish
+            foreach ($pdfFiles as $pdfFile) {
+                if (file_exists($pdfFile)) {
+                    unlink($pdfFile);
+                }
+            }
+            rmdir($tempDir);
+            
+            return response()->download($zipPath, $zipFileName)->deleteFileAfterSend(true);
+            
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Xatolik: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    private function createShowdateMenuPDF($numberChildren, $kindergarten, $ageRange, $dayId, $tempDir)
+    {
+        try {
+            // Active_menu dan ma'lumotlarni olish
+            $menu = Number_children::where([
+                ['kingar_name_id', '=', $kindergarten->id],
+                ['day_id', '=', $dayId],
+                ['king_age_name_id', '=', $ageRange->id]
+            ])
+            ->join('kindgardens', 'number_childrens.kingar_name_id', '=', 'kindgardens.id')
+            ->join('age_ranges', 'number_childrens.king_age_name_id', '=', 'age_ranges.id')
+            ->first();
+            
+            if (!$menu) {
+                return null;
+            }
+            
+            $taomnoma = Titlemenu::where('id', $menu->kingar_menu_id)->first();
+            
+            $products = Product::where('hide', 1)
+                ->leftjoin('sizes', 'sizes.id', '=', 'products.size_name_id')
+                ->orderBy('sort', 'ASC')->get(['products.*', 'sizes.size_name']);
+            
+            $menuitem = Active_menu::where('day_id', $dayId)
+                ->where('title_menu_id', $menu->kingar_menu_id)
+                ->where('age_range_id', $ageRange->id)
+                ->join('meal_times', 'active_menus.menu_meal_time_id', '=', 'meal_times.id')
+                ->join('food', 'active_menus.menu_food_id', '=', 'food.id')
+                ->join('products', 'active_menus.product_name_id', '=', 'products.id')
+                ->join('sizes', 'sizes.id', '=', 'products.size_name_id')
+                ->orderBy('menu_meal_time_id')
+                ->orderBy('menu_food_id')
+                ->get();
+            
+            $day = Day::where('days.id', $dayId)
+                ->join('months', 'months.id', '=', 'days.month_id')
+                ->join('years', 'years.id', '=', 'days.year_id')
+                ->orderBy('days.id', 'DESC')
+                ->first(['days.day_number','days.id as id', 'months.month_name', 'years.year_name']);
+            
+            $workerfood = titlemenu_food::where('day_id', ($dayId-1))
+                ->where('worker_age_id', $ageRange->id)
+                ->where('titlemenu_id', $menu->kingar_menu_id)
+                ->get();
+            
+            $costs = bycosts::where('day_id', bycosts::where('day_id', '<=', $dayId)->where('region_name_id', $kindergarten->region_id)->orderBy('day_id', 'DESC')->first()->day_id)
+                ->where('region_name_id', $kindergarten->region_id)
+                ->orderBy('day_id', 'DESC')
+                ->get();
+            
+            $narx = [];
+            foreach($costs as $row){
+                if(!isset($narx[$row->praduct_name_id])){
+                    $narx[$row->praduct_name_id] = $row->price_cost;
+                }
+            }
+            
+            $nextdaymenuitem = [];
+            $workerproducts = [];
+            $productallcount = array_fill(1, 500, 0);
+            
+            foreach($menuitem as $item){
+                $nextdaymenuitem[$item->menu_meal_time_id][0]['mealtime'] = $item->meal_time_name; 
+                $nextdaymenuitem[$item->menu_meal_time_id][$item->menu_food_id][$item->product_name_id] = $item->weight;
+                $nextdaymenuitem[$item->menu_meal_time_id][$item->menu_food_id]['foodname'] = $item->food_name; 
+                $nextdaymenuitem[$item->menu_meal_time_id][$item->menu_food_id]['foodweight'] = $item->food_weight; 
+                $productallcount[$item->product_name_id] += $item->weight;
+                
+                for($i = 0; $i<count($products); $i++){
+                    if(empty($products[$i]['yes']) and $products[$i]['id'] == $item->product_name_id){
+                        $products[$i]['yes'] = 1;
+                    }
+                }
+            }
+            
+            $workerproducts = array_fill(1, 500, 0);
+            foreach($workerfood as $tr){
+                if(isset($nextdaymenuitem[3][$tr->food_id])){
+                    foreach($nextdaymenuitem[3][$tr->food_id] as $key => $value){
+                        if($key != 'foodname' and $key != 'foodweight'){
+                            $workerproducts[$key] += $value; 
+                        }
+                    }
+                }
+            }
+            
+            // DomPDF yordamida PDF yaratish
+            $dompdf = new Dompdf('UTF-8');
+            $html = mb_convert_encoding(view('pdffile.technolog.activmenu', [
+                'narx' => $narx,
+                'day' => $day,
+                'productallcount' => $productallcount,
+                'workerproducts' => $workerproducts,
+                'menu' => [$menu],
+                'menuitem' => $nextdaymenuitem,
+                'products' => $products,
+                'workerfood' => $workerfood
+            ]), 'HTML-ENTITIES', 'UTF-8');
+            
+            $dompdf->loadHtml($html);
+            $dompdf->setPaper('A4', 'landscape');
+            
+            $fileName = $this->cleanFileName($kindergarten->kingar_name) . '_' . $ageRange->age_name . '_' . date('Y-m-d') . '.pdf';
+            $pdfPath = $tempDir . '/' . $fileName;
+            
+            $dompdf->render();
+            file_put_contents($pdfPath, $dompdf->output());
+            
+            return $pdfPath;
+            
+        } catch (\Exception $e) {
+            return null;
+        }
+    }
+
+    // ... existing code ...
+
+    public function editWorkersCount(Request $request)
+    {
+        try {
+            $request->validate([
+                'day_id' => 'required|integer',
+                'kingar_name_id' => 'required|integer',
+                'workers_count' => 'required|integer|min:0'
+            ]);
+
+            // Number_childrens jadvalida barcha mos qatorlarni yangilash
+            $updated = Number_children::where('day_id', $request->day_id)
+                ->where('kingar_name_id', $request->kingar_name_id)
+                ->update(['workers_count' => $request->workers_count]);
+
+            if ($updated > 0) {
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Xodimlar soni muvaffaqiyatli yangilandi!',
+                    'updated_count' => $updated
+                ]);
+            } else {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Hech qanday qator topilmadi!'
+                ], 404);
+            }
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Xatolik: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
 }

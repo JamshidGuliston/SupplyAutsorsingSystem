@@ -303,7 +303,14 @@ Route::group(['prefix' => 'technolog', 'middleware' => ['isTechnolog', 'auth']],
     Route::post('/updatetitlemenu', [TechnologController::class, 'updateTitlemenu'])->name('technolog.updateTitlemenu');
     Route::post('/deletetitlemenu', [TechnologController::class, 'deleteTitlemenu'])->name('technolog.deleteTitlemenu');
     Route::get('createKindergartenMenuPDF/{garden_id}/{age_id}/{temp}', [TechnologController::class, 'createKindergartenMenuPDF'])->name('technolog.createKindergartenMenuPDF');
+    
+    // ... existing routes ...
+    // ... existing routes ...
 
+    Route::get('/download-showdate-menus-pdf', [TechnologController::class, 'downloadShowdateMenusPDF'])->name('technolog.downloadShowdateMenusPDF');
+    Route::post('/edit-workers-count', [TechnologController::class, 'editWorkersCount'])->name('technolog.editWorkersCount');
+
+    Route::get('nextdayshopexcel/{id}', [TechnologController::class, 'nextdayshopexcel'])->name('technolog.nextdayshopexcel');
     Route::get('/test-zip-creation', [TechnologController::class, 'testZipCreation']);
 });
 

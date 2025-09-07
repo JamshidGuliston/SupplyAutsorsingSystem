@@ -43,9 +43,9 @@ use App\Models\Shop;
 use App\Models\Shop_product;
 use App\Models\Size;
 use App\Models\titlemenu_food;
-use Dompdf\Dompdf;
 use PhpParser\Node\Stmt\Foreach_;
 use TCG\Voyager\Models\Category;
+use Dompdf\Dompdf; 
 
 class TestController extends Controller
 {
@@ -139,42 +139,63 @@ class TestController extends Controller
 		
 
 		// Snappy bilan PDF yaratish
-		$pdf = \PDF::loadView('pdffile.technolog.alltable', [
-			'narx' => $narx,
-			'day' => $day,
-			'productallcount' => $productallcount,
-			'workerproducts' => $workerproducts,
-			'menu' => $menu,
-			'menuitem' => $nextdaymenuitem,
-			'products' => $products,
-			'workerfood' => $workerfood,
-			'taomnoma' => $taomnoma
-		]);
-
-		// PDF sozlamalari
-		$pdf->setPaper('a4', 'landscape')
-			->setOptions([
-				'encoding' => 'UTF-8',
-				'enable-javascript' => true,
-				'javascript-delay' => 1000,
-				'enable-smart-shrinking' => true,
-				'no-stop-slow-scripts' => true,
-				'disable-smart-shrinking' => false,
-				'print-media-type' => true,
-				'dpi' => 300,
-				'image-quality' => 100,
-				'margin-top' => 10,
-				'margin-right' => 10,
-				'margin-bottom' => 10,
-				'margin-left' => 10,
-				'enable-local-file-access' => true,
-				'load-error-handling' => 'ignore',
-				'load-media-error-handling' => 'ignore',
+		try {
+			$pdf = \PDF::loadView('pdffile.technolog.alltable', [
+				'narx' => $narx,
+				'day' => $day,
+				'productallcount' => $productallcount,
+				'workerproducts' => $workerproducts,
+				'menu' => $menu,
+				'menuitem' => $nextdaymenuitem,
+				'products' => $products,
+				'workerfood' => $workerfood,
+				'taomnoma' => $taomnoma
 			]);
 
-		$name = $day['id'].'-'.$gid.'-'.$ageid."taxminiy.pdf";
-		// PDF ni brauzerga yuborish
-		return $pdf->stream($name);
+			$pdf->setPaper('a4', 'landscape')
+				->setOptions([
+					'encoding' => 'UTF-8',
+					'enable-javascript' => true,
+					'javascript-delay' => 1000,
+					'enable-smart-shrinking' => true,
+					'no-stop-slow-scripts' => true,
+					'disable-smart-shrinking' => false,
+					'print-media-type' => true,
+					'dpi' => 300,
+					'image-quality' => 100,
+					'margin-top' => 10,
+					'margin-right' => 10,
+					'margin-bottom' => 10,
+					'margin-left' => 10,
+					'enable-local-file-access' => true,
+					'load-error-handling' => 'ignore',
+					'load-media-error-handling' => 'ignore',
+				]);
+
+			$name = $day['id'].'-'.$gid.'-'.$ageid."taxminiy.pdf";
+			return $pdf->download($name);
+		} catch (\Exception $e) {
+			// Snappy ishlamasa, DomPDF ishlatish
+			$dompdf = new Dompdf('UTF-8');
+			$html = mb_convert_encoding(view('pdffile.technolog.alltable', [
+				'narx' => $narx,
+				'day' => $day,
+				'productallcount' => $productallcount,
+				'workerproducts' => $workerproducts,
+				'menu' => $menu,
+				'menuitem' => $nextdaymenuitem,
+				'products' => $products,
+				'workerfood' => $workerfood,
+				'taomnoma' => $taomnoma
+			]), 'HTML-ENTITIES', 'UTF-8');
+			
+			$dompdf->loadHtml($html);
+			$dompdf->setPaper('A4', 'landscape');
+			$name = $day['id'].'-'.$gid.'-'.$ageid."taxminiy.pdf";
+			$dompdf->render();
+			
+			return $dompdf->stream($name, ['Attachment' => 0]);
+		}
 	}
 
 	public function activmenuPDF(Request $request, $today, $gid, $ageid)
@@ -768,30 +789,40 @@ class TestController extends Controller
 	// pdf shoplarga
 	public function nextdayshoppdf(Request $request, $id){
         $shop = Shop::where('id', $id)->with('kindgarden.region')->with('product')->first();
-        // dd($shop);
-
+        
         $shopproducts = array();
+        $regions = []; // Regionlar ro'yxati
+        
         foreach($shop->kindgarden as $row){
             $shopproducts[$row->id]['name'] = $row->kingar_name;
             $shopproducts[$row->id]['region_name'] = $row->region ? $row->region->region_name : '';
             $shopproducts[$row->id]['region_id'] = $row->region_id;
+            
+            // Regionni ro'yxatga qo'shish
+            if (!in_array($row->region_id, $regions)) {
+                $regions[] = $row->region_id;
+            }
+            
             $day = Day::orderBy('id', 'DESC')->first();
             foreach($shop->product as $prod){
-            	// echo $prod->id;
-            	$shopproducts[$row->id][$prod->id] = "";
+                $shopproducts[$row->id][$prod->id] = "";
                 $allsum = 0;
                 $onesum = 0;
                 $workers = 0;
                 $weight = 0;
                 $itempr = "";
-        		$nextday = Nextday_namber::orderBy('kingar_name_id', 'ASC')->orderBy('king_age_name_id', 'ASC')->get();
-        		// dd($nextday);
+                
+                $nextday = Nextday_namber::orderBy('kingar_name_id', 'ASC')->orderBy('king_age_name_id', 'ASC')->get();
+                
                 foreach($nextday as $next){
                     if($row->id == $next->kingar_name_id){
-                        $prlar =  Menu_composition::where('title_menu_id', $next->kingar_menu_id)->where('age_range_id', $next->king_age_name_id)->where('product_name_id', $prod->id)->get();
+                        $prlar = Menu_composition::where('title_menu_id', $next->kingar_menu_id)
+                            ->where('age_range_id', $next->king_age_name_id)
+                            ->where('product_name_id', $prod->id)->get();
+                        
                         foreach($prlar as $prw){
-                        	$itempr = $itempr . "+".$prw->weight." * ". $next->kingar_children_number;
-                        	$weight += $prw->weight * $next->kingar_children_number;
+                            $itempr = $itempr . "+".$prw->weight." * ". $next->kingar_children_number;
+                            $weight += $prw->weight * $next->kingar_children_number;
                         }
                         
                         // Xodimlar uchun ovqat gramajlarini hisoblash
@@ -801,7 +832,6 @@ class TestController extends Controller
                                     ->get();
                         
                         foreach($workerfood as $tr){
-                            // Tushlikdagi birinchi ovqat va nondan yeyishadi
                             $workerprlar = Menu_composition::where('title_menu_id', $next->kingar_menu_id)
                                             ->where('age_range_id', $next->king_age_name_id)
                                             ->where('menu_food_id', $tr->food_id)
@@ -814,34 +844,18 @@ class TestController extends Controller
                         }
                     }
                 }
-                // foreach($workeat as $wo){
-                //         $woe = Menu_composition::where('title_menu_id', $wo->titlemenu_id)
-                //                 ->where('menu_food_id', $wo->food_id)
-                //                 ->where('age_range_id', $wo->worker_age_id)
-                //                 ->where('product_name_id', $prod->id)
-                //                 ->sum('weight');
-                //         dd($woe);
-                        // if($woe > 0){
-                        // 	$itempr = $itempr . 
-                        // }
-                // }
-
-
 
                 $prdiv = Product::where('id', $prod->id)->first();
-                // $itempr . "=" .
                 $shopproducts[$row->id][$prod->id] = $weight / $prod->div; 
             }
         }
         
         // Muassasa nomlarini region nomi va raqamiga qarab saralash
         uasort($shopproducts, function($a, $b) {
-            // Avval region nomiga qarab saralash
             if ($a['region_name'] !== $b['region_name']) {
                 return strcmp($a['region_name'], $b['region_name']);
             }
             
-            // Region nomi bir xil bo'lsa, muassasa nomidagi raqamga qarab saralash
             $a_number = preg_replace('/[^0-9]/', '', $a['name']);
             $b_number = preg_replace('/[^0-9]/', '', $b['name']);
             
@@ -849,28 +863,36 @@ class TestController extends Controller
                 return intval($a_number) - intval($b_number);
             }
             
-            // Raqam topilmasa, to'liq nomga qarab saralash
             return strcmp($a['name'], $b['name']);
         });
         
         $day = Day::join('months', 'days.month_id', '=', 'months.id')->orderBy('days.id', 'DESC')->first();
         
-        // dd($day);
+        // Regionlar bo'yicha guruhlash
+        $groupedByRegions = [];
+        foreach($shopproducts as $kindergartenId => $kindergartenData) {
+            $regionId = $kindergartenData['region_id'];
+            if (!isset($groupedByRegions[$regionId])) {
+                $groupedByRegions[$regionId] = [
+                    'region_name' => $kindergartenData['region_name'],
+                    'kindergartens' => []
+                ];
+            }
+            $groupedByRegions[$regionId]['kindergartens'][$kindergartenId] = $kindergartenData;
+        }
 
         $dompdf = new Dompdf('UTF-8');
-		$html = mb_convert_encoding(view('technolog.nextdayshoppdf', compact('shopproducts', 'shop', 'day')), 'HTML-ENTITIES', 'UTF-8');
-		$dompdf->loadHtml($html);
+        $html = mb_convert_encoding(view('technolog.nextdayshoppdf', compact('groupedByRegions', 'shop', 'day')), 'HTML-ENTITIES', 'UTF-8');
+        $dompdf->loadHtml($html);
 
-		// (Optional) Setup the paper size and orientation
-		$dompdf->setPaper('A4');
-		// $customPaper = array(0,0,360,360);
-		// $dompdf->setPaper($customPaper);
+        // (Optional) Setup the paper size and orientation
+        $dompdf->setPaper('A4');
+        
+        // Render the HTML as PDF
+        $dompdf->render();
 
-		// Render the HTML as PDF
-		$dompdf->render();
-
-		// Output the generated PDF to Browser
-		$dompdf->stream('demo.pdf', ['Attachment' => 0]);
+        // Output the generated PDF to Browser
+        $dompdf->stream('demo.pdf', ['Attachment' => 0]);
     }
 	// TAXMINIY ikkinchi menyu
 	public function nextdaysecondmenuPDF(Request $request, $gid){

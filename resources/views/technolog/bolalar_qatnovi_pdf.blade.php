@@ -5,99 +5,109 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Bolalar qatnovi hisoboti</title>
     <style>
+        @page { 
+            margin: 0.5in; 
+            size: A4 landscape;
+        }
+        
         body {
             font-family: 'DejaVu Sans', Arial, sans-serif;
-            font-size: 12px;
-            line-height: 1.4;
+            font-size: 8px;
+            line-height: 1.2;
             color: #333;
+            margin: 0;
+            padding: 0;
         }
         
         .header {
             text-align: center;
-            margin-bottom: 20px;
+            margin-bottom: 15px;
             border-bottom: 2px solid #333;
             padding-bottom: 10px;
         }
         
         .header h1 {
             margin: 0;
-            font-size: 18px;
+            font-size: 14px;
             font-weight: bold;
         }
         
         .header p {
             margin: 5px 0;
-            font-size: 14px;
+            font-size: 10px;
         }
         
         .region-section {
-            margin-bottom: 30px;
+            margin-bottom: 20px;
             page-break-inside: avoid;
         }
         
         .region-title {
-            background-color: #f0f0f0;
+            background-color: #333;
+            color: white;
             padding: 8px;
+            text-align: center;
             font-weight: bold;
-            font-size: 14px;
-            border: 1px solid #ccc;
-            margin-bottom: 10px;
+            font-size: 10px;
+            margin-bottom: 5px;
         }
         
         table {
             width: 100%;
             border-collapse: collapse;
             margin-bottom: 15px;
-            font-size: 10px;
+            font-size: 7px;
         }
         
         th, td {
-            border: 1px solid #ddd;
-            padding: 4px 6px;
+            border: 1px solid #000;
+            padding: 3px;
             text-align: center;
             vertical-align: middle;
         }
         
         th {
-            background-color: #f8f9fa;
+            background-color: #f0f0f0;
             font-weight: bold;
-            font-size: 10px;
+            font-size: 7px;
+        }
+        
+        .main-header {
+            background-color: #333 !important;
+            color: white !important;
+            font-weight: bold;
+        }
+        
+        .sub-header {
+            background-color: #666 !important;
+            color: white !important;
+            font-weight: 600;
+        }
+        
+        .date-header {
+            background-color: #999 !important;
+            color: white !important;
+            font-weight: 600;
+        }
+        
+        .total-row {
+            background-color: #e0e0e0;
+            font-weight: bold;
+        }
+        
+        .grand-total-row {
+            background-color: #333;
+            color: white;
+            font-weight: bold;
         }
         
         .kindgarden-name {
             text-align: left;
-            font-weight: bold;
-            min-width: 150px;
-        }
-        
-        .org-number {
-            font-weight: bold;
-            color: #666;
+            font-weight: 600;
         }
         
         .children-count {
-            font-weight: bold;
-            color: #000;
-        }
-        
-        .day-header {
-            background-color: #e9ecef;
-            font-weight: bold;
-            font-size: 9px;
-            min-width: 40px;
-        }
-        
-        .footer {
-            margin-top: 20px;
-            text-align: center;
-            font-size: 10px;
-            color: #666;
-            border-top: 1px solid #ddd;
-            padding-top: 10px;
-        }
-        
-        @page {
-            margin: 1cm;
+            font-weight: 500;
         }
     </style>
 </head>
@@ -116,124 +126,96 @@
             
             <table>
                 <thead>
-                    <tr>
-                        <th style="width: 200px;">MTT-nomi</th>
-                        <th style="width: 80px;">Tashkilot №</th>
-                        @foreach($selectedDays as $day)
-                            <th class="day-header">{{ $day->day_number }}.{{ $day->month_name }}</th>
+                    <!-- Asosiy sarlavha qatori -->
+                    <tr class="main-header">
+                        <th rowspan="2" style="width: 30px;">TR</th>
+                        <th rowspan="2" style="width: 80px;">DMTT</th>
+                        @foreach($region['kindgardens'] as $kindgarden)
+                            <th colspan="3">{{ $kindgarden['number_of_org'] ?: $kindgarden['kingar_name'] }}</th>
                         @endforeach
-                        <th class="day-header" style="background-color: #f8f9fa; color: #000;">JAMI</th>
+                        <th colspan="3">Jami</th>
+                    </tr>
+                    <!-- Ikkinchi sarlavha qatori -->
+                    <tr class="sub-header">
+                        @foreach($region['kindgardens'] as $kindgarden)
+                            <th class="date-header">3-7 yosh</th>
+                            <th class="date-header">Qisqa guruh</th>
+                            <th class="date-header">Xodim</th>
+                        @endforeach
+                        <th class="date-header">3-7 yosh</th>
+                        <th class="date-header">Qisqa guruh</th>
+                        <th class="date-header">Xodim</th>
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach($region['kindgardens'] as $kindgarden)
-                        @foreach($kindgarden['age_groups'] as $ageGroup)
-                            <tr>
-                                <td class="kindgarden-name">{{ $kindgarden['name'] }} - {{ $ageGroup['age_name'] }}</td>
-                                <td class="org-number">{{ $kindgarden['number_of_org'] ?? '-' }}</td>
-                                @foreach($selectedDays as $day)
-                                    @php
-                                        $dayData = $ageGroup['days'][$day->id] ?? null;
-                                        $childrenCount = $dayData ? $dayData['children_count'] : 0;
-                                    @endphp
-                                    <td class="children-count">{{ $childrenCount }}</td>
-                                @endforeach
-                                <td class="children-count" style="background-color: #f8f9fa; font-weight: bold; color: #000;">{{ $ageGroup['total'] ?? 0 }}</td>
-                            </tr>
-                        @endforeach
-                        
-                        <!-- Bog'cha bo'yicha jami qatorini qo'shish -->
-                        <tr style="background-color: #e3f2fd; font-weight: bold;">
-                            <td class="kindgarden-name">{{ $kindgarden['name'] }} - JAMI</td>
-                            <td class="org-number" style="background-color: #e3f2fd;"></td>
-                            @foreach($selectedDays as $day)
+                    @foreach($selectedDays as $dayIndex => $day)
+                        <tr>
+                            <td>{{ $dayIndex + 1 }}</td>
+                            <td class="kindgarden-name">{{ $day->day_number }}.{{ $day->month_name }}.{{ $day->year_name }}</td>
+                            
+                            @php
+                                $dayTotal = 0;
+                                $dayShortTotal = 0;
+                                $dayWorkersTotal = 0;
+                            @endphp
+                            
+                            @foreach($region['kindgardens'] as $kindgarden)
                                 @php
-                                    $kindgardenDayTotal = 0;
-                                    foreach($kindgarden['age_groups'] as $ageGroup) {
-                                        $dayData = $ageGroup['days'][$day->id] ?? null;
-                                        if ($dayData) {
-                                            $kindgardenDayTotal += $dayData['children_count'];
-                                        }
-                                    }
+                                    $dayData = $kindgarden['days'][$day->id] ?? null;
+                                    $childrenCount = $dayData ? $dayData['children_count'] : 0;
+                                    $shortGroupCount = $dayData ? $dayData['short_group_count'] : 0;
+                                    $workersCount = $dayData ? $dayData['workers_count'] : 0;
+                                    
+                                    $dayTotal += $childrenCount;
+                                    $dayShortTotal += $shortGroupCount;
+                                    $dayWorkersTotal += $workersCount;
                                 @endphp
-                                <td class="children-count" style="background-color: #e3f2fd; color: #000; font-weight: bold;">{{ $kindgardenDayTotal }}</td>
+                                
+                                <td class="children-count">{{ $childrenCount }}</td>
+                                <td class="children-count">{{ $shortGroupCount }}</td>
+                                <td class="children-count">{{ $workersCount }}</td>
                             @endforeach
-                            <td class="children-count" style="background-color: #e3f2fd; color: #000; font-weight: bold;">{{ $kindgarden['total'] ?? 0 }}</td>
+                            
+                            <td class="children-count" style="background-color: #f0f0f0; font-weight: bold;">{{ $dayTotal }}</td>
+                            <td class="children-count" style="background-color: #f0f0f0; font-weight: bold;">{{ $dayShortTotal }}</td>
+                            <td class="children-count" style="background-color: #f0f0f0; font-weight: bold;">{{ $dayWorkersTotal }}</td>
                         </tr>
                     @endforeach
                     
-                    @if(isset($region['total_row']))
-                        <tr style="background-color: #f8f9fa;">
-                            <td class="kindgarden-name" style="font-weight: bold;">{{ $region['total_row']['name'] }}</td>
-                            <td class="org-number"></td>
-                            @foreach($selectedDays as $day)
-                                @php
-                                    $totalCount = $region['total_row']['days'][$day->id] ?? 0;
-                                @endphp
-                                <td class="children-count" style="color: #000; font-weight: bold;">{{ $totalCount }}</td>
-                            @endforeach
+                    <!-- Jami qatori -->
+                    <tr class="total-row">
+                        <td></td>
+                        <td class="kindgarden-name">Jami</td>
+                        
+                        @php
+                            $regionTotal = 0;
+                            $regionShortTotal = 0;
+                            $regionWorkersTotal = 0;
+                        @endphp
+                        
+                        @foreach($region['kindgardens'] as $kindgarden)
+                            <td class="children-count" style="background-color: #e0e0e0; font-weight: bold;">{{ $kindgarden['total'] }}</td>
+                            <td class="children-count" style="background-color: #e0e0e0; font-weight: bold;">{{ $kindgarden['short_total'] }}</td>
+                            <td class="children-count" style="background-color: #e0e0e0; font-weight: bold;">{{ $kindgarden['workers_total'] }}</td>
+                            
                             @php
-                                $regionTotal = 0;
-                                foreach($selectedDays as $day) {
-                                    $regionTotal += $region['total_row']['days'][$day->id] ?? 0;
-                                }
+                                $regionTotal += $kindgarden['total'];
+                                $regionShortTotal += $kindgarden['short_total'];
+                                $regionWorkersTotal += $kindgarden['workers_total'];
                             @endphp
-                            <td class="children-count" style="background-color: #6c757d; color: white; font-weight: bold;">{{ $regionTotal }}</td>
-                        </tr>
-                    @endif
+                        @endforeach
+                        
+                        <td class="children-count" style="background-color: #333; color: white; font-weight: bold;">{{ $regionTotal }}</td>
+                        <td class="children-count" style="background-color: #333; color: white; font-weight: bold;">{{ $regionShortTotal }}</td>
+                        <td class="children-count" style="background-color: #333; color: white; font-weight: bold;">{{ $regionWorkersTotal }}</td>
+                    </tr>
                 </tbody>
             </table>
         </div>
+        
+        @if(!$loop->last)
+            <div style="page-break-before: always;"></div>
+        @endif
     @endforeach
-    
-    <!-- Ustun bo'yicha jami -->
-    @php
-        $columnTotals = [];
-        foreach($selectedDays as $day) {
-            $columnTotals[$day->id] = 0;
-            foreach($attendanceData as $regionData) {
-                if (isset($regionData['total_row']['days'][$day->id])) {
-                    $columnTotals[$day->id] += $regionData['total_row']['days'][$day->id];
-                }
-            }
-        }
-    @endphp
-    
-            <div class="region-section">
-            <div class="region-title" style="background-color: #6c757d; color: white;">UMUMIY JAMI</div>
-        <table>
-                            <thead>
-                    <tr>
-                        <th style="width: 200px;">Jami</th>
-                        <th style="width: 80px;"></th>
-                        @foreach($selectedDays as $day)
-                            <th class="day-header">{{ $day->day_number }}.{{ $day->month_name }}</th>
-                        @endforeach
-                        <th class="day-header" style="background-color: #6c757d; color: white;">JAMI</th>
-                    </tr>
-                </thead>
-            <tbody>
-                <tr style="background-color: #fff3e0; font-weight: bold;">
-                    <td class="kindgarden-name">UMUMIY JAMI</td>
-                    <td class="org-number"></td>
-                    @foreach($selectedDays as $day)
-                        <td class="children-count" style="color: #000; font-size: 16px;">{{ $columnTotals[$day->id] ?? 0 }}</td>
-                    @endforeach
-                    @php
-                        $grandTotal = 0;
-                        foreach($selectedDays as $day) {
-                            $grandTotal += $columnTotals[$day->id] ?? 0;
-                        }
-                    @endphp
-                    <td class="children-count" style="background-color: #343a40; color: white; font-size: 16px; font-weight: bold;">{{ $grandTotal }}</td>
-                </tr>
-            </tbody>
-        </table>
-    </div>
-
-    <div class="footer">
-        <p>Bu hisobot tizim orqali avtomatik yaratildi</p>
-        <p>Jami tumanlar: {{ count($attendanceData) }} | Jami kunlar: {{ count($selectedDays) }}</p>
-    </div>
 </body>
 </html> 

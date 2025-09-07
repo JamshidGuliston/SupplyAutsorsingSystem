@@ -19,7 +19,7 @@
     }
     
     .region-header {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        background: linear-gradient(135deg,rgb(206, 206, 206) 0%,rgb(148, 148, 148) 100%);
         color: white;
         padding: 15px 20px;
         font-weight: 600;
@@ -33,23 +33,25 @@
     .attendance-table table {
         width: 100%;
         border-collapse: collapse;
+        font-size: 12px;
     }
     
     .attendance-table th {
         background: #f8f9fa;
-        padding: 12px 8px;
+        padding: 8px 4px;
         text-align: center;
         border: 1px solid #dee2e6;
         font-weight: 600;
-        font-size: 14px;
-        min-width: 80px;
+        font-size: 11px;
+        min-width: 60px;
+        color: #000 !important;
     }
     
     .attendance-table td {
-        padding: 10px 8px;
+        padding: 6px 4px;
         text-align: center;
         border: 1px solid #dee2e6;
-        font-size: 14px;
+        font-size: 11px;
     }
     
     .attendance-table tr:nth-child(even) {
@@ -64,12 +66,12 @@
         font-weight: 600;
         color: #495057;
         text-align: left;
-        min-width: 200px;
+        min-width: 150px;
     }
     
     .children-count {
         font-weight: 500;
-        color: #28a745;
+        color:rgb(30, 31, 30);
     }
     
     .loading {
@@ -98,6 +100,37 @@
         padding: 40px;
         color: #6c757d;
         font-style: italic;
+    }
+    
+    /* Yangi jadval dizayni */
+    .main-header {
+        background: #343a40 !important;
+        color: white !important;
+        font-weight: bold;
+    }
+    
+    .sub-header {
+        background:rgb(247, 250, 252) !important;
+        color: white !important;
+        font-weight: 600;
+    }
+    
+    .date-header {
+        background: white !important;
+        color: black !important;
+        font-weight: 600;
+        border: 1px solid #dee2e6 !important;
+    }
+    
+    .total-row {
+        background: #e9ecef;
+        font-weight: bold;
+    }
+    
+    .grand-total-row {
+        background: #343a40;
+        color: white;
+        font-weight: bold;
     }
 </style>
 @endsection
@@ -337,21 +370,22 @@ $(document).ready(function() {
         
         var html = '';
         
-        // Ustun bo'yicha jami hisoblash
-        var columnTotals = {};
-        days.forEach(function(day) {
-            columnTotals[day.id] = 0;
-            Object.keys(data).forEach(function(regionId) {
-                var region = data[regionId];
-                if (region.total_row && region.total_row.days[day.id]) {
-                    columnTotals[day.id] += region.total_row.days[day.id];
-                }
-            });
-        });
-        
         // Har bir tuman uchun jadval yaratish
         Object.keys(data).forEach(function(regionId) {
             var region = data[regionId];
+            
+            // Bog'chalarni number_of_org bo'yicha saralash
+            region.kindgardens.sort(function(a, b) {
+                var aNumber = parseInt(a.number_of_org) || 999999;
+                var bNumber = parseInt(b.number_of_org) || 999999;
+                
+                if (aNumber === 999999 && bNumber === 999999) {
+                    return (a.kingar_name || '').localeCompare(b.kingar_name || '');
+                }
+                
+                return aNumber - bNumber;
+            });
+            
             html += `
                 <div class="attendance-table mb-4">
                     <div class="region-header">
@@ -360,18 +394,43 @@ $(document).ready(function() {
                     <div class="table-container">
                         <table class="table table-bordered mb-0">
                             <thead>
-                                <tr>
-                                    <th style="min-width: 200px;">MTT-nomi</th>
-                                    <th style="min-width: 100px;">Tashkilot №</th>
+                                <!-- Asosiy sarlavha qatori -->
+                                <tr class="main-header">
+                                    <th rowspan="2" style="min-width: 80px;">TR</th>
+                                    <th rowspan="2" style="min-width: 120px;">DMTT</th>
             `;
             
-            // Kunlar ustunlarini qo'shish
-            days.forEach(function(day) {
-                html += `<th>${day.day_number}.${day.month_name}</th>`;
+            // Har bir bog'cha uchun ustunlar (number_of_org bo'yicha)
+            region.kindgardens.forEach(function(kindgarden) {
+                // Bog'cha raqamini ko'rsatish
+                var orgNumber = kindgarden.number_of_org || kindgarden.kingar_name || '-';
+                html += `<th colspan="3">${orgNumber}</th>`;
             });
             
-            // Jami ustunini qo'shish
-            html += `<th style="min-width: 100px; background-color: #f8f9fa; color: #000;">JAMI</th>`;
+            // Jami ustuni
+            html += `<th colspan="3">Jami</th>`;
+            
+            html += `
+                                </tr>
+                                <!-- Ikkinchi sarlavha qatori -->
+                                <tr class="sub-header">
+            `;
+            
+            // Har bir bog'cha uchun kichik ustunlar
+            region.kindgardens.forEach(function(kindgarden) {
+                html += `
+                    <th class="date-header">3-7 yosh</th>
+                    <th class="date-header">Qisqa guruh</th>
+                    <th class="date-header">Xodim</th>
+                `;
+            });
+            
+            // Jami uchun kichik ustunlar
+            html += `
+                    <th class="date-header">3-7 yosh</th>
+                    <th class="date-header">Qisqa guruh</th>
+                    <th class="date-header">Xodim</th>
+            `;
             
             html += `
                                 </tr>
@@ -379,79 +438,98 @@ $(document).ready(function() {
                             <tbody>
             `;
             
-            // Har bir bog'cha uchun qatorlar
-            region.kindgardens.forEach(function(kindgarden) {
-                // Har bir yosh guruhi uchun alohida qator
-                kindgarden.age_groups.forEach(function(ageGroup) {
-                    html += `
-                        <tr>
-                            <td class="kindgarden-name">${kindgarden.name} - ${ageGroup.age_name}</td>
-                            <td>${kindgarden.number_of_org || '-'}</td>
-                    `;
-                    
-                    // Har bir kun uchun bolalar soni
-                    days.forEach(function(day) {
-                        var dayData = ageGroup.days[day.id];
-                        var childrenCount = dayData ? dayData.children_count : 0;
-                        html += `<td class="children-count">${childrenCount}</td>`;
-                    });
-                    
-                    // Yosh guruhi bo'yicha jami
-                    var ageGroupTotal = ageGroup.total || 0;
-                    html += `<td class="children-count" style="background-color: #f8f9fa; font-weight: bold; color: #000;">${ageGroupTotal}</td>`;
-                    
-                    html += `</tr>`;
-                });
-                
-                // Bog'cha bo'yicha jami qatorini qo'shish
+            // Har bir sana uchun qatorlar
+            days.forEach(function(day, dayIndex) {
                 html += `
-                    <tr style="background-color: #e3f2fd; font-weight: bold;">
-                        <td class="kindgarden-name">${kindgarden.name} - JAMI</td>
-                        <td style="background-color: #e3f2fd;"></td>
+                    <tr>
+                        <td>${dayIndex + 1}</td>
+                        <td class="kindgarden-name">${day.day_number}.${day.month_name}.${day.year_name}</td>
                 `;
                 
-                // Har bir kun uchun bog'cha bo'yicha jami bolalar soni
-                days.forEach(function(day) {
-                    var kindgardenDayTotal = 0;
-                    kindgarden.age_groups.forEach(function(ageGroup) {
-                        var dayData = ageGroup.days[day.id];
-                        if (dayData) {
-                            kindgardenDayTotal += dayData.children_count;
-                        }
-                    });
-                    html += `<td class="children-count" style="background-color: #e3f2fd; color: #000; font-weight: bold;">${kindgardenDayTotal}</td>`;
+                // Har bir bog'cha uchun ma'lumotlar
+                region.kindgardens.forEach(function(kindgarden) {
+                    // Xavfsiz ma'lumot olish
+                    var dayData = null;
+                    if (kindgarden.days && kindgarden.days[day.id]) {
+                        dayData = kindgarden.days[day.id];
+                    }
+                    
+                    var childrenCount = dayData ? (dayData.children_count || 0) : 0;
+                    var shortGroupCount = dayData ? (dayData.short_group_count || 0) : 0;
+                    var workersCount = dayData ? (dayData.workers_count || 0) : 0;
+                    
+                    html += `
+                        <td class="children-count">${childrenCount}</td>
+                        <td class="children-count">${shortGroupCount}</td>
+                        <td class="children-count">${workersCount}</td>
+                    `;
                 });
                 
-                // Bog'cha bo'yicha jami
-                var kindgardenTotal = kindgarden.total || 0;
-                html += `<td class="children-count" style="background-color: #e3f2fd; color: #000; font-weight: bold;">${kindgardenTotal}</td>`;
+                // Kun bo'yicha jami - barcha bog'chalardan yig'ish
+                var dayTotal = 0;
+                var dayShortTotal = 0;
+                var dayWorkersTotal = 0;
+                
+                region.kindgardens.forEach(function(kindgarden) {
+                    var dayData = null;
+                    if (kindgarden.days && kindgarden.days[day.id]) {
+                        dayData = kindgarden.days[day.id];
+                    }
+                    
+                    if (dayData) {
+                        dayTotal += parseInt(dayData.children_count) || 0;
+                        dayShortTotal += parseInt(dayData.short_group_count) || 0;
+                        dayWorkersTotal += parseInt(dayData.workers_count) || 0;
+                    }
+                });
+                
+                html += `
+                    <td class="children-count" style="background-color: #f8f9fa; font-weight: bold;">${dayTotal}</td>
+                    <td class="children-count" style="background-color: #f8f9fa; font-weight: bold;">${dayShortTotal}</td>
+                    <td class="children-count" style="background-color: #f8f9fa; font-weight: bold;">${dayWorkersTotal}</td>
+                `;
                 
                 html += `</tr>`;
             });
             
             // Jami qatorini qo'shish
-            if (region.total_row) {
+            html += `
+                <tr class="total-row">
+                    <td></td>
+                    <td class="kindgarden-name">Jami</td>
+            `;
+            
+            // Har bir bog'cha bo'yicha jami
+            region.kindgardens.forEach(function(kindgarden) {
+                var kindgardenTotal = parseInt(kindgarden.total) || 0;
+                var kindgardenShortTotal = parseInt(kindgarden.short_total) || 0;
+                var kindgardenWorkersTotal = parseInt(kindgarden.workers_total) || 0;
+                
                 html += `
-                    <tr style="background-color: #f8f9fa; font-weight: bold;">
-                        <td class="kindgarden-name">${region.total_row.name}</td>
-                        <td></td>
+                    <td class="children-count" style="background-color: #e3f2fd; font-weight: bold;">${kindgardenTotal}</td>
+                    <td class="children-count" style="background-color: #e3f2fd; font-weight: bold;">${kindgardenShortTotal}</td>
+                    <td class="children-count" style="background-color: #e3f2fd; font-weight: bold;">${kindgardenWorkersTotal}</td>
                 `;
-                
-                // Har bir kun uchun jami bolalar soni
-                days.forEach(function(day) {
-                    var totalCount = region.total_row.days[day.id] || 0;
-                    html += `<td class="children-count" style="color: #000;">${totalCount}</td>`;
-                });
-                
-                // Tuman bo'yicha jami
-                var regionTotal = 0;
-                days.forEach(function(day) {
-                    regionTotal += region.total_row.days[day.id] || 0;
-                });
-                html += `<td class="children-count" style="background-color: #6c757d; color: white; font-weight: bold;">${regionTotal}</td>`;
-                
-                html += `</tr>`;
-            }
+            });
+            
+            // Umumiy jami - barcha bog'chalardan yig'ish
+            var regionTotal = 0;
+            var regionShortTotal = 0;
+            var regionWorkersTotal = 0;
+            
+            region.kindgardens.forEach(function(kindgarden) {
+                regionTotal += parseInt(kindgarden.total) || 0;
+                regionShortTotal += parseInt(kindgarden.short_total) || 0;
+                regionWorkersTotal += parseInt(kindgarden.workers_total) || 0;
+            });
+            
+            html += `
+                <td class="children-count" style="background-color: #6c757d; color: white; font-weight: bold;">${regionTotal}</td>
+                <td class="children-count" style="background-color: #6c757d; color: white; font-weight: bold;">${regionShortTotal}</td>
+                <td class="children-count" style="background-color: #6c757d; color: white; font-weight: bold;">${regionWorkersTotal}</td>
+            `;
+            
+            html += `</tr>`;
             
             html += `
                             </tbody>
@@ -460,60 +538,6 @@ $(document).ready(function() {
                 </div>
             `;
         });
-        
-        // Ustun bo'yicha jami qatorini qo'shish
-        if (Object.keys(data).length > 0) {
-            html += `
-                <div class="attendance-table mb-4">
-                    <div class="region-header" style="background-color: #6c757d;">
-                        <i class="fas fa-calculator me-2"></i>UMUMIY JAMI
-                    </div>
-                    <div class="table-container">
-                        <table class="table table-bordered mb-0">
-                            <thead>
-                                <tr>
-                                    <th style="min-width: 200px;">Jami</th>
-                                    <th style="min-width: 100px;"></th>
-            `;
-            
-            // Kunlar ustunlarini qo'shish
-            days.forEach(function(day) {
-                html += `<th>${day.day_number}.${day.month_name}</th>`;
-            });
-            
-            // Jami ustunini qo'shish
-            html += `<th style="min-width: 100px; background-color: #6c757d; color: white;">JAMI</th>`;
-            
-            html += `
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr style="background-color: #fff3e0; font-weight: bold;">
-                                    <td class="kindgarden-name">UMUMIY JAMI</td>
-                                    <td></td>
-            `;
-            
-            // Har bir kun uchun jami bolalar soni
-            days.forEach(function(day) {
-                var totalCount = columnTotals[day.id] || 0;
-                html += `<td class="children-count" style="color: #000; font-size: 16px;">${totalCount}</td>`;
-            });
-            
-            // Umumiy jami
-            var grandTotal = 0;
-            days.forEach(function(day) {
-                grandTotal += columnTotals[day.id] || 0;
-            });
-            html += `<td class="children-count" style="background-color: #343a40; color: white; font-size: 16px; font-weight: bold;">${grandTotal}</td>`;
-            
-            html += `
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            `;
-        }
         
         $('#report_container').html(html);
     }
