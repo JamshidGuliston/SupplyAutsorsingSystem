@@ -3678,6 +3678,7 @@ class TechnologController extends Controller
         return $pdf->download($fileName);
     }
     
+    
     // Excel ga yuklab olish
     public function downloadBolalarQatnoviExcel(Request $request)
     {
@@ -3715,92 +3716,353 @@ class TechnologController extends Controller
                     'kindgardens' => []
                 ];
                 
-                $regionTotalChildren = []; // Har bir kun uchun tuman bo'yicha jami bolalar
-                
                 foreach ($regionKindgardens as $kindgarden) {
                     $kindgardenData = [
                         'id' => $kindgarden->id,
-                        'name' => $kindgarden->kingar_name,
+                        'kingar_name' => $kindgarden->kingar_name,
                         'number_of_org' => $kindgarden->number_of_org,
-                        'age_groups' => [] // Yosh guruhlari uchun
+                        'days' => [], // Har bir kun uchun ma'lumotlar
+                        'total' => 0,
+                        'short_total' => 0,
+                        'workers_total' => 0
                     ];
                     
-                    $kindgardenTotal = 0; // Bog'cha bo'yicha jami bolalar
+                    $kindgardenTotal = 0;
+                    $kindgardenShortTotal = 0;
+                    $kindgardenWorkersTotal = 0;
                     
-                    // Har bir yosh guruhi uchun ma'lumotlarni olish
-                    foreach ($ageRanges as $ageRange) {
-                        $ageGroupData = [
-                            'age_id' => $ageRange->id,
-                            'age_name' => $ageRange->age_name,
-                            'days' => []
+                    // Har bir kun uchun ma'lumotlarni olish
+                    foreach ($selectedDays as $day) {
+                        // 3-7 yosh bolalar soni (age_id = 4)
+                        $childrenCount = Number_children::where('day_id', $day->id)
+                            ->where('kingar_name_id', $kindgarden->id)
+                            ->where('king_age_name_id', 4) // 3-7 yosh
+                            ->sum('kingar_children_number');
+                        
+                        // Qisqa guruh bolalar soni (age_id = 5)
+                        $shortGroupCount = Number_children::where('day_id', $day->id)
+                            ->where('kingar_name_id', $kindgarden->id)
+                            ->where('king_age_name_id', 5) // Qisqa guruh
+                            ->sum('kingar_children_number');
+                        
+                        // Xodimlar soni
+                        $workersCount = Number_children::where('day_id', $day->id)
+                            ->where('kingar_name_id', $kindgarden->id)
+                            ->where('king_age_name_id', 4) // 3-7 yosh uchun xodimlar
+                            ->sum('workers_count');
+                        
+                        $kindgardenData['days'][$day->id] = [
+                            'children_count' => $childrenCount,
+                            'short_group_count' => $shortGroupCount,
+                            'workers_count' => $workersCount
                         ];
                         
-                        $ageGroupTotal = 0; // Yosh guruhi bo'yicha jami bolalar
-                        
-                        // Har bir kun uchun yosh guruhi bo'yicha bolalar sonini olish
-                        foreach ($selectedDays as $day) {
-                            $childrenCount = Number_children::where('day_id', $day->id)
-                                ->where('kingar_name_id', $kindgarden->id)
-                                ->where('king_age_name_id', $ageRange->id)
-                                ->sum('kingar_children_number');
-                            
-                            $ageGroupData['days'][$day->id] = [
-                                'day_number' => $day->day_number,
-                                'month_name' => $day->month_name,
-                                'year_name' => $day->year_name,
-                                'children_count' => $childrenCount
-                            ];
-                            
-                            // Yosh guruhi bo'yicha jami bolalar sonini hisoblash
-                            $ageGroupTotal += $childrenCount;
-                            
-                            // Tuman bo'yicha jami bolalar sonini hisoblash
-                            if (!isset($regionTotalChildren[$day->id])) {
-                                $regionTotalChildren[$day->id] = 0;
-                            }
-                            $regionTotalChildren[$day->id] += $childrenCount;
-                        }
-                        
-                        // Yosh guruhi bo'yicha jami qo'shish
-                        $ageGroupData['total'] = $ageGroupTotal;
-                        $kindgardenData['age_groups'][] = $ageGroupData;
-                        
-                        // Bog'cha bo'yicha jami bolalar sonini hisoblash
-                        $kindgardenTotal += $ageGroupTotal;
+                        // Jami hisoblash
+                        $kindgardenTotal += $childrenCount;
+                        $kindgardenShortTotal += $shortGroupCount;
+                        $kindgardenWorkersTotal += $workersCount;
                     }
                     
                     // Bog'cha bo'yicha jami qo'shish
                     $kindgardenData['total'] = $kindgardenTotal;
+                    $kindgardenData['short_total'] = $kindgardenShortTotal;
+                    $kindgardenData['workers_total'] = $kindgardenWorkersTotal;
                     
                     $attendanceData[$region->id]['kindgardens'][] = $kindgardenData;
                 }
-                
-                // Tuman bo'yicha jami qatorini qo'shish
-                $attendanceData[$region->id]['total_row'] = [
-                    'name' => 'JAMI',
-                    'number_of_org' => '',
-                    'days' => $regionTotalChildren
-                ];
             }
         }
         
-        $regionName = $regionId ? Region::find($regionId)->region_name : 'Barcha_tumanlar';
-        $startDay = Day::with('month')->find($startDate);
-        $endDay = Day::with('month')->find($endDate);
+        // Excel fayl yaratish
+        $fileName = 'bolalar_qatnovi_' . date('Y-m-d_H-i-s') . '.xlsx';
         
-        if ($startDay && $endDay && $startDay->month && $endDay->month) {
-            $filename = "Bolalar_qatnovi_{$regionName}_{$startDay->day_number}.{$startDay->month->month_name}-{$endDay->day_number}.{$endDay->month->month_name}.xlsx";
-        } else {
-            $filename = "Bolalar_qatnovi_{$regionName}_" . date('Y-m-d') . ".xlsx";
-        }
-        
-        return response()->json([
-            'success' => true,
-            'data' => $attendanceData,
-            'days' => $selectedDays,
-            'filename' => $filename,
-            'age_ranges' => $ageRanges
-        ]);
+        return \Maatwebsite\Excel\Facades\Excel::download(new class($attendanceData, $selectedDays) implements \Maatwebsite\Excel\Concerns\FromArray, \Maatwebsite\Excel\Concerns\WithStyles, \Maatwebsite\Excel\Concerns\WithColumnWidths, \Maatwebsite\Excel\Concerns\WithEvents {
+            
+            protected $data;
+            protected $days;
+            
+            public function __construct($data, $days) {
+                $this->data = $data;
+                $this->days = $days;
+            }
+            
+            public function array(): array
+            {
+                $result = [];
+                
+                // Sarlavha qatori
+                $result[] = ['BOLALAR QATNOVI HISOBOTI'];
+                $result[] = ['Vaqt oralig\'i: ' . $this->days->first()->day_number . '.' . $this->days->first()->month_name . '.' . $this->days->first()->year_name . ' - ' . $this->days->last()->day_number . '.' . $this->days->last()->month_name . '.' . $this->days->last()->year_name];
+                $result[] = ['Hisobot sanasi: ' . date('d.m.Y H:i')];
+                $result[] = []; // Bo'sh qator
+                
+                $firstRegion = true;
+                
+                foreach ($this->data as $regionId => $region) {
+                    // Har bir tumanga o'tishdan oldin bo'sh qator (birinchi tuman bundan mustasno)
+                    if (!$firstRegion) {
+                        $result[] = []; // Bo'sh qator
+                    }
+                    $firstRegion = false;
+                    
+                    // Tuman sarlavhasi
+                    $result[] = [$region['region_name']];
+                    $result[] = []; // Bo'sh qator
+                    
+                    // Jadval sarlavhasi
+                    $headerRow = ['TR', 'DMTT'];
+                    
+                    // Har bir bog'cha uchun ustunlar
+                    foreach ($region['kindgardens'] as $kindgarden) {
+                        $orgNumber = $kindgarden['number_of_org'] ?: $kindgarden['kingar_name'];
+                        $headerRow[] = $orgNumber;
+                        $headerRow[] = '';
+                        $headerRow[] = '';
+                    }
+                    
+                    // Jami ustuni
+                    $headerRow[] = 'Jami';
+                    $headerRow[] = '';
+                    $headerRow[] = '';
+                    
+                    $result[] = $headerRow;
+                    
+                    // Ikkinchi sarlavha qatori
+                    $subHeaderRow = ['', ''];
+                    foreach ($region['kindgardens'] as $kindgarden) {
+                        $subHeaderRow[] = '3-7 yosh';
+                        $subHeaderRow[] = 'Qisqa guruh';
+                        $subHeaderRow[] = 'Xodim';
+                    }
+                    $subHeaderRow[] = '3-7 yosh';
+                    $subHeaderRow[] = 'Qisqa guruh';
+                    $subHeaderRow[] = 'Xodim';
+                    
+                    $result[] = $subHeaderRow;
+                    
+                    // Har bir kun uchun ma'lumotlar
+                    foreach ($this->days as $dayIndex => $day) {
+                        $dataRow = [$dayIndex + 1, $day->day_number . '.' . $day->month_name . '.' . $day->year_name];
+                        
+                        // Har bir bog'cha uchun ma'lumotlar
+                        foreach ($region['kindgardens'] as $kindgarden) {
+                            $dayData = $kindgarden['days'][$day->id] ?? null;
+                            
+                            // Mavjud bo'lmagan guruhlarga 0 qiymat berish
+                            $childrenCount = $dayData ? ($dayData['children_count'] ?? 0) : 0;
+                            $shortGroupCount = $dayData ? ($dayData['short_group_count'] ?? 0) : 0;
+                            $workersCount = $dayData ? ($dayData['workers_count'] ?? 0) : 0;
+                            
+                            $dataRow[] = $childrenCount;
+                            $dataRow[] = $shortGroupCount;
+                            $dataRow[] = $workersCount;
+                        }
+                        
+                        // Kun bo'yicha jami
+                        $dayTotal = 0;
+                        $dayShortTotal = 0;
+                        $dayWorkersTotal = 0;
+                        
+                        foreach ($region['kindgardens'] as $kindgarden) {
+                            $dayData = $kindgarden['days'][$day->id] ?? null;
+                            if ($dayData) {
+                                $dayTotal += $dayData['children_count'] ?? 0;
+                                $dayShortTotal += $dayData['short_group_count'] ?? 0;
+                                $dayWorkersTotal += $dayData['workers_count'] ?? 0;
+                            }
+                        }
+                        
+                        $dataRow[] = $dayTotal;
+                        $dataRow[] = $dayShortTotal;
+                        $dataRow[] = $dayWorkersTotal;
+                        
+                        $result[] = $dataRow;
+                    }
+                    
+                    // Jami qatori
+                    $totalRow = ['', 'Jami'];
+                    
+                    // Har bir bog'cha bo'yicha jami
+                    foreach ($region['kindgardens'] as $kindgarden) {
+                        $totalRow[] = $kindgarden['total'] ?? 0;
+                        $totalRow[] = $kindgarden['short_total'] ?? 0;
+                        $totalRow[] = $kindgarden['workers_total'] ?? 0;
+                    }
+                    
+                    // Tuman bo'yicha jami
+                    $regionTotal = 0;
+                    $regionShortTotal = 0;
+                    $regionWorkersTotal = 0;
+                    
+                    foreach ($region['kindgardens'] as $kindgarden) {
+                        $regionTotal += $kindgarden['total'] ?? 0;
+                        $regionShortTotal += $kindgarden['short_total'] ?? 0;
+                        $regionWorkersTotal += $kindgarden['workers_total'] ?? 0;
+                    }
+                    
+                    $totalRow[] = $regionTotal;
+                    $totalRow[] = $regionShortTotal;
+                    $totalRow[] = $regionWorkersTotal;
+                    
+                    $result[] = $totalRow;
+                }
+                
+                return $result;
+            }
+            
+            public function columnWidths(): array
+            {
+                return [
+                    'A' => 8,   // TR
+                    'B' => 15,  // DMTT
+                    'C' => 12,  // Bog'cha ustunlari
+                    'D' => 12,
+                    'E' => 12,
+                ];
+            }
+            
+            public function styles(\PhpOffice\PhpSpreadsheet\Worksheet\Worksheet $sheet)
+            {
+                $row = 1;
+                
+                // Sarlavha stillari
+                $sheet->getStyle('A1')->getFont()->setBold(true)->setSize(16);
+                $sheet->getStyle('A2')->getFont()->setSize(12);
+                $sheet->getStyle('A3')->getFont()->setSize(12);
+                
+                $row = 5; // Jadval boshlanishi
+                
+                foreach ($this->data as $regionId => $region) {
+                    // Tuman sarlavhasi
+                    $sheet->getStyle("A{$row}")->getFont()->setBold(true)->setSize(14);
+                    $sheet->getStyle("A{$row}")->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)->getStartColor()->setRGB('E0E0E0');
+                    $row += 2;
+                    
+                    // Jadval sarlavhasi - bog'cha nomlari qatori (5-qator)
+                    $headerStartRow = 5; // Bog'cha nomlari qatori
+                    $headerEndRow = 6; // Yosh guruhlari qatori
+                    $colCount = 2 + (count($region['kindgardens']) * 3) + 3; // TR + DMTT + bog'chalar + jami
+                    
+                    // Asosiy sarlavha - bog'cha nomlari uchun qora rang (5-qator)
+                    $sheet->getStyle("A{$headerStartRow}:B{$headerStartRow}")
+                        ->getFont()->setBold(true);
+                    $sheet->getStyle("A{$headerStartRow}:B{$headerStartRow}")
+                        ->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)
+                        ->getStartColor()->setRGB('333333');
+                    $sheet->getStyle("A{$headerStartRow}:B{$headerStartRow}")
+                        ->getFont()->getColor()->setRGB('FFFFFF');
+                    
+                    // Bog'cha nomlari uchun qora rang (colspan=3)
+                    $startCol = 3; // C ustuni
+                    foreach ($region['kindgardens'] as $index => $kindgarden) {
+                        $endCol = $startCol + 2; // 3 ustun uchun
+                        $sheet->getStyle("{$this->getColumnLetter($startCol)}{$headerStartRow}:{$this->getColumnLetter($endCol)}{$headerStartRow}")
+                            ->getFont()->setBold(true);
+                        $sheet->getStyle("{$this->getColumnLetter($startCol)}{$headerStartRow}:{$this->getColumnLetter($endCol)}{$headerStartRow}")
+                            ->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)
+                            ->getStartColor()->setRGB('333333');
+                        $sheet->getStyle("{$this->getColumnLetter($startCol)}{$headerStartRow}:{$this->getColumnLetter($endCol)}{$headerStartRow}")
+                            ->getFont()->getColor()->setRGB('FFFFFF');
+                        $startCol += 3;
+                    }
+                    
+                    // Jami ustuni uchun qora rang
+                    $jamiStartCol = $colCount - 2;
+                    $jamiEndCol = $colCount;
+                    $sheet->getStyle("{$this->getColumnLetter($jamiStartCol)}{$headerStartRow}:{$this->getColumnLetter($jamiEndCol)}{$headerStartRow}")
+                        ->getFont()->setBold(true);
+                    $sheet->getStyle("{$this->getColumnLetter($jamiStartCol)}{$headerStartRow}:{$this->getColumnLetter($jamiEndCol)}{$headerStartRow}")
+                        ->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)
+                        ->getStartColor()->setRGB('333333');
+                    $sheet->getStyle("{$this->getColumnLetter($jamiStartCol)}{$headerStartRow}:{$this->getColumnLetter($jamiEndCol)}{$headerStartRow}")
+                        ->getFont()->getColor()->setRGB('FFFFFF');
+                    
+                    // Ikkinchi sarlavha - oq rang (yosh guruhlari uchun) - 6-qator
+                    $sheet->getStyle("A{$headerEndRow}:{$this->getColumnLetter($colCount)}{$headerEndRow}")
+                        ->getFont()->setBold(true);
+                    $sheet->getStyle("A{$headerEndRow}:{$this->getColumnLetter($colCount)}{$headerEndRow}")
+                        ->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)
+                        ->getStartColor()->setRGB('FFFFFF');
+                    $sheet->getStyle("A{$headerEndRow}:{$this->getColumnLetter($colCount)}{$headerEndRow}")
+                        ->getFont()->getColor()->setRGB('000000');
+                    
+                    $row += 2;
+                    
+                    // Ma'lumotlar qatorlari
+                    $dataStartRow = $row;
+                    $dataEndRow = $row + count($this->days) - 1;
+                    
+                    // Ma'lumotlar qatorlari stillari
+                    for ($i = $dataStartRow; $i <= $dataEndRow; $i++) {
+                        if ($i % 2 == 0) {
+                            $sheet->getStyle("A{$i}:{$this->getColumnLetter($colCount)}{$i}")
+                                ->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)
+                                ->getStartColor()->setRGB('F8F9FA');
+                        }
+                    }
+                    
+                    $row = $dataEndRow + 1;
+                    
+                    // Jami qatori
+                    $sheet->getStyle("A{$row}:{$this->getColumnLetter($colCount)}{$row}")
+                        ->getFont()->setBold(true);
+                    $sheet->getStyle("A{$row}:{$this->getColumnLetter($colCount)}{$row}")
+                        ->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)
+                        ->getStartColor()->setRGB('E3F2FD');
+                    
+                    $row += 3; // Bo'sh qatorlar uchun
+                }
+                
+                // Barcha kataklar uchun chegaralar
+                $sheet->getStyle('A1:' . $this->getColumnLetter($colCount) . $row)
+                    ->getBorders()->getAllBorders()
+                    ->setBorderStyle(\PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN);
+            }
+            
+            public function registerEvents(): array
+            {
+                return [
+                    \Maatwebsite\Excel\Events\AfterSheet::class => function(\Maatwebsite\Excel\Events\AfterSheet $event) {
+                        $sheet = $event->sheet->getDelegate();
+                        $row = 5;
+                        
+                        foreach ($this->data as $regionId => $region) {
+                            // $row += 2; // Tuman sarlavhasi va bo'sh qator
+                            
+                            // Merge cells for main headers
+                            $colCount = 2 + (count($region['kindgardens']) * 3) + 3;
+                            $headerStartCol = 3; // C ustuni
+                            
+                            // Har bir bog'cha uchun merge qilish
+                            foreach ($region['kindgardens'] as $index => $kindgarden) {
+                                $startCol = $headerStartCol + ($index * 3);
+                                $endCol = $startCol + 2;
+                                
+                                $sheet->mergeCells($this->getColumnLetter($startCol) . $row . ':' . $this->getColumnLetter($endCol) . $row);
+                            }
+                            
+                            // Jami ustuni uchun merge
+                            $jamiStartCol = $headerStartCol + (count($region['kindgardens']) * 3);
+                            $jamiEndCol = $jamiStartCol + 2;
+                            $sheet->mergeCells($this->getColumnLetter($jamiStartCol) . $row . ':' . $this->getColumnLetter($jamiEndCol) . $row);
+                            
+                            $row += 2 + count($this->days) + 1 + 2; // Sarlavhalar + ma'lumotlar + jami + bo'sh qatorlar
+                        }
+                    }
+                ];
+            }
+            
+            private function getColumnLetter($columnNumber)
+            {
+                $columnLetter = '';
+                while ($columnNumber > 0) {
+                    $columnNumber--;
+                    $columnLetter = chr(65 + ($columnNumber % 26)) . $columnLetter;
+                    $columnNumber = intval($columnNumber / 26);
+                }
+                return $columnLetter;
+            }
+        }, $fileName);
     }
     
     // Muassasalar (Bog'chalar) boshqaruvi
