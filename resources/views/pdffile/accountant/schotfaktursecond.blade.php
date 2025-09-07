@@ -15,7 +15,7 @@
             font-family: 'DejaVu Sans', Arial, sans-serif;
             margin: 0;
             padding: 0;
-            font-size: 14px;
+            font-size: 16px;
             line-height: 1.3;
             color: #000;
         }
@@ -30,12 +30,12 @@
         .invoice-title {
             font-size: 20px;
             font-weight: bold;
-            margin-bottom: 8px;
+            margin-bottom: 15px;
         }
         
         .invoice-number {
-            font-size: 14px;
-            margin-bottom: 8px;
+            font-size: 15px;
+            margin-bottom: 15px;
         }
         
         .invoice-date {
@@ -59,12 +59,11 @@
             font-weight: bold;
             font-size: 12px;
             margin-bottom: 10px;
-            text-decoration: underline;
         }
         
         .company-details {
-            margin-bottom: 6px;
-            font-size: 10px;
+            margin-bottom: 10px;
+            font-size: 15px;
         }
         
         .label {
@@ -85,12 +84,12 @@
             width: 100%;
             border-collapse: collapse;
             margin-bottom: 15px;
-            font-size: 10px;
+            font-size: 16px;
         }
         
         th, td {
             border: 1px solid #000;
-            padding: 4px;
+            padding: 10px;
             text-align: center;
             vertical-align: middle;
         }
@@ -151,7 +150,7 @@
         }
         
         .signature-label {
-            font-size: 10px;
+            font-size: 16px;
             text-align: center;
         }
         
@@ -184,7 +183,7 @@
         /* Responsive uchun */
         @media print {
             body {
-                font-size: 10px;
+                font-size: 16px;
             }
             
             .header {
