@@ -39,7 +39,7 @@
         }
         
         .invoice-date {
-            font-size: 12px;
+            font-size: 16px;
         }
         
         .company-info {
@@ -57,7 +57,7 @@
         
         .section-title {
             font-weight: bold;
-            font-size: 12px;
+            font-size: 16px;
             margin-bottom: 10px;
         }
         
@@ -97,7 +97,7 @@
         th {
             background-color: #f0f0f0;
             font-weight: bold;
-            font-size: 10px;
+            font-size: 16px;
         }
         
         .product-name {
@@ -289,7 +289,7 @@
                 @php
                     $total_amount = 0;
                     $total_nds = 0;
-                    $tr = 0;
+                    $tr = 1;
                 @endphp
                 
                 @foreach($kindgar->age_range as $age)
