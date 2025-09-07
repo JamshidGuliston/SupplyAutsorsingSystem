@@ -323,7 +323,7 @@
                     <td></td>
                     <td>{{ number_format($total_amount * ($costs[4]->raise/100 ?? 0), 2) }}</td>
                     @php $total_amount += $total_amount * ($costs[4]->raise/100 ?? 0); @endphp
-                    <td>{{ $total_amount * ($costs[4]->raise/100) * ($costs[4]->nds/100) }}</td>
+                    <td>{{ number_format($total_amount * ($costs[4]->raise/100) * ($costs[4]->nds/100), 2) }}</td>
                     @php $total_nds += $total_amount * ($costs[4]->raise/100) * ($costs[4]->nds/100); @endphp
                 </tr>
 
