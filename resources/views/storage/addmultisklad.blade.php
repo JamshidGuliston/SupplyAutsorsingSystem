@@ -560,6 +560,8 @@
         </div>
         <div class="col-md-3">
             <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#modalRasxod">+ Yaratish</button>
+            <!-- Yetkazib beruvchilar xisobotini ko'rish -->
+            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalYetkazibBeruvchi">Yetkazib beruvchilar</button>
         </div>
     </div>
     <hr>

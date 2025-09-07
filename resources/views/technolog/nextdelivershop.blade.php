@@ -29,13 +29,7 @@
             <b>{{ $shop['shop_name'] }}</b>
         </div>
         <div class="col-md-3">
-            <b>Maxsulotlarni yuborish</b>
-            <form action="/technolog/createShopOrder/{{ $shop['id'] }}" method="POST" style="display: inline;" id="orderForm">
-                @csrf
-                <button type="submit" class="btn btn-success btn-sm" style="border: none; background: none; padding: 0;" onclick="return confirmOrder()">
-                    <i class="fas fa-paper-plane" style="color: #28a745; font-size: 18px;"></i>
-                </button>
-            </form>
+            
         </div>
         <div class="col-md-3" style="text-align: center;">
             <b>PDF </b>

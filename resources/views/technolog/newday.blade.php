@@ -945,12 +945,20 @@
                             <strong>{{ $shop->shop_name }}</strong>
                         </td>
                         <td class="text-center">
-                            <button class="btn btn-outline-success btn-sm save-request-btn" 
-                                    data-shop-id="{{ $shop->id }}" 
-                                    data-shop-name="{{ $shop->shop_name }}"
-                                    title="Zayavkani saqlab qo'yish">
-                                <i class="fas fa-save"></i>
-                            </button>
+                            @if(isset($shopOrderStatus[$shop->id]) && $shopOrderStatus[$shop->id])
+                                <!-- Zayavka saqlangan bo'lsa -->
+                                <span class="badge bg-success">
+                                    <i class="fas fa-check me-1"></i>Saqlangan
+                                </span>
+                            @else
+                                <!-- Zayavka saqlanmagan bo'lsa -->
+                                <button class="btn btn-outline-success btn-sm save-request-btn" 
+                                        data-shop-id="{{ $shop->id }}" 
+                                        data-shop-name="{{ $shop->shop_name }}"
+                                        title="Zayavkani saqlab qo'yish">
+                                    <i class="fas fa-save"></i>
+                                </button>
+                            @endif
                         </td>
                         <td class="text-center">
                             <a href="/technolog/nextdelivershop/{{ $shop->id }}" 
@@ -1643,6 +1651,66 @@
                 notification.fadeOut();
             }, 5000);
         }
+
+        // Zayavkani saqlab qo'yish funksiyasi
+        $('.save-request-btn').click(function() {
+            var shopId = $(this).data('shop-id');
+            var shopName = $(this).data('shop-name');
+            
+            if (!confirm(shopName + ' uchun zayavkani saqlab qo\'ymoqchimisiz?')) {
+                return;
+            }
+            
+            var btn = $(this);
+            var icon = btn.find('i');
+            
+            // Loading holatini ko'rsatish
+            icon.removeClass('fa-save').addClass('fa-spinner fa-spin');
+            btn.prop('disabled', true);
+            
+            $.ajax({
+                url: '/technolog/createShopOrder',
+                method: 'POST',
+                data: {
+                    _token: '{{ csrf_token() }}',
+                    shop_id: shopId
+                },
+                success: function(response) {
+                    if (response.success) {
+                        showNotification('Zayavka muvaffaqiyatli saqlandi!', 'success');
+                        
+                        // Tugmani muvaffaqiyatli holatga o'tkazish
+                        btn.removeClass('btn-outline-success').addClass('btn-success');
+                        icon.removeClass('fa-spinner fa-spin').addClass('fa-check');
+                        
+                        // 2 soniyadan keyin asl holatga qaytarish
+                        setTimeout(function() {
+                            btn.removeClass('btn-success').addClass('btn-outline-success');
+                            icon.removeClass('fa-check').addClass('fa-save');
+                            btn.prop('disabled', false);
+                        }, 2000);
+                        // reload page
+                        location.reload();
+                    } else {
+                        showNotification(response.message || 'Xatolik yuz berdi!', 'error');
+                        icon.removeClass('fa-spinner fa-spin').addClass('fa-save');
+                        btn.prop('disabled', false);
+                    }
+                },
+                error: function(xhr) {
+                    var errorMessage = 'Xatolik yuz berdi!';
+                    
+                    if (xhr.responseJSON && xhr.responseJSON.message) {
+                        errorMessage = xhr.responseJSON.message;
+                    }
+                    
+                    showNotification(errorMessage, 'error');
+                    icon.removeClass('fa-spinner fa-spin').addClass('fa-save');
+                    btn.prop('disabled', false);
+                }
+            });
+        });
+        
     });
 </script>
 @endif

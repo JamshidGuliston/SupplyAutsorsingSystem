@@ -274,8 +274,18 @@ class TechnologController extends Controller
             }
 
             $shops = Shop::where('hide', 1)->where('type_id', 1)->with('kindgarden')->with('product')->get();
-
             $endday = Day::orderBy('id', 'DESC')->first();
+            // Har bir shop uchun zayavka saqlanganligini tekshirish
+            $shopOrderStatus = [];
+            
+            foreach($shops as $shop) {
+                $hasOrder = order_product::where('shop_id', $shop->id)
+                    ->where('day_id', $endday->id)
+                    ->exists();
+                
+                $shopOrderStatus[$shop->id] = $hasOrder;
+            }
+
             $mf = titlemenu_food::orderBy('day_id', 'DESC')->first();
             $sendmenu = 0;
             
@@ -285,7 +295,19 @@ class TechnologController extends Controller
             $nextday = 1;
             $allmenus = Titlemenu::join('seasons', 'titlemenus.menu_season_id', '=', 'seasons.id')
                 ->get(['titlemenus.id', 'titlemenus.menu_name', 'seasons.season_name']);
-            return view('technolog.newday', ['temp' => $temp, 'sendmenu' => $sendmenu, 'nextdayitem' => $nextdayitem, 'shops' => $shops, 'ages' => $ages, 'menus' => $menus, 'temps' => $mass, 'gardens' => $gar, 'activ'=>$activ, 'allmenus' => $allmenus]);
+            return view('technolog.newday', [
+                'temp' => $temp, 
+                'sendmenu' => $sendmenu, 
+                'nextdayitem' => $nextdayitem, 
+                'shops' => $shops, 
+                'ages' => $ages, 
+                'menus' => $menus, 
+                'temps' => $mass, 
+                'gardens' => $gar, 
+                'activ' => $activ, 
+                'allmenus' => $allmenus,
+                'shopOrderStatus' => $shopOrderStatus
+            ]);
         }
     }
 
@@ -598,82 +620,99 @@ class TechnologController extends Controller
         return view('technolog.nextdelivershop', compact('shopproducts', 'shop', 'orderData'));
     }
 
-    public function createShopOrder(Request $request, $id){
-        $shop = Shop::where('id', $id)->with('kindgarden.region')->with('product')->first();
-        
-        if (!$shop) {
-            return redirect()->back()->with('error', 'Shop topilmadi');
-        }
-        
-        $day = Day::orderBy('id', 'DESC')->first();
-        
-        // order_product yaratish
-        $orderProduct = array();
-        foreach($shop->kindgarden as $row){
-            $orderProduct[$row->id] = order_product::create([
-                'kingar_name_id' => $row->id, // Shop uchun 0
-                'day_id' => $day->id,
-                'order_title' => date("d-m-Y H:i")."Yetkazuvchi",
-                'document_processes_id' => 4, // Default qiymat
-                'data_of_weight' => json_encode(now()),
-                'to_menus' => json_encode([]), // Shop uchun 0
-                'shop_id' => $shop->id,
-            ]);
-        }
-        
-        // order_product_structure ga maxsulotlarni qo'shish
-        $shopproducts = array();
-        foreach($shop->kindgarden as $row){
-            $shopproducts[$row->id]['name'] = $row->kingar_name;
-            $shopproducts[$row->id]['region_id'] = $row->region_id;
+    public function createShopOrder(Request $request){
+        try {
+            $shop = Shop::where('id', $request->shop_id)->with('kindgarden.region')->with('product')->first();
             
-            foreach($shop->product as $prod){
-                $weight = 0;
-                $nextday = Nextday_namber::orderBy('kingar_name_id', 'ASC')->orderBy('king_age_name_id', 'ASC')->get();
+            if (!$shop) {
+                return redirect()->back()->with('error', 'Shop topilmadi');
+            }
+            
+            $day = Day::orderBy('id', 'DESC')->first();
+            
+            // order_product yaratish
+            $orderProduct = array();
+            foreach($shop->kindgarden as $row){
+                // check if order_product already exists
+                $orderCheck = order_product::where('kingar_name_id', $row->id)->where('day_id', $day->id)->where('shop_id', $shop->id)->first();
+                if(!$orderCheck){
+                    $orderProduct[$row->id] = order_product::create([
+                        'kingar_name_id' => $row->id, // Shop uchun 0
+                        'day_id' => $day->id,
+                        'order_title' => date("d-m-Y H:i")."Yetkazuvchi",
+                        'document_processes_id' => 4, // Default qiymat
+                        'data_of_weight' => json_encode(now()),
+                        'to_menus' => json_encode([]), // Shop uchun 0
+                        'shop_id' => $shop->id,
+                    ]);
+                }
+            }
+            
+            // order_product_structure ga maxsulotlarni qo'shish
+            $shopproducts = array();
+            foreach($shop->kindgarden as $row){
+                $shopproducts[$row->id]['name'] = $row->kingar_name;
+                $shopproducts[$row->id]['region_id'] = $row->region_id;
                 
-                foreach($nextday as $next){
-                    if($row->id == $next->kingar_name_id){
-                        $workeat = titlemenu_food::where('day_id', $day->id)->get();
-                        $prlar = Menu_composition::where('title_menu_id', $next->kingar_menu_id)
-                            ->where('age_range_id', $next->king_age_name_id)
-                            ->where('product_name_id', $prod->id)
-                            ->get();
-                            
-                        foreach($prlar as $prw){
-                            $weight += $prw->weight * $next->kingar_children_number;
-                            if($next->king_age_name_id == 4){
-                                $workeat = titlemenu_food::where('day_id', $day->id)
-                                    ->where('food_id', $prw->menu_food_id)
-                                    ->get();
-                                if($workeat->count() > 0){
-                                    $weight += $prw->weight * $next->workers_count;
+                foreach($shop->product as $prod){
+                    $weight = 0;
+                    $nextday = Nextday_namber::orderBy('kingar_name_id', 'ASC')->orderBy('king_age_name_id', 'ASC')->get();
+                    
+                    foreach($nextday as $next){
+                        if($row->id == $next->kingar_name_id){
+                            $workeat = titlemenu_food::where('day_id', $day->id)->get();
+                            $prlar = Menu_composition::where('title_menu_id', $next->kingar_menu_id)
+                                ->where('age_range_id', $next->king_age_name_id)
+                                ->where('product_name_id', $prod->id)
+                                ->get();
+                                
+                            foreach($prlar as $prw){
+                                $weight += $prw->weight * $next->kingar_children_number;
+                                if($next->king_age_name_id == 4){
+                                    $workeat = titlemenu_food::where('day_id', $day->id)
+                                        ->where('food_id', $prw->menu_food_id)
+                                        ->get();
+                                    if($workeat->count() > 0){
+                                        $weight += $prw->weight * $next->workers_count;
+                                    }
                                 }
                             }
                         }
                     }
+                    
+                    $calculatedWeight = $weight / $prod->div;
+                    $result = $calculatedWeight;
+                    if($prod->size_name_id == 3 or $prod->size_name_id == 2){ 
+                        $result = round($result);
+                    }
+                    else{
+                        $result = round($result, 1);
+                    }
+                    // order_product_structure ga qo'shish
+                    if(isset($orderProduct[$row->id])){
+                        order_product_structure::create([
+                            'order_product_name_id' => $orderProduct[$row->id]->id,
+                            'product_name_id' => $prod->id,
+                                'product_weight' => $result,
+                                'actual_weight' => $calculatedWeight, // Boshlang'ich qiymat
+                            ]);
+                    }
+                    
+                    $shopproducts[$row->id][$prod->id] = $calculatedWeight;
                 }
-                
-                $calculatedWeight = $weight / $prod->div;
-                $result = $calculatedWeight;
-                if($prod->size_name_id == 3 or $prod->size_name_id == 2){ 
-                    $result = round($result);
-                }
-                else{
-                    $result = round($result, 1);
-                }
-                // order_product_structure ga qo'shish
-                order_product_structure::create([
-                    'order_product_name_id' => $orderProduct[$row->id]->id,
-                    'product_name_id' => $prod->id,
-                    'product_weight' => $result,
-                    'actual_weight' => $calculatedWeight, // Boshlang'ich qiymat
-                ]);
-                
-                $shopproducts[$row->id][$prod->id] = $calculatedWeight;
             }
-        }
+
+            return response()->json([
+                'success' => true,
+                'message' => $shop->shop_name . ' uchun zayavka saqlandi!'
+            ]);
         
-        return redirect()->back()->with('success', 'Order muvaffaqiyatli yaratildi!');
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage()
+            ]);
+        }
     }
 
     public function nextdayshoppdf(Request $request, $id){
@@ -3922,7 +3961,7 @@ class TechnologController extends Controller
                 $totalCols = 2 + (count($this->data[array_key_first($this->data)]['kindgardens']) * 3) + 3;
 
                 for ($i = 3; $i <= $totalCols; $i++) {
-                    $widths[$this->getColumnLetter($i)] = 5; // 3 xonali raqam sig‘adi
+                    $widths[$this->getColumnLetter($i)] = 5; // 3 xonali raqam sig'adi
                 }
 
                 return $widths;
