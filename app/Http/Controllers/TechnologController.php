@@ -3709,7 +3709,7 @@ class TechnologController extends Controller
         
         foreach ($regions as $region) {
             $regionKindgardens = $kindgardens->where('region_id', $region->id)
-                ->orderBy('number_of_org');
+                ->sortBy('number_of_org');
             
             if ($regionKindgardens->count() > 0) {
                 $attendanceData[$region->id] = [
