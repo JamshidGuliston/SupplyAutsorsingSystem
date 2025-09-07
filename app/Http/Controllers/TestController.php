@@ -173,7 +173,8 @@ class TestController extends Controller
 				]);
 
 			$name = $day['id'].'-'.$gid.'-'.$ageid."taxminiy.pdf";
-			return $pdf->download($name);
+
+			return $pdf->stream($name, ['Attachment' => 0]);
 		} catch (\Exception $e) {
 			// Snappy ishlamasa, DomPDF ishlatish
 			$dompdf = new Dompdf('UTF-8');
@@ -230,13 +231,15 @@ class TestController extends Controller
                     ->where('titlemenu_id', $menu[0]['kingar_menu_id'])
                     ->get();
 
-		$costs = bycosts::where('day_id', bycosts::where('day_id', '<=', $today)->where('region_name_id', Kindgarden::where('id', $gid)->first()->region_id)->orderBy('day_id', 'DESC')->first()->day_id)->where('region_name_id', Kindgarden::where('id', $gid)->first()->region_id)->orderBy('day_id', 'DESC')->get();
-		$narx = [];
-		foreach($costs as $row){
-			if(!isset($narx[$row->praduct_name_id])){
-				$narx[$row->praduct_name_id] = $row->price_cost;
-			}
-		}
+		// $costs = bycosts::where('day_id', bycosts::where('day_id', '<=', $today)->where('region_name_id', Kindgarden::where('id', $gid)->first()->region_id)->orderBy('day_id', 'DESC')->first()->day_id)->where('region_name_id', Kindgarden::where('id', $gid)->first()->region_id)->orderBy('day_id', 'DESC')->get();
+		// $narx = [];
+		// foreach($costs as $row){
+		// 	if(!isset($narx[$row->praduct_name_id])){
+		// 		$narx[$row->praduct_name_id] = $row->price_cost;
+		// 	}
+		// }
+        $protsent = Protsent::where('region_id', Kindgarden::where('id', $gid)->first()->region_id)->where('age_range_id', $ageid)->first();
+		
         $nextdaymenuitem = [];
         $workerproducts = [];
         $productallcount = array_fill(1, 500, 0);
@@ -266,7 +269,7 @@ class TestController extends Controller
             }
         }
         $dompdf = new Dompdf('UTF-8');
-		$html = mb_convert_encoding(view('pdffile.technolog.activmenu', ['narx' => $narx,'day' => $day,'productallcount' => $productallcount, 'workerproducts' => $workerproducts,'menu' => $menu, 'menuitem' => $nextdaymenuitem, 'products' => $products, 'workerfood' => $workerfood]), 'HTML-ENTITIES', 'UTF-8');
+		$html = mb_convert_encoding(view('pdffile.technolog.activmenu', ['protsent' => $protsent,'day' => $day,'productallcount' => $productallcount, 'workerproducts' => $workerproducts,'menu' => $menu, 'menuitem' => $nextdaymenuitem, 'products' => $products, 'workerfood' => $workerfood]), 'HTML-ENTITIES', 'UTF-8');
 		$dompdf->loadHtml($html);
 		$dompdf->setPaper('A4', 'landscape');
 		$name = $day['id'].$ageid."activemenu.pdf";

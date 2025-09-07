@@ -307,7 +307,7 @@
 			                            ?>
 									</tr>
 									<tr>
-										<td scope="row" colspan="3" class="align-baseline" style="padding: 0px;">Жами миқдори (кг.хис)</td>
+										<td scope="row" colspan="3" class="align-baseline" style="padding: 0px;">Жами сарфланган махулот миқдори</td>
 										<?php
 										for($t = 0; $t < count($products); $t++){
 											if(isset($products[$t]['yes']) and isset($total_weight[$products[$t]['id']])){
@@ -325,17 +325,28 @@
 									</tr>
                         </tbody>
                       </table>
-                      <div class="row" style="margin-top: 15px;">
+					  <div class="row" style="margin-top: 15px;">
+							<div class="column">
+								<p style="text-align: center;"><strong> Бир нафар {{ $menu[0]['age_name'] }}ли бола учун:</strong> <?php echo number_format($protsent->eater_cost, 0, ',', ' '); ?> so'm</p>
+							</div>
+							<div class="column">
+								<p style="text-align: center;"><strong> Жами сарфланган сумма:</strong> {{  number_format($menu[0]['kingar_children_number']*$protsent->eater_cost, 0, ',', ' '); }}</p>
+							</div>
+							<div class="column">
+								
+							</div>
+					   </div>
+                       <div class="row" style="margin-top: 15px;">
 							<div class="column">
 								<img src="images/qrmanzil.jpg" alt="QR-code" width="140">
 							</div>
 							<div class="column">
-								<p style="text-align: center;"><strong> Бош ошпаз:</strong> __________________;</p>
+								<p style="text-align: center;"><strong> Технолог:</strong> __________________;</p>
 							</div>
 							<div class="column">
-								<p style="text-align: right;"><strong>Танишдим ДМТТ рахбари: </strong> __________________;</p>
+								<p style="text-align: right;"><strong>Бош ошпаз: </strong> __________________;</p>
 							</div>
-						</div>
+					   </div>
                 </div>
             </div>
         </div>

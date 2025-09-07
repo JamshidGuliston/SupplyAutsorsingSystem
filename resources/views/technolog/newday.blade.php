@@ -916,13 +916,56 @@
         </div>
     </div>
     <?php $tr = 1 ?>
-    @foreach($shops as $shop)
-        <b>{{ $shop->shop_name }}</b>
-        <a href="/technolog/nextdelivershop/{{ $shop->id }}" target="_blank">
-        <i class="fas fa-shipping-fast" style="color: dodgerblue; font-size: 18px;"></i>
-        </a>
-        <br>
-    @endforeach
+    
+    <!-- Shopslar uchun alohida jadval -->
+    <div class="container-fluid mt-4">
+        <div class="row mb-3">
+            <div class="col-md-12">
+                <h5 class="text-primary">
+                    <i class="fas fa-store me-2"></i>Yetkazuvchilar
+                </h5>
+            </div>
+        </div>
+        
+        <div class="table-responsive">
+            <table class="table table-light table-bordered table-striped table-hover">
+                <thead class="table-primary">
+                    <tr>    
+                        <th scope="col" style="width: 50px;">№</th>
+                        <th scope="col">Yetkazuvchi nomi</th>
+                        <th scope="col" style="width: 120px;">Zayavkani saqlab qo'yish</th>
+                        <th scope="col" style="width: 100px;">Amallar</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach($shops as $shop)
+                    <tr>
+                        <td>{{ $tr++ }}</td>
+                        <td>
+                            <strong>{{ $shop->shop_name }}</strong>
+                        </td>
+                        <td class="text-center">
+                            <button class="btn btn-outline-success btn-sm save-request-btn" 
+                                    data-shop-id="{{ $shop->id }}" 
+                                    data-shop-name="{{ $shop->shop_name }}"
+                                    title="Zayavkani saqlab qo'yish">
+                                <i class="fas fa-save"></i>
+                            </button>
+                        </td>
+                        <td class="text-center">
+                            <a href="/technolog/nextdelivershop/{{ $shop->id }}" 
+                               target="_blank" 
+                               class="btn btn-outline-primary btn-sm"
+                               title="Yetkazib berish jadvalini ko'rish">
+                                <i class="fas fa-shipping-fast"></i>
+                            </a>
+                        </td>
+                    </tr>
+                    @endforeach
+                </tbody>
+            </table>
+        </div>
+    </div>
 </div>
 @endif
 @endsection
