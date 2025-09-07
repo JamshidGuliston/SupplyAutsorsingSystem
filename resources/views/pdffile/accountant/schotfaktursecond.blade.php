@@ -294,6 +294,7 @@
                 
                 @foreach($kindgar->age_range as $age)
                 <tr>
+                    <td class="order-number">{{ $loop->iteration }}</td>
                     <td class="product-name">{{ $age->description . "га кўрсатилган Аутсорсинг хизмати" }}</td>
                     <td class="unit">{{ 'бола' }}</td>
                     <td class="quantity">{{ $total_number_children[$age->id] }}</td>
