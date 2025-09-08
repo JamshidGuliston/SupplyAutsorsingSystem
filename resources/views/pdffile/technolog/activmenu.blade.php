@@ -312,7 +312,6 @@
                     					}
 			                            ?>
 									</tr>
-								@endif
 									<tr>
 										<td scope="row" colspan="3" class="align-baseline" style="padding: 0px;">Жами сарфланган махулот миқдори</td>
 										<?php
@@ -330,6 +329,7 @@
                     					}
 			                            ?>
 									</tr>
+								@endif
                         </tbody>
                       </table>
 					  <div class="row" style="margin-top: 15px;">
