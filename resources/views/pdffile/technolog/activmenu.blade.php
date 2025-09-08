@@ -69,7 +69,7 @@
 			-ms-transform: rotate(-90deg);
 			-o-transform: rotate(-90deg);
 			transform: rotate(-90deg);
-			white-space: wrap;
+			white-space: nowrap;
 			overflow: hidden;
 			text-overflow: ellipsis;
 			max-width: 90px;
