@@ -271,7 +271,7 @@
                     					}
 			                            ?>
 									</tr>
-
+								@if(env('WORKERSFORMENU') == "true")
 									<tr style="border-top: 1px solid black;">
 										<td scope="row" colspan="3" class="align-baseline" style="padding: 0px; border-top: 1px solid black">1 та ходим учун гр</td>
 										<?php
@@ -312,6 +312,7 @@
                     					}
 			                            ?>
 									</tr>
+								@endif
 									<tr>
 										<td scope="row" colspan="3" class="align-baseline" style="padding: 0px;">Жами сарфланган махулот миқдори</td>
 										<?php
