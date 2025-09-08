@@ -783,6 +783,7 @@ class AccountantController extends Controller
         // Buyurtmachi ma'lumotlari
         $buyurtmachi = [
             'company_name' => $kindgar->kingar_name ?? '_________________________________',
+            'address' => '_________________________________',
             'inn' => '____________ ____',
             'mfo' => '__________ _____',
             'account_number' => '__________ _____',

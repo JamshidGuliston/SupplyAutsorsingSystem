@@ -242,31 +242,31 @@
             <div class="section-title">Буйрутмачи:</div>
             <div class="company-details">
                 <span class="label">Ташкилот номи:</span>
-                <span class="value">{{ $buyurtmachi['company_name'] ?? 'Chinoz tumani MMTBga tasarrufidagi 1-sonli DMTT' }}</span>
+                <span class="value">{{ $buyurtmachi['company_name'] ?? '_________________________________' }}</span>
             </div>
             <div class="company-details">
                 <span class="label">Манзил:</span>
-                <span class="value">{{ $buyurtmachi['address'] ?? 'Toshkent shahri, Olmazor tumani, 1' }}</span>
+                <span class="value">{{ $buyurtmachi['address'] ?? '' }}</span>
             </div>
             <div class="company-details">
                 <span class="label">ИНН:</span>
-                <span class="value">{{ $buyurtmachi['inn'] ?? '1234567890' }}</span>
+                <span class="value">{{ $buyurtmachi['inn'] ?? '' }}</span>
             </div>
             <div class="company-details">
                 <span class="label">МФО:</span>
-                <span class="value">{{ $buyurtmachi['mfo'] ?? '1234567890' }}</span>
+                <span class="value">{{ $buyurtmachi['mfo'] ?? '' }}</span>
             </div>
             <div class="company-details">
                 <span class="label">Хисоб рақам:</span>
-                <span class="value">{{ $buyurtmachi['account_number'] ?? '1234567890' }}</span>
+                <span class="value">{{ $buyurtmachi['account_number'] ?? '' }}</span>
             </div>
             <div class="company-details">
                 <span class="label">Банк:</span>
-                <span class="value">{{ $buyurtmachi['bank'] ?? 'Bank of America' }}</span>
+                <span class="value">{{ $buyurtmachi['bank'] ?? "" }}</span>
             </div>
             <div class="company-details">
                 <span class="label">Телефон:</span>
-                <span class="value">{{ $buyurtmachi['phone'] ?? '+998901234567' }}</span>
+                <span class="value">{{ $buyurtmachi['phone'] ?? '' }}</span>
             </div>
         </div>
     </div>
