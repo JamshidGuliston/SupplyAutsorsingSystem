@@ -69,7 +69,7 @@
 			-ms-transform: rotate(-90deg);
 			-o-transform: rotate(-90deg);
 			transform: rotate(-90deg);
-			white-space: nowrap;
+			white-space: wrap;
 			overflow: hidden;
 			text-overflow: ellipsis;
 			max-width: 90px;
@@ -152,6 +152,8 @@
 									$first = $parts[0];
 									$second = isset($parts[1]) ? $parts[1] : '';
 									$third = isset($parts[2]) ? $parts[2] : '';
+									$fourth = isset($parts[3]) ? $parts[3] : '';
+									$fifth = isset($parts[4]) ? $parts[4] : '';
 									
 									// Maxsulot nomini qisqartirish
 									$shortName = $first;
@@ -168,7 +170,7 @@
 									}
 								@endphp
                           	 		<th class='vrt-header product-column' style="padding: 0px; height: 100px">
-                          	 			<span class="product-name-short"><?php echo $first.' '.$second.' '.$third; ?></span>
+                          	 			<span class="product-name-short"><?php echo $first.' '.$second.' '.$third.' '.$fourth.' '.$fifth; ?></span>
                           	 		</th>
 								@endif
 							 @endforeach
