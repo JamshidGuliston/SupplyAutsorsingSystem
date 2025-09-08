@@ -226,7 +226,7 @@
             </div>
             <div class="company-details">
                 <span class="label">Хисоб рақам:</span>
-                <span class="value">{{ $autorser['account_number'] ?? '1234567890123456' }}</span>
+                <span class="value">{{ $autorser['bank_account'] ?? '1234567890123456' }}</span>
             </div>
             <div class="company-details">
                 <span class="label">Банк:</span>
