@@ -5201,7 +5201,7 @@ class TechnologController extends Controller
             $kindergartens = Kindgarden::where('region_id', $regionId)
                 ->with('age_range')
                 ->get();
-                
+            dd($kindergartens);
             if ($kindergartens->isEmpty()) {
                 return response()->json([
                     'success' => false,
