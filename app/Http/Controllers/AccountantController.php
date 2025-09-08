@@ -782,14 +782,14 @@ class AccountantController extends Controller
         
         // Buyurtmachi ma'lumotlari
         $buyurtmachi = [
-            'company_name' => $kindgar->name ?? 'Chinoz tumani MMTBga tasarrufidagi 1-sonli DMTT',
-            'inn' => '1234567890',
-            'mfo' => 1234567890,
-            'account_number' => '1234567890',
-            'treasury_account' => 1234567890,
-            'treasury_inn' => 1234567890,
-            'bank' => 'Bank of America',
-            'phone' => '+998901234567'
+            'company_name' => $kindgar->kingar_name ?? '_________________________________',
+            'inn' => '____________ ____',
+            'mfo' => '__________ _____',
+            'account_number' => '__________ _____',
+            'treasury_account' => '__________ _____',
+            'treasury_inn' => '____________ ____',
+            'bank' => '_____________________________',
+            'phone' => '__________________________',
         ];
         
         // Hisob-faktura raqami va sanasi
