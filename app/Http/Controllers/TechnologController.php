@@ -4676,7 +4676,7 @@ class TechnologController extends Controller
     }
     
     // Har bir bog'cha uchun alohida PDF yaratish
-    public function createKindergartenMenuPDF($garden_id, $age_id, $tempDir)
+    public function createKindergartenMenuPDFAction($garden_id, $age_id, $tempDir)
     {
         try {
             $menu = Nextday_namber::where([
