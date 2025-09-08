@@ -63,22 +63,26 @@
 		}
 		.vrt-header span{
 			display: inline-block;
-			text-align: center;
+			text-align: left;
 			-webkit-transform: rotate(-90deg);
 			-moz-transform: rotate(-90deg);
 			-ms-transform: rotate(-90deg);
 			-o-transform: rotate(-90deg);
 			transform: rotate(-90deg);
-			white-space: nowrap;
-			overflow: hidden;
-			text-overflow: ellipsis;
-			max-width: 90px;
+
+			white-space: nowrap;       /* so‘zlarni bir qatorda ushlab turadi */
+			word-break: keep-all;      /* so'zlarni bo'lib tashlamaydi */
+			line-height: 1;            /* ixchamlashtiradi */
+			max-width: 90px;           /* kerak bo'lsa cheklash */
+			overflow: hidden;          /* sig'masa kesadi */
+			text-overflow: ellipsis;   /* sig'masa "..." qo'yadi */
 		}
 		
 		/* Maxsulot nomlari uchun */
 		.product-name-short {
-			font-size: 8px;
-			line-height: 1.2;
+			font-size: 6px;
+			line-height: 1.0;
+			
 		}
 		
 		/* Qator balandligini kamaytirish */
