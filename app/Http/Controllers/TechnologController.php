@@ -4335,7 +4335,6 @@ class TechnologController extends Controller
             
             // Tanlangan region bo'yicha bog'chalarni olish
             $kindergartens = Kindgarden::where('region_id', $regionId)
-                ->where('hide', 1)
                 ->with('age_range')
                 ->get();
                 
@@ -4356,9 +4355,10 @@ class TechnologController extends Controller
             $createdCount = 0;
             
             foreach ($kindergartens as $kindergarten) {
+                dd($kindergarten);
                 // Har bir bog'cha uchun PDF yaratish
                 foreach($kindergarten->age_range as $age){
-                    $pdfPath = $this->createKindergartenMenuPDF($kindergarten->id, $age->id, $tempDir);
+                    $pdfPath = $this->createKindergartenMenuPDFActive($kindergarten->id, $age->id, $tempDir);
                     if ($pdfPath && file_exists($pdfPath)) {
                         $pdfFiles[] = $pdfPath;
                         $createdCount++;
@@ -4676,7 +4676,7 @@ class TechnologController extends Controller
     }
     
     // Har bir bog'cha uchun alohida PDF yaratish
-    public function createKindergartenMenuPDF2($garden_id, $age_id, $tempDir)
+    public function createKindergartenMenuPDF($garden_id, $age_id, $tempDir)
     {
         try {
             $menu = Nextday_namber::where([
@@ -5132,7 +5132,7 @@ class TechnologController extends Controller
             foreach ($kindergartens as $kindergarten) {
                 foreach($kindergarten->age_range as $age) {
                     $pdfPath = $this->createKindergartenMenuPDF($kindergarten->id, $age->id, $tempDir);
-                    dd($kindergarten->id, $age->id, $tempDir, $pdfPath, $pdfPath && file_exists($pdfPath));
+                    // dd($kindergarten->id, $age->id, $tempDir, $pdfPath, $pdfPath && file_exists($pdfPath));
                     if ($pdfPath && file_exists($pdfPath)) {
                         $pdfFiles[] = $pdfPath;
                         echo "PDF yaratildi: " . basename($pdfPath) . " (" . filesize($pdfPath) . " bytes)\n";
@@ -5201,7 +5201,7 @@ class TechnologController extends Controller
             $kindergartens = Kindgarden::where('region_id', $regionId)
                 ->with('age_range')
                 ->get();
-            dd($kindergartens);
+                
             if ($kindergartens->isEmpty()) {
                 return response()->json([
                     'success' => false,
