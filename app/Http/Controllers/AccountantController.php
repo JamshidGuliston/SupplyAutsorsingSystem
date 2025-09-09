@@ -763,7 +763,7 @@ class AccountantController extends Controller
 
     public function schotfaktursecond(Request $request, $id, $start, $end){
         $kindgar = Kindgarden::where('id', $id)->with('age_range')->first();
-        $days = Day::where('id', '>=', $start)->where('id', '<=', $end)
+        $days = Day::where('days.id', '>=', $start)->where('days.id', '<=', $end)
                 ->join('years', 'days.year_id', '=', 'years.id')
                 ->join('months', 'days.month_id', '=', 'months.id')
                 ->get(['days.day_number', 'months.id as month_id', 'years.year_name']);
