@@ -615,7 +615,7 @@
             $(this).prop('disabled', true);
             
             $.ajax({
-                url: '{{ route("technolog.download-showdate-menus-pdf") }}',
+                url: '{{ route("technolog.downloadShowdateMenusPDF") }}',
                 method: 'GET',
                 data: {
                     region_id: selectedRegion,
