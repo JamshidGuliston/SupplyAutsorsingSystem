@@ -771,8 +771,8 @@ class AccountantController extends Controller
         foreach($kindgar->age_range as $age){
             $costs[$age->id] = Protsent::where('region_id', $kindgar->region_id)
                         ->where('age_range_id', $age->id)
-                        ->where('start_date', '<=', $days->last()->day_number.'-'.($days->last()->month_id % 12 == 0 ? 12 : $days->last()->month_id % 12).'-'.$days->last()->year_id)
-                        ->where('end_date', '>=', $days->first()->day_number.'-'.($days->first()->month_id % 12 == 0 ? 12 : $days->first()->month_id % 12).'-'.$days->first()->year_id)
+                        ->where('start_date', '<=', $days->last()->day_number.'-'.($days->last()->month_id % 12 == 0 ? 12 : $days->last()->month_id % 12).'-'.$days->last()->year_name)
+                        ->where('end_date', '>=', $days->first()->day_number.'-'.($days->first()->month_id % 12 == 0 ? 12 : $days->first()->month_id % 12).'-'.$days->first()->year_name)
                         ->first();
             if(!isset($total_number_children[$age->id])){
                 $total_number_children[$age->id] = 0;
