@@ -614,9 +614,8 @@
             $(this).html('<i class="fas fa-spinner fa-spin text-white"></i> Yuklanmoqda...');
             $(this).prop('disabled', true);
             
-            // AJAX so'rov
             $.ajax({
-                url: '{{ route("technolog.downloadShowdateMenusPDF") }}',
+                url: '{{ route("technolog.download-showdate-menus-pdf") }}',
                 method: 'GET',
                 data: {
                     region_id: selectedRegion,
