@@ -763,13 +763,17 @@ class AccountantController extends Controller
 
     public function schotfaktursecond(Request $request, $id, $start, $end){
         $kindgar = Kindgarden::where('id', $id)->with('age_range')->first();
-        $days = Day::where('id', '>=', $start)->where('id', '<=', $end)->get();
+        $days = Day::where('id', '>=', $start)->where('id', '<=', $end)
+                ->join('years', 'days.year_id', '=', 'years.id')
+                ->join('months', 'days.month_id', '=', 'months.id')
+                ->get(['days.day_number', 'months.id as month_id', 'years.year_name']);
         $costs = [];
         foreach($kindgar->age_range as $age){
             $costs[$age->id] = Protsent::where('region_id', $kindgar->region_id)
                         ->where('age_range_id', $age->id)
-                        ->where('start_date', '<=', date('Y-m-d'))
-                        ->where('end_date', '>=', date('Y-m-d'))->first();
+                        ->where('start_date', '<=', $days->last()->day_number.'-'.($days->last()->month_id % 12 == 0 ? 12 : $days->last()->month_id % 12).'-'.$days->last()->year_id)
+                        ->where('end_date', '>=', $days->first()->day_number.'-'.($days->first()->month_id % 12 == 0 ? 12 : $days->first()->month_id % 12).'-'.$days->first()->year_id)
+                        ->first();
             if(!isset($total_number_children[$age->id])){
                 $total_number_children[$age->id] = 0;
             }
