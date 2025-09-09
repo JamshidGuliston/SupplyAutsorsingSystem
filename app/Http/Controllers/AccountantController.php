@@ -768,18 +768,18 @@ class AccountantController extends Controller
                 ->join('months', 'days.month_id', '=', 'months.id')
                 ->get(['days.day_number', 'months.id as month_id', 'years.year_name']);
         $costs = [];
+        // dd($days->last()->year_name.'-'.($days->last()->month_id % 12 == 0 ? 12 : $days->last()->month_id % 12).$days->last()->day_number); 
         foreach($kindgar->age_range as $age){
             $costs[$age->id] = Protsent::where('region_id', $kindgar->region_id)
                         ->where('age_range_id', $age->id)
-                        ->where('start_date', '<=', $days->last()->day_number.'-'.($days->last()->month_id % 12 == 0 ? 12 : $days->last()->month_id % 12).'-'.$days->last()->year_name)
-                        ->where('end_date', '>=', $days->first()->day_number.'-'.($days->first()->month_id % 12 == 0 ? 12 : $days->first()->month_id % 12).'-'.$days->first()->year_name)
+                        ->where('start_date', '<=', $days->last()->year_name.'-'.($days->last()->month_id % 12 == 0 ? 12 : $days->last()->month_id % 12).'-'.$days->last()->day_number)
+                        ->where('end_date', '>=', $days->last()->year_name.'-'.($days->last()->month_id % 12 == 0 ? 12 : $days->last()->month_id % 12).'-'.$days->last()->day_number)
                         ->first();
             if(!isset($total_number_children[$age->id])){
                 $total_number_children[$age->id] = 0;
             }
             $total_number_children[$age->id] += Number_children::where('day_id', '>=', $start)->where('day_id', '<=', $end)->where('kingar_name_id', $id)->where('king_age_name_id', $age->id)->sum('kingar_children_number');
         }
-
         
         // Autsorser ma'lumotlari (kompaniya ma'lumotlari)
         $autorser = config('company.autorser');

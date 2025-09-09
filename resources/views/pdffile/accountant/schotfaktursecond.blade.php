@@ -200,8 +200,8 @@
     <!-- Header qismi -->
     <div class="header">
         <div class="invoice-title">СЧЁТ-ФАКТУРА</div>
-        <div class="invoice-number">№ {{ $invoice_number ?? '001' }}</div>
-        <div class="invoice-date">Дата: {{ $invoice_date ?? date('d.m.Y') }}</div>
+        <div class="invoice-number">№ {{ $invoice_number ?? "_________________________________" }}</div>
+        <div class="invoice-date">{{ $invoice_date ?? "_________________________________" }}</div>
     </div>
 
     <!-- Kompaniya ma'lumotlari -->
@@ -281,6 +281,7 @@
                     <th class="unit">Ўл.бир</th>
                     <th class="quantity">Сони</th>
                     <th class="price">Нархи</th>
+                    <th class="price">ҚҚС</th>
                     <th class="amount">Кўрсатилган хизмат суммаси (ҚҚС билан)</th>
                     <th class="vat">Шундан ҚҚС</th>
                 </tr>
@@ -299,6 +300,7 @@
                     <td class="unit">{{ 'бола' }}</td>
                     <td class="quantity">{{ $total_number_children[$age->id] }}</td>
                     <td class="price">{{ number_format($costs[$age->id]->eater_cost ?? 0, 2) }}</td>
+                    <td class="price">{{ $costs[$age->id]->nds ?? 0 }}%</td>
                     <td class="amount">
                         @php
                             $amount = $total_number_children[$age->id] * ($costs[$age->id]->eater_cost ?? 0);
@@ -308,7 +310,7 @@
                     </td>
                     <td class="vat">
                         @php
-                            $vat = $amount * ($costs[$age->id]->nds/100 ?? 0); // 15% НДС
+                            $vat = $amount * ($costs[$age->id]->nds/(100+$costs[$age->id]->nds) ?? 0); // 15% НДС
                             $total_nds += $vat;
                         @endphp
                         {{ number_format($vat, 2) }}
@@ -321,10 +323,10 @@
                     <td>Хизмат</td>
                     <td>1</td>
                     <td></td>
-                    <td>{{ number_format($total_amount * ($costs[4]->raise/100 ?? 0), 2) }}</td>
-                    @php $total_amount += $total_amount * ($costs[4]->raise/100 ?? 0); @endphp
-                    <td>{{ number_format($total_amount * ($costs[4]->raise/100) * ($costs[4]->nds/100), 2) }}</td>
-                    @php $total_nds += $total_amount * ($costs[4]->raise/100) * ($costs[4]->nds/100); @endphp
+                    <td>{{ number_format($total_amount * ($costs[4]->raise/(100+$costs[4]->raise) ?? 0), 2) }}</td>
+                    @php $total_amount += $total_amount * ($costs[4]->raise/(100+$costs[4]->raise) ?? 0); @endphp
+                    <td>{{ number_format($total_amount * ($costs[4]->raise/(100+$costs[4]->raise)) * ($costs[4]->nds/(100+$costs[4]->nds)), 2) }}</td>
+                    @php $total_nds += $total_amount * ($costs[4]->raise/(100+$costs[4]->raise)) * ($costs[4]->nds/(100+$costs[4]->nds)); @endphp
                 </tr>
 
                 <!-- Jami qator -->
@@ -342,11 +344,11 @@
     <div class="footer">
         <div class="footer-section">
             <div class="signature-line"></div>
-            <div class="signature-label">Авторсер директори</div>
+            <div class="signature-label">Аутсорсер директори</div>
         </div>
         <div class="footer-section">
             <div class="signature-line"></div>
-            <div class="signature-label">Буйрутмачи директори</div>
+            <div class="signature-label">Буюртмачи директори</div>
         </div>
     </div>
 </body>
