@@ -625,6 +625,7 @@
                     responseType: 'blob'
                 },
                 success: function(data, status, xhr) {
+                    alert(1);
                     // Faylni yuklab olish
                     var blob = new Blob([data]);
                     var link = document.createElement('a');
@@ -652,6 +653,7 @@
                     $('#downloadShowdateMenus').prop('disabled', false);
                 },
                 error: function(xhr, status, error) {
+                    alert(status, error);
                     var errorMessage = 'Xatolik yuz berdi!';
                     
                     // JSON xatolik xabarini olish

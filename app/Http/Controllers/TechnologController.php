@@ -29,6 +29,7 @@ use App\Models\Titlemenu;
 use App\Models\order_product;
 use App\Models\order_product_structure;
 use App\Models\history_process;
+use App\Models\Protsent;
 use App\Models\Meal_time;
 use App\Models\minus_multi_storage;
 use App\Models\Nextday_namber;
@@ -5229,7 +5230,6 @@ class TechnologController extends Controller
                         ['day_id', '=', $dayId],
                         ['king_age_name_id', '=', $ageRange->id]
                     ])->first();
-                    
                     if ($numberChildren) {
                         $pdfPath = $this->createShowdateMenuPDF($numberChildren, $kindergarten, $ageRange, $dayId, $tempDir);
                         if ($pdfPath) {
@@ -5290,101 +5290,80 @@ class TechnologController extends Controller
                 ['kingar_name_id', '=', $kindergarten->id],
                 ['day_id', '=', $dayId],
                 ['king_age_name_id', '=', $ageRange->id]
-            ])
-            ->join('kindgardens', 'number_childrens.kingar_name_id', '=', 'kindgardens.id')
-            ->join('age_ranges', 'number_childrens.king_age_name_id', '=', 'age_ranges.id')
-            ->first();
-            
-            if (!$menu) {
-                return null;
-            }
-            
-            $taomnoma = Titlemenu::where('id', $menu->kingar_menu_id)->first();
-            
+            ])->join('kindgardens', 'number_childrens.kingar_name_id', '=', 'kindgardens.id')
+            ->join('age_ranges', 'number_childrens.king_age_name_id', '=', 'age_ranges.id')->get();
+            // dd($menu);  
             $products = Product::where('hide', 1)
-                ->leftjoin('sizes', 'sizes.id', '=', 'products.size_name_id')
-                ->orderBy('sort', 'ASC')->get(['products.*', 'sizes.size_name']);
+                ->orderBy('sort', 'ASC')->get();
             
             $menuitem = Active_menu::where('day_id', $dayId)
-                ->where('title_menu_id', $menu->kingar_menu_id)
-                ->where('age_range_id', $ageRange->id)
-                ->join('meal_times', 'active_menus.menu_meal_time_id', '=', 'meal_times.id')
-                ->join('food', 'active_menus.menu_food_id', '=', 'food.id')
-                ->join('products', 'active_menus.product_name_id', '=', 'products.id')
-                ->join('sizes', 'sizes.id', '=', 'products.size_name_id')
-                ->orderBy('menu_meal_time_id')
-                ->orderBy('menu_food_id')
-                ->get();
-            
+                            ->where('title_menu_id', $menu[0]['kingar_menu_id'])
+                            ->where('age_range_id', $ageRange->id)
+                            ->join('meal_times', 'active_menus.menu_meal_time_id', '=', 'meal_times.id')
+                            ->join('food', 'active_menus.menu_food_id', '=', 'food.id')
+                            ->join('products', 'active_menus.product_name_id', '=', 'products.id')
+                            ->orderBy('menu_meal_time_id')
+                            ->orderBy('menu_food_id')
+                            ->get();	
             $day = Day::where('days.id', $dayId)
                 ->join('months', 'months.id', '=', 'days.month_id')
                 ->join('years', 'years.id', '=', 'days.year_id')
                 ->orderBy('days.id', 'DESC')
                 ->first(['days.day_number','days.id as id', 'months.month_name', 'years.year_name']);
-            
+            // dd($day);
             $workerfood = titlemenu_food::where('day_id', ($dayId-1))
-                ->where('worker_age_id', $ageRange->id)
-                ->where('titlemenu_id', $menu->kingar_menu_id)
-                ->get();
-            
-            $costs = bycosts::where('day_id', bycosts::where('day_id', '<=', $dayId)->where('region_name_id', $kindergarten->region_id)->orderBy('day_id', 'DESC')->first()->day_id)
-                ->where('region_name_id', $kindergarten->region_id)
-                ->orderBy('day_id', 'DESC')
-                ->get();
-            
-            $narx = [];
-            foreach($costs as $row){
-                if(!isset($narx[$row->praduct_name_id])){
-                    $narx[$row->praduct_name_id] = $row->price_cost;
-                }
-            }
+                        ->where('worker_age_id', $ageRange->id)
+                        ->where('titlemenu_id', $menu[0]['kingar_menu_id'])
+                        ->get();
+    
+            // $costs = bycosts::where('day_id', bycosts::where('day_id', '<=', $today)->where('region_name_id', Kindgarden::where('id', $gid)->first()->region_id)->orderBy('day_id', 'DESC')->first()->day_id)->where('region_name_id', Kindgarden::where('id', $gid)->first()->region_id)->orderBy('day_id', 'DESC')->get();
+            // $narx = [];
+            // foreach($costs as $row){
+            // 	if(!isset($narx[$row->praduct_name_id])){
+            // 		$narx[$row->praduct_name_id] = $row->price_cost;
+            // 	}
+            // }
+            $protsent = Protsent::where('region_id', $kindergarten->region_id)->where('age_range_id', $ageRange->id)->first();
             
             $nextdaymenuitem = [];
             $workerproducts = [];
             $productallcount = array_fill(1, 500, 0);
-            
             foreach($menuitem as $item){
                 $nextdaymenuitem[$item->menu_meal_time_id][0]['mealtime'] = $item->meal_time_name; 
                 $nextdaymenuitem[$item->menu_meal_time_id][$item->menu_food_id][$item->product_name_id] = $item->weight;
                 $nextdaymenuitem[$item->menu_meal_time_id][$item->menu_food_id]['foodname'] = $item->food_name; 
                 $nextdaymenuitem[$item->menu_meal_time_id][$item->menu_food_id]['foodweight'] = $item->food_weight; 
                 $productallcount[$item->product_name_id] += $item->weight;
-                
                 for($i = 0; $i<count($products); $i++){
                     if(empty($products[$i]['yes']) and $products[$i]['id'] == $item->product_name_id){
                         $products[$i]['yes'] = 1;
                     }
                 }
             }
-            
             $workerproducts = array_fill(1, 500, 0);
             foreach($workerfood as $tr){
+                // Tushlikdagi birinchi ovqat va nondan yeyishadi
                 if(isset($nextdaymenuitem[3][$tr->food_id])){
                     foreach($nextdaymenuitem[3][$tr->food_id] as $key => $value){
                         if($key != 'foodname' and $key != 'foodweight'){
                             $workerproducts[$key] += $value; 
+                            // Xodimlar gramajini ham productallcount ga qo'shish
+                            // $productallcount[$key] += $value;
                         }
                     }
                 }
             }
-            
-            // DomPDF yordamida PDF yaratish
             $dompdf = new Dompdf('UTF-8');
-            $html = mb_convert_encoding(view('pdffile.technolog.activmenu', [
-                'narx' => $narx,
-                'day' => $day,
-                'productallcount' => $productallcount,
-                'workerproducts' => $workerproducts,
-                'menu' => [$menu],
-                'menuitem' => $nextdaymenuitem,
-                'products' => $products,
-                'workerfood' => $workerfood
-            ]), 'HTML-ENTITIES', 'UTF-8');
-            
+            $html = mb_convert_encoding(view('pdffile.technolog.activmenu', ['protsent' => $protsent,'day' => $day,'productallcount' => $productallcount, 'workerproducts' => $workerproducts,'menu' => $menu, 'menuitem' => $nextdaymenuitem, 'products' => $products, 'workerfood' => $workerfood]), 'HTML-ENTITIES', 'UTF-8');
             $dompdf->loadHtml($html);
             $dompdf->setPaper('A4', 'landscape');
+
+            if(isset($kindergarten->number_of_org)){
+                $fileName = $this-> cleanFileName($kindergarten->kingar_name) . '-DMTT_' . $ageRange->age_name . '_' . $day->day_number.'-'.$day->month_name.'-'.$day->year_name.'.pdf';
+            }else{
+                $fileName = $this-> cleanFileName($kindergarten->kingar_name) . '-DMTT_' . $ageRange->age_name . '_' . $day->day_number.'-'.$day->month_name.'-'.$day->year_name.'.pdf';
+            }
             
-            $fileName = $this->cleanFileName($kindergarten->kingar_name) . '_' . $ageRange->age_name . '_' . date('Y-m-d') . '.pdf';
             $pdfPath = $tempDir . '/' . $fileName;
             
             $dompdf->render();
