@@ -39,8 +39,8 @@ return [
     */
 
     'invoice' => [
-        'default_number' => env('INVOICE_DEFAULT_NUMBER', '57'),
-        'default_date' => env('INVOICE_DEFAULT_DATE', '06 сентября 2021г.'),
+        'default_number' => env('INVOICE_DEFAULT_NUMBER', '____________'),
+        'default_date' => env('INVOICE_DEFAULT_DATE', '______________________'),
         'vat_percentage' => env('VAT_PERCENTAGE', 12),
     ],
 ]; 

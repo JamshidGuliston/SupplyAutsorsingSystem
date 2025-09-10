@@ -281,7 +281,7 @@
                     <th class="unit">Ўл.бир</th>
                     <th class="quantity">Сони</th>
                     <th class="price">Нархи</th>
-                    <th class="price">ҚҚС</th>
+                    <th class="price">ҚҚС ва устама</th>
                     <th class="amount">Кўрсатилган хизмат суммаси (ҚҚС билан)</th>
                     <th class="vat">Шундан ҚҚС</th>
                 </tr>
@@ -319,10 +319,11 @@
                 @endforeach
                 <tr>
                     <td>{{ $tr++ }}</td>
-                    <td>Аутсорсинг хизмати устамаси {{ $costs[4]->raise . "%" ?? 0 }}</td>
+                    <td>Аутсорсинг хизмати устамаси</td>
                     <td>Хизмат</td>
                     <td>1</td>
                     <td></td>
+                    <td>{{ $costs[4]->raise . "%" ?? 0 }}</td>
                     <td>{{ number_format($total_amount * ($costs[4]->raise/(100+$costs[4]->raise) ?? 0), 2) }}</td>
                     @php $total_amount += $total_amount * ($costs[4]->raise/(100+$costs[4]->raise) ?? 0); @endphp
                     <td>{{ number_format($total_amount * ($costs[4]->raise/(100+$costs[4]->raise)) * ($costs[4]->nds/(100+$costs[4]->nds)), 2) }}</td>
@@ -332,7 +333,7 @@
                 <!-- Jami qator -->
                 <tr class="total-row">
                     <td></td>
-                    <td colspan="4" class="text-right font-bold">Жами сумма:</td>
+                    <td colspan="5" class="text-right font-bold">Жами сумма:</td>
                     <td class="amount font-bold">{{ number_format($total_amount, 2) }}</td>
                     <td class="vat font-bold">{{ number_format($total_nds, 2) }}</td>
                 </tr>
