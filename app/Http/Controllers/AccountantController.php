@@ -767,13 +767,13 @@ class AccountantController extends Controller
                 ->join('years', 'days.year_id', '=', 'years.id')
                 ->join('months', 'days.month_id', '=', 'months.id')
                 ->get(['days.day_number', 'months.id as month_id', 'years.year_name', 'days.created_at']);
+        
         $costs = [];
         // dd($days->last()->year_name.'-'.($days->last()->month_id % 12 == 0 ? 12 : $days->last()->month_id % 12).$days->last()->day_number); 
         foreach($kindgar->age_range as $age){
             $costs[$age->id] = Protsent::where('region_id', $kindgar->region_id)
                         ->where('age_range_id', $age->id)
-                        ->where('start_date', '<=', $days->last()->created_at)
-                        ->where('end_date', '>=', $days->last()->created_at)
+                        ->where('end_date', '>=', $days->last()->created_at->format('Y-m-d'))
                         ->first();
             if(!isset($total_number_children[$age->id])){
                 $total_number_children[$age->id] = 0;
