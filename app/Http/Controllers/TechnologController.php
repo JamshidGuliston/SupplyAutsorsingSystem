@@ -4356,10 +4356,9 @@ class TechnologController extends Controller
             $createdCount = 0;
             
             foreach ($kindergartens as $kindergarten) {
-                dd($kindergarten);
                 // Har bir bog'cha uchun PDF yaratish
                 foreach($kindergarten->age_range as $age){
-                    $pdfPath = $this->createKindergartenMenuPDFActive($kindergarten->id, $age->id, $tempDir);
+                    $pdfPath = $this->createKindergartenMenuPDF($kindergarten->id, $age->id, $tempDir);
                     if ($pdfPath && file_exists($pdfPath)) {
                         $pdfFiles[] = $pdfPath;
                         $createdCount++;
