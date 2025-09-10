@@ -369,6 +369,10 @@ Route::group(['prefix' => 'accountant', 'middleware' => ['isAccountant', 'auth']
     Route::post('editprotsent', [AccountantController::class, 'editprotsent'])->name('accountant.editprotsent');
     Route::post('deleteprotsent', [AccountantController::class, 'deleteprotsent'])->name('accountant.deleteprotsent');
 
+    // transportation
+    Route::get('transportation/{id}/{start}/{end}', [AccountantController::class, 'transportation'])->name('accountant.transportation');
+    Route::get('transportationexcel/{id}/{start}/{end}/{costid}', [AccountantController::class, 'transportationexcel'])->name('accountant.transportationexcel');
+
 });
 
 Route::group(['prefix' => 'casher', 'middleware' => ['isChasher', 'auth']], function () {

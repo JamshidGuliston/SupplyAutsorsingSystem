@@ -1860,4 +1860,36 @@ class AccountantController extends Controller
                         ->with('success', 'Protsent muvaffaqiyatli o\'chirildi!');
     }
 
+    public function transportation(Request $request, $id, $start, $end){
+        $kindgar = Kindgarden::where('id', $id)->first();
+        $days = Day::where('days.id', '>=', $start)->where('days.id', '<=', $end)
+            ->join('months', 'months.id', '=', 'days.month_id')
+            ->join('years', 'years.id', '=', 'days.year_id')
+            ->get(['days.id', 'days.day_number', 'months.month_name', 'years.year_name', 'days.created_at']);
+        $ages = Age_range::all();
+        $costs = [];
+        foreach($ages as $age){
+            $costs[$age->id] = Protsent::where('region_id', Kindgarden::where('id', $id)->first()->region_id)
+                ->where('start_date', '>=', $days[0]->created_at->format('Y-m-d'))
+                ->where('end_date', '<=', $days[count($days)-1]->created_at->format('Y-m-d'))
+                ->first();
+        }
+
+        $number_childrens = [];
+        foreach($days as $day){
+            $number_childrens[$day->id] = Number_children::where('number_childrens.day_id', $day->id)
+                ->where('kingar_name_id', $id)
+                ->join('titlemenus', 'titlemenus.id', '=', 'number_childrens.kingar_menu_id')
+                ->get();
+        }
+
+        // make snappy pdf
+        $pdf = \PDF::loadView('pdffile.accountant.transportation', compact('days', 'costs', 'number_childrens', 'kindgar', 'ages'));
+        $pdf->setPaper('A3', 'landscape');
+        $pdf->setOptions(['dpi' => 150]);
+        return $pdf->stream('transportation.pdf');
+
+        // return view('pdffile.accountant.transportation', compact('days', 'costs', 'number_childrens', 'kindgar'));
+    }
+
 }

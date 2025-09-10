@@ -1,0 +1,25 @@
+﻿    public function transportationexcel(Request $request, $id, $start, $end, $costid){
+        $kindgar = Kindgarden::where('id', $id)->first();
+        $days = Day::where('days.id', '>=', $start)->where('days.id', '<=', $end)
+            ->join('months', 'months.id', '=', 'days.month_id')
+            ->join('years', 'years.id', '=', 'days.year_id')
+            ->get(['days.id', 'days.day_number', 'months.month_name', 'years.year_name', 'days.created_at']);
+        $ages = Age_range::all();
+        $costs = [];
+        foreach($ages as $age){
+            $costs[$age->id] = bycosts::where('region_name_id', Kindgarden::where('id', $id)->first()->region_id)
+                ->where('start_date', '>=', $days[0]->created_at->format('Y-m-d'))
+                ->where('end_date', '<=', $days[count($days)-1]->created_at->format('Y-m-d'))
+                ->first();
+        }
+
+        $number_childrens = [];
+        foreach($days as $day){
+            $number_childrens[$day->id] = Number_children::where('number_childrens.day_id', $day->id)
+                ->where('kingar_name_id', $id)
+                ->join('title_menus', 'title_menus.id', '=', 'number_childrens.kingar_menu_id')
+                ->get();
+        }
+
+        return Excel::download(new TransportationExport($request, $id, $start, $end, $costid, $days, $costs, $number_childrens, $kindgar, $ages), 'transportation.xlsx');
+    }
