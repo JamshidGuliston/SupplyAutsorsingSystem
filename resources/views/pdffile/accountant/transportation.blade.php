@@ -91,12 +91,12 @@
         
         .cost-col {
             width: 120px;
-            min-width: 120px;
+            min-width: 80px;
         }
         
         .total-cost-col {
             width: 140px;
-            min-width: 140px;
+            min-width: 100px;
         }
         
         .breakdown-col {
@@ -106,7 +106,7 @@
         
         .final-total-col {
             width: 150px;
-            min-width: 150px;
+            min-width: 100px;
             font-weight: bold;
         }
         
@@ -144,15 +144,15 @@
         /* Responsive adjustments for PDF */
         @media print {
             body {
-                font-size: 12px;
+                font-size: 14px;
             }
             
             table {
-                font-size: 12px;
+                font-size: 14px;
             }
             
             th, td {
-                padding: 4px 2px;
+                padding: 8px 2px;
             }
         }
     </style>
