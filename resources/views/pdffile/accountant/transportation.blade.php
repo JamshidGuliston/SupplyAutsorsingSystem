@@ -7,36 +7,47 @@
     <style>
         body {
             font-family: Arial, sans-serif;
-            font-size: 10px;
+            font-size: 12px;
             margin: 0;
-            padding: 20px;
+            padding: 15px;
             background-color: white;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
         
         .header {
             text-align: center;
-            margin-bottom: 20px;
+            margin-bottom: 25px;
             font-weight: bold;
-            font-size: 12px;
+            font-size: 14px;
+            width: 100%;
         }
         
         .table-container {
             width: 100%;
-            overflow: hidden;
+            max-width: 100%;
+            overflow: visible;
+            display: flex;
+            justify-content: center;
         }
         
         table {
             width: 100%;
+            max-width: 100%;
             border-collapse: collapse;
-            border: 1px solid #000;
-            font-size: 9px;
+            border: 2px solid #000;
+            font-size: 11px;
+            margin: 0 auto;
         }
         
         th, td {
             border: 1px solid #000;
-            padding: 3px;
+            padding: 6px 4px;
             text-align: center;
             vertical-align: middle;
+            white-space: nowrap;
+            min-width: 60px;
         }
         
         .header-row {
@@ -59,35 +70,43 @@
         }
         
         .number-col {
-            width: 30px;
+            width: 40px;
+            min-width: 40px;
         }
         
         .meal-col {
-            width: 60px;
+            width: 80px;
+            min-width: 80px;
         }
         
         .date-col {
-            width: 80px;
+            width: 100px;
+            min-width: 100px;
         }
         
         .children-col {
-            width: 80px;
+            width: 90px;
+            min-width: 90px;
         }
         
         .cost-col {
-            width: 100px;
+            width: 120px;
+            min-width: 120px;
         }
         
         .total-cost-col {
-            width: 120px;
+            width: 140px;
+            min-width: 140px;
         }
         
         .breakdown-col {
-            width: 100px;
+            width: 120px;
+            min-width: 120px;
         }
         
         .final-total-col {
-            width: 120px;
+            width: 150px;
+            min-width: 150px;
             font-weight: bold;
         }
         
@@ -96,26 +115,45 @@
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%) rotate(-45deg);
-            font-size: 60px;
+            font-size: 80px;
             color: rgba(0, 0, 0, 0.1);
             z-index: -1;
             pointer-events: none;
         }
         
         .footer {
-            margin-top: 30px;
+            margin-top: 40px;
             display: flex;
             justify-content: space-between;
+            width: 100%;
+            max-width: 100%;
         }
         
         .signature-section {
             width: 45%;
+            font-size: 12px;
         }
         
         .signature-line {
             border-bottom: 1px solid #000;
             margin-top: 20px;
             padding-bottom: 5px;
+            min-width: 200px;
+        }
+        
+        /* Responsive adjustments for PDF */
+        @media print {
+            body {
+                font-size: 10px;
+            }
+            
+            table {
+                font-size: 9px;
+            }
+            
+            th, td {
+                padding: 4px 2px;
+            }
         }
     </style>
 </head>
@@ -141,114 +179,116 @@
             </tr>
             
             <tr class="sub-header">
-            @foreach($ages as $age)
-                <th>{{ $age->description }}</th>
-            @endforeach
+                <th>9-10,5 соатлик гуруҳ</th>
+                <th>4 соатлик гуруҳ</th>
                 <th>Жами</th>
-            @foreach($ages as $age)
-                <th>{{ $age->description }}</th>
-            @endforeach
-            @foreach($ages as $age)
-                <th>{{ $age->description }}</th>
-            @endforeach
+                <th>9-10,5 соатлик гуруҳ</th>
+                <th>4 соатлик гуруҳ</th>
+                <th>9-10,5 соатлик гуруҳ</th>
+                <th>4 соатлик гуруҳ</th>
                 <th>Жами</th>
                 <th>Сумма (безНДС)</th>
-                <th>Устама ҳақ {{ $costs[$ages[0]->id]->raise }}%</th>
-                <th>ҚҚС (НДС) {{ $costs[$ages[0]->id]->nds }}%</th>
+                <th>Устама ҳақ 28,5%</th>
+                <th>ҚҚС (НДС) 12%</th>
             </tr>
+            
             <!-- Ma'lumot qatorlari -->
             @php
-                $row_number = 1;
-                $total_age_children = [];
-                $total_all_children = 0;
-                $total_eater_cost = [];
-                $total_spends_all = [];
-                $total_spends = 0;
-                $total_without_nds = 0;
-                $total_raise = 0;
+                $total_children_9_10 = 0;
+                $total_children_4 = 0;
+                $total_children_all = 0;
+                $total_cost_9_10 = 0;
+                $total_cost_4 = 0;
+                $total_delivery_9_10 = 0;
+                $total_delivery_4 = 0;
+                $total_delivery_all = 0;
+                $total_amount_without_nds = 0;
+                $total_markup = 0;
                 $total_nds = 0;
-                $total_summ = 0;
+                $total_final_amount = 0;
+                $row_number = 1;
             @endphp
+            
             @foreach($days as $day)
+                @php
+                    // Bolalar sonini hisoblash
+                    $children_9_10 = 0;
+                    $children_4 = 0;
+                    
+                    foreach($number_childrens[$day->id] as $age_id => $child) {
+                        if($age_id == 3) { // 9-10.5 soatlik guruh
+                            $children_9_10 += $child->kingar_children_number ?? 0;
+                        } elseif($age_id == 4) { // 4 soatlik guruh
+                            $children_4 += $child->kingar_children_number ?? 0;
+                        }
+                    }
+                    
+                    $children_all = $children_9_10 + $children_4;
+                    
+                    // Narxlarni olish
+                    $cost_9_10 = 17866.00; // 9-10.5 soatlik guruh uchun narx
+                    $cost_4 = 4355.00; // 4 soatlik guruh uchun narx
+                    
+                    // Yetkazib berish xarajatlari
+                    $delivery_9_10 = $children_9_10 * $cost_9_10;
+                    $delivery_4 = $children_4 * $cost_4;
+                    $delivery_all = $delivery_9_10 + $delivery_4;
+                    
+                    // Xarajatlar tahlili
+                    $amount_without_nds = $delivery_all / 1.12; // QQSsiz summa
+                    $markup = $amount_without_nds * 0.285; // 28.5% ustama
+                    $nds = $amount_without_nds * 0.12; // 12% QQS
+                    $final_amount = $amount_without_nds + $markup + $nds;
+                    
+                    // Jami hisoblash
+                    $total_children_9_10 += $children_9_10;
+                    $total_children_4 += $children_4;
+                    $total_children_all += $children_all;
+                    $total_cost_9_10 += $cost_9_10;
+                    $total_cost_4 += $cost_4;
+                    $total_delivery_9_10 += $delivery_9_10;
+                    $total_delivery_4 += $delivery_4;
+                    $total_delivery_all += $delivery_all;
+                    $total_amount_without_nds += $amount_without_nds;
+                    $total_markup += $markup;
+                    $total_nds += $nds;
+                    $total_final_amount += $final_amount;
+                @endphp
+                
                 <tr class="data-row">
                     <td>{{ $row_number++ }}</td>
-                    <td>{{ $number_childrens[$day->id][$ages[1]->id]->short_name ?? $number_childrens[$day->id][$ages[1]->id]->menu_name ?? '' }}</td>
+                    <td>{{ $row_number-1 }}-T</td>
                     <td>{{ $day->day_number }}/{{ $day->month_name }}/{{ $day->year_name }}</td>
-                    <!-- Буюртма бўйича бола сони -->
-                    @php $total_children = 0; @endphp
-                    @foreach($ages as $age)
-                    @if(isset($number_childrens[$day->id][$age->id]->kingar_children_number))
-                        <td>{{ number_format($number_childrens[$day->id][$age->id]->kingar_children_number ?? 0, 0, ',', ' ') }}</td>
-                        @php $total_children += $number_childrens[$day->id][$age->id]->kingar_children_number ?? 0; @endphp
-                        @php $total_all_children += $number_childrens[$day->id][$age->id]->kingar_children_number ?? 0; @endphp
-                        @if(!isset($total_age_children[$age->id]))
-                            @php $total_age_children[$age->id] = 0; @endphp
-                        @endif
-                        @php $total_age_children[$age->id] += $number_childrens[$day->id][$age->id]->kingar_children_number ?? 0; @endphp
-                    @else
-                        <td>{{ "-" }}</td>
-                    @endif
-                    @endforeach
-                    <td>{{ number_format($total_children, 0, ',', ' ') }}</td>
-                    <!-- Бир нафар болага сарфланган харажат НДС билан -->
-                    @foreach($ages as $age)
-                    @if(isset($number_childrens[$day->id][$age->id]->kingar_children_number))
-                        <td>{{ number_format($costs[$age->id]->eater_cost ?? 0, 2, ',', ' ') }}</td>
-                        @if(!isset($total_eater_cost[$age->id]))
-                            @php $total_eater_cost[$age->id] = 0; @endphp
-                        @endif
-                        @php $total_eater_cost[$age->id] += $costs[$age->id]->eater_cost; @endphp
-                    @else
-                        <td>{{ "-" }}</td>
-                    @endif
-                    @endforeach
-                    <!-- Жами етказиб бериш харажатлари -->
-                    @php $total_cost = 0;@endphp
-                    @foreach($ages as $age)
-                    @if(isset($number_childrens[$day->id][$age->id]->kingar_children_number))
-                        <td>{{ number_format($costs[$age->id]->eater_cost * $number_childrens[$day->id][$age->id]->kingar_children_number, 2, ',', ' ') }}</td>
-                        @php $total_cost += $total_cost + $costs[$age->id]->eater_cost * $number_childrens[$day->id][$age->id]->kingar_children_number; @endphp
-                        @if(!isset($total_spends_all[$age->id]))
-                            @php $total_spends_all[$age->id] = 0; @endphp
-                        @endif
-                        @php $total_spends_all[$age->id] += $costs[$age->id]->eater_cost * $number_childrens[$day->id][$age->id]->kingar_children_number; @endphp
-                    @else
-                        <td>{{ "-" }}</td>
-                    @endif
-                    @endforeach
-                    <td>{{ number_format($total_cost, 2, ',', ' ') }}</td>
-                    @php $total_spends += $total_cost; @endphp
-                    <!-- Жами етказиб бериш харажатлари -->
-                    <td>{{ number_format($total_cost / (1 + $costs[$ages[1]->id]->nds / 100), 2, ',', ' ') }}</td>
-                    @php $total_without_nds += $total_cost / (1 + $costs[$ages[1]->id]->nds / 100); @endphp
-                    <td>{{ number_format($total_cost / (1 + $costs[$ages[1]->id]->nds / 100) * ($costs[$ages[1]->id]->raise / 100), 2, ',', ' ') }}</td>
-                    @php $total_raise += $total_cost / (1 + $costs[$ages[1]->id]->nds / 100) * ($costs[$ages[1]->id]->raise / 100); @endphp
-                    <td>{{ number_format(($total_cost / (1 + $costs[$ages[1]->id]->nds / 100) + $total_cost / (1 + $costs[$ages[1]->id]->nds / 100) * ($costs[$ages[1]->id]->raise / 100)) * ($costs[$ages[1]->id]->nds / 100), 2, ',', ' ') }}</td>
-                    @php $total_nds += ($total_cost / (1 + $costs[$ages[1]->id]->nds / 100) + $total_cost / (1 + $costs[$ages[1]->id]->nds / 100) * ($costs[$ages[1]->id]->raise / 100)) * ($costs[$ages[1]->id]->nds / 100); @endphp
-                    <!-- Жами етказиб бериш суммаси (НДС билан) -->
-                    <td>{{ number_format($total_cost / (1 + $costs[$ages[1]->id]->nds / 100) + $total_cost / (1 + $costs[$ages[1]->id]->nds / 100) * ($costs[$ages[1]->id]->raise / 100) + ($total_cost / (1 + $costs[$ages[1]->id]->nds / 100) + $total_cost / (1 + $costs[$ages[1]->id]->nds / 100) * ($costs[$ages[1]->id]->raise / 100)) * ($costs[$ages[1]->id]->nds / 100), 2, ',', ' ') }}</td>
-                    @php $total_summ += $total_cost / (1 + $costs[$ages[1]->id]->nds / 100) + $total_cost / (1 + $costs[$ages[1]->id]->nds / 100) * ($costs[$ages[1]->id]->raise / 100) + ($total_cost / (1 + $costs[$ages[1]->id]->nds / 100) + $total_cost / (1 + $costs[$ages[1]->id]->nds / 100) * ($costs[$ages[1]->id]->raise / 100)) * ($costs[$ages[1]->id]->nds / 100); @endphp
+                    <td>{{ number_format($children_9_10, 0, ',', ' ') }}</td>
+                    <td>{{ number_format($children_4, 0, ',', ' ') }}</td>
+                    <td>{{ number_format($children_all, 0, ',', ' ') }}</td>
+                    <td>{{ number_format($cost_9_10, 2, ',', ' ') }}</td>
+                    <td>{{ number_format($cost_4, 2, ',', ' ') }}</td>
+                    <td>{{ number_format($delivery_9_10, 2, ',', ' ') }}</td>
+                    <td>{{ number_format($delivery_4, 2, ',', ' ') }}</td>
+                    <td>{{ number_format($delivery_all, 2, ',', ' ') }}</td>
+                    <td>{{ number_format($amount_without_nds, 2, ',', ' ') }}</td>
+                    <td>{{ number_format($markup, 2, ',', ' ') }}</td>
+                    <td>{{ number_format($nds, 2, ',', ' ') }}</td>
+                    <td><strong>{{ number_format($final_amount, 2, ',', ' ') }}</strong></td>
                 </tr>
             @endforeach
             
             <!-- Jami qatori -->
             <tr class="total-row">
                 <td colspan="3"><strong>ЖАМИ</strong></td>
-                @foreach($ages as $age)
-                    <td><strong>{{ number_format($total_age_children[$age->id] ?? 0, 0, ',', ' ') }}</strong></td>
-                @endforeach
-                <td><strong>{{ number_format($total_all_children ?? 0, 0, ',', ' ') }}</strong></td>
-                @foreach($ages as $age)
-                    <td><strong>{{ number_format($total_eater_cost[$age->id] ?? 0, 2, ',', ' ') }}</strong></td>
-                @endforeach
-                @foreach($ages as $age)
-                    <td><strong>{{ number_format($total_spends_all[$age->id] ?? 0, 2, ',', ' ') }}</strong></td>
-                @endforeach
-                <td><strong>{{ number_format($total_spends ?? 0, 2, ',', ' ') }}</strong></td>
-                <td><strong>{{ number_format($total_without_nds ?? 0, 2, ',', ' ') }}</strong></td>
-                <td><strong>{{ number_format($total_raise ?? 0, 2, ',', ' ') }}</strong></td>
-                <td><strong>{{ number_format($total_nds ?? 0, 2, ',', ' ') }}</strong></td>
-                <td><strong>{{ number_format($total_summ, 2, ',', ' ') }}</strong></td>
+                <td><strong>{{ number_format($total_children_9_10, 0, ',', ' ') }}</strong></td>
+                <td><strong>{{ number_format($total_children_4, 0, ',', ' ') }}</strong></td>
+                <td><strong>{{ number_format($total_children_all, 0, ',', ' ') }}</strong></td>
+                <td><strong>{{ number_format($total_cost_9_10, 2, ',', ' ') }}</strong></td>
+                <td><strong>{{ number_format($total_cost_4, 2, ',', ' ') }}</strong></td>
+                <td><strong>{{ number_format($total_delivery_9_10, 2, ',', ' ') }}</strong></td>
+                <td><strong>{{ number_format($total_delivery_4, 2, ',', ' ') }}</strong></td>
+                <td><strong>{{ number_format($total_delivery_all, 2, ',', ' ') }}</strong></td>
+                <td><strong>{{ number_format($total_amount_without_nds, 2, ',', ' ') }}</strong></td>
+                <td><strong>{{ number_format($total_markup, 2, ',', ' ') }}</strong></td>
+                <td><strong>{{ number_format($total_nds, 2, ',', ' ') }}</strong></td>
+                <td><strong>{{ number_format($total_final_amount, 2, ',', ' ') }}</strong></td>
             </tr>
         </table>
     </div>
@@ -256,14 +296,14 @@
     <div class="footer">
         <div class="signature-section">
             <strong>Аутсорсер:</strong><br>
-            {{ env('COMPANY_NAME') }}<br>
-            директор: _________________________
+            ASIA BEST DISTRIBUTION SERVICE МЧЖ<br>
+            директори: Т.Саидов
         </div>
         
         <div class="signature-section">
             <strong>Истемолчи:</strong><br>
             {{ $kindgar->kingar_name }}<br>
-            директор: <span class="signature-line"></span>
+            директори: <span class="signature-line"></span>
         </div>
     </div>
 </body>
