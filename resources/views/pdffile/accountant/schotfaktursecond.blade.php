@@ -310,7 +310,7 @@
                     </td>
                     <td class="vat">
                         @php
-                            $vat = $amount * ($costs[$age->id]->nds/(100+$costs[$age->id]->nds) ?? 0); // 15% НДС
+                            $vat = $amount * ($costs[$age->id]->nds/(100+$costs[$age->id]->nds) ?? 0);
                             $total_nds += $vat;
                         @endphp
                         {{ number_format($vat, 2) }}
@@ -324,10 +324,10 @@
                     <td>1</td>
                     <td></td>
                     <td>{{ $costs[4]->raise . "%" ?? 0 }}</td>
-                    <td>{{ number_format($total_amount * ($costs[4]->raise/(100+$costs[4]->raise) ?? 0), 2) }}</td>
-                    @php $total_amount += $total_amount * ($costs[4]->raise/(100+$costs[4]->raise) ?? 0); @endphp
-                    <td>{{ number_format($total_amount * ($costs[4]->raise/(100+$costs[4]->raise)) * ($costs[4]->nds/(100+$costs[4]->nds)), 2) }}</td>
-                    @php $total_nds += $total_amount * ($costs[4]->raise/(100+$costs[4]->raise)) * ($costs[4]->nds/(100+$costs[4]->nds)); @endphp
+                    <td>{{ number_format($total_amount * ($costs[4]->raise/100 ?? 0), 2) }}</td>
+                    @php $total_amount += $total_amount * ($costs[4]->raise/100 ?? 0); @endphp
+                    <td>{{ number_format($total_amount * ($costs[4]->raise/100) * ($costs[4]->nds/(100+$costs[4]->nds)), 2) }}</td>
+                    @php $total_nds += $total_amount * ($costs[4]->raise/(100)) * ($costs[4]->nds/(100+$costs[4]->nds)); @endphp
                 </tr>
 
                 <!-- Jami qator -->
