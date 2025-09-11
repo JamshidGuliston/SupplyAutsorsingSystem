@@ -1882,7 +1882,6 @@ class AccountantController extends Controller
                 ->join('titlemenus', 'titlemenus.id', '=', 'number_childrens.kingar_menu_id')
                 ->get();
         }
-        dd($number_childrens);
         // make snappy pdf
         return view('pdffile.accountant.transportation', compact('days', 'costs', 'number_childrens', 'kindgar', 'ages'));
 
