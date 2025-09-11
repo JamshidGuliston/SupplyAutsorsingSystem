@@ -173,7 +173,7 @@
 						<td><?php printf("%01.2f", $protsent->eater_cost*$numberofchildren); ?></td>
 					</tr>
 					<tr>
-						<td colspan="2">Белгиланган устама</td> 
+						<td colspan="2">Белгиланган устама {{ $protsent->nds }}%</td> 
 						<td colspan="{{ count($days) }}"></td>
 						<td><?php printf("%01.2f", $protsent->eater_cost*$numberofchildren*$protsent->nds) / 100; ?></td>
 					</tr>

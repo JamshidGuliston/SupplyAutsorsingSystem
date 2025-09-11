@@ -1870,8 +1870,8 @@ class AccountantController extends Controller
         $costs = [];
         foreach($ages as $age){
             $costs[$age->id] = Protsent::where('region_id', Kindgarden::where('id', $id)->first()->region_id)
-                ->where('start_date', '>=', $days[0]->created_at->format('Y-m-d'))
-                ->where('end_date', '<=', $days[count($days)-1]->created_at->format('Y-m-d'))
+                ->where('start_date', '<=', $days[0]->created_at->format('Y-m-d'))
+                ->where('end_date', '>=', $days[count($days)-1]->created_at->format('Y-m-d'))
                 ->first();
         }
 
@@ -1884,6 +1884,8 @@ class AccountantController extends Controller
         }
 
         // make snappy pdf
+        return view('pdffile.accountant.transportation', compact('days', 'costs', 'number_childrens', 'kindgar', 'ages'));
+
         $pdf = \PDF::loadView('pdffile.accountant.transportation', compact('days', 'costs', 'number_childrens', 'kindgar', 'ages'));
         $pdf->setPaper('A3', 'landscape');
         $pdf->setOptions(['dpi' => 150]);

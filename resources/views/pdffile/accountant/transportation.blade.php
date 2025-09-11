@@ -141,24 +141,27 @@
             </tr>
             
             <tr class="sub-header">
-                <th rowspan="2">9-10,5 соатлик гуруҳ</th>
-                <th rowspan="2">4 соатлик гуруҳ</th>
+            @foreach($ages as $age)
+                <th rowspan="2">{{ $age->description }}</th>
+            @endforeach
                 <th rowspan="2">Жами</th>
-                <th rowspan="2">9-10,5 соатлик гуруҳ</th>
-                <th rowspan="2">4 соатлик гуруҳ</th>
-                <th rowspan="2">9-10,5 соатлик гуруҳ</th>
-                <th rowspan="2">4 соатлик гуруҳ</th>
+            @foreach($ages as $age)
+                <th rowspan="2">{{ $age->description }}</th>
+            @endforeach
+            @foreach($ages as $age)
+                <th rowspan="2">{{ $age->description }}</th>
+            @endforeach
                 <th rowspan="2">Жами</th>
                 <th>Сумма (безНДС)</th>
-                <th>Устама ҳақ 28,5%</th>
-                <th>ҚҚС (НДС) 12%</th>
+                <th>Устама ҳақ {{ $costs[$ages[0]->id]->raise }}%</th>
+                <th>ҚҚС (НДС) {{ $costs[$ages[0]->id]->nds }}%</th>
                 <th>Жами етказиб бериш суммаси (НДС билан)</th>
             </tr>
             
             <tr class="sub-header">
                 <th>Сумма (безНДС)</th>
-                <th>Устама ҳақ 28,5%</th>
-                <th>ҚҚС (НДС) 12%</th>
+                <th>Устама ҳақ {{ $costs[$ages[0]->id]->raise }}%</th>
+                <th>ҚҚС (НДС) {{ $costs[$ages[0]->id]->nds }}%</th>
                 <th>Жами етказиб бериш суммаси (НДС билан)</th>
             </tr>
             
@@ -180,56 +183,19 @@
             @endphp
             
             @foreach($days as $day)
-                @php
-                    // Bolalar sonini hisoblash
-                    $children_9_10 = 0;
-                    $children_4 = 0;
-                    
-                    foreach($number_childrens[$day->id] as $child) {
-                        if($child->king_age_name_id == 3) { // 9-10.5 soatlik guruh
-                            $children_9_10 += $child->kingar_children_number;
-                        } elseif($child->king_age_name_id == 4) { // 4 soatlik guruh
-                            $children_4 += $child->kingar_children_number;
-                        }
-                    }
-                    
-                    $children_all = $children_9_10 + $children_4;
-                    
-                    // Narxlarni olish
-                    $cost_9_10 = 17866.00; // 9-10.5 soatlik guruh uchun narx
-                    $cost_4 = 4355.00; // 4 soatlik guruh uchun narx
-                    
-                    // Yetkazib berish xarajatlari
-                    $delivery_9_10 = $children_9_10 * $cost_9_10;
-                    $delivery_4 = $children_4 * $cost_4;
-                    $delivery_all = $delivery_9_10 + $delivery_4;
-                    
-                    // Xarajatlar tahlili
-                    $amount_without_nds = $delivery_all / 1.12; // QQSsiz summa
-                    $markup = $amount_without_nds * 0.285; // 28.5% ustama
-                    $nds = $amount_without_nds * 0.12; // 12% QQS
-                    $final_amount = $amount_without_nds + $markup + $nds;
-                    
-                    // Jami hisoblash
-                    $total_children_9_10 += $children_9_10;
-                    $total_children_4 += $children_4;
-                    $total_children_all += $children_all;
-                    $total_cost_9_10 += $cost_9_10;
-                    $total_cost_4 += $cost_4;
-                    $total_delivery_9_10 += $delivery_9_10;
-                    $total_delivery_4 += $delivery_4;
-                    $total_delivery_all += $delivery_all;
-                    $total_amount_without_nds += $amount_without_nds;
-                    $total_markup += $markup;
-                    $total_nds += $nds;
-                    $total_final_amount += $final_amount;
-                @endphp
-                
                 <tr class="data-row">
                     <td>{{ $row_number++ }}</td>
                     <td>{{ $row_number-1 }}-T</td>
                     <td>{{ $day->day_number }}/{{ $day->month_name }}/{{ $day->year_name }}</td>
-                    <td>{{ number_format($children_9_10, 0, ',', ' ') }}</td>
+                    @foreach($ages as $age)
+                        <td>{{ number_format($number_childrens[$day->id][$age->id], 0, ',', ' ') }}</td>
+                    @endforeach
+                    <td>{{ number_format(0, 0, ',', ' ') }}</td>
+                    @foreach($ages as $age)
+                        <td>{{ number_format($costs[$age->id]->cost, 2, ',', ' ') }}</td>
+                    @endforeach
+                    <td>{{ number_format(0, 2, ',', ' ') }}</td>
+                    <td>{{ number_format(0, 2, ',', ' ') }}</td>
                     <td>{{ number_format($children_4, 0, ',', ' ') }}</td>
                     <td>{{ number_format($children_all, 0, ',', ' ') }}</td>
                     <td>{{ number_format($cost_9_10, 2, ',', ' ') }}</td>
