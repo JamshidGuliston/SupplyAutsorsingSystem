@@ -31,7 +31,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use PhpParser\Node\Stmt\Foreach_;
 use Barryvdh\Snappy\Facades\SnappyPdf as PDF;
-use PDF;
+// use PDF;
 
 class AccountantController extends Controller
 {
