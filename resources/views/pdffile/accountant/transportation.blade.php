@@ -164,7 +164,6 @@
                 <th>ҚҚС (НДС) {{ $costs[$ages[0]->id]->nds }}%</th>
                 <th>Жами етказиб бериш суммаси (НДС билан)</th>
             </tr>
-            
             <!-- Ma'lumot qatorlari -->
             @php
                 $total_children_9_10 = 0;
@@ -185,28 +184,26 @@
             @foreach($days as $day)
                 <tr class="data-row">
                     <td>{{ $row_number++ }}</td>
-                    <td>{{ $row_number-1 }}-T</td>
+                    <td>{{ $number_childrens[$day->id]->short_name }}</td>
                     <td>{{ $day->day_number }}/{{ $day->month_name }}/{{ $day->year_name }}</td>
                     @foreach($ages as $age)
-                        <td>{{ number_format($number_childrens[$day->id][$age->id], 0, ',', ' ') }}</td>
+                        <td>{{ number_format($number_childrens[$day->id]->where('age_range_id', $age->id)->kingar_children_number, 0, ',', ' ') }}</td>
                     @endforeach
                     <td>{{ number_format(0, 0, ',', ' ') }}</td>
                     @foreach($ages as $age)
                         <td>{{ number_format($costs[$age->id]->cost, 2, ',', ' ') }}</td>
                     @endforeach
-                    <td>{{ number_format(0, 2, ',', ' ') }}</td>
-                    <td>{{ number_format(0, 2, ',', ' ') }}</td>
-                    <td>{{ number_format($children_4, 0, ',', ' ') }}</td>
-                    <td>{{ number_format($children_all, 0, ',', ' ') }}</td>
-                    <td>{{ number_format($cost_9_10, 2, ',', ' ') }}</td>
-                    <td>{{ number_format($cost_4, 2, ',', ' ') }}</td>
-                    <td>{{ number_format($delivery_9_10, 2, ',', ' ') }}</td>
-                    <td>{{ number_format($delivery_4, 2, ',', ' ') }}</td>
-                    <td>{{ number_format($delivery_all, 2, ',', ' ') }}</td>
-                    <td>{{ number_format($amount_without_nds, 2, ',', ' ') }}</td>
-                    <td>{{ number_format($markup, 2, ',', ' ') }}</td>
-                    <td>{{ number_format($nds, 2, ',', ' ') }}</td>
-                    <td><strong>{{ number_format($final_amount, 2, ',', ' ') }}</strong></td>
+                    @php $total_cost = 0; @endphp
+                    @foreach($ages as $age)
+                        <td>{{ number_format($costs[$age->id]->cost * $number_childrens[$day->id]->where('age_range_id', $age->id)->kingar_children_number, 2, ',', ' ') }}</td>
+                        @php $total_cost += $total_cost + number_format($costs[$age->id]->cost * $number_childrens[$day->id]->where('age_range_id', $age->id)->kingar_children_number, 2, ',', ' ');
+                    @endforeach
+                    <!-- Жами етказиб бериш харажатлари -->
+                    <td>{{ number_format($total_cost / (1 + $costs[$ages[0]->id]->nds / 100), 2, ',', ' ') }}</td>
+                    <td>{{ number_format($total_cost / (1 + $costs[$ages[0]->id]->nds / 100) * ($costs[$ages[0]->id]->raise / 100), 2, ',', ' ') }}</td>
+                    <td>{{ number_format(($total_cost / (1 + $costs[$ages[0]->id]->nds / 100) + $total_cost / (1 + $costs[$ages[0]->id]->nds / 100) * ($costs[$ages[0]->id]->raise / 100)) * ($costs[$ages[0]->id]->nds / 100), 2, ',', ' ') }}</td>
+                    <!-- Жами етказиб бериш суммаси (НДС билан) -->
+                    <td>{{ number_format($total_cost / (1 + $costs[$ages[0]->id]->nds / 100) + $total_cost / (1 + $costs[$ages[0]->id]->nds / 100) * ($costs[$ages[0]->id]->raise / 100) + ($total_cost / (1 + $costs[$ages[0]->id]->nds / 100) + $total_cost / (1 + $costs[$ages[0]->id]->nds / 100) * ($costs[$ages[0]->id]->raise / 100)) * ($costs[$ages[0]->id]->nds / 100), 2, ',', ' ') }}</td>
                 </tr>
             @endforeach
             
