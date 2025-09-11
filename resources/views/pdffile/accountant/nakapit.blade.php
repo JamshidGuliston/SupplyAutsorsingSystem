@@ -175,12 +175,12 @@
 					<tr>
 						<td colspan="2">Белгиланган устама {{ $protsent->raise }}%</td> 
 						<td colspan="{{ count($days) }}"></td>
-						<td><?php printf("%01.2f", $protsent->eater_cost*$numberofchildren*$protsent->raise) / 100; ?></td>
+						<td><?php printf("%01.2f", $protsent->eater_cost*$numberofchildren*$protsent->raise/100); ?></td>
 					</tr>
 					<tr>
 						<td colspan="2">1 ойлик жами харажат</td> 
 						<td colspan="{{ count($days) }}"></td>
-						<td><?php printf("%01.2f", $protsent->eater_cost*$numberofchildren*$protsent->raise) / 100 + $protsent->eater_cost*$numberofchildren; ?></td>
+						<td><?php printf("%01.2f", $protsent->eater_cost*$numberofchildren*$protsent->raise/100 + $protsent->eater_cost*$numberofchildren); ?></td>
 					</tr>
 				</tbody>
 			</table>
