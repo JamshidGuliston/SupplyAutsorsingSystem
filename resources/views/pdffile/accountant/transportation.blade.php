@@ -7,7 +7,7 @@
     <style>
         body {
             font-family: Arial, sans-serif;
-            font-size: 12px;
+            font-size: 14px;
             margin: 0;
             padding: 15px;
             background-color: white;
@@ -46,7 +46,7 @@
             padding: 6px 4px;
             text-align: center;
             vertical-align: middle;
-            white-space: nowrap;
+            white-space: wrap;
             min-width: 60px;
         }
         
@@ -131,7 +131,7 @@
         
         .signature-section {
             width: 45%;
-            font-size: 12px;
+            font-size: 14px;
         }
         
         .signature-line {
@@ -144,11 +144,11 @@
         /* Responsive adjustments for PDF */
         @media print {
             body {
-                font-size: 10px;
+                font-size: 12px;
             }
             
             table {
-                font-size: 9px;
+                font-size: 12px;
             }
             
             th, td {
