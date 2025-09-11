@@ -1887,8 +1887,7 @@ class AccountantController extends Controller
             }
         }
         // make snappy pdf
-        return view('pdffile.accountant.transportation', compact('days', 'costs', 'number_childrens', 'kindgar', 'ages'));
-
+    
         $pdf = \PDF::loadView('pdffile.accountant.transportation', compact('days', 'costs', 'number_childrens', 'kindgar', 'ages'));
         $pdf->setPaper('A3', 'landscape');
         $pdf->setOptions(['dpi' => 150]);
