@@ -19,7 +19,7 @@
         .header {
             text-align: center;
             margin-bottom: 25px;
-            margin-top: 100px;
+            margin-top: 80px;
             font-weight: bold;
             font-size: 20px;
             width: 100%;
@@ -123,24 +123,29 @@
         }
         
         .footer {
-            margin-top: 40px;
-            display: flex;
-            justify-content: space-between;
+            margin-top: 30px;
+            display: table;
             width: 100%;
-            max-width: 100%;
         }
         
-        .signature-section {
-            width: 45%;
-            font-size: 20px;
+        .footer-section {
+            display: table-cell;
+            width: 48%;
+            vertical-align: top;
+            padding-right: 2%;
         }
         
         .signature-line {
             border-bottom: 1px solid #000;
-            margin-top: 20px;
-            padding-bottom: 5px;
-            min-width: 200px;
+            width: 200px;
+            margin: 20px 0 5px 0;
         }
+        
+        .signature-label {
+            font-size: 16px;
+            text-align: center;
+        }
+        
         
         /* Responsive adjustments for PDF */
         @media print {
@@ -294,20 +299,15 @@
         </table>
     </div>
     
-    <div class="row">
-        <div class="col-md-6">
-            <div class="signature-section">
-                <strong>Аутсорсер:</strong><br>
-                ASIA BEST DISTRIBUTION SERVICE МЧЖ<br>
-                директори: Т.Саидов
-            </div>
+    <!-- Footer qismi -->
+    <div class="footer">
+        <div class="footer-section">
+            <div class="signature-line"></div>
+            <div class="signature-label">Аутсорсер директори</div>
         </div>
-        <div class="col-md-6">
-            <div class="signature-section">
-                <strong>Истемолчи:</strong><br>
-                {{ $kindgar->kingar_name }}<br>
-                директори: <span class="signature-line"></span>
-            </div>
+        <div class="footer-section">
+            <div class="signature-line"></div>
+            <div class="signature-label">Буюртмачи директори</div>
         </div>
     </div>
 </body>
