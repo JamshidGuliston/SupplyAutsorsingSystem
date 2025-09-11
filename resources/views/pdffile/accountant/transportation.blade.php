@@ -7,7 +7,7 @@
     <style>
         body {
             font-family: Arial, sans-serif;
-            font-size: 14px;
+            font-size: 20px;
             margin: 0;
             padding: 15px;
             background-color: white;
@@ -19,8 +19,9 @@
         .header {
             text-align: center;
             margin-bottom: 25px;
+            margin-top: 100px;
             font-weight: bold;
-            font-size: 14px;
+            font-size: 20px;
             width: 100%;
         }
         
@@ -131,7 +132,7 @@
         
         .signature-section {
             width: 45%;
-            font-size: 14px;
+            font-size: 20px;
         }
         
         .signature-line {
@@ -293,17 +294,20 @@
         </table>
     </div>
     
-    <div class="footer">
-        <div class="signature-section">
-            <strong>Аутсорсер:</strong><br>
-            ASIA BEST DISTRIBUTION SERVICE МЧЖ<br>
-            директори: Т.Саидов
+    <div class="row">
+        <div class="col-md-6">
+            <div class="signature-section">
+                <strong>Аутсорсер:</strong><br>
+                ASIA BEST DISTRIBUTION SERVICE МЧЖ<br>
+                директори: Т.Саидов
+            </div>
         </div>
-        
-        <div class="signature-section">
-            <strong>Истемолчи:</strong><br>
-            {{ $kindgar->kingar_name }}<br>
-            директори: <span class="signature-line"></span>
+        <div class="col-md-6">
+            <div class="signature-section">
+                <strong>Истемолчи:</strong><br>
+                {{ $kindgar->kingar_name }}<br>
+                директори: <span class="signature-line"></span>
+            </div>
         </div>
     </div>
 </body>
