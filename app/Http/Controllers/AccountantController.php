@@ -803,7 +803,7 @@ class AccountantController extends Controller
         
         // Hisob-faktura raqami va sanasi
         $invoice_number = $days->last()->day_number.'-'. $kindgar->number_of_org;
-        $invoice_date = config('company.invoice.default_date');
+        $invoice_date = $days->last()->created_at->format('d.m.Y');
         
         // Snappy PDF yaratish
         $pdf = \PDF::loadView('pdffile.accountant.schotfaktursecond', compact('costs', 'days', 'kindgar', 'autorser', 'buyurtmachi', 'invoice_number', 'invoice_date', 'total_number_children'));
