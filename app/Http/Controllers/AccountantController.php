@@ -1924,6 +1924,8 @@ class AccountantController extends Controller
             }
         }
 
+        
+
         $pdf = \PDF::loadView('pdffile.accountant.reportregion', compact('region', 'days', 'costs', 'number_childrens', 'ages', 'kindgardens'));
         $pdf->setPaper('A3', 'landscape');
         $pdf->setOptions(['dpi' => 150]);
