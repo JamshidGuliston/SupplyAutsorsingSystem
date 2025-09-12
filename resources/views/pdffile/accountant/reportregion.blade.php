@@ -97,22 +97,29 @@
         }
         
         .footer {
-            margin-top: 40px;
-            display: flex;
-            justify-content: space-between;
+            margin-top: 30px;
+            display: table;
+            width: 100%;
         }
         
-        .signature-section {
-            width: 45%;
-            font-size: 12px;
+        .footer-section {
+            display: table-cell;
+            width: 48%;
+            vertical-align: top;
+            padding-right: 2%;
         }
         
         .signature-line {
             border-bottom: 1px solid #000;
-            margin-top: 20px;
-            padding-bottom: 5px;
-            min-width: 200px;
+            width: 200px;
+            margin: 20px 0 5px 0;
         }
+        
+        .signature-label {
+            font-size: 16px;
+            text-align: center;
+        }
+        
     </style>
 </head>
 <body>
@@ -199,8 +206,8 @@
                 
                 <tr class="data-row">
                     <td class="org-name-col">{{ $row_number }}-ДМТТ</td>
-                    <td>{{ number_format($children_short, 0, ',', ' ') }}</td>
                     <td>{{ number_format($children_3_7, 0, ',', ' ') }}</td>
+                    <td>{{ number_format($children_short, 0, ',', ' ') }}</td>
                     <td>{{ number_format($price_3_7, 1, ',', ' ') }}</td>
                     <td>{{ number_format($price_short, 1, ',', ' ') }}</td>
                     <td>{{ number_format($total_cost_row, 2, ',', ' ') }}</td>
@@ -229,18 +236,22 @@
         </table>
     </div>
     
+    <!-- Footer qismi -->
     <div class="footer">
-        <div class="signature-section">
-            <strong>Аутсорсер:</strong><br>
+        <div class="footer-section">
+            <div class="signature-line"></div>
+            <div class="signature-label">Аутсорсер:</div><br>
             {{ env('COMPANY_NAME') }}<br>
             директори: _____________________
         </div>
-        
-        <div class="signature-section">
-            <strong>Истемолчи:</strong><br>
+        <div class="footer-section">
+            <div class="signature-line"></div>
+            <div class="signature-label">Истемолчи:</div>
+            <br>
             {{ $region->region_name }} мактабгача таълим ташкилотлари<br>
             директори: _____________________
         </div>
+    </div>
     </div>
 </body>
 </html>

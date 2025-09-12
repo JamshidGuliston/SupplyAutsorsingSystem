@@ -1923,8 +1923,8 @@ class AccountantController extends Controller
                     ->sum('kingar_children_number');
             }
         }
-       
-        $pdf = \PDF::loadView('pdffile.accountant.reportregion', compact('region', 'days', 'costs', 'number_childrens', 'ages', 'kindgardens', 'costs', 'costs'));
+
+        $pdf = \PDF::loadView('pdffile.accountant.reportregion', compact('region', 'days', 'costs', 'number_childrens', 'ages', 'kindgardens'));
         $pdf->setPaper('A3', 'landscape');
         $pdf->setOptions(['dpi' => 150]);
         return $pdf->stream('reportregion.pdf');
