@@ -129,6 +129,8 @@
             @php
                 $total_children_3_7 = 0;
                 $total_children_short = 0;
+                $total_price_3_7 = 0;
+                $total_price_short = 0;
                 $total_cost = 0;
                 $total_cost_without_qqs = 0;
                 $total_markup = 0;
@@ -148,7 +150,9 @@
                     // Narxlarni olish
                     $price_3_7 = $costs->where('age_range_id', 4)->first()->eater_cost; // 3-7 yosh uchun narx
                     $price_short = $costs->where('age_range_id', 3)->first()->eater_cost; // Qisqa guruh uchun narx
-                    
+                    <!-- Jami narh -->
+                    $total_price_3_7 += $price_3_7;
+                    $total_price_short += $price_short;
                     // Jami xarajat
                     $total_cost_row = ($children_3_7 * $price_3_7) + ($children_short * $price_short);
                     
@@ -196,10 +200,10 @@
             <!-- Jami qatori -->
             <tr class="total-row">
                 <td><strong>Jami</strong></td>
-                <td><strong>{{ number_format($total_children_short, 0, ',', ' ') }}</strong></td>
                 <td><strong>{{ number_format($total_children_3_7, 0, ',', ' ') }}</strong></td>
-                <td><strong>-</strong></td>
-                <td><strong>-</strong></td>
+                <td><strong>{{ number_format($total_children_short, 0, ',', ' ') }}</strong></td>
+                <td><strong>{{ number_format($total_price_3_7, 1, ',', ' ') }}</strong></td>
+                <td><strong>{{ number_format($total_price_short, 1, ',', ' ') }}</strong></td>
                 <td><strong>{{ number_format($total_cost, 2, ',', ' ') }}</strong></td>
                 <td><strong>{{ number_format($total_cost_without_qqs, 2, ',', ' ') }}</strong></td>
                 <td><strong>{{ number_format($total_markup, 2, ',', ' ') }}</strong></td>
