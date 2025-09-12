@@ -59,15 +59,6 @@
             font-weight: bold;
         }
         
-        .breakdown-col {
-            width: 100px;
-        }
-        
-        .final-total-col {
-            width: 140px;
-            font-weight: bold;
-        }
-        
         .watermark {
             position: absolute;
             top: 50%;
