@@ -1897,5 +1897,42 @@ class AccountantController extends Controller
         // return view('pdffile.accountant.transportation', compact('days', 'costs', 'number_childrens', 'kindgar'));
     }
 
+    public function reportregion(Request $request, $id, $start, $end){
+        $days = Day::where('days.id', '>=', $start)->where('days.id', '<=', $end)
+            ->join('months', 'months.id', '=', 'days.month_id')
+            ->join('years', 'years.id', '=', 'days.year_id')
+            ->get(['days.id', 'days.day_number', 'months.month_name', 'years.year_name', 'days.created_at']);
+
+        $costs = Protsent::where('region_id', $id)
+                ->where('start_date', '<=', $days[0]->created_at->format('Y-m-d'))
+                ->where('end_date', '>=', $days[count($days)-1]->created_at->format('Y-m-d'))
+                ->get();
+
+        $region = Region::where('id', $id)->first();
+        
+        $ages = Age_range::all();
+        
+        $kindgardens = Kindgarden::where('region_id', $id)->get();
+        $number_childrens = [];
+        foreach($kindgardens as $kindgarden){
+            foreach($ages as $age){
+                $number_childrens[$kindgarden->id][$age->id] = Number_children::where('number_childrens.day_id', '>=', $start)
+                    ->where('number_childrens.day_id', '<=', $end)
+                    ->where('kingar_name_id', $kindgarden->id)
+                    ->where('king_age_name_id', $age->id)
+                    ->sum('kingar_children_number');
+            }
+        }
+       
+        $pdf = \PDF::loadView('pdffile.accountant.reportregion', compact('region', 'days', 'costs', 'number_childrens', 'ages', 'kindgardens', 'costs', 'costs'));
+        $pdf->setPaper('A3', 'landscape');
+        $pdf->setOptions(['dpi' => 150]);
+        return $pdf->stream('reportregion.pdf');
+    }
+
+    public function boqchakexcel(Request $request, $id, $start, $end){
+
+    }
+
 }
 
