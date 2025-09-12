@@ -146,12 +146,12 @@
         .signature-line {
             border-bottom: 1px solid #000;
             width: 200px;
-            margin: 20px 0 5px 0;
+            margin: 27px 0 5px 0;
         }
         
         .signature-label {
             font-size: 16px;
-            text-align: center;
+            text-align: left;
         }
         
         /* Snappy uchun qo'shimcha sozlamalar */
@@ -240,7 +240,7 @@
         </div>
 
         <div class="company-section">
-            <div class="section-title">Буйрутмачи:</div>
+            <div class="section-title">Буюртмачи:</div>
             <div class="company-details">
                 <span class="label">Ташкилот:</span>
                 <span class="value">{{ $buyurtmachi['company_name'] ?? '_________________________________' }}</span>
