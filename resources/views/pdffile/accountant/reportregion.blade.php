@@ -220,12 +220,20 @@
             <div class="signature-label">Аутсорсер:</div><br>
             {{ env('COMPANY_NAME') }}<br>
             директори: _____________________
+        </div><div class="footer-section">
+            <div class="signature-label">Аутсорсер:</div>
+            <br>
+            {{ env('COMPANY_NAME')}} бош хисобчиси: _____________________<br>
         </div>
         <div class="footer-section">
             <div class="signature-label">Истемолчи:</div>
             <br>
-            {{ $region->region_name }} мактабгача таълим ташкилотлари<br>
-            директори: _____________________
+            {{ $region->region_name }} ММТБ директори: _____________________<br>
+        </div>
+        <div class="footer-section">
+            <div class="signature-label">Истемолчи:</div>
+            <br>
+            {{ $region->region_name }} бош хисобчиси: _____________________<br>
         </div>
     </div>
     </div>
