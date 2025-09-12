@@ -793,6 +793,7 @@ class AccountantController extends Controller
             'company_name' => $region->region_name.' ММТБга тасарруфидаги '.$kindgar->number_of_org .'-сонли ДМТТ' ?? '',
             'address' => $region->region_name,
             'inn' => '________________',
+            'bank_account' => '_______________________',
             'mfo' => '00014',
             'account_number' => '23402000300100001010',
             'treasury_account' => '_______________',

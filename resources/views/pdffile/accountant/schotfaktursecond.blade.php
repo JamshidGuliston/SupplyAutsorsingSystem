@@ -253,6 +253,10 @@
                 <span class="value">{{ $buyurtmachi['inn'] ?? '' }}</span>
             </div>
             <div class="company-details">
+                <span class="label">Х/р:</span>
+                <span class="value">{{ $buyurtmachi['bank_account'] ?? '' }}</span>
+            </div>
+            <div class="company-details">
                 <span class="label">МФО:</span>
                 <span class="value">{{ $buyurtmachi['mfo'] ?? '' }}</span>
             </div>
@@ -263,10 +267,6 @@
             <div class="company-details">
                 <span class="label">Банк:</span>
                 <span class="value">{{ $buyurtmachi['bank'] ?? "" }}</span>
-            </div>
-            <div class="company-details">
-                <span class="label">Телефон:</span>
-                <span class="value">{{ $buyurtmachi['phone'] ?? '' }}</span>
             </div>
         </div>
     </div>
