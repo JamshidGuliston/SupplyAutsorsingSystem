@@ -802,7 +802,7 @@ class AccountantController extends Controller
         ];
         
         // Hisob-faktura raqami va sanasi
-        $invoice_number = config('company.invoice.default_number');
+        $invoice_number = ;
         $invoice_date = config('company.invoice.default_date');
         
         // Snappy PDF yaratish

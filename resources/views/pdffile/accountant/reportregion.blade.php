@@ -78,7 +78,7 @@
         
         .footer-section {
             display: table-cell;
-            width: 25%;
+            width: 40%;
             vertical-align: top;
             padding-right: 2%;
         }
@@ -219,21 +219,15 @@
         <div class="footer-section">
             <div class="signature-label">Аутсорсер:</div><br>
             {{ env('COMPANY_NAME') }}<br>
-            директори: _____________________
-        </div><div class="footer-section">
-            <div class="signature-label"></div>
-            <br>
-            {{ env('COMPANY_NAME')}} <br>Бош хисобчиси: _____________________<br>
+            директори: _____________________<br>
+            Бош хисобчиси: _____________________
         </div>
         <div class="footer-section">
             <div class="signature-label">Истемолчи:</div>
             <br>
-            {{ $region->region_name }} ММТБ <br>директори: _____________________<br>
-        </div>
-        <div class="footer-section">
-            <div class="signature-label"></div>
+            {{ $region->region_name }} ММТБ <br>директори: _____________________
             <br>
-            {{ $region->region_name }} ММТБ<br>Бош хисобчиси: _____________________<br>
+            Бош хисобчиси: _____________________
         </div>
     </div>
     </div>
