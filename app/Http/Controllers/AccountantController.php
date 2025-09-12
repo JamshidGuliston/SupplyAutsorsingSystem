@@ -790,7 +790,7 @@ class AccountantController extends Controller
         
         // Buyurtmachi ma'lumotlari
         $buyurtmachi = [
-            'company_name' => $region->region_name.' ММТБга тасарруфидаги '.$kindgar->number_of_org ?? '-сонли ДМТТ',
+            'company_name' => $region->region_name.' ММТБга тасарруфидаги '.$kindgar->number_of_org .'-сонли ДМТТ' ?? '',
             'address' => $region->region_name,
             'inn' => '________________',
             'mfo' => '00014',
