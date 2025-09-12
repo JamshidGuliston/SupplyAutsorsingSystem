@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chinoz tumani maktabgacha ta'lim tashkilotlariga Avgust oyida ko'rsatilgan Autsorsing xizmati xisob kitobi</title>
+    <title>tuman maktabgacha ta'lim tashkilotlariga</title>
     <style>
         body {
             font-family: Arial, sans-serif;
