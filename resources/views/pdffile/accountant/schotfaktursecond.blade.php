@@ -200,8 +200,8 @@
     <div class="header">
         <div class="invoice-title">СЧЁТ-ФАКТУРА</div>
         <div class="invoice-number">№ {{ $invoice_number ?? "_________________________________" }}</div>
-        <div class="invoice-date">{{ $invoice_date ?? "_________________________________" }}</div>
-        <div class="invoice-date">{{ "Хизмат кўрсатиш шартномаси: № ______  ______  ___________ 2025 й" }}</div>
+        <div class="invoice-date">{{ $invoice_date." й" ?? "_________________________________" }}</div>
+        <div class="invoice-date">{{ "Хизмат кўрсатиш шартномаси: № ______  \'______\'  ___________ 2025 й" }}</div>
     </div>
 
     <!-- Kompaniya ma'lumotlari -->
@@ -344,12 +344,12 @@
     <!-- Footer qismi -->
     <div class="footer">
         <div class="footer-section">
-            <div class="signature-line"></div>
-            <div class="signature-label">Аутсорсер директори</div>
+            <!-- <div class="signature-line"></div> -->
+            <div class="signature-label">Аутсорсер директори: ____________________________</div>
         </div>
         <div class="footer-section">
-            <div class="signature-line"></div>
-            <div class="signature-label">Буюртмачи директори</div>
+            <!-- <div class="signature-line"></div> -->
+            <div class="signature-label">Буюртмачи директори: ____________________________</div>
         </div>
     </div>
 </body>
