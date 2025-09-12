@@ -69,7 +69,7 @@
         .label {
             font-weight: bold;
             display: inline-block;
-            width: 100px;
+            width: 150px;
         }
         
         .value {
@@ -209,7 +209,7 @@
         <div class="company-section">
             <div class="section-title">Аутсорсер:</div>
             <div class="company-details">
-                <span class="label">Ташкилот номи:</span>
+                <span class="label">Ташкилот:</span>
                 <span class="value">{{ $autorser['company_name'] ?? 'IOS-Service MCHJ' }}</span>
             </div>
             <div class="company-details">
@@ -241,7 +241,7 @@
         <div class="company-section">
             <div class="section-title">Буйрутмачи:</div>
             <div class="company-details">
-                <span class="label">Ташкилот номи:</span>
+                <span class="label">Ташкилот:</span>
                 <span class="value">{{ $buyurtmachi['company_name'] ?? '_________________________________' }}</span>
             </div>
             <div class="company-details">
