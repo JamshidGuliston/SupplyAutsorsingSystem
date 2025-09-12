@@ -222,9 +222,9 @@
                     $children_4 = 0;
                     
                     foreach($number_childrens[$day->id] as $age_id => $child) {
-                        if($age_id == 3) { // 9-10.5 soatlik guruh
+                        if($age_id == 4) { // 9-10.5 soatlik guruh
                             $children_9_10 += $child->kingar_children_number ?? 0;
-                        } elseif($age_id == 4) { // 4 soatlik guruh
+                        } elseif($age_id == 3) { // 4 soatlik guruh
                             $children_4 += $child->kingar_children_number ?? 0;
                         }
                     }
