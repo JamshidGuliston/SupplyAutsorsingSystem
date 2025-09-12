@@ -223,17 +223,17 @@
         </div><div class="footer-section">
             <div class="signature-label">Аутсорсер:</div>
             <br>
-            {{ env('COMPANY_NAME')}} бош хисобчиси: _____________________<br>
+            {{ env('COMPANY_NAME')}} <br>Бош хисобчиси: _____________________<br>
         </div>
         <div class="footer-section">
             <div class="signature-label">Истемолчи:</div>
             <br>
-            {{ $region->region_name }} ММТБ директори: _____________________<br>
+            {{ $region->region_name }} ММТБ <br>директори: _____________________<br>
         </div>
         <div class="footer-section">
             <div class="signature-label">Истемолчи:</div>
             <br>
-            {{ $region->region_name }} бош хисобчиси: _____________________<br>
+            {{ $region->region_name }} <br>Бош хисобчиси: _____________________<br>
         </div>
     </div>
     </div>
