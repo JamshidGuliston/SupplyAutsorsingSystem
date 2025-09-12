@@ -150,7 +150,7 @@
                     // Narxlarni olish
                     $price_3_7 = $costs->where('age_range_id', 4)->first()->eater_cost; // 3-7 yosh uchun narx
                     $price_short = $costs->where('age_range_id', 3)->first()->eater_cost; // Qisqa guruh uchun narx
-                    <!-- Jami narh -->
+                    // Jami narh
                     $total_price_3_7 += $price_3_7;
                     $total_price_short += $price_short;
                     // Jami xarajat
