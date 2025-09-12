@@ -59,23 +59,6 @@
             font-weight: bold;
         }
         
-        .org-name-col {
-            width: 120px;
-            text-align: left;
-        }
-        
-        .children-col {
-            width: 80px;
-        }
-        
-        .price-col {
-            width: 80px;
-        }
-        
-        .cost-col {
-            width: 120px;
-        }
-        
         .breakdown-col {
             width: 100px;
         }
