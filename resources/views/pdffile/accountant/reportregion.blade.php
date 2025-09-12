@@ -7,7 +7,7 @@
     <style>
         body {
             font-family: Arial, sans-serif;
-            font-size: 12px;
+            font-size: 18px;
             margin: 0;
             padding: 20px;
             background-color: white;
@@ -29,7 +29,7 @@
             width: 100%;
             border-collapse: collapse;
             border: 2px solid #000;
-            font-size: 11px;
+            font-size: 15px;
         }
         
         th, td {
@@ -37,7 +37,7 @@
             padding: 8px 4px;
             text-align: center;
             vertical-align: middle;
-            white-space: nowrap;
+            white-space: wrap;
         }
         
         .header-row {
@@ -69,7 +69,7 @@
         }
         
         .price-col {
-            width: 100px;
+            width: 80px;
         }
         
         .cost-col {
@@ -117,7 +117,7 @@
         
         .signature-label {
             font-size: 16px;
-            text-align: center;
+            text-align: left;
         }
         
     </style>
@@ -146,9 +146,9 @@
             
             <tr class="sub-header">
                 <th>3-7 ёш</th>
-                <th>Киска гр</th>
+                <th>Қисқа гр</th>
                 <th>3-7 ёш</th>
-                <th>Киска гр</th>
+                <th>Қисқа гр</th>
             </tr>
             
             <!-- Ma'lumot qatorlari -->
@@ -239,13 +239,11 @@
     <!-- Footer qismi -->
     <div class="footer">
         <div class="footer-section">
-            <div class="signature-line"></div>
             <div class="signature-label">Аутсорсер:</div><br>
             {{ env('COMPANY_NAME') }}<br>
             директори: _____________________
         </div>
         <div class="footer-section">
-            <div class="signature-line"></div>
             <div class="signature-label">Истемолчи:</div>
             <br>
             {{ $region->region_name }} мактабгача таълим ташкилотлари<br>
