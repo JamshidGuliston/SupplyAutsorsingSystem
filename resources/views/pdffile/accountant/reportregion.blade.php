@@ -78,7 +78,7 @@
         
         .footer-section {
             display: table-cell;
-            width: 48%;
+            width: 33.33%;
             vertical-align: top;
             padding-right: 2%;
         }
