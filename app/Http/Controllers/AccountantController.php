@@ -803,7 +803,7 @@ class AccountantController extends Controller
         $invoice_date = config('company.invoice.default_date');
         
         // Snappy PDF yaratish
-        $pdf = SnappyPdf::loadView('pdffile.accountant.schotfaktursecond', compact('costs', 'days', 'kindgar', 'autorser', 'buyurtmachi', 'invoice_number', 'invoice_date', 'total_number_children'));
+        $pdf = \PDF::loadView('pdffile.accountant.schotfaktursecond', compact('costs', 'days', 'kindgar', 'autorser', 'buyurtmachi', 'invoice_number', 'invoice_date', 'total_number_children'));
         
         // PDF sozlamalari
         $pdf->setOption('page-size', 'A4');
