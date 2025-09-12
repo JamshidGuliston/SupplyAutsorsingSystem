@@ -221,7 +221,7 @@
             {{ env('COMPANY_NAME') }}<br>
             директори: _____________________
         </div><div class="footer-section">
-            <div class="signature-label">Аутсорсер:</div>
+            <div class="signature-label"></div>
             <br>
             {{ env('COMPANY_NAME')}} <br>Бош хисобчиси: _____________________<br>
         </div>
@@ -231,9 +231,9 @@
             {{ $region->region_name }} ММТБ <br>директори: _____________________<br>
         </div>
         <div class="footer-section">
-            <div class="signature-label">Истемолчи:</div>
+            <div class="signature-label"></div>
             <br>
-            {{ $region->region_name }} <br>Бош хисобчиси: _____________________<br>
+            {{ $region->region_name }} ММТБ<br>Бош хисобчиси: _____________________<br>
         </div>
     </div>
     </div>
