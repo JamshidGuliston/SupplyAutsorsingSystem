@@ -202,7 +202,7 @@
         <div class="invoice-title">СЧЁТ-ФАКТУРА</div>
         <div class="invoice-number">№ {{ $invoice_number ?? "_________________________________" }}</div>
         <div class="invoice-date">{{ $invoice_date ?? "_________________________________" }}</div>
-        <div class="invoice-date">{{ "Хизмат кўрсатиш шартномаси:"." № ______  \"______\" ___________ 2025 й" ?? "_________________________________" }}</div>
+        <div class="invoice-date">{{ "Хизмат кўрсатиш шартномаси: № ______  ______  ___________ 2025 й" }}</div>
     </div>
 
     <!-- Kompaniya ma'lumotlari -->
