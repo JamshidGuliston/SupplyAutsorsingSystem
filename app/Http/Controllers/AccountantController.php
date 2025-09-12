@@ -764,6 +764,9 @@ class AccountantController extends Controller
 
     public function schotfaktursecond(Request $request, $id, $start, $end){
         $kindgar = Kindgarden::where('id', $id)->with('age_range')->first();
+
+        $region = Region::where('id', $kindgar->region_id)->first();
+        
         $days = Day::where('days.id', '>=', $start)->where('days.id', '<=', $end)
                 ->join('years', 'days.year_id', '=', 'years.id')
                 ->join('months', 'days.month_id', '=', 'months.id')
@@ -787,14 +790,14 @@ class AccountantController extends Controller
         
         // Buyurtmachi ma'lumotlari
         $buyurtmachi = [
-            'company_name' => $kindgar->kingar_name ?? '_________________________________',
-            'address' => '_________________________________',
-            'inn' => '____________ ____',
-            'mfo' => '__________ _____',
-            'account_number' => '__________ _____',
-            'treasury_account' => '__________ _____',
-            'treasury_inn' => '____________ ____',
-            'bank' => '_____________________________',
+            'company_name' => $region->region_name.' ММТБга тасарруфидаги '.$kindgar->number_of_org ?? '-сонли ДМТТ',
+            'address' => $region->region_name,
+            'inn' => '________________',
+            'mfo' => '00014',
+            'account_number' => '23402000300100001010',
+            'treasury_account' => '_______________',
+            'treasury_inn' => '________________',
+            'bank' => 'Марказий банк ХККМ',
             'phone' => '__________________________',
         ];
         
@@ -1924,7 +1927,7 @@ class AccountantController extends Controller
             }
         }
 
-        
+
 
         $pdf = \PDF::loadView('pdffile.accountant.reportregion', compact('region', 'days', 'costs', 'number_childrens', 'ages', 'kindgardens'));
         $pdf->setPaper('A3', 'landscape');

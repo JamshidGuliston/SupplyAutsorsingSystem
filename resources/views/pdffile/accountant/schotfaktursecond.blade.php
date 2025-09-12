@@ -257,7 +257,7 @@
                 <span class="value">{{ $buyurtmachi['mfo'] ?? '' }}</span>
             </div>
             <div class="company-details">
-                <span class="label">Хисоб рақам:</span>
+                <span class="label">Ягона хисоб рақам:</span>
                 <span class="value">{{ $buyurtmachi['account_number'] ?? '' }}</span>
             </div>
             <div class="company-details">
