@@ -93,7 +93,7 @@
 							}
 							$month = App\Models\Month::where('id', $days[0]->month_id)->first();
 						?>
-						<center><b>{{ $kindgar->kingar_name }}   да <?php printf('%02d', $days->first()->year_name) ?> йил <?php echo $days->first()->day_number."-".$days->last()->day_number ?> <?php echo $month->month_name ?> кунлари {{ $age->description }} учун сарфланган озиқ-овқат маҳсулотлар тўғрисида маълумот</b></center>
+						<p style="text-align: center;"><b>{{ $kindgar->kingar_name }}   да <?php printf('%02d', $days->first()->year_name) ?> йил <?php echo $days->first()->day_number."-".$days->last()->day_number ?> <?php echo $month->month_name ?> кунлари {{ $age->description }} учун сарфланган озиқ-овқат маҳсулотлар тўғрисида маълумот</b></p>
 					</div>
                 </div>
                 <table style="width:100%; table-layout: fixed;">
@@ -104,7 +104,7 @@
                             <th style="width: 10px;">Сана</th>
                             <!-- <th style="width: 30px; font-size: 7px"><bold>Нарх</bold></th> -->
                             @foreach($days as $day)
-								<th scope="col">{{ $day->day_number; }}</th>
+								<th scope="col">{{ $day->day_number.'.'.$day->month_name.' '.$day->year_name.'й.'; }}</th>
 							@endforeach
 							<th>Жами</th>
                         </tr>
@@ -116,7 +116,7 @@
 					@foreach($nakproducts as $key => $row)
 					<tr>
 						@if($row['product_name'] != "Болалар сони")
-							<td>{{ $key + 1 }}</td>
+							<td>{{ $key }}</td>
 						@endif
 						<td style="text-align: left; padding-left: 2px">{{ implode(' ', array_slice(explode(' ', $row['product_name']), 0, 3)) }}</td>
 						@if($row['product_name'] != "Болалар сони")
