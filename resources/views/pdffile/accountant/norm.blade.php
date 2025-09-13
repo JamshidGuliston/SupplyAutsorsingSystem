@@ -161,7 +161,6 @@
 						<img src="images/qrmanzil.jpg" alt="QR-code" width="140">
 					</div>
 					<div class="column">
-                    	<p>Технолог _______________     __________________</p>
 					</div>
                 </div>
             </div>
