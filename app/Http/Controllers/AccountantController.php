@@ -1896,11 +1896,11 @@ class AccountantController extends Controller
                 $number_childrens[$day->id][$age->id] = Number_children::where('number_childrens.day_id', $day->id)
                     ->where('kingar_name_id', $id)
                     ->where('king_age_name_id', $age->id)
+                    ->leftJoin('titlemenus', 'titlemenus.id', '=', 'number_childrens.kingar_menu_id')
                     ->first();
             }
         }
         // make snappy pdf
-        return view('pdffile.accountant.transportation', compact('days', 'costs', 'number_childrens', 'kindgar', 'ages'));
         $pdf = \PDF::loadView('pdffile.accountant.transportation', compact('days', 'costs', 'number_childrens', 'kindgar', 'ages'));
         $pdf->setPaper('A3', 'landscape');
         $pdf->setOptions(['dpi' => 150]);

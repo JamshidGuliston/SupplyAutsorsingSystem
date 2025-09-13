@@ -13,7 +13,7 @@ return [
     'autorser' => [
         'company_name' => env('COMPANY_NAME', 'NISHON INVEST MCHJ'),
         'address' => env('AUTSORSER_ADDRESS', 'г.Гулистан ул.Бирлашган №5/13'),
-        'bank_account' => env('AUTSORSER_BANK_ACCOUNT', '20 208 000 000 726 393 001'),
+        'bank_account' => env('AUTSORSER_BANK_ACCOUNT', '2020 8000 0007 2639 3001'),
         'bank' => env('AUTSORSER_BANK', 'ДАТ "Асака Банк"'),
         'mfo' => env('AUTSORSER_MFO', '00373'),
         'inn' => env('AUTSORSER_INN', '304 658 134'),

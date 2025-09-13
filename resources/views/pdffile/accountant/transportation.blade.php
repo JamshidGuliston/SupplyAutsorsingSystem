@@ -174,13 +174,15 @@
         <table>
             <!-- Asosiy sarlavha qatorlari -->
             <tr class="header-row">
-                <th rowspan="2" class="number-col"></th>
-                <th rowspan="2" class="meal-col">Таом нома</th>
+                <th rowspan="2" class="number-col">№</th>
+                <th rowspan="2" class="meal-col">Таомнома</th>
                 <th rowspan="2" class="date-col">Сана</th>
                 <th colspan="3">Буюртма бўйича бола сони</th>
                 <th colspan="2">Бир нафар болага сарфланган харажат НДС билан</th>
                 <th colspan="3">Жами етказиб бериш харажат НДС билан</th>
-                <th colspan="3">Жами етказиб бериш харажатлари</th>
+                @foreach($ages as $age)
+                    <th colspan="4">{{ "Жами етказиб бериш харажатлари (".$age->description.")" }}</th>
+                @endforeach
                 <th rowspan="2" class="final-total-col">Жами етказиб бериш суммаси (НДС билан)</th>
             </tr>
             
@@ -193,9 +195,12 @@
                 <th>9-10,5 соатлик гуруҳ</th>
                 <th>4 соатлик гуруҳ</th>
                 <th>Жами</th>
-                <th>Сумма (безНДС)</th>
-                <th>Устама ҳақ {{$costs->where('age_range_id', 4)->first()->raise ?? 0}}%</th>
-                <th>ҚҚС (НДС) {{$costs->where('age_range_id', 4)->first()->nds ?? 0}}%</th>
+                @foreach($ages as $age)
+                    <th>Сумма (безНДС)</th>
+                    <th>Устама ҳақ {{$costs->where('age_range_id', 4)->first()->raise ?? 0}}%</th>
+                    <th>ҚҚС (НДС) {{$costs->where('age_range_id', 4)->first()->nds ?? 0}}%</th>
+                    <th>Жами сумма</th>
+                @endforeach
             </tr>
             
             <!-- Ma'lumot qatorlari -->
@@ -208,11 +213,20 @@
                 $total_delivery_9_10 = 0;
                 $total_delivery_4 = 0;
                 $total_delivery_all = 0;
-                $total_amount_without_nds = 0;
+                $total_amount_without_nds9_10 = 0;
+                $total_amount_without_nds4 = 0;
+                $total_markup9_10 = 0;
+                $total_markup4 = 0;
+                $total_nds9_10 = 0;
+                $total_nds4 = 0;
+                $total_final_amount9_10 = 0;
+                $total_final_amount4 = 0;
+                $total_final_amount = 0;
                 $total_markup = 0;
                 $total_nds = 0;
                 $total_final_amount = 0;
                 $row_number = 1;
+                $menu_name = '';
             @endphp
             
             @foreach($days as $day)
@@ -223,6 +237,7 @@
                     
                     foreach($number_childrens[$day->id] as $age_id => $child) {
                         if($age_id == 4) { // 9-10.5 soatlik guruh
+                            $menu_name = $child->menu_name;
                             $children_9_10 += $child->kingar_children_number ?? 0;
                         } elseif($age_id == 3) { // 4 soatlik guruh
                             $children_4 += $child->kingar_children_number ?? 0;
@@ -246,10 +261,15 @@
                     $delivery_all = $delivery_9_10 + $delivery_4;
                     
                     // Xarajatlar tahlili
-                    $amount_without_nds = $delivery_all / (1 + $nds / 100); // QQSsiz summa
-                    $markup = $amount_without_nds * $raise / 100; // 28.7% ustama
-                    $nds = $amount_without_nds * $nds / 100; // 12% QQS
-                    $final_amount = $amount_without_nds + $markup + $nds;
+                    $amount_without_nds9_10 = $delivery_9_10 / (1 + $nds / 100); // QQSsiz summa
+                    $amount_without_nds4 = $delivery_4 / (1 + $nds / 100); // QQSsiz summa
+                    $markup9_10 = $amount_without_nds9_10 * $raise / 100; // 28.7% ustama
+                    $markup4 = $amount_without_nds4 * $raise / 100; // 28.7% ustama
+                    $nds9_10 = $amount_without_nds9_10 * $nds / 100; // 12% QQS
+                    $nds4 = $amount_without_nds4 * $nds / 100; // 12% QQS
+                    $final_amount9_10 = $amount_without_nds9_10 + $markup9_10 + $nds9_10;
+                    $final_amount4 = $amount_without_nds4 + $markup4 + $nds4;
+                    $final_amount = $final_amount9_10 + $final_amount4;
                     
                     // Jami hisoblash
                     $total_children_9_10 += $children_9_10;
@@ -260,15 +280,19 @@
                     $total_delivery_9_10 += $delivery_9_10;
                     $total_delivery_4 += $delivery_4;
                     $total_delivery_all += $delivery_all;
-                    $total_amount_without_nds += $amount_without_nds;
-                    $total_markup += $markup;
-                    $total_nds += $nds;
+                    $total_amount_without_nds9_10 += $amount_without_nds9_10;
+                    $total_amount_without_nds4 += $amount_without_nds4;
+                    $total_markup9_10 += $markup9_10;
+                    $total_markup4 += $markup4;
+                    $total_nds9_10 += $nds9_10;
+                    $total_nds4 += $nds4;
+                    $total_final_amount9_10 += $final_amount9_10;
+                    $total_final_amount4 += $final_amount4;
                     $total_final_amount += $final_amount;
                 @endphp
-                
                 <tr class="data-row">
                     <td>{{ $row_number++ }}</td>
-                    <td>{{ $row_number-1 }}-T</td>
+                    <td>{{ $menu_name ?? '' }}</td>
                     <td>{{ $day->day_number }}/{{ $day->month_name }}/{{ $day->year_name }}</td>
                     <td>{{ number_format($children_9_10, 0, ',', ' ') }}</td>
                     <td>{{ number_format($children_4, 0, ',', ' ') }}</td>
@@ -278,9 +302,14 @@
                     <td>{{ number_format($delivery_9_10, 2, ',', ' ') }}</td>
                     <td>{{ number_format($delivery_4, 2, ',', ' ') }}</td>
                     <td>{{ number_format($delivery_all, 2, ',', ' ') }}</td>
-                    <td>{{ number_format($amount_without_nds, 2, ',', ' ') }}</td>
-                    <td>{{ number_format($markup, 2, ',', ' ') }}</td>
-                    <td>{{ number_format($nds, 2, ',', ' ') }}</td>
+                    <td>{{ number_format($amount_without_nds9_10, 2, ',', ' ') }}</td>
+                    <td>{{ number_format($markup9_10, 2, ',', ' ') }}</td>
+                    <td>{{ number_format($nds9_10, 2, ',', ' ') }}</td>
+                    <td>{{ number_format($final_amount9_10, 2, ',', ' ') }}</td>
+                    <td>{{ number_format($amount_without_nds4, 2, ',', ' ') }}</td>
+                    <td>{{ number_format($markup4, 2, ',', ' ') }}</td>
+                    <td>{{ number_format($nds4, 2, ',', ' ') }}</td>
+                    <td>{{ number_format($final_amount4, 2, ',', ' ') }}</td>
                     <td><strong>{{ number_format($final_amount, 2, ',', ' ') }}</strong></td>
                 </tr>
             @endforeach
@@ -296,9 +325,14 @@
                 <td><strong>{{ number_format($total_delivery_9_10, 2, ',', ' ') }}</strong></td>
                 <td><strong>{{ number_format($total_delivery_4, 2, ',', ' ') }}</strong></td>
                 <td><strong>{{ number_format($total_delivery_all, 2, ',', ' ') }}</strong></td>
-                <td><strong>{{ number_format($total_amount_without_nds, 2, ',', ' ') }}</strong></td>
-                <td><strong>{{ number_format($total_markup, 2, ',', ' ') }}</strong></td>
-                <td><strong>{{ number_format($total_nds, 2, ',', ' ') }}</strong></td>
+                <td><strong>{{ number_format($total_amount_without_nds9_10, 2, ',', ' ') }}</strong></td>
+                <td><strong>{{ number_format($total_markup9_10, 2, ',', ' ') }}</strong></td>
+                <td><strong>{{ number_format($total_nds9_10, 2, ',', ' ') }}</strong></td>
+                <td><strong>{{ number_format($total_final_amount9_10, 2, ',', ' ') }}</strong></td>
+                <td><strong>{{ number_format($total_amount_without_nds4, 2, ',', ' ') }}</strong></td>
+                <td><strong>{{ number_format($total_markup4, 2, ',', ' ') }}</strong></td>
+                <td><strong>{{ number_format($total_nds4, 2, ',', ' ') }}</strong></td>
+                <td><strong>{{ number_format($total_final_amount4, 2, ',', ' ') }}</strong></td>
                 <td><strong>{{ number_format($total_final_amount, 2, ',', ' ') }}</strong></td>
             </tr>
         </table>
