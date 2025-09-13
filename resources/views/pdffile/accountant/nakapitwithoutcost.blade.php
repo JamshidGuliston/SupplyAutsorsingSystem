@@ -93,12 +93,13 @@
 							}
 							$month = App\Models\Month::where('id', $days[0]->month_id)->first();
 						?>
-						<center><b>{{ $kindgar->kingar_name }}   да <?php printf('%02d', $days->first()->year_name) ?> йил <?php echo $days->first()->day_number."-".$days->last()->day_number ?> <?php echo $month->month_name ?> кунлари {{ $age->age_name }} учун сарфланган озиқ-овқат маҳсулотлар тўғрисида маълумот</b></center>
+						<center><b>{{ $kindgar->kingar_name }}   да <?php printf('%02d', $days->first()->year_name) ?> йил <?php echo $days->first()->day_number."-".$days->last()->day_number ?> <?php echo $month->month_name ?> кунлари {{ $age->description }} учун сарфланган озиқ-овқат маҳсулотлар тўғрисида маълумот</b></center>
 					</div>
                 </div>
                 <table style="width:100%; table-layout: fixed;">
 				    <tbody>
                         <tr>
+							<th scope="col" style="width: 5%;" rowspan="2">№</th>
                             <th scope="col" style="width: 10%;" rowspan="2">Махсулотлар</th>
                             <th style="width: 10px;">Сана</th>
                             <!-- <th style="width: 30px; font-size: 7px"><bold>Нарх</bold></th> -->
@@ -114,6 +115,7 @@
 					?>
 					@foreach($nakproducts as $key => $row)
 					<tr>
+						<td>{{ $key + 1 }}</td>
 						<td style="text-align: left; padding-left: 2px">{{ implode(' ', array_slice(explode(' ', $row['product_name']), 0, 3)) }}</td>
 						@if($row['product_name'] != "Болалар сони")
 							<td>{{ $row['size_name'] }}</td>
