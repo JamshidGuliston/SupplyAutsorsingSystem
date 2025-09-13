@@ -62,7 +62,7 @@
   .column {
     float: left;
     text-align: center;
-    width: 50%;
+    width: 33%;
   }
 
   /* Clear floats after the columns */
@@ -176,15 +176,13 @@
 				</tbody>
 			</table>
 					<div class="column">
-					    @php
-							$qrImage = base64_encode(file_get_contents(public_path('images/qrmanzil.jpg')));
-						@endphp
-						<img src="data:image/jpeg;base64,{{ $qrImage }}" 
-							style="width:120; position:absolute; left:10px;">
+					    <p>Аутсорсер директори: ____________________;</p>
 					</div>
 					<div class="column">
-						<p></p>
-						<p style="text-align: center;"><strong>ДМТТ рахбари: </strong> __________________;</p>
+						<p style="text-align: center;"><strong>ДМТТ рахбари: </strong> _________________;</p>
+					</div>
+					<div class="column">
+						<p style="text-align: center;"><strong>Хамшира: </strong> __________________;</p>
 					</div>
                 </div>
             </div>
