@@ -560,7 +560,7 @@ class AccountantController extends Controller
         });
         // dd($nakproducts);
         $dompdf = new Dompdf('UTF-8');
-		$html = mb_convert_encoding(view('pdffile.accountant.nakapit', compact('age', 'days', 'nakproducts', 'costsdays', 'costs', 'kindgar', 'protsent')), 'HTML-ENTITIES', 'UTF-8');
+		$html = mb_convert_encoding(view('pdffile.accountant.nakapit', compact('age', 'days', 'nakproducts', 'costsdays', 'costs', 'kindgar', 'protsent', 'region')), 'HTML-ENTITIES', 'UTF-8');
 		$dompdf->loadHtml($html);
         
 		// (Optional) Setup the paper size and orientation
