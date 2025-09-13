@@ -232,8 +232,8 @@
                     $children_all = $children_9_10 + $children_4;
                     
                     // Narxlarni olish
-                    $cost_9_10 = $costs->where('age_range_id', 4)->first()->eater_cost; // 9-10.5 soatlik guruh uchun narx
-                    $cost_4 = $costs->where('age_range_id', 3)->first()->eater_cost; // 4 soatlik guruh uchun narx
+                    $cost_9_10 = $costs->where('age_range_id', 4)->first()->eater_cost ?? 0; // 9-10.5 soatlik guruh uchun narx
+                    $cost_4 = $costs->where('age_range_id', 3)->first()->eater_cost ?? 0; // 4 soatlik guruh uchun narx
                     
                     // Yetkazib berish xarajatlari
                     $delivery_9_10 = $children_9_10 * $cost_9_10;
