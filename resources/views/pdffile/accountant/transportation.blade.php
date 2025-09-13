@@ -233,7 +233,7 @@
 
                     $eater_cost9_10 = $costs->where('age_range_id', 4)->first()->eater_cost ?? 0;
                     $eater_cost4 = $costs->where('age_range_id', 3)->first()->eater_cost ?? 0;
-                    $raise = $costs->where('age_range_id', 4)->first()->raise ?? 0;
+                    $raise = 28.7 ?? 0;
                     $nds = $costs->where('age_range_id', 4)->first()->nds ?? 0;
                     
                     // Narxlarni olish
@@ -247,7 +247,7 @@
                     
                     // Xarajatlar tahlili
                     $amount_without_nds = $delivery_all / (1 + $nds / 100); // QQSsiz summa
-                    $markup = $amount_without_nds * $raise / 100; // 28.5% ustama
+                    $markup = $amount_without_nds * $raise / 100; // 28.7% ustama
                     $nds = $amount_without_nds * $nds / 100; // 12% QQS
                     $final_amount = $amount_without_nds + $markup + $nds;
                     
