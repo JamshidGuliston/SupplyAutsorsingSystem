@@ -550,7 +550,10 @@ class AccountantController extends Controller
             }
         }
 
-        $protsent = Protsent::where('region_id', Kindgarden::where('id', $id)->first()->region_id)->first();
+        $protsent = Protsent::where('region_id', Kindgarden::where('id', $id)->first()->region_id)
+                    ->where('end_date', '>=', $days[count($days)-1]->created_at->format('Y-m-d'))
+                    ->where('age_range_id', $ageid)
+                    ->first();
         // dd($protsent);
 
         usort($nakproducts, function ($a, $b){
