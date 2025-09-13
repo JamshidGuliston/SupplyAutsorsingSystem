@@ -194,8 +194,8 @@
                 <th>4 соатлик гуруҳ</th>
                 <th>Жами</th>
                 <th>Сумма (безНДС)</th>
-                <th>Устама ҳақ {{$costs[0]->raise}}%</th>
-                <th>ҚҚС (НДС) {{$costs[0]->nds}}%</th>
+                <th>Устама ҳақ {{$costs->where('age_range_id', 4)->first()->raise ?? 0}}%</th>
+                <th>ҚҚС (НДС) {{$costs->where('age_range_id', 4)->first()->nds ?? 0}}%</th>
             </tr>
             
             <!-- Ma'lumot qatorlari -->
