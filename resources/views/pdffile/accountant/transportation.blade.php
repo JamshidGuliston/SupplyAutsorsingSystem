@@ -22,7 +22,7 @@
             font-weight: bold;
             font-size: 20px;
             width: 100%;
-            margin-top: {{ count($days) <= 10 ? '80px' : (count($days) <= 20 ? '20px' : '10px') }};
+            margin-top: {{ count($days) <= 10 ? '80px' : (count($days) <= 20 ? '20px' : '1px') }};
         }
         
         .table-container {
@@ -44,10 +44,10 @@
         
         th, td {
             border: 1px solid #000;
-            padding: 6px 4px;
+            padding: 6px 1px;
             text-align: center;
             vertical-align: middle;
-            white-space: wrap;
+            white-space: nowrap;
             min-width: 60px;
         }
         
