@@ -66,6 +66,9 @@
   }
 
   /* Clear floats after the columns */
+  .row{
+	margin-top: 15px;
+  }
   .row:after {
     content: "";
     display: table;
@@ -175,8 +178,9 @@
 					@endforeach
 				</tbody>
 			</table>
+			    <div class="row">
 					<div class="column">
-					    <p>Аутсорсер директори: ____________________;</p>
+					    <p><b>Аутсорсер директори:<b> ____________________;</p>
 					</div>
 					<div class="column">
 						<p style="text-align: center;"><strong>ДМТТ рахбари: </strong> _________________;</p>
