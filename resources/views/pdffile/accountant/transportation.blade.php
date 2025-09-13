@@ -52,11 +52,12 @@
         }
         td {
             border: 1px solid #000;
-            padding: 6px 2px;
             text-align: center;
             vertical-align: middle;
             white-space: nowrap;
             min-width: 60px;
+            padding-top: <?php echo count($days) <= 15 ? '10px' : (count($days) <= 20 ? '7px' : '3px') ?>;
+            padding-bottom: <?php echo count($days) <= 15 ? '6px' : (count($days) <= 20 ? '7px' : '3px') ?>;
         }
         
         .header-row {
