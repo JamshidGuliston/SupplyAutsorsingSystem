@@ -112,7 +112,7 @@
 									}
 								?>
 								<!-- number format for two decimal 02 insaid of 2  -->
-								<th scope="col">{{ number_format($day->day_number, 0, '.', ' ') . '.' . number_format($month_id, 0, '.', ' ') . '.' . $day->year_name .'й.'; }}</th>
+								<th scope="col">{{ sprintf("%02d.%02d.%d", $day->day_number, $month_id,  $day->year_name); }}</th>
 							@endforeach
 							<th>Жами</th>
                         </tr>
