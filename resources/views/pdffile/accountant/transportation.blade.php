@@ -42,9 +42,17 @@
             margin: 0 auto;
         }
         
-        th, td {
+        th {
             border: 1px solid #000;
-            padding: 6px 1px;
+            padding: 6px 4px;
+            text-align: center;
+            vertical-align: middle;
+            white-space: wrap;
+            min-width: 60px;
+        }
+        td {
+            border: 1px solid #000;
+            padding: 6px 2px;
             text-align: center;
             vertical-align: middle;
             white-space: nowrap;
