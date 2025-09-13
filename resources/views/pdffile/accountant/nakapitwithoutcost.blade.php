@@ -104,7 +104,14 @@
                             <th style="width: 10px;">Сана</th>
                             <!-- <th style="width: 30px; font-size: 7px"><bold>Нарх</bold></th> -->
                             @foreach($days as $day)
-								<th scope="col">{{ $day->day_number.'.'.$day->month_name.' '.$day->year_name.'й.'; }}</th>
+								<?php
+									if($day->month_id % 12 == 0){
+										$month_id = 12;
+									}else{
+										$month_id = $day->month_id % 12;
+									}
+								?>
+								<th scope="col">{{ $day->day_number.'.'.$month_id.' '.$day->year_name.'й.'; }}</th>
 							@endforeach
 							<th>Жами</th>
                         </tr>
