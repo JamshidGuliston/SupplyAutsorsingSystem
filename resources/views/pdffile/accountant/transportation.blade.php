@@ -230,10 +230,14 @@
                     }
                     
                     $children_all = $children_9_10 + $children_4;
+
+                    $eater_cost = $costs->where('age_range_id', 4)->first()->eater_cost ?? 0;
+                    $raise = $costs->where('age_range_id', 4)->first()->raise ?? 0;
+                    $nds = $costs->where('age_range_id', 4)->first()->nds ?? 0;
                     
                     // Narxlarni olish
-                    $cost_9_10 = $costs->where('age_range_id', 4)->first()->eater_cost ?? 0; // 9-10.5 soatlik guruh uchun narx
-                    $cost_4 = $costs->where('age_range_id', 3)->first()->eater_cost ?? 0; // 4 soatlik guruh uchun narx
+                    $cost_9_10 = $eater_cost; // 9-10.5 soatlik guruh uchun narx
+                    $cost_4 = $eater_cost; // 4 soatlik guruh uchun narx
                     
                     // Yetkazib berish xarajatlari
                     $delivery_9_10 = $children_9_10 * $cost_9_10;
@@ -241,9 +245,9 @@
                     $delivery_all = $delivery_9_10 + $delivery_4;
                     
                     // Xarajatlar tahlili
-                    $amount_without_nds = $delivery_all / (1 + $costs->where('age_range_id', 4)->first()->nds ?? 0 / 100); // QQSsiz summa
-                    $markup = $amount_without_nds * $costs->where('age_range_id', 4)->first()->raise ?? 0 / 100; // 28.5% ustama
-                    $nds = $amount_without_nds * $costs->where('age_range_id', 4)->first()->nds ?? 0 / 100; // 12% QQS
+                    $amount_without_nds = $delivery_all / (1 + $nds / 100); // QQSsiz summa
+                    $markup = $amount_without_nds * $raise / 100; // 28.5% ustama
+                    $nds = $amount_without_nds * $nds / 100; // 12% QQS
                     $final_amount = $amount_without_nds + $markup + $nds;
                     
                     // Jami hisoblash
