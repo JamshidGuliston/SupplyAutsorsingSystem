@@ -111,7 +111,8 @@
 										$month_id = $day->month_id % 12;
 									}
 								?>
-								<th scope="col">{{ $day->day_number.'.'.$month_id.' '.$day->year_name.'й.'; }}</th>
+								<!-- number format for two decimal 02 insaid of 2  -->
+								<th scope="col">{{ number_format($day->day_number, 0, '.', ' ') . '.' . number_format($month_id, 0, '.', ' ') . '.' . $day->year_name .'й.'; }}</th>
 							@endforeach
 							<th>Жами</th>
                         </tr>
