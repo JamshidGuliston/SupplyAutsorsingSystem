@@ -92,7 +92,7 @@
 								$mth = $days[0]->month_id % 12;
 							}
 						?>
-						<center><b>{{ env('COMPANY_NAME') }} хизмат кўрсатаётган  {{ $kindgar->kingar_name }} " <?php echo $days->last()->day_number ?> ". <?php printf('%02d', $mth) ?> . <?php printf('%02d', $costs[0]->year_name) ?> йил  {{ $age->age_name }} учун НАКАПИТЕЛ</b></center>
+						<center><b>{{ env('COMPANY_NAME') }} томонида Аутсорсинг хизмати кўрсатилаётган {{ $region->region_name }} {{ $kindgar->number_of_org }}-сонли ДМТТнинг <?php echo $days->last()->day_number ?> . <?php printf('%02d', $mth) ?> . <?php printf('%02d', $costs[0]->year_name) ?> йил  {{ $age->age_name }} учун НАКАПИТЕЛ</b></center>
 					</div>
                 </div>
                 <table style="width:100%; table-layout: fixed;">

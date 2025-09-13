@@ -474,6 +474,7 @@ class AccountantController extends Controller
 
     public function nakapit(Request $request, $id, $ageid, $start, $end, $costid){
         $kindgar = Kindgarden::where('id', $id)->first();
+        $region = Region::where('id', $kindgar->region_id)->first();
         $nakproducts = [];
         $age = Age_range::where('id', $ageid)->first();
         $days = Day::where('id', '>=', $start)->where('id', '<=', $end)->get();
