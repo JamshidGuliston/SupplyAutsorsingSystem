@@ -281,6 +281,7 @@
                     <th class="unit">Ўл.бир</th>
                     <th class="quantity">Сони</th>
                     <th class="price">Нархи</th>
+                    <th class="price">Етказиб бериш нархи</th>
                     <th class="price">ҚҚС ва устама</th>
                     <th class="amount">Кўрсатилган хизмат суммаси (ҚҚС билан)</th>
                     <th class="vat">Шундан ҚҚС</th>
@@ -300,6 +301,7 @@
                     <td class="unit">{{ 'бола' }}</td>
                     <td class="quantity">{{ $total_number_children[$age->id] }}</td>
                     <td class="price">{{ number_format($costs[$age->id]->eater_cost ?? 0, 2) }}</td>
+                    <td class="price">{{ number_format($total_number_children[$age->id] * $costs[$age->id]->eater_cost ?? 0, 2) }}</td>
                     <td class="price">{{ $costs[$age->id]->nds ?? 0 }}%</td>
                     <td class="amount">
                         @php
