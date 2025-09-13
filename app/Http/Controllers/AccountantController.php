@@ -1874,7 +1874,6 @@ class AccountantController extends Controller
             ->get(['days.id', 'days.day_number', 'months.month_name', 'years.year_name', 'days.created_at']);
         $ages = Age_range::all();
         $costs = Protsent::where('region_id', $kindgar->region_id)
-                ->where('start_date', '<=', $days[0]->created_at->format('Y-m-d'))
                 ->where('end_date', '>=', $days[count($days)-1]->created_at->format('Y-m-d'))
                 ->get();
 
