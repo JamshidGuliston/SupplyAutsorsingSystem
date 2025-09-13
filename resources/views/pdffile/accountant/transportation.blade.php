@@ -38,7 +38,7 @@
             max-width: 100%;
             border-collapse: collapse;
             border: 2px solid #000;
-            font-size: 11px;
+            font-size: 12px;
             margin: 0 auto;
         }
         
@@ -140,6 +140,7 @@
             display: table-cell;
             width: 48%;
             vertical-align: top;
+            margin-top: 30px;
             padding-right: 2%;
         }
         
@@ -189,7 +190,7 @@
                 <th colspan="2">Бир нафар болага сарфланган харажат НДС билан</th>
                 <th colspan="3">Жами етказиб бериш харажат НДС билан</th>
                 @foreach($ages as $age)
-                    <th colspan="4">{{ "Жами етказиб бериш харажатлари (".$age->description.")" }}</th>
+                    <th colspan="4">Жами етказиб бериш харажатлари <br/>{{ "(".$age->description.")" }}</th>
                 @endforeach
                 <th rowspan="2" class="final-total-col">Жами етказиб бериш суммаси (НДС билан)</th>
             </tr>
