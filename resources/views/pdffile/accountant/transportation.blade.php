@@ -194,8 +194,8 @@
                 <th>4 соатлик гуруҳ</th>
                 <th>Жами</th>
                 <th>Сумма (безНДС)</th>
-                <th>Устама ҳақ 28,5%</th>
-                <th>ҚҚС (НДС) 12%</th>
+                <th>Устама ҳақ {{$costs[0]->raise}}%</th>
+                <th>ҚҚС (НДС) {{$costs[0]->nds}}%</th>
             </tr>
             
             <!-- Ma'lumot qatorlari -->
@@ -232,8 +232,8 @@
                     $children_all = $children_9_10 + $children_4;
                     
                     // Narxlarni olish
-                    $cost_9_10 = 17866.00; // 9-10.5 soatlik guruh uchun narx
-                    $cost_4 = 4355.00; // 4 soatlik guruh uchun narx
+                    $cost_9_10 = $costs->where('age_range_id', 4)->first()->eater_cost; // 9-10.5 soatlik guruh uchun narx
+                    $cost_4 = $costs->where('age_range_id', 3)->first()->eater_cost; // 4 soatlik guruh uchun narx
                     
                     // Yetkazib berish xarajatlari
                     $delivery_9_10 = $children_9_10 * $cost_9_10;
@@ -241,9 +241,9 @@
                     $delivery_all = $delivery_9_10 + $delivery_4;
                     
                     // Xarajatlar tahlili
-                    $amount_without_nds = $delivery_all / 1.12; // QQSsiz summa
-                    $markup = $amount_without_nds * 0.285; // 28.5% ustama
-                    $nds = $amount_without_nds * 0.12; // 12% QQS
+                    $amount_without_nds = $delivery_all / (1 + $costs->where('age_range_id', 4)->first()->nds / 100); // QQSsiz summa
+                    $markup = $amount_without_nds * $costs->where('age_range_id', 4)->first()->raise / 100; // 28.5% ustama
+                    $nds = $amount_without_nds * $costs->where('age_range_id', 4)->first()->nds / 100; // 12% QQS
                     $final_amount = $amount_without_nds + $markup + $nds;
                     
                     // Jami hisoblash

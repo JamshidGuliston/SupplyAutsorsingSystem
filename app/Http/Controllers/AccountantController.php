@@ -1873,14 +1873,10 @@ class AccountantController extends Controller
             ->join('years', 'years.id', '=', 'days.year_id')
             ->get(['days.id', 'days.day_number', 'months.month_name', 'years.year_name', 'days.created_at']);
         $ages = Age_range::all();
-        $costs = [];
-        foreach($ages as $age){
-            $costs[$age->id] = Protsent::where('region_id', Kindgarden::where('id', $id)->first()->region_id)
-                ->where('age_range_id', $age->id)
+        $costs = Protsent::where('region_id', $kindgar->region_id)
                 ->where('start_date', '<=', $days[0]->created_at->format('Y-m-d'))
                 ->where('end_date', '>=', $days[count($days)-1]->created_at->format('Y-m-d'))
-                ->first();
-        }
+                ->get();
 
         $number_childrens = [];
         foreach($days as $day){
