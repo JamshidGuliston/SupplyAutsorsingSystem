@@ -19,10 +19,10 @@
         .header {
             text-align: center;
             margin-bottom: 25px;
-            margin-top: 80px;
             font-weight: bold;
             font-size: 20px;
             width: 100%;
+            margin-top: {{ count($days) <= 10 ? '80px' : (count($days) <= 20 ? '20px' : '10px') }};
         }
         
         .table-container {
@@ -237,7 +237,7 @@
                     
                     foreach($number_childrens[$day->id] as $age_id => $child) {
                         if($age_id == 4) { // 9-10.5 soatlik guruh
-                            $menu_name = $child->menu_name;
+                            $menu_name = $child->menu_name ?? '';
                             $children_9_10 += $child->kingar_children_number ?? 0;
                         } elseif($age_id == 3) { // 4 soatlik guruh
                             $children_4 += $child->kingar_children_number ?? 0;
