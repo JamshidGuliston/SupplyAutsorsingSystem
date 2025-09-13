@@ -255,6 +255,9 @@
                 <div class="row">
                     <div class="col-sm-4">
                         <input type="hidden" id="kind" name="kindid" value="{{ $kindgar->id }}" /> 
+                        <!-- hidden age ranges with id and name it should be more than 1 -->
+                        <input type="hidden" id="age_ranges" name="age_ranges" value="{{ $kindgar->age_range->pluck('id')->implode(',') }}" />
+                        <input type="hidden" id="age_range_names" name="age_range_names" value="{{ $kindgar->age_range->pluck('age_name')->implode(',') }}" />
                         <select class="form-select" id="startdayid" onchange="changeFunc();" aria-label="Default select example" required>
                             <option value="">Sanadan</option>
                             @foreach($yeardays as $row)
@@ -374,108 +377,66 @@
         var selectBox = document.getElementById("costdayid");
         var cost = selectBox.options[selectBox.selectedIndex].value;
         var kindid = document.getElementById("kind").value; 
+        var age_ranges = document.getElementById("age_ranges").value;
+        var age_ranges = age_ranges.split(',');
+        var age_range_names = document.getElementById("age_range_names").value;
+        var age_range_names = age_range_names.split(',');
+        // console.log(age_ranges);
         var div = $('.urlpdf');
         
         if(start != "" && end != "" && cost != ""){
             var html = '<div class="report-section">';
             
-            // Qisqa guruh
-            html += '<div class="age-group-header">';
-            html += '<i class="fas fa-child"></i>Қисқа гурух (3 yosh)';
-            html += '</div>';
-            
-            html += '<div class="report-category">';
-            html += '<h6><i class="fas fa-warehouse"></i>Накапител</h6>';
-            html += '<div class="report-links">';
-            html += '<span class="me-2">Narx bilan:</span>';
-            html += '<a href="/accountant/nakapit/'+kindid+'/3/'+start+'/'+end+'/'+cost+'" target="_blank" class="report-link pdf">';
-            html += '<i class="far fa-file-pdf"></i>PDF';
-            html += '</a>';
-            html += '<a href="/accountant/nakapitexcel/'+kindid+'/3/'+start+'/'+end+'/'+cost+'" target="_blank" class="report-link excel">';
-            html += '<i class="far fa-file-excel"></i>Excel';
-            html += '</a>';
-            html += '<span class="me-2 ms-3">Narxsiz:</span>';
-            html += '<a href="/accountant/nakapitwithoutcost/'+kindid+'/3/'+start+'/'+end+'" target="_blank" class="report-link pdf">';
-            html += '<i class="far fa-file-pdf"></i>PDF';
-            html += '</a>';
-            html += '<a href="/accountant/nakapitexcelwithoutcost/'+kindid+'/3/'+start+'/'+end+'" target="_blank" class="report-link excel">';
-            html += '<i class="far fa-file-excel"></i>Excel';
-            html += '</a>';
-            html += '</div>';
-            html += '</div>';
-            
-            html += '<div class="report-category">';
-            html += '<h6><i class="fas fa-file-invoice"></i>Счёт фактура</h6>';
-            html += '<div class="report-links">';
-            html += '<a href="/accountant/schotfaktur/'+kindid+'/3/'+start+'/'+end+'/'+cost+'" target="_blank" class="report-link pdf">';
-            html += '<i class="far fa-file-pdf"></i>PDF';
-            html += '</a>';
-            html += '<a href="/accountant/schotfakturexcel/'+kindid+'/3/'+start+'/'+end+'/'+cost+'" target="_blank" class="report-link excel">';
-            html += '<i class="far fa-file-excel"></i>Excel';
-            html += '</a>';
-            html += '</div>';
-            html += '</div>';
-            
-            html += '<div class="report-category">';
-            html += '<h6><i class="fas fa-ruler"></i>Меёр</h6>';
-            html += '<div class="report-links">';
-            html += '<a href="/accountant/norm/'+kindid+'/3/'+start+'/'+end+'/'+cost+'" target="_blank" class="report-link pdf">';
-            html += '<i class="far fa-file-pdf"></i>PDF';
-            html += '</a>';
-            html += '<a href="/accountant/normexcel/'+kindid+'/3/'+start+'/'+end+'/'+cost+'" target="_blank" class="report-link excel">';
-            html += '<i class="far fa-file-excel"></i>Excel';
-            html += '</a>';
-            html += '</div>';
-            html += '</div>';
-            
-            // 3-7 yoshli
-            html += '<div class="age-group-header">';
-            html += '<i class="fas fa-users"></i>3-7 ёшли (4 yosh)';
-            html += '</div>';
-            
-            html += '<div class="report-category">';
-            html += '<h6><i class="fas fa-warehouse"></i>Накапител</h6>';
-            html += '<div class="report-links">';
-            html += '<span class="me-2">Narx bilan:</span>';
-            html += '<a href="/accountant/nakapit/'+kindid+'/4/'+start+'/'+end+'/'+cost+'" target="_blank" class="report-link pdf">';
-            html += '<i class="far fa-file-pdf"></i>PDF';
-            html += '</a>';
-            html += '<a href="/accountant/nakapitexcel/'+kindid+'/4/'+start+'/'+end+'/'+cost+'" target="_blank" class="report-link excel">';
-            html += '<i class="far fa-file-excel"></i>Excel';
-            html += '</a>';
-            html += '<span class="me-2 ms-3">Narxsiz:</span>';
-            html += '<a href="/accountant/nakapitwithoutcost/'+kindid+'/4/'+start+'/'+end+'" target="_blank" class="report-link pdf">';
-            html += '<i class="far fa-file-pdf"></i>PDF';
-            html += '</a>';
-            html += '<a href="/accountant/nakapitexcelwithoutcost/'+kindid+'/4/'+start+'/'+end+'" target="_blank" class="report-link excel">';
-            html += '<i class="far fa-file-excel"></i>Excel';
-            html += '</a>';
-            html += '</div>';
-            html += '</div>';
-            
-            html += '<div class="report-category">';
-            html += '<h6><i class="fas fa-file-invoice"></i>Счёт фактура</h6>';
-            html += '<div class="report-links">';
-            html += '<a href="/accountant/schotfaktur/'+kindid+'/4/'+start+'/'+end+'/'+cost+'" target="_blank" class="report-link pdf">';
-            html += '<i class="far fa-file-pdf"></i>PDF';
-            html += '</a>';
-            html += '<a href="/accountant/schotfakturexcel/'+kindid+'/4/'+start+'/'+end+'/'+cost+'" target="_blank" class="report-link excel">';
-            html += '<i class="far fa-file-excel"></i>Excel';
-            html += '</a>';
-            html += '</div>';
-            html += '</div>';
-            
-            html += '<div class="report-category">';
-            html += '<h6><i class="fas fa-ruler"></i>Меёр</h6>';
-            html += '<div class="report-links">';
-            html += '<a href="/accountant/norm/'+kindid+'/4/'+start+'/'+end+'/'+cost+'" target="_blank" class="report-link pdf">';
-            html += '<i class="far fa-file-pdf"></i>PDF';
-            html += '</a>';
-            html += '<a href="/accountant/normexcel/'+kindid+'/4/'+start+'/'+end+'/'+cost+'" target="_blank" class="report-link excel">';
-            html += '<i class="far fa-file-excel"></i>Excel';
-            html += '</a>';
-            html += '</div>';
-            html += '</div>';
+            // Qisqa guruh for each age range
+            for(var i = 0; i < age_ranges.length; i++){
+                html += '<div class="age-group-header">';
+                html += '<i class="fas fa-child"></i> '+age_range_names[i];
+                html += '</div>';
+
+                html += '<div class="report-category">';
+                html += '<h6><i class="fas fa-warehouse"></i>Накапител</h6>';
+                html += '<div class="report-links">';
+                html += '<span class="me-2">Narx bilan:</span>';
+                html += '<a href="/accountant/nakapit/'+kindid+'/'+age_ranges[i]+'/'+start+'/'+end+'/'+cost+'" target="_blank" class="report-link pdf">';
+                html += '<i class="far fa-file-pdf"></i>PDF';
+                html += '</a>';
+                html += '<a href="/accountant/nakapitexcel/'+kindid+'/'+age_ranges[i]+'/'+start+'/'+end+'/'+cost+'" target="_blank" class="report-link excel">';
+                html += '<i class="far fa-file-excel"></i>Excel';
+                html += '</a>';
+                html += '<span class="me-2 ms-3">Narxsiz:</span>';
+                html += '<a href="/accountant/nakapitwithoutcost/'+kindid+'/'+age_ranges[i]+'/'+start+'/'+end+'" target="_blank" class="report-link pdf">';
+                html += '<i class="far fa-file-pdf"></i>PDF';
+                html += '</a>';
+                html += '<a href="/accountant/nakapitexcelwithoutcost/'+kindid+'/'+age_ranges[i]+'/'+start+'/'+end+'" target="_blank" class="report-link excel">';
+                html += '<i class="far fa-file-excel"></i>Excel';
+                html += '</a>';
+                html += '</div>';
+                html += '</div>';
+                
+                // html += '<div class="report-category">';
+                // html += '<h6><i class="fas fa-file-invoice"></i>Счёт фактура</h6>';
+                // html += '<div class="report-links">';
+                // html += '<a href="/accountant/schotfaktur/'+kindid+'/'+age_ranges[i]+'/'+start+'/'+end+'/'+cost+'" target="_blank" class="report-link pdf">';
+                // html += '<i class="far fa-file-pdf"></i>PDF';
+                // html += '</a>';
+                // html += '<a href="/accountant/schotfakturexcel/'+kindid+'/'+age_ranges[i]+'/'+start+'/'+end+'/'+cost+'" target="_blank" class="report-link excel">';
+                // html += '<i class="far fa-file-excel"></i>Excel';
+                // html += '</a>';
+                // html += '</div>';
+                // html += '</div>';
+                
+                html += '<div class="report-category">';
+                html += '<h6><i class="fas fa-ruler"></i>Меёр</h6>';
+                html += '<div class="report-links">';
+                html += '<a href="/accountant/norm/'+kindid+'/'+age_ranges[i]+'/'+start+'/'+end+'/'+cost+'" target="_blank" class="report-link pdf">';
+                html += '<i class="far fa-file-pdf"></i>PDF';
+                html += '</a>';
+                html += '<a href="/accountant/normexcel/'+kindid+'/'+age_ranges[i]+'/'+start+'/'+end+'/'+cost+'" target="_blank" class="report-link excel">';
+                html += '<i class="far fa-file-excel"></i>Excel';
+                html += '</a>';
+                html += '</div>';
+                html += '</div>';                
+            }
             
             // Umumiy faktura
             html += '<div class="general-invoice">';

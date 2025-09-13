@@ -210,7 +210,7 @@ class AccountantController extends Controller
     public function kindreport(Request $request, $id){
         $days = $this->activmonth();
         $yeardays = $this->activyear();
-        $kindgar = Kindgarden::where('id', $id)->first();
+        $kindgar = Kindgarden::where('id', $id)->with('age_range')->first();
         $nakproducts = [];
         $first = 0;
         foreach($days as $day){
@@ -793,7 +793,7 @@ class AccountantController extends Controller
             'company_name' => $region->region_name.' ММТБга тасарруфидаги '.$kindgar->number_of_org .'-сонли ДМТТ' ?? '',
             'address' => $region->region_name,
             'inn' => '________________',
-            'bank_account' => '_______________________',
+            'bank_account' => '___________________________________',
             'mfo' => '00014',
             'account_number' => '23402000300100001010',
             'treasury_account' => '_______________',

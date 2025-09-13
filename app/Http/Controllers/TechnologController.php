@@ -3575,7 +3575,7 @@ class TechnologController extends Controller
                         // Qisqa guruh bolalar soni (age_id = 5)
                         $shortGroupCount = Number_children::where('day_id', $day->id)
                             ->where('kingar_name_id', $kindgarden->id)
-                            ->where('king_age_name_id', 5) // Qisqa guruh
+                            ->where('king_age_name_id', 3) // Qisqa guruh
                             ->sum('kingar_children_number');
                         
                         // Xodimlar soni
@@ -3676,7 +3676,7 @@ class TechnologController extends Controller
                         // Qisqa guruh bolalar soni (age_id = 5)
                         $shortGroupCount = Number_children::where('day_id', $day->id)
                             ->where('kingar_name_id', $kindgarden->id)
-                            ->where('king_age_name_id', 5) // Qisqa guruh
+                            ->where('king_age_name_id', 3) // Qisqa guruh
                             ->sum('kingar_children_number');
                         
                         // Xodimlar soni
@@ -3783,7 +3783,7 @@ class TechnologController extends Controller
                         // Qisqa guruh bolalar soni (age_id = 5)
                         $shortGroupCount = Number_children::where('day_id', $day->id)
                             ->where('kingar_name_id', $kindgarden->id)
-                            ->where('king_age_name_id', 5) // Qisqa guruh
+                            ->where('king_age_name_id', 3) // Qisqa guruh
                             ->sum('kingar_children_number');
                         
                         // Xodimlar soni
