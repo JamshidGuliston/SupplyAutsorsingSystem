@@ -115,7 +115,9 @@
 					?>
 					@foreach($nakproducts as $key => $row)
 					<tr>
-						<td>{{ $key + 1 }}</td>
+						@if($row['product_name'] != "Болалар сони")
+							<td>{{ $key + 1 }}</td>
+						@endif
 						<td style="text-align: left; padding-left: 2px">{{ implode(' ', array_slice(explode(' ', $row['product_name']), 0, 3)) }}</td>
 						@if($row['product_name'] != "Болалар сони")
 							<td>{{ $row['size_name'] }}</td>
