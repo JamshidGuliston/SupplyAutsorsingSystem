@@ -1883,7 +1883,6 @@ class AccountantController extends Controller
                 dd(Number_children::where('number_childrens.day_id', $day->id)
                 ->where('kingar_name_id', $id)
                 ->where('king_age_name_id', 4)
-                ->join('titlemenus', 'titlemenus.id', '=', 'number_childrens.kingar_menu_id')
                 ->first());
                 $number_childrens[$day->id][$age->id] = Number_children::where('number_childrens.day_id', $day->id)
                     ->where('kingar_name_id', $id)
