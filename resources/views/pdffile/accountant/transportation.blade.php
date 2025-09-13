@@ -302,12 +302,10 @@
     <!-- Footer qismi -->
     <div class="footer">
         <div class="footer-section">
-            <div class="signature-line"></div>
-            <div class="signature-label">Аутсорсер директори</div>
+            <div class="signature-label">Аутсорсер директори: ____________________________</div>
         </div>
         <div class="footer-section">
-            <div class="signature-line"></div>
-            <div class="signature-label">Буюртмачи директори</div>
+            <div class="signature-label">Буюртмачи директори: ____________________________</div>
         </div>
     </div>
 </body>
