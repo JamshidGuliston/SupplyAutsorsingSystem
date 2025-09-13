@@ -60,15 +60,13 @@
   	
   	/* Create two equal columns that floats next to each other */
   .column {
+	margin-top: 5px;
     float: left;
     text-align: center;
     width: 33%;
   }
 
   /* Clear floats after the columns */
-  .row{
-	margin-top: 15px;
-  }
   .row:after {
     content: "";
     display: table;
