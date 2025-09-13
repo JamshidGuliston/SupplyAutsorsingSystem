@@ -241,9 +241,9 @@
                     $delivery_all = $delivery_9_10 + $delivery_4;
                     
                     // Xarajatlar tahlili
-                    $amount_without_nds = $delivery_all / (1 + $costs->where('age_range_id', 4)->first()->nds / 100); // QQSsiz summa
-                    $markup = $amount_without_nds * $costs->where('age_range_id', 4)->first()->raise / 100; // 28.5% ustama
-                    $nds = $amount_without_nds * $costs->where('age_range_id', 4)->first()->nds / 100; // 12% QQS
+                    $amount_without_nds = $delivery_all / (1 + $costs->where('age_range_id', 4)->first()->nds ?? 0 / 100); // QQSsiz summa
+                    $markup = $amount_without_nds * $costs->where('age_range_id', 4)->first()->raise ?? 0 / 100; // 28.5% ustama
+                    $nds = $amount_without_nds * $costs->where('age_range_id', 4)->first()->nds ?? 0 / 100; // 12% QQS
                     $final_amount = $amount_without_nds + $markup + $nds;
                     
                     // Jami hisoblash
