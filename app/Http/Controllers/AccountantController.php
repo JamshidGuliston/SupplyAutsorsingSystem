@@ -805,13 +805,23 @@ class AccountantController extends Controller
             'bank' => 'Марказий банк ХККМ',
             'phone' => '__________________________',
         ];
+
+        if(is_null(env('CONTRACT_DATA'))){
+            $contract_data = " ______ '______' ___________ 2025 й";
+        }else{
+            $contract_data = " 25111006438231  16.07.2025 й";
+        }
         
         // Hisob-faktura raqami va sanasi
-        $invoice_number = $days->last()->month_id.'-'. $kindgar->number_of_org;
+        if(is_null(env('INVOICE_NUMBER'))){
+            $invoice_number = $days->last()->month_id.'-'. $kindgar->number_of_org;
+        }else{
+            $invoice_number = $days->last()->month_id.'/'.env('INVOICE_NUMBER');
+        }
         $invoice_date = $days->last()->created_at->format('d.m.Y');
         
         // Snappy PDF yaratish
-        $pdf = \PDF::loadView('pdffile.accountant.schotfaktursecond', compact('costs', 'days', 'kindgar', 'autorser', 'buyurtmachi', 'invoice_number', 'invoice_date', 'total_number_children'));
+        $pdf = \PDF::loadView('pdffile.accountant.schotfaktursecond', compact('contract_data', 'costs', 'days', 'kindgar', 'autorser', 'buyurtmachi', 'invoice_number', 'invoice_date', 'total_number_children'));
         
         // PDF sozlamalari
         $pdf->setOption('page-size', 'A4');

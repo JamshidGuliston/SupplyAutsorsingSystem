@@ -14,4 +14,5 @@ class Region extends Model
         'short_name',
         'hide'
     ];
+
 }
