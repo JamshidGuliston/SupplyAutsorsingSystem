@@ -325,6 +325,7 @@
                     <td>Хизмат</td>
                     <td>1</td>
                     <td></td>
+                    <td></td>
                     <td>{{ $costs[4]->raise . "%" ?? 0 }}</td>
                     <td>{{ number_format($total_amount * ($costs[4]->raise/100 ?? 0), 2) }}</td>
                     @php $total_amount += $total_amount * ($costs[4]->raise/100 ?? 0); @endphp
@@ -335,7 +336,7 @@
                 <!-- Jami qator -->
                 <tr class="total-row">
                     <td></td>
-                    <td colspan="5" class="text-right font-bold">Жами сумма:</td>
+                    <td colspan="6" class="text-right font-bold">Жами сумма:</td>
                     <td class="amount font-bold">{{ number_format($total_amount, 2) }}</td>
                     <td class="vat font-bold">{{ number_format($total_nds, 2) }}</td>
                 </tr>
