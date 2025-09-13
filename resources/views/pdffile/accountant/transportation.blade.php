@@ -302,14 +302,14 @@
                     <td>{{ number_format($delivery_9_10, 2, ',', ' ') }}</td>
                     <td>{{ number_format($delivery_4, 2, ',', ' ') }}</td>
                     <td>{{ number_format($delivery_all, 2, ',', ' ') }}</td>
-                    <td>{{ number_format($amount_without_nds9_10, 2, ',', ' ') }}</td>
-                    <td>{{ number_format($markup9_10, 2, ',', ' ') }}</td>
-                    <td>{{ number_format($nds9_10, 2, ',', ' ') }}</td>
-                    <td>{{ number_format($final_amount9_10, 2, ',', ' ') }}</td>
                     <td>{{ number_format($amount_without_nds4, 2, ',', ' ') }}</td>
                     <td>{{ number_format($markup4, 2, ',', ' ') }}</td>
                     <td>{{ number_format($nds4, 2, ',', ' ') }}</td>
                     <td>{{ number_format($final_amount4, 2, ',', ' ') }}</td>
+                    <td>{{ number_format($amount_without_nds9_10, 2, ',', ' ') }}</td>
+                    <td>{{ number_format($markup9_10, 2, ',', ' ') }}</td>
+                    <td>{{ number_format($nds9_10, 2, ',', ' ') }}</td>
+                    <td>{{ number_format($final_amount9_10, 2, ',', ' ') }}</td>
                     <td><strong>{{ number_format($final_amount, 2, ',', ' ') }}</strong></td>
                 </tr>
             @endforeach
@@ -325,14 +325,14 @@
                 <td><strong>{{ number_format($total_delivery_9_10, 2, ',', ' ') }}</strong></td>
                 <td><strong>{{ number_format($total_delivery_4, 2, ',', ' ') }}</strong></td>
                 <td><strong>{{ number_format($total_delivery_all, 2, ',', ' ') }}</strong></td>
-                <td><strong>{{ number_format($total_amount_without_nds9_10, 2, ',', ' ') }}</strong></td>
-                <td><strong>{{ number_format($total_markup9_10, 2, ',', ' ') }}</strong></td>
-                <td><strong>{{ number_format($total_nds9_10, 2, ',', ' ') }}</strong></td>
-                <td><strong>{{ number_format($total_final_amount9_10, 2, ',', ' ') }}</strong></td>
                 <td><strong>{{ number_format($total_amount_without_nds4, 2, ',', ' ') }}</strong></td>
                 <td><strong>{{ number_format($total_markup4, 2, ',', ' ') }}</strong></td>
                 <td><strong>{{ number_format($total_nds4, 2, ',', ' ') }}</strong></td>
                 <td><strong>{{ number_format($total_final_amount4, 2, ',', ' ') }}</strong></td>
+                <td><strong>{{ number_format($total_amount_without_nds9_10, 2, ',', ' ') }}</strong></td>
+                <td><strong>{{ number_format($total_markup9_10, 2, ',', ' ') }}</strong></td>
+                <td><strong>{{ number_format($total_nds9_10, 2, ',', ' ') }}</strong></td>
+                <td><strong>{{ number_format($total_final_amount9_10, 2, ',', ' ') }}</strong></td>
                 <td><strong>{{ number_format($total_final_amount, 2, ',', ' ') }}</strong></td>
             </tr>
         </table>
