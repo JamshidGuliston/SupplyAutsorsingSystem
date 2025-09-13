@@ -256,8 +256,8 @@
                     <div class="col-sm-4">
                         <input type="hidden" id="kind" name="kindid" value="{{ $kindgar->id }}" /> 
                         <!-- hidden age ranges with id and name it should be more than 1 -->
-                        <input type="hidden" id="age_ranges" name="age_ranges" value="{{ $kindgar->age_range->pluck('id')->implode(',') }}" />
-                        <input type="hidden" id="age_range_names" name="age_range_names" value="{{ $kindgar->age_range->pluck('age_name')->implode(',') }}" />
+                        <input type="hidden" id="age_ranges" name="age_ranges" value="{{ $ages->pluck('id')->implode(',') }}" />
+                        <input type="hidden" id="age_range_names" name="age_range_names" value="{{ $ages->pluck('age_name')->implode(',') }}" />
                         <select class="form-select" id="startdayid" onchange="changeFunc();" aria-label="Default select example" required>
                             <option value="">Sanadan</option>
                             @foreach($yeardays as $row)
