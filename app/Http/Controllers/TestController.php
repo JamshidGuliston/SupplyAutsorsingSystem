@@ -206,6 +206,7 @@ class TestController extends Controller
 			['day_id', '=', $today],
 			['king_age_name_id', '=', $ageid]
 		])->join('kindgardens', 'number_childrens.kingar_name_id', '=', 'kindgardens.id')
+		->join('titlemenus', 'number_childrens.kingar_menu_id', '=', 'titlemenus.id')
         ->join('age_ranges', 'number_childrens.king_age_name_id', '=', 'age_ranges.id')->get();
 		// dd($menu);  
 		$products = Product::where('hide', 1)
@@ -220,6 +221,7 @@ class TestController extends Controller
                         ->orderBy('menu_meal_time_id')
 						->orderBy('menu_food_id')
                         ->get();	
+		
         $day = Day::where('days.id', $today)
 			->join('months', 'months.id', '=', 'days.month_id')
 			->join('years', 'years.id', '=', 'days.year_id')
