@@ -394,7 +394,7 @@
                 html += '</div>';
 
                 html += '<div class="report-category">';
-                html += '<h6><i class="fas fa-warehouse"></i>Накапител</h6>';
+                html += '<h6><i class="fas fa-warehouse"></i>Расход</h6>';
                 html += '<div class="report-links">';
                 html += '<span class="me-2">Narx bilan:</span>';
                 html += '<a href="/accountant/nakapit/'+kindid+'/'+age_ranges[i]+'/'+start+'/'+end+'/'+cost+'" target="_blank" class="report-link pdf">';
