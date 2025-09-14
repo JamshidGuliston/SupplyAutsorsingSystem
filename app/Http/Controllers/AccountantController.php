@@ -1989,7 +1989,7 @@ class AccountantController extends Controller
         $days = Day::where('days.id', '>=', $start)->where('days.id', '<=', $end)
                 ->join('years', 'days.year_id', '=', 'years.id')
                 ->join('months', 'days.month_id', '=', 'months.id')
-                ->get(['days.day_number', 'months.id as month_id', 'years.year_name', 'days.created_at']);
+                ->get(['days.day_number', 'months.id as month_id', 'months.month_name', 'years.year_name', 'days.created_at']);
         
         $costs = [];
         $number_childrens = [];
@@ -2013,7 +2013,7 @@ class AccountantController extends Controller
         
         // Buyurtmachi ma'lumotlari
         $buyurtmachi = [
-            'company_name' => $region->region_name.' ММТБга тасарруфидаги '.$kindgar->number_of_org .'-сонли ДМТТ' ?? '',
+            'company_name' => $region->region_name.' ММТБ' ?? '',
             'address' => $region->region_name,
             'inn' => '________________',
             'bank_account' => '___________________________________',
@@ -2033,14 +2033,14 @@ class AccountantController extends Controller
         
         // Hisob-faktura raqami va sanasi
         if(is_null(env('INVOICE_NUMBER'))){
-            $invoice_number = $days->last()->month_id.'-'. $kindgar->number_of_org;
+            $invoice_number = $days->last()->month_id.'-'. $id;
         }else{
             $invoice_number = $days->last()->month_id.'/'.env('INVOICE_NUMBER');
         }
         $invoice_date = $days->last()->created_at->format('d.m.Y');
         
         // Snappy PDF yaratish
-        $pdf = \PDF::loadView('pdffile.accountant.regionschotfaktura', compact('contract_data', 'costs', 'ages', 'days', 'kindgardens', 'autorser', 'buyurtmachi', 'invoice_number', 'invoice_date', 'number_childrens'));
+        $pdf = \PDF::loadView('pdffile.accountant.regionschotfaktura', compact('contract_data', 'costs', 'ages', 'days', 'kindgardens', 'autorser', 'buyurtmachi', 'invoice_number', 'invoice_date', 'number_childrens', 'region'));
         
         // PDF sozlamalari
         $pdf->setOption('page-size', 'A4');

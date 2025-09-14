@@ -275,45 +275,56 @@
     <div class="table-container">
         <table>
             <thead>
-                <tr>
-                    <th class="order-number">№</th>
-                    <th class="product-name">Маҳсулот, иш, хизматлар номи</th>
-                    <th class="unit">Ўл.бир</th>
-                    <th class="quantity">Сони</th>
-                    <th class="price">Нархи</th>
-                    <th class="price">Етказиб бериш нархи</th>
-                    <th class="price">ҚҚС ва устама</th>
-                    <th class="amount">Кўрсатилган хизмат суммаси (ҚҚС билан)</th>
-                    <th class="vat">Шундан ҚҚС</th>
+                <tr class="header-row">
+                    <th rowspan="2" class="order-number">№</th>
+                    <th rowspan="2" class="product-name">Иш, хизмат номи</th>
+                    <th rowspan="2" class="unit">Ўл.бир</th>
+                    <th rowspan="2" class="quantity">Сони</th>
+                    <th rowspan="2" class="price">Нархи</th>
+                    <th rowspan="2" class="price">Етказиб бериш нархи</th>
+                    <th class="vat" colspan="2">ҚҚС ва устама</th>
+                    <th rowspan="2" class="amount">Кўрсатилган хизмат суммаси (ҚҚС билан)</th>
+                </tr>
+                <tr class="sub-header">
+                    <th>
+                        %
+                    </th>
+                    <th>
+                         Сумма
+                    </th>
                 </tr>
             </thead>
             <tbody>
                 @php
-                    $total_amount = 0;
-                    $total_nds = 0;
+                    $total_service = 0;
+                    $total_nds_raise = 0;
+                    $total_cost = 0;
                     $tr = 1;
                 @endphp
                 
-                @foreach($kindgar->age_range as $age)
+                @foreach($ages as $age)
                 <tr>
                     <td class="order-number">{{ $tr++ }}</td>
-                    <td class="product-name">{{ $age->description . "га кўрсатилган Аутсорсинг хизмати" }}</td>
-                    <td class="unit">{{ 'бола' }}</td>
-                    <td class="quantity">{{ $total_number_children[$age->id] }}</td>
-                    <td class="price">{{ number_format($costs[$age->id]->eater_cost ?? 0, 2) }}</td>
-                    <td class="price">{{ number_format($total_number_children[$age->id] * $costs[$age->id]->eater_cost ?? 0, 2) }}</td>
+                    <td class="product-name">{{ $region->region_name . " MMTB " . $age->description . "ли гуруҳ тарбияланувчилари учун кўрсатилган ".$days[0]->year_name." йил ".$days[0]->day_number."-".$days[count($days)-1]->day_number." ".$days[0]->month_name." даги Аутсорсинг хизмати" }}</td>
+                    <td class="unit">{{ 'хизмат' }}</td>
+                    <td class="quantity">{{ 1 }}</td>
+                    <!-- without nds -->
+                    <td class="price">{{ number_format($number_childrens[$age->id] * $costs[$age->id]->eater_cost / (1 + $costs[$age->id]->nds/100) ?? 0, 2) }}</td>
+                    <td class="price">{{ number_format($number_childrens[$age->id] * $costs[$age->id]->eater_cost/ (1 + $costs[$age->id]->nds/100) ?? 0, 2) }}</td>
+                    @php $total_cost += $number_childrens[$age->id] * $costs[$age->id]->eater_cost / (1 + $costs[$age->id]->nds/100) ?? 0; @endphp
                     <td class="price">{{ $costs[$age->id]->nds ?? 0 }}%</td>
-                    <td class="amount">
+                    <!-- only nds -->
+                    <td class="nds">
                         @php
-                            $amount = $total_number_children[$age->id] * ($costs[$age->id]->eater_cost ?? 0);
-                            $total_amount += $amount;
+                            $amount = $number_childrens[$age->id] * ($costs[$age->id]->eater_cost ?? 0);
+                            $total_nds_raise += $amount * ($costs[$age->id]->nds/(100+$costs[$age->id]->nds) ?? 0);
                         @endphp
-                        {{ number_format($amount, 2) }}
+                        {{ number_format($amount * ($costs[$age->id]->nds/(100+$costs[$age->id]->nds) ?? 0), 2) }}
                     </td>
                     <td class="vat">
                         @php
-                            $vat = $amount * ($costs[$age->id]->nds/(100+$costs[$age->id]->nds) ?? 0);
-                            $total_nds += $vat;
+                            $vat = $number_childrens[$age->id] * ($costs[$age->id]->eater_cost ?? 0);
+                            $total_service += $vat;
                         @endphp
                         {{ number_format($vat, 2) }}
                     </td>
@@ -325,20 +336,22 @@
                     <td>Хизмат</td>
                     <td>1</td>
                     <td></td>
-                    <td></td>
+                    <td>{{ number_format($total_cost, 2) }}</td>
                     <td>{{ $costs[4]->raise . "%" ?? 0 }}</td>
-                    <td>{{ number_format($total_amount * ($costs[4]->raise/100 ?? 0), 2) }}</td>
-                    @php $total_amount += $total_amount * ($costs[4]->raise/100 ?? 0); @endphp
-                    <td>{{ number_format($total_amount * ($costs[4]->raise/100) * ($costs[4]->nds/(100+$costs[4]->nds)), 2) }}</td>
-                    @php $total_nds += $total_amount * ($costs[4]->raise/(100)) * ($costs[4]->nds/(100+$costs[4]->nds)); @endphp
+                    <td>{{ number_format($total_cost * ($costs[4]->raise/100 ?? 0), 2) }}</td>
+                    <td>{{ number_format($total_cost+$total_cost * ($costs[4]->raise/100 ?? 0), 2) }} </td>
+                    @php $total_service += $total_cost+$total_cost * ($costs[4]->raise/100 ?? 0); @endphp
+                    @php $total_nds_raise += $total_cost * ($costs[4]->raise/100 ?? 0); @endphp
+                    @php $total_cost += $total_cost; @endphp
                 </tr>
-
                 <!-- Jami qator -->
                 <tr class="total-row">
                     <td></td>
-                    <td colspan="6" class="text-right font-bold">Жами сумма:</td>
-                    <td class="amount font-bold">{{ number_format($total_amount, 2) }}</td>
-                    <td class="vat font-bold">{{ number_format($total_nds, 2) }}</td>
+                    <td colspan="4" class="text-right font-bold">Жами сумма:</td>
+                    <td class="amount font-bold">{{ number_format($total_cost, 2) }}</td>
+                    <td></td>
+                    <td class="vat font-bold">{{ number_format($total_nds_raise, 2) }}</td>
+                    <td class="amount font-bold">{{ number_format($total_service, 2) }}</td>
                 </tr>
             </tbody>
         </table>
