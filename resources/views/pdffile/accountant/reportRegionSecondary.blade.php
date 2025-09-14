@@ -77,6 +77,10 @@
             vertical-align: top;
             padding-right: 2%;
         }
+
+        .page-break {
+            page-break-before: always;
+        }
         
         .signature-line {
             border-bottom: 1px solid #000;
@@ -132,8 +136,11 @@
         }
     </style>
 </head>
-@foreach($ages as $age)
 <body>
+    @foreach($ages as $age)
+    @if(!$loop->first)
+        <div class="page-break"></div>
+    @endif
     <div class="header">
         {{ $region->region_name }} ДМТТларда {{ $days[0]->day_number }}-{{ $days[count($days)-1]->day_number }} {{ $days[0]->month_name }} {{ $days[0]->year_name }} йил кунлари {{ $age->description }}и учун аутсорсинг хизмати харажатлари тўғрисидаги маълумот
     </div>
@@ -227,6 +234,6 @@
             </div>
         </div>
     </div>
+    @endforeach
 </body>
-@endforeach
 </html>
