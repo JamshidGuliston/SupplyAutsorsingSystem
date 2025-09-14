@@ -173,7 +173,7 @@
             @endphp
             @foreach($kindgardens as $kindgarden)
                 @if($number_childrens[$kindgarden->id][$age->id] == 0)
-                    $no_childrens++;
+                    @php $no_childrens++; @endphp
                 @endif
             @endforeach
             
