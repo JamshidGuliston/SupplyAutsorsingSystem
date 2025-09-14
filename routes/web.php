@@ -376,6 +376,7 @@ Route::group(['prefix' => 'accountant', 'middleware' => ['isAccountant', 'auth']
     // reportregion
     Route::get('reportregion/{id}/{start}/{end}', [AccountantController::class, 'reportregion'])->name('accountant.reportregion');
     Route::get('boqchakexcel/{id}/{start}/{end}', [AccountantController::class, 'boqchakexcel'])->name('accountant.boqchakexcel');
+    Route::get('transportationRegion/{id}/{start}/{end}', [AccountantController::class, 'transportationRegion'])->name('accountant.transportationRegion');
 
 });
 

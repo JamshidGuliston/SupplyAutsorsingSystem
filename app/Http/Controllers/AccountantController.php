@@ -1909,6 +1909,39 @@ class AccountantController extends Controller
         // return view('pdffile.accountant.transportation', compact('days', 'costs', 'number_childrens', 'kindgar'));
     }
 
+    public function transportationRegion(Request $request, $id, $start, $end){
+        $kindgardens = Kindgarden::where('region_id', $id)->get();
+        $region = Region::where('id', $id)->first();
+        $days = Day::where('days.id', '>=', $start)->where('days.id', '<=', $end)
+            ->join('months', 'months.id', '=', 'days.month_id')
+            ->join('years', 'years.id', '=', 'days.year_id')
+            ->get(['days.id', 'days.day_number', 'months.month_name', 'years.year_name', 'days.created_at']);
+        $ages = Age_range::all();
+        $costs = Protsent::where('region_id', $id)
+                ->where('start_date', '<=', $days[0]->created_at->format('Y-m-d'))
+                ->where('end_date', '>=', $days[count($days)-1]->created_at->format('Y-m-d'))
+                ->get();
+
+        $number_childrens = [];
+        foreach($days as $day){
+            foreach($ages as $age){
+                $number_childrens[$day->id][$age->id] = Number_children::where('number_childrens.day_id', $day->id)
+                    ->where('king_age_name_id', $age->id)
+                    ->sum('kingar_children_number');
+            }
+            $number_childrens[$day->id]["menu"] = Number_children::where('number_childrens.day_id', $day->id)
+                    ->leftJoin('titlemenus', 'titlemenus.id', '=', 'number_childrens.kingar_menu_id')
+                    ->first();
+        }
+        // make snappy pdf
+        $pdf = \PDF::loadView('pdffile.accountant.transportationRegion', compact('days', 'costs', 'number_childrens', 'region', 'ages'));
+        $pdf->setPaper('A3', 'landscape');
+        $pdf->setOptions(['dpi' => 150]);
+        return $pdf->stream('transportation.pdf');
+
+        // return view('pdffile.accountant.transportation', compact('days', 'costs', 'number_childrens', 'kindgar'));
+    }
+
     public function reportregion(Request $request, $id, $start, $end){
         $days = Day::where('days.id', '>=', $start)->where('days.id', '<=', $end)
             ->join('months', 'months.id', '=', 'days.month_id')

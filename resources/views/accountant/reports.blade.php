@@ -222,7 +222,7 @@
             
             // Umumiy faktura
             html += '<div class="general-invoice">';
-            html += '<i class="fas fa-file-invoice-dollar"></i>Умумий свод';
+            html += '<i class="fas fa-file-invoice-dollar"></i> Умумий свод';
             html += '</div>';
             
             html += '<div class="report-category">';
@@ -240,10 +240,10 @@
             html += '<div class="report-category">';
             html += '<h6><i class="fas fa-file-invoice"></i>Қатнов</h6>';
             html += '<div class="report-links">';
-            html += '<a href="/accountant/transportation/'+region+'/'+start+'/'+end+'" target="_blank" class="report-link pdf">';
+            html += '<a href="/accountant/transportationRegion/'+region+'/'+start+'/'+end+'" target="_blank" class="report-link pdf">';
             html += '<i class="far fa-file-pdf"></i>PDF';
             html += '</a>';
-            html += '<a href="/accountant/transportationexcel/'+region+'/'+start+'/'+end+'" target="_blank" class="report-link excel">';
+            html += '<a href="/accountant/transportationRegionexcel/'+region+'/'+start+'/'+end+'" target="_blank" class="report-link excel">';
             html += '<i class="far fa-file-excel"></i>Excel';
             html += '</a>';
             html += '</div>';
