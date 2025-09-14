@@ -214,7 +214,7 @@
                     <td class="number-col">{{ $row_number++ }}</td>
                     <td class="mtt-col">{{ $kindgarden->number_of_org }}-ДМТТ</td>
                     @if($loop->first)
-                        <td rowspan="{{ count($kindgardens)-$no_childrens }}" class="month-col">{{ $days[0]->day_number }}-{{ $days[count($days)-1]->day_number }} {{ $days[0]->month_name }}</td>
+                        <td rowspan="{{ count($kindgardens)-$no_childrens-1 }}" class="month-col">{{ $days[0]->day_number }}-{{ $days[count($days)-1]->day_number }} {{ $days[0]->month_name }}</td>
                     @endif
                     <td class="amount-col">{{ number_format($cost_without_vat, 2, ',', ' ') }}</td>
                     <td class="surcharge-col">{{ number_format($surcharge, 2, ',', ' ') }}</td>
