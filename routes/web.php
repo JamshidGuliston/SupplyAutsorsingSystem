@@ -380,7 +380,10 @@ Route::group(['prefix' => 'accountant', 'middleware' => ['isAccountant', 'auth']
     Route::get('transportationRegionexcel/{id}/{start}/{end}', [AccountantController::class, 'transportationRegionexcel'])->name('accountant.transportationRegionexcel');
     Route::get('regionSchotFaktura/{id}/{start}/{end}', [AccountantController::class, 'regionSchotFaktura'])->name('accountant.regionSchotFaktura');
     Route::get('regionSchotFakturaexcel/{id}/{start}/{end}', [AccountantController::class, 'regionSchotFakturaexcel'])->name('accountant.regionSchotFakturaexcel');
-
+    Route::get('reportRegionSecondary/{id}/{start}/{end}', [AccountantController::class, 'reportRegionSecondary'])->name('accountant.reportRegionSecondary');
+    Route::get('reportRegionSecondaryexcel/{id}/{start}/{end}', [AccountantController::class, 'reportRegionSecondaryexcel'])->name('accountant.reportRegionSecondaryexcel');
+    Route::get('reportRegionOfProducts/{id}/{start}/{end}', [AccountantController::class, 'reportRegionOfProducts'])->name('accountant.reportRegionOfProducts');
+    Route::get('reportRegionOfProductsexcel/{id}/{start}/{end}', [AccountantController::class, 'reportRegionOfProductsexcel'])->name('accountant.reportRegionOfProductsexcel');
 });
 
 Route::group(['prefix' => 'casher', 'middleware' => ['isChasher', 'auth']], function () {

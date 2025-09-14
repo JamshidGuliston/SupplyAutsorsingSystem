@@ -258,8 +258,25 @@
             html += '<a href="/accountant/reportregionexcel/'+region+'/'+start+'/'+end+'" target="_blank" class="report-link excel">';
             html += '<i class="far fa-file-excel"></i>Excel';
             html += '</a>';
+            html += '<a href="/accountant/reportRegionSecondary/'+region+'/'+start+'/'+end+'" target="_blank" class="report-link pdf">';
+            html += '<i class="far fa-file-pdf"></i>PDF';
+            html += '</a>';
+            html += '<a href="/accountant/reportRegionSecondaryexcel/'+region+'/'+start+'/'+end+'" target="_blank" class="report-link excel">';
+            html += '<i class="far fa-file-excel"></i>Excel';
+            html += '</a>';
+            
             html += '</div>';
             html += '</div>';
+            // html += '<div class="report-category">';
+            // html += '<h6><i class="fas fa-file-invoice"></i>Махсулотлар сарфланиши</h6>';
+            // html += '<div class="report-links">';
+            // html += '<a href="/accountant/reportRegionOfProducts/'+region+'/'+start+'/'+end+'" target="_blank" class="report-link pdf">';
+            // html += '<i class="far fa-file-pdf"></i>PDF';
+            // html += '</a>';
+            // html += '<a href="/accountant/reportRegionOfProductsexcel/'+region+'/'+start+'/'+end+'" target="_blank" class="report-link excel">';
+            // html += '<i class="far fa-file-excel"></i>Excel';
+            // html += '</a>';
+            // html += '</a>';
             
             html += '</div>';
             
