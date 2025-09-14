@@ -101,7 +101,7 @@
         
         .product-name {
             text-align: left;
-            width: 40%;
+            width: 400px;
         }
         
         .unit {
