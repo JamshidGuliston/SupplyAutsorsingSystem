@@ -101,25 +101,29 @@
         
         .product-name {
             text-align: left;
-            width: 900px;
+            width: 40%;
         }
         
         .unit {
-            width: 10%;
+            width: 4%;
         }
         
         .quantity {
-            width: 10%;
+            width: 4%;
         }
         
         .price {
-            width: 15%;
+            width: 10%;
         }
         
         .amount {
-            width: 15%;
+            width: 10%;
         }
-        
+
+        .nds {
+            width: 10%;
+        }
+
         .vat {
             width: 10%;
         }
