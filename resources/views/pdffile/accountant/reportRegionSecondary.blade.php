@@ -135,7 +135,7 @@
 @foreach($ages as $age)
 <body>
     <div class="header">
-        {{ $region->region_name }} ДМТТларда {{ $days[0]->day_number }}-{{ $days[count($days)-1]->day_number }} {{ $days[0]->month_name }} {{ $days[0]->year_name }} йил кунлари {{ $age->description }}гуруҳи учун аутсорсинг хизмати харажатлари тўғрисидаги маълумот
+        {{ $region->region_name }} ДМТТларда {{ $days[0]->day_number }}-{{ $days[count($days)-1]->day_number }} {{ $days[0]->month_name }} {{ $days[0]->year_name }} йил кунлари {{ $age->description }}и учун аутсорсинг хизмати харажатлари тўғрисидаги маълумот
     </div>
     
     <div class="table-container">
@@ -167,15 +167,13 @@
             @foreach($kindgardens as $kindgarden)
                 @php
                     // Bolalar sonini hisoblash
-                    $children_3_7 = $number_childrens[$kindgarden->id][4] ?? 0; // 3-7 yosh
-                    $children_short = $number_childrens[$kindgarden->id][3] ?? 0; // Qisqa guruh 
+                    $children = $number_childrens[$kindgarden->id][$age->id] ?? 0; // current age
                     
                     // Narxlarni olish
-                    $price_3_7 = $costs->where('age_range_id', 4)->first()->eater_cost ?? 0; // 3-7 yosh uchun narx
-                    $price_short = $costs->where('age_range_id', 3)->first()->eater_cost ?? 0; // Qisqa guruh uchun narx
+                    $price = $costs->where('age_range_id', $age->id)->first()->eater_cost ?? 0; // current age uchun narx
                     
                     // Jami xarajat
-                    $total_cost_row = ($children_3_7 * $price_3_7) + ($children_short * $price_short);
+                    $total_cost_row = ($children * $price);
                     
                     // QQSsiz jami xarajat
                     $cost_without_vat = $total_cost_row / (1 + (($costs[0]->nds ?? 12)/100));
@@ -198,7 +196,7 @@
                 
                 <tr class="data-row">
                     <td class="number-col">{{ $row_number++ }}</td>
-                    <td class="mtt-col">{{ $kindgarden->number_of_org }}-????</td>
+                    <td class="mtt-col">{{ $kindgarden->number_of_org }}-ДМТТ</td>
                     <td class="month-col">{{ $days[0]->day_number }}-{{ $days[count($days)-1]->day_number }} {{ $days[0]->month_name }}</td>
                     <td class="amount-col">{{ number_format($cost_without_vat, 2, ',', ' ') }}</td>
                     <td class="surcharge-col">{{ number_format($surcharge, 2, ',', ' ') }}</td>
