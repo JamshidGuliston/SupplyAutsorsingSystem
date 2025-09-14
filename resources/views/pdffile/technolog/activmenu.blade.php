@@ -10,7 +10,7 @@
 	<!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"> -->
 	<title>Title</title>
 	<style>
-		@page { margin: 0.3in 0.8in 0in 0.3in; }
+		@page { margin: 0.3in 0.3in 0.8in 0.3in; }
 		body{
 			font-family: DejaVu Sans;
 			font-size: 7.5px;
@@ -151,7 +151,7 @@
 								echo "Боғча номи: <b>".$menu[0]['kingar_name']."</b><br/>";
 								echo "Таомнома: <b>".$menu[0]['menu_name']."</b><br/>";
 								echo  'Cана: <b>'.$day['day_number'].'.'.$day['month_name'].' '.$day['year_name'].'й.</b><br/>  ' . $menu[0]['age_name'] . "ли болалар сони: <b>" . $menu[0]['kingar_children_number'].";</b>";
-								if($menu[0]['worker_age_id'] == $menu[0]['king_age_name_id']){
+								if($workerfood[0]['worker_age_id'] == $menu[0]['king_age_name_id']){
 									echo "  ходимлар сони: <b>".$menu[0]['workers_count'].";</b>  ";	
 								}
 							?>
@@ -251,7 +251,7 @@
 								
 								@endforeach
 							@endforeach
-									<tr>
+									<tr style="border-top: 2px solid black;">
 										<!-- <th scope="row" rowspan="5" class='vrt-header' style="padding: 0px; border-top: 2px solid black"><span>Болалар</span></th> -->
 										<td scope="row" colspan="3" class="align-baseline" style="padding: 0px; border-top: 1px solid black">{{ $menu[0]['age_name'].'ли'  }} бир бола учун гр</td>
 										<?php

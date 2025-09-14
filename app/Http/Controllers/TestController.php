@@ -233,6 +233,7 @@ class TestController extends Controller
                     ->where('titlemenu_id', $menu[0]['kingar_menu_id'])
                     ->get();
 
+
 		// $costs = bycosts::where('day_id', bycosts::where('day_id', '<=', $today)->where('region_name_id', Kindgarden::where('id', $gid)->first()->region_id)->orderBy('day_id', 'DESC')->first()->day_id)->where('region_name_id', Kindgarden::where('id', $gid)->first()->region_id)->orderBy('day_id', 'DESC')->get();
 		// $narx = [];
 		// foreach($costs as $row){
