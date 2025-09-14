@@ -7,7 +7,7 @@
     <style>
         body {
             font-family: Arial, sans-serif;
-            font-size: 14px;
+            font-size: 12px;
             margin: 0;
             padding: 20px;
             background-color: white;
@@ -35,7 +35,7 @@
         
         th, td {
             border: 1px solid #000;
-            padding: 8px 4px;
+            padding: 4px 4px;
             text-align: center;
             vertical-align: middle;
             white-space: nowrap;
