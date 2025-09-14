@@ -56,8 +56,32 @@
             vertical-align: middle;
             white-space: nowrap;
             min-width: 60px;
-            padding-top: <?php echo count($days) <= 15 ? '10px' : (count($days) <= 20 ? '7px' : '3px') ?>;
-            padding-bottom: <?php echo count($days) <= 15 ? '6px' : (count($days) <= 20 ? '7px' : '3px') ?>;
+            padding-top: <?php 
+                if (count($days) <= 10) {
+                    echo '18px';
+                } elseif (count($days) <= 15) {
+                    echo '14px';
+                } elseif (count($days) <= 20) {
+                    echo '10px';
+                } elseif (count($days) <= 25) {
+                    echo '7px';
+                } else {
+                    echo '3px';
+                }
+            ?>;
+            padding-bottom: <?php 
+                if (count($days) <= 10) {
+                    echo '12px';
+                } elseif (count($days) <= 15) {
+                    echo '10px';
+                } elseif (count($days) <= 20) {
+                    echo '7px';
+                } elseif (count($days) <= 25) {
+                    echo '5px';
+                } else {
+                    echo '2px';
+                }
+            ?>;
         }
         
         .header-row {
