@@ -377,12 +377,22 @@
 							</div>
 					   </div>
                        <div class="row" style="margin-top: 15px;">
+					   @if(env('WORKERSFORMENU') == "true")
 					   		<div class="column">
 								<p style="text-align: center;"><strong> Технолог:</strong> __________________;</p>
 							</div>
 							<div class="column">
 								<p style="text-align: center;"><strong> Бухгалтер:</strong> __________________;</p>
 							</div>
+						@else
+							<div class="column">
+								@php
+									$qrImage = base64_encode(file_get_contents(public_path('images/qrmanzil.jpg')));
+								@endphp
+								<img src="data:image/jpeg;base64,{{ $qrImage }}" 
+									style="width:120; position:absolute; left:10px;">
+							</div>
+						@endif
 							<div class="column">
 								<p style="text-align: center;"><strong> Хамшира:</strong> __________________;</p>
 							</div>
