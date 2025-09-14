@@ -139,6 +139,7 @@
         <div class="row mt-5">
             <div class="col-md-12">
                 <div class="table" id="table_with_data">
+				@if(env('WORKERSFORMENU') == "true")
 					<div class="row">
 							<div class="column_top">
 								<!-- ТАСДИҚЛАЙМАН -->
@@ -162,7 +163,17 @@
 								<p style="text-align: center;">{{ env('company_name') }}</p>
 								<p>Рахбари ______________________</p>
 							</div>
-					   </div>
+					</div>
+				@else
+					<?php
+						echo "Боғча номи: <b>".$menu[0]['kingar_name']."</b><br/>";
+						echo "Таомнома: <b>".$menu[0]['menu_name']."</b><br/>";
+						echo  'Cана: <b>'.$day['day_number'].'.'.$day['month_name'].' '.$day['year_name'].'й.</b><br/>  ' . $menu[0]['age_name'] . "ли болалар сони: <b>" . $menu[0]['kingar_children_number'].";</b>";
+						if($workerfood[0]['worker_age_id'] == $menu[0]['king_age_name_id']){
+							echo "  ходимлар сони: <b>".$menu[0]['workers_count'].";</b>  ";	
+						}
+					?>
+				@endif
                     <table style="width:100%; table-layout: fixed; margin-top: 25px;">
                         <thead>
                           <tr>
