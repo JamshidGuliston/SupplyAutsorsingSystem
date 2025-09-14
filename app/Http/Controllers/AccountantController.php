@@ -2083,7 +2083,11 @@ class AccountantController extends Controller
         }
 
         // dd($number_childrens);
-        return view('pdffile.accountant.reportRegionSecondary', compact('region', 'days', 'costs', 'number_childrens', 'ages', 'kindgardens'));
+        $pdf = \PDF::loadView('pdffile.accountant.reportRegionSecondary', compact('region', 'days', 'costs', 'number_childrens', 'ages', 'kindgardens'));
+        $pdf->setPaper('A3', 'landscape');
+        $pdf->setOptions(['dpi' => 150]);
+        
+        return $pdf->stream('reportRegionSecondary.pdf');
     }
 
     public function reportRegionOfProducts(Request $request, $id, $start, $end){

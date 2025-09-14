@@ -213,36 +213,7 @@
                 <td><strong>{{ number_format($total_vat, 2, ',', ' ') }}</strong></td>
                 <td><strong>{{ number_format($total_payment, 2, ',', ' ') }}</strong></td>
             </tr>
-            
-            <!-- Qo'shimcha DMTT qatori (agar kerak bo'lsa) -->
-            @if(count($kindgardens) < 35)
-                @php
-                    $additional_dmt = 27; // Rasmda ko'rsatilgan 27-????
-                    $additional_cost = 15754504.46; // Rasmda ko'rsatilgan summa
-                    $additional_surcharge = $additional_cost * (($costs[0]->raise ?? 28.5)/100);
-                    $additional_vat = ($additional_cost + $additional_surcharge) * (($costs[0]->nds ?? 12)/100);
-                    $additional_total = $additional_cost + $additional_surcharge + $additional_vat;
-                @endphp
-                <tr class="data-row">
-                    <td class="number-col">{{ $row_number++ }}</td>
-                    <td class="mtt-col">{{ $additional_dmt }}-????</td>
-                    <td class="month-col">{{ $days[0]->day_number }}-{{ $days[count($days)-1]->day_number }} {{ $days[0]->month_name }}</td>
-                    <td class="amount-col">{{ number_format($additional_cost, 2, ',', ' ') }}</td>
-                    <td class="surcharge-col">{{ number_format($additional_surcharge, 2, ',', ' ') }}</td>
-                    <td class="vat-col">{{ number_format($additional_vat, 2, ',', ' ') }}</td>
-                    <td class="total-col">{{ number_format($additional_total, 2, ',', ' ') }}</td>
-                </tr>
-                
-                @php
-                    $total_without_vat += $additional_cost;
-                    $total_surcharge += $additional_surcharge;
-                    $total_vat += $additional_vat;
-                    $total_payment += $additional_total;
-                @endphp
-            @endif
-            
-            <!-- Viloyat jami qatori -->
-            
+                        
         </table>
     </div>
     
