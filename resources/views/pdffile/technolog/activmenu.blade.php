@@ -260,7 +260,7 @@
 			                            for($t = 0; $t < count($products); $t++){
 											if(isset($products[$t]['yes']) and isset($productallcount[$products[$t]['id']])){
 			                            ?>
-			                            	<td style="padding: 0px; font-size: 5px; border-top: 1px solid black"><?= $productallcount[$products[$t]['id']]; ?></td>
+			                            	<td style="padding: 0px; border-top: 1px solid black"><?= $productallcount[$products[$t]['id']]; ?></td>
 			                            <?php	
 											}
 											elseif(isset($products[$t]['yes'])){
@@ -282,7 +282,7 @@
 												$total_weight[$products[$t]['id']] += (($menu[0]['kingar_children_number'])*$productallcount[$products[$t]['id']]) / $products[$t]['div'];
 			                            ?>
 			                            <!---->
-			                            	<td style="padding: 0px; font-size: 5px"><?php printf("%01.3f", (($menu[0]['kingar_children_number'])*$productallcount[$products[$t]['id']]) / $products[$t]['div'] ); ?></td>
+			                            	<td style="padding: 0px"><?php printf("%01.3f", (($menu[0]['kingar_children_number'])*$productallcount[$products[$t]['id']]) / $products[$t]['div'] ); ?></td>
 			                            <?php	
 											}
 											elseif(isset($products[$t]['yes'])){
@@ -300,7 +300,7 @@
 			                            for($t = 0; $t < count($products); $t++){
 											if(isset($products[$t]['yes']) and isset($workerproducts[$products[$t]['id']])){
 			                            ?>
-			                            	<td style="padding: 0px; font-size: 5px; border-top: 1px solid black"><?= $workerproducts[$products[$t]['id']]; ?></td>
+			                            	<td style="padding: 0px; border-top: 1px solid black"><?= $workerproducts[$products[$t]['id']]; ?></td>
 			                            <?php	
 											}
 											elseif(isset($products[$t]['yes'])){
@@ -323,7 +323,7 @@
 											}
 											if(isset($products[$t]['yes']) and isset($workerproducts[$products[$t]['id']])){
 			                            ?>
-			                            	<td style="padding: 0px; font-size: 5px"><?php printf("%01.3f", (($menu[0]['workers_count'])*$workerproducts[$products[$t]['id']]) / $products[$t]['div']); ?></td>
+			                            	<td style="padding: 0px"><?php printf("%01.3f", (($menu[0]['workers_count'])*$workerproducts[$products[$t]['id']]) / $products[$t]['div']); ?></td>
 			                            <?php	
 											}
 											elseif(isset($products[$t]['yes'])){
@@ -340,7 +340,7 @@
 										for($t = 0; $t < count($products); $t++){
 											if(isset($products[$t]['yes']) and isset($total_weight[$products[$t]['id']])){
 											?>
-												<td style="padding: 0px; font-size: 5px"><?php printf("%01.3f", $total_weight[$products[$t]['id']]); ?></td>
+												<td style="padding: 0px"><?php printf("%01.3f", $total_weight[$products[$t]['id']]); ?></td>
 											<?php	
 											}
 											elseif(isset($products[$t]['yes'])){
