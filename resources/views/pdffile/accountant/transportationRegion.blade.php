@@ -177,7 +177,7 @@
     <div class="watermark">Страница</div>
     
     <div class="header">
-        {{ $region->region_name }} да {{ $days[0]->year_name }} йил {{ $days[0]->day_number }}-{{ $days[count($days)-1]->day_number }} {{ $days[0]->month_name }} кунлари болалар катнови ва аутсорсинг хизмати харажатлари тўғрисида маълумот
+        {{ $region->region_name }}ида {{ $days[0]->year_name }} йил {{ $days[0]->day_number }}-{{ $days[count($days)-1]->day_number }} {{ $days[0]->month_name }} кунлари болалар катнови ва аутсорсинг хизмати харажатлари тўғрисида маълумот
     </div>
     
     <div class="table-container">
@@ -244,10 +244,12 @@
                     // Bolalar sonini hisoblash
                     $children_9_10 = 0;
                     $children_4 = 0;
-                    
                     foreach($number_childrens[$day->id] as $age_id => $child) {
+                        if($child == "menu"){
+                            $menu_name = $child->short_name ?? $child->menu_name ?? '';
+                            continue;
+                        }
                         if($age_id == 4) { // 9-10.5 soatlik guruh
-                            $menu_name = $day->menu->short_name ?? $day->menu->menu_name ?? '';
                             $children_9_10 += $child->kingar_children_number ?? 0;
                         } elseif($age_id == 3) { // 4 soatlik guruh
                             $children_4 += $child->kingar_children_number ?? 0;

@@ -1922,6 +1922,8 @@ class AccountantController extends Controller
                 ->where('end_date', '>=', $days[count($days)-1]->created_at->format('Y-m-d'))
                 ->get();
 
+        // dd($costs->where('age_range_id', 4)->first()->raise);
+
         $number_childrens = [];
         foreach($days as $day){
             foreach($ages as $age){
