@@ -169,7 +169,7 @@
 						echo "Боғча номи: <b>".$menu[0]['kingar_name']."</b><br/>";
 						echo "Таомнома: <b>".$menu[0]['menu_name']."</b><br/>";
 						echo  'Cана: <b>'.$day['day_number'].'.'.$day['month_name'].' '.$day['year_name'].'й.</b><br/>  ' . $menu[0]['age_name'] . "ли болалар сони: <b>" . $menu[0]['kingar_children_number'].";</b>";
-						if($workerfood[0]['worker_age_id'] == $menu[0]['king_age_name_id']){
+						if(isset($workerfood[0]['worker_age_id']) and $workerfood[0]['worker_age_id'] == $menu[0]['king_age_name_id']){
 							echo "  ходимлар сони: <b>".$menu[0]['workers_count'].";</b>  ";	
 						}
 					?>
