@@ -1911,6 +1911,7 @@ class AccountantController extends Controller
 
     public function transportationRegion(Request $request, $id, $start, $end){
         $kindgardens = Kindgarden::where('region_id', $id)->get();
+        // dd($kindgardens->pluck('id')->toArray());
         $region = Region::where('id', $id)->first();
         $days = Day::where('days.id', '>=', $start)->where('days.id', '<=', $end)
             ->join('months', 'months.id', '=', 'days.month_id')
@@ -1928,6 +1929,7 @@ class AccountantController extends Controller
         foreach($days as $day){
             foreach($ages as $age){
                 $number_childrens[$day->id][$age->id] = Number_children::where('number_childrens.day_id', $day->id)
+                    ->whereIn('kingar_name_id', $kindgardens->pluck('id')->toArray())
                     ->where('king_age_name_id', $age->id)
                     ->sum('kingar_children_number');
             }
@@ -1972,7 +1974,7 @@ class AccountantController extends Controller
         }
 
 
-
+        return view('pdffile.accountant.reportregion', compact('region', 'days', 'costs', 'number_childrens', 'ages', 'kindgardens'));
         $pdf = \PDF::loadView('pdffile.accountant.reportregion', compact('region', 'days', 'costs', 'number_childrens', 'ages', 'kindgardens'));
         $pdf->setPaper('A3', 'landscape');
         $pdf->setOptions(['dpi' => 150]);
