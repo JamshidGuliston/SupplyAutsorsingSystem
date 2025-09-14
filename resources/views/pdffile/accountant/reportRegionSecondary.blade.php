@@ -169,9 +169,18 @@
                 $total_vat = 0;
                 $total_payment = 0;
                 $row_number = 1;
+                $no_childrens = 0;
             @endphp
+            @foreach($kindgardens as $kindgarden)
+                @if($number_childrens[$kindgarden->id][$age->id] == 0)
+                    $no_childrens++;
+                @endif
+            @endforeach
             
             @foreach($kindgardens as $kindgarden)
+                @if($number_childrens[$kindgarden->id][$age->id] == 0)
+                    @continue
+                @endif
                 @php
                     // Bolalar sonini hisoblash
                     $children = $number_childrens[$kindgarden->id][$age->id] ?? 0; // current age
@@ -205,7 +214,7 @@
                     <td class="number-col">{{ $row_number++ }}</td>
                     <td class="mtt-col">{{ $kindgarden->number_of_org }}-ДМТТ</td>
                     @if($loop->first)
-                        <td rowspan="{{ count($kindgardens) }}" class="month-col">{{ $days[0]->day_number }}-{{ $days[count($days)-1]->day_number }} {{ $days[0]->month_name }}</td>
+                        <td rowspan="{{ count($kindgardens)-$no_childrens }}" class="month-col">{{ $days[0]->day_number }}-{{ $days[count($days)-1]->day_number }} {{ $days[0]->month_name }}</td>
                     @endif
                     <td class="amount-col">{{ number_format($cost_without_vat, 2, ',', ' ') }}</td>
                     <td class="surcharge-col">{{ number_format($surcharge, 2, ',', ' ') }}</td>
