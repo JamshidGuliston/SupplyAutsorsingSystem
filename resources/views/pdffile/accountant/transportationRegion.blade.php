@@ -245,14 +245,14 @@
                     $children_9_10 = 0;
                     $children_4 = 0;
                     foreach($number_childrens[$day->id] as $age_id => $child) {
-                        if($child == "menu"){
+                        if($age_id == "menu"){
                             $menu_name = $child->short_name ?? $child->menu_name ?? '';
                             continue;
                         }
                         if($age_id == 4) { // 9-10.5 soatlik guruh
-                            $children_9_10 += $child->kingar_children_number ?? 0;
+                            $children_9_10 += $child ?? 0;
                         } elseif($age_id == 3) { // 4 soatlik guruh
-                            $children_4 += $child->kingar_children_number ?? 0;
+                            $children_4 += $child ?? 0;
                         }
                     }
                     
