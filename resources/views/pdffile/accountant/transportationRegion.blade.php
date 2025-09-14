@@ -182,7 +182,7 @@
         
         
         /* Responsive adjustments for PDF */
-        @media print {
+        /* @media print {
             body {
                 font-size: 14px;
             }
@@ -194,7 +194,7 @@
             th, td {
                 padding: 8px 2px;
             }
-        }
+        } */
     </style>
 </head>
 <body>
