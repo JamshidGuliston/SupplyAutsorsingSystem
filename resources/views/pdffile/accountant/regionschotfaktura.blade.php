@@ -341,8 +341,9 @@
                     <td>1</td>
                     <td></td>
                     <td>{{ number_format($total_cost * ($costs[4]->raise/100 ?? 0), 2) }}</td>
+                    @php $total_cost += $total_cost * ($costs[4]->raise/100 ?? 0); @endphp
                     <td>{{ $costs[4]->nds . "%" ?? 0 }}</td>
-                    <td>{{ number_format($total_cost * ($costs[4]->nds/100 ?? 0), 2) }}</td>
+                    <td>{{ number_format($total_cost * ($costs[4]->raise/100 ?? 0) * ($costs[4]->nds/100 ?? 0), 2) }}</td>
                     <td>{{ number_format($total_cost+$total_cost * ($costs[4]->raise/100 ?? 0), 2) }} </td>
                     @php $total_service += $total_cost+$total_cost * ($costs[4]->raise/100 ?? 0); @endphp
                     @php $total_nds_raise += $total_cost * ($costs[4]->raise/100 ?? 0); @endphp
