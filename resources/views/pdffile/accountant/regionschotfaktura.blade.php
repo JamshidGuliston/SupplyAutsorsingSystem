@@ -356,8 +356,8 @@
                     <td></td>
                     <td colspan="4" class="text-right font-bold">Жами сумма:</td>
                     <td class="amount font-bold">{{ number_format($total_cost, 2) }}</td>
-                    <td class="vat font-bold">{{ number_format($total_nds_raise, 2) }}</td>
                     <td></td>
+                    <td class="vat font-bold">{{ number_format($total_nds_raise, 2) }}</td>
                     <td class="amount font-bold">{{ number_format($total_service, 2) }}</td>
                 </tr>
             </tbody>
