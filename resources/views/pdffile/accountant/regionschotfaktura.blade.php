@@ -336,13 +336,13 @@
                 @endforeach
                 <tr>
                     <td>{{ $tr++ }}</td>
-                    <td>Аутсорсинг хизмати устамаси</td>
+                    <td>Аутсорсинг хизмати устамаси {{ $costs[4]->raise . "%" ?? 0 }}</td>
                     <td>Хизмат</td>
                     <td>1</td>
                     <td></td>
-                    <td>{{ number_format($total_cost, 2) }}</td>
-                    <td>{{ $costs[4]->raise . "%" ?? 0 }}</td>
                     <td>{{ number_format($total_cost * ($costs[4]->raise/100 ?? 0), 2) }}</td>
+                    <td>{{ $costs[4]->nds . "%" ?? 0 }}</td>
+                    <td>{{ number_format($total_cost * ($costs[4]->nds/100 ?? 0), 2) }}</td>
                     <td>{{ number_format($total_cost+$total_cost * ($costs[4]->raise/100 ?? 0), 2) }} </td>
                     @php $total_service += $total_cost+$total_cost * ($costs[4]->raise/100 ?? 0); @endphp
                     @php $total_nds_raise += $total_cost * ($costs[4]->raise/100 ?? 0); @endphp
