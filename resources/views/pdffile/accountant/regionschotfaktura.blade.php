@@ -346,18 +346,18 @@
                     <td>{{ number_format($total_cost * ($costs[4]->raise/100 ?? 0) * ($costs[4]->nds/100 ?? 0), 2) }}</td>
                     @php $nds = $total_cost * ($costs[4]->raise/100 ?? 0) * ($costs[4]->nds/100 ?? 0); @endphp
                     <td>{{ number_format($raise + $nds, 2) }} </td>
-                    @php $total_service += $total_cost+$total_cost * ($costs[4]->raise/100 ?? 0); @endphp
+                    @php $total_service += $raise + $nds; @endphp
                     @php $total_cost += $total_cost * ($costs[4]->raise/100 ?? 0); @endphp
-                    @php $total_nds_raise += $total_cost * ($costs[4]->raise/100 ?? 0); @endphp
-                    @php $total_cost += $total_cost; @endphp
+                    @php $total_nds_raise += $nds; @endphp
+        
                 </tr>
                 <!-- Jami qator -->
                 <tr class="total-row">
                     <td></td>
                     <td colspan="4" class="text-right font-bold">Жами сумма:</td>
                     <td class="amount font-bold">{{ number_format($total_cost, 2) }}</td>
-                    <td></td>
                     <td class="vat font-bold">{{ number_format($total_nds_raise, 2) }}</td>
+                    <td></td>
                     <td class="amount font-bold">{{ number_format($total_service, 2) }}</td>
                 </tr>
             </tbody>
