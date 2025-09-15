@@ -15,7 +15,7 @@
             font-family: 'DejaVu Sans', Arial, sans-serif;
             margin: 0;
             padding: 0;
-            font-size: 16px;
+            font-size: 14px;
             line-height: 1.3;
             color: #000;
         }
@@ -38,7 +38,7 @@
         }
         
         .invoice-date {
-            font-size: 16px;
+            font-size: 14px;
         }
         
         .company-info {
@@ -56,7 +56,7 @@
         
         .section-title {
             font-weight: bold;
-            font-size: 16px;
+            font-size: 14px;
             margin-bottom: 10px;
         }
         
@@ -82,8 +82,8 @@
         table {
             width: 100%;
             border-collapse: collapse;
-            margin-bottom: 15px;
-            font-size: 16px;
+            margin-bottom: 1px;
+            font-size: 14px;
         }
         
         th, td {
@@ -96,7 +96,7 @@
         th {
             background-color: #f0f0f0;
             font-weight: bold;
-            font-size: 16px;
+            font-size: 14px;
         }
         
         .product-name {
@@ -153,7 +153,7 @@
         }
         
         .signature-label {
-            font-size: 16px;
+            font-size: 14px;
             text-align: left;
         }
         
@@ -186,7 +186,7 @@
         /* Responsive uchun */
         @media print {
             body {
-                font-size: 16px;
+                font-size: 14px;
             }
             
             .header {
