@@ -372,6 +372,10 @@ Route::group(['prefix' => 'accountant', 'middleware' => ['isAccountant', 'auth']
     // transportation
     Route::get('transportation/{id}/{start}/{end}', [AccountantController::class, 'transportation'])->name('accountant.transportation');
     Route::get('transportationexcel/{id}/{start}/{end}/{costid}', [AccountantController::class, 'transportationexcel'])->name('accountant.transportationexcel');
+    Route::get('transportationSecondary/{id}/{start}/{end}', [AccountantController::class, 'transportationSecondary'])->name('accountant.transportationSecondary');
+    Route::get('transportationSecondaryexcel/{id}/{start}/{end}/{costid}', [AccountantController::class, 'transportationSecondaryexcel'])->name('accountant.transportationSecondaryexcel');
+    Route::get('transportationThird/{id}/{start}/{end}', [AccountantController::class, 'transportationThird'])->name('accountant.transportationThird');
+    Route::get('transportationThirdexcel/{id}/{start}/{end}/{costid}', [AccountantController::class, 'transportationThirdexcel'])->name('accountant.transportationThirdexcel');
 
     // reportregion
     Route::get('reportregion/{id}/{start}/{end}', [AccountantController::class, 'reportregion'])->name('accountant.reportregion');

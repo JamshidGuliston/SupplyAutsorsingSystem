@@ -1887,6 +1887,7 @@ class AccountantController extends Controller
             ->get(['days.id', 'days.day_number', 'months.month_name', 'years.year_name', 'days.created_at']);
         $ages = Age_range::all();
         $costs = Protsent::where('region_id', $kindgar->region_id)
+                ->where('start_date', '<=', $days[0]->created_at->format('Y-m-d'))
                 ->where('end_date', '>=', $days[count($days)-1]->created_at->format('Y-m-d'))
                 ->get();
 
@@ -1907,6 +1908,92 @@ class AccountantController extends Controller
         return $pdf->stream('transportation.pdf');
 
         // return view('pdffile.accountant.transportation', compact('days', 'costs', 'number_childrens', 'kindgar'));
+    }
+
+    public function transportationSecondary(Request $request, $id, $start, $end){
+        $kindgar = Kindgarden::where('id', $id)->first();
+        $days = Day::where('days.id', '>=', $start)->where('days.id', '<=', $end)
+            ->join('months', 'months.id', '=', 'days.month_id')
+            ->join('years', 'years.id', '=', 'days.year_id')
+            ->get(['days.id', 'days.day_number', 'months.month_name', 'years.year_name', 'days.created_at']);
+        $ages = Age_range::all();
+        $costs = Protsent::where('region_id', $kindgar->region_id)
+                ->where('start_date', '<=', $days[0]->created_at->format('Y-m-d'))
+                ->where('end_date', '>=', $days[count($days)-1]->created_at->format('Y-m-d'))
+                ->get();
+        
+        $number_childrens = [];
+        foreach($days as $day){
+            foreach($ages as $age){
+                $number_childrens[$day->id][$age->id] = Number_children::where('number_childrens.day_id', $day->id)
+                    ->where('kingar_name_id', $id)
+                    ->where('king_age_name_id', $age->id)
+                    ->leftJoin('titlemenus', 'titlemenus.id', '=', 'number_childrens.kingar_menu_id')
+                    ->first();
+            }
+        }
+
+        $pdf = \PDF::loadView('pdffile.accountant.transportationSecondary', compact('days', 'costs', 'number_childrens', 'kindgar', 'ages'));
+        $pdf->setPaper('A3', 'landscape');
+        $pdf->setOptions(['dpi' => 150]);
+        return $pdf->stream('transportationSecondary.pdf');
+
+        // return view('pdffile.accountant.transportationSecondary', compact('days', 'costs', 'number_childrens', 'kindgar', 'ages'));
+
+    }
+
+    public function transportationSecondaryexcel(Request $request, $id, $start, $end, $costid){
+        $kindgar = Kindgarden::where('id', $id)->first();
+        $days = Day::where('days.id', '>=', $start)->where('days.id', '<=', $end)
+            ->join('months', 'months.id', '=', 'days.month_id')
+            ->join('years', 'years.id', '=', 'days.year_id')
+            ->get(['days.id', 'days.day_number', 'months.month_name', 'years.year_name', 'days.created_at']);
+        $ages = Age_range::all();
+        $costs = Protsent::where('region_id', $kindgar->region_id)
+                ->where('end_date', '>=', $days[count($days)-1]->created_at->format('Y-m-d'))
+                ->get();
+    }
+
+    public function transportationThird(Request $request, $id, $start, $end){
+        $kindgar = Kindgarden::where('id', $id)->first();
+        $days = Day::where('days.id', '>=', $start)->where('days.id', '<=', $end)
+            ->join('months', 'months.id', '=', 'days.month_id')
+            ->join('years', 'years.id', '=', 'days.year_id')
+            ->get(['days.id', 'days.day_number', 'months.month_name', 'years.year_name', 'days.created_at']);
+        $ages = Age_range::all();
+        $costs = Protsent::where('region_id', $kindgar->region_id)
+                ->where('end_date', '>=', $days[count($days)-1]->created_at->format('Y-m-d'))
+                ->get();
+
+        $number_childrens = [];
+        foreach($days as $day){
+            foreach($ages as $age){
+                $number_childrens[$day->id][$age->id] = Number_children::where('number_childrens.day_id', $day->id)
+                    ->where('kingar_name_id', $id)
+                    ->where('king_age_name_id', $age->id)
+                    ->leftJoin('titlemenus', 'titlemenus.id', '=', 'number_childrens.kingar_menu_id')
+                    ->first();
+            }
+        }
+
+        // return view('pdffile.accountant.transportationThird', compact('days', 'costs', 'number_childrens', 'kindgar', 'ages'));
+
+        $pdf = \PDF::loadView('pdffile.accountant.transportationThird', compact('days', 'costs', 'number_childrens', 'kindgar', 'ages'));
+        $pdf->setPaper('A3', 'landscape');
+        $pdf->setOptions(['dpi' => 150]);
+        return $pdf->stream('transportationThird.pdf');
+    }
+
+    public function transportationThirdexcel(Request $request, $id, $start, $end, $costid){
+        $kindgar = Kindgarden::where('id', $id)->first();
+        $days = Day::where('days.id', '>=', $start)->where('days.id', '<=', $end)
+            ->join('months', 'months.id', '=', 'days.month_id')
+            ->join('years', 'years.id', '=', 'days.year_id')
+            ->get(['days.id', 'days.day_number', 'months.month_name', 'years.year_name', 'days.created_at']);
+        $ages = Age_range::all();
+        $costs = Protsent::where('region_id', $kindgar->region_id)
+                ->where('end_date', '>=', $days[count($days)-1]->created_at->format('Y-m-d'))
+                ->get();
     }
 
     public function transportationRegion(Request $request, $id, $start, $end){

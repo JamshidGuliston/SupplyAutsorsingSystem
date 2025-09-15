@@ -458,10 +458,24 @@
             html += '<div class="report-category">';
             html += '<h6><i class="fas fa-file-invoice"></i>Қатнов</h6>';
             html += '<div class="report-links">';
-            html += '<a href="/accountant/transportation/'+kindid+'/'+start+'/'+end+'" target="_blank" class="report-link pdf">';
+            html += '1-<a href="/accountant/transportation/'+kindid+'/'+start+'/'+end+'" target="_blank" class="report-link pdf">';
             html += '<i class="far fa-file-pdf"></i>PDF';
             html += '</a>';
             html += '<a href="/accountant/transportationexcel/'+kindid+'/'+start+'/'+end+'/'+cost+'" target="_blank" class="report-link excel">';
+            html += '<i class="far fa-file-excel"></i>Excel';
+            html += '</a>';
+
+            html += '2-<a href="/accountant/transportationSecondary/'+kindid+'/'+start+'/'+end+'" target="_blank" class="report-link pdf">';
+            html += '<i class="far fa-file-pdf"></i>PDF';
+            html += '</a>';
+            html += '<a href="/accountant/transportationSecondaryexcel/'+kindid+'/'+start+'/'+end+'/'+cost+'" target="_blank" class="report-link excel">';
+            html += '<i class="far fa-file-excel"></i>Excel';
+            html += '</a>';
+
+            html += '3-<a href="/accountant/transportationThird/'+kindid+'/'+start+'/'+end+'" target="_blank" class="report-link pdf">';
+            html += '<i class="far fa-file-pdf"></i>PDF';
+            html += '</a>';
+            html += '<a href="/accountant/transportationThirdexcel/'+kindid+'/'+start+'/'+end+'/'+cost+'" target="_blank" class="report-link excel">';
             html += '<i class="far fa-file-excel"></i>Excel';
             html += '</a>';
             html += '</div>';
