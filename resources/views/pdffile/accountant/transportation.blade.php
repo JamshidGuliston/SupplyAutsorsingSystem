@@ -258,7 +258,7 @@
 
                     $eater_cost9_10 = $costs->where('age_range_id', 4)->first()->eater_cost ?? 0;
                     $eater_cost4 = $costs->where('age_range_id', 3)->first()->eater_cost ?? 0;
-                    $raise = 28.7 ?? 0;
+                    $raise = $costs->where('age_range_id', 4)->first()->raise ?? 0;
                     $nds = $costs->where('age_range_id', 4)->first()->nds ?? 0;
                     
                     // Narxlarni olish
@@ -275,8 +275,8 @@
                     $amount_without_nds4 = $delivery_4 / (1 + $nds / 100); // QQSsiz summa
                     $markup9_10 = $amount_without_nds9_10 * $raise / 100; // 28.7% ustama
                     $markup4 = $amount_without_nds4 * $raise / 100; // 28.7% ustama
-                    $nds9_10 = $amount_without_nds9_10 * $nds / 100; // 12% QQS
-                    $nds4 = $amount_without_nds4 * $nds / 100; // 12% QQS
+                    $nds9_10 = ($amount_without_nds9_10 + $markup9_10) * $nds / 100; // 12% QQS
+                    $nds4 = ($amount_without_nds4 + $markup4) * $nds / 100; // 12% QQS
                     $final_amount9_10 = $amount_without_nds9_10 + $markup9_10 + $nds9_10;
                     $final_amount4 = $amount_without_nds4 + $markup4 + $nds4;
                     $final_amount = $final_amount9_10 + $final_amount4;
