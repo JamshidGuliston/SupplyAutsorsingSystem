@@ -260,8 +260,8 @@
                     
                     // Xarajatlar tahlili (umumiy)
                     $amount_without_nds = $delivery_all / (1 + $nds / 100); // QQSsiz summa
-                    $markup = $amount_without_nds * $raise / 100; // Ustama
-                    $nds_amount = ($amount_without_nds + $markup) * $nds / 100; // QQS
+                    $markup = $delivery_all * $raise / 100; // Ustama
+                    $nds_amount = $amount_without_nds * $nds / 100; // QQS
                     $final_amount = $amount_without_nds + $markup + $nds_amount;
                     
                     // Jami hisoblash
