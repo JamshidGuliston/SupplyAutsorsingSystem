@@ -21,7 +21,7 @@ class OrderProductController extends Controller
             $orderTitles = order_product::where('shop_id', 0)
                 ->select('order_title')
                 ->distinct()
-                ->orderBy('order_title', 'desc')
+                ->orderBy('created_at', 'desc')
                 ->paginate($perPage, ['*'], 'page', $page);
 
             $formattedData = [];
