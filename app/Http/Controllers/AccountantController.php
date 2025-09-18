@@ -1064,7 +1064,7 @@ class AccountantController extends Controller
                 $productscount[$row->norm_cat_id]['norm_weight'] = $row->norm_weight;
             }
             
-            foreach($productscount as $key => $row){
+            foreach($`productscount` as $key => $row){
                 if(isset($row['product_name'])){
                     if(!isset($nakproducts[$key]['children'])){
                         $nakproducts[$key]['children'] = 0;
