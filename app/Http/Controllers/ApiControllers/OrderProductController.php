@@ -19,7 +19,7 @@ class OrderProductController extends Controller
             
             // order_title bo'yicha guruhlash va pagination
             $orderTitles = order_product::where('shop_id', 0)
-                ->select('order_title')
+                ->select('order_title', 'created_at')
                 ->distinct()
                 ->orderBy('created_at', 'desc')
                 ->paginate($perPage, ['*'], 'page', $page);
