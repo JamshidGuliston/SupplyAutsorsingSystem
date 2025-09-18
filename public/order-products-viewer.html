@@ -151,11 +151,29 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        
+        .order-group-header:hover {
+            background: linear-gradient(135deg, #ff5252 0%, #e64a19 100%);
         }
         
         .order-title {
             font-size: 1.4em;
             font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .collapse-icon {
+            font-size: 1.2em;
+            transition: transform 0.3s;
+        }
+        
+        .collapse-icon.collapsed {
+            transform: rotate(-90deg);
         }
         
         .order-count {
@@ -167,6 +185,12 @@
         
         .orders-list {
             padding: 0;
+            transition: max-height 0.3s ease-out;
+            overflow: hidden;
+        }
+        
+        .orders-list.collapsed {
+            max-height: 0;
         }
         
         .order-item {
@@ -191,12 +215,23 @@
             margin-bottom: 15px;
             padding-bottom: 10px;
             border-bottom: 2px solid #e9ecef;
+            cursor: pointer;
+        }
+        
+        .order-item-header:hover {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 10px;
+            margin: -10px -10px 15px -10px;
         }
         
         .order-id {
             font-size: 1.1em;
             font-weight: bold;
             color: #1976d2;
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
         
         .order-date {
@@ -209,6 +244,13 @@
             grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
             gap: 15px;
             margin-bottom: 15px;
+            transition: max-height 0.3s ease-out;
+            overflow: hidden;
+        }
+        
+        .order-details.collapsed {
+            max-height: 0;
+            margin-bottom: 0;
         }
         
         .detail-item {
@@ -230,6 +272,12 @@
         
         .products-section {
             margin-top: 15px;
+            transition: max-height 0.3s ease-out;
+            overflow: hidden;
+        }
+        
+        .products-section.collapsed {
+            max-height: 0;
         }
         
         .products-title {
@@ -237,12 +285,29 @@
             color: #495057;
             margin-bottom: 10px;
             font-size: 1.1em;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px;
+            border-radius: 6px;
+            transition: background-color 0.3s;
+        }
+        
+        .products-title:hover {
+            background: #e9ecef;
         }
         
         .products-list {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
             gap: 15px;
+            transition: max-height 0.3s ease-out;
+            overflow: hidden;
+        }
+        
+        .products-list.collapsed {
+            max-height: 0;
         }
         
         .product-item {
@@ -335,6 +400,16 @@
             border-left: 4px solid #c62828;
         }
         
+        .collapse-all-btn {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            margin-left: auto;
+        }
+        
+        .expand-all-btn {
+            background: linear-gradient(135deg, #17a2b8 0%, #6f42c1 100%);
+            margin-left: 10px;
+        }
+        
         @media (max-width: 768px) {
             .controls {
                 flex-direction: column;
@@ -377,6 +452,8 @@
                 </select>
             </div>
             <button class="btn" id="loadBtn"> Ma''lumotlarni yuklash</button>
+            <button class="btn collapse-all-btn" id="collapseAllBtn"> Barchasini yig''ish</button>
+            <button class="btn expand-all-btn" id="expandAllBtn"> Barchasini ochish</button>
         </div>
         
         <div id="stats" class="stats" style="display: none;">
@@ -471,6 +548,7 @@
             data.data.forEach(function(group, groupIndex) {
                 const groupDiv = document.createElement('div');
                 groupDiv.className = 'order-group';
+                groupDiv.setAttribute('data-group-index', groupIndex);
                 
                 let ordersHtml = '';
                 group.orders.forEach(function(order, orderIndex) {
@@ -510,13 +588,16 @@
                     });
                     
                     ordersHtml += `
-                        <div class="order-item">
-                            <div class="order-item-header">
-                                <div class="order-id">Order #${order.id}</div>
+                        <div class="order-item" data-order-index="${orderIndex}">
+                            <div class="order-item-header" onclick="toggleOrderDetails(${groupIndex}, ${orderIndex})">
+                                <div class="order-id">
+                                    <span class="collapse-icon"></span>
+                                    Order #${order.id}
+                                </div>
                                 <div class="order-date">${new Date(order.created_at).toLocaleString('uz-UZ')}</div>
                             </div>
                             
-                            <div class="order-details">
+                            <div class="order-details" id="order-details-${groupIndex}-${orderIndex}">
                                 <div class="detail-item">
                                     <div class="detail-label">Bog''cha ID</div>
                                     <div class="detail-value">${order.kingar_name_id || 'N/A'}</div>
@@ -549,9 +630,12 @@
                                 </div>
                             ` : ''}
                             
-                            <div class="products-section">
-                                <div class="products-title"> Mahsulotlar (${order.products.length} ta)</div>
-                                <div class="products-list">
+                            <div class="products-section" id="products-section-${groupIndex}-${orderIndex}">
+                                <div class="products-title" onclick="toggleProducts(${groupIndex}, ${orderIndex})">
+                                    <span class="collapse-icon"></span>
+                                     Mahsulotlar (${order.products.length} ta)
+                                </div>
+                                <div class="products-list" id="products-list-${groupIndex}-${orderIndex}">
                                     ${productsHtml}
                                 </div>
                             </div>
@@ -560,16 +644,88 @@
                 });
                 
                 groupDiv.innerHTML = `
-                    <div class="order-group-header">
-                        <div class="order-title">${group.order_title}</div>
+                    <div class="order-group-header" onclick="toggleOrderGroup(${groupIndex})">
+                        <div class="order-title">
+                            <span class="collapse-icon"></span>
+                            ${group.order_title}
+                        </div>
                         <div class="order-count">${group.order_count} ta order</div>
                     </div>
-                    <div class="orders-list">
+                    <div class="orders-list" id="orders-list-${groupIndex}">
                         ${ordersHtml}
                     </div>
                 `;
                 
                 container.appendChild(groupDiv);
+            });
+        }
+        
+        function toggleOrderGroup(groupIndex) {
+            const ordersList = document.getElementById('orders-list-' + groupIndex);
+            const icon = ordersList.previousElementSibling.querySelector('.collapse-icon');
+            
+            if (ordersList.classList.contains('collapsed')) {
+                ordersList.classList.remove('collapsed');
+                icon.classList.remove('collapsed');
+            } else {
+                ordersList.classList.add('collapsed');
+                icon.classList.add('collapsed');
+            }
+        }
+        
+        function toggleOrderDetails(groupIndex, orderIndex) {
+            const orderDetails = document.getElementById('order-details-' + groupIndex + '-' + orderIndex);
+            const icon = orderDetails.previousElementSibling.querySelector('.collapse-icon');
+            
+            if (orderDetails.classList.contains('collapsed')) {
+                orderDetails.classList.remove('collapsed');
+                icon.classList.remove('collapsed');
+            } else {
+                orderDetails.classList.add('collapsed');
+                icon.classList.add('collapsed');
+            }
+        }
+        
+        function toggleProducts(groupIndex, orderIndex) {
+            const productsList = document.getElementById('products-list-' + groupIndex + '-' + orderIndex);
+            const icon = productsList.previousElementSibling.querySelector('.collapse-icon');
+            
+            if (productsList.classList.contains('collapsed')) {
+                productsList.classList.remove('collapsed');
+                icon.classList.remove('collapsed');
+            } else {
+                productsList.classList.add('collapsed');
+                icon.classList.add('collapsed');
+            }
+        }
+        
+        function collapseAll() {
+            // Barcha order guruhlarini yig''ish
+            const orderGroups = document.querySelectorAll('.order-group');
+            orderGroups.forEach(function(group) {
+                const ordersList = group.querySelector('.orders-list');
+                const icon = group.querySelector('.order-group-header .collapse-icon');
+                ordersList.classList.add('collapsed');
+                icon.classList.add('collapsed');
+            });
+            
+            // Barcha order details va products larni yig''ish
+            const orderDetails = document.querySelectorAll('.order-details, .products-list');
+            orderDetails.forEach(function(element) {
+                element.classList.add('collapsed');
+            });
+            
+            const icons = document.querySelectorAll('.collapse-icon');
+            icons.forEach(function(icon) {
+                icon.classList.add('collapsed');
+            });
+        }
+        
+        function expandAll() {
+            // Barcha elementlarni ochish
+            const collapsedElements = document.querySelectorAll('.collapsed');
+            collapsedElements.forEach(function(element) {
+                element.classList.remove('collapsed');
             });
         }
         
@@ -635,6 +791,8 @@
         // Sahifa yuklanganda avtomatik ma''lumotlarni yuklash
         window.onload = function() {
             document.getElementById('loadBtn').onclick = loadData;
+            document.getElementById('collapseAllBtn').onclick = collapseAll;
+            document.getElementById('expandAllBtn').onclick = expandAll;
             loadData();
         };
     </script>
