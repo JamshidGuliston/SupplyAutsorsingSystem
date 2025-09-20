@@ -226,7 +226,7 @@ class TestController extends Controller
 			->join('months', 'months.id', '=', 'days.month_id')
 			->join('years', 'years.id', '=', 'days.year_id')
 			->orderBy('days.id', 'DESC')
-			->first(['days.day_number','days.id as id', 'months.month_name', 'years.year_name']);
+			->first(['days.day_number','days.id as id', 'months.month_name', 'months.id as MID', 'years.year_name']);
         // dd($day);
         $workerfood = titlemenu_food::where('day_id', ($today-1))
                     ->where('worker_age_id', $ageid)
@@ -241,7 +241,17 @@ class TestController extends Controller
 		// 		$narx[$row->praduct_name_id] = $row->price_cost;
 		// 	}
 		// }
-        $protsent = Protsent::where('region_id', Kindgarden::where('id', $gid)->first()->region_id)->where('age_range_id', $ageid)->first();
+		if($day->MID % 12 == 0){
+			$month_id = 12;
+		}
+		else{
+			$month_id = $day->MID % 12;
+		}
+        $protsent = Protsent::where('region_id', Kindgarden::where('id', $gid)->first()->region_id)
+					->where('start_date', '<=', $day->year_name.'-'.$month_id.'-'.$day->day_number)
+					->where('end_date', '>=', $day->year_name.'-'.$month_id.'-'.$day->day_number)
+					->where('age_range_id', $ageid)
+					->first();
 		
         $nextdaymenuitem = [];
         $workerproducts = [];
