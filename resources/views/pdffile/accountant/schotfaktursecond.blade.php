@@ -328,9 +328,9 @@
                     <td></td>
                     <td>{{ $costs[4]->raise . "%" ?? 0 }}</td>
                     <td>{{ number_format($total_amount * ($costs[4]->raise/100 ?? 0), 2) }}</td>
-                    @php $total_amount += $total_amount * ($costs[4]->raise/100 ?? 0); @endphp
                     <td>{{ number_format($total_amount * ($costs[4]->raise/100) * ($costs[4]->nds/(100+$costs[4]->nds)), 2) }}</td>
                     @php $total_nds += $total_amount * ($costs[4]->raise/(100)) * ($costs[4]->nds/(100+$costs[4]->nds)); @endphp
+                    @php $total_amount += $total_amount * ($costs[4]->raise/100 ?? 0); @endphp
                 </tr>
 
                 <!-- Jami qator -->

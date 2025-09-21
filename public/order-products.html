@@ -1,0 +1,800 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Products - API Ma''lumotlari</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: ''Segoe UI'', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+        
+        .controls {
+            padding: 20px 30px;
+            background: #f8f9fa;
+            border-bottom: 1px solid #e9ecef;
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        
+        .control-group {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .control-group label {
+            font-weight: 600;
+            color: #495057;
+        }
+        
+        .control-group input, .control-group select {
+            padding: 8px 12px;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+        
+        .control-group input:focus, .control-group select:focus {
+            outline: none;
+            border-color: #4facfe;
+        }
+        
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: transform 0.2s;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+        }
+        
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .stats {
+            padding: 20px 30px;
+            background: #e3f2fd;
+            border-bottom: 1px solid #bbdefb;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+        }
+        
+        .stat-card {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        
+        .stat-number {
+            font-size: 2em;
+            font-weight: bold;
+            color: #1976d2;
+            margin-bottom: 5px;
+        }
+        
+        .stat-label {
+            color: #666;
+            font-size: 0.9em;
+        }
+        
+        .content {
+            padding: 30px;
+        }
+        
+        .order-group {
+            background: #f8f9fa;
+            border-radius: 12px;
+            margin-bottom: 25px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        
+        .order-group-header {
+            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%);
+            color: white;
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        
+        .order-group-header:hover {
+            background: linear-gradient(135deg, #ff5252 0%, #e64a19 100%);
+        }
+        
+        .order-title {
+            font-size: 1.4em;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .collapse-icon {
+            font-size: 1.2em;
+            transition: transform 0.3s;
+        }
+        
+        .collapse-icon.collapsed {
+            transform: rotate(-90deg);
+        }
+        
+        .order-count {
+            background: rgba(255,255,255,0.2);
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: bold;
+        }
+        
+        .orders-list {
+            padding: 0;
+            transition: max-height 0.3s ease-out;
+            overflow: hidden;
+        }
+        
+        .orders-list.collapsed {
+            max-height: 0;
+        }
+        
+        .order-item {
+            background: white;
+            border-bottom: 1px solid #e9ecef;
+            padding: 20px;
+            transition: background-color 0.3s;
+        }
+        
+        .order-item:hover {
+            background: #f8f9fa;
+        }
+        
+        .order-item:last-child {
+            border-bottom: none;
+        }
+        
+        .order-item-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #e9ecef;
+            cursor: pointer;
+        }
+        
+        .order-item-header:hover {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 10px;
+            margin: -10px -10px 15px -10px;
+        }
+        
+        .order-id {
+            font-size: 1.1em;
+            font-weight: bold;
+            color: #1976d2;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .order-date {
+            color: #666;
+            font-size: 0.9em;
+        }
+        
+        .order-details {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            margin-bottom: 15px;
+            transition: max-height 0.3s ease-out;
+            overflow: hidden;
+        }
+        
+        .order-details.collapsed {
+            max-height: 0;
+            margin-bottom: 0;
+        }
+        
+        .detail-item {
+            background: #f8f9fa;
+            padding: 10px;
+            border-radius: 6px;
+        }
+        
+        .detail-label {
+            font-weight: 600;
+            color: #495057;
+            font-size: 0.9em;
+        }
+        
+        .detail-value {
+            color: #212529;
+            margin-top: 2px;
+        }
+        
+        .products-section {
+            margin-top: 15px;
+            transition: max-height 0.3s ease-out;
+            overflow: hidden;
+        }
+        
+        .products-section.collapsed {
+            max-height: 0;
+        }
+        
+        .products-title {
+            font-weight: bold;
+            color: #495057;
+            margin-bottom: 10px;
+            font-size: 1.1em;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px;
+            border-radius: 6px;
+            transition: background-color 0.3s;
+        }
+        
+        .products-title:hover {
+            background: #e9ecef;
+        }
+        
+        .products-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 15px;
+            transition: max-height 0.3s ease-out;
+            overflow: hidden;
+        }
+        
+        .products-list.collapsed {
+            max-height: 0;
+        }
+        
+        .product-item {
+            background: white;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            padding: 15px;
+            transition: border-color 0.3s;
+        }
+        
+        .product-item:hover {
+            border-color: #4facfe;
+        }
+        
+        .product-name {
+            font-weight: bold;
+            color: #1976d2;
+            margin-bottom: 8px;
+        }
+        
+        .product-details {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            font-size: 0.9em;
+        }
+        
+        .product-detail {
+            display: flex;
+            justify-content: space-between;
+        }
+        
+        .product-detail-label {
+            color: #666;
+        }
+        
+        .product-detail-value {
+            font-weight: 600;
+            color: #333;
+        }
+        
+        .pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            margin-top: 30px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 10px;
+        }
+        
+        .pagination button {
+            padding: 10px 15px;
+            border: 2px solid #e9ecef;
+            background: white;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .pagination button:hover:not(:disabled) {
+            border-color: #4facfe;
+            background: #4facfe;
+            color: white;
+        }
+        
+        .pagination button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        .pagination-info {
+            color: #666;
+            font-weight: 600;
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 50px;
+            color: #666;
+        }
+        
+        .error {
+            background: #ffebee;
+            color: #c62828;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+            border-left: 4px solid #c62828;
+        }
+        
+        .collapse-all-btn {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            margin-left: auto;
+        }
+        
+        .expand-all-btn {
+            background: linear-gradient(135deg, #17a2b8 0%, #6f42c1 100%);
+            margin-left: 10px;
+        }
+        
+        @media (max-width: 768px) {
+            .controls {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .control-group {
+                justify-content: space-between;
+            }
+            
+            .order-details {
+                grid-template-columns: 1fr;
+            }
+            
+            .products-list {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1> Order Products API</h1>
+            <p>Ma''lumotlarni chiroyli formatda ko''rish</p>
+        </div>
+        
+        <div class="controls">
+            <div class="control-group">
+                <label for="apiUrl">API URL:</label>
+                <input type="text" id="apiUrl" value="http://127.0.0.1:8000/api/order-products/active" style="width: 300px;">
+            </div>
+            <div class="control-group">
+                <label for="perPage">Har sahifada:</label>
+                <select id="perPage">
+                    <option value="5">5 ta</option>
+                    <option value="10" selected>10 ta</option>
+                    <option value="15">15 ta</option>
+                    <option value="20">20 ta</option>
+                </select>
+            </div>
+            <button class="btn" id="loadBtn"> Ma''lumotlarni yuklash</button>
+            <button class="btn collapse-all-btn" id="collapseAllBtn"> Barchasini yig''ish</button>
+            <button class="btn expand-all-btn" id="expandAllBtn"> Barchasini ochish</button>
+        </div>
+        
+        <div id="stats" class="stats" style="display: none;">
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-number" id="totalOrders">0</div>
+                    <div class="stat-label">Jami Order Title</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="currentPage">0</div>
+                    <div class="stat-label">Joriy Sahifa</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="totalPages">0</div>
+                    <div class="stat-label">Jami Sahifalar</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="totalItems">0</div>
+                    <div class="stat-label">Jami Order Product</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="content">
+            <div id="loading" class="loading" style="display: none;">
+                <h3> Ma''lumotlar yuklanmoqda...</h3>
+            </div>
+            
+            <div id="error" class="error" style="display: none;">
+                <h3> Xatolik</h3>
+                <p id="errorMessage"></p>
+            </div>
+            
+            <div id="dataContainer"></div>
+            
+            <div id="pagination" class="pagination" style="display: none;"></div>
+        </div>
+    </div>
+
+    <script>
+        let currentData = null;
+        let currentPage = 1;
+        
+        function showLoading() {
+            document.getElementById('loading').style.display = 'block';
+            document.getElementById('error').style.display = 'none';
+            document.getElementById('dataContainer').innerHTML = '';
+            document.getElementById('stats').style.display = 'none';
+            document.getElementById('pagination').style.display = 'none';
+        }
+        
+        function showError(message) {
+            document.getElementById('loading').style.display = 'none';
+            document.getElementById('error').style.display = 'block';
+            document.getElementById('errorMessage').textContent = message;
+            document.getElementById('stats').style.display = 'none';
+            document.getElementById('pagination').style.display = 'none';
+        }
+        
+        function showData(data) {
+            document.getElementById('loading').style.display = 'none';
+            document.getElementById('error').style.display = 'none';
+            document.getElementById('stats').style.display = 'block';
+            document.getElementById('pagination').style.display = 'block';
+            
+            currentData = data;
+            currentPage = data.pagination.current_page;
+            
+            // Statistikalarni yangilash
+            document.getElementById('totalOrders').textContent = data.pagination.total;
+            document.getElementById('currentPage').textContent = data.pagination.current_page;
+            document.getElementById('totalPages').textContent = data.pagination.last_page;
+            
+            // Jami order product sonini hisoblash
+            let totalItems = 0;
+            data.data.forEach(function(group) {
+                totalItems += group.order_count;
+            });
+            document.getElementById('totalItems').textContent = totalItems;
+            
+            // Ma''lumotlarni ko''rsatish
+            displayData(data);
+            
+            // Pagination yaratish
+            createPagination(data.pagination);
+        }
+        
+        function displayData(data) {
+            const container = document.getElementById('dataContainer');
+            container.innerHTML = '';
+            
+            data.data.forEach(function(group, groupIndex) {
+                const groupDiv = document.createElement('div');
+                groupDiv.className = 'order-group';
+                groupDiv.setAttribute('data-group-index', groupIndex);
+                
+                let ordersHtml = '';
+                group.orders.forEach(function(order, orderIndex) {
+                    let productsHtml = '';
+                    order.products.forEach(function(product) {
+                        productsHtml += `
+                            <div class="product-item">
+                                <div class="product-name">${product.product ? product.product.product_name : 'N/A'}</div>
+                                <div class="product-details">
+                                    <div class="product-detail">
+                                        <span class="product-detail-label">Mahsulot ID:</span>
+                                        <span class="product-detail-value">${product.product_name_id}</span>
+                                    </div>
+                                    <div class="product-detail">
+                                        <span class="product-detail-label">Mahsulot og''irligi:</span>
+                                        <span class="product-detail-value">${product.product_weight} kg</span>
+                                    </div>
+                                    <div class="product-detail">
+                                        <span class="product-detail-label">Haqiqiy og''irlik:</span>
+                                        <span class="product-detail-value">${product.actual_weight} kg</span>
+                                    </div>
+                                    ${product.product && product.product.category ? `
+                                        <div class="product-detail">
+                                            <span class="product-detail-label">Kategoriya:</span>
+                                            <span class="product-detail-value">${product.product.category.category_name}</span>
+                                        </div>
+                                    ` : ''}
+                                    ${product.product && product.product.size ? `
+                                        <div class="product-detail">
+                                            <span class="product-detail-label">O''lcham:</span>
+                                            <span class="product-detail-value">${product.product.size.size_name}</span>
+                                        </div>
+                                    ` : ''}
+                                </div>
+                            </div>
+                        `;
+                    });
+                    
+                    ordersHtml += `
+                        <div class="order-item" data-order-index="${orderIndex}">
+                            <div class="order-item-header" onclick="toggleOrderDetails(${groupIndex}, ${orderIndex})">
+                                <div class="order-id">
+                                    <span class="collapse-icon"></span>
+                                    Order #${order.id}
+                                </div>
+                                <div class="order-date">${new Date(order.created_at).toLocaleString('uz-UZ')}</div>
+                            </div>
+                            
+                            <div class="order-details" id="order-details-${groupIndex}-${orderIndex}">
+                                <div class="detail-item">
+                                    <div class="detail-label">Bog''cha ID</div>
+                                    <div class="detail-value">${order.kingar_name_id || 'N/A'}</div>
+                                </div>
+                                <div class="detail-item">
+                                    <div class="detail-label">Hujjat ID</div>
+                                    <div class="detail-value">${order.document_processes_id || 'N/A'}</div>
+                                </div>
+                                <div class="detail-item">
+                                    <div class="detail-label">Shop ID</div>
+                                    <div class="detail-value">${order.shop_id}</div>
+                                </div>
+                                <div class="detail-item">
+                                    <div class="detail-label">Parent ID</div>
+                                    <div class="detail-value">${order.parent_id || 'N/A'}</div>
+                                </div>
+                            </div>
+                            
+                            ${order.kinggarden ? `
+                                <div class="detail-item">
+                                    <div class="detail-label">Bog''cha</div>
+                                    <div class="detail-value">${order.kinggarden.name || 'N/A'}</div>
+                                </div>
+                            ` : ''}
+                            
+                            ${order.shop ? `
+                                <div class="detail-item">
+                                    <div class="detail-label">Do''kon</div>
+                                    <div class="detail-value">${order.shop.shop_name || 'N/A'}</div>
+                                </div>
+                            ` : ''}
+                            
+                            <div class="products-section" id="products-section-${groupIndex}-${orderIndex}">
+                                <div class="products-title" onclick="toggleProducts(${groupIndex}, ${orderIndex})">
+                                    <span class="collapse-icon"></span>
+                                     Mahsulotlar (${order.products.length} ta)
+                                </div>
+                                <div class="products-list" id="products-list-${groupIndex}-${orderIndex}">
+                                    ${productsHtml}
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                });
+                
+                groupDiv.innerHTML = `
+                    <div class="order-group-header" onclick="toggleOrderGroup(${groupIndex})">
+                        <div class="order-title">
+                            <span class="collapse-icon"></span>
+                            ${group.order_title}
+                        </div>
+                        <div class="order-count">${group.order_count} ta order</div>
+                    </div>
+                    <div class="orders-list" id="orders-list-${groupIndex}">
+                        ${ordersHtml}
+                    </div>
+                `;
+                
+                container.appendChild(groupDiv);
+            });
+        }
+        
+        function toggleOrderGroup(groupIndex) {
+            const ordersList = document.getElementById('orders-list-' + groupIndex);
+            const icon = ordersList.previousElementSibling.querySelector('.collapse-icon');
+            
+            if (ordersList.classList.contains('collapsed')) {
+                ordersList.classList.remove('collapsed');
+                icon.classList.remove('collapsed');
+            } else {
+                ordersList.classList.add('collapsed');
+                icon.classList.add('collapsed');
+            }
+        }
+        
+        function toggleOrderDetails(groupIndex, orderIndex) {
+            const orderDetails = document.getElementById('order-details-' + groupIndex + '-' + orderIndex);
+            const icon = orderDetails.previousElementSibling.querySelector('.collapse-icon');
+            
+            if (orderDetails.classList.contains('collapsed')) {
+                orderDetails.classList.remove('collapsed');
+                icon.classList.remove('collapsed');
+            } else {
+                orderDetails.classList.add('collapsed');
+                icon.classList.add('collapsed');
+            }
+        }
+        
+        function toggleProducts(groupIndex, orderIndex) {
+            const productsList = document.getElementById('products-list-' + groupIndex + '-' + orderIndex);
+            const icon = productsList.previousElementSibling.querySelector('.collapse-icon');
+            
+            if (productsList.classList.contains('collapsed')) {
+                productsList.classList.remove('collapsed');
+                icon.classList.remove('collapsed');
+            } else {
+                productsList.classList.add('collapsed');
+                icon.classList.add('collapsed');
+            }
+        }
+        
+        function collapseAll() {
+            // Barcha order guruhlarini yig''ish
+            const orderGroups = document.querySelectorAll('.order-group');
+            orderGroups.forEach(function(group) {
+                const ordersList = group.querySelector('.orders-list');
+                const icon = group.querySelector('.order-group-header .collapse-icon');
+                ordersList.classList.add('collapsed');
+                icon.classList.add('collapsed');
+            });
+            
+            // Barcha order details va products larni yig''ish
+            const orderDetails = document.querySelectorAll('.order-details, .products-list');
+            orderDetails.forEach(function(element) {
+                element.classList.add('collapsed');
+            });
+            
+            const icons = document.querySelectorAll('.collapse-icon');
+            icons.forEach(function(icon) {
+                icon.classList.add('collapsed');
+            });
+        }
+        
+        function expandAll() {
+            // Barcha elementlarni ochish
+            const collapsedElements = document.querySelectorAll('.collapsed');
+            collapsedElements.forEach(function(element) {
+                element.classList.remove('collapsed');
+            });
+        }
+        
+        function createPagination(pagination) {
+            const paginationDiv = document.getElementById('pagination');
+            paginationDiv.innerHTML = '';
+            
+            // Oldingi sahifa tugmasi
+            const prevBtn = document.createElement('button');
+            prevBtn.textContent = ' Oldingi';
+            prevBtn.disabled = !pagination.prev;
+            prevBtn.onclick = function() {
+                if (pagination.prev) {
+                    loadPage(pagination.current_page - 1);
+                }
+            };
+            paginationDiv.appendChild(prevBtn);
+            
+            // Sahifa raqamlari
+            const pageInfo = document.createElement('div');
+            pageInfo.className = 'pagination-info';
+            pageInfo.textContent = 'Sahifa ' + pagination.current_page + ' / ' + pagination.last_page;
+            paginationDiv.appendChild(pageInfo);
+            
+            // Keyingi sahifa tugmasi
+            const nextBtn = document.createElement('button');
+            nextBtn.textContent = 'Keyingi ';
+            nextBtn.disabled = !pagination.next;
+            nextBtn.onclick = function() {
+                if (pagination.next) {
+                    loadPage(pagination.current_page + 1);
+                }
+            };
+            paginationDiv.appendChild(nextBtn);
+        }
+        
+        function loadPage(page) {
+            const apiUrl = document.getElementById('apiUrl').value;
+            const perPage = document.getElementById('perPage').value;
+            const url = apiUrl + '?page=' + page + '&per_page=' + perPage;
+            
+            showLoading();
+            fetch(url)
+                .then(function(response) {
+                    return response.json();
+                })
+                .then(function(data) {
+                    if (data.success) {
+                        showData(data);
+                    } else {
+                        showError(data.message || 'Noma\'lum xatolik');
+                    }
+                })
+                .catch(function(error) {
+                    showError('API ga ulanishda xatolik: ' + error.message);
+                });
+        }
+        
+        function loadData() {
+            loadPage(1);
+        }
+        
+        // Sahifa yuklanganda avtomatik ma''lumotlarni yuklash
+        window.onload = function() {
+            document.getElementById('loadBtn').onclick = loadData;
+            document.getElementById('collapseAllBtn').onclick = collapseAll;
+            document.getElementById('expandAllBtn').onclick = expandAll;
+            loadData();
+        };
+    </script>
+</body>
+</html>
