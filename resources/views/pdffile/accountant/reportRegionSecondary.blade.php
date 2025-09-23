@@ -149,7 +149,7 @@
         <table>
             <!-- Asosiy sarlavha qatorlari -->
             <tr class="header-row">
-                <th rowspan="2" class="number-col"></th>
+                <th rowspan="2" class="number-col">№</th>
                 <th rowspan="2" class="mtt-col">ДМТТ</th>
                 <th rowspan="2" class="month-col">Кунлар</th>
                 <th colspan="3" class="amount-col">Харжатлар</th>

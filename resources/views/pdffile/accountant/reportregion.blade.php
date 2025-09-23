@@ -107,6 +107,7 @@
         <table>
             <!-- Asosiy sarlavha qatorlari -->
             <tr class="header-row">
+                <th rowspan="2" class="org-name-col">№</th>
                 <th rowspan="2" class="org-name-col">Ташкилот номи</th>
                 <th colspan="2">Буюртма бўйича бола сони</th>
                 <th colspan="2">1 бола учун белгиланган нарх</th>
@@ -183,6 +184,7 @@
                 @endphp
                 
                 <tr class="data-row">
+                    <td class="org-name-col">{{ $loop->iteration }}</td>
                     <td class="org-name-col">{{ $row_number }}-ДМТТ</td>
                     <td>{{ number_format($children_3_7, 0, ',', ' ') }}</td>
                     <td>{{ number_format($children_short, 0, ',', ' ') }}</td>
@@ -199,7 +201,7 @@
             
             <!-- Jami qatori -->
             <tr class="total-row">
-                <td><strong>Jami</strong></td>
+                <td colspan="2"><strong>Jami</strong></td>
                 <td><strong>{{ number_format($total_children_3_7, 0, ',', ' ') }}</strong></td>
                 <td><strong>{{ number_format($total_children_short, 0, ',', ' ') }}</strong></td>
                 <td><strong>{{ number_format($total_price_3_7, 1, ',', ' ') }}</strong></td>

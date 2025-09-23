@@ -5,6 +5,9 @@ namespace App\Http\Controllers;
 use App\Exports\NakapitelExport;
 use App\Exports\FakturaExport;
 use App\Exports\RegionSchotFakturaExport;
+use App\Exports\TransportationRegionExport;
+use App\Exports\ReportRegionExport;
+use App\Exports\ReportRegionSecondaryExport;
 use App\Models\Age_range;
 use App\Models\bycosts;
 use App\Models\Active_menu;
@@ -2154,6 +2157,13 @@ class AccountantController extends Controller
         return Excel::download(new RegionSchotFakturaExport($id, $start, $end), 'region_schotfaktura_'.date('Y-m-d').'.xlsx');
     }
 
+    public function transportationRegionexcel(Request $request, $id, $start, $end){
+        // Execution time oshirish
+        set_time_limit(300); // 5 daqiqa
+        
+        return Excel::download(new TransportationRegionExport($id, $start, $end), 'transportation_region_'.date('Y-m-d').'.xlsx');
+    }
+
     public function reportRegionSecondary(Request $request, $id, $start, $end){
         $days = Day::where('days.id', '>=', $start)->where('days.id', '<=', $end)
             ->join('months', 'months.id', '=', 'days.month_id')
@@ -2203,8 +2213,18 @@ class AccountantController extends Controller
         
     }
 
-    public function reportRegionSecondaryexcel(Request $request, $id, $start, $end){
+    public function reportregionexcel(Request $request, $id, $start, $end){
+        // Execution time oshirish
+        set_time_limit(300); // 5 daqiqa
+        
+        return Excel::download(new ReportRegionExport($id, $start, $end), 'report_region_'.date('Y-m-d').'.xlsx');
+    }
 
+    public function reportRegionSecondaryexcel(Request $request, $id, $start, $end){
+        // Execution time oshirish
+        set_time_limit(300); // 5 daqiqa
+        
+        return Excel::download(new ReportRegionSecondaryExport($id, $start, $end), 'report_region_secondary_'.date('Y-m-d').'.xlsx');
     }
 
     public function boqchakexcel(Request $request, $id, $start, $end){
