@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Exports\NakapitelExport;
 use App\Exports\FakturaExport;
+use App\Exports\RegionSchotFakturaExport;
 use App\Models\Age_range;
 use App\Models\bycosts;
 use App\Models\Active_menu;
@@ -2144,6 +2145,10 @@ class AccountantController extends Controller
         $name = $start.$end.$id."schotfaktursecond.pdf";
         
         return $pdf->stream($name);
+    }
+
+    public function regionSchotFakturaexcel(Request $request, $id, $start, $end){
+        return Excel::download(new RegionSchotFakturaExport($id, $start, $end), 'region_schotfaktura_'.date('Y-m-d').'.xlsx');
     }
 
     public function reportRegionSecondary(Request $request, $id, $start, $end){
