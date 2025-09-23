@@ -2148,6 +2148,9 @@ class AccountantController extends Controller
     }
 
     public function regionSchotFakturaexcel(Request $request, $id, $start, $end){
+        // Execution time oshirish
+        set_time_limit(300); // 5 daqiqa
+        
         return Excel::download(new RegionSchotFakturaExport($id, $start, $end), 'region_schotfaktura_'.date('Y-m-d').'.xlsx');
     }
 
