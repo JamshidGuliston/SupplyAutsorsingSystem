@@ -8,6 +8,10 @@ use App\Exports\RegionSchotFakturaExport;
 use App\Exports\TransportationRegionExport;
 use App\Exports\ReportRegionExport;
 use App\Exports\ReportRegionSecondaryExport;
+use App\Exports\NakapitWithoutCostExport;
+use App\Exports\NormExport;
+use App\Exports\SchotFakturaSecondExport;
+use App\Exports\TransportationExcelExport;
 use App\Models\Age_range;
 use App\Models\bycosts;
 use App\Models\Active_menu;
@@ -1109,9 +1113,6 @@ class AccountantController extends Controller
 		$dompdf->stream($name, ['Attachment' => 0]);    
     }
 
-    public function normexcel(Request $request, $id, $ageid, $start, $end, $costid){
-        
-    }
 
     public function svod(Request $request){
         // dd($request->all());
@@ -1946,17 +1947,6 @@ class AccountantController extends Controller
 
     }
 
-    public function transportationSecondaryexcel(Request $request, $id, $start, $end, $costid){
-        $kindgar = Kindgarden::where('id', $id)->first();
-        $days = Day::where('days.id', '>=', $start)->where('days.id', '<=', $end)
-            ->join('months', 'months.id', '=', 'days.month_id')
-            ->join('years', 'years.id', '=', 'days.year_id')
-            ->get(['days.id', 'days.day_number', 'months.month_name', 'years.year_name', 'days.created_at']);
-        $ages = Age_range::all();
-        $costs = Protsent::where('region_id', $kindgar->region_id)
-                ->where('end_date', '>=', $days[count($days)-1]->created_at->format('Y-m-d'))
-                ->get();
-    }
 
     public function transportationThird(Request $request, $id, $start, $end){
         $kindgar = Kindgarden::where('id', $id)->first();
@@ -1988,17 +1978,7 @@ class AccountantController extends Controller
         return $pdf->stream('transportationThird.pdf');
     }
 
-    public function transportationThirdexcel(Request $request, $id, $start, $end, $costid){
-        $kindgar = Kindgarden::where('id', $id)->first();
-        $days = Day::where('days.id', '>=', $start)->where('days.id', '<=', $end)
-            ->join('months', 'months.id', '=', 'days.month_id')
-            ->join('years', 'years.id', '=', 'days.year_id')
-            ->get(['days.id', 'days.day_number', 'months.month_name', 'years.year_name', 'days.created_at']);
-        $ages = Age_range::all();
-        $costs = Protsent::where('region_id', $kindgar->region_id)
-                ->where('end_date', '>=', $days[count($days)-1]->created_at->format('Y-m-d'))
-                ->get();
-    }
+   
 
     public function transportationRegion(Request $request, $id, $start, $end){
         $kindgardens = Kindgarden::where('region_id', $id)->get();
@@ -2195,22 +2175,87 @@ class AccountantController extends Controller
         return $pdf->stream('reportRegionSecondary.pdf');
     }
 
-    public function reportRegionOfProducts(Request $request, $id, $start, $end){
+    public function reportProductsOfRegion(Request $request, $id, $start, $end, $ageid){
         $days = Day::where('days.id', '>=', $start)->where('days.id', '<=', $end)
             ->join('months', 'months.id', '=', 'days.month_id')
             ->join('years', 'years.id', '=', 'days.year_id')
-            ->get(['days.id', 'days.day_number', 'months.month_name', 'years.year_name', 'days.created_at']);
-        $ages = Age_range::all();
+            ->get(['days.id', 'days.day_number', 'months.month_name', 'days.month_id', 'years.year_name', 'days.created_at']);
+        $protsent = Protsent::where('region_id', $id)
+                ->where('start_date', '<=', $days[0]->created_at->format('Y-m-d'))
+                ->where('end_date', '>=', $days[count($days)-1]->created_at->format('Y-m-d'))
+                ->get();
+
+        $age = Age_range::where('id', $ageid)->first();
         $products = Product::all();
         $region = Region::where('id', $id)->first();
-        $kindgardens = Kindgarden::where('region_id', $id)->get();
-        $spended_products = [];
-        
-        return view('pdffile.accountant.reportRegionOfProducts', compact('region', 'days', 'costs', 'number_childrens', 'ages', 'kindgardens'));
-    }
+        $kindgardens = Kindgarden::where('region_id', $id)
+                    ->whereHas('age_range', function($query) use ($ageid){
+                        $query->where('age_range_id', $ageid);
+                    })
+                    ->get();
+        $nakproducts = [];
+        foreach($days as $day){
+            $join = Number_children::where('number_childrens.day_id', $day->id)
+                    ->where('kingar_name_id', $kindgardens->first()->id)
+                    ->where('king_age_name_id', $ageid)
+                    ->leftjoin('active_menus', function($join){
+                        $join->on('number_childrens.kingar_menu_id', '=', 'active_menus.title_menu_id');
+                        $join->on('number_childrens.king_age_name_id', '=', 'active_menus.age_range_id');
+                    })
+                    ->where('active_menus.day_id', $day->id)
+                    ->join('products', 'active_menus.product_name_id', '=', 'products.id')
+                    ->join('sizes', 'products.size_name_id', '=', 'sizes.id')
+                    ->get();
+            // dd($join);
+            // $agerange = array();
+            $productscount = [];
+            // $productscount = array_fill(1, 500, $agerange);
+            foreach($join as $row){
+                if(!isset($productscount[$row->product_name_id][$ageid])){
+                    $productscount[$row->product_name_id][$ageid] = 0;
+                }
+                $productscount[$row->product_name_id][$ageid] += $row->weight;
+                $productscount[$row->product_name_id][$ageid.'-children'] = $row->kingar_children_number;
+                $productscount[$row->product_name_id][$ageid.'div'] = $row->div;
+                $productscount[$row->product_name_id]['product_name'] = $row->product_name;
+                $productscount[$row->product_name_id][$ageid.'sort'] = $row->sort;
+                $productscount[$row->product_name_id]['size_name'] = $row->size_name;
+            }
+            foreach($productscount as $key => $row){
+                if(isset($row['product_name'])){
+                    $childs = Number_children::where('day_id', $day->id)
+                                    ->whereIn('kingar_name_id', $kindgardens->pluck('id')->toArray())
+                                    ->where('king_age_name_id', $ageid)
+                                    ->sum('kingar_children_number');    
+                    $nakproducts[0][$day->id] = $childs;
+                    $nakproducts[0]['product_name'] = "Болалар сони";
+                    $nakproducts[0]['size_name'] = "";
+                    $nakproducts[$key][$day->id] = ($row[$ageid]*$row[$ageid.'-children']) / $row[$ageid.'div'];
+                    $nakproducts[$key]['product_name'] = $row['product_name'];
+                    $nakproducts[$key]['sort'] = $row[$ageid.'sort'];
+                    $nakproducts[$key]['size_name'] = $row['size_name'];
+                }
+            }
+        }
 
-    public function reportRegionOfProductsexcel(Request $request, $id, $start, $end){
+        usort($nakproducts, function ($a, $b){
+            if(isset($a["sort"]) and isset($b["sort"])){
+                return $a["sort"] > $b["sort"];
+            }
+        });
+// snapy pdf
+        $pdf = \PDF::loadView('pdffile.accountant.reportProductsOfRegion', compact('region', 'days', 'protsent', 'age', 'products', 'kindgardens', 'nakproducts'));
+        $pdf->setPaper('A4', 'landscape');
+        $pdf->setOptions(['dpi' => 150]);
+
+        return $pdf->stream('reportProductsOfRegion.pdf');
         
+        // return view('pdffile.accountant.reportProductsOfRegion', compact('region', 'days', 'protsent', 'age', 'products', 'kindgardens', 'nakproducts'));
+    }   
+
+    public function reportProductsOfRegionexcel(Request $request, $id, $start, $end, $ageid){
+        set_time_limit(300);
+        return Excel::download(new ReportProductsOfRegionExport($id, $start, $end, $ageid), 'report_products_of_region_'.date('Y-m-d').'.xlsx');
     }
 
     public function reportregionexcel(Request $request, $id, $start, $end){
@@ -2225,6 +2270,36 @@ class AccountantController extends Controller
         set_time_limit(300); // 5 daqiqa
         
         return Excel::download(new ReportRegionSecondaryExport($id, $start, $end), 'report_region_secondary_'.date('Y-m-d').'.xlsx');
+    }
+
+    public function nakapitwithoutcostexcel(Request $request, $id, $ageid, $start, $end){
+        set_time_limit(300);
+        return Excel::download(new NakapitWithoutCostExport($request, $id, $ageid, $start, $end), 'nakapit_without_cost_'.date('Y-m-d').'.xlsx');
+    }
+
+    public function normexcel(Request $request, $id, $ageid, $start, $end, $costid){
+        set_time_limit(300);
+        return Excel::download(new NormExport($id, $ageid, $start, $end, $costid), 'norm_'.date('Y-m-d').'.xlsx');
+    }
+
+    public function schotfaktursecondexcel(Request $request, $id, $start, $end){
+        set_time_limit(300);
+        return Excel::download(new SchotFakturaSecondExport($id, $start, $end), 'schotfaktura_second_'.date('Y-m-d').'.xlsx');
+    }
+
+    public function transportationexcel(Request $request, $id, $start, $end, $costid){
+        set_time_limit(300);
+        return Excel::download(new TransportationExcelExport($id, $start, $end, $costid), 'transportation_'.date('Y-m-d').'.xlsx');
+    }
+
+    public function transportationSecondaryexcel(Request $request, $id, $start, $end, $costid){
+        set_time_limit(300);
+        return Excel::download(new TransportationExcelExport($id, $start, $end, $costid), 'transportation_secondary_'.date('Y-m-d').'.xlsx');
+    }
+
+    public function transportationThirdexcel(Request $request, $id, $start, $end, $costid){
+        set_time_limit(300);
+        return Excel::download(new TransportationExcelExport($id, $start, $end, $costid), 'transportation_third_'.date('Y-m-d').'.xlsx');
     }
 
     public function boqchakexcel(Request $request, $id, $start, $end){
