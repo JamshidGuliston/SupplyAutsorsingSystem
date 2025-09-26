@@ -2243,10 +2243,12 @@ class AccountantController extends Controller
                 return $a["sort"] > $b["sort"];
             }
         });
-// snapy pdf
-        $pdf = \PDF::loadView('pdffile.accountant.reportProductsOfRegion', compact('region', 'days', 'protsent', 'age', 'products', 'kindgardens', 'nakproducts'));
+
+// dompdf 
+        $pdf = new Dompdf();
+        $pdf->loadHtml(view('pdffile.accountant.reportProductsOfRegion', compact('region', 'days', 'protsent', 'age', 'products', 'kindgardens', 'nakproducts')));
         $pdf->setPaper('A4', 'landscape');
-        $pdf->setOptions(['dpi' => 150]);
+        $pdf->render();
 
         return $pdf->stream('reportProductsOfRegion.pdf');
         

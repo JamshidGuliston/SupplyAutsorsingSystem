@@ -99,7 +99,7 @@
                 <table style="width:100%; table-layout: fixed;">
 				    <tbody>
                         <tr>
-							<th scope="col" style="width: 5%;" rowspan="2">№</th>
+							<th scope="col" rowspan="2">№</th>
                             <th scope="col" style="width: 10%;" rowspan="2">Махсулотлар</th>
                             <th style="width: 10px;">Сана</th>
                             <!-- <th style="width: 30px; font-size: 7px"><bold>Нарх</bold></th> -->
