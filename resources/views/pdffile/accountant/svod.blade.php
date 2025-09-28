@@ -107,6 +107,7 @@
 						$allsumma = 0;
 						$ndssumma = 0;
 						$jamisumma = 0;
+						
 					?>
 					@foreach($nakproducts as $key => $row)
 					@if($loop->index % 2 == 0)
@@ -114,12 +115,13 @@
 					@else
 						<tr>
 					@endif
+						<?php 
+							$summ = 0;
+							$row[0] = $row[0] ?? 0;
+						?>
 						<td>{{ $row['product_name'] }}</td>
 						<td>{{ $row['size_name'] }}</td>
 						<td>{{ $row[0] }}</td>
-						<?php 
-							$summ = 0;
-						?>
 						@foreach($kindgardens as $day)
 							@if(!isset($regionsumm[$day['id']]))
 								<?php $regionsumm[$day['id']] = 0; ?>

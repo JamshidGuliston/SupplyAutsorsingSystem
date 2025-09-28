@@ -145,12 +145,12 @@
 								@else
                                 	@if($row['size_name'] == "дона")
                                   		<?php  
-                                            printf("%01.3f", $row[$day['id']]); 
+                                            printf("%01.2f", $row[$day['id']]); 
                                             $summ += $row[$day['id']];
                                         ?>
                                 	@else
                                 		<?php  
-                                            printf("%01.3f", $row[$day['id']]); 
+                                            printf("%01.2f", $row[$day['id']]); 
                                             $summ += $row[$day['id']];
                                         ?>
                                   	@endif
@@ -168,7 +168,7 @@
 						@if($row['product_name'] == "Болалар сони")
 							<td>{{ $summ }}</td>
 						@else
-							<td ><?php printf("%01.3f", $summ) ?></td>
+							<td ><?php printf("%01.2f", $summ) ?></td>
 						@endif
 						
 					</tr>

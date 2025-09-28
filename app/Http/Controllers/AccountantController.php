@@ -1185,15 +1185,18 @@ class AccountantController extends Controller
                 return $a["sort"] > $b["sort"];
             }
         });
-        
-        $dompdf = new Dompdf('UTF-8');
-		$html = mb_convert_encoding(view('pdffile.accountant.svod', compact('days', 'age', 'regions', 'nakproducts', 'kindgardens', 'over', 'nds')), 'HTML-ENTITIES', 'UTF-8');
-		$dompdf->loadHtml($html);
+        // use snappy to generate pdf
+        $pdf = PDF::loadView('pdffile.accountant.svod', compact('days', 'age', 'regions', 'nakproducts', 'kindgardens', 'over', 'nds'));
+        return $pdf->stream('svod.pdf');
 
-		$dompdf->setPaper('A3',  'landscape');
-		$name = "svod.pdf";
-		$dompdf->render();
-		$dompdf->stream($name, ['Attachment' => 0]); 
+        // $dompdf = new Dompdf('UTF-8');
+		// $html = mb_convert_encoding(view('pdffile.accountant.svod', compact('days', 'age', 'regions', 'nakproducts', 'kindgardens', 'over', 'nds')), 'HTML-ENTITIES', 'UTF-8');
+		// $dompdf->loadHtml($html);
+
+		// $dompdf->setPaper('A3',  'landscape');
+		// $name = "svod.pdf";
+		// $dompdf->render();
+		// $dompdf->stream($name, ['Attachment' => 0]); 
     }
 
     public function svodworkers(Request $request){
