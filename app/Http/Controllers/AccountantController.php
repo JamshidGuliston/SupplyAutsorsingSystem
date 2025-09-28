@@ -13,6 +13,7 @@ use App\Exports\NormExport;
 use App\Exports\SchotFakturaSecondExport;
 use App\Exports\TransportationExcelExport;
 use App\Exports\SvodExport;
+use App\Exports\ReportProductsOfRegionExport;
 use App\Models\Age_range;
 use App\Models\bycosts;
 use App\Models\Active_menu;

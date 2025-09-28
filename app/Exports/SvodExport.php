@@ -228,20 +228,42 @@ class SvodExport implements FromArray, WithStyles, WithColumnWidths, WithEvents
 
     public function columnWidths(): array
     {
-        return [
-            'A' => 25,
-            'B' => 8,
-            'C' => 10,
-            'D' => 12,
-            'E' => 12,
-            'F' => 12,
-            'G' => 12,
-            'H' => 12,
-            'I' => 12,
-            'J' => 12,
-            'K' => 12,
-            'L' => 12,
+        $widths = [
+            'A' => 25,  // Махсулот
+            'B' => 8,   // Ўл.бир
+            'C' => 10,  // Нарх
         ];
+        
+        // Ustunlar nomlarini yaratish (D dan boshlab)
+        $columns = range('D', 'Z');
+        if(count($this->kindgardens) * 2 + 2 > 23) {
+            // Agar ko'p ustun kerak bo'lsa, AA, AB, AC... ni qo'shamiz
+            foreach(range('A', 'Z') as $first) {
+                foreach(range('A', 'Z') as $second) {
+                    $columns[] = $first . $second;
+                }
+            }
+        }
+        
+        $columnIndex = 0;
+        // Har bir bog'cha uchun 2 ta ustun
+        for($i = 0; $i < count($this->kindgardens) * 2; $i++) {
+            if(isset($columns[$columnIndex])) {
+                $widths[$columns[$columnIndex]] = 12;
+                $columnIndex++;
+            }
+        }
+        
+        // KG va Summa ustunlari
+        if(isset($columns[$columnIndex])) {
+            $widths[$columns[$columnIndex]] = 12;  // КГ
+            $columnIndex++;
+        }
+        if(isset($columns[$columnIndex])) {
+            $widths[$columns[$columnIndex]] = 15;  // Сумма
+        }
+        
+        return $widths;
     }
 
     public function styles(Worksheet $sheet)
