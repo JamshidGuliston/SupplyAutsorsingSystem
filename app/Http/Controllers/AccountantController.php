@@ -1187,7 +1187,8 @@ class AccountantController extends Controller
         });
         // use snappy to generate pdf
         $pdf = PDF::loadView('pdffile.accountant.svod', compact('days', 'age', 'regions', 'nakproducts', 'kindgardens', 'over', 'nds'));
-        return $pdf->stream('svod.pdf');
+        $pdf->setPaper('A3', 'landscape');
+        return $pdf->stream('svod.pdf', ['Attachment' => 0]);
 
         // $dompdf = new Dompdf('UTF-8');
 		// $html = mb_convert_encoding(view('pdffile.accountant.svod', compact('days', 'age', 'regions', 'nakproducts', 'kindgardens', 'over', 'nds')), 'HTML-ENTITIES', 'UTF-8');
