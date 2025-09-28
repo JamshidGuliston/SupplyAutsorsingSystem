@@ -226,7 +226,7 @@ class TestController extends Controller
 			->join('months', 'months.id', '=', 'days.month_id')
 			->join('years', 'years.id', '=', 'days.year_id')
 			->orderBy('days.id', 'DESC')
-			->first(['days.day_number','days.id as id', 'months.month_name', 'years.year_name']);
+			->first(['days.day_number','days.id as id', 'months.month_name', 'months.id as month_id', 'years.year_name']);
         // dd($day);
         $workerfood = titlemenu_food::where('day_id', ($today-1))
                     ->where('worker_age_id', $ageid)
@@ -234,14 +234,21 @@ class TestController extends Controller
                     ->get();
 
 
-		// $costs = bycosts::where('day_id', bycosts::where('day_id', '<=', $today)->where('region_name_id', Kindgarden::where('id', $gid)->first()->region_id)->orderBy('day_id', 'DESC')->first()->day_id)->where('region_name_id', Kindgarden::where('id', $gid)->first()->region_id)->orderBy('day_id', 'DESC')->get();
-		// $narx = [];
-		// foreach($costs as $row){
-		// 	if(!isset($narx[$row->praduct_name_id])){
-		// 		$narx[$row->praduct_name_id] = $row->price_cost;
-		// 	}
-		// }
-        $protsent = Protsent::where('region_id', Kindgarden::where('id', $gid)->first()->region_id)->where('age_range_id', $ageid)->first();
+		if($day->month_id % 12 == 0){
+			$month_id = 12;
+		}else{
+			$month_id = $day->month_id % 12;
+		}
+        $protsent = Protsent::where('region_id', Kindgarden::where('id', $gid)->first()->region_id)
+		                    ->where('start_date', '<=', $day->year_name.'-'.$month_id.'-'.$day->day_number)
+							->where('end_date', '>=', $day->year_name.'-'.$month_id.'-'.$day->day_number)
+		                    ->where('age_range_id', $ageid)->first();
+		if(!$protsent){
+			$protsent = new Protsent();
+			// age_range_id 3 va 4 uchun
+			$protsent->where('age_range_id', 3)->eater_cost = 0;
+			$protsent->where('age_range_id', 4)->eater_cost = 0;
+		}
 		
         $nextdaymenuitem = [];
         $workerproducts = [];
@@ -1125,7 +1132,7 @@ class TestController extends Controller
 		$dateString = sprintf(
 			'%04d-%02d-%02d',
 			$day->year_name,
-			($day->month_id % 12),
+			($day->month_id % 12 == 0 ? 12 : $day->month_id % 12),
 			$day->day_number
 		);
 		
@@ -1136,7 +1143,6 @@ class TestController extends Controller
 			// age_range_id 3 va 4 uchun
 			$protsent->where('age_range_id', 3)->eater_cost = 0;
 			$protsent->where('age_range_id', 4)->eater_cost = 0;
-			
 		}
 
         $dompdf = new Dompdf('UTF-8');

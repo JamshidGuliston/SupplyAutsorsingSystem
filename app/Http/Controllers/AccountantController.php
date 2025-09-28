@@ -2196,7 +2196,7 @@ class AccountantController extends Controller
         $nakproducts = [];
         foreach($days as $day){
             $join = Number_children::where('number_childrens.day_id', $day->id)
-                    ->where('kingar_name_id', $kindgardens->first()->id)
+                    ->whereIn('kingar_name_id', $kindgardens->pluck('id')->toArray())
                     ->where('king_age_name_id', $ageid)
                     ->leftjoin('active_menus', function($join){
                         $join->on('number_childrens.kingar_menu_id', '=', 'active_menus.title_menu_id');
@@ -2213,13 +2213,14 @@ class AccountantController extends Controller
             foreach($join as $row){
                 if(!isset($productscount[$row->product_name_id][$ageid])){
                     $productscount[$row->product_name_id][$ageid] = 0;
+                    $productscount[$row->product_name_id][$ageid.'-children'] = 0;
+                    $productscount[$row->product_name_id][$ageid.'div'] = $row->div;
+                    $productscount[$row->product_name_id]['product_name'] = $row->product_name;
+                    $productscount[$row->product_name_id][$ageid.'sort'] = $row->sort;
+                    $productscount[$row->product_name_id]['size_name'] = $row->size_name;
                 }
                 $productscount[$row->product_name_id][$ageid] += $row->weight;
-                $productscount[$row->product_name_id][$ageid.'-children'] = $row->kingar_children_number;
-                $productscount[$row->product_name_id][$ageid.'div'] = $row->div;
-                $productscount[$row->product_name_id]['product_name'] = $row->product_name;
-                $productscount[$row->product_name_id][$ageid.'sort'] = $row->sort;
-                $productscount[$row->product_name_id]['size_name'] = $row->size_name;
+                $productscount[$row->product_name_id][$ageid.'-children'] += $row->kingar_children_number;
             }
             foreach($productscount as $key => $row){
                 if(isset($row['product_name'])){
@@ -2250,7 +2251,7 @@ class AccountantController extends Controller
         $pdf->setPaper('A4', 'landscape');
         $pdf->render();
 
-        return $pdf->stream('reportProductsOfRegion.pdf');
+        return $pdf->output();
         
         // return view('pdffile.accountant.reportProductsOfRegion', compact('region', 'days', 'protsent', 'age', 'products', 'kindgardens', 'nakproducts'));
     }   
