@@ -82,7 +82,7 @@
 						 <center><b>{{ $regions->find($kindgardens[0]->region_id)->region_name." мттларнинг ". $days[0]->year_name ." йил ". $days[0]->month_name ." ойида берилган озиқ овқат махсулотларининг хисоб-китоби" }}</b></center> 
 					</div>
                 </div>
-                <table style="table-layout: fixed;">
+                <table style="table-layout: fixed; width: 99%;">
                     <thead>
                         <tr>
                             <th scope="col" style="width: 7.5%;">Махсулот</th>
@@ -91,7 +91,7 @@
                             @foreach($kindgardens as $day)
 								<th scope="col" colspan="2">{{ $day->kingar_name; }}</th>
 							@endforeach
-							<th>КГ</th>
+							<th style="width: 3%;">КГ</th>
 							<th style="width: 4%;">Сумма</th>
 							<!--<th style="width: 4%;">Устама {{ $over }}%</th>-->
 							<!--<th style="width: 4%;">Жами сумма</th>-->
