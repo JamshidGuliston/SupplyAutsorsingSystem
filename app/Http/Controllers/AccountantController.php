@@ -2251,7 +2251,7 @@ class AccountantController extends Controller
         $pdf->setPaper('A4', 'landscape');
         $pdf->render();
 
-        return $pdf->output();
+        return $pdf->stream('reportProductsOfRegion.pdf');
         
         // return view('pdffile.accountant.reportProductsOfRegion', compact('region', 'days', 'protsent', 'age', 'products', 'kindgardens', 'nakproducts'));
     }   
