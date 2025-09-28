@@ -2203,43 +2203,46 @@ class AccountantController extends Controller
             $join = Number_children::where('number_childrens.day_id', $day->id)
                     ->whereIn('kingar_name_id', $kindgardens->pluck('id')->toArray())
                     ->where('king_age_name_id', $ageid)
-                    ->leftjoin('active_menus', function($join){
-                        $join->on('number_childrens.kingar_menu_id', '=', 'active_menus.title_menu_id');
-                        $join->on('number_childrens.king_age_name_id', '=', 'active_menus.age_range_id');
-                    })
-                    ->where('active_menus.day_id', $day->id)
-                    ->join('products', 'active_menus.product_name_id', '=', 'products.id')
-                    ->join('sizes', 'products.size_name_id', '=', 'sizes.id')
                     ->get();
-            // dd($join);
             // $agerange = array();
             $productscount = [];
             // $productscount = array_fill(1, 500, $agerange);
             foreach($join as $row){
-                if(!isset($productscount[$row->product_name_id][$ageid])){
-                    $productscount[$row->product_name_id][$ageid] = 0;
-                    $productscount[$row->product_name_id][$ageid.'-children'] = 0;
-                    $productscount[$row->product_name_id][$ageid.'div'] = $row->div;
-                    $productscount[$row->product_name_id]['product_name'] = $row->product_name;
-                    $productscount[$row->product_name_id][$ageid.'sort'] = $row->sort;
-                    $productscount[$row->product_name_id]['size_name'] = $row->size_name;
+                $active_menu = Active_menu::where('day_id', $day->id)
+                    ->where('title_menu_id', $row->kingar_menu_id)
+                    ->join('products', 'active_menus.product_name_id', '=', 'products.id')
+                    ->join('sizes', 'products.size_name_id', '=', 'sizes.id')
+                    ->get();
+
+                foreach($active_menu as $menu){
+                    // dd($menu);
+                    if(!isset($productscount[$row->kingar_name_id][$menu->product_name_id])){
+                        $productscount[$row->kingar_name_id][$menu->product_name_id] = 0;
+                    }
+                    $productscount[$row->kingar_name_id][$menu->product_name_id] += $menu->weight;
                 }
-                $productscount[$row->product_name_id][$ageid] += $row->weight;
-                $productscount[$row->product_name_id][$ageid.'-children'] += $row->kingar_children_number;
             }
+            // dd($productscount);
             foreach($productscount as $key => $row){
-                if(isset($row['product_name'])){
-                    $childs = Number_children::where('day_id', $day->id)
-                                    ->whereIn('kingar_name_id', $kindgardens->pluck('id')->toArray())
-                                    ->where('king_age_name_id', $ageid)
-                                    ->sum('kingar_children_number');    
-                    $nakproducts[0][$day->id] = $childs;
+                $product = Product::whereIn('id', array_keys($row))->get();
+                $childs = Number_children::where('day_id', $day->id)
+                                ->where('kingar_name_id', $key)
+                                ->where('king_age_name_id', $ageid)
+                                ->sum('kingar_children_number');
+                if(!isset($nakproducts[0][$day->id])){
+                    $nakproducts[0][$day->id] = 0;
                     $nakproducts[0]['product_name'] = "Болалар сони";
                     $nakproducts[0]['size_name'] = "";
-                    $nakproducts[$key][$day->id] = ($row[$ageid]*$row[$ageid.'-children']) / $row[$ageid.'div'];
-                    $nakproducts[$key]['product_name'] = $row['product_name'];
-                    $nakproducts[$key]['sort'] = $row[$ageid.'sort'];
-                    $nakproducts[$key]['size_name'] = $row['size_name'];
+                }
+                $nakproducts[0][$day->id] += $childs;
+                foreach($row as $product_id => $weight){
+                    if(!isset($nakproducts[$product_id][$day->id])){
+                        $nakproducts[$product_id][$day->id] = 0;
+                        $nakproducts[$product_id]['product_name'] = $product->where('id', $product_id)->first()->product_name;
+                        $nakproducts[$product_id]['sort'] = $product->where('id', $product_id)->first()->sort;
+                        $nakproducts[$product_id]['size_name'] = $product->where('id', $product_id)->first()->size_name ?? '';
+                    }
+                    $nakproducts[$product_id][$day->id] += ($weight*$childs) / $product->where('id', $product_id)->first()->div;
                 }
             }
         }
@@ -2249,12 +2252,10 @@ class AccountantController extends Controller
                 return $a["sort"] > $b["sort"];
             }
         });
-
-// dompdf 
-        $pdf = new Dompdf();
-        $pdf->loadHtml(view('pdffile.accountant.reportProductsOfRegion', compact('region', 'days', 'protsent', 'age', 'products', 'kindgardens', 'nakproducts')));
+        // use snappy pdf
+        $pdf = \PDF::loadView('pdffile.accountant.reportProductsOfRegion', compact('region', 'days', 'protsent', 'age', 'products', 'kindgardens', 'nakproducts'));
         $pdf->setPaper('A4', 'landscape');
-        $pdf->render();
+        $pdf->setOptions(['dpi' => 150]);
 
         return $pdf->stream('reportProductsOfRegion.pdf');
         
