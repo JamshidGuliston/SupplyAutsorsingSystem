@@ -96,10 +96,10 @@
 						<p style="text-align: center;"><b>{{ $region->region_name }}   да <?php printf('%02d', $days->first()->year_name) ?> йил <?php echo $days->first()->day_number."-".$days->last()->day_number ?> <?php echo $days->first()->month_name ?> кунлари {{ $age->description }} учун сарфланган озиқ-овқат маҳсулотлар тўғрисида маълумот</b></p>
 					</div>
                 </div>
-                <table style="width:100%; table-layout: fixed;">
+                <table style="width:98%; table-layout: fixed;">
 				    <tbody>
                         <tr>
-							<th scope="col" style="width: 3px;" rowspan="2">№</th>
+							<th scope="col" style="width: 3%;" rowspan="2">№</th>
                             <th scope="col" style="width: 10%;" rowspan="2">Махсулотлар</th>
                             <th style="width: 5%;">Сана</th>
                             <!-- <th style="width: 30px; font-size: 7px"><bold>Нарх</bold></th> -->

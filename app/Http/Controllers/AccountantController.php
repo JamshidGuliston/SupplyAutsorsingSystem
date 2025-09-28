@@ -2224,7 +2224,9 @@ class AccountantController extends Controller
             }
             // dd($productscount);
             foreach($productscount as $key => $row){
-                $product = Product::whereIn('id', array_keys($row))->get();
+                $product = Product::whereIn('products.id', array_keys($row))
+                            ->join('sizes', 'products.size_name_id', '=', 'sizes.id')
+                            ->get(['products.id', 'products.product_name', 'sizes.size_name', 'products.sort', 'products.div']);
                 $childs = Number_children::where('day_id', $day->id)
                                 ->where('kingar_name_id', $key)
                                 ->where('king_age_name_id', $ageid)
