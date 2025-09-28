@@ -231,8 +231,8 @@ class ReportProductsOfRegionExport implements FromArray, WithStyles, WithColumnW
                 $sheet->mergeCells('A2:' . $lastColumn . '2');
                 
                 // Birinchi qatorni bold qilish (Болалар сони)
-                if($lastRow > 4) {
-                    $sheet->getStyle('A5:' . $lastColumn . '5')->applyFromArray([
+                if($lastRow > 3) {
+                    $sheet->getStyle('A5:' . $lastColumn . '4')->applyFromArray([
                         'font' => ['bold' => true],
                         'fill' => [
                             'fillType' => Fill::FILL_SOLID,
