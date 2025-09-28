@@ -211,7 +211,7 @@
                 <div class="modal-body">
                     <div class="row">
                         <div class="col-sm-4">
-                            <select class="form-select" id="startdayid" name="start" aria-label="Default select example" required onchange="changeFunc();">
+                            <select class="form-select" id="startdayidsecond" name="start" aria-label="Default select example" required onchange="changeFunction();">
                                 <option value="">-Sanadan-</option>
                                 @foreach($days as $row)
                                     <option value="{{$row['id']}}">{{ $row['day_number'].".".$row['month_name'].".".$row['year_name']; }}</option>
@@ -219,7 +219,7 @@
                             </select>
                         </div>
                         <div class="col-sm-4">
-                            <select class="form-select" id="enddayid" name="end" aria-label="Default select example" required onchange="changeFunc();">
+                            <select class="form-select" id="enddayidsecond" name="end" aria-label="Default select example" required onchange="changeFunction();">
                                 <option value="">-Sanaga-</option>
                                 @foreach($days as $row)
                                     <option value="{{$row['id']}}">{{ $row['day_number'].".".$row['month_name'].".".$row['year_name']; }}</option>
@@ -227,7 +227,7 @@
                             </select>
                         </div>
                         <div class="col-sm-4">
-                            <select class="form-select" id="RegionSelect" name="region_id" aria-label="Default select example" required onchange="changeFunc();">
+                            <select class="form-select" id="RegionSelectsecond" name="region_id" aria-label="Default select example" required onchange="changeFunction();">
                                 <option value="">-Tuman-</option>
                                 @foreach($regions as $row)
                                     <option value="{{$row['id']}}">{{ $row['region_name']; }}</option>
@@ -274,14 +274,15 @@
 @endsection
 @section('script')
 <script>
-    function changeFunc() {
-        var selectBox = document.getElementById("startdayid");
+    function changeFunction() {
+        var selectBox = document.getElementById("startdayidsecond");
         var start = selectBox.options[selectBox.selectedIndex].value;
-        var selectBox = document.getElementById("enddayid");
+        var selectBox = document.getElementById("enddayidsecond");
         var end = selectBox.options[selectBox.selectedIndex].value;
-        var selectBox = document.getElementById("RegionSelect");
+        var selectBox = document.getElementById("RegionSelectsecond");
         var region = selectBox.options[selectBox.selectedIndex].value;
         var div = $('.urlpdf');
+        console.log(start, end, region);
         
         if(start != "" && end != "" && region != ""){
             var html = '<div class="report-section">';
@@ -382,11 +383,6 @@
             }
         })
     });
-    
-    function changeFunc() {
-        var div = $('.divmodproduct');
-        // div.html("<p value=''>1-sad</p>");
-    }
 
     document.multiselect('#testSelect1')
 		.setCheckBoxClick("checkboxAll", function(target, args) {
