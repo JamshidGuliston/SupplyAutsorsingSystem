@@ -12,6 +12,7 @@ use App\Exports\NakapitWithoutCostExport;
 use App\Exports\NormExport;
 use App\Exports\SchotFakturaSecondExport;
 use App\Exports\TransportationExcelExport;
+use App\Exports\SvodExport;
 use App\Models\Age_range;
 use App\Models\bycosts;
 use App\Models\Active_menu;
@@ -2311,6 +2312,23 @@ class AccountantController extends Controller
 
     public function boqchakexcel(Request $request, $id, $start, $end){
 
+    }
+
+    public function svodexcel(Request $request){
+        set_time_limit(300); // 5 daqiqa
+        
+        return Excel::download(
+            new SvodExport(
+                $request->start,
+                $request->end,
+                $request->kindgardens,
+                $request->region_id,
+                $request->cost_id,
+                $request->over,
+                $request->nds
+            ), 
+            'svod_hisoboti_' . date('Y-m-d') . '.xlsx'
+        );
     }
 
 }

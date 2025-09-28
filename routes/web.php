@@ -348,6 +348,7 @@ Route::group(['prefix' => 'accountant', 'middleware' => ['isAccountant', 'auth']
     Route::get('norm/{id}/{ageid}/{start}/{end}/{costid}', [AccountantController::class, 'norm'])->name('accountant.norm');
     Route::get('normexcel/{id}/{ageid}/{start}/{end}/{costid}', [AccountantController::class, 'normexcel'])->name('accountant.normexcel');
     Route::get('svod', [AccountantController::class, 'svod'])->name('accountant.svod');
+    Route::get('svodexcel', [AccountantController::class, 'svodexcel'])->name('accountant.svodexcel');
     // hisobot ishchi xodimlar 
     Route::get('reportsworker', [AccountantController::class, 'reportsworker'])->name('accountant.reportsworker');
     Route::get('kindreportworker/{id}', [AccountantController::class, 'kindreportworker'])->name('accountant.kindreportworker');

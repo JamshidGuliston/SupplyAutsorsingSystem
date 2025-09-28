@@ -186,9 +186,13 @@
                         NDS % da
                         <input type="number" name="nds" class="form-control" required>
                     </div>
-                    <div class="col-sm-4">
+                    <div class="col-sm-2">
                         Yuklab olish
                         <button type="submit" class="btn btn-info form-control">PDF <i class="fas fa-download" aria-hidden="true"></i></button>
+                    </div>
+                    <div class="col-sm-2">
+                        <br>
+                        <button type="button" class="btn btn-success form-control" onclick="downloadExcel()">Excel <i class="fas fa-file-excel" aria-hidden="true"></i></button>
                     </div>
                     <br/>
                 </div>
@@ -399,6 +403,46 @@
 	function disable() {
 		document.multiselect('#testSelect1').setIsEnabled(false);
 	}
+
+    function downloadExcel() {
+        // Formani validatsiya qilish
+        var form = document.querySelector('#modalsvod form');
+        var formData = new FormData(form);
+        
+        // Formning barcha fieldlarini tekshirish
+        var kindgardens = formData.getAll('kindgardens[]');
+        var regionId = formData.get('region_id');
+        var costId = formData.get('cost_id');
+        var start = formData.get('start');
+        var end = formData.get('end');
+        var over = formData.get('over');
+        var nds = formData.get('nds');
+        
+        if (kindgardens.length === 0) {
+            alert('Iltimos, kamida bitta bog\'chani tanlang!');
+            return;
+        }
+        
+        if (!regionId || !costId || !start || !end || !over || !nds) {
+            alert('Iltimos, barcha maydonlarni to\'ldiring!');
+            return;
+        }
+        
+        // Excel URL yaratish
+        var params = new URLSearchParams();
+        kindgardens.forEach(kg => params.append('kindgardens[]', kg));
+        params.append('region_id', regionId);
+        params.append('cost_id', costId);
+        params.append('start', start);
+        params.append('end', end);
+        params.append('over', over);
+        params.append('nds', nds);
+        
+        var url = '{{ route("accountant.svodexcel") }}?' + params.toString();
+        
+        // Yuklab olish
+        window.open(url, '_blank');
+    }
 
 </script>
 @endsection
