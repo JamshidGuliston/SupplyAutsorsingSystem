@@ -53,20 +53,6 @@
             font-size: 10px;
         }
 
-        
-        .vertical-text span {
-            display: block;
-            transform: rotate(-90deg);
-            transform-origin: center;
-            width: 80px;
-            height: 20px;
-            margin-top: 30px;
-            margin-left: -30px;
-            font-size: 10px;
-            line-height: 1.1;
-            text-align: center;
-        }
-        
         .product-name {
 			font-size: 8px;
             font-weight: bold;
@@ -137,13 +123,14 @@
 		}
 
 		.vertical-text {
-            writing-mode: vertical-lr;
-            -webkit-writing-mode: vertical-lr;
-            -ms-writing-mode: tb-lr;
-            text-align: center;
+            writing-mode: vertical-rl;   /* Vertikal joylash */
+            text-orientation: mixed;
+            transform: rotate(180deg);   /* Yo‘nalishni teskari qiladi */
+            transform-origin: center center;
             white-space: nowrap;
             display: inline-block;
         }
+
 
 
 
@@ -171,9 +158,7 @@
                         @php $col++; @endphp
                         <th class="col-product">
 							<div class="vertical-text">
-                                <span>
 								    {{ implode(' ', array_slice(explode(' ', $product['product_name']), 0, 2)) }}
-                                </span>
 							</div>
 						</th>
                     @endif
