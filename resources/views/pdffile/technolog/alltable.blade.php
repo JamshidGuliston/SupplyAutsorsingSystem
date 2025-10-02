@@ -126,22 +126,15 @@
 			text-align: center;
 		}
 
-		/* .vertical-text {
+		.vertical-text {
             writing-mode: vertical-rl;   
             text-orientation: upright;   
             transform: rotate(-90deg);  
             transform-origin: center center;
             white-space: nowrap;
             display: inline-block;
-        } */
-
-        .vertical-text {
-            writing-mode: vertical-rl;   /* pastdan tepaga yozadi */
-            text-orientation: upright;   /* harflar normal ko‘rinadi */
-            white-space: nowrap;
-            display: inline-block;
-            text-align: center;
         }
+
 
 
     </style>
