@@ -159,7 +159,7 @@
                     @if(isset($product['yes']))
                         @php $col++; @endphp
                         <th class="col-product">
-							<div class="vertical-text">
+							<div class="vertical-header-content">
 								    {{ implode(' ', array_slice(explode(' ', $product['product_name']), 0, 2)) }}
 							</div>
 						</th>
