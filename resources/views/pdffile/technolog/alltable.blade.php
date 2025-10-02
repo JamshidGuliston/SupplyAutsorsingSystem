@@ -132,17 +132,12 @@
         } */
 
         .vertical-text {
-            transform: rotate(-90deg);   /* pastdan tepaga chiqaradi */
-            transform-origin: center center;
+            writing-mode: vertical-lr;  
+            text-orientation: upright;  
             white-space: nowrap;
             display: inline-block;
             font-size: 10px;
         }
-
-
-
-
-
 
     </style>
 </head>
