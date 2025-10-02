@@ -136,8 +136,6 @@ class TestController extends Controller
 		$day->month_name = $nextWorkDay->format('F');
 		$day->year_name = $nextWorkDay->format('Y');
 
-		
-
 		// Snappy bilan PDF yaratish
 		try {
 			$pdf = \PDF::loadView('pdffile.technolog.alltable', [
