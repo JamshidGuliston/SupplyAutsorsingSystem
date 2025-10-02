@@ -137,16 +137,14 @@
 		}
 
 		.vertical-text {
-            writing-mode: vertical-rl;   /* matnni vertikal qiladi */
-            -webkit-writing-mode: vertical-rl;
-            -ms-writing-mode: tb-rl;
-
-            transform: rotate(0deg);     /* 180 emas, oddiy holatda qoldiramiz */
-            transform-origin: center center;
+            writing-mode: vertical-lr;
+            -webkit-writing-mode: vertical-lr;
+            -ms-writing-mode: tb-lr;
             text-align: center;
             white-space: nowrap;
             display: inline-block;
         }
+
 
 
 
