@@ -125,7 +125,7 @@
 		.vertical-text {
             writing-mode: vertical-rl;   /* vertikal joylash */
             text-orientation: upright;   /* harflar to‘g‘ri turishi uchun */
-            transform: rotate(270deg);   /* yoki -90deg */
+            transform: rotate(1180deg);   /* yoki -90deg */
             transform-origin: center center;
             white-space: nowrap;
             display: inline-block;
