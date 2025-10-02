@@ -136,11 +136,13 @@
         } */
 
         .vertical-text {
-            transform: rotate(-90deg);   /* yozuvni aylantiradi */
-            transform-origin: center;    /* o‘rtadan aylansin */
-            white-space: nowrap;         /* so‘z bo‘linib ketmasin */
+            writing-mode: vertical-rl;   /* pastdan tepaga yozadi */
+            text-orientation: upright;   /* harflar normal ko‘rinadi */
+            white-space: nowrap;
             display: inline-block;
+            text-align: center;
         }
+
 
     </style>
 </head>
