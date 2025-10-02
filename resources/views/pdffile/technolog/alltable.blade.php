@@ -103,8 +103,12 @@
         /* Fixed column widths */
         .col-1 { width: 2%; }
         .col-2 { width: 8%; font-size: 10px; }
-        .col-product { width: 20px; }
-        
+        .col-product {
+            width: 30px;          /* ustun kengligini majburiy berish */
+            height: 120px;        /* ustun balandligini ham belgilang */
+            text-align: center;
+            vertical-align: middle;
+        }
         /* Alternativ vertikal matn usuli */
         .vertical-header {
 			width: 20px;      /* ustun eni */
@@ -132,11 +136,10 @@
         } */
 
         .vertical-text {
-            writing-mode: vertical-lr;  
-            text-orientation: upright;  
-            white-space: nowrap;
+            transform: rotate(-90deg);   /* yozuvni aylantiradi */
+            transform-origin: center;    /* o‘rtadan aylansin */
+            white-space: nowrap;         /* so‘z bo‘linib ketmasin */
             display: inline-block;
-            font-size: 10px;
         }
 
     </style>
