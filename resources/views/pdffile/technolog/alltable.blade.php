@@ -122,13 +122,21 @@
 			text-align: center;
 		}
 
-		.vertical-text {
-            writing-mode: vertical-rl;   /* vertikal joylash */
-            text-orientation: upright;   /* harflar to‘g‘ri turishi uchun */
-            transform: rotate(-90deg);   /* yoki -90deg */
+		/* .vertical-text {
+            writing-mode: vertical-rl;   
+            text-orientation: upright;   
+            transform: rotate(-90deg);  
             transform-origin: center center;
             white-space: nowrap;
             display: inline-block;
+        } */
+
+        .vertical-text {
+            transform: rotate(-90deg);   /* pastdan tepaga chiqaradi */
+            transform-origin: center center;
+            white-space: nowrap;
+            display: inline-block;
+            font-size: 10px;
         }
 
 
