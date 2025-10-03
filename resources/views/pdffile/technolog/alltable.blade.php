@@ -168,7 +168,7 @@
                         @php $col++; @endphp
                         <th class="col-product">
 							<div class=".vertical-text">
-								    {{ implode(' ', array_slice(explode(' ', $product['product_name']), 0, 2)) }}
+								    {!! implode(' ', array_slice(explode(' ', $product['product_name']), 0, 2)) !!}
 							</div>
 						</th>
                     @endif
