@@ -126,13 +126,21 @@
 			text-align: center;
 		}
 
-		.vertical-text {
+		/* .vertical-text {
             writing-mode: vertical-rl;   
             text-orientation: upright;   
             transform: rotate(-90deg);  
             transform-origin: center center;
             white-space: nowrap;
             display: inline-block;
+        } */
+
+        .vertical-text {
+            transform: rotate(270deg);     /* 90° yuqoriga buradi */
+            transform-origin: bottom left; /* pastki chap burchakdan aylansin */
+            white-space: nowrap;           /* bo‘linmasin */
+            display: block;
+            text-align: center;
         }
 
 
