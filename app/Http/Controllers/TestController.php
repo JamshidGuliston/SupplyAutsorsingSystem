@@ -284,6 +284,7 @@ class TestController extends Controller
 		$dompdf->render();
 		$dompdf->stream($name, ['Attachment' => 0]);
 	}
+	
 	public function nextnakladnoyPDF($kid){
 		$king = Kindgarden::where('id', $kid)->first();
 		$join = Nextday_namber::where('kingar_name_id', $kid)

@@ -136,11 +136,17 @@
         } */
 
         .vertical-text {
-            transform: rotate(270deg);     /* 90° yuqoriga buradi */
-            transform-origin: bottom left; /* pastki chap burchakdan aylansin */
-            white-space: nowrap;           /* bo‘linmasin */
             display: block;
+            transform: rotate(90deg);         /* yuqoriga buradi */
+            transform-origin: left bottom;    /* chap pastdan aylantiradi */
+            white-space: nowrap;
+            font-size: 9px;
+        }
+        .col-product {
+            width: 40px;       /* ustun kengligi */
+            height: 140px;     /* ustun balandligi */
             text-align: center;
+            vertical-align: middle;
         }
 
 
@@ -168,7 +174,7 @@
                         @php $col++; @endphp
                         <th class="col-product">
 							<div class=".vertical-text">
-								    {!! implode(' ', array_slice(explode(' ', $product['product_name']), 0, 2)) !!}
+								    {{ implode(' ', array_slice(explode(' ', $product['product_name']), 0, 2)) }}
 							</div>
 						</th>
                     @endif
