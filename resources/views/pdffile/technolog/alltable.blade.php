@@ -135,29 +135,13 @@
             display: inline-block;
         } */
 
-        .col-product {
-            width: 40px;
-            height: 140px;
-            text-align: center;
-            vertical-align: middle;
-            position: relative;
-        }
-
-        .rotate-wrapper {
-            height: 140px;         /* ustun balandligiga teng */
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-
         .vertical-text {
-            display: inline-block; 
-            transform: rotate(270deg);    /* yoki 90deg – siz xohlagan yo‘nalishga qarab */
-            transform-origin: center center;
+            display: inline-block;
+            transform: rotate(90deg);         /* yuqoriga buradi */
+            transform-origin: left bottom;    /* chap pastdan aylantiradi */
             white-space: nowrap;
             font-size: 9px;
         }
-
 
     </style>
 </head>
@@ -181,15 +165,12 @@
                     @if(isset($product['yes']))
                         @php $col++; @endphp
                         <th class="col-product">
-                            <div class="rotate-wrapper">
-                                <span class="vertical-text">
-                                    {{ implode(' ', array_slice(explode(' ', $product['product_name']), 0, 2)) }}
-                                </span>
-                            </div>
-                        </th>
+							<div class=".vertical-text">
+								    {{ implode(' ', array_slice(explode(' ', $product['product_name']), 0, 2)) }}
+							</div>
+						</th>
                     @endif
                 @endforeach
-
             </tr>
             <tr>
                 @foreach($products as $product)
