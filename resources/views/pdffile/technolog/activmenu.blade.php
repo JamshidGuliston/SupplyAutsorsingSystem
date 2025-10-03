@@ -10,7 +10,7 @@
 	<!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"> -->
 	<title>Title</title>
 	<style>
-		@page { margin: 0.3in 0.3in 0.8in 0.3in; }
+		@page { margin: 0.3in 0.3in 0.2in 0.3in; }
 		body{
 			font-family: DejaVu Sans;
 			font-size: 7.5px;
@@ -397,7 +397,7 @@
 								<p style="text-align: center;"><strong> Хамшира:</strong> __________________;</p>
 							</div>
 							<div class="column">
-								<p style="text-align: right;"><strong>Бош ошпаз: </strong> __________________;</p>
+								<p style="text-align: right;"><strong>ДМТТ рахбари: </strong> __________________;</p>
 							</div>
 					   </div>
                 </div>
