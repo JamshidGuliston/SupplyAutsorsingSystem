@@ -137,7 +137,7 @@
 
         .vertical-text {
             display: inline-block;
-            transform: rotate(90deg);         /* yuqoriga buradi */
+            transform: rotate(270deg);         /* yuqoriga buradi */
             transform-origin: left bottom;    /* chap pastdan aylantiradi */
             white-space: nowrap;
             font-size: 9px;
