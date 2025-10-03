@@ -104,7 +104,7 @@
         .col-1 { width: 2%; }
         .col-2 { width: 8%; font-size: 10px; }
         .col-product {
-            width: 35px;          /* ustun kengligini majburiy berish */
+            width: 28px;          /* ustun kengligini majburiy berish */
             height: 120px;        /* ustun balandligini ham belgilang */
             text-align: center;
             vertical-align: middle;
