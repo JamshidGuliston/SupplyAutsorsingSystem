@@ -849,6 +849,85 @@ class AccountantController extends Controller
         return $pdf->stream($name);
     }
 
+    public function dalolatnoma(Request $request, $id, $start, $end){
+        $kindgar = Kindgarden::where('id', $id)->with('age_range')->first();
+
+        $region = Region::where('id', $kindgar->region_id)->first();
+        
+        $days = Day::where('days.id', '>=', $start)->where('days.id', '<=', $end)
+                ->join('years', 'days.year_id', '=', 'years.id')
+                ->join('months', 'days.month_id', '=', 'months.id')
+                ->get(['days.day_number', 'months.id as month_id', 'months.month_name', 'years.year_name', 'days.created_at']);
+        
+        $costs = [];
+        $total_number_children = [];
+        
+        // Har bir yosh guruhi uchun protsent va bolalar sonini olish
+        foreach($kindgar->age_range as $age){
+            $costs[$age->id] = Protsent::where('region_id', $kindgar->region_id)
+                        ->where('age_range_id', $age->id)
+                        ->where('end_date', '>=', $days->last()->created_at->format('Y-m-d'))
+                        ->first();
+            if(!isset($total_number_children[$age->id])){
+                $total_number_children[$age->id] = 0;
+            }
+            $total_number_children[$age->id] += Number_children::where('day_id', '>=', $start)
+                ->where('day_id', '<=', $end)
+                ->where('kingar_name_id', $id)
+                ->where('king_age_name_id', $age->id)
+                ->sum('kingar_children_number');
+        }
+        
+        // Autsorser ma'lumotlari (kompaniya ma'lumotlari)
+        $autorser = config('company.autorser');
+        
+        // Buyurtmachi ma'lumotlari
+        $buyurtmachi = [
+            'company_name' => $region->region_name.' ММТБга тасарруфидаги '.$kindgar->number_of_org .'-сонли ДМТТ' ?? '',
+            'address' => $region->region_name,
+            'inn' => '________________',
+            'bank_account' => '___________________________________',
+            'mfo' => '00014',
+            'account_number' => '23402000300100001010',
+            'treasury_account' => '_______________',
+            'treasury_inn' => '________________',
+            'bank' => 'Марказий банк ХККМ',
+            'phone' => '__________________________',
+        ];
+
+        $contract_env = env('CONTRACT_DATA');
+        
+        $contract_data = $contract_env ? explode(',', $contract_env)[$region->id - 1] ?? " ______ '______' ___________ 2025 й"
+            : " ______ '______' ___________ 2025 й";
+        
+        // Dalolatnoma raqami va sanasi
+        if(is_null(env('INVOICE_NUMBER'))){
+            $invoice_number = $days->last()->month_id.'-'. $kindgar->number_of_org;
+        }else{
+            $invoice_number = $days->last()->month_id.'/'.env('INVOICE_NUMBER');
+        }
+        $invoice_date = $days->last()->created_at->format('d.m.Y');
+        
+        // Snappy PDF yaratish
+        $pdf = \PDF::loadView('pdffile.accountant.dalolatnoma', compact('contract_data', 'costs', 'days', 'kindgar', 'autorser', 'buyurtmachi', 'invoice_number', 'invoice_date', 'total_number_children'));
+        
+        // PDF sozlamalari
+        $pdf->setOption('page-size', 'A4');
+        $pdf->setOption('orientation', 'portrait');
+        $pdf->setOption('margin-top', 10);
+        $pdf->setOption('margin-bottom', 10);
+        $pdf->setOption('margin-left', 10);
+        $pdf->setOption('margin-right', 10);
+        $pdf->setOption('encoding', 'UTF-8');
+        $pdf->setOption('enable-local-file-access', true);
+        $pdf->setOption('print-media-type', true);
+        $pdf->setOption('disable-smart-shrinking', false);
+        
+        $name = $start.$end.$id."dalolatnoma.pdf";
+        
+        return $pdf->stream($name);
+    }
+
     public function schotfakturworker(Request $request, $id, $ageid, $start, $end, $costid){
         $kindgar = Kindgarden::where('id', $id)->first();
         $nakproducts = [];
