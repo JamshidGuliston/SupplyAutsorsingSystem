@@ -819,7 +819,7 @@ class AccountantController extends Controller
         if(is_null(env('CONTRACT_DATA'))){
             $contract_data = " ______ '______' ___________ 2025 й";
         }else{
-            $contract_data = " 25111006438231       16.07.2025 й";
+            $contract_data = json_decode(env('CONTRACT_DATA'), true)[$region->id] ?? " ______ '______' ___________ 2025 й";
         }
         
         // Hisob-faktura raqami va sanasi
