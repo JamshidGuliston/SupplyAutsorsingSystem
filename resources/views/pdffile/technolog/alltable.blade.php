@@ -52,7 +52,33 @@
         .main-table td {
             font-size: 10px;
         }
-
+        
+        /* Vertikal matn uchun Snappy-optimized CSS */
+        .vertical-text {
+            display: block;
+            width: 20px;
+            height: 80px;
+            font-size: 10px;
+            line-height: 1.1;
+            text-align: center;
+            word-wrap: break-word;
+            overflow: hidden;
+            white-space: normal;
+        }
+        
+        .vertical-text span {
+            display: block;
+            transform: rotate(-90deg);
+            transform-origin: center;
+            width: 80px;
+            height: 20px;
+            margin-top: 30px;
+            margin-left: -30px;
+            font-size: 10px;
+            line-height: 1.1;
+            text-align: center;
+        }
+        
         .product-name {
 			font-size: 8px;
             font-weight: bold;
@@ -103,12 +129,8 @@
         /* Fixed column widths */
         .col-1 { width: 2%; }
         .col-2 { width: 8%; font-size: 10px; }
-        .col-product {
-            width: 28px;          /* ustun kengligini majburiy berish */
-            height: 120px;        /* ustun balandligini ham belgilang */
-            text-align: center;
-            vertical-align: middle;
-        }
+        .col-product { width: 20px; }
+        
         /* Alternativ vertikal matn usuli */
         .vertical-header {
 			width: 20px;      /* ustun eni */
@@ -126,22 +148,18 @@
 			text-align: center;
 		}
 
-		/* .vertical-text {
-            writing-mode: vertical-rl;   
-            text-orientation: upright;   
-            transform: rotate(-90deg);  
-            transform-origin: center center;
-            white-space: nowrap;
-            display: inline-block;
-        } */
+		.vertical-text {
+			writing-mode: vertical-rl;   /* matnni vertikal qiladi (yuqoridan pastga) */
+			-webkit-writing-mode: vertical-rl;
+			-ms-writing-mode: tb-rl;
 
-        .vertical-text {
-            display: inline-block;
-            transform: rotate(270deg);         /* yuqoriga buradi */
-            transform-origin: left bottom;    /* chap pastdan aylantiradi */
-            white-space: nowrap;
-            font-size: 9px;
-        }
+			transform: rotate(180deg);   /* teskari qilib pastdan tepaga chiqaradi */
+			transform-origin: center center;
+			text-align: center;
+			white-space: nowrap;
+			display: inline-block;
+		}
+
 
     </style>
 </head>
@@ -165,8 +183,8 @@
                     @if(isset($product['yes']))
                         @php $col++; @endphp
                         <th class="col-product">
-							<div class=".vertical-text">
-								    {{ implode(' ', array_slice(explode(' ', $product['product_name']), 0, 2)) }}
+							<div class="vertical-text">
+								{{ implode(' ', array_slice(explode(' ', $product['product_name']), 0, 2)) }}
 							</div>
 						</th>
                     @endif
