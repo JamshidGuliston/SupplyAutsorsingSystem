@@ -817,6 +817,7 @@ class AccountantController extends Controller
         ];
 
         $contract_env = env('CONTRACT_DATA');
+        dd(explode(',', $contract_env));
         $contract_data = $contract_env ? explode(',', $contract_env)[$region->id - 1] ?? " ______ '______' ___________ 2025 й"
             : " ______ '______' ___________ 2025 й";
         
