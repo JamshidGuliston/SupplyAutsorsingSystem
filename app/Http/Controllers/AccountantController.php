@@ -902,7 +902,7 @@ class AccountantController extends Controller
         
         // Dalolatnoma raqami va sanasi
         if(is_null(env('INVOICE_NUMBER'))){
-            $invoice_number = $days->last()->month_id.'-'. $kindgar->number_of_org;
+            $invoice_number = $days->last()->month_id-1.'-'. $kindgar->number_of_org;
         }else{
             $invoice_number = $days->last()->month_id.'/'.env('INVOICE_NUMBER');
         }
