@@ -224,7 +224,7 @@
                             $amount = $total_number_children[$age->id] * ($costs[$age->id]->eater_cost ?? 0);
                             $total_amount += $amount;
                         @endphp
-                        {{ number_format($amount, 2, ',', ' ') }}
+                        {{ number_format($amount, 2, '.', ' ') }}
                     </td>
                 </tr>
                 @endforeach
@@ -237,7 +237,7 @@
                             $outsourcing_amount = $total_amount * (($costs[$age->id]->raise ?? 28.5) / 100);
                             $total_amount += $outsourcing_amount;
                         @endphp
-                        {{ number_format($outsourcing_amount, 2, ',', ' ') }}
+                        {{ number_format($outsourcing_amount, 2, '.', ' ') }}
                     </td>
                 </tr>
 
@@ -245,7 +245,7 @@
                 <tr class="total-row">
                     <td></td>
                     <td class="text-center font-bold">ЖАМИ</td>
-                    <td class="amount-col font-bold">{{ number_format($total_amount, 2, ',', ' ') }}</td>
+                    <td class="amount-col font-bold">{{ number_format($total_amount, 2, '.', ' ') }}</td>
                 </tr>
             </tbody>
         </table>
