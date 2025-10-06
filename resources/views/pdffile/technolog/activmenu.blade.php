@@ -14,7 +14,6 @@
 		body{
 			font-family: DejaVu Sans;
 			font-size: 7.5px;
-			background-image: url(images/bg.jpg);
 			background-position: top left;
 			background-repeat: no-repeat;
 			background-size: 100%;
