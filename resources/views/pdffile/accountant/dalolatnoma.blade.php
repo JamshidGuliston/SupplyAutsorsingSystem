@@ -204,7 +204,7 @@
                 <tr>
                     <th class="number-col">№</th>
                     <th class="work-name-col">Иш, хизмат номи</th>
-                    <th class="amount-col">Бажарилган ишлар миқдори (НДС билан)</th>
+                    <th class="amount-col">Бажарилган ишлар миқдори (ҚҚС билан)</th>
                 </tr>
             </thead>
             <tbody>
@@ -253,7 +253,7 @@
 
     <!-- Xulosa matni -->
     <div class="summary-text">
-        Бажарилган ишлар учун тўлов миқдори барча устама хак ва соликларни хисобга олган холда <br><span class="amount-text">{{ number_format($total_amount, 2, '.', ' ') }}</span>  сумни ташкил этади.
+        Бажарилган ишлар учун тўлов миқдори барча устама хак ва соликларни хисобга олган холда <br><span class="amount-text">{{ "ҚҚС билан ".number_format($total_amount, 2, '.', ' ') }}</span>  сумни ташкил этади.
     </div>
 
     <!-- Imzo qismi -->
