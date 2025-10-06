@@ -815,7 +815,7 @@ class AccountantController extends Controller
             'bank' => 'Марказий банк ХККМ',
             'phone' => '__________________________',
         ];
-
+        dd(explode(',', env('CONTRACT_DATA'))[$region->id+1]);
         if(is_null(env('CONTRACT_DATA'))){
             $contract_data = " ______ '______' ___________ 2025 й";
         }else{
