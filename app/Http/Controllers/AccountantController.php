@@ -815,12 +815,10 @@ class AccountantController extends Controller
             'bank' => 'Марказий банк ХККМ',
             'phone' => '__________________________',
         ];
-        
-        if(!isset(env('CONTRACT_DATA'))){
-            $contract_data = " ______ '______' ___________ 2025 й";
-        }else{
-            $contract_data = explode(',', env('CONTRACT_DATA'))[$region->id-1] ?? " ______ '______' ___________ 2025 й";
-        }
+
+        $contract_env = env('CONTRACT_DATA');
+        $contract_data = $contract_env ? explode(',', $contract_env)[$region->id - 1] ?? " ______ '______' ___________ 2025 й"
+            : " ______ '______' ___________ 2025 й";
         
         // Hisob-faktura raqami va sanasi
         if(is_null(env('INVOICE_NUMBER'))){
