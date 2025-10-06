@@ -217,7 +217,7 @@
                 <tr>
                     <td class="number-col">{{ $tr++ }}</td>
                     <td class="work-name-col">
-                        {{ $buyurtmachi['address'] ?? 'Олмалик шахар' }} {{ $kindgar->number_of_org ?? '3' }}-сон МТТ {{ $age->description ?? '9-10,5 соатлик' }} гуруҳ тарбияланувчилари учун {{ $days->first()->year_name ?? '2025' }} йил {{ $days->first()->month_id ?? '02' }}-{{ $days->last()->day_number ?? '19' }} {{ $days->first()->month_name ?? 'сентябр' }}да аутсорсинг асосида кунига уч маҳал овқатланишни ташкил этиш бўйича:
+                        {{ $buyurtmachi['address'] ?? 'Олмалик шахар' }} {{ $kindgar->number_of_org ?? '3' }}-сон МТТ {{ $age->description ?? '9-10,5 соатлик' }} гуруҳ тарбияланувчилари учун {{ $days->first()->year_name ?? '2025' }} йил {{ $days->first()->day_number ?? '02' }}-{{ $days->last()->day_number ?? '19' }} {{ $days->first()->month_name ?? 'сентябр' }}да аутсорсинг асосида кунига уч маҳал овқатланишни ташкил этиш бўйича:
                     </td>
                     <td class="amount-col">
                         @php
@@ -260,7 +260,7 @@
     <div class="footer">
         <div class="footer-section">
             <div class="signature-title">Аутсорсер:</div>
-            <div class="signature-info">{{ $autorser['company_name'] ?? 'ASIA BEST DISTRIBUTION SERVICE' }} МЧЖ</div>
+            <div class="signature-info">{{ $autorser['company_name'] ?? 'ASIA BEST DISTRIBUTION SERVICE' }}</div>
             <div class="signature-info">директори: Б.Тажибaев</div>
             <div class="signature-line"></div>
         </div>
