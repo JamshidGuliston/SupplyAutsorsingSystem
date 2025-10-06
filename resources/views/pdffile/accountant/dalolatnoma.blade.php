@@ -183,7 +183,7 @@
 
     <!-- Kirish matni -->
     <div class="intro-text">
-        Бизлар қуйидаги имзо чекувчилар {{ $autorser['company_name'] ?? 'ASIA BEST DISTRIBUTION SERVICE' }} МЧЖ директори Т.Саидов бир томондан ва {{ $buyurtmachi['company_name'] ?? 'Олмалик шахар 3-сони ДМТТ директори' }} иккинчи томондан {{ $contract_data ?? '25111006442027-шартномага' }} асосида бажарилган ишларни қуйидаги миқдорда тасдиқлаймиз:
+        Бизлар қуйидаги имзо чекувчилар {{ $autorser['company_name'] ?? 'ASIA BEST DISTRIBUTION SERVICE' }} директори Б.Тажибaев бир томондан ва {{ $buyurtmachi['company_name'] ?? 'Олмалик шахар 3-сони ДМТТ директори' }} иккинчи томондан {{ $contract_data ?? '25111006442027' }}даги шартнома асосида қуйидаги миқдорда бажарилганлиги ҳақида туздик:
     </div>
 
     <!-- Jadval -->
@@ -220,10 +220,10 @@
                 
                 <tr>
                     <td class="number-col">{{ $tr++ }}</td>
-                    <td class="work-name-col">Аутсорсинг хизмати ({{ $costs[4]->protsent ?? '28,5' }}%)</td>
+                    <td class="work-name-col">Аутсорсинг хизмати ({{ $costs[$age->id]->raise ?? '28,5' }}%)</td>
                     <td class="amount-col">
                         @php
-                            $outsourcing_amount = $total_amount * (($costs[4]->protsent ?? 28.5) / 100);
+                            $outsourcing_amount = $total_amount * (($costs[$age->id]->raise ?? 28.5) / 100);
                             $total_amount += $outsourcing_amount;
                         @endphp
                         {{ number_format($outsourcing_amount, 2, ',', ' ') }}
@@ -242,19 +242,19 @@
 
     <!-- Xulosa matni -->
     <div class="summary-text">
-        Бажарилган ишлар учун тўлов миқдори барча устама хак ва соликларни хисобга олган холда <span class="amount-text">{{ number_format($total_amount, 2, ',', ' ') }}</span> <span class="written-amount">({{ $total_amount > 0 ? 'саксон турт миллион беш юз ун икки минг беш юз етмиш туккиз сум 04 т' : 'нол сум' }})</span> сумни ташкил этади.
+        Бажарилган ишлар учун тўлов миқдори барча устама хак ва соликларни хисобга олган холда <span class="amount-text">{{ number_format($total_amount, 2, ',', ' ') }}</span>  сумни ташкил этади.
     </div>
 
     <!-- Imzo qismi -->
-    <div class="signature-section">
-        <div class="signature-block">
+    <div class="footer">
+        <div class="footer-section">
             <div class="signature-title">Аутсорсер:</div>
             <div class="signature-info">{{ $autorser['company_name'] ?? 'ASIA BEST DISTRIBUTION SERVICE' }} МЧЖ</div>
-            <div class="signature-info">директори: Т.Саидов</div>
+            <div class="signature-info">директори: Б.Тажибaев</div>
             <div class="signature-line"></div>
         </div>
         
-        <div class="signature-block">
+        <div class="footer-section">
             <div class="signature-title">Истемолчи:</div>
             <div class="signature-info">{{ $kindgar->number_of_org ?? '3' }}-сон ДМТТ</div>
             <div class="signature-info">Директори</div>
