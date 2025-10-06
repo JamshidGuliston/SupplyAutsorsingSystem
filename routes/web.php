@@ -343,6 +343,8 @@ Route::group(['prefix' => 'accountant', 'middleware' => ['isAccountant', 'auth']
     Route::get('schotfaktur/{id}/{ageid}/{start}/{end}/{costid}', [AccountantController::class, 'schotfaktur'])->name('accountant.schotfaktur');
     Route::get('schotfaktursecond/{id}/{start}/{end}', [AccountantController::class, 'schotfaktursecond'])->name('accountant.schotfaktursecond');
     Route::get('schotfaktursecondexcel/{id}/{start}/{end}', [AccountantController::class, 'schotfaktursecondexcel'])->name('accountant.schotfaktursecondexcel');
+    Route::get('dalolatnoma/{id}/{start}/{end}', [AccountantController::class, 'dalolatnoma'])->name('accountant.dalolatnoma');
+    Route::get('dalolatnomaexcel/{id}/{start}/{end}', [AccountantController::class, 'dalolatnomaexcel'])->name('accountant.dalolatnomaexcel');
     Route::get('allschotfaktur/{id}/{start}/{end}/{costid}/{nds}/{ust}', [AccountantController::class, 'allschotfaktur'])->name('accountant.allschotfaktur');
     Route::get('schotfakturexcel/{id}/{ageid}/{start}/{end}/{costid}/{nds}/{ust}', [AccountantController::class, 'schotfakturexcel'])->name('accountant.schotfakturexcel');
     Route::get('norm/{id}/{ageid}/{start}/{end}/{costid}', [AccountantController::class, 'norm'])->name('accountant.norm');
