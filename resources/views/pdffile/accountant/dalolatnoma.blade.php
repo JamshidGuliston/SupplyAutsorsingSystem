@@ -146,7 +146,18 @@
             margin-bottom: 5px;
             font-size: 15px;
         }
+        .footer {
+            margin-top: 30px;
+            display: table;
+            width: 100%;
+        }
         
+        .footer-section {
+            display: table-cell;
+            width: 48%;
+            vertical-align: top;
+            padding-right: 2%;
+        }
         .signature-line {
             border-bottom: 1px solid #000;
             width: 200px;
