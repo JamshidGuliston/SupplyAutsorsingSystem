@@ -101,9 +101,13 @@ class SchotFakturaSecondExport implements FromArray, WithStyles, WithColumnWidth
         // Ma'lumotlar qatorlari
         $currentDataRow = 17; // Jadval ma'lumotlari 17-qatordan boshlanadi
         $tr = 1;
+        $total_base_amount = 0; // Asosiy summa uchun
         
         foreach($kindgar->age_range as $age) {
             if(isset($costs[$age->id]) && $costs[$age->id] && isset($total_number_children[$age->id]) && $total_number_children[$age->id] > 0) {
+                $base_amount = ($total_number_children[$age->id] ?? 0) * ($costs[$age->id]->eater_cost ?? 0);
+                $total_base_amount += $base_amount;
+                
                 $data[] = [
                     $tr++,
                     $kindgar->number_of_org . '-ДМТТ ' . $age->description . ' ёшли гуруҳ тарбияланувчилари учун кўрсатилган ' . $days[0]->year_name . ' йил ' . $days[0]->day_number . '-' . $days[count($days)-1]->day_number . ' ' . $days[0]->month_name . ' даги Аутсорсинг хизмати',
@@ -121,6 +125,27 @@ class SchotFakturaSecondExport implements FromArray, WithStyles, WithColumnWidth
                 ];
                 $currentDataRow++;
             }
+        }
+        
+        // Аутсорсинг хизмати устамаси qatori qo'shish
+        if($total_base_amount > 0) {
+            // Ustama protsentini topish (birinchi yosh guruhi uchun)
+            $first_age = $kindgar->age_range->first();
+            $raise_percent = $costs[$first_age->id]->raise ?? 28.5;
+            $raise_amount = $total_base_amount * ($raise_percent / 100);
+            
+            $data[] = [
+                $tr++,
+                'Аутсорсинг хизмати устамаси',
+                'Хизмат',
+                1,
+                '', // Нархи bo'sh
+                '', // Етказиб бериш нархи bo'sh
+                $raise_percent . '%',
+                '=' . $raise_amount, // Ustama summasi
+                '=' . $raise_amount // Jami summa
+            ];
+            $currentDataRow++;
         }
         
         // Jami qator

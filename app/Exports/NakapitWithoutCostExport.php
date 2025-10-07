@@ -91,14 +91,18 @@ class NakapitWithoutCostExport implements FromArray, WithStyles, WithColumnWidth
 
         $data = [];
         
-        // Header
-        $data[] = [$kindgar->number_of_org . '-сонли ДМТТ ' . $age->description . ' ёшдаги болаларнинг ' . $days[0]->day_number . '.' . $days[0]->month_id . ' дан ' . $days[count($days)-1]->day_number . '.' . $days[count($days)-1]->month_id . ' гача бўлган махсулот сарфи хақида маълумот'];
+        // Header - oy ID sini to'g'rilash
+        $first_month_id = $days[0]->month_id % 12 == 0 ? 12 : $days[0]->month_id % 12;
+        $last_month_id = $days[count($days)-1]->month_id % 12 == 0 ? 12 : $days[count($days)-1]->month_id % 12;
+        
+        $data[] = [$kindgar->kingar_name . ' ' . $age->description . ' ёшдаги болаларнинг ' . $days[0]->day_number . '.' . $first_month_id . ' дан ' . $days[count($days)-1]->day_number . '.' . $last_month_id . ' гача бўлган махсулот сарфи хақида маълумот'];
         $data[] = [''];
         
-        // Jadval header
+        // Jadval header - oy ID sini to'g'rilash
         $header = ['№', 'Махсулот номи', 'Ўлчов бирлиги'];
         foreach($days as $day) {
-            $header[] = $day->day_number . '.' . $day->month_id;
+            $month_id = $day->month_id % 12 == 0 ? 12 : $day->month_id % 12;
+            $header[] = $day->day_number . '.' . $month_id;
         }
         $header[] = 'Жами';
         $data[] = $header;

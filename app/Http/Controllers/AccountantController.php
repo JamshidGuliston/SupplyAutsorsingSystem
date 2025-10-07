@@ -12,8 +12,11 @@ use App\Exports\NakapitWithoutCostExport;
 use App\Exports\NormExport;
 use App\Exports\SchotFakturaSecondExport;
 use App\Exports\TransportationExcelExport;
+use App\Exports\TransportationSecondaryExcelExport;
+use App\Exports\TransportationThirdExcelExport;
 use App\Exports\SvodExport;
 use App\Exports\ReportProductsOfRegionExport;
+use App\Exports\DalolatnomaExport;
 use App\Models\Age_range;
 use App\Models\bycosts;
 use App\Models\Active_menu;
@@ -588,10 +591,25 @@ class AccountantController extends Controller
 		$dompdf->stream($name, ['Attachment' => 0]);
     }
 
-    public function nakapitexcel(Request $request, $id, $ageid, $start, $end, $costid, $nds, $ust){
-        // Excel::store(new NakapitelExport($request, $id, $ageid, $start, $end, $costid), "nakapitel.xlsx");
-        return Excel::download(new NakapitelExport($request, $id, $ageid, $start, $end, $costid, $nds, $ust), 'excellist.xlsx');
-        // return response(Storage::get('nakapitel.xlsx'))->header('Content-Type', Storage::mimeType('nakapitel.xlsx'));
+    public function nakapitexcel(Request $request, $id, $ageid, $start, $end, $costid){
+        set_time_limit(300);
+        
+        // costid orqali nds va ust larni topish
+        $kindgar = Kindgarden::where('id', $id)->first();
+        $protsent = Protsent::where('region_id', $kindgar->region_id)
+                    ->where('end_date', '>=', Day::where('id', $end)->first()->created_at->format('Y-m-d'))
+                    ->where('age_range_id', $ageid)
+                    ->first();
+        
+        $nds = $protsent->nds ?? 12;
+        $ust = $protsent->raise ?? 28.5;
+        
+        return Excel::download(new NakapitelExport($request, $id, $ageid, $start, $end, $costid, $nds, $ust), 'nakapit_'.date('Y-m-d').'.xlsx');
+    }
+
+    public function nakapitwithoutcostexcel(Request $request, $id, $ageid, $start, $end){
+        set_time_limit(300);
+        return Excel::download(new NakapitWithoutCostExport($request, $id, $ageid, $start, $end), 'nakapit_without_cost_'.date('Y-m-d').'.xlsx');
     }
 
     public function nakapitworker(Request $request, $id, $ageid, $start, $end, $costid){
@@ -926,6 +944,11 @@ class AccountantController extends Controller
         $name = $start.$end.$id."dalolatnoma.pdf";
         
         return $pdf->stream($name);
+    }
+
+    public function dalolatnomaexcel(Request $request, $id, $start, $end){
+        set_time_limit(300);
+        return Excel::download(new DalolatnomaExport($id, $start, $end), 'dalolatnoma_'.date('Y-m-d').'.xlsx');
     }
 
     public function schotfakturworker(Request $request, $id, $ageid, $start, $end, $costid){
@@ -2362,10 +2385,6 @@ class AccountantController extends Controller
         return Excel::download(new ReportRegionSecondaryExport($id, $start, $end), 'report_region_secondary_'.date('Y-m-d').'.xlsx');
     }
 
-    public function nakapitwithoutcostexcel(Request $request, $id, $ageid, $start, $end){
-        set_time_limit(300);
-        return Excel::download(new NakapitWithoutCostExport($request, $id, $ageid, $start, $end), 'nakapit_without_cost_'.date('Y-m-d').'.xlsx');
-    }
 
     public function normexcel(Request $request, $id, $ageid, $start, $end, $costid){
         set_time_limit(300);
@@ -2384,12 +2403,12 @@ class AccountantController extends Controller
 
     public function transportationSecondaryexcel(Request $request, $id, $start, $end, $costid){
         set_time_limit(300);
-        return Excel::download(new TransportationExcelExport($id, $start, $end, $costid), 'transportation_secondary_'.date('Y-m-d').'.xlsx');
+        return Excel::download(new TransportationSecondaryExcelExport($id, $start, $end, $costid), 'transportation_secondary_'.date('Y-m-d').'.xlsx');
     }
 
     public function transportationThirdexcel(Request $request, $id, $start, $end, $costid){
         set_time_limit(300);
-        return Excel::download(new TransportationExcelExport($id, $start, $end, $costid), 'transportation_third_'.date('Y-m-d').'.xlsx');
+        return Excel::download(new TransportationThirdExcelExport($id, $start, $end, $costid), 'transportation_third_'.date('Y-m-d').'.xlsx');
     }
 
     public function boqchakexcel(Request $request, $id, $start, $end){

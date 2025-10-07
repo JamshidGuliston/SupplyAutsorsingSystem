@@ -17,7 +17,7 @@ use PhpOffice\PhpSpreadsheet\Style\Alignment;
 use PhpOffice\PhpSpreadsheet\Style\Border;
 use PhpOffice\PhpSpreadsheet\Style\Fill;
 
-class TransportationExcelExport implements FromArray, WithStyles, WithColumnWidths, WithEvents
+class TransportationSecondaryExcelExport implements FromArray, WithStyles, WithColumnWidths, WithEvents
 {
     protected $id, $start, $end, $costid;
     
@@ -59,34 +59,15 @@ class TransportationExcelExport implements FromArray, WithStyles, WithColumnWidt
         $data[] = [$kindgar->kingar_name . ' да ' . $days[0]->day_number . '-' . $days[count($days)-1]->day_number . ' ' . $days[0]->month_name . ' ' . $days[0]->year_name . ' йил кунлари болалар катнови ва аутсорсинг хизмати харажатлари тўғрисида маълумот'];
         $data[] = [''];
         
-        // Jadval header - PDF bilan bir xil struktura
-        $header1 = ['№', 'Таомнома', 'Сана', 'Буюртма бўйича бола сони', '', '', 'Бир нафар болага сарфланган харажат НДС билан', '', 'Жами етказиб бериш харажат НДС билан', '', ''];
-        
-        // Age range headers qo'shish - har bir yosh guruhi uchun 4 ustun
-        foreach($ages as $age) {
-            $header1[] = 'Жами етказиб бериш харажатлари (' . $age->description . ')';
-            $header1[] = '';
-            $header1[] = '';
-            $header1[] = '';
-        }
-        $header1[] = 'Жами етказиб бериш суммаси (НДС билан)';
-        
+        // Jadval header - PDF bilan bir xil struktura (13 ustun)
+        $header1 = ['№', 'Таомнома', 'Сана', 'Буюртма бўйича бола сони', '', '', 'Бир нафар болага сарфланган харажат НДС билан', '', 'Жами етказиб бериш харажат НДС билан', '', '', 'Устама ҳақ', 'Жами етказиб бериш суммаси (НДС билан)'];
         $data[] = $header1;
         
-        // Sub header
+        // Sub header - PDF bilan bir xil
         $raise = $costs->where('age_range_id', 4)->first()->raise ?? 28.5;
         $nds = $costs->where('age_range_id', 4)->first()->nds ?? 12;
         
-        $header2 = ['', '', '', '9-10,5 соатлик гуруҳ', '4 соатлик гуруҳ', 'Жами', '9-10,5 соатлик гуруҳ', '4 соатлик гуруҳ', '9-10,5 соатлик гуруҳ', '4 соатлик гуруҳ', 'Жами'];
-        
-        foreach($ages as $age) {
-            $header2[] = 'Сумма (безНДС)';
-            $header2[] = 'Устама ҳақ ' . $raise . '%';
-            $header2[] = 'ҚҚС (НДС) ' . $nds . '%';
-            $header2[] = 'Жами сумма';
-        }
-        $header2[] = '';
-        
+        $header2 = ['', '', '', '9-10,5 соатлик гуруҳ', '4 соатлик гуруҳ', 'Жами', '9-10,5 соатлик гуруҳ', '4 соатлик гуруҳ', '9-10,5 соатлик гуруҳ', '4 соатлик гуруҳ', 'Жами', $raise . '%', ''];
         $data[] = $header2;
         
         // Ma'lumotlar qatorlari
@@ -102,14 +83,7 @@ class TransportationExcelExport implements FromArray, WithStyles, WithColumnWidt
         $total_delivery_9_10 = 0;
         $total_delivery_4 = 0;
         $total_delivery_all = 0;
-        $total_amount_without_nds9_10 = 0;
-        $total_amount_without_nds4 = 0;
-        $total_markup9_10 = 0;
-        $total_markup4 = 0;
-        $total_nds9_10 = 0;
-        $total_nds4 = 0;
-        $total_final_amount9_10 = 0;
-        $total_final_amount4 = 0;
+        $total_markup = 0;
         $total_final_amount = 0;
         
         foreach($days as $day) {
@@ -136,16 +110,9 @@ class TransportationExcelExport implements FromArray, WithStyles, WithColumnWidt
             $delivery_4 = $children_4 * $eater_cost4;
             $delivery_all = $delivery_9_10 + $delivery_4;
             
-            // Age range calculations - har bir yosh guruhi uchun alohida
-            $amount_without_nds9_10 = $delivery_9_10 / (1 + ($nds / 100));
-            $amount_without_nds4 = $delivery_4 / (1 + ($nds / 100));
-            $markup9_10 = $amount_without_nds9_10 * ($raise / 100);
-            $markup4 = $amount_without_nds4 * ($raise / 100);
-            $nds9_10 = $amount_without_nds9_10 * ($nds / 100);
-            $nds4 = $amount_without_nds4 * ($nds / 100);
-            $final_amount9_10 = $amount_without_nds9_10 + $markup9_10 + $nds9_10;
-            $final_amount4 = $amount_without_nds4 + $markup4 + $nds4;
-            $final_amount = $final_amount9_10 + $final_amount4;
+            // Ustama hisoblash (Secondary da faqat ustama ko'rsatiladi)
+            $markup = $delivery_all * ($raise / 100);
+            $final_amount = $delivery_all + $markup;
             
             // Jami hisoblash
             $total_children_9_10 += $children_9_10;
@@ -156,14 +123,7 @@ class TransportationExcelExport implements FromArray, WithStyles, WithColumnWidt
             $total_delivery_9_10 += $delivery_9_10;
             $total_delivery_4 += $delivery_4;
             $total_delivery_all += $delivery_all;
-            $total_amount_without_nds9_10 += $amount_without_nds9_10;
-            $total_amount_without_nds4 += $amount_without_nds4;
-            $total_markup9_10 += $markup9_10;
-            $total_markup4 += $markup4;
-            $total_nds9_10 += $nds9_10;
-            $total_nds4 += $nds4;
-            $total_final_amount9_10 += $final_amount9_10;
-            $total_final_amount4 += $final_amount4;
+            $total_markup += $markup;
             $total_final_amount += $final_amount;
             
             $row = [
@@ -177,39 +137,17 @@ class TransportationExcelExport implements FromArray, WithStyles, WithColumnWidt
                 $eater_cost4,
                 $delivery_9_10,
                 $delivery_4,
-                $delivery_all
+                $delivery_all,
+                $markup,
+                $final_amount
             ];
-            
-            // Age range data qo'shish - har bir yosh guruhi uchun 4 ustun
-            foreach($ages as $age) {
-                if($age->id == 4) { // 9-10.5 soatlik
-                    $row[] = $amount_without_nds9_10;
-                    $row[] = $markup9_10;
-                    $row[] = $nds9_10;
-                    $row[] = $final_amount9_10;
-                } elseif($age->id == 3) { // 4 soatlik
-                    $row[] = $amount_without_nds4;
-                    $row[] = $markup4;
-                    $row[] = $nds4;
-                    $row[] = $final_amount4;
-                } else {
-                    // Boshqa yosh guruhlari uchun 0
-                    $row[] = 0;
-                    $row[] = 0;
-                    $row[] = 0;
-                    $row[] = 0;
-                }
-            }
-            
-            // Final total
-            $row[] = $final_amount;
             
             $data[] = $row;
             $currentDataRow++;
         }
         
         // Jami qatori - PDF bilan bir xil
-        $totalRow = [
+        $data[] = [
             '',
             '',
             'ЖАМИ',
@@ -220,38 +158,15 @@ class TransportationExcelExport implements FromArray, WithStyles, WithColumnWidt
             $total_cost_4,
             $total_delivery_9_10,
             $total_delivery_4,
-            $total_delivery_all
+            $total_delivery_all,
+            $total_markup,
+            $total_final_amount
         ];
-        
-        // Age range totals qo'shish
-        foreach($ages as $age) {
-            if($age->id == 4) { // 9-10.5 soatlik
-                $totalRow[] = $total_amount_without_nds9_10;
-                $totalRow[] = $total_markup9_10;
-                $totalRow[] = $total_nds9_10;
-                $totalRow[] = $total_final_amount9_10;
-            } elseif($age->id == 3) { // 4 soatlik
-                $totalRow[] = $total_amount_without_nds4;
-                $totalRow[] = $total_markup4;
-                $totalRow[] = $total_nds4;
-                $totalRow[] = $total_final_amount4;
-            } else {
-                // Boshqa yosh guruhlari uchun 0
-                $totalRow[] = 0;
-                $totalRow[] = 0;
-                $totalRow[] = 0;
-                $totalRow[] = 0;
-            }
-        }
-        
-        // Final total
-        $totalRow[] = $total_final_amount;
-        $data[] = $totalRow;
         
         // Imzo qismi
         $data[] = [''];
-        $data[] = ['Аутсорсер директори: ____________________________'];
-        $data[] = ['Буюртмачи директори: ____________________________'];
+        $data[] = ['Аутсорсер директори: ____________________________', '', '', '', '', '', '', '', '', '', '', '', ''];
+        $data[] = ['Буюртмачи директори: ____________________________', '', '', '', '', '', '', '', '', '', '', '', ''];
         
         return $data;
     }
@@ -281,31 +196,24 @@ class TransportationExcelExport implements FromArray, WithStyles, WithColumnWidt
                 $highestColumn = $sheet->getHighestColumn();
                 
                 // Header merge va style
-                $sheet->mergeCells('A1:' . $highestColumn . '1');
+                $sheet->mergeCells('A1:M1');
                 $sheet->getStyle('A1')->getAlignment()
                       ->setHorizontal(Alignment::HORIZONTAL_CENTER)
                       ->setVertical(Alignment::VERTICAL_CENTER);
                 $sheet->getStyle('A1')->getFont()->setSize(14)->setBold(true);
                 
-                // Jadval header merge cells - PDF bilan bir xil
+                // Jadval header merge cells - PDF bilan bir xil (13 ustun)
                 $sheet->mergeCells('A3:A4'); // №
                 $sheet->mergeCells('B3:B4'); // Таомнома
                 $sheet->mergeCells('C3:C4'); // Сана
                 $sheet->mergeCells('D3:F3'); // Буюртма бўйича бола сони
                 $sheet->mergeCells('G3:H3'); // Бир нафар болага сарфланган харажат НДС билан
                 $sheet->mergeCells('I3:K3'); // Жами етказиб бериш харажат НДС билан
-                
-                // Age range headers - har bir yosh guruhi uchun 4 ustun
-                $col = 'L';
-                foreach(Age_range::all() as $age) {
-                    $endCol = chr(ord($col) + 3);
-                    $sheet->mergeCells($col . '3:' . $endCol . '3');
-                    $col = chr(ord($endCol) + 1);
-                }
-                $sheet->mergeCells($col . '3:' . $col . '4'); // Final total
+                $sheet->mergeCells('L3:L4'); // Устама ҳақ
+                $sheet->mergeCells('M3:M4'); // Жами етказиб бериш суммаси (НДС билан)
                 
                 // Header style
-                $sheet->getStyle('A3:' . $highestColumn . '4')->applyFromArray([
+                $sheet->getStyle('A3:M4')->applyFromArray([
                     'fill' => [
                         'fillType' => Fill::FILL_SOLID,
                         'startColor' => ['rgb' => 'F0F0F0'],
@@ -323,7 +231,7 @@ class TransportationExcelExport implements FromArray, WithStyles, WithColumnWidt
                 // Ma'lumotlar border
                 $dataStartRow = 5;
                 $dataEndRow = $highestRow - 3; // Imzo qatorlaridan oldin
-                $dataRange = 'A' . $dataStartRow . ':' . $highestColumn . $dataEndRow;
+                $dataRange = 'A' . $dataStartRow . ':M' . $dataEndRow;
                 $sheet->getStyle($dataRange)->applyFromArray([
                     'borders' => [
                         'allBorders' => ['borderStyle' => Border::BORDER_THIN],
@@ -332,9 +240,9 @@ class TransportationExcelExport implements FromArray, WithStyles, WithColumnWidt
                 
                 // Jami qatori style
                 $totalRow = $dataEndRow;
-                $sheet->getStyle('A' . $totalRow . ':' . $highestColumn . $totalRow)
+                $sheet->getStyle('A' . $totalRow . ':M' . $totalRow)
                       ->getFont()->setBold(true);
-                $sheet->getStyle('A' . $totalRow . ':' . $highestColumn . $totalRow)
+                $sheet->getStyle('A' . $totalRow . ':M' . $totalRow)
                       ->applyFromArray([
                           'fill' => [
                               'fillType' => Fill::FILL_SOLID,
@@ -346,7 +254,7 @@ class TransportationExcelExport implements FromArray, WithStyles, WithColumnWidt
                       ]);
                 
                 // Number format - raqamli ustunlar uchun
-                $sheet->getStyle('D' . $dataStartRow . ':' . $highestColumn . $dataEndRow)
+                $sheet->getStyle('D' . $dataStartRow . ':M' . $dataEndRow)
                       ->getNumberFormat()->setFormatCode('#,##0.00');
                 
                 // Imzo qatorlari style
@@ -374,6 +282,8 @@ class TransportationExcelExport implements FromArray, WithStyles, WithColumnWidt
             'I' => 15,  // 9-10.5 delivery
             'J' => 15,  // 4 delivery
             'K' => 15,  // Жами delivery
+            'L' => 15,  // Устама ҳақ
+            'M' => 20,  // Жами етказиб бериш суммаси (НДС билан)
         ];
     }
-} 
+}

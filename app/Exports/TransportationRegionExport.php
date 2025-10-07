@@ -146,14 +146,14 @@ class TransportationRegionExport implements FromArray, WithStyles, WithColumnWid
                     // Jami
                     $row[] = '=' . $col . $currentDataRow . '+' . chr(ord($col)+1) . $currentDataRow . '+' . chr(ord($col)+2) . $currentDataRow;
                 } elseif($age->id == 3) { // 4 soatlik
-                    // Summa (bezNDS)
+                    // Summa (bezNDS) - J ustunidan olish
                     $row[] = '=J' . $currentDataRow . '/(1+' . ($nds/100) . ')';
-                    // Ustama
-                    $row[] = '=' . chr(ord($col)+4) . $currentDataRow . '*' . ($raise/100);
-                    // NDS
-                    $row[] = '=' . chr(ord($col)+4) . $currentDataRow . '*' . ($nds/100);
+                    // Ustama - L ustunidan olish (4 soatlik guruh uchun)
+                    $row[] = '=' . $col . $currentDataRow . '*' . ($raise/100);
+                    // NDS - L ustunidan olish (4 soatlik guruh uchun)
+                    $row[] = '=' . $col . $currentDataRow . '*' . ($nds/100);
                     // Jami
-                    $row[] = '=' . chr(ord($col)+4) . $currentDataRow . '+' . chr(ord($col)+5) . $currentDataRow . '+' . chr(ord($col)+6) . $currentDataRow;
+                    $row[] = '=' . $col . $currentDataRow . '+' . chr(ord($col)+1) . $currentDataRow . '+' . chr(ord($col)+2) . $currentDataRow;
                 }
                 $col = chr(ord($col) + 4);
             }

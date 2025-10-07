@@ -407,7 +407,7 @@
                 html += '<a href="/accountant/nakapitwithoutcost/'+kindid+'/'+age_ranges[i]+'/'+start+'/'+end+'" target="_blank" class="report-link pdf">';
                 html += '<i class="far fa-file-pdf"></i>PDF';
                 html += '</a>';
-                html += '<a href="/accountant/nakapitexcelwithoutcost/'+kindid+'/'+age_ranges[i]+'/'+start+'/'+end+'" target="_blank" class="report-link excel">';
+                html += '<a href="/accountant/nakapitwithoutcostexcel/'+kindid+'/'+age_ranges[i]+'/'+start+'/'+end+'" target="_blank" class="report-link excel">';
                 html += '<i class="far fa-file-excel"></i>Excel';
                 html += '</a>';
                 html += '</div>';
@@ -449,7 +449,7 @@
             html += '<a href="/accountant/schotfaktursecond/'+kindid+'/'+start+'/'+end+'" target="_blank" class="report-link pdf">';
             html += '<i class="far fa-file-pdf"></i>PDF';
             html += '</a>';
-            html += '<a href="/accountant/allschotfakturexcel/'+kindid+'/'+start+'/'+end+'/'+cost+'" target="_blank" class="report-link excel">';
+            html += '<a href="/accountant/schotfaktursecondexcel/'+kindid+'/'+start+'/'+end+'" target="_blank" class="report-link excel">';
             html += '<i class="far fa-file-excel"></i>Excel';
             html += '</a>';
             html += '</div>';
@@ -461,7 +461,7 @@
             html += '<a href="/accountant/dalolatnoma/'+kindid+'/'+start+'/'+end+'" target="_blank" class="report-link pdf">';
             html += '<i class="far fa-file-pdf"></i>PDF';
             html += '</a>';
-            html += '<a href="/accountant/dalolatnomaexcel/'+kindid+'/'+start+'/'+end+'/'+cost+'" target="_blank" class="report-link excel">';
+            html += '<a href="/accountant/dalolatnomaexcel/'+kindid+'/'+start+'/'+end+'" target="_blank" class="report-link excel">';
             html += '<i class="far fa-file-excel"></i>Excel';
             html += '</a>';
             html += '</div>';
