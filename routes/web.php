@@ -394,6 +394,8 @@ Route::group(['prefix' => 'accountant', 'middleware' => ['isAccountant', 'auth']
     Route::get('transportationRegionexcel/{id}/{start}/{end}', [AccountantController::class, 'transportationRegionexcel'])->name('accountant.transportationRegionexcel');
     Route::get('regionSchotFaktura/{id}/{start}/{end}', [AccountantController::class, 'regionSchotFaktura'])->name('accountant.regionSchotFaktura');
     Route::get('regionSchotFakturaexcel/{id}/{start}/{end}', [AccountantController::class, 'regionSchotFakturaexcel'])->name('accountant.regionSchotFakturaexcel');
+    Route::get('regionDalolatnoma/{id}/{start}/{end}', [AccountantController::class, 'regionDalolatnoma'])->name('accountant.regionDalolatnoma');
+    Route::get('regionDalolatnomaexcel/{id}/{start}/{end}', [AccountantController::class, 'regionDalolatnomaexcel'])->name('accountant.regionDalolatnomaexcel');
     Route::get('reportRegionSecondary/{id}/{start}/{end}', [AccountantController::class, 'reportRegionSecondary'])->name('accountant.reportRegionSecondary');
     Route::get('reportRegionSecondaryexcel/{id}/{start}/{end}', [AccountantController::class, 'reportRegionSecondaryexcel'])->name('accountant.reportRegionSecondaryexcel');
     Route::get('reportProductsOfRegion/{id}/{start}/{end}/{ageid}', [AccountantController::class, 'reportProductsOfRegion'])->name('accountant.reportProductsOfRegion');

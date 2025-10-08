@@ -17,6 +17,7 @@ use App\Exports\TransportationThirdExcelExport;
 use App\Exports\SvodExport;
 use App\Exports\ReportProductsOfRegionExport;
 use App\Exports\DalolatnomaExport;
+use App\Exports\RegionDalolatnomaExport;
 use App\Models\Age_range;
 use App\Models\bycosts;
 use App\Models\Active_menu;
@@ -2235,6 +2236,94 @@ class AccountantController extends Controller
         $name = $start.$end.$id."schotfaktursecond.pdf";
         
         return $pdf->stream($name);
+    }
+
+    public function regionDalolatnoma(Request $request, $id, $start, $end){
+        $kindgardens = Kindgarden::where('region_id', $id)->get();
+
+        $region = Region::where('id', $id)->first();
+        
+        $days = Day::where('days.id', '>=', $start)->where('days.id', '<=', $end)
+                ->join('years', 'days.year_id', '=', 'years.id')
+                ->join('months', 'days.month_id', '=', 'months.id')
+                ->get(['days.day_number', 'months.id as month_id', 'months.month_name', 'years.year_name', 'days.created_at']);
+        
+        $costs = [];
+        $total_number_children = [];
+        $ages = Age_range::all();
+        
+        // Har bir yosh guruhi uchun protsent va bolalar sonini olish
+        foreach($ages as $age){
+            $costs[$age->id] = Protsent::where('region_id', $id)
+                        ->where('age_range_id', $age->id)
+                        ->where('start_date', '<=', $days[0]->created_at->format('Y-m-d'))
+                        ->where('end_date', '>=', $days->last()->created_at->format('Y-m-d'))
+                        ->first();
+            if(!isset($total_number_children[$age->id])){
+                $total_number_children[$age->id] = 0;
+            }
+            $total_number_children[$age->id] += Number_children::where('number_childrens.day_id', '>=', $start)
+                ->where('number_childrens.day_id', '<=', $end)
+                ->whereIn('kingar_name_id', $kindgardens->pluck('id')->toArray())
+                ->where('king_age_name_id', $age->id)
+                ->sum('kingar_children_number');
+        }
+        
+        // Autsorser ma'lumotlari (kompaniya ma'lumotlari)
+        $autorser = config('company.autorser');
+        
+        // Buyurtmachi ma'lumotlari
+        $buyurtmachi = [
+            'company_name' => $region->region_name.' ММТБ' ?? '',
+            'address' => $region->region_name,
+            'inn' => '________________',
+            'bank_account' => '___________________________________',
+            'mfo' => '00014',
+            'account_number' => '23402000300100001010',
+            'treasury_account' => '_______________',
+            'treasury_inn' => '________________',
+            'bank' => 'Марказий банк ХККМ',
+            'phone' => '__________________________',
+        ];
+
+        $contract_env = env('CONTRACT_DATA');
+        
+        $contract_data = $contract_env ? explode(',', $contract_env)[$region->id - 1] ?? " ______ '______' ___________ 2025 й"
+            : " ______ '______' ___________ 2025 й";
+        
+        // Dalolatnoma raqami va sanasi
+        if(is_null(env('INVOICE_NUMBER'))){
+            $invoice_number = $id.'-'.$days->last()->month_id;
+        }else{
+            $invoice_number = $days->last()->month_id.'/'.env('INVOICE_NUMBER');
+        }
+        $invoice_date = $days->last()->created_at->format('d.m.Y');
+        
+        // Snappy PDF yaratish
+        $pdf = \PDF::loadView('pdffile.accountant.regiondalolatnoma', compact('contract_data', 'costs', 'ages', 'days', 'kindgardens', 'autorser', 'buyurtmachi', 'invoice_number', 'invoice_date', 'total_number_children', 'region'));
+        
+        // PDF sozlamalari
+        $pdf->setOption('page-size', 'A4');
+        $pdf->setOption('orientation', 'portrait');
+        $pdf->setOption('margin-top', 10);
+        $pdf->setOption('margin-bottom', 10);
+        $pdf->setOption('margin-left', 10);
+        $pdf->setOption('margin-right', 10);
+        $pdf->setOption('encoding', 'UTF-8');
+        $pdf->setOption('enable-local-file-access', true);
+        $pdf->setOption('print-media-type', true);
+        $pdf->setOption('disable-smart-shrinking', false);
+        
+        $name = $start.$end.$id."regiondalolatnoma.pdf";
+        
+        return $pdf->stream($name);
+    }
+
+    public function regionDalolatnomaexcel(Request $request, $id, $start, $end){
+        // Execution time oshirish
+        set_time_limit(300); // 5 daqiqa
+        
+        return Excel::download(new RegionDalolatnomaExport($id, $start, $end), 'region_dalolatnoma_'.date('Y-m-d').'.xlsx');
     }
 
     public function regionSchotFakturaexcel(Request $request, $id, $start, $end){
