@@ -2203,11 +2203,11 @@ class AccountantController extends Controller
             'phone' => '__________________________',
         ];
 
-        if(is_null(env('CONTRACT_DATA'))){
-            $contract_data = " ______ '______' ___________ 2025 й";
-        }else{
-            $contract_data = " 25111006438231       16.07.2025 й";
-        }
+        $contract_env = env('CONTRACT_DATA');
+        
+        $contract_data = $contract_env ? explode(',', $contract_env)[$region->id - 1] ?? " ______ '______' ___________ 2025 й"
+            : " ______ '______' ___________ 2025 й";
+        
         
         // Hisob-faktura raqami va sanasi
         if(is_null(env('INVOICE_NUMBER'))){
