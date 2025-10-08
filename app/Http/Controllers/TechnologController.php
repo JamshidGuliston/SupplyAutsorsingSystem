@@ -5411,4 +5411,138 @@ class TechnologController extends Controller
         }
     }
 
+    /**
+     * Copy children numbers from selected day to nextday_nambers
+     */
+    public function copyChildrenNumbers(Request $request)
+    {
+        try {
+            $ageId = $request->input('age_id');
+            $dayId = $request->input('day_id');
+            
+            if (!$ageId || !$dayId) {
+                return redirect()->back()->with('error', 'Yosh guruhi va kun tanlanishi shart!');
+            }
+            
+            // Tanlangan kundagi bolalar sonlarini olish
+            $sourceChildren = Number_children::where('day_id', $dayId)
+                ->where('king_age_name_id', $ageId)
+                ->get();
+            
+            if ($sourceChildren->isEmpty()) {
+                return redirect()->back()->with('error', 'Tanlangan kunda hech qanday ma\'lumot topilmadi!');
+            }
+            
+            // Mavjud nextday_nambers ma'lumotlarini vaqtincha saqlash
+            $backupData = [];
+            $nextdayRecords = Nextday_namber::where('king_age_name_id', $ageId)->get();
+            
+            foreach ($nextdayRecords as $record) {
+                $backupData[] = [
+                    'kingar_name_id' => $record->kingar_name_id,
+                    'king_age_name_id' => $record->king_age_name_id,
+                    'kingar_children_number' => $record->kingar_children_number,
+                    'workers_count' => $record->workers_count,
+                    'kingar_menu_id' => $record->kingar_menu_id,
+                ];
+            }
+            
+            // Backup ma'lumotlarni session ga saqlash
+            session(['backup_children_data_' . $ageId => $backupData]);
+            
+            // Yangi ma'lumotlarni nusxalash
+            $updatedCount = 0;
+            foreach ($sourceChildren as $sourceChild) {
+                $nextdayRecord = Nextday_namber::where('kingar_name_id', $sourceChild->kingar_name_id)
+                    ->where('king_age_name_id', $ageId)
+                    ->first();
+                
+                if ($nextdayRecord) {
+                    // Mavjud qatorni yangilash
+                    $nextdayRecord->update([
+                        'kingar_children_number' => $sourceChild->kingar_children_number,
+                        'workers_count' => $sourceChild->workers_count,
+                    ]);
+                    $updatedCount++;
+                } else {
+                    // Yangi qator yaratish
+                    Nextday_namber::create([
+                        'kingar_name_id' => $sourceChild->kingar_name_id,
+                        'king_age_name_id' => $ageId,
+                        'kingar_children_number' => $sourceChild->kingar_children_number,
+                        'workers_count' => $sourceChild->workers_count,
+                        'kingar_menu_id' => $sourceChild->kingar_menu_id,
+                    ]);
+                    $updatedCount++;
+                }
+            }
+            
+            return redirect()->back()->with('success', 
+                "Muvaffaqiyatli! {$updatedCount} ta bog'cha uchun bolalar sonlari nusxalandi. " .
+                "Mavjud ma'lumotlar vaqtincha saqlanadi va kerak bo'lsa qayta tiklanadi."
+            );
+            
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'Xatolik yuz berdi: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Restore backup children numbers
+     */
+    public function restoreChildrenNumbers(Request $request)
+    {
+        try {
+            $ageId = $request->input('age_id');
+            
+            if (!$ageId) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Yosh guruhi tanlanishi shart!'
+                ], 400);
+            }
+            
+            // Session dan backup ma'lumotlarni olish
+            $backupData = session('backup_children_data_' . $ageId);
+            
+            if (!$backupData) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Qayta tiklash uchun ma\'lumot topilmadi!'
+                ], 404);
+            }
+            
+            // Backup ma'lumotlarni qayta tiklash
+            $restoredCount = 0;
+            foreach ($backupData as $data) {
+                $record = Nextday_namber::where('kingar_name_id', $data['kingar_name_id'])
+                    ->where('king_age_name_id', $ageId)
+                    ->first();
+                
+                if ($record) {
+                    $record->update([
+                        'kingar_children_number' => $data['kingar_children_number'],
+                        'workers_count' => $data['workers_count'],
+                        'kingar_menu_id' => $data['kingar_menu_id'],
+                    ]);
+                    $restoredCount++;
+                }
+            }
+            
+            // Session dan backup ma'lumotlarni o'chirish
+            session()->forget('backup_children_data_' . $ageId);
+            
+            return response()->json([
+                'success' => true,
+                'message' => "Muvaffaqiyatli! {$restoredCount} ta bog'cha uchun ma'lumotlar qayta tiklandi."
+            ]);
+            
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Xatolik: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
 }

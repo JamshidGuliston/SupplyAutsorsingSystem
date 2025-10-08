@@ -707,6 +707,54 @@
 </div>
 <!-- EDIT -->
 
+<!-- Copy children numbers modal -->
+<div class="modal fade" id="copyChildrenModal" tabindex="-1" aria-labelledby="copyChildrenModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <form action="{{ route('technolog.copyChildrenNumbers') }}" method="post">
+                @csrf
+                <div class="modal-header bg-info">
+                    <h5 class="modal-title text-white" id="copyChildrenModalLabel">Bolalar sonini nusxalash</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h6 class="age-title text-primary"></h6>
+                            <input type="hidden" name="age_id" id="copy_age_id">
+                        </div>
+                        <div class="col-md-6">
+                            <label for="daySelect" class="form-label">Kunni tanlang:</label>
+                            <select class="form-select" id="daySelect" name="day_id" required>
+                                <option value="">Kunni tanlang</option>
+                                @foreach(\App\Models\Day::join('months', 'months.id', '=', 'days.month_id')
+                                    ->join('years', 'years.id', '=', 'days.year_id')
+                                    ->orderBy('days.id', 'DESC')
+                                    ->limit(30)
+                                    ->get(['days.id', 'days.day_number', 'months.month_name', 'years.year_name']) as $day)
+                                    <option value="{{ $day->id }}">{{ $day->day_number }}.{{ $day->month_name }}.{{ $day->year_name }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                    </div>
+                    <div class="mt-3">
+                        <div class="alert alert-info">
+                            <i class="fas fa-info-circle me-2"></i>
+                            Tanlangan kundagi bolalar sonlari keyingi kun uchun nusxalanadi. 
+                            Mavjud ma'lumotlar vaqtincha saqlanadi va kerak bo'lsa qayta tiklanadi.
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Bekor qilish</button>
+                    <button type="submit" class="btn btn-info text-white">Nusxalash</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<!-- Copy children numbers modal -->
+
 <!-- DELETE Modal 2 - Birinchi jadval uchun -->
 <!-- Modal -->
 <div class="modal fade" id="deleteModal2" tabindex="-1" aria-labelledby="deleteModalLabel1" aria-hidden="true">
@@ -808,6 +856,18 @@
                         @foreach($ages as $age)
                         <th scope="col" colspan="2"> 
                             <span class="age_name{{ $age->id }}">{{ $age->age_name }} </span>
+                            <i class="fas fa-edit copy-children-btn" 
+                               style="color: #727213; font-size: 14px; cursor: pointer; margin-left: 5px;" 
+                               data-age-id="{{ $age->id }}" 
+                               data-age-name="{{ $age->age_name }}"
+                               data-bs-toggle="modal" 
+                               data-bs-target="#copyChildrenModal" 
+                               title="Bolalar sonini nusxalash"></i>
+                            <i class="fas fa-undo restore-children-btn" 
+                               style="color: #dc3545; font-size: 14px; cursor: pointer; margin-left: 3px;" 
+                               data-age-id="{{ $age->id }}" 
+                               data-age-name="{{ $age->age_name }}"
+                               title="Ma'lumotlarni qayta tiklash"></i>
                         </th>
                         @endforeach
                         <th style="width: 70px;" rowspan="2">Накладной</th>
@@ -1463,6 +1523,58 @@
             $('#bulk_age_id').val(ageId);
             var ageName = $('.age_name' + ageId).text();
             $('.menutitle').html("<p>" + ageName + " yosh guruhi uchun barcha menyularni o'zgartirish</p>");
+        });
+
+        // Copy children numbers modal
+        $('.copy-children-btn').click(function() {
+            var ageId = $(this).attr('data-age-id');
+            var ageName = $(this).attr('data-age-name');
+            
+            $('#copy_age_id').val(ageId);
+            $('.age-title').text(ageName + ' yosh guruhi uchun bolalar sonini nusxalash');
+        });
+
+        // Restore children numbers
+        $('.restore-children-btn').click(function() {
+            var ageId = $(this).attr('data-age-id');
+            var ageName = $(this).attr('data-age-name');
+            
+            if (!confirm(ageName + ' yosh guruhi uchun ma\'lumotlarni qayta tiklamoqchimisiz?')) {
+                return;
+            }
+            
+            var icon = $(this);
+            icon.removeClass('fa-undo').addClass('fa-spinner fa-spin');
+            
+            $.ajax({
+                url: '{{ route("technolog.restoreChildrenNumbers") }}',
+                method: 'POST',
+                data: {
+                    _token: '{{ csrf_token() }}',
+                    age_id: ageId
+                },
+                success: function(response) {
+                    if (response.success) {
+                        showNotification(response.message, 'success');
+                        // Sahifani qayta yuklash
+                        setTimeout(function() {
+                            location.reload();
+                        }, 1500);
+                    } else {
+                        showNotification(response.message, 'error');
+                    }
+                },
+                error: function(xhr) {
+                    var errorMessage = 'Xatolik yuz berdi!';
+                    if (xhr.responseJSON && xhr.responseJSON.message) {
+                        errorMessage = xhr.responseJSON.message;
+                    }
+                    showNotification(errorMessage, 'error');
+                },
+                complete: function() {
+                    icon.removeClass('fa-spinner fa-spin').addClass('fa-undo');
+                }
+            });
         });
 
         // Share menu funksiyasi

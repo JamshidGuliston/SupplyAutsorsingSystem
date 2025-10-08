@@ -313,6 +313,10 @@ Route::group(['prefix' => 'technolog', 'middleware' => ['isTechnolog', 'auth']],
 
     Route::get('nextdayshopexcel/{id}', [TechnologController::class, 'nextdayshopexcel'])->name('technolog.nextdayshopexcel');
     Route::get('/test-zip-creation', [TechnologController::class, 'testZipCreation']);
+    
+    // Copy children numbers functionality
+    Route::post('copy-children-numbers', [TechnologController::class, 'copyChildrenNumbers'])->name('technolog.copyChildrenNumbers');
+    Route::post('restore-children-numbers', [TechnologController::class, 'restoreChildrenNumbers'])->name('technolog.restoreChildrenNumbers');
 });
 
 
