@@ -309,7 +309,7 @@
                 @foreach($ages as $age)
                 <tr>
                     <td class="order-number">{{ $tr++ }}</td>
-                    <td class="product-name">{{ $region->region_name . " MMTB " . $age->description . "ли гуруҳ тарбияланувчилари учун кўрсатилган ".$days[0]->year_name." йил ".$days[0]->day_number."-".$days[count($days)-1]->day_number." ".$days[0]->month_name." даги Аутсорсинг хизмати" }}</td>
+                    <td class="product-name">{{ $region->region_name . " MMTB " . $age->description . " тарбияланувчилари учун кўрсатилган ".$days[0]->year_name." йил ".$days[0]->day_number."-".$days[count($days)-1]->day_number." ".$days[0]->month_name." даги Аутсорсинг хизмати" }}</td>
                     <td class="unit">{{ 'хизмат' }}</td>
                     <td class="quantity">{{ 1 }}</td>
                     <!-- without nds -->

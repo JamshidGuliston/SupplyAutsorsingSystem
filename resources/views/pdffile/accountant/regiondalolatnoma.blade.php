@@ -217,7 +217,7 @@
                 <tr>
                     <td class="number-col">{{ $tr++ }}</td>
                     <td class="work-name-col">
-                        {{ $buyurtmachi['address'] ?? 'Олмалик шахар' }} ММТБга тасарруфидаги барча ДМТТ {{ $age->description ?? '9-10,5 соатлик' }} гуруҳ тарбияланувчилари учун {{ $days->first()->year_name ?? '2025' }} йил {{ $days->first()->day_number ?? '02' }}-{{ $days->last()->day_number ?? '19' }} {{ $days->first()->month_name ?? 'сентябр' }}да аутсорсинг асосида кунига уч маҳал овқатланишни ташкил этиш бўйича:
+                        {{ $buyurtmachi['address'] ?? 'Олмалик шахар' }} ММТБга тасарруфидаги барча ДМТТ {{ $age->description ?? '9-10,5 соатлик' }} тарбияланувчилари учун {{ $days->first()->year_name ?? '2025' }} йил {{ $days->first()->day_number ?? '02' }}-{{ $days->last()->day_number ?? '19' }} {{ $days->first()->month_name ?? 'сентябр' }}да аутсорсинг асосида кунига уч маҳал овқатланишни ташкил этиш бўйича:
                     </td>
                     <td class="amount-col">
                         @php
