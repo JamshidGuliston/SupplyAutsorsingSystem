@@ -205,7 +205,7 @@
         <div class="invoice-title">СЧЁТ-ФАКТУРА</div>
         <div class="invoice-number">№ {{ $invoice_number ?? "_________________________________" }}</div>
         <div class="invoice-date">{{ $invoice_date."  й" ?? "_________________________________" }}</div>
-        <div class="invoice-date">{{ "Хизмат кўрсатиш шартномаси:"." № ".$contract_data }}</div>
+        <div class="invoice-date">{{ "Хизмат кўрсатиш шартномаси: ".$contract_data }}</div>
     </div>
 
     <!-- Kompaniya ma'lumotlari -->
