@@ -276,13 +276,65 @@ class TestController extends Controller
                 }
             }
         }
-        $dompdf = new Dompdf('UTF-8');
-		$html = mb_convert_encoding(view('pdffile.technolog.activmenu', ['protsent' => $protsent,'day' => $day,'productallcount' => $productallcount, 'workerproducts' => $workerproducts,'menu' => $menu, 'menuitem' => $nextdaymenuitem, 'products' => $products, 'workerfood' => $workerfood]), 'HTML-ENTITIES', 'UTF-8');
-		$dompdf->loadHtml($html);
-		$dompdf->setPaper('A4', 'landscape');
-		$name = $day['id'].$ageid."activemenu.pdf";
-		$dompdf->render();
-		$dompdf->stream($name, ['Attachment' => 0]);
+		// Snappy bilan PDF yaratish
+		try {
+			$pdf = \PDF::loadView('pdffile.technolog.activmenu', [
+				'protsent' => $protsent,
+				'day' => $day,
+				'productallcount' => $productallcount,
+				'workerproducts' => $workerproducts,
+				'menu' => $menu,
+				'menuitem' => $nextdaymenuitem,
+				'products' => $products,
+				'workerfood' => $workerfood
+			]);
+
+			$pdf->setPaper('A4', 'landscape')
+				->setOptions([
+					'encoding' => 'UTF-8',
+					'defaultFont' => 'DejaVu Sans',
+					'dpi' => 150,
+					'image-quality' => 100,
+					'margin-top' => 5,
+					'margin-right' => 5,
+					'margin-bottom' => 5,
+					'margin-left' => 5,
+					'enable-local-file-access' => true,
+					'print-media-type' => true,
+					'disable-smart-shrinking' => false,
+					'load-error-handling' => 'ignore',
+					'load-media-error-handling' => 'ignore',
+					'isHtml5ParserEnabled' => true,
+					'isRemoteEnabled' => true,
+					'debugKeepTemp' => false,
+					'no-outline' => true,
+					'disable-external-links' => false,
+					'disable-internal-links' => false,
+				]);
+
+			$name = $day['id'].$ageid."activemenu.pdf";
+
+			return $pdf->stream($name, ['Attachment' => 0]);
+		} catch (\Exception $e) {
+			// Snappy ishlamasa, DomPDF ishlatish
+			$dompdf = new Dompdf('UTF-8');
+			$html = mb_convert_encoding(view('pdffile.technolog.activmenu', [
+				'protsent' => $protsent,
+				'day' => $day,
+				'productallcount' => $productallcount,
+				'workerproducts' => $workerproducts,
+				'menu' => $menu,
+				'menuitem' => $nextdaymenuitem,
+				'products' => $products,
+				'workerfood' => $workerfood
+			]), 'HTML-ENTITIES', 'UTF-8');
+			$dompdf->loadHtml($html);
+			$dompdf->setPaper('A4', 'landscape');
+			$name = $day['id'].$ageid."activemenu.pdf";
+			$dompdf->render();
+			
+			return $dompdf->stream($name, ['Attachment' => 0]);
+		}
 	}
 	
 	public function nextnakladnoyPDF($kid){
