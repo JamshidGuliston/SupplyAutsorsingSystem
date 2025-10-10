@@ -61,19 +61,16 @@
         
         /* Vertikal matn uchun Snappy-optimized CSS */
         .vertical-text {
-            display: block;
+            display: inline-block;
             width: 80px;
-            height: 20px;
-            font-size: 10px;
-            line-height: 1.1;
-            text-align: center;
-            word-wrap: break-word;
-            overflow: visible;
+            height: 25px;
+            font-size: 9px;
+            line-height: 1.2;
+            text-align: left;
             white-space: nowrap;
-            writing-mode: vertical-rl;
-            text-orientation: mixed;
-            transform: rotate(180deg);
-            transform-origin: center center;
+            overflow: visible;
+            transform: rotate(-90deg) translateX(-60px);
+            transform-origin: left bottom;
         }
         
         .product-name {
@@ -127,9 +124,11 @@
         .col-1 { width: 2%; }
         .col-2 { width: 8%; font-size: 10px; }
         .col-product { 
-            width: 30px; 
-            min-width: 30px;
-            max-width: 30px;
+            width: 25px; 
+            min-width: 25px;
+            max-width: 25px;
+            height: 100px;
+            padding: 5px 2px;
         }
         
         /* Alternativ vertikal matn usuli */
