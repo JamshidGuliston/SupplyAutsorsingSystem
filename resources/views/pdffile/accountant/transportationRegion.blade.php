@@ -301,8 +301,8 @@
                     $amount_without_nds4 = $delivery_4 / (1 + $nds / 100); // QQSsiz summa
                     $markup9_10 = $amount_without_nds9_10 * $raise / 100; // 28.7% ustama
                     $markup4 = $amount_without_nds4 * $raise / 100; // 28.7% ustama
-                    $nds9_10 = $amount_without_nds9_10 * $nds / 100; // 12% QQS
-                    $nds4 = $amount_without_nds4 * $nds / 100; // 12% QQS
+                    $nds9_10 = ($amount_without_nds9_10 + $markup9_10) * $nds / 100; // 12% QQS
+                    $nds4 = ($amount_without_nds4 + $markup4)* $nds / 100; // 12% QQS
                     $final_amount9_10 = $amount_without_nds9_10 + $markup9_10 + $nds9_10;
                     $final_amount4 = $amount_without_nds4 + $markup4 + $nds4;
                     $final_amount = $final_amount9_10 + $final_amount4;
