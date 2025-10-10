@@ -61,18 +61,18 @@
         
         /* Vertikal matn uchun Snappy-optimized CSS */
         .vertical-text {
-            writing-mode: vertical-rl;
-            text-orientation: mixed;
-            transform: rotate(180deg);
+            writing-mode: vertical-lr;
+            text-orientation: upright;
             display: inline-block;
             width: auto;
             height: auto;
-            font-size: 9px;
+            font-size: 8px;
             line-height: 1;
             text-align: center;
             white-space: nowrap;
             overflow: visible;
             padding: 2px;
+            letter-spacing: 0;
         }
         
         .product-name {
@@ -144,7 +144,7 @@
 			position: absolute;
 			top: 50%;
 			left: 50%;
-			transform: translate(-50%, -50%) rotate(90deg);
+			transform: translate(-50%, -50%) rotate(180deg);
 			transform-origin: center center;
 			white-space: nowrap;
 			text-align: center;
@@ -157,7 +157,7 @@
 		.vertical-text-alt {
 			writing-mode: vertical-rl;
 			text-orientation: mixed;
-			transform: rotate(90deg);
+			transform: rotate(180deg);
 			transform-origin: center center;
 			text-align: center;
 			white-space: nowrap;
