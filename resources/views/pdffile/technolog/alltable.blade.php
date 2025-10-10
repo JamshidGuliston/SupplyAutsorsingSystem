@@ -142,7 +142,7 @@
 			position: absolute;
 			top: 50%;
 			left: 50%;
-			transform: translate(-50%, -50%) rotate(-90deg);
+			transform: translate(-50%, -50%) rotate(90deg);
 			transform-origin: center;
 			white-space: nowrap;
 			text-align: center;
