@@ -10,6 +10,12 @@
             size: A4 landscape;
         }
         
+        /* Snappy PDF uchun qo'shimcha optimizatsiya */
+        * {
+            -webkit-print-color-adjust: exact !important;
+            color-adjust: exact !important;
+        }
+        
         body {
             font-family: "DejaVu Sans", Arial, sans-serif;
             font-size: 10px;
@@ -64,19 +70,9 @@
             word-wrap: break-word;
             overflow: hidden;
             white-space: normal;
-        }
-        
-        .vertical-text span {
-            display: block;
-            transform: rotate(-90deg);
-            transform-origin: center;
-            width: 80px;
-            height: 20px;
-            margin-top: 30px;
-            margin-left: -30px;
-            font-size: 10px;
-            line-height: 1.1;
-            text-align: center;
+            transform: rotate(90deg);
+            transform-origin: center center;
+            position: relative;
         }
         
         .product-name {
@@ -129,7 +125,11 @@
         /* Fixed column widths */
         .col-1 { width: 2%; }
         .col-2 { width: 8%; font-size: 10px; }
-        .col-product { width: 20px; }
+        .col-product { 
+            width: 20px; 
+            min-width: 20px;
+            max-width: 20px;
+        }
         
         /* Alternativ vertikal matn usuli */
         .vertical-header {
@@ -143,21 +143,21 @@
 			top: 50%;
 			left: 50%;
 			transform: translate(-50%, -50%) rotate(90deg);
-			transform-origin: center;
+			transform-origin: center center;
 			white-space: nowrap;
 			text-align: center;
+			width: 20px;
+			height: 80px;
 		}
 
-		.vertical-text {
-			writing-mode: vertical-rl;   /* matnni vertikal qiladi (yuqoridan pastga) */
-			-webkit-writing-mode: vertical-rl;
-			-ms-writing-mode: tb-rl;
-
-			transform: rotate(180deg);   /* teskari qilib pastdan tepaga chiqaradi */
+		.vertical-text-alt {
+			transform: rotate(90deg);
 			transform-origin: center center;
 			text-align: center;
 			white-space: nowrap;
 			display: inline-block;
+			width: 20px;
+			height: 80px;
 		}
 
 
