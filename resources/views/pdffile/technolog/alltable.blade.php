@@ -62,17 +62,18 @@
         /* Vertikal matn uchun Snappy-optimized CSS */
         .vertical-text {
             display: block;
-            width: 20px;
-            height: 80px;
+            width: 80px;
+            height: 20px;
             font-size: 10px;
             line-height: 1.1;
             text-align: center;
             word-wrap: break-word;
-            overflow: hidden;
-            white-space: normal;
-            transform: rotate(90deg);
+            overflow: visible;
+            white-space: nowrap;
+            writing-mode: vertical-rl;
+            text-orientation: mixed;
+            transform: rotate(180deg);
             transform-origin: center center;
-            position: relative;
         }
         
         .product-name {
@@ -126,14 +127,14 @@
         .col-1 { width: 2%; }
         .col-2 { width: 8%; font-size: 10px; }
         .col-product { 
-            width: 20px; 
-            min-width: 20px;
-            max-width: 20px;
+            width: 30px; 
+            min-width: 30px;
+            max-width: 30px;
         }
         
         /* Alternativ vertikal matn usuli */
         .vertical-header {
-			width: 20px;      /* ustun eni */
+			width: 30px;      /* ustun eni */
 			height: 80px;     /* ustun balandligi */
 			position: relative;
 		}
@@ -142,21 +143,25 @@
 			position: absolute;
 			top: 50%;
 			left: 50%;
-			transform: translate(-50%, -50%) rotate(90deg);
+			transform: translate(-50%, -50%) rotate(180deg);
 			transform-origin: center center;
 			white-space: nowrap;
 			text-align: center;
-			width: 20px;
+			width: 30px;
 			height: 80px;
+			writing-mode: vertical-rl;
+			text-orientation: mixed;
 		}
 
 		.vertical-text-alt {
-			transform: rotate(90deg);
+			writing-mode: vertical-rl;
+			text-orientation: mixed;
+			transform: rotate(180deg);
 			transform-origin: center center;
 			text-align: center;
 			white-space: nowrap;
 			display: inline-block;
-			width: 20px;
+			width: 30px;
 			height: 80px;
 		}
 
