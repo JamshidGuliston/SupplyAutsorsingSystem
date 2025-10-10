@@ -144,7 +144,7 @@
 			position: absolute;
 			top: 50%;
 			left: 50%;
-			transform: translate(-50%, -50%) rotate(180deg);
+			transform: translate(-50%, -50%) rotate(90deg);
 			transform-origin: center center;
 			white-space: nowrap;
 			text-align: center;
