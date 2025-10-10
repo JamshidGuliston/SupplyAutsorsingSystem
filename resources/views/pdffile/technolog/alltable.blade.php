@@ -117,31 +117,40 @@
         .col-2 { width: 8%; font-size: 10px; }
         .col-product { width: 20px; }
         
-        /* Mahsulot nomlari uchun (activmenu.blade.php dan ko'chirilgan) */
+        /* Mahsulot nomlari uchun - MARKAZGA joylashtirilgan */
         .vrt-header {
 			vertical-align: middle;
 			text-align: center;
+			position: relative;
+			padding: 5px 0;
 		}
 		
 		.vrt-header span{
 			display: inline-block;
-			text-align: left;
+			text-align: center;           /* MARKAZ! */
 			-webkit-transform: rotate(-90deg);
 			-moz-transform: rotate(-90deg);
 			-ms-transform: rotate(-90deg);
 			-o-transform: rotate(-90deg);
 			transform: rotate(-90deg);
+			transform-origin: center center;  /* MARKAZ! */
 
 			white-space: nowrap;
 			word-break: keep-all;
-			line-height: 1;
-			max-width: 90px;
+			line-height: 1.2;
+			max-width: 95px;
 			overflow: hidden;
 			text-overflow: ellipsis;
+			
+			/* Markazga joylash uchun */
+			position: relative;
+			left: 0;
+			right: 0;
+			margin: auto;
 		}
 		.product-name-short {
 			font-size: 9px;
-			line-height: 1.1;
+			line-height: 1.2;
 			font-weight: bold;
 		}
 		
