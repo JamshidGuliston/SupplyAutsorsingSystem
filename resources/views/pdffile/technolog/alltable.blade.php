@@ -53,30 +53,16 @@
             font-size: 10px;
         }
         
-        /* Vertikal matn uchun Snappy-optimized CSS */
+        /* Vertikal matn uchun (Bolalar/Xodimlar ustunlari) */
         .vertical-text {
-            display: block;
-            width: 20px;
-            height: 80px;
-            font-size: 10px;
-            line-height: 1.1;
+            writing-mode: vertical-rl;
+            -webkit-writing-mode: vertical-rl;
+            -ms-writing-mode: tb-rl;
+            transform: rotate(180deg);
+            transform-origin: center center;
             text-align: center;
-            word-wrap: break-word;
-            overflow: hidden;
-            white-space: normal;
-        }
-        
-        .vertical-text span {
-            display: block;
-            transform: rotate(-90deg);
-            transform-origin: center;
-            width: 80px;
-            height: 20px;
-            margin-top: 30px;
-            margin-left: -30px;
-            font-size: 10px;
-            line-height: 1.1;
-            text-align: center;
+            white-space: nowrap;
+            display: inline-block;
         }
         
         .product-name {
@@ -131,61 +117,27 @@
         .col-2 { width: 8%; font-size: 10px; }
         .col-product { width: 20px; }
         
-        /* Alternativ vertikal matn usuli */
-        .vertical-header {
-			width: 20px;      /* ustun eni */
-			height: 80px;     /* ustun balandligi */
-			position: relative;
-		}
-
-		.vertical-header-content {
-			position: absolute;
-			top: 50%;
-			left: 50%;
-			transform: translate(-50%, -50%) rotate(-90deg);
-			transform-origin: center;
-			white-space: nowrap;
-			text-align: center;
-		}
-
-		.vertical-text {
-			writing-mode: vertical-rl;   /* matnni vertikal qiladi (yuqoridan pastga) */
-			-webkit-writing-mode: vertical-rl;
-			-ms-writing-mode: tb-rl;
-
-			transform: rotate(180deg);   /* teskari qilib pastdan tepaga chiqaradi */
-			transform-origin: center center;
-			text-align: center;
-			white-space: nowrap;
-			display: inline-block;
-		}
-
+        /* Mahsulot nomlari uchun (activmenu.blade.php dan ko'chirilgan) */
         .vrt-header {
-			position: relative;
 			vertical-align: middle;
 			text-align: center;
 		}
 		
 		.vrt-header span{
 			display: inline-block;
-			text-align: center;
+			text-align: left;
 			-webkit-transform: rotate(-90deg);
 			-moz-transform: rotate(-90deg);
 			-ms-transform: rotate(-90deg);
 			-o-transform: rotate(-90deg);
 			transform: rotate(-90deg);
-			transform-origin: center center;
 
 			white-space: nowrap;
 			word-break: keep-all;
-			line-height: 1.2;
-			max-width: 100px;
-			overflow: visible;
-			position: absolute;
-			top: 50%;
-			left: 50%;
-			margin-left: -50px;
-			margin-top: -10px;
+			line-height: 1;
+			max-width: 90px;
+			overflow: hidden;
+			text-overflow: ellipsis;
 		}
 		.product-name-short {
 			font-size: 9px;
