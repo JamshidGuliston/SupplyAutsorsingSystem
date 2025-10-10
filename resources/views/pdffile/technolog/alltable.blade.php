@@ -160,33 +160,46 @@
 			display: inline-block;
 		}
 
-        .vrt-header span{
+        .vrt-header {
+			position: relative;
+			vertical-align: middle;
+			text-align: center;
+		}
+		
+		.vrt-header span{
 			display: inline-block;
-			text-align: left;
+			text-align: center;
 			-webkit-transform: rotate(-90deg);
 			-moz-transform: rotate(-90deg);
 			-ms-transform: rotate(-90deg);
 			-o-transform: rotate(-90deg);
 			transform: rotate(-90deg);
+			transform-origin: center center;
 
-			white-space: nowrap;       /* so‘zlarni bir qatorda ushlab turadi */
-			word-break: keep-all;      /* so'zlarni bo'lib tashlamaydi */
-			line-height: 1;            /* ixchamlashtiradi */
-			max-width: 90px;           /* kerak bo'lsa cheklash */
-			overflow: hidden;          /* sig'masa kesadi */
-			text-overflow: ellipsis;   /* sig'masa "..." qo'yadi */
+			white-space: nowrap;
+			word-break: keep-all;
+			line-height: 1.2;
+			max-width: 100px;
+			overflow: visible;
+			position: absolute;
+			top: 50%;
+			left: 50%;
+			margin-left: -50px;
+			margin-top: -10px;
 		}
 		.product-name-short {
-			font-size: 6px;
-			line-height: 1.0;
-			
+			font-size: 9px;
+			line-height: 1.1;
+			font-weight: bold;
 		}
 		
 		/* Maxsulot ustunlari uchun */
 		.product-column {
 			width: 2.5% !important;
 			max-width: 2.5%;
-			overflow: hidden;
+			overflow: visible;
+			height: 100px;
+			min-height: 100px;
 		}
 
 
