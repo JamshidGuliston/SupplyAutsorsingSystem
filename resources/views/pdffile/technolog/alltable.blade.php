@@ -61,8 +61,9 @@
         
         /* Vertikal matn uchun Snappy-optimized CSS */
         .vertical-text {
-            writing-mode: vertical-lr;
-            text-orientation: upright;
+            writing-mode: vertical-rl;
+            text-orientation: mixed;
+            transform: rotate(180deg);
             display: inline-block;
             width: auto;
             height: auto;
