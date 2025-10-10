@@ -55,28 +55,18 @@
         
         /* Vertikal matn uchun Snappy-optimized CSS */
         .vertical-text {
-            display: block;
-            width: 20px;
-            height: 80px;
-            font-size: 10px;
+            writing-mode: vertical-rl;
+            -webkit-writing-mode: vertical-rl;
+            -ms-writing-mode: tb-rl;
+            transform: rotate(180deg);
+            transform-origin: center center;
+            display: inline-block;
+            font-size: 9px;
             line-height: 1.1;
             text-align: center;
-            word-wrap: break-word;
-            overflow: hidden;
-            white-space: normal;
-        }
-        
-        .vertical-text span {
-            display: block;
-            transform: rotate(-90deg);
-            transform-origin: center;
-            width: 80px;
-            height: 20px;
-            margin-top: 30px;
-            margin-left: -30px;
-            font-size: 10px;
-            line-height: 1.1;
-            text-align: center;
+            white-space: nowrap;
+            overflow: visible;
+            padding: 2px;
         }
         
         .product-name {
@@ -146,18 +136,6 @@
 			transform-origin: center;
 			white-space: nowrap;
 			text-align: center;
-		}
-
-		.vertical-text {
-			writing-mode: vertical-rl;   /* matnni vertikal qiladi (yuqoridan pastga) */
-			-webkit-writing-mode: vertical-rl;
-			-ms-writing-mode: tb-rl;
-
-			transform: rotate(180deg);   /* teskari qilib pastdan tepaga chiqaradi */
-			transform-origin: center center;
-			text-align: center;
-			white-space: nowrap;
-			display: inline-block;
 		}
 
 
