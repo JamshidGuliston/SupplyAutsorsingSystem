@@ -157,7 +157,7 @@
 		.vertical-text-alt {
 			writing-mode: vertical-rl;
 			text-orientation: mixed;
-			transform: rotate(180deg);
+			transform: rotate(90deg);
 			transform-origin: center center;
 			text-align: center;
 			white-space: nowrap;
