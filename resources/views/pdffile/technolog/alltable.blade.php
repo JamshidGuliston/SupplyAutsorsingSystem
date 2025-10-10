@@ -160,6 +160,35 @@
 			display: inline-block;
 		}
 
+        .vrt-header span{
+			display: inline-block;
+			text-align: left;
+			-webkit-transform: rotate(-90deg);
+			-moz-transform: rotate(-90deg);
+			-ms-transform: rotate(-90deg);
+			-o-transform: rotate(-90deg);
+			transform: rotate(-90deg);
+
+			white-space: nowrap;       /* so‘zlarni bir qatorda ushlab turadi */
+			word-break: keep-all;      /* so'zlarni bo'lib tashlamaydi */
+			line-height: 1;            /* ixchamlashtiradi */
+			max-width: 90px;           /* kerak bo'lsa cheklash */
+			overflow: hidden;          /* sig'masa kesadi */
+			text-overflow: ellipsis;   /* sig'masa "..." qo'yadi */
+		}
+		.product-name-short {
+			font-size: 6px;
+			line-height: 1.0;
+			
+		}
+		
+		/* Maxsulot ustunlari uchun */
+		.product-column {
+			width: 2.5% !important;
+			max-width: 2.5%;
+			overflow: hidden;
+		}
+
 
     </style>
 </head>
@@ -182,10 +211,8 @@
                 @foreach($products as $product)
                     @if(isset($product['yes']))
                         @php $col++; @endphp
-                        <th class="col-product">
-							<div class="vertical-text">
-								{{ implode(' ', array_slice(explode(' ', $product['product_name']), 0, 2)) }}
-							</div>
+                        <th class='vrt-header product-column' style="padding: 0px; height: 100px">
+                        <span class="product-name-short">{{ implode(' ', array_slice(explode(' ', $product['product_name']), 0, 2)) }}</span>
 						</th>
                     @endif
                 @endforeach
@@ -215,10 +242,8 @@
                     @endif
                     <tr>
                         @if($loop->index == 1)
-                            <th class="col-product meal-time" rowspan="{{ 2 * (count($row)-1) }}">
-								<div class="vertical-text">
-									{{ $row[0]['mealtime'] }}
-								</div>
+                            <th class="vrt-header meal-time" rowspan="{{ 2 * (count($row)-1) }}">
+								<span class="product-name-short">{{ $row[0]['mealtime'] }}</span>
 							</div>
 						</th>
                         @endif
