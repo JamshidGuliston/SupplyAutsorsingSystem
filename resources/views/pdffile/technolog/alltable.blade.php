@@ -61,18 +61,20 @@
         
         /* Vertikal matn uchun Snappy-optimized CSS */
         .vertical-text {
-            writing-mode: vertical-lr;
-            text-orientation: upright;
+            writing-mode: tb-rl;
+            -webkit-writing-mode: vertical-rl;
+            -ms-writing-mode: tb-rl;
             display: inline-block;
             width: auto;
             height: auto;
             font-size: 8px;
-            line-height: 1;
+            line-height: 1.2;
             text-align: center;
             white-space: nowrap;
             overflow: visible;
             padding: 2px;
             letter-spacing: 0;
+            transform: scale(-1, -1);
         }
         
         .product-name {
