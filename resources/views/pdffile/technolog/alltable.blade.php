@@ -135,7 +135,7 @@
 			transform: rotate(-90deg);
 			transform-origin: center center;  /* MARKAZ! */
 
-			white-space: nowrap;
+			white-space: wrap;
 			word-break: keep-all;
 			line-height: 1.2;
 			max-width: 95px;
