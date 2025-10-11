@@ -35,7 +35,7 @@
         
         .main-table th,
         .main-table td {
-            border: 1.5px solid #000;        /* 1px → 1.5px */
+            border: 1px solid #000;        /* 1px → 1.5px */
             padding: 2px;
             text-align: center;
             vertical-align: middle;
