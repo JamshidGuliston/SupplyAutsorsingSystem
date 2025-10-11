@@ -101,35 +101,11 @@
 			overflow: hidden;
 		}
 		
-		/* Qatorlarni ajratish uchun ranglar - faqat ma'lumot qatorlari uchun */
-		tbody tr:nth-child(odd) {
-			background-color: #f5f5f5; /* Och kulrang */
-		}
-		tbody tr:nth-child(even) {
-			background-color: #ffffff; /* Oq rang */
-		}
-		
 		/* Maxsulotlar va taom nomlari uchun oq rang */
 		thead tr,
 		thead th,
 		thead td {
 			background-color: #ffffff !important; /* Oq rang */
-		}
-		
-		/* Ma'lumot qatorlarida maxsulot nomlari ustunini oq qoldirish */
-		td:first-child,
-		td:nth-child(2),
-		td:nth-child(3) {
-			background-color: #ffffff !important; /* Oq rang */
-		}
-		
-		/* Xulosa qatorlari uchun oq rang */
-		tr:has(th[scope="row"]) {
-			background-color: #ffffff !important;
-		}
-		
-		tr:has(th[scope="row"]) td {
-			background-color: #ffffff !important;
 		}
 	</style>
 </head>
@@ -213,19 +189,23 @@
                           </tr>
                         </thead>
                         <tbody>
-							$boolmeal = [];
+							<?php $row_counter = 0; ?>
                         	@foreach($menuitem as $row)
 								@foreach($row as $item)
 								@if($loop->index == 0)
 									@continue;
 									<?php $time = $item['mealtime']; ?>
 								@endif
-			                        <tr>
+								<?php 
+									$row_counter++; 
+									$bg_color = ($row_counter % 2 == 1) ? 'background-color: rgb(226, 253, 255);' : 'background-color: #ffffff;';
+								?>
+			                        <tr style="{{ $bg_color }}">
 			                        	@if($loop->index == 1)
-												<th scope="row" rowspan="<?php echo 2 * (count($row)-1); ?>" class='vrt-header' style="padding: 0px; height: 60px;"><?php echo '<span>'. $row[0]['mealtime'] .'</span>'; ?></th>
+												<th scope="row" rowspan="<?php echo 2 * (count($row)-1); ?>" class='vrt-header' style="padding: 0px; height: 60px; background-color: #ffffff;"><?php echo '<span>'. $row[0]['mealtime'] .'</span>'; ?></th>
 			                            @endif
-			                            <td scope="row" rowspan="2" class="align-baseline" style="padding: 2px;"><?php echo $item['foodname'] ?></td>
-			                            <td scope="row" rowspan="2" class="align-baseline" style="padding: 0px;"><?php echo $item['foodweight'] ?></td>
+			                            <td scope="row" rowspan="2" class="align-baseline" style="padding: 2px; background-color: #ffffff;"><?php echo $item['foodname'] ?></td>
+			                            <td scope="row" rowspan="2" class="align-baseline" style="padding: 0px; background-color: #ffffff;"><?php echo $item['foodweight'] ?></td>
 			                            <?php
 			                            for($t = 0; $t < count($products); $t++){
 			                            	if(isset($products[$t]['yes']) and isset($item[$products[$t]['id']])){
@@ -241,7 +221,11 @@
                     					}
 			                            ?>
                     				</tr>
-                    				<tr>
+								<?php 
+									$row_counter++; 
+									$bg_color = ($row_counter % 2 == 1) ? 'background-color: rgb(226, 253, 255);' : 'background-color: #ffffff;';
+								?>
+                    				<tr style="{{ $bg_color }}">
 			                        	<?php
 			                            for($t = 0; $t < count($products); $t++){
 			                            	if(isset($products[$t]['yes']) and isset($item[$products[$t]['id']])){
