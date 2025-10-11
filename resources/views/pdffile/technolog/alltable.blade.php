@@ -74,9 +74,7 @@
         .meal-time {
             writing-mode: vertical-rl;
             text-orientation: mixed;
-            white-space: nowrap;
             font-weight: bold;
-            background-color: #e0e0e0;
         }
         
         .food-name {
@@ -133,7 +131,7 @@
 			-o-transform: rotate(-90deg);
 			transform: rotate(-90deg);
 			transform-origin: center center;  /* MARKAZ! */
-            
+
 			word-break: keep-all;
 			line-height: 1.2;
 			max-width: 95px;
@@ -214,9 +212,8 @@
                     @endif
                     <tr>
                         @if($loop->index == 1)
-                            <th class="vrt-header meal-time" rowspan="{{ 2 * (count($row)-1) }}">
+                        <th class="vrt-header meal-time" rowspan="{{ 2 * (count($row)-1) }}">
 								<span class="product-name-short">{{ $row[0]['mealtime'] }}</span>
-							</div>
 						</th>
                         @endif
                         <td class="food-name" rowspan="2" style="width: 40px;">{{ $item['foodname'] }}</td>
@@ -244,10 +241,10 @@
             
             <!-- Bolalar bo'limi -->
             <tr class="children-section">
-                <th class="meal-time col-product" rowspan="5">
-					<div class="vertical-text">
+                <th class="vrt-header col-product" rowspan="5">
+					<span class="product-name-short">
 						Болалар
-					</div>
+					</span>
 				</th>
                 <td class="summary-row">Жами миқдори</td>
                 @foreach($products as $product)
@@ -293,10 +290,10 @@
             
             <!-- Xodimlar bo'limi -->
             <tr class="workers-section">
-                <th class="meal-time col-product" rowspan="5">
-					<div class="vertical-text">
+                <th class="vrt-header col-product" rowspan="5">
+					<span class="product-name-short">
 						Ходимлар
-					</div>
+					</span>
 				</th>
                 <td class="summary-row">Жами миқдори</td>
                 @foreach($products as $product)
