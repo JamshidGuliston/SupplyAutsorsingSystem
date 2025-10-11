@@ -118,12 +118,10 @@
         
         /* Mahsulot nomlari uchun - MARKAZGA joylashtirilgan */
         .vrt-header {
-            background-color: #f0f0f0;
 			vertical-align: middle;
 			text-align: center;
 			position: relative;
 			padding: 5px 0;
-            margin: 1px;
 		}
 		
 		.vrt-header span{
@@ -135,8 +133,7 @@
 			-o-transform: rotate(-90deg);
 			transform: rotate(-90deg);
 			transform-origin: center center;  /* MARKAZ! */
-
-			white-space: nowrap;
+            
 			word-break: keep-all;
 			line-height: 1.2;
 			max-width: 95px;
