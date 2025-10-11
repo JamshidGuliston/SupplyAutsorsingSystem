@@ -34,7 +34,8 @@
         }
         
         .main-table th,
-        .main-table td {    /* 1px → 1.5px */
+        .main-table td {
+            border: 1.5px solid #000;        /* 1px → 1.5px */
             padding: 2px;
             text-align: center;
             vertical-align: middle;
@@ -134,7 +135,8 @@
 			-o-transform: rotate(-90deg);
 			transform: rotate(-90deg);
 			transform-origin: center center;  /* MARKAZ! */
-      /* wrap → nowrap (to'g'ri qiymat) */
+
+			white-space: nowrap;
 			word-break: keep-all;
 			line-height: 1.2;
 			max-width: 95px;
