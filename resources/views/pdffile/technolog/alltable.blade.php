@@ -44,7 +44,6 @@
         }
         
         .main-table th {
-            background-color: #f0f0f0;
             font-weight: bold;
             font-size: 10px;
             border: 1.5px solid #000;        /* 2px → 1.5px (barcha borderlar bir xil) */
