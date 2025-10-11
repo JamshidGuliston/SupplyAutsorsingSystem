@@ -45,8 +45,7 @@
         
         .main-table th {
             font-weight: bold;
-            font-size: 10px;
-            border: 1.5px solid #000;        /* 2px → 1.5px (barcha borderlar bir xil) */
+            font-size: 10px;       /* 2px → 1.5px (barcha borderlar bir xil) */
         }
         
         .main-table td {
@@ -119,6 +118,7 @@
         
         /* Mahsulot nomlari uchun - MARKAZGA joylashtirilgan */
         .vrt-header {
+            background-color: #f0f0f0;
 			vertical-align: middle;
 			text-align: center;
 			position: relative;
