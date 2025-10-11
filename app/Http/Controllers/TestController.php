@@ -136,17 +136,17 @@ class TestController extends Controller
 		$day->month_name = $nextWorkDay->format('F');
 		$day->year_name = $nextWorkDay->format('Y');
 
-		return view('pdffile.technolog.alltable', [
-			'narx' => $narx,
-			'day' => $day,
-			'productallcount' => $productallcount,
-			'workerproducts' => $workerproducts,
-			'menu' => $menu,
-			'menuitem' => $nextdaymenuitem,
-			'products' => $products,
-			'workerfood' => $workerfood,
-			'taomnoma' => $taomnoma
-		]);
+		// return view('pdffile.technolog.alltable', [
+		// 	'narx' => $narx,
+		// 	'day' => $day,
+		// 	'productallcount' => $productallcount,
+		// 	'workerproducts' => $workerproducts,
+		// 	'menu' => $menu,
+		// 	'menuitem' => $nextdaymenuitem,
+		// 	'products' => $products,
+		// 	'workerfood' => $workerfood,
+		// 	'taomnoma' => $taomnoma
+		// ]);
 
 		// Snappy bilan PDF yaratish
 		try {
