@@ -35,7 +35,7 @@
         
         .main-table th,
         .main-table td {
-            border: 1px solid #000;
+            border: 1.5px solid #000;        /* 1px → 1.5px */
             padding: 2px;
             text-align: center;
             vertical-align: middle;
@@ -47,7 +47,7 @@
             background-color: #f0f0f0;
             font-weight: bold;
             font-size: 10px;
-            border: 2px solid #000;
+            border: 1.5px solid #000;        /* 2px → 1.5px (barcha borderlar bir xil) */
         }
         
         .main-table td {
@@ -135,8 +135,7 @@
 			-o-transform: rotate(-90deg);
 			transform: rotate(-90deg);
 			transform-origin: center center;  /* MARKAZ! */
-
-			white-space: wrap;
+      /* wrap → nowrap (to'g'ri qiymat) */
 			word-break: keep-all;
 			line-height: 1.2;
 			max-width: 95px;
