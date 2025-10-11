@@ -47,6 +47,7 @@
             background-color: #f0f0f0;
             font-weight: bold;
             font-size: 10px;
+            border: 2px solid #000;
         }
         
         .main-table td {
