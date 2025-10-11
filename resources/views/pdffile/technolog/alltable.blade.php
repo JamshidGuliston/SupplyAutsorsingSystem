@@ -123,6 +123,7 @@
 			text-align: center;
 			position: relative;
 			padding: 5px 0;
+            margin: 1px;
 		}
 		
 		.vrt-header span{
