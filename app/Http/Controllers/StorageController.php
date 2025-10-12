@@ -1185,6 +1185,7 @@ class StorageController extends Controller
                 'kingar_name_id' => $garden,
                 'day_id' => $request->day,
                 'order_title' => date("d-m-Y H"),
+                'note' => $request->note,
                 'document_processes_id' => 3,
                 'data_of_weight' => json_encode($dataOfWeight),
                 'to_menus' => json_encode([]),

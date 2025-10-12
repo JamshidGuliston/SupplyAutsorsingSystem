@@ -14,6 +14,7 @@ class order_product extends Model
         'kingar_name_id',
         'day_id',
         'order_title',
+        'note',
         'document_processes_id',
         'data_of_weight',
         'to_menus', 

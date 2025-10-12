@@ -352,15 +352,27 @@
             </div>
             <div class="modal-body foodcomposition"> 
                 <div class="mb-3">
-                    <label for="products_select" class="form-label">Mahsulot kategoriyalarini tanlang</label>
-                    <div class="multiselect-container">
-                        <select id="products_select" name="selected_products[]" class="form-select" multiple required>
-                            @foreach($product_categories as $category)
-                                <option value="cat-{{ $category->id }}" data-type="category" data-category-id="{{ $category->id }}" data-category-name="{{ $category->pro_cat_name }}" data-limit-quantity="{{ $category->limit_quantity ?? 0 }}">{{ $category->pro_cat_name }}</option>
-                            @endforeach
-                        </select>
+                    <!-- crete checkbox for all -->
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" value="" id="products_select_all">
+                        <label class="form-check-label" for="products_select_all">
+                            Barcha kategoriyalar
+                        </label>
                     </div>
                 </div>
+                
+                <!-- Yashirin kategoriyalar ro'yxati -->
+                <select id="products_select" multiple style="display: none;">
+                    @foreach($product_categories as $category)
+                        <option value="cat-{{ $category->id }}" 
+                                data-type="category" 
+                                data-category-id="{{ $category->id }}" 
+                                data-category-name="{{ $category->pro_cat_name }}" 
+                                data-limit-quantity="0">
+                            {{ $category->pro_cat_name }}
+                        </option>
+                    @endforeach
+                </select>
                 
                 <div id="selected_products_container">
                     <!-- Tanlangan mahsulotlar bu yerda ko'rsatiladi -->
@@ -389,6 +401,10 @@
                         <option value="{{$row['id']}}">{{ $row['day_number'].".".$row['month_name'].".".$row['year_name']; }}</option>
                     @endforeach
                 </select>
+                <br>
+                Sarlavha
+                <input type="text" name="note" placeholder="Sarlavha" class="form-control" required>
+                <br>
             </div>
             <div class="modal-footer">
                 <!-- <button type="button" class="btn btn-warning" data-bs-dismiss="modal">Close</button> -->
@@ -576,7 +592,7 @@
             <tr>
                 <th scope="col">ID</th>
                 <th scope="col">Title</th>
-                <th scope="col">Date</th>
+                <th scope="col">Note</th>
                 <th scope="col">Yaratilgan sana</th>
                 <th style="width: 80px;">Umumiy</th>
                 <th style="width: 80px;">Tumanlar</th>
@@ -599,7 +615,7 @@
                                 {{ $row->order_title }}
                             </a>
                         </td> -->
-                        <td>{{ $row->day_id }}</td>
+                        <td>{{ $row->note }}</td>
                         <td>{{ $row->created_at ? $row->created_at->format('d.m.Y H:i') : '-' }}</td>
                         <td>
                             <a href="/storage/onedaysvod/{{ $row->order_title }}" class="btn btn-sm btn-warning" target="_blank">
@@ -718,21 +734,21 @@
 			console.log("Muassasa checkbox for item with value '1' was clicked and got value ", args.checked);
 		});
     
-    // Mahsulotlar multiselect - faqat bu updateSelectedProducts() ni chaqiradi
-    document.multiselect('#products_select')
-        .setCheckBoxClick("checkboxAll", function(target, args) {
-            console.log("Mahsulotlar Select All clicked: ", args.checked);
-            updateSelectedProducts();
-        })
-        .setCheckBoxClick("category", function(target, args) {
-            console.log("Kategoriya clicked: ", target.value, args.checked);
-            updateSelectedProducts();
-        })
-        .setCheckBoxClick("product", function(target, args) {
-            console.log("Mahsulot clicked: ", target.value, args.checked);
-            // Mahsulot tanlanganda ham update qilish
-            updateSelectedProducts();
-        });
+    // Barcha kategoriyalar checkbox o'zgarishida
+    $('#products_select_all').on('change', function() {
+        var isChecked = $(this).is(':checked');
+        console.log('Barcha kategoriyalar checkbox:', isChecked);
+        
+        if (isChecked) {
+            // Barcha kategoriyalarni tanlash
+            $('#products_select option').prop('selected', true);
+        } else {
+            // Barcha kategoriyalarni bekor qilish
+            $('#products_select option').prop('selected', false);
+        }
+        
+        updateSelectedProducts();
+    });
     
     // Faqat mahsulotlar multiselect o'zgarishida updateSelectedProducts() chaqiriladi
     $('#products_select').on('change', function() {
@@ -907,11 +923,20 @@
             console.log('Kategoriya card o\'chirildi');
         }
         
+        // "Barcha kategoriyalar" checkboxni o'chirish
+        var allCategories = document.querySelectorAll('#products_select option');
+        var selectedCategories = document.querySelectorAll('#products_select option:checked');
+        if (selectedCategories.length < allCategories.length) {
+            $('#products_select_all').prop('checked', false);
+            console.log('Barcha kategoriyalar checkbox o\'chirildi');
+        }
+        
         // Agar boshqa kategoriyalar qolmagan bo'lsa, container-ni tozalash
         var remainingCards = document.querySelectorAll('.category-card');
         if (remainingCards.length === 0) {
             var container = document.getElementById('selected_products_container');
             container.innerHTML = '';
+            $('#products_select_all').prop('checked', false);
             console.log('Barcha kategoriyalar o\'chirildi, container tozalandi');
         }
     }
