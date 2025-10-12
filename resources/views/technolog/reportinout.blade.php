@@ -261,7 +261,9 @@
 									@else
 										<td></td>
 									@endif
-									$minus[$product->id] = ($plus[$product->id] - $minus[$product->id] < 0) ? ($minus[$product->id] - $plus[$product->id]) + $minus[$product->id] : $minus[$product->id];
+									@php
+										$minus[$product->id] = ($plus[$product->id] - $minus[$product->id] < 0) ? ($plus[$product->id] - $minus[$product->id]) + $minus[$product->id] : $minus[$product->id];
+									@endphp
 									@if(isset($isThisMeasureDay[$day->id]) and $plus[$product->id] - $minus[$product->id] < $actualweights[$product->id][$day->id])
 										<td>{{ sprintf('%0.3f', $actualweights[$product->id][$day->id]) }}</td>
 										<?php
