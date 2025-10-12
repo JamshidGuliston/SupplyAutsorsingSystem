@@ -981,9 +981,13 @@ class StorageController extends Controller
             }
 
             foreach($products as $row){
-                if(isset($plusproducts[$row->id]) and isset($minusproducts[$row->id])){
-                    $minusproducts[$row->id] = ($plusproducts[$row->id] - $minusproducts[$row->id] < 0) ? ($plusproducts[$row->id] - $minusproducts[$row->id]) + $minusproducts[$row->id] : $minusproducts[$row->id];
+                if(!isset($plusproducts[$row->id])){
+                    $plusproducts[$row->id] = 0;
                 }
+                if(!isset($minusproducts[$row->id])){
+                    $minusproducts[$row->id] = 0;
+                }
+                $minusproducts[$row->id] = ($plusproducts[$row->id] - $minusproducts[$row->id] < 0) ? ($plusproducts[$row->id] - $minusproducts[$row->id]) + $minusproducts[$row->id] : $minusproducts[$row->id];
             }
 
             $groups = Groupweight::where('kindergarden_id', $kid)
