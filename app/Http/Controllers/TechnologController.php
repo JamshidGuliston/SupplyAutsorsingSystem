@@ -2669,6 +2669,141 @@ class TechnologController extends Controller
         return \Excel::download(new \App\Exports\PlusmultistorageExport($kid, $monthid), 'plusmultistorage_'.$king->kingar_name.'_'.$month->month_name.'.xlsx');
     }
 
+    public function editMinusStorage(Request $request){
+        $productId = $request->product_id;
+        $dayId = $request->day_id;
+        $kingardenId = $request->kingarden_id;
+        $weight = $request->weight;
+        
+        // Mavjud yozuvni qidirish
+        $product = Product::find($productId);
+        if(!$product){
+            return response()->json(['success' => false, 'message' => 'Mahsulot topilmadi'], 404);
+        }
+        
+        $minusStorage = minus_multi_storage::where('day_id', $dayId)
+            ->where('kingarden_name_id', $kingardenId)
+            ->where('product_name_id', $productId)
+            ->first();
+        
+        $weightWithDiv = $weight * $product->div;
+        
+        if($minusStorage){
+            // Yangilash
+            if($weight > 0){
+                $minusStorage->update([
+                    'product_weight' => $weightWithDiv
+                ]);
+            } else {
+                // Agar 0 bo'lsa, o'chirish
+                $minusStorage->delete();
+            }
+        } else {
+            // Yangi yozuv yaratish (faqat 0 dan katta bo'lsa)
+            if($weight > 0){
+                minus_multi_storage::create([
+                    'day_id' => $dayId,
+                    'kingarden_name_id' => $kingardenId,
+                    'product_name_id' => $productId,
+                    'product_weight' => $weightWithDiv,
+                ]);
+            }
+        }
+        
+        return response()->json(['success' => true]);
+    }
+
+    public function editPlusStorage(Request $request){
+        $productId = $request->product_id;
+        $dayId = $request->day_id;
+        $kingardenId = $request->kingarden_id;
+        $weight = $request->weight;
+        
+        // Mavjud yozuvni qidirish (shop_id != -1 bo'lgan kirimlar)
+        $plusStorage = plus_multi_storage::where('day_id', $dayId)
+            ->where('kingarden_name_d', $kingardenId)
+            ->where('product_name_id', $productId)
+            ->where('shop_id', '!=', -1)
+            ->where('residual', 0)
+            ->first();
+        
+        if($plusStorage){
+            // Yangilash
+            if($weight > 0){
+                $plusStorage->update([
+                    'product_weight' => $weight
+                ]);
+            } else {
+                // Agar 0 bo'lsa, o'chirish
+                $plusStorage->delete();
+            }
+        } else {
+            // Yangi yozuv yaratish (faqat 0 dan katta bo'lsa)
+            if($weight > 0){
+                plus_multi_storage::create([
+                    'day_id' => $dayId,
+                    'shop_id' => 0, // Qo'lda kiritilgan
+                    'kingarden_name_d' => $kingardenId,
+                    'product_name_id' => $productId,
+                    'product_weight' => $weight,
+                    'residual' => 0,
+                ]);
+            }
+        }
+        
+        return response()->json(['success' => true]);
+    }
+
+    public function editResidualStorage(Request $request){
+        $productId = $request->product_id;
+        $kingardenId = $request->kingarden_id;
+        $weight = $request->weight;
+        
+        // Mavjud residual yozuvni qidirish
+        $residualStorage = plus_multi_storage::where('kingarden_name_d', $kingardenId)
+            ->where('product_name_id', $productId)
+            ->where('residual', 1)
+            ->first();
+        
+        // Agar yangi yozuv yaratish kerak bo'lsa, hozirgi oyning birinchi kunini olish
+        $year = Year::where('year_active', 1)->first();
+        $month = Month::where('month_active', 1)->first();
+        $firstDay = Day::where('year_id', $year->id)
+            ->where('month_id', $month->id)
+            ->orderBy('day_number', 'asc')
+            ->first();
+        
+        if(!$firstDay){
+            return response()->json(['success' => false, 'message' => 'Kun topilmadi'], 404);
+        }
+        
+        if($residualStorage){
+            // Yangilash
+            if($weight > 0){
+                $residualStorage->update([
+                    'product_weight' => $weight
+                ]);
+            } else {
+                // Agar 0 bo'lsa, o'chirish
+                $residualStorage->delete();
+            }
+        } else {
+            // Yangi yozuv yaratish (faqat 0 dan katta bo'lsa)
+            if($weight > 0){
+                plus_multi_storage::create([
+                    'day_id' => $firstDay->id, // Birinchi kun
+                    'shop_id' => 0,
+                    'kingarden_name_d' => $kingardenId,
+                    'product_name_id' => $productId,
+                    'product_weight' => $weight,
+                    'residual' => 1,
+                ]);
+            }
+        }
+        
+        return response()->json(['success' => true]);
+    }
+
     public function moveremainder(Request $request){
         $thismonth = Month::where('month_active', 1)->first();
 		$prevmonth = Day::where('month_id', $thismonth->id-1)->get();

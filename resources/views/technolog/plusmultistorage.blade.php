@@ -67,6 +67,23 @@
         z-index: 11;
     }
     
+    /* Editable cells */
+    .editable-cell {
+        cursor: pointer;
+        position: relative;
+    }
+    
+    .editable-cell:hover {
+        background-color: #fff3cd;
+    }
+    
+    .editable-cell input {
+        width: 100%;
+        border: 2px solid #007bff;
+        padding: 2px 5px;
+        text-align: center;
+    }
+    
     /* Safari */
     @-webkit-keyframes spin {
         0% {
@@ -274,7 +291,7 @@
             ?>
             <tr>
                 <td>{{ $row['productname'] }}</td>
-                <td>{{ $residualWeight > 0 ? $residualWeight : 0 }}</td> <!-- O'tgan oydan Qoldiq -->
+                <td>{{ $residualWeight > 0 ? $residualWeight : 0 }}</td>
                 @foreach($days as $day)
                     <?php
                         $minusValue = isset($minusproducts[$key][$day['id']]) ? $minusproducts[$key][$day['id']] : 0;
@@ -282,8 +299,18 @@
                         $totalMinus += $minusValue;
                         $totalPlus += $plusValue;
                     ?>
-                    <td>{{ $minusValue > 0 ? $minusValue : '' }}</td>
-                    <td>{{ $plusValue > 0 ? $plusValue : '' }}</td>
+                    <td class="editable-cell editable-minus" 
+                        data-product-id="{{ $key }}" 
+                        data-day-id="{{ $day['id'] }}" 
+                        data-value="{{ $minusValue }}">
+                        {{ $minusValue > 0 ? $minusValue : '' }}
+                    </td>
+                    <td class="editable-cell editable-plus" 
+                        data-product-id="{{ $key }}" 
+                        data-day-id="{{ $day['id'] }}" 
+                        data-value="{{ $plusValue }}">
+                        {{ $plusValue > 0 ? $plusValue : '' }}
+                    </td>
                 @endforeach
                 <?php
                 for($i = 0; $i < 21-count($days); $i++){
@@ -307,6 +334,99 @@
 
 @section('script')
 <script>
+    // Editable cells
+    let editingCell = null;
+    
+    // Minus (sarflangan) edit
+    $(document).on('click', '.editable-minus', function() {
+        if(editingCell) return;
+        
+        editingCell = $(this);
+        let value = $(this).data('value');
+        let productId = $(this).data('product-id');
+        let dayId = $(this).data('day-id');
+        
+        $(this).html('<input type="number" step="0.01" value="' + value + '" class="edit-input" />');
+        $(this).find('input').focus().select();
+        
+        $(this).find('input').on('blur keypress', function(e) {
+            if(e.type === 'blur' || e.which === 13) {
+                let newValue = parseFloat($(this).val()) || 0;
+                saveMinusValue(productId, dayId, newValue, editingCell);
+            }
+        });
+    });
+    
+    // Plus (kirim) edit
+    $(document).on('click', '.editable-plus', function() {
+        if(editingCell) return;
+        
+        editingCell = $(this);
+        let value = $(this).data('value');
+        let productId = $(this).data('product-id');
+        let dayId = $(this).data('day-id');
+        
+        $(this).html('<input type="number" step="0.01" value="' + value + '" class="edit-input" />');
+        $(this).find('input').focus().select();
+        
+        $(this).find('input').on('blur keypress', function(e) {
+            if(e.type === 'blur' || e.which === 13) {
+                let newValue = parseFloat($(this).val()) || 0;
+                savePlusValue(productId, dayId, newValue, editingCell);
+            }
+        });
+    });
+    
+    function saveMinusValue(productId, dayId, value, cell) {
+        $.ajax({
+            method: "POST",
+            url: '{{ route("technolog.editMinusStorage") }}',
+            data: {
+                '_token': '{{ csrf_token() }}',
+                'product_id': productId,
+                'day_id': dayId,
+                'kingarden_id': '{{ $kingar->id }}',
+                'weight': value
+            },
+            success: function(response) {
+                cell.data('value', value);
+                cell.html(value > 0 ? value : '');
+                editingCell = null;
+                location.reload(); // Jami ustunlarni yangilash uchun
+            },
+            error: function() {
+                alert('Xatolik yuz berdi!');
+                cell.html(cell.data('value') > 0 ? cell.data('value') : '');
+                editingCell = null;
+            }
+        });
+    }
+    
+    function savePlusValue(productId, dayId, value, cell) {
+        $.ajax({
+            method: "POST",
+            url: '{{ route("technolog.editPlusStorage") }}',
+            data: {
+                '_token': '{{ csrf_token() }}',
+                'product_id': productId,
+                'day_id': dayId,
+                'kingarden_id': '{{ $kingar->id }}',
+                'weight': value
+            },
+            success: function(response) {
+                cell.data('value', value);
+                cell.html(value > 0 ? value : '');
+                editingCell = null;
+                location.reload();
+            },
+            error: function() {
+                alert('Xatolik yuz berdi!');
+                cell.html(cell.data('value') > 0 ? cell.data('value') : '');
+                editingCell = null;
+            }
+        });
+    }
+
     $('.w_countedit').click(function() {
         var king = $(this).attr('data-menu-id');
         var wc = $(this).attr('data-wor-count');
