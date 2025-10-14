@@ -233,6 +233,8 @@ Route::group(['prefix' => 'technolog', 'middleware' => ['isTechnolog', 'auth']],
     Route::post('saveProductExpense', [TechnologController::class, 'saveProductExpense'])->name('technolog.saveProductExpense');
     Route::post('plusmultimodadd', [TechnologController::class, 'plusmultimodadd'])->name('technolog.plusmultimodadd');
     Route::get('plusmultistorage/{id}/{monthid}', [TechnologController::class, 'plusmultistorage'])->name('technolog.plusmultistorage');
+    Route::get('plusmultistoragePDF/{id}/{monthid}', [TechnologController::class, 'plusmultistoragePDF'])->name('technolog.plusmultistoragePDF');
+    Route::get('plusmultistorageExcel/{id}/{monthid}', [TechnologController::class, 'plusmultistorageExcel'])->name('technolog.plusmultistorageExcel');
     Route::post('deleteweights', [TechnologController::class, 'deleteweights'])->name('technolog.deleteweights');
     Route::get('weightcurrent/{kind}/{yearid}/{monthid}', [TechnologController::class, 'weightcurrent'])->name('technolog.weightcurrent');
     Route::get('weightsdocument/{group_id}', [TechnologController::class, 'weightsdocument'])->name('technolog.weightsdocument');

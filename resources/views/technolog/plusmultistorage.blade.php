@@ -1,5 +1,6 @@
 @extends('layouts.app')
 @section('css')
+<link href="/css/dates.css?ver=1.0" rel="stylesheet"/>
 <style>
     .loader-box {
         width: 100%;
@@ -29,6 +30,19 @@
         left: 353px;
         top: 153px;
     }
+    
+    /* Jadval uchun scroll wrapper */
+    .table-wrapper {
+        overflow-x: auto;
+        position: relative;
+    }
+    
+    .table-light {
+        border-collapse: collapse;
+        width: max-content;
+        min-width: 100%;
+    }
+    
     th, td{
         font-size: 0.8rem;
         margin: .3rem .3rem;
@@ -36,7 +50,23 @@
         vertical-align: middle;
         border-bottom-color: currentColor;
         border-right: 1px solid #c2b8b8;
+        white-space: nowrap;
     }
+    
+    /* Birinchi ustunni qotib qo'yish (Mahsulotlar) */
+    .table-light thead th:first-child,
+    .table-light tbody td:first-child {
+        position: sticky;
+        left: 0;
+        background-color: #f8f9fa;
+        z-index: 10;
+        box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+    }
+    
+    .table-light thead th:first-child {
+        z-index: 11;
+    }
+    
     /* Safari */
     @-webkit-keyframes spin {
         0% {
@@ -56,52 +86,6 @@
         100% {
             transform: rotate(360deg);
         }
-    }
-    .year {
-        text-align: center;
-    }
-    .month,
-    .day {
-        margin: 10px 20px;
-        display: flex;
-        justify-content: left;
-    }
-
-    .month__item{
-        width: calc(100% / 12);
-        text-align: center;
-        border-bottom: 1px solid #000;
-    }
-
-    .month__item + .month__item {
-        /* border-left: 1px solid #000; */
-    }
-    .day__item{
-        background-color: #ecf6f1;
-        text-align: center;
-        vertical-align: middle;
-        min-width: 34px;
-        padding: 5px;
-        margin-left: 5px;
-        border-radius: 50%;
-    }
-
-    .month__item, .day__item{
-        color: black;
-        cursor: context-menu;
-        /* border: 1px solid #87706a; */
-        text-decoration: none;
-    }
-    .active{
-        background-color: #23b242;
-        color: #fff;
-    }
-    .month__item:hover,
-    .day__item:hover{
-        background-color: #23b242;
-        color: #fff;
-        transition: all .5s;
-        cursor: pointer;
     }
 </style>
 @endsection
@@ -213,10 +197,17 @@
 </div>
 <!-- EDIT -->
 <div class="date">
+    <div class="year first-text fw-bold">
+        {{ $year->year_name }}
+    </div>
     <div class="month">
+        @if($year->id != 1)
+            <a href="{{ route('technolog.plusmultistorage', ['id' => $kingar->id, 'monthid' => 0]) }}" class="month__item">{{ $year->year_name - 1 }}</a>
+        @endif
         @foreach($months as $month)
-            <a href="{{ route('technolog.plusmultistorage',  ['id' => $kingar->id, 'monthid' => $month->id ]) }}" class="month__item {{ (Request::is('technolog/plusmultistorage/'.$kingar->id.'/'.$month->id) or ($month->month_active == 1 and $monthid == 0)) ? 'active' : null }}">{{ $month->month_name }}</a>
+            <a href="{{ route('technolog.plusmultistorage', ['id' => $kingar->id, 'monthid' => $month->id]) }}" class="month__item {{ (Request::is('technolog/plusmultistorage/'.$kingar->id.'/'.$month->id) or ($month->month_active == 1 and $monthid == 0)) ? 'active first-text' : 'second-text' }} fw-bold">{{ $month->month_name }}</a>
         @endforeach
+        <a href="{{ route('technolog.plusmultistorage', ['id' => $kingar->id, 'monthid' => 0]) }}" class="month__item">{{ $year->year_name + 1 }}</a>
     </div>
 </div>
 <div class="py-4 px-4">
@@ -225,75 +216,91 @@
             <b>+ Шу ойда qo'shilgan махсулотлар</b>
         </div>
         <div class="col-md-3">
-            <!-- <b>Bog'chalarga so'rov yuborish</b>
-            <a href="">
-                <i class="far fa-paper-plane" style="color: dodgerblue; font-size: 18px;"></i>
-            </a> -->
-        </div>
-        <div class="col-md-3">
             <b>Боғча: {{ $kingar->kingar_name }}</b>
-            <!-- <b>Taxminiy menyu yuborish</b>
-            <a href="">
-                <i class="far fa-paper-plane" style="color: dodgerblue; font-size: 18px;"></i>
-            </a> -->
+        </div>
+        <div class="col-md-3 text-end">
+            <a href="{{ route('technolog.plusmultistoragePDF', ['id' => $kingar->id, 'monthid' => $monthid]) }}" class="btn btn-sm btn-danger" target="_blank">
+                <i class="fas fa-file-pdf"></i> PDF
+            </a>
+            <a href="{{ route('technolog.plusmultistorageExcel', ['id' => $kingar->id, 'monthid' => $monthid]) }}" class="btn btn-sm btn-success">
+                <i class="fas fa-file-excel"></i> Excel
+            </a>
         </div>
     </div>
     <hr>
-    <table class="table table-light py-4 px-4">
-        <thead>
-            <tr>
-                <th style="width: 30px;">Махсулотлар</th>
+    <div class="table-wrapper">
+        <table class="table table-light py-4 px-4">
+            <thead>
+                <tr>
+                    <th rowspan="2" style="width: 150px; vertical-align: middle;">Махсулотлар</th>
                 <!-- o'tgan oydan qoldiq va Qoldiqni shu oyga ko'chirish -->
-                <th scope="col">{{ "O'tgan oydan Qoldiq" }} <i class="fa fa-plus" style="color: #23b242; font-size: 18px; cursor: pointer;" data-bs-toggle="modal" data-bs-target="#qoldiqModal"></i></th>
+                <th rowspan="2" scope="col" style="vertical-align: middle;">{{ "O'tgan oydan Qoldiq" }} <i class="fa fa-plus" style="color: #23b242; font-size: 18px; cursor: pointer;" data-bs-toggle="modal" data-bs-target="#qoldiqModal"></i></th>
                 @foreach($days as $day)
-                <th scope="col">{{ $day->day_number }}</th>
+                <th colspan="2" scope="col" style="text-align: center;">{{ $day->day_number }}</th>
+                @endforeach
+                <?php
+                for($i = 0; $i < 21-count($days); $i++){
+                    ?>
+                    <th colspan="2" scope="col"></th>
+                    <?php
+                }
+                ?>
+                <th rowspan="2" style="width: 80px; vertical-align: middle;">Жами киритилган</th>
+                <th rowspan="2" style="width: 80px; vertical-align: middle;">Жами сарфланган</th>
+                <th rowspan="2" style="width: 80px; vertical-align: middle;">Фарқи</th>
+            </tr>
+            <tr>
+                @foreach($days as $day)
+                <th scope="col" style="text-align: center; font-size: 0.7rem;">-</th>
+                <th scope="col" style="text-align: center; font-size: 0.7rem;">+</th>
                 @endforeach
                 <?php
                 for($i = 0; $i < 21-count($days); $i++){
                     ?>
                     <th scope="col"></th>
+                    <th scope="col"></th>
                     <?php
                 }
                 ?>
-                <th style="width: 70px;">Жами:</th>
-                <!-- <th style="width: 70px;">Қолдиқ:</th> -->
             </tr>
         </thead>
         <tbody>
             @foreach($plusproducts as $key => $row)
-            @if(is_numeric($key) and isset($minusproducts[$key]))
-            <?php $ke = $key; $allq = $minusproducts[$key];  $all = 0;?>
-            @else
-            <?php $all = 0;  $allq = 0 ?>
-            @endif
+            <?php 
+                $totalMinus = 0;  // Jami sarflangan
+                $totalPlus = 0;   // Jami kiritilgan
+                $residualWeight = isset($residualProducts[$key]) ? $residualProducts[$key]['weight'] : 0;
+                $totalPlus += $residualWeight; // O'tgan oydan qoldiqni kirimga qo'shish
+            ?>
             <tr>
                 <td>{{ $row['productname'] }}</td>
+                <td>{{ $residualWeight > 0 ? $residualWeight : 0 }}</td> <!-- O'tgan oydan Qoldiq -->
                 @foreach($days as $day)
-                    @if(isset($row[$day['id']."+"]) or isset($row[$day['id']."-"]))
-                        <td>
-                        	{{ $row[$day['id']."-"] }}
-                        </td>
-                        <td>
-                        	{{ $row[$day['id']."+"] }}
-                        </td>
-                        <?php $all += $row[$day['id']."+"] + $row[$day['id']."-"]; ?>
-                    @else
-                        <td></td>
-                    @endif
+                    <?php
+                        $minusValue = isset($minusproducts[$key][$day['id']]) ? $minusproducts[$key][$day['id']] : 0;
+                        $plusValue = isset($row[$day['id']."+"], $row[$day['id']."-"]) ? $row[$day['id']."+"] : 0;
+                        $totalMinus += $minusValue;
+                        $totalPlus += $plusValue;
+                    ?>
+                    <td>{{ $minusValue > 0 ? $minusValue : '' }}</td>
+                    <td>{{ $plusValue > 0 ? $plusValue : '' }}</td>
                 @endforeach
                 <?php
                 for($i = 0; $i < 21-count($days); $i++){
                     ?>
                     <td></td>
+                    <td></td>
                     <?php
                 }
                 ?>
-                <td style="width: 70px;">{{ $all }}</td>
-                <!-- <td style="width: 70px;">{{ round($all-$allq, 2) }}</td> -->
+                <td style="width: 80px;">{{ round($totalPlus, 2) }}</td>
+                <td style="width: 80px;">{{ round($totalMinus, 2) }}</td>
+                <td style="width: 80px;">{{ round($totalPlus - $totalMinus, 2) }}</td>
             </tr>
             @endforeach
         </tbody>
-    </table>
+        </table>
+    </div>
     
 </div>
 @endsection

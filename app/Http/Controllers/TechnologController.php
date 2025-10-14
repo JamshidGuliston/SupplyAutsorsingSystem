@@ -2440,11 +2440,15 @@ class TechnologController extends Controller
     public function plusmultistorage(Request $request, $kid, $monthid){
         $king = Kindgarden::where('id', $kid)->first();
         $ill = $monthid;
+        $year = Year::where('year_active', 1)->first();
         if($monthid == 0){
             $monthid = Month::where('month_active', 1)->first()->id;
         }
-        $months = Month::all();
-        $days = Day::where('year_id', Year::where('year_active', 1)->first()->id)->where('month_id', Month::where('id', $monthid)->first()->id)->get();
+        // Faqat joriy yilga tegishli oylarni olish
+        $months = Month::where('yearid', $year->id)->get();
+        $days = Day::where('year_id', $year->id)->where('month_id', Month::where('id', $monthid)->first()->id)->get();
+        
+        // Sarflangan mahsulotlar (minus) - har bir kun uchun
         $minusproducts = [];
         foreach($days as $day){
             $minus = minus_multi_storage::where('day_id', $day->id)
@@ -2462,14 +2466,35 @@ class TechnologController extends Controller
                     'products.sort'
                 ]);
             foreach($minus as $row){
-                if(!isset($minusproducts[$row->product_name_id])){
-                    $minusproducts[$row->product_name_id] = 0;
+                if(!isset($minusproducts[$row->product_name_id][$day->id])){
+                    $minusproducts[$row->product_name_id][$day->id] = 0;
                 }
-                $minusproducts[$row->product_name_id] += round($row->product_weight / $row->div, 2);
-                // $minusproducts[$row->product_name_id]['productname'] = $row->product_name;
+                $minusproducts[$row->product_name_id][$day->id] += round($row->product_weight / $row->div, 2);
+                $minusproducts[$row->product_name_id]['productname'] = $row->product_name;
             }
         }
-        // dd($minusproducts);
+        
+        // O'tgan oydan qoldiqni olish (residual = 1)
+        $residualProducts = [];
+        $residualData = plus_multi_storage::where('kingarden_name_d', $kid)
+            ->where('residual', 1)
+            ->join('products', 'plus_multi_storages.product_name_id', '=', 'products.id')
+            ->get([
+                'plus_multi_storages.product_name_id',
+                'plus_multi_storages.product_weight',
+                'products.product_name',
+            ]);
+        
+        foreach($residualData as $row){
+            if(!isset($residualProducts[$row->product_name_id])){
+                $residualProducts[$row->product_name_id] = [
+                    'weight' => 0,
+                    'productname' => $row->product_name
+                ];
+            }
+            $residualProducts[$row->product_name_id]['weight'] += round($row->product_weight, 3);
+        }
+        
         $plusproducts = [];
         foreach($days as $day){
             $plus = plus_multi_storage::where('day_id', $day->id)
@@ -2482,12 +2507,18 @@ class TechnologController extends Controller
                     'plus_multi_storages.shop_id',
                     'plus_multi_storages.kingarden_name_d',
                     'plus_multi_storages.product_weight',
+                    'plus_multi_storages.residual',
                     'products.product_name',
                     'products.size_name_id',
                     'products.div',
                     'products.sort'
                 ]);
             foreach($plus as $row){
+                // residual = 1 bo'lganlarni o'tkazib yuborish (ular qoldiqda ko'rsatiladi)
+                if($row->residual == 1){
+                    continue;
+                }
+                
                 if(!isset($plusproducts[$row->product_name_id][$day->id])){
                     $plusproducts[$row->product_name_id][$day->id."+"] = 0;
                     $plusproducts[$row->product_name_id][$day->id] = 0;
@@ -2503,7 +2534,139 @@ class TechnologController extends Controller
                 $plusproducts[$row->product_name_id]['productname'] = $row->product_name;
             }
         }
-        return view('technolog.plusmultistorage', ['plusproducts' => $plusproducts, 'minusproducts' => $minusproducts, 'kingar' => $king, 'days' => $days, 'months' => $months, 'monthid' => $ill]); 
+        
+        // Faqat qoldiq bo'lib, kunlik ma'lumoti yo'q mahsulotlarni qo'shish
+        foreach($residualProducts as $productId => $residualData){
+            if(!isset($plusproducts[$productId])){
+                $plusproducts[$productId] = ['productname' => $residualData['productname']];
+            }
+        }
+        
+        // Faqat minus bo'lib, plus bo'lmagan mahsulotlarni qo'shish
+        foreach($minusproducts as $productId => $minusData){
+            if(is_numeric($productId) && !isset($plusproducts[$productId])){
+                $plusproducts[$productId] = ['productname' => $minusData['productname']];
+            }
+        }
+        
+        return view('technolog.plusmultistorage', ['plusproducts' => $plusproducts, 'minusproducts' => $minusproducts, 'residualProducts' => $residualProducts, 'kingar' => $king, 'days' => $days, 'months' => $months, 'monthid' => $ill, 'year' => $year]); 
+    }
+
+    public function plusmultistoragePDF(Request $request, $kid, $monthid){
+        $king = Kindgarden::where('id', $kid)->first();
+        $year = Year::where('year_active', 1)->first();
+        if($monthid == 0){
+            $monthid = Month::where('month_active', 1)->first()->id;
+        }
+        $month = Month::where('id', $monthid)->first();
+        $days = Day::where('year_id', $year->id)->where('month_id', $month->id)->get();
+        
+        // Sarflangan mahsulotlar (minus) - har bir kun uchun
+        $minusproducts = [];
+        foreach($days as $day){
+            $minus = minus_multi_storage::where('day_id', $day->id)
+                ->where('kingarden_name_id', $kid)
+                ->join('products', 'minus_multi_storages.product_name_id', '=', 'products.id')
+                ->get([
+                    'minus_multi_storages.product_name_id',
+                    'minus_multi_storages.product_weight',
+                    'products.product_name',
+                    'products.div',
+                ]);
+            foreach($minus as $row){
+                if(!isset($minusproducts[$row->product_name_id][$day->id])){
+                    $minusproducts[$row->product_name_id][$day->id] = 0;
+                }
+                $minusproducts[$row->product_name_id][$day->id] += round($row->product_weight / $row->div, 2);
+                $minusproducts[$row->product_name_id]['productname'] = $row->product_name;
+            }
+        }
+        
+        // O'tgan oydan qoldiqni olish (residual = 1)
+        $residualProducts = [];
+        $residualData = plus_multi_storage::where('kingarden_name_d', $kid)
+            ->where('residual', 1)
+            ->join('products', 'plus_multi_storages.product_name_id', '=', 'products.id')
+            ->get([
+                'plus_multi_storages.product_name_id',
+                'plus_multi_storages.product_weight',
+                'products.product_name',
+            ]);
+        
+        foreach($residualData as $row){
+            if(!isset($residualProducts[$row->product_name_id])){
+                $residualProducts[$row->product_name_id] = [
+                    'weight' => 0,
+                    'productname' => $row->product_name
+                ];
+            }
+            $residualProducts[$row->product_name_id]['weight'] += round($row->product_weight, 3);
+        }
+        
+        $plusproducts = [];
+        foreach($days as $day){
+            $plus = plus_multi_storage::where('day_id', $day->id)
+                ->where('kingarden_name_d', $kid)
+                ->join('products', 'plus_multi_storages.product_name_id', '=', 'products.id')
+                ->get([
+                    'plus_multi_storages.product_name_id',
+                    'plus_multi_storages.shop_id',
+                    'plus_multi_storages.product_weight',
+                    'plus_multi_storages.residual',
+                    'products.product_name',
+                ]);
+            foreach($plus as $row){
+                // residual = 1 bo'lganlarni o'tkazib yuborish (ular qoldiqda ko'rsatiladi)
+                if($row->residual == 1){
+                    continue;
+                }
+                
+                if(!isset($plusproducts[$row->product_name_id][$day->id])){
+                    $plusproducts[$row->product_name_id][$day->id."+"] = 0;
+                }
+                if($row->shop_id != -1){
+                    $plusproducts[$row->product_name_id][$day->id."+"] +=  round($row->product_weight, 3);
+                }
+                $plusproducts[$row->product_name_id]['productname'] = $row->product_name;
+            }
+        }
+        
+        // Faqat qoldiq bo'lib, kunlik ma'lumoti yo'q mahsulotlarni qo'shish
+        foreach($residualProducts as $productId => $residualData){
+            if(!isset($plusproducts[$productId])){
+                $plusproducts[$productId] = ['productname' => $residualData['productname']];
+            }
+        }
+        
+        // Faqat minus bo'lib, plus bo'lmagan mahsulotlarni qo'shish
+        foreach($minusproducts as $productId => $minusData){
+            if(is_numeric($productId) && !isset($plusproducts[$productId])){
+                $plusproducts[$productId] = ['productname' => $minusData['productname']];
+            }
+        }
+        
+        $pdf = \PDF::loadView('pdffile.technolog.plusmultistorage', [
+            'plusproducts' => $plusproducts, 
+            'minusproducts' => $minusproducts, 
+            'residualProducts' => $residualProducts, 
+            'kingar' => $king, 
+            'days' => $days, 
+            'month' => $month,
+            'year' => $year
+        ]);
+        $pdf->setPaper('A4', 'landscape');
+        return $pdf->stream('plusmultistorage_'.$king->kingar_name.'_'.$month->month_name.'.pdf');
+    }
+
+    public function plusmultistorageExcel(Request $request, $kid, $monthid){
+        $king = Kindgarden::where('id', $kid)->first();
+        $year = Year::where('year_active', 1)->first();
+        if($monthid == 0){
+            $monthid = Month::where('month_active', 1)->first()->id;
+        }
+        $month = Month::where('id', $monthid)->first();
+        
+        return \Excel::download(new \App\Exports\PlusmultistorageExport($kid, $monthid), 'plusmultistorage_'.$king->kingar_name.'_'.$month->month_name.'.xlsx');
     }
 
     public function moveremainder(Request $request){
