@@ -1,5 +1,6 @@
 @extends('layouts.app')
 @section('css')
+<link href="/css/dates.css?ver=1.0" rel="stylesheet"/>
 <style>
     .loader-box {
         width: 100%;
@@ -205,36 +206,44 @@
 </div>
 <!-- EDIT -->
 <div class="date">
+    <div class="year first-text fw-bold">
+        {{ $year->year_name }}
+    </div>
     <div class="month">
-        @foreach($months as $month)
-            <a href="{{ route('technolog.minusmultistorage',  ['id' => $kingar->id, 'monthid' => $month->id ]) }}" class="month__item {{ (Request::is('technolog/minusmultistorage/'.$kingar->id.'/'.$month->id) or ($month->month_active == 1 and $monthid == 0)) ? 'active' : null }}">{{ $month->month_name }}</a>
+        @if($year->id != 1)
+            <a href="{{ route('technolog.minusmultistorage', ['id' => $kingar->id, 'monthid' => 0]) }}" class="month__item">{{ $year->year_name - 1 }}</a>
+        @endif
+        @foreach($months as $m)
+            <a href="{{ route('technolog.minusmultistorage',  ['id' => $kingar->id, 'monthid' => $m->id ]) }}" class="month__item {{ ($m->id == $month->id) ? 'active first-text' : 'second-text' }} fw-bold">{{ $m->month_name }}</a>
         @endforeach
+        <a href="{{ route('technolog.minusmultistorage', ['id' => $kingar->id, 'monthid' => 0]) }}" class="month__item">{{ $year->year_name + 1 }}</a>
     </div>
 </div>
 <div class="py-4 px-4">
-    <div class="row">
-        <div class="col-md-6">
+    <div class="row mb-3">
+        <div class="col-md-4">
             <b>- Шу ойда ишлатилган махсулотлар</b>
         </div>
-        <div class="col-md-3">
-            <!-- <b>Bog'chalarga so'rov yuborish</b>
-            <a href="">
-                <i class="far fa-paper-plane" style="color: dodgerblue; font-size: 18px;"></i>
-            </a> -->
+        <div class="col-md-4 text-center">
+            <a href="{{ route('technolog.minusmultistoragePDF', ['id' => $kingar->id, 'monthid' => $monthid]) }}" class="btn btn-sm btn-danger" target="_blank">
+                <i class="fas fa-file-pdf"></i> PDF
+            </a>
+            <a href="{{ route('technolog.minusmultistorageExcel', ['id' => $kingar->id, 'monthid' => $monthid]) }}" class="btn btn-sm btn-success">
+                <i class="fas fa-file-excel"></i> Excel
+            </a>
+            <a href="{{ route('technolog.storageChangeLogs', ['id' => $kingar->id, 'monthid' => $monthid]) }}" class="btn btn-sm btn-info">
+                <i class="fas fa-history"></i> O'zgarishlar tarixi
+            </a>
         </div>
-        <div class="col-md-3">
+        <div class="col-md-4 text-end">
             <b>Боғча: {{ $kingar->kingar_name }}</b>
-            <!-- <b>Taxminiy menyu yuborish</b>
-            <a href="">
-                <i class="far fa-paper-plane" style="color: dodgerblue; font-size: 18px;"></i>
-            </a> -->
         </div>
     </div>
     <hr>
     <table class="table table-light py-4 px-4">
         <thead>
             <tr>
-                <th style="width: 30px;" rowspan="2">Махсулотлар</th>
+                <th style="width: 30px;">Махсулотлар</th>
                 @foreach($days as $day)
                 <th scope="col">{{ $day->day_number }}</th>
                 @endforeach
@@ -245,21 +254,7 @@
                     <?php
                 }
                 ?>
-                <th style="width: 70px;" rowspan="2">Жами:</th>
-            </tr>
-            <tr>
-                @foreach($days as $day)
-                <th scope="col" class="{{ isset($usage_status[$day->id]) && $usage_status[$day->id] == 'Ishlatilgan' ? 'usage-status-used' : 'usage-status-unused' }}" style="font-size: 0.7rem;">
-                    {{ isset($usage_status[$day->id]) ? $usage_status[$day->id] : 'Ishlatilmagan' }}
-                </th>
-                @endforeach
-                <?php
-                for($i = 0; $i < 21-count($days); $i++){
-                    ?>
-                    <th scope="col"></th>
-                    <?php
-                }
-                ?>
+                <th style="width: 70px;">Жами:</th>
             </tr>
         </thead>
         <tbody>
@@ -268,19 +263,18 @@
             <tr>
                 <td>{{ $row['productname'] }}</td>
                 @foreach($days as $day)
-                    @if(isset($row[$day['id']."+"]) or isset($row[$day['id']."-"]))
-                        <td>
-                            {{ $row[$day['id']."+"] }}
-                            <i class="edites far fa-edit text-info" data-bs-toggle="modal" data-bs-target="#pcountModal" data-dayid="{{ $day->id }}" data-prodid="{{ $key }}" data-weight="{{ $row[$day['id'].'+'] }}" data-kinid="{{ $kingar->id }}" style="cursor: pointer; margin-right: 16px;"> </i>
-                            @if($row[$day['id']."-"] != 0)
-                                <hr>
-                                {{ $row[$day['id']."-"] }}
-                            @endif
-                        </td>
-                        <?php $all += $row[$day['id']."+"] + $row[$day['id']."-"]; ?>
-                    @else
-                        <td></td>
-                    @endif
+                    @php
+                        $plusValue = isset($row[$day->id."+"]) ? $row[$day->id."+"] : 0;
+                        $minusValue = isset($row[$day->id."-"]) ? $row[$day->id."-"] : 0;
+                        $dayTotal = $plusValue + $minusValue;
+                        $all += $dayTotal;
+                    @endphp
+                    <td>
+                        @if($dayTotal > 0)
+                            {{ round($dayTotal, 2) }}
+                            <i class="edites far fa-edit text-info" data-bs-toggle="modal" data-bs-target="#pcountModal" data-dayid="{{ $day->id }}" data-prodid="{{ $key }}" data-weight="{{ $dayTotal }}" data-kinid="{{ $kingar->id }}" style="cursor: pointer; margin-left: 5px;"> </i>
+                        @endif
+                    </td>
                 @endforeach
                 <?php
                 for($i = 0; $i < 21-count($days); $i++){
@@ -289,7 +283,7 @@
                     <?php
                 }
                 ?>
-                <td style="width: 70px;">{{ $all }}</td>
+                <td style="width: 70px;">{{ round($all, 2) }}</td>
             </tr>
             @endforeach
         </tbody>
