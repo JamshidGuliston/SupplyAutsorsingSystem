@@ -236,6 +236,9 @@
             <b>Боғча: {{ $kingar->kingar_name }}</b>
         </div>
         <div class="col-md-3 text-end">
+            <a href="{{ route('technolog.storageChangeLogs', ['id' => $kingar->id, 'monthid' => $monthid]) }}" class="btn btn-sm btn-info">
+                <i class="fas fa-history"></i> O'zgarishlar tarixi
+            </a>
             <a href="{{ route('technolog.plusmultistoragePDF', ['id' => $kingar->id, 'monthid' => $monthid]) }}" class="btn btn-sm btn-danger" target="_blank">
                 <i class="fas fa-file-pdf"></i> PDF
             </a>

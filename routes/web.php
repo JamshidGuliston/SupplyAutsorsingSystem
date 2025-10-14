@@ -238,6 +238,7 @@ Route::group(['prefix' => 'technolog', 'middleware' => ['isTechnolog', 'auth']],
     Route::post('editMinusStorage', [TechnologController::class, 'editMinusStorage'])->name('technolog.editMinusStorage');
     Route::post('editPlusStorage', [TechnologController::class, 'editPlusStorage'])->name('technolog.editPlusStorage');
     Route::post('editResidualStorage', [TechnologController::class, 'editResidualStorage'])->name('technolog.editResidualStorage');
+    Route::get('storageChangeLogs/{id}/{monthid}', [TechnologController::class, 'storageChangeLogs'])->name('technolog.storageChangeLogs');
     Route::post('deleteweights', [TechnologController::class, 'deleteweights'])->name('technolog.deleteweights');
     Route::get('weightcurrent/{kind}/{yearid}/{monthid}', [TechnologController::class, 'weightcurrent'])->name('technolog.weightcurrent');
     Route::get('weightsdocument/{group_id}', [TechnologController::class, 'weightsdocument'])->name('technolog.weightsdocument');

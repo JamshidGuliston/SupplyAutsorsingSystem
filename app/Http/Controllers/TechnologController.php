@@ -47,6 +47,7 @@ use App\Models\Take_small_base;
 use App\Models\titlemenu_food;
 use App\Models\typeofwork;
 use App\Models\User;
+use App\Models\StorageChangeLog;
 use Database\Seeders\TypeOfWorkSeeder;
 use Telegram\Bot\Api;
 use Illuminate\Support\Str;
@@ -2469,7 +2470,7 @@ class TechnologController extends Controller
                 if(!isset($minusproducts[$row->product_name_id][$day->id])){
                     $minusproducts[$row->product_name_id][$day->id] = 0;
                 }
-                $minusproducts[$row->product_name_id][$day->id] += round($row->product_weight / $row->div, 2);
+                $minusproducts[$row->product_name_id][$day->id] += $row->product_weight;
                 $minusproducts[$row->product_name_id]['productname'] = $row->product_name;
             }
         }
@@ -2492,7 +2493,7 @@ class TechnologController extends Controller
                     'productname' => $row->product_name
                 ];
             }
-            $residualProducts[$row->product_name_id]['weight'] += round($row->product_weight, 3);
+            $residualProducts[$row->product_name_id]['weight'] += $row->product_weight;
         }
         
         $plusproducts = [];
@@ -2525,10 +2526,10 @@ class TechnologController extends Controller
                     $plusproducts[$row->product_name_id][$day->id.'-'] = 0;
                 }
                 if($row->shop_id == -1){
-                    $plusproducts[$row->product_name_id][$day->id."-"] += round($row->product_weight, 3);
+                    $plusproducts[$row->product_name_id][$day->id."-"] +=   $row->product_weight;
                 }
                 else{
-                    $plusproducts[$row->product_name_id][$day->id."+"] +=  round($row->product_weight, 3);
+                    $plusproducts[$row->product_name_id][$day->id."+"] += $row->product_weight;
                 }
                 $plusproducts[$row->product_name_id][$day->id] = $plusproducts[$row->product_name_id][$day->id."-"] + $plusproducts[$row->product_name_id][$day->id."+"];
                 $plusproducts[$row->product_name_id]['productname'] = $row->product_name;
@@ -2688,6 +2689,9 @@ class TechnologController extends Controller
         
         $weightWithDiv = $weight * $product->div;
         
+        // Eski qiymatni saqlash (log uchun)
+        $oldValue = $minusStorage ? round($minusStorage->product_weight / $product->div, 2) : 0;
+        
         if($minusStorage){
             // Yangilash
             if($weight > 0){
@@ -2710,6 +2714,19 @@ class TechnologController extends Controller
             }
         }
         
+        // Log yozish
+        StorageChangeLog::create([
+            'kingarden_id' => $kingardenId,
+            'product_id' => $productId,
+            'day_id' => $dayId,
+            'type' => 'minus',
+            'old_value' => $oldValue,
+            'new_value' => $weight,
+            'difference' => $weight - $oldValue,
+            'user_id' => auth()->id(),
+            'user_name' => auth()->user()->name ?? 'Unknown',
+        ]);
+        
         return response()->json(['success' => true]);
     }
 
@@ -2726,6 +2743,9 @@ class TechnologController extends Controller
             ->where('shop_id', '!=', -1)
             ->where('residual', 0)
             ->first();
+        
+        // Eski qiymatni saqlash (log uchun)
+        $oldValue = $plusStorage ? round($plusStorage->product_weight, 2) : 0;
         
         if($plusStorage){
             // Yangilash
@@ -2751,7 +2771,49 @@ class TechnologController extends Controller
             }
         }
         
+        // Log yozish
+        StorageChangeLog::create([
+            'kingarden_id' => $kingardenId,
+            'product_id' => $productId,
+            'day_id' => $dayId,
+            'type' => 'plus',
+            'old_value' => $oldValue,
+            'new_value' => $weight,
+            'difference' => $weight - $oldValue,
+            'user_id' => auth()->id(),
+            'user_name' => auth()->user()->name ?? 'Unknown',
+        ]);
+        
         return response()->json(['success' => true]);
+    }
+
+    public function storageChangeLogs(Request $request, $kid, $monthid){
+        $king = Kindgarden::where('id', $kid)->first();
+        $year = Year::where('year_active', 1)->first();
+        if($monthid == 0){
+            $monthid = Month::where('month_active', 1)->first()->id;
+        }
+        $month = Month::where('id', $monthid)->first();
+        $months = Month::where('yearid', $year->id)->get();
+        
+        // O'zgarishlar tarixini olish
+        $logs = StorageChangeLog::where('kingarden_id', $kid)
+            ->with(['product', 'day', 'user'])
+            ->whereHas('day', function($query) use ($monthid, $year) {
+                $query->where('month_id', $monthid)
+                      ->where('year_id', $year->id);
+            })
+            ->orderBy('created_at', 'desc')
+            ->get();
+        
+        return view('technolog.storageChangeLogs', [
+            'logs' => $logs,
+            'kingar' => $king,
+            'month' => $month,
+            'months' => $months,
+            'monthid' => $monthid,
+            'year' => $year
+        ]);
     }
 
     public function editResidualStorage(Request $request){
