@@ -87,7 +87,7 @@ class PlusmultistorageExport implements FromArray, WithHeadings, WithStyles, Wit
                     'productname' => $row->product_name
                 ];
             }
-            $residualProducts[$row->product_name_id]['weight'] += round($row->product_weight, 3);
+            $residualProducts[$row->product_name_id]['weight'] += $row->product_weight;
         }
         
         // Kiritilgan mahsulotlar (plus)
@@ -112,7 +112,7 @@ class PlusmultistorageExport implements FromArray, WithHeadings, WithStyles, Wit
                     $plusproducts[$row->product_name_id][$day->id."+"] = 0;
                 }
                 if($row->shop_id != -1){
-                    $plusproducts[$row->product_name_id][$day->id."+"] +=  round($row->product_weight, 3);
+                    $plusproducts[$row->product_name_id][$day->id."+"] += $row->product_weight;
                 }
                 $plusproducts[$row->product_name_id]['productname'] = $row->product_name;
             }

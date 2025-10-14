@@ -2578,7 +2578,7 @@ class TechnologController extends Controller
                 if(!isset($minusproducts[$row->product_name_id][$day->id])){
                     $minusproducts[$row->product_name_id][$day->id] = 0;
                 }
-                $minusproducts[$row->product_name_id][$day->id] += round($row->product_weight / $row->div, 2);
+                $minusproducts[$row->product_name_id][$day->id] += $row->product_weight;
                 $minusproducts[$row->product_name_id]['productname'] = $row->product_name;
             }
         }
@@ -2601,7 +2601,7 @@ class TechnologController extends Controller
                     'productname' => $row->product_name
                 ];
             }
-            $residualProducts[$row->product_name_id]['weight'] += round($row->product_weight, 3);
+            $residualProducts[$row->product_name_id]['weight'] += $row->product_weight;
         }
         
         $plusproducts = [];
@@ -2626,7 +2626,7 @@ class TechnologController extends Controller
                     $plusproducts[$row->product_name_id][$day->id."+"] = 0;
                 }
                 if($row->shop_id != -1){
-                    $plusproducts[$row->product_name_id][$day->id."+"] +=  round($row->product_weight, 3);
+                    $plusproducts[$row->product_name_id][$day->id."+"] += $row->product_weight;
                 }
                 $plusproducts[$row->product_name_id]['productname'] = $row->product_name;
             }
@@ -2687,10 +2687,11 @@ class TechnologController extends Controller
             ->where('product_name_id', $productId)
             ->first();
         
-        $weightWithDiv = $weight * $product->div;
+        // div bilan ko'paytirmaslik kerak, chunki view da ham div dan foydalanmayapmiz
+        $weightWithDiv = $weight;
         
         // Eski qiymatni saqlash (log uchun)
-        $oldValue = $minusStorage ? round($minusStorage->product_weight / $product->div, 2) : 0;
+        $oldValue = $minusStorage ? round($minusStorage->product_weight, 2) : 0;
         
         if($minusStorage){
             // Yangilash
