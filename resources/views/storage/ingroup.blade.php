@@ -150,12 +150,20 @@
 <div class="py-4 px-4">
   <div class="d-flex justify-content-between align-items-center mb-3">
     <h5>{{ $group->group_name }} — {{ sprintf('%02d',$group->day_number).'.'.$group->month_name.'.'.$group->year_name }}</h5>
-    <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#addRowModal"><i class="fas fa-plus"></i> Qo'shish</button>
+    <div>
+      <button class="btn btn-danger me-2" id="bulkDeleteBtn" style="display:none;">
+        <i class="fas fa-trash"></i> Tanlanganlarni o'chirish (<span id="selectedCount">0</span>)
+      </button>
+      <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#addRowModal"><i class="fas fa-plus"></i> Qo'shish</button>
+    </div>
   </div>
 
   <table class="table table-light table-striped table-hover">
     <thead>
       <tr>
+        <th style="width: 40px;">
+          <input type="checkbox" id="selectAll" class="form-check-input">
+        </th>
         <th>ID</th>
         <th>Maxsulot</th>
         <th>Birlik</th>
@@ -170,6 +178,9 @@
       <?php $i = 0; ?>
       @foreach($productall as $item)
       <tr>
+        <td>
+          <input type="checkbox" class="form-check-input item-checkbox" value="{{ $item->id }}">
+        </td>
         <td>{{ ++$i }}</td>
         <td>{{ $item->product_name }}</td>
         <td>{{ $item->size_name }}</td>
@@ -269,6 +280,93 @@
       btn.addEventListener('click', function(){
         document.getElementById('delete_row_id').value = this.dataset.id;
       });
+    });
+
+    // Bulk delete funksiyalari
+    const selectAllCheckbox = document.getElementById('selectAll');
+    const itemCheckboxes = document.querySelectorAll('.item-checkbox');
+    const bulkDeleteBtn = document.getElementById('bulkDeleteBtn');
+    const selectedCountSpan = document.getElementById('selectedCount');
+
+    // Barcha checkboxlarni belgilash/bekor qilish
+    selectAllCheckbox.addEventListener('change', function() {
+      itemCheckboxes.forEach(checkbox => {
+        checkbox.checked = this.checked;
+      });
+      updateBulkDeleteButton();
+    });
+
+    // Har bir checkbox o'zgarganda
+    itemCheckboxes.forEach(checkbox => {
+      checkbox.addEventListener('change', function() {
+        updateSelectAllCheckbox();
+        updateBulkDeleteButton();
+      });
+    });
+
+    // "Barchasini belgilash" checkboxni yangilash
+    function updateSelectAllCheckbox() {
+      const allChecked = Array.from(itemCheckboxes).every(cb => cb.checked);
+      const someChecked = Array.from(itemCheckboxes).some(cb => cb.checked);
+      selectAllCheckbox.checked = allChecked;
+      selectAllCheckbox.indeterminate = someChecked && !allChecked;
+    }
+
+    // Bulk delete tugmasini ko'rsatish/yashirish
+    function updateBulkDeleteButton() {
+      const selectedItems = Array.from(itemCheckboxes).filter(cb => cb.checked);
+      const count = selectedItems.length;
+      
+      if (count > 0) {
+        bulkDeleteBtn.style.display = 'inline-block';
+        selectedCountSpan.textContent = count;
+      } else {
+        bulkDeleteBtn.style.display = 'none';
+      }
+    }
+
+    // Bulk delete tugmasini bosish
+    bulkDeleteBtn.addEventListener('click', function() {
+      const selectedItems = Array.from(itemCheckboxes).filter(cb => cb.checked);
+      const selectedIds = selectedItems.map(cb => cb.value);
+      
+      if (selectedIds.length === 0) {
+        alert('Hech qanday mahsulot tanlanmagan!');
+        return;
+      }
+
+      if (confirm(`Tanlangan ${selectedIds.length} ta mahsulotni o'chirishni xohlaysizmi?`)) {
+        // Form yaratish va yuborish
+        const form = document.createElement('form');
+        form.method = 'POST';
+        form.action = '{{ route("storage.ingroup.bulk.delete") }}';
+        
+        // CSRF token
+        const csrfToken = document.createElement('input');
+        csrfToken.type = 'hidden';
+        csrfToken.name = '_token';
+        csrfToken.value = '{{ csrf_token() }}';
+        form.appendChild(csrfToken);
+        
+        // Group ID
+        const groupIdInput = document.createElement('input');
+        groupIdInput.type = 'hidden';
+        groupIdInput.name = 'group_id';
+        groupIdInput.value = '{{ $group->id }}';
+        form.appendChild(groupIdInput);
+        
+        // Tanlangan ID'lar
+        selectedIds.forEach(id => {
+          const input = document.createElement('input');
+          input.type = 'hidden';
+          input.name = 'ids[]';
+          input.value = id;
+          form.appendChild(input);
+        });
+        
+        document.body.appendChild(form);
+        form.submit();
+      }
     });
   });
 </script>

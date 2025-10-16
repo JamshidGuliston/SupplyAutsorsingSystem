@@ -1557,6 +1557,24 @@ class StorageController extends Controller
         return redirect()->route('storage.ingroup', $request->group_id)->with('status', "O'chirildi");
     }
 
+    public function bulkDeleteIngroupProducts(Request $request){
+        $request->validate([
+            'ids' => 'required|array|min:1',
+            'ids.*' => 'required|integer|exists:add_large_werehouses,id',
+            'group_id' => 'required|integer|exists:add_groups,id',
+        ]);
+
+        // Tanlangan yozuvlarni o'chirish
+        foreach($request->ids as $id){
+            debts::where('row_id', $id)->delete();
+            Add_large_werehouse::where('id', $id)->delete();
+        }
+
+        $count = count($request->ids);
+        return redirect()->route('storage.ingroup', $request->group_id)
+            ->with('status', "{$count} ta mahsulot o'chirildi");
+    }
+
     public function addproduct(Request $request){
         // dd($request->all());
         Add_large_werehouse::create([

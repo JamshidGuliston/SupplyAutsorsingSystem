@@ -129,6 +129,7 @@ Route::group(['prefix' => 'storage', 'middleware' => ['isStorage', 'auth']], fun
     Route::post('ingroup/add', [StorageController::class, 'addIngroupProduct'])->name('storage.ingroup.add');
     Route::post('ingroup/edit', [StorageController::class, 'editIngroupProduct'])->name('storage.ingroup.edit');
     Route::post('ingroup/delete', [StorageController::class, 'deleteIngroupProduct'])->name('storage.ingroup.delete');
+    Route::post('ingroup/bulk-delete', [StorageController::class, 'bulkDeleteIngroupProducts'])->name('storage.ingroup.bulk.delete');
     Route::get('payment_history', [StorageController::class, 'paymentHistory'])->name('storage.payment_history');
     Route::post('delete_payment', [StorageController::class, 'deletePayment'])->name('storage.delete_payment');
     Route::get('edit_payment/{id}', [StorageController::class, 'editPayment'])->name('storage.edit_payment');
