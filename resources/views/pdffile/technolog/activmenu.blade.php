@@ -377,10 +377,10 @@
 							</div>
 						@endif
 							<div class="column">
-								<p style="text-align: center;"><strong> Хамшира:</strong> __________________;</p>
+								<p style="text-align: center;"><strong>{{ env('MENU_SIGNATURE') }}:</strong> __________________;</p>
 							</div>
 							<div class="column">
-								<p style="text-align: right;"><strong>{{ env('MENU_SIGNATURE') }}: </strong> __________________;</p>
+								<p style="text-align: right;"><strong>ДМТТ рахбари: </strong> __________________;</p>
 							</div>
 					   </div>
                 </div>

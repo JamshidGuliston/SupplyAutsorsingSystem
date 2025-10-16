@@ -218,11 +218,6 @@ class TestController extends Controller
 		])->join('kindgardens', 'number_childrens.kingar_name_id', '=', 'kindgardens.id')
 		->join('titlemenus', 'number_childrens.kingar_menu_id', '=', 'titlemenus.id')
         ->join('age_ranges', 'number_childrens.king_age_name_id', '=', 'age_ranges.id')->get();
-		
-		// Agar ma'lumot topilmasa, xatolikni qaytarish
-		if($menu->isEmpty()) {
-			abort(404, 'Ushbu kun, bog\'cha va yosh toifasi uchun menyu ma\'lumoti topilmadi');
-		}
 		// dd($menu);  
 		$products = Product::where('hide', 1)
 			->orderBy('sort', 'ASC')->get();
@@ -245,7 +240,7 @@ class TestController extends Controller
         // dd($day);
         $workerfood = titlemenu_food::where('day_id', ($today-1))
                     ->where('worker_age_id', $ageid)
-                    ->where('titlemenu_id', $menu->first()->kingar_menu_id ?? 0)
+                    ->where('titlemenu_id', $menu[0]['kingar_menu_id'])
                     ->get();
 
 
