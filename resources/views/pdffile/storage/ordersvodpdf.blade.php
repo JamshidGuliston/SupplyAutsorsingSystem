@@ -90,12 +90,12 @@
                 <table style="width:100%; table-layout: fixed;">
                     <thead>
                         <tr style="width: 15%;">
-                            <th scope="col" style="width: 6%;">TR</th>
+                            <th scope="col" style="width: 5%;">TR</th>
                             <th scope="col" style="width: 30%;">Maxsulotlar</th>
-                            <th scope="col" style="width: 15%;">Olcham</th>
-                            <th scope="col" style="width: 15%;">Miqdori</th>
-                            <th scope="col" style="width: 10%;">Narx</th>
-                            <th scope="col" style="width: 10%;">...</th>
+                            <th scope="col" style="width: 12%;">Olcham</th>
+                            <th scope="col" style="width: 13%;">Miqdori</th>
+                            <th scope="col" style="width: 13%;">Qoldiq</th>
+                            <th scope="col" style="width: 13%;">Farq</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -110,8 +110,8 @@
                             <td>{{ $row['product_name'] }}</td>
 							<td>{{ $row['size_name'] }}</td>
 							<td><?php printf("%01.1f", $row['product_weight']); ?></td>
-							<td></td>
-							<td></td>
+							<td><?php printf("%01.1f", $row['qoldiq']); ?></td>
+							<td><?php printf("%01.1f", $row['farq']); ?></td>
                         </tr>
                         @endforeach
                     </tbody>

@@ -1410,6 +1410,46 @@ class StorageController extends Controller
             }  
         }
 
+        // Qoldiqlarni hisoblash
+        $remainders = [];
+        
+        // Kirimlarni olish (add_large_werehouses)
+        $addlarch = Add_large_werehouse::join('add_groups', 'add_groups.id', '=', 'add_large_werehouses.add_group_id')
+                    ->join('products', 'products.id', '=', 'add_large_werehouses.product_id')
+                    ->select('add_large_werehouses.product_id', 'add_large_werehouses.weight')
+                    ->get();
+        
+        foreach($addlarch as $row){
+            if(!isset($remainders[$row->product_id])){
+                $remainders[$row->product_id]['kirim'] = 0;
+                $remainders[$row->product_id]['chiqim'] = 0;
+            }
+            $remainders[$row->product_id]['kirim'] += $row->weight;
+        }
+        
+        // Chiqimlarni olish (order_product_structures with document_processes_id = 4)
+        $chiqimlar = order_product_structure::join('order_products', 'order_products.id', '=', 'order_product_structures.order_product_name_id')
+                    ->where('order_products.document_processes_id', 4)
+                    ->select('order_product_structures.product_name_id', 'order_product_structures.product_weight')
+                    ->get();
+        
+        foreach($chiqimlar as $row){
+            if(!isset($remainders[$row->product_name_id])){
+                $remainders[$row->product_name_id]['kirim'] = 0;
+                $remainders[$row->product_name_id]['chiqim'] = 0;
+            }
+            $remainders[$row->product_name_id]['chiqim'] += $row->product_weight;
+        }
+        
+        // Har bir mahsulot uchun qoldiqni hisoblash
+        foreach($items as $product_id => &$item){
+            $kirim = isset($remainders[$product_id]) ? $remainders[$product_id]['kirim'] : 0;
+            $chiqim = isset($remainders[$product_id]) ? $remainders[$product_id]['chiqim'] : 0;
+            $item['qoldiq'] = $kirim - $chiqim;
+            $item['farq'] = $item['product_weight'] - $item['qoldiq'];
+        }
+        unset($item);
+
         usort($items, function ($a, $b){
             if(isset($a["p_sort"]) and isset($b["p_sort"])){
                 return $a["p_sort"] > $b["p_sort"];
