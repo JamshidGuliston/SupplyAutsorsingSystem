@@ -1409,14 +1409,14 @@ class StorageController extends Controller
                 $items[$in->product_name_id]['product_weight'] += $in->product_weight;
             }  
         }
-
+        $month_days = $this->activmonth(Day::where('id', $document->first()->day_id)->first()->month_id);
         // Qoldiqlarni hisoblash
         $remainders = [];
-        
-        // Kirimlarni olish (add_large_werehouses)
-        $addlarch = Add_large_werehouse::join('add_groups', 'add_groups.id', '=', 'add_large_werehouses.add_group_id')
+        $addlarch = Add_large_werehouse::where('add_groups.day_id', '>=', $month_days->first()->id)
+                    ->where('add_groups.day_id', '<=', $month_days->last()->id)
+                    ->join('add_groups', 'add_groups.id', '=', 'add_large_werehouses.add_group_id')
                     ->join('products', 'products.id', '=', 'add_large_werehouses.product_id')
-                    ->select('add_large_werehouses.product_id', 'add_large_werehouses.weight')
+                    ->join('sizes', 'sizes.id', '=', 'products.size_name_id')
                     ->get();
         
         foreach($addlarch as $row){
@@ -1428,7 +1428,9 @@ class StorageController extends Controller
         }
         
         // Chiqimlarni olish (order_product_structures with document_processes_id = 4)
-        $chiqimlar = order_product_structure::join('order_products', 'order_products.id', '=', 'order_product_structures.order_product_name_id')
+        $chiqimlar = order_product_structure::where('order_products.day_id', '>=', $month_days->first()->id)
+                    ->where('order_products.day_id', '<=', $month_days->last()->id)
+                    ->join('order_products', 'order_products.id', '=', 'order_product_structures.order_product_name_id')
                     ->where('order_products.document_processes_id', 4)
                     ->select('order_product_structures.product_name_id', 'order_product_structures.product_weight')
                     ->get();
