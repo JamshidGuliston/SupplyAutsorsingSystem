@@ -603,7 +603,48 @@
         </div>
     </div>
     <hr>
-    
+       <!-- Kirim guruhlari jadvali -->
+       <div class="card">
+        <div class="card-header bg-secondary text-white">
+            <h5 class="mb-0"><i class="fas fa-list"></i> Kirim guruhlari</h5>
+        </div>
+        <div class="card-body">
+            <table class="table table-light table-hover">
+                <thead>
+                    <tr>
+                        <th scope="col">ID</th>
+                        <th scope="col">Title</th>
+                        <th scope="col">Date</th>
+                        <th style="width: 40px;">PDF</th>
+                        <th style="width: 60px;">...</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach($group as $item)
+                    <tr>
+                        <td>{{ $item['id'] }}</td>
+                        <td><a href="/storage/ingroup/{{ $item->id }}">{{ $item['group_name'] }}</a></td>
+                        <td>{{ $item['day_number'].".".$item['month_name'].".".$item['year_name'] }}</td>
+                        <td>
+                            <a href="/storage/document/{{ $item->id }}" target="_blank">pdf</a>
+                        </td>
+                        <td>
+                        	<i class="edite_  fa fa-edit" aria-hidden="true" 
+                                    data-title = "{{ $item['group_name'] }}" 
+                                    data-id = "{{ $item['id'] }}"
+                                    data-dayid = "{{ $item['dayid'] }}"
+                                    data-yearid = "{{ $year->id }}"
+                                    data-monthid = "{{ $id }}"
+                                    data-bs-toggle="modal" style="cursor: pointer; color:cadetblue" data-bs-target="#editModal"></i>
+                        </td>
+                    </tr>
+                    @endforeach
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <br>
+ 
     <!-- Maxsulotlar qoldiqlari jadvali -->
     <div class="card mb-4">
         <div class="card-header" style="background: linear-gradient(to bottom, #3a3a3a 0%, #333333 100%); color: #F3F3F3;">
@@ -731,48 +772,6 @@
             </div>
         </div>
     </div>
-    
-    <!-- Kirim guruhlari jadvali -->
-    <div class="card">
-        <div class="card-header bg-secondary text-white">
-            <h5 class="mb-0"><i class="fas fa-list"></i> Kirim guruhlari</h5>
-        </div>
-        <div class="card-body">
-            <table class="table table-light table-hover">
-                <thead>
-                    <tr>
-                        <th scope="col">ID</th>
-                        <th scope="col">Title</th>
-                        <th scope="col">Date</th>
-                        <th style="width: 40px;">PDF</th>
-                        <th style="width: 60px;">...</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach($group as $item)
-                    <tr>
-                        <td>{{ $item['id'] }}</td>
-                        <td><a href="/storage/ingroup/{{ $item->id }}">{{ $item['group_name'] }}</a></td>
-                        <td>{{ $item['day_number'].".".$item['month_name'].".".$item['year_name'] }}</td>
-                        <td>
-                            <a href="/storage/document/{{ $item->id }}" target="_blank">pdf</a>
-                        </td>
-                        <td>
-                        	<i class="edite_  fa fa-edit" aria-hidden="true" 
-                                    data-title = "{{ $item['group_name'] }}" 
-                                    data-id = "{{ $item['id'] }}"
-                                    data-dayid = "{{ $item['dayid'] }}"
-                                    data-yearid = "{{ $year->id }}"
-                                    data-monthid = "{{ $id }}"
-                                    data-bs-toggle="modal" style="cursor: pointer; color:cadetblue" data-bs-target="#editModal"></i>
-                        </td>
-                    </tr>
-                    @endforeach
-                </tbody>
-            </table>
-        </div>
-    </div>
-    <br>
     <a href="/storage/home" class="btn btn-secondary"><i class="fas fa-arrow-left"></i> Orqaga</a>
 </div>
 
