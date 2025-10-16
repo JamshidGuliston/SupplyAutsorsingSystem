@@ -111,7 +111,7 @@
 							<td>{{ $row['size_name'] }}</td>
 							<td><?php printf("%01.1f", $row['product_weight']); ?></td>
 							<td><?php printf("%01.1f", $row['qoldiq']); ?></td>
-							<td><?php printf("%01.1f", $row['farq'] > 0 ? $row['farq'] : ""); ?></td>
+							<td><?php printf("%01.1f", $row['farq'] > 0 ? $row['farq'] : 0); ?></td>
                         </tr>
                         @endforeach
                     </tbody>
