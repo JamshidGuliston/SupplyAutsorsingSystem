@@ -95,7 +95,7 @@
                             <th scope="col" style="width: 12%;">Olcham</th>
                             <th scope="col" style="width: 13%;">Miqdori</th>
                             <th scope="col" style="width: 13%;">Qoldiq</th>
-                            <th scope="col" style="width: 13%;">Farq</th>
+                            <th scope="col" style="width: 13%;">Kerak bo'ladi</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -111,7 +111,7 @@
 							<td>{{ $row['size_name'] }}</td>
 							<td><?php printf("%01.1f", $row['product_weight']); ?></td>
 							<td><?php printf("%01.1f", $row['qoldiq']); ?></td>
-							<td><?php printf("%01.1f", $row['farq']); ?></td>
+							<td><?php printf("%01.1f", $row['farq']) > 0 ? $row['farq'] : ""; ?></td>
                         </tr>
                         @endforeach
                     </tbody>
