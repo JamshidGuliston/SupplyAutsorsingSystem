@@ -1289,10 +1289,70 @@ class StorageController extends Controller
                 ->orderby('add_groups.id', 'DESC')
                 ->get(['add_groups.id', 'add_groups.group_name', 'days.id as dayid', 'days.day_number', 'months.month_name', 'years.year_name']);
         
+        // Maxsulotlar qoldiqlari hisobi
+        $month_days = $start;
+        
+        // Kategoriyalarni olish
+        $categories = Product_category::all();
+        
+        // Kirim bo'lgan maxsulotlar
+        $addlarch = Add_large_werehouse::where('add_groups.day_id', '>=', $month_days->first()->id)
+                    ->where('add_groups.day_id', '<=', $month_days->last()->id)
+                    ->join('add_groups', 'add_groups.id', '=', 'add_large_werehouses.add_group_id')
+                    ->join('products', 'products.id', '=', 'add_large_werehouses.product_id')
+                    ->join('sizes', 'sizes.id', '=', 'products.size_name_id')
+                    ->get(['add_large_werehouses.*', 'products.product_name', 'products.sort', 'products.category_name_id', 'sizes.size_name']);
+        
+        $productsData = [];
+        foreach($addlarch as $row){
+            if(!isset($productsData[$row->product_id])){
+                $productsData[$row->product_id]['kirim'] = 0;
+                $productsData[$row->product_id]['chiqim'] = 0;
+                $productsData[$row->product_id]['p_name'] = $row->product_name;
+                $productsData[$row->product_id]['size_name'] = $row->size_name;
+                $productsData[$row->product_id]['p_sort'] = $row->sort;
+                $productsData[$row->product_id]['category_id'] = $row->category_name_id;
+            }
+            $productsData[$row->product_id]['kirim'] += $row->weight; 
+        }
+        
+        // Chiqim bo'lgan maxsulotlar (document_processes_id = 5 bo'lgan orderlar)
+        $chiqimlar = order_product_structure::where('order_products.day_id', '>=', $month_days->first()->id)
+                    ->where('order_products.day_id', '<=', $month_days->last()->id)
+                    ->where('order_products.document_processes_id', 5)
+                    ->join('order_products', 'order_products.id', '=', 'order_product_structures.order_product_name_id')
+                    ->join('products', 'products.id', '=', 'order_product_structures.product_name_id')
+                    ->join('sizes', 'sizes.id', '=', 'products.size_name_id')
+                    ->get(['order_product_structures.product_name_id', 'order_product_structures.product_weight', 'products.product_name', 'products.sort', 'products.category_name_id', 'sizes.size_name']);
+        
+        foreach($chiqimlar as $row){
+            if(!isset($productsData[$row->product_name_id])){
+                $productsData[$row->product_name_id]['kirim'] = 0;
+                $productsData[$row->product_name_id]['chiqim'] = 0;
+                $productsData[$row->product_name_id]['p_name'] = $row->product_name;
+                $productsData[$row->product_name_id]['size_name'] = $row->size_name;
+                $productsData[$row->product_name_id]['p_sort'] = $row->sort;
+                $productsData[$row->product_name_id]['category_id'] = $row->category_name_id;
+            }
+            $productsData[$row->product_name_id]['chiqim'] += $row->product_weight;
+        }
+        
+        // Qoldiqni hisoblash
+        foreach($productsData as $key => $row){
+            $productsData[$key]['qoldiq'] = $row['kirim'] - $row['chiqim'];
+        }
+        
+        // Saralash
+        usort($productsData, function ($a, $b){
+            if(isset($a["p_sort"]) and isset($b["p_sort"])){
+                return $a["p_sort"] > $b["p_sort"];
+            }
+        });
+        
         $products = Product::all();
         $shops = Shop::where('hide', 1)->get();
         $id = $il;
-        return view('storage.addedproducts', compact('shops', 'group', 'months', 'id', 'days', 'products', 'year', 'start'));
+        return view('storage.addedproducts', compact('shops', 'group', 'months', 'id', 'days', 'products', 'year', 'start', 'productsData', 'categories'));
     }
     
     public function editegroup(Request $request){
