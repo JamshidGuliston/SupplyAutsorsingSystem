@@ -149,50 +149,51 @@ class StorageController extends Controller
         ]);
 
         // chiqim bo'lgan maxsulotlar
-        // $minuslarch = order_product_structure::where('order_products.day_id', '>=', $month_days->first()->id)
-        //             ->where('order_products.day_id', '<=', $month_days->last()->id)
-        //             ->join('order_products', 'order_products.id', '=', 'order_product_structures.order_product_name_id')
-        //             ->join('products', 'products.id', '=', 'order_product_structures.product_name_id')
-        //             ->join('sizes', 'sizes.id', '=', 'products.size_name_id')
-        //             ->get();
+        $minuslarch = order_product_structure::where('order_products.day_id', '>=', $month_days->first()->id)
+                    ->where('order_products.day_id', '<=', $month_days->last()->id)
+                    ->where('order_products.document_processes_id', 4)
+                    ->join('order_products', 'order_products.id', '=', 'order_product_structures.order_product_name_id')
+                    ->join('products', 'products.id', '=', 'order_product_structures.product_name_id')
+                    ->join('sizes', 'sizes.id', '=', 'products.size_name_id')
+                    ->get();
 
-        // foreach($minuslarch as $row){
-        //     if(!isset($alladd[$row->product_name_id])){
-        //         $alladd[$row->product_name_id]['weight'] = 0;
-        //         $alladd[$row->product_name_id]['minusweight'] = 0;
-        //         $alladd[$row->product_name_id]['p_name'] = $row->product_name;
-        //         $alladd[$row->product_name_id]['size_name'] = $row->size_name;
-        //         $alladd[$row->product_name_id]['p_sort'] = $row->sort;
-        //     }
-        //     $alladd[$row->product_name_id]['minusweight'] += $row->product_weight;
-        // }
+        foreach($minuslarch as $row){
+            if(!isset($alladd[$row->product_name_id])){
+                $alladd[$row->product_name_id]['weight'] = 0;
+                $alladd[$row->product_name_id]['minusweight'] = 0;
+                $alladd[$row->product_name_id]['p_name'] = $row->product_name;
+                $alladd[$row->product_name_id]['size_name'] = $row->size_name;
+                $alladd[$row->product_name_id]['p_sort'] = $row->sort;
+            }
+            $alladd[$row->product_name_id]['minusweight'] += $row->product_weight;
+        }
         
         Log::info('Chiqim maxsulotlari hisoblandi', [
             'total_products_count' => count($alladd)
         ]);
 
         // sotuv bo'lgan maxsulotlar
-        $sales = Sale::where('day_id', '>=', $month_days->first()->id)
-                    ->where('day_id', '<=', $month_days->last()->id)
-                    ->join('take_products', 'take_products.sale_id', '=', 'sales.id')
-                    ->join('products', 'products.id', '=', 'take_products.product_id')
-                    ->join('sizes', 'sizes.id', '=', 'products.size_name_id')
-                    ->get();
+        // $sales = Sale::where('day_id', '>=', $month_days->first()->id)
+        //             ->where('day_id', '<=', $month_days->last()->id)
+        //             ->join('take_products', 'take_products.sale_id', '=', 'sales.id')
+        //             ->join('products', 'products.id', '=', 'take_products.product_id')
+        //             ->join('sizes', 'sizes.id', '=', 'products.size_name_id')
+        //             ->get();
         
-        Log::info('Sotuv maxsulotlari olingan', [
-            'sales_count' => $sales->count()
-        ]);
+        // Log::info('Sotuv maxsulotlari olingan', [
+        //     'sales_count' => $sales->count()
+        // ]);
         
-        foreach($sales as $row){
-            if(!isset($alladd[$row->product_id])){
-                $alladd[$row->product_id]['weight'] = 0;
-                $alladd[$row->product_id]['minusweight'] = 0;
-                $alladd[$row->product_id]['p_name'] = $row->product_name;
-                $alladd[$row->product_id]['size_name'] = $row->size_name;
-                $alladd[$row->product_id]['p_sort'] = $row->sort;
-            }
-            $alladd[$row->product_id]['minusweight'] += $row->weight;
-        }
+        // foreach($sales as $row){
+        //     if(!isset($alladd[$row->product_id])){
+        //         $alladd[$row->product_id]['weight'] = 0;
+        //         $alladd[$row->product_id]['minusweight'] = 0;
+        //         $alladd[$row->product_id]['p_name'] = $row->product_name;
+        //         $alladd[$row->product_id]['size_name'] = $row->size_name;
+        //         $alladd[$row->product_id]['p_sort'] = $row->sort;
+        //     }
+        //     $alladd[$row->product_id]['minusweight'] += $row->weight;
+        // }
         
         Log::info('Sotuv maxsulotlari hisoblandi', [
             'final_products_count' => count($alladd)
@@ -1319,7 +1320,7 @@ class StorageController extends Controller
         // Chiqim bo'lgan maxsulotlar (document_processes_id = 5 bo'lgan orderlar)
         $chiqimlar = order_product_structure::where('order_products.day_id', '>=', $month_days->first()->id)
                     ->where('order_products.day_id', '<=', $month_days->last()->id)
-                    ->where('order_products.document_processes_id', 5)
+                    ->where('order_products.document_processes_id', 4)
                     ->join('order_products', 'order_products.id', '=', 'order_product_structures.order_product_name_id')
                     ->join('products', 'products.id', '=', 'order_product_structures.product_name_id')
                     ->join('sizes', 'sizes.id', '=', 'products.size_name_id')
