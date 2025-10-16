@@ -284,7 +284,7 @@
 
                     $eater_cost9_10 = $costs->where('age_range_id', 4)->first()->eater_cost ?? 0;
                     $eater_cost4 = $costs->where('age_range_id', 3)->first()->eater_cost ?? 0;
-                    $raise = 28.7 ?? 0;
+                    $raise = $costs->where('age_range_id', 4)->first()->raise ?? 0;
                     $nds = $costs->where('age_range_id', 4)->first()->nds ?? 0;
                     
                     // Narxlarni olish
