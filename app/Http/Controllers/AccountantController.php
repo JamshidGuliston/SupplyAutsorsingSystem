@@ -2663,7 +2663,134 @@ class AccountantController extends Controller
                     ->where('end_date', '>=', $days[count($days)-1]->created_at->format('Y-m-d'))
                     ->get();
             
-            // 1. Har bir yosh guruhi uchun Nakapit without cost (birinchi)
+            // 0. Har bir kun va har bir yosh guruhi uchun menyular (birinchi)
+            // Kunlarni kamayuvchi tartibda olish (oxirgi kundan birinchisiga)
+            $days_for_menu = Day::where('days.id', '>=', $start)->where('days.id', '<=', $end)
+                    ->orderBy('days.id', 'DESC')
+                    ->get();
+            
+            $menu_counter = 0;
+            foreach($days_for_menu as $day){
+                foreach($kindgar->age_range as $age){
+                    // Har bir kun va yosh guruhi uchun menyu mavjudligini tekshirish
+                    $menu_check = Number_children::where('kingar_name_id', $id)
+                            ->where('day_id', $day->id)
+                            ->where('king_age_name_id', $age->id)
+                            ->first();
+                    
+                    if(!$menu_check) continue;
+                    
+                    // Menyu ma'lumotlarini tayyorlash
+                    $menu = Number_children::where([
+                        ['kingar_name_id', '=', $id],
+                        ['day_id', '=', $day->id],
+                        ['king_age_name_id', '=', $age->id]
+                    ])->join('kindgardens', 'number_childrens.kingar_name_id', '=', 'kindgardens.id')
+                    ->join('titlemenus', 'number_childrens.kingar_menu_id', '=', 'titlemenus.id')
+                    ->join('age_ranges', 'number_childrens.king_age_name_id', '=', 'age_ranges.id')->get();
+                    
+                    if($menu->count() == 0) continue;
+                    
+                    $products = Product::where('hide', 1)->orderBy('sort', 'ASC')->get();
+                    
+                    $menuitem = Active_menu::where('day_id', $day->id)
+                                    ->where('title_menu_id', $menu[0]['kingar_menu_id'])
+                                    ->where('age_range_id', $age->id)
+                                    ->join('meal_times', 'active_menus.menu_meal_time_id', '=', 'meal_times.id')
+                                    ->join('food', 'active_menus.menu_food_id', '=', 'food.id')
+                                    ->join('products', 'active_menus.product_name_id', '=', 'products.id')
+                                    ->orderBy('menu_meal_time_id')
+                                    ->orderBy('menu_food_id')
+                                    ->get();
+                    
+                    if($menuitem->count() == 0) continue;
+                    
+                    $day_info = Day::where('days.id', $day->id)
+                        ->join('months', 'months.id', '=', 'days.month_id')
+                        ->join('years', 'years.id', '=', 'days.year_id')
+                        ->orderBy('days.id', 'DESC')
+                        ->first(['days.day_number','days.id as id', 'months.month_name', 'months.id as month_id', 'years.year_name']);
+                    
+                    $workerfood = titlemenu_food::where('day_id', ($day->id-1))
+                                ->where('worker_age_id', $age->id)
+                                ->where('titlemenu_id', $menu[0]['kingar_menu_id'])
+                                ->get();
+                    
+                    // Protsent ma'lumotlarini olish
+                    if($day_info->month_id % 12 == 0){
+                        $month_id = 12;
+                    }else{
+                        $month_id = $day_info->month_id % 12;
+                    }
+                    $protsent = Protsent::where('region_id', $kindgar->region_id)
+                                        ->where('start_date', '<=', $day_info->year_name.'-'.$month_id.'-'.$day_info->day_number)
+                                        ->where('end_date', '>=', $day_info->year_name.'-'.$month_id.'-'.$day_info->day_number)
+                                        ->where('age_range_id', $age->id)->first();
+                    if(!$protsent){
+                        $protsent = new Protsent();
+                        $protsent->eater_cost = 0;
+                    }
+                    
+                    $nextdaymenuitem = [];
+                    $workerproducts = [];
+                    $productallcount = array_fill(1, 500, 0);
+                    
+                    foreach($menuitem as $item){
+                        $nextdaymenuitem[$item->menu_meal_time_id][0]['mealtime'] = $item->meal_time_name; 
+                        $nextdaymenuitem[$item->menu_meal_time_id][$item->menu_food_id][$item->product_name_id] = $item->weight;
+                        $nextdaymenuitem[$item->menu_meal_time_id][$item->menu_food_id]['foodname'] = $item->food_name; 
+                        $nextdaymenuitem[$item->menu_meal_time_id][$item->menu_food_id]['foodweight'] = $item->food_weight; 
+                        $productallcount[$item->product_name_id] += $item->weight;
+                        
+                        for($i = 0; $i<count($products); $i++){
+                            if(empty($products[$i]['yes']) and $products[$i]['id'] == $item->product_name_id){
+                                $products[$i]['yes'] = 1;
+                            }
+                        }
+                    }
+                    
+                    $workerproducts = array_fill(1, 500, 0);
+                    foreach($workerfood as $tr){
+                        if(isset($nextdaymenuitem[3][$tr->food_id])){
+                            foreach($nextdaymenuitem[3][$tr->food_id] as $key => $value){
+                                if($key != 'foodname' and $key != 'foodweight'){
+                                    $workerproducts[$key] += $value;
+                                }
+                            }
+                        }
+                    }
+                    
+                    // Menyu PDF yaratish
+                    $pdf_menu = \PDF::loadView('pdffile.technolog.activmenu', [
+                        'protsent' => $protsent,
+                        'day' => $day_info,
+                        'productallcount' => $productallcount,
+                        'workerproducts' => $workerproducts,
+                        'menu' => $menu,
+                        'menuitem' => $nextdaymenuitem,
+                        'products' => $products,
+                        'workerfood' => $workerfood
+                    ]);
+                    
+                    $pdf_menu->setOption('page-size', 'A4');
+                    $pdf_menu->setOption('orientation', 'landscape');
+                    $pdf_menu->setOption('margin-top', 5);
+                    $pdf_menu->setOption('margin-bottom', 5);
+                    $pdf_menu->setOption('margin-left', 5);
+                    $pdf_menu->setOption('margin-right', 5);
+                    $pdf_menu->setOption('encoding', 'UTF-8');
+                    $pdf_menu->setOption('enable-local-file-access', true);
+                    $pdf_menu->setOption('print-media-type', true);
+                    $pdf_menu->setOption('disable-smart-shrinking', false);
+                    
+                    $file_menu = $tempDir . '/0_menu_' . $day->id . '_' . $age->id . '_' . $menu_counter . '_' . $timestamp . '.pdf';
+                    file_put_contents($file_menu, $pdf_menu->output());
+                    $pdfFiles[] = $file_menu;
+                    $menu_counter++;
+                }
+            }
+            
+            // 1. Har bir yosh guruhi uchun Nakapit without cost
             $counter = 1;
             foreach($kindgar->age_range as $age){
                 $nakproducts_without = $this->getNakapitWithoutCostData($id, $age->id, $start, $end);
