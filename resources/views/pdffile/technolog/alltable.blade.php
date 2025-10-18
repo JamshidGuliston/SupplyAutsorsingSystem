@@ -113,39 +113,31 @@
         .col-1 { width: 2%; }
         .col-2 { width: 8%; font-size: 10px; }
         .col-product { width: 20px; }
-        
-        /* Mahsulot nomlari uchun - MARKAZGA joylashtirilgan */
-        .vrt-header {
-			vertical-align: middle;
-			text-align: center;
-			position: relative;
-			padding: 5px 0;
-		}
 		
-	.vrt-header span{
-		display: inline-block;
-		text-align: center;
-		-webkit-transform: rotate(-90deg);
-		-moz-transform: rotate(-90deg);
-		-ms-transform: rotate(-90deg);
-		-o-transform: rotate(-90deg);
-		transform: rotate(-90deg);
+        .vrt-header span{
+            display: inline-block;
+            text-align: center;
+            -webkit-transform: rotate(-90deg);
+            -moz-transform: rotate(-90deg);
+            -ms-transform: rotate(-90deg);
+            -o-transform: rotate(-90deg);
+            transform: rotate(-90deg);
 
-		white-space: wrap;       /* birinchi bir qatorda */
-		width: 95px;               /* aniq kenglik (burilgandan keyin balandlik) */
-		overflow: visible;         /* hamma ko'rinsin */
-	}
-	
-	/* Maxsulot nomlari uchun */
-	.product-name-short {
-		font-size: 6px;
-		line-height: 1;
-		white-space: normal;       /* ichki span bir necha qator bo'lishi mumkin */
-		word-wrap: break-word;     /* uzun so'zlarni bo'lish */
-		display: inline-block;
-		max-width: 100px;          /* burilishdan oldin kenglik */
-		text-align: center;
-	}
+            white-space: wrap;       /* birinchi bir qatorda */
+            width: 95px;               /* aniq kenglik (burilgandan keyin balandlik) */
+            overflow: visible;         /* hamma ko'rinsin */
+        }
+        
+        /* Maxsulot nomlari uchun */
+        .product-name-short {
+            font-size: 6px;
+            line-height: 1;
+            white-space: normal;       /* ichki span bir necha qator bo'lishi mumkin */
+            word-wrap: break-word;     /* uzun so'zlarni bo'lish */
+            display: inline-block;
+            max-width: 100px;          /* burilishdan oldin kenglik */
+            text-align: center;
+        }
 		
 		/* Maxsulot ustunlari uchun */
 		.product-column {
