@@ -2607,7 +2607,7 @@ class AccountantController extends Controller
 
     /**
      * Bog'cha uchun barcha hujjatlarni bitta PDF da birlashtirish
-     * schotfakturthird, dalolatnoma, nakapit va nakapitwithoutcost
+     * Tartib: nakapitwithoutcost, transportation, dalolatnoma, schotfakturthird
      * Har bir hujjat o'zining CSS va layout'ini saqlab qoladi
      */
     public function combinedKindgardenDocuments(Request $request, $id, $start, $end, $costid = null){
@@ -2657,139 +2657,20 @@ class AccountantController extends Controller
             }
             $invoice_date = $days->last()->created_at->format('d.m.Y');
             
-            // 1. Schotfakturthird PDF yaratish
-            $costs_schotfaktur = [];
-            $total_number_children_schotfaktur = [];
+            // Umumiy ma'lumotlar barcha hujjatlar uchun
+            $ages = Age_range::all();
+            $costs_common = Protsent::where('region_id', $kindgar->region_id)
+                    ->where('start_date', '<=', $days[0]->created_at->format('Y-m-d'))
+                    ->where('end_date', '>=', $days[count($days)-1]->created_at->format('Y-m-d'))
+                    ->get();
+            
+            // 1. Har bir yosh guruhi uchun Nakapit without cost (birinchi)
+            $counter = 1;
             foreach($kindgar->age_range as $age){
-                $costs_schotfaktur[$age->id] = Protsent::where('region_id', $kindgar->region_id)
-                            ->where('age_range_id', $age->id)
-                            ->where('end_date', '>=', $days->last()->created_at->format('Y-m-d'))
-                            ->first();
-                $total_number_children_schotfaktur[$age->id] = Number_children::where('day_id', '>=', $start)
-                    ->where('day_id', '<=', $end)
-                    ->where('kingar_name_id', $id)
-                    ->where('king_age_name_id', $age->id)
-                    ->sum('kingar_children_number');
-            }
-            
-            $pdf1 = \PDF::loadView('pdffile.accountant.schotfakturthird', [
-                'contract_data' => $contract_data,
-                'region' => $region,
-                'costs' => $costs_schotfaktur,
-                'days' => $days,
-                'kindgar' => $kindgar,
-                'autorser' => $autorser,
-                'buyurtmachi' => $buyurtmachi,
-                'invoice_number' => $invoice_number,
-                'invoice_date' => $invoice_date,
-                'total_number_children' => $total_number_children_schotfaktur
-            ]);
-            $pdf1->setOption('page-size', 'A4');
-            $pdf1->setOption('orientation', 'landscape');
-            $pdf1->setOption('margin-top', 10);
-            $pdf1->setOption('margin-bottom', 10);
-            $pdf1->setOption('margin-left', 10);
-            $pdf1->setOption('margin-right', 10);
-            $pdf1->setOption('encoding', 'UTF-8');
-            $pdf1->setOption('enable-local-file-access', true);
-            
-            $file1 = $tempDir . '/schotfaktur_' . $timestamp . '.pdf';
-            file_put_contents($file1, $pdf1->output());
-            $pdfFiles[] = $file1;
-            
-            // 2. Dalolatnoma PDF yaratish
-            $costs_dalolatnoma = [];
-            $total_number_children_dalolatnoma = [];
-            foreach($kindgar->age_range as $age){
-                $costs_dalolatnoma[$age->id] = Protsent::where('region_id', $kindgar->region_id)
-                            ->where('age_range_id', $age->id)
-                            ->where('end_date', '>=', $days->last()->created_at->format('Y-m-d'))
-                            ->first();
-                $total_number_children_dalolatnoma[$age->id] = Number_children::where('day_id', '>=', $start)
-                    ->where('day_id', '<=', $end)
-                    ->where('kingar_name_id', $id)
-                    ->where('king_age_name_id', $age->id)
-                    ->sum('kingar_children_number');
-            }
-            
-            $pdf2 = \PDF::loadView('pdffile.accountant.dalolatnoma', [
-                'contract_data' => $contract_data,
-                'costs' => $costs_dalolatnoma,
-                'days' => $days,
-                'kindgar' => $kindgar,
-                'autorser' => $autorser,
-                'buyurtmachi' => $buyurtmachi,
-                'invoice_number' => $invoice_number,
-                'invoice_date' => $invoice_date,
-                'total_number_children' => $total_number_children_dalolatnoma
-            ]);
-            $pdf2->setOption('page-size', 'A4');
-            $pdf2->setOption('orientation', 'portrait');
-            $pdf2->setOption('margin-top', 10);
-            $pdf2->setOption('margin-bottom', 10);
-            $pdf2->setOption('margin-left', 10);
-            $pdf2->setOption('margin-right', 10);
-            $pdf2->setOption('encoding', 'UTF-8');
-            $pdf2->setOption('enable-local-file-access', true);
-            
-            $file2 = $tempDir . '/dalolatnoma_' . $timestamp . '.pdf';
-            file_put_contents($file2, $pdf2->output());
-            $pdfFiles[] = $file2;
-            
-            // 3. Har bir yosh guruhi uchun nakapit va nakapitwithoutcost
-            $counter = 3;
-            foreach($kindgar->age_range as $age){
-                // Nakapit (agar costid berilgan bo'lsa)
-                if($costid){
-                    $nakproducts_nakapit = $this->getNakapitData($id, $age->id, $start, $end, $costid);
-                    $protsent_nakapit = Protsent::where('region_id', $kindgar->region_id)
-                        ->where('end_date', '>=', $days[count($days)-1]->created_at->format('Y-m-d'))
-                        ->where('age_range_id', $age->id)
-                        ->first();
-                        
-                    $costsdays = bycosts::where('day_id', $costid)
-                                ->where('region_name_id', $kindgar->region_id)
-                                ->join('days', 'bycosts.day_id', '=', 'days.id')
-                                ->join('years', 'days.year_id', '=', 'years.id')
-                                ->orderBy('day_id', 'DESC')
-                                ->get(['bycosts.day_id', 'days.day_number', 'days.month_id', 'years.year_name']);
-                    $costs_nakapit = [];
-                    $bool = [];
-                    foreach($costsdays as $row){
-                        if(!isset($bool[$row->day_id])){
-                            array_push($costs_nakapit, $row);
-                            $bool[$row->day_id] = 1;
-                        }
-                    }
-                    
-                    $pdf_nakapit = \PDF::loadView('pdffile.accountant.nakapit', [
-                        'age' => $age,
-                        'days' => $days,
-                        'nakproducts' => $nakproducts_nakapit,
-                        'costsdays' => $costsdays,
-                        'costs' => $costs_nakapit,
-                        'kindgar' => $kindgar,
-                        'protsent' => $protsent_nakapit,
-                        'region' => $region
-                    ]);
-                    $pdf_nakapit->setOption('page-size', 'A4');
-                    $pdf_nakapit->setOption('orientation', 'landscape');
-                    $pdf_nakapit->setOption('margin-top', 10);
-                    $pdf_nakapit->setOption('margin-bottom', 10);
-                    $pdf_nakapit->setOption('margin-left', 10);
-                    $pdf_nakapit->setOption('margin-right', 10);
-                    $pdf_nakapit->setOption('encoding', 'UTF-8');
-                    $pdf_nakapit->setOption('enable-local-file-access', true);
-                    
-                    $file_nakapit = $tempDir . '/nakapit_' . $age->id . '_' . $timestamp . '.pdf';
-                    file_put_contents($file_nakapit, $pdf_nakapit->output());
-                    $pdfFiles[] = $file_nakapit;
-                    $counter++;
-                }
-                
-                // Nakapit without cost
                 $nakproducts_without = $this->getNakapitWithoutCostData($id, $age->id, $start, $end);
-                $protsent_without = Protsent::where('region_id', $kindgar->region_id)->first();
+                $protsent_without = Protsent::where('region_id', $kindgar->region_id)
+                    ->where('age_range_id', $age->id)
+                    ->first();
                 
                 $pdf_without = \PDF::loadView('pdffile.accountant.nakapitwithoutcost', [
                     'age' => $age,
@@ -2807,11 +2688,123 @@ class AccountantController extends Controller
                 $pdf_without->setOption('encoding', 'UTF-8');
                 $pdf_without->setOption('enable-local-file-access', true);
                 
-                $file_without = $tempDir . '/nakapit_without_' . $age->id . '_' . $timestamp . '.pdf';
+                $file_without = $tempDir . '/1_nakapit_without_' . $age->id . '_' . $timestamp . '.pdf';
                 file_put_contents($file_without, $pdf_without->output());
                 $pdfFiles[] = $file_without;
                 $counter++;
             }
+            
+            // 2. Transportation PDF yaratish (ikkinchi)
+            $number_childrens = [];
+            foreach($days as $day){
+                foreach($ages as $age){
+                    $number_childrens[$day->id][$age->id] = Number_children::where('number_childrens.day_id', $day->id)
+                        ->where('kingar_name_id', $id)
+                        ->where('king_age_name_id', $age->id)
+                        ->leftJoin('titlemenus', 'titlemenus.id', '=', 'number_childrens.kingar_menu_id')
+                        ->first();
+                }
+            }
+            
+            $pdf_transportation = \PDF::loadView('pdffile.accountant.transportation', [
+                'days' => $days,
+                'costs' => $costs_common,
+                'number_childrens' => $number_childrens,
+                'kindgar' => $kindgar,
+                'ages' => $ages
+            ]);
+            $pdf_transportation->setOption('page-size', 'A3');
+            $pdf_transportation->setOption('orientation', 'landscape');
+            $pdf_transportation->setOption('margin-top', 10);
+            $pdf_transportation->setOption('margin-bottom', 10);
+            $pdf_transportation->setOption('margin-left', 10);
+            $pdf_transportation->setOption('margin-right', 10);
+            $pdf_transportation->setOption('encoding', 'UTF-8');
+            $pdf_transportation->setOption('enable-local-file-access', true);
+            $pdf_transportation->setOption('dpi', 150);
+            
+            $file_transportation = $tempDir . '/2_transportation_' . $timestamp . '.pdf';
+            file_put_contents($file_transportation, $pdf_transportation->output());
+            $pdfFiles[] = $file_transportation;
+            
+            // 3. Dalolatnoma PDF yaratish (uchinchi)
+            $costs_dalolatnoma = [];
+            $total_number_children_dalolatnoma = [];
+            foreach($kindgar->age_range as $age){
+                $costs_dalolatnoma[$age->id] = Protsent::where('region_id', $kindgar->region_id)
+                            ->where('age_range_id', $age->id)
+                            ->where('end_date', '>=', $days->last()->created_at->format('Y-m-d'))
+                            ->first();
+                $total_number_children_dalolatnoma[$age->id] = Number_children::where('day_id', '>=', $start)
+                    ->where('day_id', '<=', $end)
+                    ->where('kingar_name_id', $id)
+                    ->where('king_age_name_id', $age->id)
+                    ->sum('kingar_children_number');
+            }
+            
+            $pdf_dalolatnoma = \PDF::loadView('pdffile.accountant.dalolatnoma', [
+                'contract_data' => $contract_data,
+                'costs' => $costs_dalolatnoma,
+                'days' => $days,
+                'kindgar' => $kindgar,
+                'autorser' => $autorser,
+                'buyurtmachi' => $buyurtmachi,
+                'invoice_number' => $invoice_number,
+                'invoice_date' => $invoice_date,
+                'total_number_children' => $total_number_children_dalolatnoma
+            ]);
+            $pdf_dalolatnoma->setOption('page-size', 'A4');
+            $pdf_dalolatnoma->setOption('orientation', 'portrait');
+            $pdf_dalolatnoma->setOption('margin-top', 10);
+            $pdf_dalolatnoma->setOption('margin-bottom', 10);
+            $pdf_dalolatnoma->setOption('margin-left', 10);
+            $pdf_dalolatnoma->setOption('margin-right', 10);
+            $pdf_dalolatnoma->setOption('encoding', 'UTF-8');
+            $pdf_dalolatnoma->setOption('enable-local-file-access', true);
+            
+            $file_dalolatnoma = $tempDir . '/3_dalolatnoma_' . $timestamp . '.pdf';
+            file_put_contents($file_dalolatnoma, $pdf_dalolatnoma->output());
+            $pdfFiles[] = $file_dalolatnoma;
+            
+            // 4. Schotfakturthird PDF yaratish (to'rtinchi)
+            $costs_schotfaktur = [];
+            $total_number_children_schotfaktur = [];
+            foreach($kindgar->age_range as $age){
+                $costs_schotfaktur[$age->id] = Protsent::where('region_id', $kindgar->region_id)
+                            ->where('age_range_id', $age->id)
+                            ->where('end_date', '>=', $days->last()->created_at->format('Y-m-d'))
+                            ->first();
+                $total_number_children_schotfaktur[$age->id] = Number_children::where('day_id', '>=', $start)
+                    ->where('day_id', '<=', $end)
+                    ->where('kingar_name_id', $id)
+                    ->where('king_age_name_id', $age->id)
+                    ->sum('kingar_children_number');
+            }
+            
+            $pdf_schotfaktur = \PDF::loadView('pdffile.accountant.schotfakturthird', [
+                'contract_data' => $contract_data,
+                'region' => $region,
+                'costs' => $costs_schotfaktur,
+                'days' => $days,
+                'kindgar' => $kindgar,
+                'autorser' => $autorser,
+                'buyurtmachi' => $buyurtmachi,
+                'invoice_number' => $invoice_number,
+                'invoice_date' => $invoice_date,
+                'total_number_children' => $total_number_children_schotfaktur
+            ]);
+            $pdf_schotfaktur->setOption('page-size', 'A4');
+            $pdf_schotfaktur->setOption('orientation', 'landscape');
+            $pdf_schotfaktur->setOption('margin-top', 10);
+            $pdf_schotfaktur->setOption('margin-bottom', 10);
+            $pdf_schotfaktur->setOption('margin-left', 10);
+            $pdf_schotfaktur->setOption('margin-right', 10);
+            $pdf_schotfaktur->setOption('encoding', 'UTF-8');
+            $pdf_schotfaktur->setOption('enable-local-file-access', true);
+            
+            $file_schotfaktur = $tempDir . '/4_schotfaktur_' . $timestamp . '.pdf';
+            file_put_contents($file_schotfaktur, $pdf_schotfaktur->output());
+            $pdfFiles[] = $file_schotfaktur;
             
             // PDF'larni birlashtirish uchun Ghostscript ishlatish
             $outputFile = $tempDir . '/combined_' . $kindgar->number_of_org . '_' . $timestamp . '.pdf';
@@ -2875,10 +2868,10 @@ class AccountantController extends Controller
         $html .= '<h1 style="text-align:center; margin-top: 200px;">Bog\'cha hujjatlari to\'plami</h1>';
         $html .= '<p style="text-align:center;">Ushbu hujjat quyidagi hujjatlardan iborat:</p>';
         $html .= '<ol style="text-align:center; list-style-position: inside;">';
-        $html .= '<li>Хисоб-фактура</li>';
-        $html .= '<li>Далолатнома</li>';
-        $html .= '<li>Накапит (har bir yosh guruhi)</li>';
         $html .= '<li>Накапит (нархсиз, har bir yosh guruhi)</li>';
+        $html .= '<li>Транспортировка</li>';
+        $html .= '<li>Далолатнома</li>';
+        $html .= '<li>Хисоб-фактура</li>';
         $html .= '</ol>';
         $html .= '</body></html>';
         
