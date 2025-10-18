@@ -166,6 +166,11 @@
 									$third = isset($parts[2]) ? $parts[2] : '';
 									$fourth = isset($parts[3]) ? $parts[3] : '';
 									$fifth = isset($parts[4]) ? $parts[4] : '';
+									$sixth = isset($parts[5]) ? $parts[5] : '';
+									$seventh = isset($parts[6]) ? $parts[6] : '';
+									$eighth = isset($parts[7]) ? $parts[7] : '';
+									$ninth = isset($parts[8]) ? $parts[8] : '';
+									$tenth = isset($parts[9]) ? $parts[9] : '';
 									
 									// Maxsulot nomini qisqartirish
 									$shortName = $first;
@@ -181,8 +186,8 @@
 										$shortName = $first;
 									}
 								@endphp
-                          	 		<th class='vrt-header product-column' style="padding: 0px; height: 100px">
-                          	 			<span class="product-name-short"><?php echo $first.' '.$second.' '.$third.' '.$fourth.' '.$fifth; ?></span>
+                          	 		<th class='vrt-header product-column' style="padding: 0px; height: 150px">
+                          	 			<span class="product-name-short"><?php echo $first.' '.$second.' '.$third.' '.$fourth.' '.$fifth.' '.$sixth.' '.$seventh.' '.$eighth.' '.$ninth.' '.$tenth; ?></span>
                           	 		</th>
 								@endif
 							 @endforeach
