@@ -296,7 +296,7 @@
                     @endphp
                     <tr>
                         <td class="order-number">{{ $tr++ }}</td>
-                        <td class="product-name">{{ $region->region_name . " " . $kindgar->number_of_org .'-сонли ДМТТ' . $age->description . " тарбияланувчилари учун" . $days[0]->year_name . " йил " . $days[0]->day_number . "-" . $days[count($days)-1]->day_number . " " . $days[0]->month_name . " да аутсорсинг асосида кунига уч маҳал овқатланишни ташкил этиш бўйича:" }}</td>
+                        <td class="product-name">{{ $buyurtmachi['address'] . " " . $kindgar->number_of_org .'-сонли ДМТТ' . $age->description . " тарбияланувчилари учун" . $days[0]->year_name . " йил " . $days[0]->day_number . "-" . $days[count($days)-1]->day_number . " " . $days[0]->month_name . " да аутсорсинг асосида кунига уч маҳал овқатланишни ташкил этиш бўйича:" }}</td>
                         <td class="unit">{{ 'cум' }}</td>
                         <td class="quantity">{{ "1" }}</td>
                         <td class="price">{{ number_format($f17, 2) }}</td>
