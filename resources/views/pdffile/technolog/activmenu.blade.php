@@ -10,10 +10,10 @@
 	<!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"> -->
 	<title>Title</title>
 	<style>
-		@page { margin: 0.3in 0.3in 0.2in 0.3in; }
+		@page { margin: 3mm 3mm 3mm 3mm; }
 		body{
 			font-family: DejaVu Sans;
-			font-size: 7.5px;
+			font-size: 7px;
 			background-position: top left;
 			background-repeat: no-repeat;
 			background-size: 100%;
@@ -74,20 +74,21 @@
 			-o-transform: rotate(-90deg);
 			transform: rotate(-90deg);
 
-			white-space: wrap;       /* birinchi bir qatorda */
-			width: 95px;               /* aniq kenglik (burilgandan keyin balandlik) */
+			white-space: nowrap;       /* birinchi bir qatorda */
+			width: 80px;               /* aniq kenglik (burilgandan keyin balandlik) */
 			overflow: visible;         /* hamma ko'rinsin */
+			font-size: 6px;
 		}
 		
 		/* Maxsulot nomlari uchun */
 		.product-name-short {
-			font-size: 6px;
-			line-height: 1;
-			white-space: normal;       /* ichki span bir necha qator bo'lishi mumkin */
-			word-wrap: break-word;     /* uzun so'zlarni bo'lish */
+			font-size: 5.5px;
+			line-height: 1.1;
+			white-space: nowrap;       /* bir qatorda */
 			display: inline-block;
-			max-width: 100px;          /* burilishdan oldin kenglik */
+			max-width: 75px;          /* burilishdan oldin kenglik */
 			text-align: center;
+			overflow: visible;
 		}
 		
 		/* Qator balandligini kamaytirish */
@@ -97,9 +98,10 @@
 		
 		/* Maxsulot ustunlari uchun */
 		.product-column {
-			width: 2.5% !important;
-			max-width: 2.5%;
+			width: 1.8% !important;
+			max-width: 1.8%;
 			overflow: hidden;
+			padding: 0px !important;
 		}
 		
 		/* Maxsulotlar va taom nomlari uchun oq rang */
@@ -153,9 +155,9 @@
                     <table style="width:100%; table-layout: fixed; margin-top: 25px;">
                         <thead>
                           <tr>
-                          	 <th style="width:2%;"></th>
-                          	 <th style="width:12%;">Махсулотлар номи</th>
-                          	 <th class='vrt-header' style="width:2%;"><?php echo '<span>Таом вазни</span>';?></th>
+                          	 <th style="width:1.5%;"></th>
+                          	 <th style="width:10%;">Махсулотлар номи</th>
+                          	 <th class='vrt-header' style="width:1.8%;"><?php echo '<span>Таом вазни</span>';?></th>
 							   <?php $col = 0; ?>
 							 @foreach($products as $product)
 							 	@if(isset($product['yes']))
