@@ -15,7 +15,7 @@
             font-family: 'DejaVu Sans', Arial, sans-serif;
             margin: 0;
             padding: 0;
-            font-size: 12px;
+            font-size: 14px;
             line-height: 1.3;
             color: #000;
         }
@@ -62,7 +62,7 @@
         
         .company-details {
             margin-bottom: 5px;
-            font-size: 12px;
+            font-size: 14px;
         }
         
         .label {
@@ -83,7 +83,7 @@
             width: 100%;
             border-collapse: collapse;
             margin-bottom: 10px;
-            font-size: 11px;
+            font-size: 14px;
         }
         
         th, td {
@@ -96,7 +96,7 @@
         th {
             background-color: #f0f0f0;
             font-weight: bold;
-            font-size: 11px;
+            font-size: 14px;
         }
         
         .product-name {
@@ -125,7 +125,7 @@
         }
         
         .amount {
-            width: 18%;
+            width: 250px;
         }
         
         .total-row {
