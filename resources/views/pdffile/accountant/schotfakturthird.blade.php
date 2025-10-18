@@ -258,6 +258,7 @@
                     <th class="unit">Ўл.бир</th>
                     <th class="quantity">Сони</th>
                     <th class="price">Нархи</th>
+                    <th class="price">Етказиб бериш суммаси</th>
                     <th class="vat-percent">ҚҚС %</th>
                     <th class="vat">Шундан ҚҚС</th>
                     <th class="amount">Кўрсатилган хизмат суммаси (ҚҚС билан)</th>
@@ -296,8 +297,9 @@
                     <tr>
                         <td class="order-number">{{ $tr++ }}</td>
                         <td class="product-name">{{ $age->description . "га кўрсатилган Аутсорсинг хизмати" }}</td>
-                        <td class="unit">{{ 'бола' }}</td>
-                        <td class="quantity">{{ $total_number_children[$age->id] }}</td>
+                        <td class="unit">{{ 'cум' }}</td>
+                        <td class="quantity">{{ "1" }}</td>
+                        <td class="price">{{ number_format($f17, 2) }}</td>
                         <td class="price">{{ number_format($f17, 2) }}</td>
                         <td class="vat-percent">{{ $costs[$age->id]->nds ?? 0 }}%</td>
                         <td class="vat">{{ number_format($h17, 2) }}</td>
@@ -332,8 +334,9 @@
                 <tr>
                     <td>{{ $tr++ }}</td>
                     <td class="product-name">Аутсорсинг хизмати устамаси</td>
-                    <td>Хизмат</td>
+                    <td>cум</td>
                     <td>1</td>
+                    <td>{{ number_format($f18, 2) }}</td>
                     <td>{{ number_format($f18, 2) }}</td>
                     <td>{{ $costs[4]->nds ?? 0 }}%</td>
                     <td>{{ number_format($h18, 2) }}</td>
@@ -343,8 +346,8 @@
                 <!-- Jami qator -->
                 <tr class="total-row">
                     <td colspan="4" class="text-right font-bold">Жами сумма:</td>
-                    <td class="font-bold">{{ number_format($sum_total, 2) }}</td>
                     <td></td>
+                    <td class="font-bold">{{ number_format($sum_total, 2) }}</td>
                     <td class="font-bold">{{ number_format($qqs_total, 2) }}</td>
                     <td class="font-bold">{{ number_format($total_sum, 2) }}</td>
                 </tr>
