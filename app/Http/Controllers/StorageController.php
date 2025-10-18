@@ -39,6 +39,10 @@ use Illuminate\Support\Facades\Log;
 use Dompdf\Dompdf;
 use TCG\Voyager\Models\MenuItem;
 use DB;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Exports\OrderSvodExport;
+use App\Exports\OrderAllRegionsExport;
+use App\Exports\OrderTitleExport;
 class StorageController extends Controller
 {
     public function days(){
@@ -375,6 +379,11 @@ class StorageController extends Controller
             'orders' => $orders,
             'products' => $productData
         ]);
+    }
+    
+    // Excel export - Order Title
+    public function generateOrderTitleExcel($orderTitle){
+        return Excel::download(new OrderTitleExport($orderTitle), 'buyurtma_' . $orderTitle . '.xlsx');
     }
     
     // PDF generatsiya qilish
@@ -1391,6 +1400,11 @@ class StorageController extends Controller
 		$dompdf->stream('demo.pdf', ['Attachment' => 0]);
     }
     // svod sklad
+    // Excel export - Svod
+    public function ordersvodexcel(Request $request, $id){
+        return Excel::download(new OrderSvodExport($id), 'svod_' . $id . '.xlsx');
+    }
+    
     public function ordersvodpdf(Request $request, $id){
         $document = order_product::where('order_products.order_title', $id)->get();
         $items = [];
@@ -1466,11 +1480,16 @@ class StorageController extends Controller
 		$dompdf->stream('demo.pdf', ['Attachment' => 0]);
     }
 
+    // Excel export - Barcha hududlar
+    public function ordersvodAllRegionsExcel(Request $request, $id){
+        return Excel::download(new OrderAllRegionsExport($id), 'barcha_hududlar_' . $id . '.xlsx');
+    }
+    
     public function ordersvodAllRegions(Request $request, $id){
         $document = order_product::where('order_products.order_title', $id)
             ->join('kindgardens', 'kindgardens.id', '=', 'order_products.kingar_name_id')
             ->join('regions', 'regions.id', '=', 'kindgardens.region_id')
-            ->get(['order_products.id', 'regions.id as region_id', 'regions.region_name', 'regions.short_name']);
+            ->get(['order_products.id', 'order_products.day_id', 'regions.id as region_id', 'regions.region_name', 'regions.short_name']);
         $regions = [];
         $items = [];
         foreach($document as $row){
@@ -1489,14 +1508,65 @@ class StorageController extends Controller
             }  
             $regions[$row->region_id]['short_name'] = $row->short_name;   
         }
+        
+        // Qoldiqlarni hisoblash
+        if($document->count() > 0){
+            $month_days = $this->activmonth(Day::where('id', $document->first()->day_id)->first()->month_id);
+            $remainders = [];
+            $addlarch = Add_large_werehouse::where('add_groups.day_id', '>=', $month_days->first()->id)
+                        ->where('add_groups.day_id', '<=', $month_days->last()->id)
+                        ->join('add_groups', 'add_groups.id', '=', 'add_large_werehouses.add_group_id')
+                        ->join('products', 'products.id', '=', 'add_large_werehouses.product_id')
+                        ->get();
+            
+            foreach($addlarch as $row){
+                if(!isset($remainders[$row->product_id])){
+                    $remainders[$row->product_id]['kirim'] = 0;
+                    $remainders[$row->product_id]['chiqim'] = 0;
+                }
+                $remainders[$row->product_id]['kirim'] += $row->weight;
+            }
+            
+            // Chiqimlarni olish
+            $chiqimlar = order_product_structure::where('order_products.day_id', '>=', $month_days->first()->id)
+                        ->where('order_products.day_id', '<=', $month_days->last()->id)
+                        ->join('order_products', 'order_products.id', '=', 'order_product_structures.order_product_name_id')
+                        ->where('order_products.document_processes_id', 4)
+                        ->select('order_product_structures.product_name_id', 'order_product_structures.product_weight')
+                        ->get();
+            
+            foreach($chiqimlar as $row){
+                if(!isset($remainders[$row->product_name_id])){
+                    $remainders[$row->product_name_id]['kirim'] = 0;
+                    $remainders[$row->product_name_id]['chiqim'] = 0;
+                }
+                $remainders[$row->product_name_id]['chiqim'] += $row->product_weight;
+            }
+            
+            // Har bir mahsulot uchun qoldiq va farqni hisoblash
+            foreach($items as $product_id => &$item){
+                $kirim = isset($remainders[$product_id]) ? $remainders[$product_id]['kirim'] : 0;
+                $chiqim = isset($remainders[$product_id]) ? $remainders[$product_id]['chiqim'] : 0;
+                $item['qoldiq'] = $kirim - $chiqim;
+                
+                // Jami miqdorni hisoblash
+                $total_weight = 0;
+                foreach($regions as $region_id => $region){
+                    if(isset($item[$region_id]['product_weight'])){
+                        $total_weight += $item[$region_id]['product_weight'];
+                    }
+                }
+                $item['total_weight'] = $total_weight;
+                $item['farq'] = $total_weight - $item['qoldiq'];
+            }
+            unset($item);
+        }
 
         // usort($items, function ($a, $b){
         //     if(isset($a["p_sort"]) and isset($b["p_sort"])){
         //         return $a["p_sort"] > $b["p_sort"];
         //     }
         // });
-
-        return view('pdffile.storage.ordersvodAllRegions', compact('items', 'document', 'regions'));
 
         $dompdf = new Dompdf('UTF-8');
 		$html = mb_convert_encoding(view('pdffile.storage.ordersvodAllRegions', compact('items', 'document', 'regions')), 'HTML-ENTITIES', 'UTF-8');

@@ -618,19 +618,34 @@
                         <td>{{ $row->note }}</td>
                         <td>{{ $row->created_at ? $row->created_at->format('d.m.Y H:i') : '-' }}</td>
                         <td>
-                            <a href="/storage/onedaysvod/{{ $row->order_title }}" class="btn btn-sm btn-warning" target="_blank">
-                                <i class="fa fa-file-pdf"></i> PDF
-                            </a>
+                            <div class="d-flex gap-1">
+                                <a href="/storage/onedaysvod/{{ $row->order_title }}" class="btn btn-sm btn-warning" target="_blank" title="PDF">
+                                    <i class="fa fa-file-pdf"></i>
+                                </a>
+                                <a href="/storage/onedaysvodexcel/{{ $row->order_title }}" class="btn btn-sm btn-success" target="_blank" title="Excel">
+                                    <i class="fa fa-file-excel"></i>
+                                </a>
+                            </div>
                         </td>
                         <td>
-                            <a href="/storage/ordersvodAllRegions/{{ $row->order_title }}" class="btn btn-sm btn-warning" target="_blank">
-                                <i class="fa fa-file-pdf"></i> PDF
-                            </a>
+                            <div class="d-flex gap-1">
+                                <a href="/storage/ordersvodAllRegions/{{ $row->order_title }}" class="btn btn-sm btn-warning" target="_blank" title="PDF">
+                                    <i class="fa fa-file-pdf"></i>
+                                </a>
+                                <a href="/storage/ordersvodAllRegionsExcel/{{ $row->order_title }}" class="btn btn-sm btn-success" target="_blank" title="Excel">
+                                    <i class="fa fa-file-excel"></i>
+                                </a>
+                            </div>
                         </td>
                         <td>
-                            <a href="/storage/generate-order-title-pdf/{{ $row->order_title }}" class="btn btn-sm btn-warning" target="_blank">
-                                <i class="fa fa-file-pdf"></i> PDF
-                            </a>
+                            <div class="d-flex gap-1">
+                                <a href="/storage/generate-order-title-pdf/{{ $row->order_title }}" class="btn btn-sm btn-warning" target="_blank" title="PDF">
+                                    <i class="fa fa-file-pdf"></i>
+                                </a>
+                                <a href="/storage/generate-order-title-excel/{{ $row->order_title }}" class="btn btn-sm btn-success" target="_blank" title="Excel">
+                                    <i class="fa fa-file-excel"></i>
+                                </a>
+                            </div>
                         </td>
                         <td>
                             <div class="dropdown">

@@ -90,14 +90,15 @@
                 <table style="width:100%; table-layout: fixed;">
                     <thead>
                         <tr style="width: 15%;">
-                            <th scope="col" style="width: 6%;">ТР</th>
-                            <th scope="col" style="width: 25%;">Махсулотлар</th>
-                            <th scope="col" style="width: 7%;">ШТ</th>
+                            <th scope="col" style="width: 4%;">ТР</th>
+                            <th scope="col" style="width: 20%;">Махсулотлар</th>
+                            <th scope="col" style="width: 5%;">Ўлчов</th>
                             @foreach($regions as $key => $region)
-                                <th scope="col" style="width: 15%;">{{ $region['short_name'] }}</th>
+                                <th scope="col" style="width: 8%;">{{ $region['short_name'] }}</th>
                             @endforeach
-                            <th scope="col" style="width: 15%;">Жами</th>
-                            <th scope="col" style="width: 4%;">...</th>
+                            <th scope="col" style="width: 8%;">Миқдори</th>
+                            <th scope="col" style="width: 8%;">Қолдиқ</th>
+                            <th scope="col" style="width: 8%;">Керак<br/>бўлади</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -106,19 +107,25 @@
                             $allm = array();
                             $counts = [];
                         ?>
-                        @foreach($items as $row)
+                        @foreach($items as $product_id => $row)
                         @php $summ = 0; @endphp
                         <tr>
 							<th scope="row">{{ $tr++ }}</th>
-                            <!-- maxsulotni nomi boshlanish uchta so'zini ko'rsatish -->
-                            <td>{{ mb_substr($row['product_name'], 0, 15) }}</td>
+                            <!-- maxsulotni nomi -->
+                            <td style="text-align: left; padding-left: 3px;">{{ mb_substr($row['product_name'], 0, 25) }}</td>
 							<td>{{ $row['size_name'] }}</td>
                             @foreach($regions as $key => $region)
-                                <td><?php printf("%01.1f", $row[$key]['product_weight']); ?></td>
-                                @php $summ += $row[$key]['product_weight']; @endphp
+                                @php
+                                    $weight = isset($row[$key]['product_weight']) ? $row[$key]['product_weight'] : 0;
+                                    $summ += $weight;
+                                @endphp
+                                <td>{{ $weight > 0 ? number_format($weight, 1, '.', '') : '' }}</td>
                             @endforeach
-							<td><?php printf("%01.1f", $summ); ?></td>
-							<td></td>
+							<td><b>{{ number_format($row['total_weight'] ?? $summ, 1, '.', '') }}</b></td>
+							<td>{{ number_format($row['qoldiq'] ?? 0, 1, '.', '') }}</td>
+							<td style="{{ ($row['farq'] ?? 0) > 0 ? 'color: red; font-weight: bold;' : '' }}">
+                                {{ number_format($row['farq'] ?? 0, 1, '.', '') }}
+                            </td>
                         </tr>
                         @endforeach
                     </tbody>

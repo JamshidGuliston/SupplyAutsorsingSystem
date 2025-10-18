@@ -78,6 +78,7 @@ Route::group(['prefix' => 'storage', 'middleware' => ['isStorage', 'auth']], fun
     Route::get('addmultisklad', [StorageController::class, 'addmultisklad'])->name('storage.addmultisklad');
     Route::get('get-order-title-details/{orderTitle}', [StorageController::class, 'getOrderTitleDetails'])->name('storage.getOrderTitleDetails');
     Route::get('generate-order-title-pdf/{orderTitle}', [StorageController::class, 'generateOrderTitlePDF'])->name('storage.generateOrderTitlePDF');
+    Route::get('generate-order-title-excel/{orderTitle}', [StorageController::class, 'generateOrderTitleExcel'])->name('storage.generateOrderTitleExcel');
     Route::post('newordersklad', [StorageController::class, 'newordersklad'])->name('storage.newordersklad');
     Route::get('onedaymulti/{id}', [StorageController::class, 'onedaymulti'])->name('storage.onedaymulti');
     Route::get('onedaymulti/{id}/{haschild}', [StorageController::class, 'onedaymulti'])->name('storage.onedaymulti');
@@ -90,7 +91,9 @@ Route::group(['prefix' => 'storage', 'middleware' => ['isStorage', 'auth']], fun
     Route::get('getworkerfoods', [StorageController::class, 'getworkerfoods'])->name('storage.getworkerfoods');
     Route::get('get-category-products', [StorageController::class, 'getCategoryProducts'])->name('storage.getCategoryProducts');
     Route::get('onedaysvod/{id}', [StorageController::class, 'ordersvodpdf'])->name('storage.onedaysvod');
+    Route::get('onedaysvodexcel/{id}', [StorageController::class, 'ordersvodexcel'])->name('storage.onedaysvodexcel');
     Route::get('ordersvodAllRegions/{id}', [StorageController::class, 'ordersvodAllRegions'])->name('storage.ordersvodAllRegions');
+    Route::get('ordersvodAllRegionsExcel/{id}', [StorageController::class, 'ordersvodAllRegionsExcel'])->name('storage.ordersvodAllRegionsExcel');
     Route::get('ingroup/{id}', [StorageController::class, 'ingroup'])->name('storage.ingroup');
     Route::get('deleteproduct', [StorageController::class, 'deleteproduct'])->name('storage.deleteproduct');
     Route::get('takecategories', [StorageController::class, 'takecategories'])->name('storage.takecategories');
