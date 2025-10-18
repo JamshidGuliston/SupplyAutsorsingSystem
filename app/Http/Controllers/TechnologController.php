@@ -2579,6 +2579,8 @@ class TechnologController extends Controller
         $residualProducts = [];
         $residualData = plus_multi_storage::where('kingarden_name_d', $kid)
             ->where('residual', 1)
+            ->where('day_id', '>=', $days->first()->id)
+            ->where('day_id', '<=', $days->last()->id)
             ->join('products', 'plus_multi_storages.product_name_id', '=', 'products.id')
             ->get([
                 'plus_multi_storages.product_name_id',
