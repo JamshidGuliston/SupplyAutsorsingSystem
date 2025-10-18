@@ -64,7 +64,7 @@ class PlusmultistorageExport implements FromArray, WithHeadings, WithStyles, Wit
                 if(!isset($minusproducts[$row->product_name_id][$day->id])){
                     $minusproducts[$row->product_name_id][$day->id] = 0;
                 }
-                $minusproducts[$row->product_name_id][$day->id] += round($row->product_weight / $row->div, 2);
+                $minusproducts[$row->product_name_id][$day->id] += $row->product_weight;
                 $minusproducts[$row->product_name_id]['productname'] = $row->product_name;
             }
         }
@@ -73,6 +73,8 @@ class PlusmultistorageExport implements FromArray, WithHeadings, WithStyles, Wit
         $residualProducts = [];
         $residualData = plus_multi_storage::where('kingarden_name_d', $this->kid)
             ->where('residual', 1)
+            ->where('day_id', '>=', $this->days->first()->id)
+            ->where('day_id', '<=', $this->days->last()->id)
             ->join('products', 'plus_multi_storages.product_name_id', '=', 'products.id')
             ->get([
                 'plus_multi_storages.product_name_id',
