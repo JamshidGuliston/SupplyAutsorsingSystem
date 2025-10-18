@@ -67,7 +67,7 @@
 		}
 	.vrt-header span{
 		display: inline-block;
-		text-align: left;
+		text-align: center;
 		-webkit-transform: rotate(-90deg);
 		-moz-transform: rotate(-90deg);
 		-ms-transform: rotate(-90deg);
@@ -87,7 +87,7 @@
 		word-wrap: break-word;     /* uzun so'zlarni bo'lish */
 		display: inline-block;
 		max-width: 100px;          /* burilishdan oldin kenglik */
-		text-align: left;
+		text-align: center;
 	}
 		
 		/* Qator balandligini kamaytirish */
