@@ -446,10 +446,17 @@
             html += '<div class="report-category">';
             html += '<h6><i class="fas fa-file-invoice"></i>Счёт фактура</h6>';
             html += '<div class="report-links">';
-            html += '<a href="/accountant/schotfaktursecond/'+kindid+'/'+start+'/'+end+'" target="_blank" class="report-link pdf">';
+            html += '2-<a href="/accountant/schotfaktursecond/'+kindid+'/'+start+'/'+end+'" target="_blank" class="report-link pdf">';
             html += '<i class="far fa-file-pdf"></i>PDF';
             html += '</a>';
             html += '<a href="/accountant/schotfaktursecondexcel/'+kindid+'/'+start+'/'+end+'" target="_blank" class="report-link excel">';
+            html += '<i class="far fa-file-excel"></i>Excel';
+            html += '</a>';
+
+            html += '3-<a href="/accountant/schotfakturthird/'+kindid+'/'+start+'/'+end+'" target="_blank" class="report-link pdf">';
+            html += '<i class="far fa-file-pdf"></i>PDF';
+            html += '</a>';
+            html += '<a href="/accountant/schotfakturthirdexcel/'+kindid+'/'+start+'/'+end+'" target="_blank" class="report-link excel">';
             html += '<i class="far fa-file-excel"></i>Excel';
             html += '</a>';
             html += '</div>';
