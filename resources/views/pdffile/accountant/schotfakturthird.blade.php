@@ -125,7 +125,7 @@
         }
         
         .amount {
-            width: 12%;
+            width: 18%;
         }
         
         .total-row {
