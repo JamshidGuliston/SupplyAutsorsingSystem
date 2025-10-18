@@ -65,22 +65,20 @@
 			border-bottom: 1px solid black;
 			padding: 0px;
 		}
-		.vrt-header span{
-			display: inline-block;
-			text-align: left;
-			-webkit-transform: rotate(-90deg);
-			-moz-transform: rotate(-90deg);
-			-ms-transform: rotate(-90deg);
-			-o-transform: rotate(-90deg);
-			transform: rotate(-90deg);
+	.vrt-header span{
+		display: inline-block;
+		text-align: left;
+		-webkit-transform: rotate(-90deg);
+		-moz-transform: rotate(-90deg);
+		-ms-transform: rotate(-90deg);
+		-o-transform: rotate(-90deg);
+		transform: rotate(-90deg);
 
-			white-space: wrap;       /* so‘zlarni bir qatorda ushlab turadi */
-			word-break: keep-all;      /* so'zlarni bo'lib tashlamaydi */
-			line-height: 1;            /* ixchamlashtiradi */
-			max-width: 90px;           /* kerak bo'lsa cheklash */
-			overflow: hidden;          /* sig'masa kesadi */
-			text-overflow: ellipsis;   /* sig'masa "..." qo'yadi */
-		}
+		white-space: normal;       /* so'zlarni kerakli joyda o'rash */
+		word-break: normal;        /* oddiy so'z bo'linishi */
+		line-height: 1.2;          /* qatorlar orasidagi masofa */
+		max-width: 90px;           /* kerak bo'lsa cheklash */
+	}
 		
 		/* Maxsulot nomlari uchun */
 		.product-name-short {
