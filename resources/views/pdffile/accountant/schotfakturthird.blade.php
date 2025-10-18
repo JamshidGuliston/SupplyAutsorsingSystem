@@ -372,7 +372,10 @@
         <div class="footer-section">
             <span class="signature-label">Қабул қилди:</span>
             <br/>
-            <div class="signature-label"> {{ $kindgar->number_of_org .'-сонли ДМТТ ' }} директори: ___________    ______________________</div>
+            <br/>
+            <br/>
+            <br/>
+            <div class="signature-label"> {{ $kindgar->number_of_org .'-сонли ДМТТ ' }} директори: ___________      ______________________</div>
         </div>
     </div>
 </body>
