@@ -361,9 +361,9 @@
         <div class="footer-section">
             <span class="signature-label">Топширди:</span>
             <br/>
+            <br/>
             <span class="signature-label">{{ $autorser['company_name'] ?? '___________________________' }}</span>
             <br/>
-            <span class="signature-label">___________________________</span>
             <br/>
             <div class="signature-label">Аутсорсер директори: ____________________________ {{ $autorser['company_director'] }}</div>
             <br/>
