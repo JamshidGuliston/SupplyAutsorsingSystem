@@ -74,7 +74,7 @@
 			-o-transform: rotate(-90deg);
 			transform: rotate(-90deg);
 
-			white-space: nowrap;       /* so‘zlarni bir qatorda ushlab turadi */
+			white-space: wrap;       /* so‘zlarni bir qatorda ushlab turadi */
 			word-break: keep-all;      /* so'zlarni bo'lib tashlamaydi */
 			line-height: 1;            /* ixchamlashtiradi */
 			max-width: 90px;           /* kerak bo'lsa cheklash */
@@ -186,7 +186,7 @@
 										$shortName = $first;
 									}
 								@endphp
-                          	 		<th class='vrt-header product-column' style="padding: 0px; height: 150px">
+                          	 		<th class='vrt-header product-column' style="padding: 0px; height: 100px">
                           	 			<span class="product-name-short"><?php echo $first.' '.$second.' '.$third.' '.$fourth.' '.$fifth.' '.$sixth.' '.$seventh.' '.$eighth.' '.$ninth.' '.$tenth; ?></span>
                           	 		</th>
 								@endif
