@@ -434,14 +434,13 @@
                                     <div class="card-body">
                                         <h6 class="card-title">${product.product_name}</h6>
                                         <div class="input-group">
-                                        // o'zgartirish imkoni bo'lmasin
                                             <input type="number" readonly 
                                                    class="form-control" 
                                                    name="products[${product.id}]" 
                                                    step="0.001" 
                                                    min="0" 
                                                    value="${product.product_weight}">
-                                            <span class="input-group-text">kg</span>
+                                            <span class="input-group-text"></span>
                                         </div>
                                     </div>
                                 </div>
