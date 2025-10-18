@@ -2687,6 +2687,8 @@ class AccountantController extends Controller
                 $pdf_without->setOption('margin-right', 10);
                 $pdf_without->setOption('encoding', 'UTF-8');
                 $pdf_without->setOption('enable-local-file-access', true);
+                $pdf_without->setOption('print-media-type', true);
+                $pdf_without->setOption('disable-smart-shrinking', false);
                 
                 $file_without = $tempDir . '/1_nakapit_without_' . $age->id . '_' . $timestamp . '.pdf';
                 file_put_contents($file_without, $pdf_without->output());
@@ -2721,7 +2723,11 @@ class AccountantController extends Controller
             $pdf_transportation->setOption('margin-right', 10);
             $pdf_transportation->setOption('encoding', 'UTF-8');
             $pdf_transportation->setOption('enable-local-file-access', true);
+            $pdf_transportation->setOption('print-media-type', true);
+            $pdf_transportation->setOption('disable-smart-shrinking', false);
             $pdf_transportation->setOption('dpi', 150);
+            $pdf_transportation->setOption('image-dpi', 150);
+            $pdf_transportation->setOption('image-quality', 100);
             
             $file_transportation = $tempDir . '/2_transportation_' . $timestamp . '.pdf';
             file_put_contents($file_transportation, $pdf_transportation->output());
@@ -2761,6 +2767,8 @@ class AccountantController extends Controller
             $pdf_dalolatnoma->setOption('margin-right', 10);
             $pdf_dalolatnoma->setOption('encoding', 'UTF-8');
             $pdf_dalolatnoma->setOption('enable-local-file-access', true);
+            $pdf_dalolatnoma->setOption('print-media-type', true);
+            $pdf_dalolatnoma->setOption('disable-smart-shrinking', false);
             
             $file_dalolatnoma = $tempDir . '/3_dalolatnoma_' . $timestamp . '.pdf';
             file_put_contents($file_dalolatnoma, $pdf_dalolatnoma->output());
@@ -2801,6 +2809,8 @@ class AccountantController extends Controller
             $pdf_schotfaktur->setOption('margin-right', 10);
             $pdf_schotfaktur->setOption('encoding', 'UTF-8');
             $pdf_schotfaktur->setOption('enable-local-file-access', true);
+            $pdf_schotfaktur->setOption('print-media-type', true);
+            $pdf_schotfaktur->setOption('disable-smart-shrinking', false);
             
             $file_schotfaktur = $tempDir . '/4_schotfaktur_' . $timestamp . '.pdf';
             file_put_contents($file_schotfaktur, $pdf_schotfaktur->output());
@@ -2809,8 +2819,16 @@ class AccountantController extends Controller
             // PDF'larni birlashtirish uchun Ghostscript ishlatish
             $outputFile = $tempDir . '/combined_' . $kindgar->number_of_org . '_' . $timestamp . '.pdf';
             
-            // Ghostscript yordamida PDF'larni birlashtirish
-            $command = 'gs -dBATCH -dNOPAUSE -q -sDEVICE=pdfwrite -sOutputFile="' . $outputFile . '"';
+            // Ghostscript yordamida PDF'larni birlashtirish (to'liq formatni saqlash)
+            $command = 'gs -dBATCH -dNOPAUSE -q -sDEVICE=pdfwrite';
+            $command .= ' -dCompatibilityLevel=1.4';
+            $command .= ' -dPDFSETTINGS=/prepress';
+            $command .= ' -dCompressFonts=false';
+            $command .= ' -dSubsetFonts=false';
+            $command .= ' -dEmbedAllFonts=true';
+            $command .= ' -dAutoRotatePages=/None';
+            $command .= ' -dPreserveAnnots=true';
+            $command .= ' -sOutputFile="' . $outputFile . '"';
             foreach ($pdfFiles as $file) {
                 $command .= ' "' . $file . '"';
             }
