@@ -182,7 +182,7 @@
                     @if(isset($product['yes']))
                         @php $col++; @endphp
                         <th class='vrt-header product-column' style="padding: 0px; height: 100px">
-                        <span class="product-name-short">{{ implode(' ', array_slice(explode(' ', $product['product_name']), 0, 2)) }}</span>
+                        <span class="product-name-short">{{ implode(' ', array_slice(explode(' ', $product['product_name']), 0, 6)) }}</span>
 						</th>
                     @endif
                 @endforeach
