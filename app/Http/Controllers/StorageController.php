@@ -436,12 +436,14 @@ class StorageController extends Controller
             return $a['sort'] - $b['sort'];
         });
         
-        // Bog'chalarni region bo'yicha saralash
-        usort($kindergartens, function($a, $b) use ($regions) {
-            if($a['number_of_org'] != $b['number_of_org']) {
-                return $a['number_of_org'] - $b['number_of_org'];
+        // Bog'chalarni avval region, keyin raqam bo'yicha saralash
+        usort($kindergartens, function($a, $b) {
+            // Avval region bo'yicha saralash
+            if($a['region_id'] != $b['region_id']) {
+                return $a['region_id'] - $b['region_id'];
             }
-            return strcmp($a['number_of_org'], $b['number_of_org']);
+            // Keyin number_of_org bo'yicha saralash
+            return $a['number_of_org'] - $b['number_of_org'];
         });
         
         // Har bir maxsulot uchun har bir bog'cha bo'yicha miqdorni olish

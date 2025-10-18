@@ -4,77 +4,130 @@ namespace App\Exports;
 
 use App\Models\order_product;
 use App\Models\order_product_structure;
-use Maatwebsite\Excel\Concerns\FromCollection;
-use Maatwebsite\Excel\Concerns\WithHeadings;
-use Maatwebsite\Excel\Concerns\WithStyles;
-use Maatwebsite\Excel\Concerns\WithTitle;
-use Maatwebsite\Excel\Concerns\WithEvents;
-use Maatwebsite\Excel\Events\AfterSheet;
-use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
-use PhpOffice\PhpSpreadsheet\Style\Border;
-use PhpOffice\PhpSpreadsheet\Style\Fill;
-use PhpOffice\PhpSpreadsheet\Style\Alignment;
-use PhpOffice\PhpSpreadsheet\Cell\Coordinate;
+use Maatwebsite\Excel\Concerns\WithMultipleSheets;
 
-class OrderTitleExport implements FromCollection, WithHeadings, WithStyles, WithTitle, WithEvents
+class OrderTitleExport implements WithMultipleSheets
 {
     protected $orderTitle;
-    protected $allProducts = [];
-    protected $kindergartens = [];
-    protected $productData = [];
+    protected $allOrders;
+    protected $allProductStructures;
     
     public function __construct($orderTitle)
     {
         $this->orderTitle = $orderTitle;
+        $this->loadAllData();
+    }
+    
+    protected function loadAllData()
+    {
+        // Barcha orderlarni bir marta olish
+        $this->allOrders = order_product::where('order_title', $this->orderTitle)
+            ->join('kindgardens', 'kindgardens.id', '=', 'order_products.kingar_name_id')
+            ->join('regions', 'regions.id', '=', 'kindgardens.region_id')
+            ->orderBy('regions.id')
+            ->orderBy('kindgardens.number_of_org')
+            ->get(['order_products.id', 'regions.id as region_id', 'regions.region_name', 'regions.short_name', 'kindgardens.kingar_name', 'kindgardens.number_of_org', 'kindgardens.id as kingar_name_id']);
+        
+        // Barcha maxsulotlarni bir marta olish
+        $orderIds = $this->allOrders->pluck('id')->toArray();
+        $this->allProductStructures = order_product_structure::whereIn('order_product_name_id', $orderIds)
+            ->join('products', 'products.id', '=', 'order_product_structures.product_name_id')
+            ->join('sizes', 'sizes.id', '=', 'products.size_name_id')
+            ->get(['order_product_structures.id', 'order_product_structures.order_product_name_id', 'products.size_name_id', 'order_product_structures.product_name_id', 'order_product_structures.product_weight', 'products.product_name', 'sizes.size_name', 'products.div', 'order_product_structures.actual_weight', 'products.sort']);
+    }
+    
+    public function sheets(): array
+    {
+        $sheets = [];
+        
+        // Tumanlarni guruplash
+        $regions = [];
+        foreach($this->allOrders as $order) {
+            if(!isset($regions[$order->region_id])) {
+                $regions[$order->region_id] = $order->region_name;
+            }
+        }
+        
+        // Tumanlarni ID bo'yicha saralash
+        ksort($regions);
+        
+        // Har bir tuman uchun alohida sheet yaratish
+        foreach($regions as $regionId => $regionName) {
+            $sheets[] = new OrderTitleRegionExport($this->orderTitle, $regionId, $regionName, $this->allOrders, $this->allProductStructures);
+        }
+        
+        return $sheets;
+    }
+}
+
+// Har bir tuman uchun sheet class
+class OrderTitleRegionExport implements \Maatwebsite\Excel\Concerns\FromCollection, \Maatwebsite\Excel\Concerns\WithHeadings, \Maatwebsite\Excel\Concerns\WithStyles, \Maatwebsite\Excel\Concerns\WithTitle, \Maatwebsite\Excel\Concerns\WithEvents
+{
+    protected $orderTitle;
+    protected $regionId;
+    protected $regionName;
+    protected $allProducts = [];
+    protected $kindergartens = [];
+    protected $productData = [];
+    protected $allOrders;
+    protected $allProductStructures;
+    
+    public function __construct($orderTitle, $regionId, $regionName, $allOrders, $allProductStructures)
+    {
+        $this->orderTitle = $orderTitle;
+        $this->regionId = $regionId;
+        $this->regionName = $regionName;
+        $this->allOrders = $allOrders;
+        $this->allProductStructures = $allProductStructures;
         $this->prepareData();
     }
     
     protected function prepareData()
     {
-        $orders = order_product::where('order_title', $this->orderTitle)
-            ->join('kindgardens', 'kindgardens.id', '=', 'order_products.kingar_name_id')
-            ->join('regions', 'regions.id', '=', 'kindgardens.region_id')
-            ->get(['order_products.id', 'regions.id as region_id', 'regions.region_name', 'regions.short_name', 'kindgardens.kingar_name', 'kindgardens.number_of_org', 'kindgardens.id as kingar_name_id']);
+        // Faqat joriy tuman uchun orderlarni filter qilish
+        $orders = $this->allOrders->where('region_id', $this->regionId);
         
+        // Orderlarni kindergarten ID bo'yicha index qilish
+        $ordersByKindergarten = [];
         foreach($orders as $order) {
+            $ordersByKindergarten[$order->kingar_name_id] = $order;
             $this->kindergartens[$order->kingar_name_id] = [
                 'id' => $order->kingar_name_id,
                 'name' => $order->kingar_name,
                 'number_of_org' => $order->number_of_org,
                 'region_id' => $order->region_id
             ];
+        }
+        
+        // Bog'chalarni raqam bo'yicha saralash
+        usort($this->kindergartens, function($a, $b) {
+            return $a['number_of_org'] - $b['number_of_org'];
+        });
+        
+        // Joriy tuman bog'chalari uchun maxsulotlarni olish
+        $orderIds = $orders->pluck('id')->toArray();
+        $structures = $this->allProductStructures->whereIn('order_product_name_id', $orderIds);
+        
+        // Maxsulotlarni order ID va product ID bo'yicha index qilish
+        $structuresByOrderAndProduct = [];
+        foreach($structures as $structure) {
+            $structuresByOrderAndProduct[$structure->order_product_name_id][$structure->product_name_id] = $structure;
             
-            $orderProductStructures = order_product_structure::where('order_product_name_id', $order->id)
-                ->join('products', 'products.id', '=', 'order_product_structures.product_name_id')
-                ->join('sizes', 'sizes.id', '=', 'products.size_name_id')
-                ->get(['order_product_structures.id', 'products.size_name_id', 'order_product_structures.product_name_id', 'order_product_structures.product_weight', 'products.product_name', 'sizes.size_name', 'products.div', 'order_product_structures.actual_weight', 'products.sort']);
-                
-            foreach($orderProductStructures as $structure) {
-                $productId = $structure->product_name_id;
-                
-                if(!isset($this->allProducts[$productId])) {
-                    $this->allProducts[$productId] = [
-                        'id' => $productId,
-                        'name' => $structure->product_name,
-                        'unit' => $structure->size_name,
-                        'unit_id' => $structure->size_name_id,
-                        'sort' => $structure->sort ?? 0
-                    ];
-                }
+            $productId = $structure->product_name_id;
+            if(!isset($this->allProducts[$productId])) {
+                $this->allProducts[$productId] = [
+                    'id' => $productId,
+                    'name' => $structure->product_name,
+                    'unit' => $structure->size_name,
+                    'unit_id' => $structure->size_name_id,
+                    'sort' => $structure->sort ?? 0
+                ];
             }
         }
         
         // Maxsulotlarni sort bo'yicha saralash
         usort($this->allProducts, function($a, $b) {
             return $a['sort'] - $b['sort'];
-        });
-        
-        // Bog'chalarni region bo'yicha saralash
-        usort($this->kindergartens, function($a, $b) {
-            if($a['number_of_org'] != $b['number_of_org']) {
-                return $a['number_of_org'] - $b['number_of_org'];
-            }
-            return strcmp($a['number_of_org'], $b['number_of_org']);
         });
         
         // Har bir maxsulot uchun har bir bog'cha bo'yicha miqdorni olish
@@ -88,15 +141,16 @@ class OrderTitleExport implements FromCollection, WithHeadings, WithStyles, With
             ];
             
             foreach($this->kindergartens as $kindergarten) {
-                $order = $orders->where('kingar_name_id', $kindergarten['id'])->first();
-                $structure = null;
-                if($order) {
-                    $structure = order_product_structure::where('order_product_name_id', $order->id)
-                        ->where('product_name_id', $product['id'])
-                        ->first();
+                $weight = 0;
+                
+                if(isset($ordersByKindergarten[$kindergarten['id']])) {
+                    $orderId = $ordersByKindergarten[$kindergarten['id']]->id;
+                    
+                    if(isset($structuresByOrderAndProduct[$orderId][$product['id']])) {
+                        $weight = $structuresByOrderAndProduct[$orderId][$product['id']]->product_weight;
+                    }
                 }
                 
-                $weight = $structure ? $structure->product_weight : 0;
                 $this->productData[$product['id']]['kindergartens'][$kindergarten['id']] = $weight;
                 $this->productData[$product['id']]['total'] += $weight;
             }
@@ -143,26 +197,41 @@ class OrderTitleExport implements FromCollection, WithHeadings, WithStyles, With
         return $headings;
     }
     
-    public function styles(Worksheet $sheet)
+    public function title(): string
+    {
+        // Sheet nomini tuman nomi bilan
+        return mb_substr($this->regionName, 0, 31); // Excel sheet nomi 31 belgidan oshmasligi kerak
+    }
+    
+    public function registerEvents(): array
+    {
+        return [
+            \Maatwebsite\Excel\Events\AfterSheet::class => function(\Maatwebsite\Excel\Events\AfterSheet $event) {
+                $event->sheet->getDelegate()->getRowDimension('1')->setRowHeight(30);
+            },
+        ];
+    }
+    
+    public function styles(\PhpOffice\PhpSpreadsheet\Worksheet\Worksheet $sheet)
     {
         $lastRow = count($this->productData) + 1;
         // 3 = A,B,C | kindergartens + 1 = Jami ustuni
         $lastColumnIndex = 3 + count($this->kindergartens) + 1;
-        $lastColumn = Coordinate::stringFromColumnIndex($lastColumnIndex);
+        $lastColumn = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($lastColumnIndex);
         
         // Header style
         $sheet->getStyle('A1:' . $lastColumn . '1')->applyFromArray([
             'font' => ['bold' => true, 'size' => 10],
             'fill' => [
-                'fillType' => Fill::FILL_SOLID,
+                'fillType' => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID,
                 'startColor' => ['rgb' => 'E0E0E0']
             ],
             'borders' => [
-                'allBorders' => ['borderStyle' => Border::BORDER_THIN]
+                'allBorders' => ['borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN]
             ],
             'alignment' => [
-                'horizontal' => Alignment::HORIZONTAL_CENTER,
-                'vertical' => Alignment::VERTICAL_CENTER,
+                'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER,
+                'vertical' => \PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER,
                 'wrapText' => true
             ]
         ]);
@@ -170,10 +239,10 @@ class OrderTitleExport implements FromCollection, WithHeadings, WithStyles, With
         // Data style
         $sheet->getStyle('A2:' . $lastColumn . $lastRow)->applyFromArray([
             'borders' => [
-                'allBorders' => ['borderStyle' => Border::BORDER_THIN]
+                'allBorders' => ['borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN]
             ],
             'alignment' => [
-                'vertical' => Alignment::VERTICAL_CENTER
+                'vertical' => \PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER
             ]
         ]);
         
@@ -181,7 +250,7 @@ class OrderTitleExport implements FromCollection, WithHeadings, WithStyles, With
         $sheet->getStyle($lastColumn . '2:' . $lastColumn . $lastRow)->applyFromArray([
             'font' => ['bold' => true],
             'fill' => [
-                'fillType' => Fill::FILL_SOLID,
+                'fillType' => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID,
                 'startColor' => ['rgb' => 'C8E6C9']
             ]
         ]);
@@ -193,25 +262,11 @@ class OrderTitleExport implements FromCollection, WithHeadings, WithStyles, With
         
         // Bog'cha ustunlari (D dan boshlab oxirigacha)
         for($i = 4; $i < $lastColumnIndex; $i++) {
-            $col = Coordinate::stringFromColumnIndex($i);
+            $col = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($i);
             $sheet->getColumnDimension($col)->setWidth(8);
         }
         
         return [];
-    }
-    
-    public function registerEvents(): array
-    {
-        return [
-            AfterSheet::class => function(AfterSheet $event) {
-                $event->sheet->getDelegate()->getRowDimension('1')->setRowHeight(30);
-            },
-        ];
-    }
-    
-    public function title(): string
-    {
-        return 'Буюртма';
     }
 }
 
