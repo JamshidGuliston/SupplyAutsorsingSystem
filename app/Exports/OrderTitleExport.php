@@ -61,7 +61,7 @@ class OrderTitleExport implements WithMultipleSheets
 }
 
 // Har bir tuman uchun sheet class
-class OrderTitleRegionExport implements \Maatwebsite\Excel\Concerns\FromCollection, \Maatwebsite\Excel\Concerns\WithHeadings, \Maatwebsite\Excel\Concerns\WithStyles, \Maatwebsite\Excel\Concerns\WithTitle, \Maatwebsite\Excel\Concerns\WithEvents
+class OrderTitleRegionExport implements \Maatwebsite\Excel\Concerns\FromArray, \Maatwebsite\Excel\Concerns\WithStyles, \Maatwebsite\Excel\Concerns\WithTitle, \Maatwebsite\Excel\Concerns\WithEvents
 {
     protected $orderTitle;
     protected $regionId;
@@ -157,11 +157,37 @@ class OrderTitleRegionExport implements \Maatwebsite\Excel\Concerns\FromCollecti
         }
     }
     
-    public function collection()
+    public function array(): array
     {
-        $data = collect();
-        $counter = 1;
+        $data = [];
         
+        // 1-qator: Tuman nomi va sana
+        $firstRow = [];
+        $firstRow[] = $this->regionName; // A ustuni - tuman nomi
+        
+        // Bo'sh kataklar
+        $emptyCount = 2 + count($this->kindergartens); // B va C ustunlari + bog'chalar
+        for($i = 0; $i < $emptyCount; $i++) {
+            $firstRow[] = '';
+        }
+        
+        // Oxirgi ustun - sana (Jami ustuni ustida)
+        $firstRow[] = $this->orderTitle;
+        
+        $data[] = $firstRow;
+        
+        // 2-qator: Headers
+        $headings = ['№', 'Махсулот номи', 'Ўлчов'];
+        
+        foreach($this->kindergartens as $kindergarten) {
+            $headings[] = $kindergarten['number_of_org'];
+        }
+        
+        $headings[] = 'Жами';
+        $data[] = $headings;
+        
+        // 3-qatordan: Ma'lumotlar
+        $counter = 1;
         foreach($this->productData as $productId => $product) {
             $row = [
                 $counter++,
@@ -178,23 +204,10 @@ class OrderTitleRegionExport implements \Maatwebsite\Excel\Concerns\FromCollecti
             // Jami
             $row[] = number_format($product['total'], 2, '.', '');
             
-            $data->push($row);
+            $data[] = $row;
         }
         
         return $data;
-    }
-    
-    public function headings(): array
-    {
-        $headings = ['№', 'Махсулот номи', 'Ўлчов'];
-        
-        foreach($this->kindergartens as $kindergarten) {
-            $headings[] = $kindergarten['number_of_org'];
-        }
-        
-        $headings[] = 'Жами';
-        
-        return $headings;
     }
     
     public function title(): string
@@ -207,20 +220,40 @@ class OrderTitleRegionExport implements \Maatwebsite\Excel\Concerns\FromCollecti
     {
         return [
             \Maatwebsite\Excel\Events\AfterSheet::class => function(\Maatwebsite\Excel\Events\AfterSheet $event) {
-                $event->sheet->getDelegate()->getRowDimension('1')->setRowHeight(30);
+                // 2-qator (header) balandligini sozlash
+                $event->sheet->getDelegate()->getRowDimension('2')->setRowHeight(30);
             },
         ];
     }
     
     public function styles(\PhpOffice\PhpSpreadsheet\Worksheet\Worksheet $sheet)
     {
-        $lastRow = count($this->productData) + 1;
+        $lastRow = count($this->productData) + 2; // +2 chunki 1-qator title, 2-qator header
         // 3 = A,B,C | kindergartens + 1 = Jami ustuni
         $lastColumnIndex = 3 + count($this->kindergartens) + 1;
         $lastColumn = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($lastColumnIndex);
         
-        // Header style
-        $sheet->getStyle('A1:' . $lastColumn . '1')->applyFromArray([
+        // 1-qator: Tuman nomi va sana
+        // Tuman nomi (A1)
+        $sheet->getStyle('A1')->applyFromArray([
+            'font' => ['bold' => true, 'size' => 14],
+            'alignment' => [
+                'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_LEFT,
+                'vertical' => \PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER
+            ]
+        ]);
+        
+        // Sana (oxirgi ustun)
+        $sheet->getStyle($lastColumn . '1')->applyFromArray([
+            'font' => ['bold' => true, 'size' => 12],
+            'alignment' => [
+                'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_RIGHT,
+                'vertical' => \PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER
+            ]
+        ]);
+        
+        // 2-qator: Header style
+        $sheet->getStyle('A2:' . $lastColumn . '2')->applyFromArray([
             'font' => ['bold' => true, 'size' => 10],
             'fill' => [
                 'fillType' => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID,
@@ -236,8 +269,8 @@ class OrderTitleRegionExport implements \Maatwebsite\Excel\Concerns\FromCollecti
             ]
         ]);
         
-        // Data style
-        $sheet->getStyle('A2:' . $lastColumn . $lastRow)->applyFromArray([
+        // Data style (3-qatordan)
+        $sheet->getStyle('A3:' . $lastColumn . $lastRow)->applyFromArray([
             'borders' => [
                 'allBorders' => ['borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN]
             ],
@@ -247,7 +280,7 @@ class OrderTitleRegionExport implements \Maatwebsite\Excel\Concerns\FromCollecti
         ]);
         
         // Jami ustuni
-        $sheet->getStyle($lastColumn . '2:' . $lastColumn . $lastRow)->applyFromArray([
+        $sheet->getStyle($lastColumn . '3:' . $lastColumn . $lastRow)->applyFromArray([
             'font' => ['bold' => true],
             'fill' => [
                 'fillType' => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID,
@@ -265,6 +298,9 @@ class OrderTitleRegionExport implements \Maatwebsite\Excel\Concerns\FromCollecti
             $col = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($i);
             $sheet->getColumnDimension($col)->setWidth(8);
         }
+        
+        // 1-qatorni balandroq qilish
+        $sheet->getRowDimension(1)->setRowHeight(25);
         
         return [];
     }
