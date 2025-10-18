@@ -10,7 +10,7 @@
 	<!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"> -->
 	<title>Title</title>
 	<style>
-		@page { margin: 3mm 3mm 3mm 3mm; }
+		@page { margin: 10mm 10mm 10mm 10mm; }
 		body{
 			font-family: DejaVu Sans;
 			font-size: 7px;
@@ -74,7 +74,7 @@
 			-o-transform: rotate(-90deg);
 			transform: rotate(-90deg);
 
-			white-space: nowrap;       /* birinchi bir qatorda */
+			white-space: normal;       /* birinchi bir qatorda */
 			width: 100px;               /* aniq kenglik (burilgandan keyin balandlik) */
 			overflow: visible;         /* hamma ko'rinsin */
 			font-size: 6px;
@@ -84,7 +84,7 @@
 		.product-name-short {
 			font-size: 5.5px;
 			line-height: 1.0;
-			white-space: wrap;       /* bir qatorda */
+			white-space: normal;       /* bir qatorda */
 			display: inline-block;
 			max-width: 95px;          /* burilishdan oldin kenglik */
 			text-align: center;
