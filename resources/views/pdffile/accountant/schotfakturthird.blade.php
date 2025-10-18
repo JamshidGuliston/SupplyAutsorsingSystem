@@ -254,7 +254,7 @@
             <thead>
                 <tr>
                     <th class="order-number">№</th>
-                    <th class="product-name">Маҳсулот, иш, хизматлар номи</th>
+                    <th class="product-name">Иш, хизматлар номи</th>
                     <th class="unit">Ўл.бир</th>
                     <th class="quantity">Сони</th>
                     <th class="price">Нархи</th>
@@ -296,7 +296,7 @@
                     @endphp
                     <tr>
                         <td class="order-number">{{ $tr++ }}</td>
-                        <td class="product-name">{{ $age->description . "га кўрсатилган Аутсорсинг хизмати" }}</td>
+                        <td class="product-name">{{ $region->region_name . " " . $kindgar->number_of_org .'-сонли ДМТТ' . $age->description . " тарбияланувчилари учун" . $days[0]->year_name . " йил " . $days[0]->day_number . "-" . $days[count($days)-1]->day_number . " " . $days[0]->month_name . " да аутсорсинг асосида кунига уч маҳал овқатланишни ташкил этиш бўйича:" }}</td>
                         <td class="unit">{{ 'cум' }}</td>
                         <td class="quantity">{{ "1" }}</td>
                         <td class="price">{{ number_format($f17, 2) }}</td>
@@ -348,6 +348,7 @@
                     <td colspan="4" class="text-right font-bold">Жами сумма:</td>
                     <td></td>
                     <td class="font-bold">{{ number_format($sum_total, 2) }}</td>
+                    <td></td>
                     <td class="font-bold">{{ number_format($qqs_total, 2) }}</td>
                     <td class="font-bold">{{ number_format($total_sum, 2) }}</td>
                 </tr>
