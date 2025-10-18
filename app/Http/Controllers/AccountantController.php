@@ -2697,6 +2697,8 @@ class AccountantController extends Controller
                             'id' => $product->id,
                             'product_name' => $product->product_name,
                             'sort' => $product->sort,
+                            'div' => $product->div,
+                            'size_name_id' => $product->size_name_id
                         ];
                     })->toArray();
                     
