@@ -75,7 +75,7 @@
 			transform: rotate(-90deg);
 
 			white-space: nowrap;       /* birinchi bir qatorda */
-			width: 80px;               /* aniq kenglik (burilgandan keyin balandlik) */
+			width: 100px;               /* aniq kenglik (burilgandan keyin balandlik) */
 			overflow: visible;         /* hamma ko'rinsin */
 			font-size: 6px;
 		}
@@ -83,10 +83,10 @@
 		/* Maxsulot nomlari uchun */
 		.product-name-short {
 			font-size: 5.5px;
-			line-height: 1.1;
-			white-space: nowrap;       /* bir qatorda */
+			line-height: 1.0;
+			white-space: wrap;       /* bir qatorda */
 			display: inline-block;
-			max-width: 75px;          /* burilishdan oldin kenglik */
+			max-width: 95px;          /* burilishdan oldin kenglik */
 			text-align: center;
 			overflow: visible;
 		}
