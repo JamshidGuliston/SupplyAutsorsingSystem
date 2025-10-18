@@ -130,7 +130,7 @@
 			<tr>
 				<th rowspan="2">№</th>
 				<th colspan="2">Махсулотлар номи ва Ўлчов бирлиги</th>
-				<th rowspan="2">сана</th>
+				<!-- <th rowspan="2">сана</th> -->
 				@foreach($days as $day)
 					<?php
 						if($day->month_id % 12 == 0){
