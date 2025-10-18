@@ -501,6 +501,20 @@
                 html += '</div>';
                 html += '</div>';                
             }
+
+            html += '<div class="age-group-header">';
+            html += '<i class="fas fa-file-invoice-dollar"></i> Умумий
+            html += '</div>';
+
+            html += '<div class="report-category">';
+            html += '<h6><i class="fas fa-warehouse"></i></h6>';
+            html += '<div class="report-links">';
+            html += '<span class="me-2">Narx bilan:</span>';
+            html += '<a href="/accountant/allofthemWithMenuAndCost/'+kindid+'/'+start+'/'+end+'/'+cost+'" target="_blank" class="report-link pdf">';
+            html += '<i class="far fa-file-pdf"></i>PDF';
+            html += '</a>';
+            html += '</div>';
+            html += '</div>';
             
             
             html += '</div>';
