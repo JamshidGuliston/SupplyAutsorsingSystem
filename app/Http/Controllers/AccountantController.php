@@ -2691,7 +2691,9 @@ class AccountantController extends Controller
                     
                     if($menu->count() == 0) continue;
                     
-                    $products = Product::where('hide', 1)->orderBy('sort', 'ASC')->get();
+                    // Har safar yangi products olish va array ga aylantirish
+                    $products_collection = Product::where('hide', 1)->orderBy('sort', 'ASC')->get();
+                    $products = $products_collection->toArray();
                     
                     $menuitem = Active_menu::where('day_id', $day->id)
                                     ->where('title_menu_id', $menu[0]['kingar_menu_id'])
