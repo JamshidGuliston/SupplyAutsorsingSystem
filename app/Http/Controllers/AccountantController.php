@@ -376,21 +376,9 @@ class AccountantController extends Controller
                 return $a["sort"] > $b["sort"];
             }
         });
-
-        $dompdf = new Dompdf('UTF-8');
-		$html = mb_convert_encoding(view('pdffile.accountant.nakapitwithoutcost', compact('age', 'days', 'nakproducts', 'kindgar', 'protsent')), 'HTML-ENTITIES', 'UTF-8');
-		$dompdf->loadHtml($html);
-        
-		// (Optional) Setup the paper size and orientation
-		$dompdf->setPaper('A4', 'landscape');
-		// $customPaper = array(0,0,360,360);
-		// $dompdf->setPaper($customPaper);
-		$name = $start.$end.$id.$ageid."nakapit.pdf";
-		// Render the HTML as PDF
-		$dompdf->render();
-
-		// Output the generated PDF to Browser
-		$dompdf->stream($name, ['Attachment' => 0]);
+       
+        $dompdf = \PDF::loadView('pdffile.accountant.nakapitwithoutcost', compact('age', 'days', 'nakproducts', 'kindgar', 'protsent'));
+        return $dompdf->stream('nakapitwithoutcost.pdf', ['Attachment' => 0]);
     }
 
     public function kindreportworker(Request $request, $id){
