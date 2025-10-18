@@ -363,6 +363,10 @@ Route::group(['prefix' => 'accountant', 'middleware' => ['isAccountant', 'auth']
     Route::get('schotfakturthirdexcel/{id}/{start}/{end}', [AccountantController::class, 'schotfakturthirdexcel'])->name('accountant.schotfakturthirdexcel');
     Route::get('dalolatnoma/{id}/{start}/{end}', [AccountantController::class, 'dalolatnoma'])->name('accountant.dalolatnoma');
     Route::get('dalolatnomaexcel/{id}/{start}/{end}', [AccountantController::class, 'dalolatnomaexcel'])->name('accountant.dalolatnomaexcel');
+    
+    // Birlashtirilgan hujjat - barcha 4 ta hujjatni bitta PDF da
+    Route::get('combined-documents/{id}/{start}/{end}/{costid?}', [AccountantController::class, 'combinedKindgardenDocuments'])->name('accountant.combined.documents');
+    
     Route::get('allschotfaktur/{id}/{start}/{end}/{costid}/{nds}/{ust}', [AccountantController::class, 'allschotfaktur'])->name('accountant.allschotfaktur');
     Route::get('schotfakturexcel/{id}/{ageid}/{start}/{end}/{costid}/{nds}/{ust}', [AccountantController::class, 'schotfakturexcel'])->name('accountant.schotfakturexcel');
     Route::get('norm/{id}/{ageid}/{start}/{end}/{costid}', [AccountantController::class, 'norm'])->name('accountant.norm');

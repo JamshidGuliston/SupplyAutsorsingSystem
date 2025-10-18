@@ -2605,5 +2605,307 @@ class AccountantController extends Controller
         );
     }
 
+    /**
+     * Bog'cha uchun barcha hujjatlarni bitta PDF da birlashtirish
+     * schotfakturthird, dalolatnoma, nakapit va nakapitwithoutcost
+     */
+    public function combinedKindgardenDocuments(Request $request, $id, $start, $end, $costid = null){
+        set_time_limit(300);
+        
+        $kindgar = Kindgarden::where('id', $id)->with('age_range')->first();
+        $region = Region::where('id', $kindgar->region_id)->first();
+        
+        $days = Day::where('days.id', '>=', $start)->where('days.id', '<=', $end)
+                ->join('years', 'days.year_id', '=', 'years.id')
+                ->join('months', 'days.month_id', '=', 'months.id')
+                ->get(['days.id', 'days.day_number', 'months.id as month_id', 'months.month_name', 'years.year_name', 'days.created_at']);
+        
+        // Umumiy ma'lumotlar
+        $autorser = config('company.autorser');
+        $contract_env = env('CONTRACT_DATA');
+        $contract_data = $contract_env ? explode(',', $contract_env)[$region->id - 1] ?? " ______ '______' ___________ 2025 й"
+            : " ______ '______' ___________ 2025 й";
+        
+        $buyurtmachi = [
+            'company_name' => $region->region_name.' ММТБга тасарруфидаги '.$kindgar->number_of_org .'-сонли ДМТТ' ?? '',
+            'address' => $region->region_name,
+            'inn' => '________________',
+            'bank_account' => '___________________________________',
+            'mfo' => '00014',
+            'account_number' => '23402000300100001010',
+            'treasury_account' => '_______________',
+            'treasury_inn' => '________________',
+            'bank' => 'Марказий банк ХККМ',
+            'phone' => '__________________________',
+        ];
+        
+        if(is_null(env('INVOICE_NUMBER'))){
+            $invoice_number = $days->last()->month_id.'-'. $kindgar->number_of_org;
+        }else{
+            $invoice_number = $days->last()->month_id.'/'.env('INVOICE_NUMBER');
+        }
+        $invoice_date = $days->last()->created_at->format('d.m.Y');
+        
+        // Barcha yosh guruhlari uchun ma'lumotlar
+        $combined_html = '';
+        
+        // 1. Schotfakturthird
+        $costs_schotfaktur = [];
+        $total_number_children_schotfaktur = [];
+        foreach($kindgar->age_range as $age){
+            $costs_schotfaktur[$age->id] = Protsent::where('region_id', $kindgar->region_id)
+                        ->where('age_range_id', $age->id)
+                        ->where('end_date', '>=', $days->last()->created_at->format('Y-m-d'))
+                        ->first();
+            $total_number_children_schotfaktur[$age->id] = Number_children::where('day_id', '>=', $start)
+                ->where('day_id', '<=', $end)
+                ->where('kingar_name_id', $id)
+                ->where('king_age_name_id', $age->id)
+                ->sum('kingar_children_number');
+        }
+        
+        $combined_html .= view('pdffile.accountant.schotfakturthird', [
+            'contract_data' => $contract_data,
+            'region' => $region,
+            'costs' => $costs_schotfaktur,
+            'days' => $days,
+            'kindgar' => $kindgar,
+            'autorser' => $autorser,
+            'buyurtmachi' => $buyurtmachi,
+            'invoice_number' => $invoice_number,
+            'invoice_date' => $invoice_date,
+            'total_number_children' => $total_number_children_schotfaktur
+        ])->render();
+        
+        $combined_html .= '<div style="page-break-after: always;"></div>';
+        
+        // 2. Dalolatnoma
+        $costs_dalolatnoma = [];
+        $total_number_children_dalolatnoma = [];
+        foreach($kindgar->age_range as $age){
+            $costs_dalolatnoma[$age->id] = Protsent::where('region_id', $kindgar->region_id)
+                        ->where('age_range_id', $age->id)
+                        ->where('end_date', '>=', $days->last()->created_at->format('Y-m-d'))
+                        ->first();
+            $total_number_children_dalolatnoma[$age->id] = Number_children::where('day_id', '>=', $start)
+                ->where('day_id', '<=', $end)
+                ->where('kingar_name_id', $id)
+                ->where('king_age_name_id', $age->id)
+                ->sum('kingar_children_number');
+        }
+        
+        $combined_html .= view('pdffile.accountant.dalolatnoma', [
+            'contract_data' => $contract_data,
+            'costs' => $costs_dalolatnoma,
+            'days' => $days,
+            'kindgar' => $kindgar,
+            'autorser' => $autorser,
+            'buyurtmachi' => $buyurtmachi,
+            'invoice_number' => $invoice_number,
+            'invoice_date' => $invoice_date,
+            'total_number_children' => $total_number_children_dalolatnoma
+        ])->render();
+        
+        // Har bir yosh guruhi uchun nakapit va nakapitwithoutcost
+        foreach($kindgar->age_range as $age){
+            $combined_html .= '<div style="page-break-after: always;"></div>';
+            
+            // 3. Nakapit (agar costid berilgan bo'lsa)
+            if($costid){
+                $nakproducts_nakapit = $this->getNakapitData($id, $age->id, $start, $end, $costid);
+                $protsent_nakapit = Protsent::where('region_id', $kindgar->region_id)
+                    ->where('end_date', '>=', $days[count($days)-1]->created_at->format('Y-m-d'))
+                    ->where('age_range_id', $age->id)
+                    ->first();
+                    
+                $costsdays = bycosts::where('day_id', $costid)
+                            ->where('region_name_id', $kindgar->region_id)
+                            ->join('days', 'bycosts.day_id', '=', 'days.id')
+                            ->join('years', 'days.year_id', '=', 'years.id')
+                            ->orderBy('day_id', 'DESC')
+                            ->get(['bycosts.day_id', 'days.day_number', 'days.month_id', 'years.year_name']);
+                $costs_nakapit = [];
+                $bool = [];
+                foreach($costsdays as $row){
+                    if(!isset($bool[$row->day_id])){
+                        array_push($costs_nakapit, $row);
+                        $bool[$row->day_id] = 1;
+                    }
+                }
+                
+                $combined_html .= view('pdffile.accountant.nakapit', [
+                    'age' => $age,
+                    'days' => $days,
+                    'nakproducts' => $nakproducts_nakapit,
+                    'costsdays' => $costsdays,
+                    'costs' => $costs_nakapit,
+                    'kindgar' => $kindgar,
+                    'protsent' => $protsent_nakapit,
+                    'region' => $region
+                ])->render();
+                
+                $combined_html .= '<div style="page-break-after: always;"></div>';
+            }
+            
+            // 4. Nakapit without cost
+            $nakproducts_without = $this->getNakapitWithoutCostData($id, $age->id, $start, $end);
+            $protsent_without = Protsent::where('region_id', $kindgar->region_id)->first();
+            
+            $combined_html .= view('pdffile.accountant.nakapitwithoutcost', [
+                'age' => $age,
+                'days' => $days,
+                'nakproducts' => $nakproducts_without,
+                'kindgar' => $kindgar,
+                'protsent' => $protsent_without
+            ])->render();
+        }
+        
+        // PDF yaratish
+        $pdf = \PDF::loadHTML($combined_html);
+        $pdf->setOption('page-size', 'A4');
+        $pdf->setOption('orientation', 'landscape');
+        $pdf->setOption('margin-top', 10);
+        $pdf->setOption('margin-bottom', 10);
+        $pdf->setOption('margin-left', 10);
+        $pdf->setOption('margin-right', 10);
+        $pdf->setOption('encoding', 'UTF-8');
+        $pdf->setOption('enable-local-file-access', true);
+        
+        $name = "combined_".$kindgar->number_of_org."_".date('Y-m-d').".pdf";
+        
+        return $pdf->stream($name);
+    }
+    
+    /**
+     * Nakapit uchun ma'lumotlarni olish (helper method)
+     */
+    private function getNakapitData($id, $ageid, $start, $end, $costid){
+        $nakproducts = [];
+        $days = Day::where('id', '>=', $start)->where('id', '<=', $end)->get();
+        
+        foreach($days as $day){
+            $join = Number_children::where('number_childrens.day_id', $day->id)
+                    ->where('kingar_name_id', $id)
+                    ->where('king_age_name_id', $ageid)
+                    ->leftjoin('active_menus', function($join){
+                        $join->on('number_childrens.kingar_menu_id', '=', 'active_menus.title_menu_id');
+                        $join->on('number_childrens.king_age_name_id', '=', 'active_menus.age_range_id');
+                    })
+                    ->where('active_menus.day_id', $day->id)
+                    ->join('products', 'active_menus.product_name_id', '=', 'products.id')
+                    ->join('sizes', 'products.size_name_id', '=', 'sizes.id')
+                    ->get();
+            
+            $productscount = [];
+            foreach($join as $row){
+                if(!isset($productscount[$row->product_name_id][$ageid])){
+                    $productscount[$row->product_name_id][$ageid] = 0;
+                }
+                $productscount[$row->product_name_id][$ageid] += $row->weight;
+                $productscount[$row->product_name_id][$ageid.'-children'] = $row->kingar_children_number;
+                $productscount[$row->product_name_id][$ageid.'div'] = $row->div;
+                $productscount[$row->product_name_id]['product_name'] = $row->product_name;
+                $productscount[$row->product_name_id][$ageid.'sort'] = $row->sort;
+                $productscount[$row->product_name_id]['size_name'] = $row->size_name;
+            }
+            
+            foreach($productscount as $key => $row){
+                if(isset($row['product_name'])){
+                    $childs = Number_children::where('day_id', $day->id)
+                                    ->where('kingar_name_id', $id)
+                                    ->where('king_age_name_id', $ageid)
+                                    ->sum('kingar_children_number');    
+                    $nakproducts[0][$day->id] = $childs;
+                    $nakproducts[0]['product_name'] = "Болалар сони";
+                    $nakproducts[0]['size_name'] = "";
+                    $nakproducts[$key][$day->id] = ($row[$ageid]*$row[$ageid.'-children']) / $row[$ageid.'div'];
+                    $nakproducts[$key]['product_name'] = $row['product_name'];
+                    $nakproducts[$key]['sort'] = $row[$ageid.'sort'];
+                    $nakproducts[$key]['size_name'] = $row['size_name'];
+                }
+            }
+        }
+        
+        $costs = bycosts::where('day_id', $costid)
+                    ->where('region_name_id', Kindgarden::where('id', $id)->first()->region_id)
+                    ->orderBy('day_id', 'DESC')->get();
+            
+        foreach($costs as $cost){
+            $nakproducts[0][0] = 0;
+            if(isset($nakproducts[$cost->praduct_name_id]['product_name'])){
+                $nakproducts[$cost->praduct_name_id][0] = $cost->price_cost;
+            }
+        }
+        
+        usort($nakproducts, function ($a, $b){
+            if(isset($a["sort"]) and isset($b["sort"])){
+                return $a["sort"] > $b["sort"];
+            }
+        });
+        
+        return $nakproducts;
+    }
+    
+    /**
+     * Nakapit without cost uchun ma'lumotlarni olish (helper method)
+     */
+    private function getNakapitWithoutCostData($id, $ageid, $start, $end){
+        $nakproducts = [];
+        $days = Day::where('days.id', '>=', $start)->where('days.id', '<=', $end)
+            ->join('years', 'days.year_id', '=', 'years.id')
+            ->get(['days.id', 'days.day_number', 'days.month_id', 'years.year_name']);
+        
+        foreach($days as $day){
+            $join = Number_children::where('number_childrens.day_id', $day->id)
+                    ->where('kingar_name_id', $id)
+                    ->where('king_age_name_id', $ageid)
+                    ->leftjoin('active_menus', function($join){
+                        $join->on('number_childrens.kingar_menu_id', '=', 'active_menus.title_menu_id');
+                        $join->on('number_childrens.king_age_name_id', '=', 'active_menus.age_range_id');
+                    })
+                    ->where('active_menus.day_id', $day->id)
+                    ->join('products', 'active_menus.product_name_id', '=', 'products.id')
+                    ->join('sizes', 'products.size_name_id', '=', 'sizes.id')
+                    ->get();
+            
+            $productscount = [];
+            foreach($join as $row){
+                if(!isset($productscount[$row->product_name_id][$ageid])){
+                    $productscount[$row->product_name_id][$ageid] = 0;
+                }
+                $productscount[$row->product_name_id][$ageid] += $row->weight;
+                $productscount[$row->product_name_id][$ageid.'-children'] = $row->kingar_children_number;
+                $productscount[$row->product_name_id][$ageid.'div'] = $row->div;
+                $productscount[$row->product_name_id]['product_name'] = $row->product_name;
+                $productscount[$row->product_name_id][$ageid.'sort'] = $row->sort;
+                $productscount[$row->product_name_id]['size_name'] = $row->size_name;
+            }
+            
+            foreach($productscount as $key => $row){
+                if(isset($row['product_name'])){
+                    $childs = Number_children::where('day_id', $day->id)
+                                    ->where('kingar_name_id', $id)
+                                    ->where('king_age_name_id', $ageid)
+                                    ->sum('kingar_children_number');    
+                    $nakproducts[0][$day->id] = $childs;
+                    $nakproducts[0]['product_name'] = "Болалар сони";
+                    $nakproducts[0]['size_name'] = "";
+                    $nakproducts[$key][$day->id] = ($row[$ageid]*$row[$ageid.'-children']) / $row[$ageid.'div'];
+                    $nakproducts[$key]['product_name'] = $row['product_name'];
+                    $nakproducts[$key]['sort'] = $row[$ageid.'sort'];
+                    $nakproducts[$key]['size_name'] = $row['size_name'];
+                }
+            }
+        }
+        
+        usort($nakproducts, function ($a, $b){
+            if(isset($a["sort"]) and isset($b["sort"])){
+                return $a["sort"] > $b["sort"];
+            }
+        });
+        
+        return $nakproducts;
+    }
+
 }
 
