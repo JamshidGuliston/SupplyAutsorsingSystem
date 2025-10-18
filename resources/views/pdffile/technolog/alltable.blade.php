@@ -122,33 +122,30 @@
 			padding: 5px 0;
 		}
 		
-		.vrt-header span{
-			display: inline-block;
-			text-align: center;           /* MARKAZ! */
-			-webkit-transform: rotate(-90deg);
-			-moz-transform: rotate(-90deg);
-			-ms-transform: rotate(-90deg);
-			-o-transform: rotate(-90deg);
-			transform: rotate(-90deg);
-			transform-origin: center center;  /* MARKAZ! */
+	.vrt-header span{
+		display: inline-block;
+		text-align: center;
+		-webkit-transform: rotate(-90deg);
+		-moz-transform: rotate(-90deg);
+		-ms-transform: rotate(-90deg);
+		-o-transform: rotate(-90deg);
+		transform: rotate(-90deg);
 
-			word-break: keep-all;
-			line-height: 1.2;
-			max-width: 95px;
-			overflow: hidden;
-			text-overflow: ellipsis;
-			
-			/* Markazga joylash uchun */
-			position: relative;
-			left: 0;
-			right: 0;
-			margin: auto;
-		}
-		.product-name-short {
-			font-size: 9px;
-			line-height: 1.2;
-			font-weight: bold;
-		}
+		white-space: wrap;       /* birinchi bir qatorda */
+		width: 95px;               /* aniq kenglik (burilgandan keyin balandlik) */
+		overflow: visible;         /* hamma ko'rinsin */
+	}
+	
+	/* Maxsulot nomlari uchun */
+	.product-name-short {
+		font-size: 6px;
+		line-height: 1;
+		white-space: normal;       /* ichki span bir necha qator bo'lishi mumkin */
+		word-wrap: break-word;     /* uzun so'zlarni bo'lish */
+		display: inline-block;
+		max-width: 100px;          /* burilishdan oldin kenglik */
+		text-align: center;
+	}
 		
 		/* Maxsulot ustunlari uchun */
 		.product-column {
