@@ -73,23 +73,20 @@
 		-ms-transform: rotate(-90deg);
 		-o-transform: rotate(-90deg);
 		transform: rotate(-90deg);
-		transform-origin: center center;
-		
-		white-space: normal;       /* bir necha qatorga ruxsat */
-		max-width: 100px;          /* burilishdan oldin maksimal kenglik */
-		width: auto;               /* avtomatik kenglik */
+
+		white-space: wrap;       /* birinchi bir qatorda */
+		width: 95px;               /* aniq kenglik (burilgandan keyin balandlik) */
 		overflow: visible;         /* hamma ko'rinsin */
-		word-wrap: break-word;     /* uzun so'zlarni bo'lish */
 	}
 	
 	/* Maxsulot nomlari uchun */
 	.product-name-short {
 		font-size: 6px;
 		line-height: 1;
-		white-space: normal;       /* bir necha qatorga ruxsat */
+		white-space: normal;       /* ichki span bir necha qator bo'lishi mumkin */
 		word-wrap: break-word;     /* uzun so'zlarni bo'lish */
 		display: inline-block;
-		max-width: 100px;          /* burilishdan oldin maksimal kenglik */
+		max-width: 100px;          /* burilishdan oldin kenglik */
 		text-align: left;
 	}
 		
