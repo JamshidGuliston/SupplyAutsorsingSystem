@@ -3061,6 +3061,20 @@ class TechnologController extends Controller
 					}
 	
 				}
+
+                foreach($products as $row){
+                    if(!isset($prevmods[$row->id])){
+                        $prevmods[$row->id] = 0;
+                    }
+                    if(!isset($plusproducts[$row->id])){
+                        $plusproducts[$row->id] = 0;
+                    }
+                    if(!isset($minusproducts[$row->id])){
+                        $minusproducts[$row->id] = 0;
+                    }
+                    $minusproducts[$row->id] = ($plusproducts[$row->id] - $minusproducts[$row->id] < 0) ? ($plusproducts[$row->id] - $minusproducts[$row->id]) + $minusproducts[$row->id] : $minusproducts[$row->id];
+                }
+                
 				$groups = Groupweight::where('kindergarden_id', $kid->id)
 					->where('day_id', $day->id)
 					->get();
