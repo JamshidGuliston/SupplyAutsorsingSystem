@@ -74,18 +74,21 @@
 		-o-transform: rotate(-90deg);
 		transform: rotate(-90deg);
 
-		white-space: normal;       /* so'zlarni kerakli joyda o'rash */
-		word-break: normal;        /* oddiy so'z bo'linishi */
-		line-height: 1.2;          /* qatorlar orasidagi masofa */
-		max-width: 90px;           /* kerak bo'lsa cheklash */
+		white-space: nowrap;       /* birinchi bir qatorda */
+		width: 95px;               /* aniq kenglik (burilgandan keyin balandlik) */
+		overflow: visible;         /* hamma ko'rinsin */
 	}
-		
-		/* Maxsulot nomlari uchun */
-		.product-name-short {
-			font-size: 6px;
-			line-height: 1.0;
-			
-		}
+	
+	/* Maxsulot nomlari uchun */
+	.product-name-short {
+		font-size: 6px;
+		line-height: 1.1;
+		white-space: normal;       /* ichki span bir necha qator bo'lishi mumkin */
+		word-wrap: break-word;     /* uzun so'zlarni bo'lish */
+		display: inline-block;
+		max-width: 200px;          /* burilishdan oldin kenglik */
+		text-align: left;
+	}
 		
 		/* Qator balandligini kamaytirish */
 		tr {
