@@ -129,7 +129,7 @@
 		<thead>
 			<tr>
 				<th rowspan="2">№</th>
-				<th rowspan="2">Махсулотлар номи ва Ўлчов бирлиги</th>
+				<th colspan="2">Махсулотлар номи ва Ўлчов бирлиги</th>
 				<th rowspan="2">сана</th>
 				@foreach($days as $day)
 					<?php
