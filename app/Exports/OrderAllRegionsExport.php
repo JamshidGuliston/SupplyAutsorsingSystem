@@ -12,6 +12,7 @@ use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 use PhpOffice\PhpSpreadsheet\Style\Border;
 use PhpOffice\PhpSpreadsheet\Style\Fill;
 use PhpOffice\PhpSpreadsheet\Style\Alignment;
+use PhpOffice\PhpSpreadsheet\Cell\Coordinate;
 
 class OrderAllRegionsExport implements FromCollection, WithHeadings, WithStyles, WithTitle
 {
@@ -177,10 +178,15 @@ class OrderAllRegionsExport implements FromCollection, WithHeadings, WithStyles,
     public function styles(Worksheet $sheet)
     {
         $lastRow = count($this->items) + 1;
-        $lastColumn = chr(67 + count($this->regions) + 2); // C + regions count + 3 yangi ustun
-        $miqdoriColumn = chr(67 + count($this->regions)); // Миқдори ustuni
-        $qoldiqColumn = chr(67 + count($this->regions) + 1); // Қолдиқ ustuni
-        $farqColumn = chr(67 + count($this->regions) + 2); // Керak бўлади ustuni
+        // 3 = A,B,C | regions + 3 yangi ustun (Miqdori, Qoldiq, Kerak bo'ladi)
+        $lastColumnIndex = 3 + count($this->regions) + 3;
+        $lastColumn = Coordinate::stringFromColumnIndex($lastColumnIndex);
+        $miqdoriColumnIndex = 3 + count($this->regions) + 1;
+        $qoldiqColumnIndex = 3 + count($this->regions) + 2;
+        $farqColumnIndex = 3 + count($this->regions) + 3;
+        $miqdoriColumn = Coordinate::stringFromColumnIndex($miqdoriColumnIndex);
+        $qoldiqColumn = Coordinate::stringFromColumnIndex($qoldiqColumnIndex);
+        $farqColumn = Coordinate::stringFromColumnIndex($farqColumnIndex);
         
         // Header style
         $sheet->getStyle('A1:' . $lastColumn . '1')->applyFromArray([
@@ -239,8 +245,9 @@ class OrderAllRegionsExport implements FromCollection, WithHeadings, WithStyles,
         $sheet->getColumnDimension('B')->setWidth(35);
         $sheet->getColumnDimension('C')->setWidth(10);
         
-        // Region ustunlari
-        foreach(range('D', chr(66 + count($this->regions))) as $col) {
+        // Region ustunlari (D dan boshlab)
+        for($i = 4; $i <= 3 + count($this->regions); $i++) {
+            $col = Coordinate::stringFromColumnIndex($i);
             $sheet->getColumnDimension($col)->setWidth(10);
         }
         

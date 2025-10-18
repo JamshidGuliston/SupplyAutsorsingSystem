@@ -14,6 +14,7 @@ use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 use PhpOffice\PhpSpreadsheet\Style\Border;
 use PhpOffice\PhpSpreadsheet\Style\Fill;
 use PhpOffice\PhpSpreadsheet\Style\Alignment;
+use PhpOffice\PhpSpreadsheet\Cell\Coordinate;
 
 class OrderTitleExport implements FromCollection, WithHeadings, WithStyles, WithTitle, WithEvents
 {
@@ -145,7 +146,9 @@ class OrderTitleExport implements FromCollection, WithHeadings, WithStyles, With
     public function styles(Worksheet $sheet)
     {
         $lastRow = count($this->productData) + 1;
-        $lastColumn = chr(67 + count($this->kindergartens)); // C + kindergartens count
+        // 3 = A,B,C | kindergartens + 1 = Jami ustuni
+        $lastColumnIndex = 3 + count($this->kindergartens) + 1;
+        $lastColumn = Coordinate::stringFromColumnIndex($lastColumnIndex);
         
         // Header style
         $sheet->getStyle('A1:' . $lastColumn . '1')->applyFromArray([
@@ -188,8 +191,9 @@ class OrderTitleExport implements FromCollection, WithHeadings, WithStyles, With
         $sheet->getColumnDimension('B')->setWidth(35);
         $sheet->getColumnDimension('C')->setWidth(10);
         
-        // Bog'cha ustunlari
-        foreach(range('D', $lastColumn) as $col) {
+        // Bog'cha ustunlari (D dan boshlab oxirigacha)
+        for($i = 4; $i < $lastColumnIndex; $i++) {
+            $col = Coordinate::stringFromColumnIndex($i);
             $sheet->getColumnDimension($col)->setWidth(8);
         }
         
