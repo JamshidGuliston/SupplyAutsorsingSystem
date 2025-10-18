@@ -377,8 +377,19 @@ class AccountantController extends Controller
             }
         });
        
-        $dompdf = \PDF::loadView('pdffile.accountant.nakapitwithoutcost', compact('age', 'days', 'nakproducts', 'kindgar', 'protsent'));
-        return $dompdf->stream('nakapitwithoutcost.pdf', ['Attachment' => 0]);
+        $pdf = \PDF::loadView('pdffile.accountant.nakapitwithoutcost', compact('age', 'days', 'nakproducts', 'kindgar', 'protsent'));
+        $pdf->setOption('page-size', 'A4');
+        $pdf->setOption('orientation', 'landscape');
+        $pdf->setOption('margin-top', 10);
+        $pdf->setOption('margin-bottom', 10);
+        $pdf->setOption('margin-left', 10);
+        $pdf->setOption('margin-right', 10);
+        $pdf->setOption('encoding', 'UTF-8');
+        $pdf->setOption('enable-local-file-access', true);
+        $pdf->setOption('print-media-type', true);
+        $pdf->setOption('disable-smart-shrinking', false);
+        
+        return $pdf->stream('nakapitwithoutcost.pdf', ['Attachment' => 0]);
     }
 
     public function kindreportworker(Request $request, $id){
