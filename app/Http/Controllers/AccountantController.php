@@ -2545,7 +2545,7 @@ class AccountantController extends Controller
         $invoice_date = $days->last()->created_at->format('d.m.Y');
         
         // Snappy PDF yaratish
-        $pdf = \PDF::loadView('pdffile.accountant.schotfakturthird', compact('contract_data', 'costs', 'days', 'kindgar', 'autorser', 'buyurtmachi', 'invoice_number', 'invoice_date', 'total_number_children'));
+        $pdf = \PDF::loadView('pdffile.accountant.schotfakturthird', compact('contract_data', 'region', 'costs', 'days', 'kindgar', 'autorser', 'buyurtmachi', 'invoice_number', 'invoice_date', 'total_number_children'));
         
         // PDF sozlamalari
         $pdf->setOption('page-size', 'A4');

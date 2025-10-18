@@ -261,7 +261,7 @@
         <div class="footer-section">
             <div class="signature-title">Аутсорсер:</div>
             <div class="signature-info">{{ $autorser['company_name'] ?? 'ASIA BEST DISTRIBUTION SERVICE' }}</div>
-            <div class="signature-info">директори: Б.Тажибaев</div>
+            <div class="signature-info">директори: $autorser['company_director']</div>
             <div class="signature-line"></div>
         </div>
         

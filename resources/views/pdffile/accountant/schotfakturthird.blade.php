@@ -359,10 +359,20 @@
     <!-- Footer qismi -->
     <div class="footer">
         <div class="footer-section">
-            <div class="signature-label">Аутсорсер директори: ____________________________</div>
+            <span class="signature-label">Топширди:</span>
+            <br/>
+            <span class="signature-label">{{ $autorser['company_name'] ?? '___________________________' }}</span>
+            <br/>
+            <span class="signature-label">___________________________</span>
+            <br/>
+            <div class="signature-label">Аутсорсер директори: ____________________________ {{ $autorser['company_director'] }}</div>
+            <br/>
+            <div class="signature-label"> Бош хисобчиси: ___________________________ </div>
         </div>
         <div class="footer-section">
-            <div class="signature-label">Буюртмачи директори: ____________________________</div>
+            <span class="signature-label">Қабул қилди:</span>
+            <br/>
+            <div class="signature-label"> {{ $kindgar->number_of_org .'-сонли ДМТТ ' }} директори: ___________    ______________________</div>
         </div>
     </div>
 </body>
