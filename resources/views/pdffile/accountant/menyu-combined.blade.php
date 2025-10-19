@@ -87,6 +87,21 @@
 			overflow: visible;         /* hamma ko'rinsin */
 			font-size: 8px;
 		}
+		.vrt-headermealtime {
+			display: inline-block;
+			text-align: center;
+			-webkit-transform: rotate(-90deg);
+			-moz-transform: rotate(-90deg);
+			-ms-transform: rotate(-90deg);
+			-o-transform: rotate(-90deg);
+			transform: rotate(-90deg);
+			height: 40px;
+			width: 55px;
+			white-space: normal;  
+			text-align: center;     /* birinchi bir qatorda */
+			overflow: visible;         /* hamma ko'rinsin */
+			font-size: 8px;
+		}
 
 		
 		/* Background colorlarni olib tashlash */
@@ -199,7 +214,7 @@
 								?>
 			                        <tr style="{{ $bg_color }}">
 			                        	@if($loop->index == 1)
-												<th scope="row" rowspan="<?php echo 2 * (count($row)-1); ?>" class='vrt-header' style="height: 60px;">
+												<th scope="row" rowspan="<?php echo 2 * (count($row)-1); ?>" class='vrt-headermealtime' style="height: 60px;">
 													<span class="mealtime-header">{{ $row[0]['mealtime'] }}</span>
 												</th>
 			                            @endif
