@@ -2762,16 +2762,6 @@ class AccountantController extends Controller
                         }
                     }
                     
-                    return view('pdffile.accountant.menyu-combined', [
-                        'protsent' => $protsent,
-                        'day' => $day_info,
-                        'productallcount' => $productallcount,
-                        'workerproducts' => $workerproducts,
-                        'menu' => $menu,
-                        'menuitem' => $nextdaymenuitem,
-                        'products' => $products,
-                        'workerfood' => $workerfood
-                    ]);
                     // Menyu PDF yaratish - yangi combined blade fayldan
                     $pdf_menu = \PDF::loadView('pdffile.accountant.menyu-combined', [
                         'protsent' => $protsent,
