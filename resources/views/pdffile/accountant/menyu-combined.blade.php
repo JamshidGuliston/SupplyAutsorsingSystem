@@ -8,7 +8,7 @@
 	<meta name="Description" content="Enter your description here"/>
 	<title>Title</title>
 	<style>
-		@page { margin: 10mm 10mm 10mm 10mm; }
+		@page { margin: 3mm 3mm 3mm 3mm; }
 		body{
 			font-family: DejaVu Sans;
 			font-size: 7px;
@@ -42,7 +42,8 @@
 		table{
 			border-collapse: collapse;
 			border: 1px solid black;
-			width: 100%;	
+			width: 100%;
+			table-layout: fixed;
 		}
 		thead{
 			border: 1px solid black;
@@ -91,8 +92,8 @@
 			line-height: 1.0;
 			white-space: normal;       /* bir qatorda */
 			display: inline-block;
-			width: 55px;               /* aniq kenglik (aylantirilganda balandlik) */
-			max-width: 55px;           /* maksimal kenglik */
+			width: 50px;               /* aniq kenglik (aylantirilganda balandlik) */
+			max-width: 50px;           /* maksimal kenglik */
 			text-align: center;
 			overflow: hidden;
 			word-wrap: break-word;
@@ -106,8 +107,8 @@
 		
 		/* Maxsulot ustunlari uchun */
 		.product-column {
-			width: 2% !important;
-			max-width: 2%;
+			width: 1.5% !important;
+			max-width: 1.5%;
 			overflow: hidden;
 			padding: 0px !important;
 			height: 100px;
@@ -115,11 +116,11 @@
 
 		/* Ovqat vaqti uchun */
 		.mealtime-header {
-			font-size: 5px;
+			font-size: 4px;
 			line-height: 1.0;
 			white-space: nowrap;
 			display: inline-block;
-			width: 50px;
+			width: 40px;
 			text-align: center;
 			overflow: hidden;
 		}
@@ -167,9 +168,9 @@
                     <table style="width:100%; table-layout: fixed; margin-top: 25px;">
                         <thead>
                           <tr>
-                          	 <th style="width:1.2%;"></th>
-                          	 <th style="width:9%;">Махсулотлар номи</th>
-                          	 <th class='vrt-header product-column' style="width:1.5%;"><span class="product-name-short">Таом вазни</span></th>
+                          	 <th style="width:1%;"></th>
+                          	 <th style="width:8%;">Махсулотлар номи</th>
+                          	 <th class='vrt-header product-column' style="width:1.2%;"><span class="product-name-short">Таом вазни</span></th>
 							   <?php $col = 0; ?>
 							 @foreach($products as $product)
 							 	@if(isset($product['yes']))
