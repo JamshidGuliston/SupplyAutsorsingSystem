@@ -108,7 +108,7 @@
 		thead tr,
 		thead th,
 		thead td {
-			background-color:rgb(243, 243, 243) !important; /* Kulrang */
+			background-color:rgb(247, 247, 247) !important; /* Kulrang */
 		}
 		
 		/* Footer qatorlari uchun och sariq rang */
