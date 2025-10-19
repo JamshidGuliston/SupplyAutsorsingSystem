@@ -104,11 +104,16 @@
 			padding: 0px !important;
 		}
 		
-		/* Maxsulotlar va taom nomlari uchun oq rang */
+		/* Maxsulotlar va taom nomlari uchun kulrang */
 		thead tr,
 		thead th,
 		thead td {
-			background-color: #ffffff !important; /* Oq rang */
+			background-color: #d3d3d3 !important; /* Kulrang */
+		}
+		
+		/* Footer qatorlari uchun och sariq rang */
+		.footer-row {
+			background-color: #fffacd !important; /* Och sariq */
 		}
 	</style>
 </head>
@@ -253,7 +258,7 @@
 								
 								@endforeach
 							@endforeach
-									<tr style="border-top: 2px solid black;">
+									<tr class="footer-row" style="border-top: 2px solid black;">
 										<!-- <th scope="row" rowspan="5" class='vrt-header' style="padding: 0px; border-top: 2px solid black"><span>Болалар</span></th> -->
 										<td scope="row" colspan="3" class="align-baseline" style="padding: 0px; border-top: 1px solid black">{{ $menu[0]['age_name'].'ли'  }} бир бола учун гр</td>
 										<?php
@@ -273,7 +278,7 @@
                     					}
 			                            ?>
 									</tr>
-									<tr>
+									<tr class="footer-row">
 										<td scope="row" colspan="3" class="align-baseline" style="padding: 0px;">Жами миқдори(кг,хис)</td>
 										<?php
 										for($t = 0; $t < count($products); $t++){
@@ -296,7 +301,7 @@
 			                            ?>
 									</tr>
 								@if(env('WORKERSFORMENU') == "true")
-									<tr style="border-top: 1px solid black;">
+									<tr class="footer-row" style="border-top: 1px solid black;">
 										<td scope="row" colspan="3" class="align-baseline" style="padding: 0px; border-top: 1px solid black">1 та ходим учун гр</td>
 										<?php
 			                            for($t = 0; $t < count($products); $t++){
@@ -313,7 +318,7 @@
                     					}
 			                            ?>
 									</tr>
-									<tr>
+									<tr class="footer-row">
 										<td scope="row" colspan="3" class="align-baseline" style="padding: 0px;">Жами миқдори (кг.хис)</td>
 										<?php
 			                            for($t = 0; $t < count($products); $t++){
@@ -336,8 +341,8 @@
                     					}
 			                            ?>
 									</tr>
-									<tr>
-										<td scope="row" colspan="3" class="align-baseline" style="padding: 0px;">Жами сарфланган махулот миқдори</td>
+									<tr class="footer-row">
+										<td scope="row" colspan="3" class="align-baseline" style="padding: 0px;">Жами сарфланган махcулот миқдори</td>
 										<?php
 										for($t = 0; $t < count($products); $t++){
 											if(isset($products[$t]['yes']) and isset($total_weight[$products[$t]['id']])){
