@@ -204,7 +204,7 @@
 								?>
 			                        <tr style="{{ $bg_color }}">
 			                        	@if($loop->index == 1)
-												<th scope="row" rowspan="<?php echo 2 * (count($row)-1); ?>" class='vrt-header product-column' style="height: 60px; background-color: #ffffff;">
+												<th scope="row" rowspan="<?php echo 2 * (count($row)-1); ?>" class='vrt-header' style="height: 60px; background-color: #ffffff;">
 													<span class="product-name-short">{{ $row[0]['mealtime'] }}</span>
 												</th>
 			                            @endif
