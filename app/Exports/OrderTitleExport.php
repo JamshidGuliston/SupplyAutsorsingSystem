@@ -224,7 +224,7 @@ class OrderTitleRegionExport implements \Maatwebsite\Excel\Concerns\FromArray, \
                 }
                 
                 $summ += $displayValue;
-                $row[] = $displayValue > 0 ? number_format($displayValue, 0, '.', '') : '';
+                $row[] = $displayValue > 0 ? $displayValue : '';
             }
             
             // Jami
@@ -236,7 +236,7 @@ class OrderTitleRegionExport implements \Maatwebsite\Excel\Concerns\FromArray, \
         // Oxirgi qator: Jami yig'indisi
         $totalRow = ['', 'Жами', ''];
         foreach($this->kindergartens as $kindergarten) {
-            $totalRow[] = number_format($counts[$kindergarten['id']], 0, '.', '');
+            $totalRow[] = number_format($counts[$kindergarten['id']], 1, '.', '');
         }
         $totalRow[] = '';
         $data[] = $totalRow;
