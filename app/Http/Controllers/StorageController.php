@@ -1238,7 +1238,7 @@ class StorageController extends Controller
                         }
                         else{
                             if($prod->package_size != null){
-                                $result = round($actual_weight / $prod->package_size) * $prod->package_size;
+                                $result = ceil($actual_weight / $prod->package_size) * $prod->package_size;
                             }
                             else{
                                 $result = round($actual_weight, 1);
