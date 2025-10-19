@@ -174,8 +174,8 @@
 							</div>
 							<div class="column_top">
 								<h5><b>ТАСДИҚЛАЙМАН</b></h5>
-								<p style="text-align: center;">{{ env('company_name') }}</p>
-								<p>Рахбари ______________________</p>
+								<p style="text-align: center;">{{ env('COMPANY_NAME') }}</p>
+								<p>Рахбари ______________________ {{ env('COMPANY_DIRECTOR') }}</p>
 							</div>
 					</div>
 				@else
