@@ -12,7 +12,7 @@
 		body{
 			font-family: DejaVu Sans;
 			margin: 10px 10px 10px 15px;
-			font-size: 9px;
+			font-size: 8px;
 			background-position: top left;
 			background-repeat: no-repeat;
 			background-size: 100%;
@@ -80,24 +80,24 @@
 			-ms-transform: rotate(-90deg);
 			-o-transform: rotate(-90deg);
 			transform: rotate(-90deg);
-			white-space: normal;
-			vertical-align: middle;
-			width: 150px;
+
+			white-space: normal;  
+			text-align: center;     /* birinchi bir qatorda */
+			width: 100px;               /* aniq kenglik (burilgandan keyin balandlik) */
+			overflow: visible;         /* hamma ko'rinsin */
 			font-size: 8px;
-			overflow: visible;
 		}
 
 		
 		/* Background colorlarni olib tashlash */
 		.product-name-short {
-			font-size: 9px;
+			font-size: 4.5px;
 			line-height: 1.0;
 			white-space: normal;       /* bir qatorda */
 			display: inline-block;
-			width: 130px;               /* aniq kenglik (aylantirilganda balandlik) */
-			max-width: 150px;           /* maksimal kenglik */
+			width: 55px;               /* aniq kenglik (aylantirilganda balandlik) */
+			max-width: 55px;           /* maksimal kenglik */
 			text-align: center;
-			vertical-align: middle;
 			overflow: hidden;
 			word-wrap: break-word;
 			max-height: 15px;          /* balandlikni cheklash */
@@ -110,19 +110,23 @@
 		
 		/* Maxsulot ustunlari uchun */
 		.product-column {
-			vertical-align: middle;
-			text-align: center;
+			width: 2% !important;
+			max-width: 2%;
 			overflow: hidden;
 			padding: 0px !important;
+			height: 95px;
+			vertical-align: middle;
+			text-align: center;
+			position: relative;
 		}
 
 		/* Ovqat vaqti uchun */
 		.mealtime-header {
-			font-size: 8px;
+			font-size: 5px;
 			line-height: 1.0;
 			white-space: nowrap;
 			display: inline-block;
-			width: 40px;
+			width: 50px;
 			text-align: center;
 			overflow: hidden;
 		}
