@@ -66,9 +66,11 @@
 			text-align: center;
 			vertical-align: middle;
 			font-size: 5.5px;
-			line-height: 1.1;
-			word-wrap: break-word;
+			line-height: 1.0;
 			padding: 2px !important;
+			height: 95px;
+			writing-mode: vertical-rl;
+			text-orientation: mixed;
 		}
 		
 		/* Qator balandligini kamaytirish */
@@ -76,15 +78,13 @@
 			height: 20px;
 		}
 		
-		/* Maxsulot ustunlari uchun */
+		/* Maxsulot ustunlari uchun - vertikal */
 		.product-column {
-			width: 2% !important;
-			max-width: 2%;
+			width: 1.6% !important;
+			max-width: 1.6%;
 			font-size: 5px;
 			line-height: 1.0;
-			word-wrap: break-word;
 			padding: 1px !important;
-			vertical-align: top;
 		}
 		
 		/* Maxsulotlar va taom nomlari uchun kulrang */
@@ -92,7 +92,7 @@
 		thead th,
 		thead td {
 			background-color:rgb(247, 247, 247) !important;
-			height: 40px;
+			height: 95px;
 		}
 		
 		/* Footer qatorlari uchun och sariq rang */
