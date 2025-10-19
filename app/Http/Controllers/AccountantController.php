@@ -2691,16 +2691,9 @@ class AccountantController extends Controller
                     
                     if($menu->count() == 0) continue;
                     
-                    // Har safar yangi products olish (Collection sifatida)
-                    $products = Product::orderBy('sort', 'ASC')->get()->map(function($product) {
-                        return [
-                            'id' => $product->id,
-                            'product_name' => $product->product_name,
-                            'sort' => $product->sort,
-                            'div' => $product->div,
-                            'size_name_id' => $product->size_name_id
-                        ];
-                    })->toArray();
+                    // Har safar yangi products olish (Collection sifatida - activmenuPDF dagi kabi)
+                    $products = Product::where('hide', 1)
+                        ->orderBy('sort', 'ASC')->get();
                     
                     $menuitem = Active_menu::where('day_id', $day->id)
                                     ->where('title_menu_id', $menu[0]['kingar_menu_id'])
@@ -2781,17 +2774,21 @@ class AccountantController extends Controller
                         'workerfood' => $workerfood
                     ]);
                     
-                    $pdf_menu->setOption('page-size', 'A4');
-                    $pdf_menu->setOption('orientation', 'landscape');
-                    $pdf_menu->setOption('encoding', 'UTF-8');
-                    $pdf_menu->setOption('margin-top', 3);
-                    $pdf_menu->setOption('margin-bottom', 3);
-                    $pdf_menu->setOption('margin-left', 3);
-                    $pdf_menu->setOption('margin-right', 3);
-                    $pdf_menu->setOption('enable-local-file-access', true);
-                    $pdf_menu->setOption('print-media-type', true);
-                    $pdf_menu->setOption('disable-smart-shrinking', false);
-                    $pdf_menu->setOption('zoom', 0.75);
+                    // PDF sozlamalari - activmenuPDF dagi kabi
+                    $pdf_menu->setPaper('A4', 'landscape');
+                    $pdf_menu->setOptions([
+                        'encoding' => 'UTF-8',
+                        'defaultFont' => 'DejaVu Sans',
+                        'dpi' => 150,
+                        'image-quality' => 100,
+                        'margin-top' => 5,
+                        'margin-right' => 5,
+                        'margin-bottom' => 5,
+                        'margin-left' => 5,
+                        'enable-local-file-access' => true,
+                        'print-media-type' => true,
+                        'disable-smart-shrinking' => false
+                    ]);
                     
                     $file_menu = $tempDir . '/0_menu_' . $day->id . '_' . $age->id . '_' . $menu_counter . '_' . $timestamp . '.pdf';
                     file_put_contents($file_menu, $pdf_menu->output());
