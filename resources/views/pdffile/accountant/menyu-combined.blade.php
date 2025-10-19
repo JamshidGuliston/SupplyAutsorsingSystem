@@ -8,14 +8,14 @@
 	<meta name="Description" content="Enter your description here"/>
 	<title>Title</title>
 	<style>
-		@page { margin: 10mm 10mm 10mm 10mm; }
+		@page { margin: 10mm 10mm 10mm 15mm; }
 		body{
 			font-family: DejaVu Sans;
-			font-size: 7px;
+			font-size: 10px;
 			background-position: top left;
 			background-repeat: no-repeat;
 			background-size: 100%;
-			width:95%;
+			width:98%;
 		}
 		.column {
 			float: left;
@@ -81,19 +81,19 @@
 			transform: rotate(-90deg);
 			white-space: normal;
 			width: 100px;
-			font-size: 5px;
+			font-size: 10px;
 			overflow: visible;
 		}
 
 		
 		/* Background colorlarni olib tashlash */
 		.product-name-short {
-			font-size: 4.5px;
+			font-size: 9px;
 			line-height: 1.0;
 			white-space: normal;       /* bir qatorda */
 			display: inline-block;
-			width: 50px;               /* aniq kenglik (aylantirilganda balandlik) */
-			max-width: 50px;           /* maksimal kenglik */
+			width: 95px;               /* aniq kenglik (aylantirilganda balandlik) */
+			max-width: 100px;           /* maksimal kenglik */
 			text-align: center;
 			overflow: hidden;
 			word-wrap: break-word;
@@ -116,7 +116,7 @@
 
 		/* Ovqat vaqti uchun */
 		.mealtime-header {
-			font-size: 4px;
+			font-size: 8px;
 			line-height: 1.0;
 			white-space: nowrap;
 			display: inline-block;
