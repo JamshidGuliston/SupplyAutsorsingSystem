@@ -79,13 +79,15 @@
 		
 		/* Maxsulot nomlari uchun */
 		.product-name-short {
-			font-size: 5px;
+			font-size: 4.5px;
 			line-height: 1.0;
 			white-space: normal;       /* bir qatorda */
 			display: inline-block;
-			max-width: 95px;          /* burilishdan oldin kenglik */
+			max-width: 90px;          /* burilishdan oldin kenglik */
 			text-align: center;
-			overflow: visible;
+			overflow: hidden;
+			word-wrap: break-word;
+			max-height: 18px;
 		}
 		
 		/* Qator balandligini kamaytirish */
@@ -95,10 +97,13 @@
 		
 		/* Maxsulot ustunlari uchun */
 		.product-column {
-			width: 1.6% !important;
-			max-width: 1.6%;
+			width: 1.8% !important;
+			max-width: 1.8%;
 			overflow: hidden;
 			padding: 0px !important;
+			height: 100px;
+			vertical-align: middle;
+			position: relative;
 		}
 		
 		/* Maxsulotlar va taom nomlari uchun kulrang */
