@@ -63,18 +63,12 @@
 			padding: 0px;
 		}
 		.vrt-header {
-			display: inline-block;
 			text-align: center;
-			-webkit-transform: rotate(-90deg);
-			-moz-transform: rotate(-90deg);
-			-ms-transform: rotate(-90deg);
-			-o-transform: rotate(-90deg);
-			transform: rotate(-90deg);
-
-			white-space: normal;       /* birinchi bir qatorda */
-			width: 100px;               /* aniq kenglik (burilgandan keyin balandlik) */
-			overflow: visible;         /* hamma ko'rinsin */
-			font-size: 6.5px;
+			vertical-align: middle;
+			font-size: 5.5px;
+			line-height: 1.1;
+			word-wrap: break-word;
+			padding: 2px !important;
 		}
 		
 		/* Qator balandligini kamaytirish */
@@ -84,12 +78,13 @@
 		
 		/* Maxsulot ustunlari uchun */
 		.product-column {
+			width: 2% !important;
+			max-width: 2%;
+			font-size: 5px;
 			line-height: 1.0;
-			white-space: normal;       /* bir qatorda */
-			display: inline-block;
-			max-width: 95px;          /* burilishdan oldin kenglik */
-			text-align: center;
-			overflow: visible;
+			word-wrap: break-word;
+			padding: 1px !important;
+			vertical-align: top;
 		}
 		
 		/* Maxsulotlar va taom nomlari uchun kulrang */
