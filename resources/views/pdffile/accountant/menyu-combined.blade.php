@@ -12,7 +12,7 @@
 		body{
 			font-family: DejaVu Sans;
 			margin: 10px 10px 10px 15px;
-			font-size: 11px;
+			font-size: 9px;
 			background-position: top left;
 			background-repeat: no-repeat;
 			background-size: 100%;
@@ -82,7 +82,7 @@
 			transform: rotate(-90deg);
 			white-space: normal;
 			width: 100px;
-			font-size: 10px;
+			font-size: 8px;
 			overflow: visible;
 		}
 
@@ -98,7 +98,7 @@
 			text-align: center;
 			overflow: hidden;
 			word-wrap: break-word;
-			max-height: 15px;          /* balandlikni cheklash */
+			max-height: 20px;          /* balandlikni cheklash */
 			text-overflow: ellipsis;
 		}
 		/* Qator balandligini kamaytirish */
@@ -108,11 +108,8 @@
 		
 		/* Maxsulot ustunlari uchun */
 		.product-column {
-			width: 1.5% !important;
-			max-width: 1.5%;
 			overflow: hidden;
 			padding: 0px !important;
-			height: 100px;
 		}
 
 		/* Ovqat vaqti uchun */
