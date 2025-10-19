@@ -6,18 +6,15 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<meta http-equiv="X-UA-Compatible" content="ie=edge">
 	<meta name="Description" content="Enter your description here"/>
-	 <!--<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.6.0/css/bootstrap.min.css"> -->
-	<!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"> -->
 	<title>Title</title>
 	<style>
-		@page { margin: 10mm 5mm 10mm 10mm; }
+		@page { margin: 10mm 10mm 10mm 10mm; }
 		body{
 			font-family: DejaVu Sans;
 			font-size: 7px;
 			background-position: top left;
 			background-repeat: no-repeat;
 			background-size: 100%;
-			/* padding: 300px 100px 10px 100px; */
 			width:100%;
 		}
 		.column {
@@ -74,7 +71,8 @@
 			-o-transform: rotate(-90deg);
 			transform: rotate(-90deg);
 
-			white-space: normal;       /* birinchi bir qatorda */
+			white-space: normal;  
+			text-align: center;     /* birinchi bir qatorda */
 			width: 100px;               /* aniq kenglik (burilgandan keyin balandlik) */
 			overflow: visible;         /* hamma ko'rinsin */
 			font-size: 5.5px;
@@ -82,13 +80,28 @@
 		
 		/* Maxsulot nomlari uchun */
 		.product-name-short {
-			font-size: 5px;
+			font-size: 4.5px;
 			line-height: 1.0;
 			white-space: normal;       /* bir qatorda */
 			display: inline-block;
-			max-width: 95px;          /* burilishdan oldin kenglik */
+			width: 55px;               /* aniq kenglik (aylantirilganda balandlik) */
+			max-width: 55px;           /* maksimal kenglik */
 			text-align: center;
-			overflow: visible;
+			overflow: hidden;
+			word-wrap: break-word;
+			max-height: 15px;          /* balandlikni cheklash */
+			text-overflow: ellipsis;
+		}
+		
+		/* Ovqat vaqti uchun */
+		.mealtime-header {
+			font-size: 5px;
+			line-height: 1.0;
+			white-space: nowrap;
+			display: inline-block;
+			width: 50px;
+			text-align: center;
+			overflow: hidden;
 		}
 		
 		/* Qator balandligini kamaytirish */
@@ -98,17 +111,26 @@
 		
 		/* Maxsulot ustunlari uchun */
 		.product-column {
-			width: 1.6% !important;
-			max-width: 1.6%;
+			width: 2% !important;
+			max-width: 2%;
 			overflow: hidden;
 			padding: 0px !important;
+			height: 95px;
+			vertical-align: middle;
+			text-align: center;
+			position: relative;
 		}
 		
 		/* Maxsulotlar va taom nomlari uchun kulrang */
+		thead tr,
+		thead th,
+		thead td {
+			background-color:rgb(247, 247, 247) !important;
+		}
 		
 		/* Footer qatorlari uchun och sariq rang */
 		.footer-row {
-			background-color:rgb(253, 250, 221) !important; /* Och sariq */
+			background-color:rgb(253, 250, 221) !important;
 		}
 	</style>
 </head>
@@ -120,7 +142,6 @@
 				@if(env('WORKERSFORMENU') == "true")
 					<div class="row">
 							<div class="column_top">
-								<!-- ТАСДИҚЛАЙМАН -->
 								<h5><b>ТАСДИҚЛАЙМАН</b></h5>
 								<p style="text-align: center;">{{ $menu[0]['kingar_name'] }}</p>
 								<p>Рахбари ______________________</p>
@@ -130,13 +151,12 @@
 								echo "Боғча номи: <b>".$menu[0]['kingar_name']."</b><br/>";
 								echo "Таомнома: <b>".$menu[0]['menu_name'] ?? "" ."</b><br/>";
 								echo  ' Cана: <b>'.$day['day_number'].'.'.$day['month_name'].' '.$day['year_name'].'й.</b><br/>  ' . $menu[0]['age_name'] . "ли болалар сони: <b>" . $menu[0]['kingar_children_number'].";</b>";
-								if($workerfood[0]['worker_age_id'] == $menu[0]['king_age_name_id']){
+								if(isset($workerfood[0]) && $workerfood[0]['worker_age_id'] == $menu[0]['king_age_name_id']){
 									echo "  ходимлар сони: <b>".$menu[0]['workers_count'].";</b>  ";	
 								}
 							?>
 							</div>
 							<div class="column_top">
-								<!-- ТАСДИҚЛАЙМАН -->
 								<h5><b>ТАСДИҚЛАЙМАН</b></h5>
 								<p style="text-align: center;">{{ env('company_name') }}</p>
 								<p>Рахбари ______________________</p>
@@ -147,7 +167,7 @@
 						echo "Боғча номи: <b>".$menu[0]['kingar_name']."</b><br/>";
 						echo "Таомнома: <b>".$menu[0]['menu_name']."</b><br/>";
 						echo  'Cана: <b>'.$day['day_number'].'.'.$day['month_name'].' '.$day['year_name'].'й.</b><br/>  ' . $menu[0]['age_name'] . "ли болалар сони: <b>" . $menu[0]['kingar_children_number'].";</b>";
-						if(isset($workerfood[0]['worker_age_id']) and $workerfood[0]['worker_age_id'] == $menu[0]['king_age_name_id']){
+						if(isset($workerfood[0]) && isset($workerfood[0]['worker_age_id']) && $workerfood[0]['worker_age_id'] == $menu[0]['king_age_name_id']){
 							echo "  ходимлар сони: <b>".$menu[0]['workers_count'].";</b>  ";	
 						}
 					?>
@@ -157,40 +177,30 @@
                           <tr>
                           	 <th style="width:1.2%;"></th>
                           	 <th style="width:9%;">Махсулотлар номи</th>
-                          	 <th class='vrt-header' style="width:1.5%;"><?php echo '<span>Таом вазни</span>';?></th>
+                          	 <th class='vrt-header product-column' style="width:1.5%;"><span class="product-name-short">Таом вазни</span></th>
 							   <?php $col = 0; ?>
 							 @foreach($products as $product)
 							 	@if(isset($product['yes']))
 								 @php
 									$col++;
+									// Maxsulot nomini so'zlarga bo'lish
 									$parts = explode(' ', $product['product_name']);
-									$first = $parts[0];
-									$second = isset($parts[1]) ? $parts[1] : '';
-									$third = isset($parts[2]) ? $parts[2] : '';
-									$fourth = isset($parts[3]) ? $parts[3] : '';
-									$fifth = isset($parts[4]) ? $parts[4] : '';
-									$sixth = isset($parts[5]) ? $parts[5] : '';
-									$seventh = isset($parts[6]) ? $parts[6] : '';
-									$eighth = isset($parts[7]) ? $parts[7] : '';
-									$ninth = isset($parts[8]) ? $parts[8] : '';
-									$tenth = isset($parts[9]) ? $parts[9] : '';
+									$first = $parts[0] ?? '';
+									$second = $parts[1] ?? '';
+									$third = $parts[2] ?? '';
+									$fourth = $parts[3] ?? '';
+									$fifth = $parts[4] ?? '';
+									$sixth = $parts[5] ?? '';
+									$seventh = $parts[6] ?? '';
+									$eighth = $parts[7] ?? '';
+									$ninth = $parts[8] ?? '';
+									$tenth = $parts[9] ?? '';
 									
-									// Maxsulot nomini qisqartirish
-									$shortName = $first;
-									if($second && strlen($shortName . ' ' . $second) <= 16) {
-										$shortName .= ' ' . $second;
-									}
-									if($third && strlen($shortName . ' ' . $third) <= 16) {
-										$shortName .= ' ' . $third;
-									}
-									
-									// Agar juda uzun bo'lsa, faqat birinchi so'zni olish
-									if(strlen($shortName) > 8) {
-										$shortName = $first;
-									}
+									// 7 ta so'zni olish
+									$shortName = $first . ' ' . $second . ' ' . $third . ' ' . $fourth . ' ' . $fifth . ' ' . $sixth . ' ' . $seventh . ' ' . $eighth . ' ' . $ninth . ' ' . $tenth;
 								@endphp
                           	 		<th class='vrt-header product-column' style="padding: 0px; height: 100px">
-                          	 			<span class="product-name-short"><?php echo $first.' '.$second.' '.$third.' '.$fourth.' '.$fifth.' '.$sixth.' '.$seventh.' '.$eighth.' '.$ninth.' '.$tenth; ?></span>
+                          	 			<span class="product-name-short">{{ $shortName }}</span>
                           	 		</th>
 								@endif
 							 @endforeach
@@ -210,7 +220,9 @@
 								?>
 			                        <tr style="{{ $bg_color }}">
 			                        	@if($loop->index == 1)
-												<th scope="row" rowspan="<?php echo 2 * (count($row)-1); ?>" class='vrt-header' style="padding: 0px; height: 60px; background-color: #ffffff;"><?php echo '<span>'. $row[0]['mealtime'] .'</span>'; ?></th>
+												<th scope="row" rowspan="<?php echo 2 * (count($row)-1); ?>" class='vrt-header' style="height: 60px; background-color: #ffffff; padding: 0px;">
+													<span class="mealtime-header">{{ $row[0]['mealtime'] }}</span>
+												</th>
 			                            @endif
 			                            <td scope="row" rowspan="2" class="align-baseline" style="padding: 2px; background-color: #ffffff;"><?php echo $item['foodname'] ?></td>
 			                            <td scope="row" rowspan="2" class="align-baseline" style="padding: 0px; background-color: #ffffff;"><?php echo $item['foodweight'] ?></td>
@@ -254,7 +266,6 @@
 								@endforeach
 							@endforeach
 									<tr class="footer-row" style="border-top: 2px solid black;">
-										<!-- <th scope="row" rowspan="5" class='vrt-header' style="padding: 0px; border-top: 2px solid black"><span>Болалар</span></th> -->
 										<td scope="row" colspan="3" class="align-baseline" style="padding: 0px; border-top: 1px solid black">{{ $menu[0]['age_name'].'ли'  }} бир бола учун гр</td>
 										<?php
 										$total_weight = [];
@@ -283,7 +294,6 @@
 											if(isset($products[$t]['yes']) and isset($productallcount[$products[$t]['id']])){
 												$total_weight[$products[$t]['id']] += (($menu[0]['kingar_children_number'])*$productallcount[$products[$t]['id']]) / $products[$t]['div'];
 			                            ?>
-			                            <!---->
 			                            	<td style="padding: 0px"><?php printf("%01.3f", (($menu[0]['kingar_children_number'])*$productallcount[$products[$t]['id']]) / $products[$t]['div'] ); ?></td>
 			                            <?php	
 											}
@@ -397,3 +407,4 @@
     </div>
 </body>
 </html>
+

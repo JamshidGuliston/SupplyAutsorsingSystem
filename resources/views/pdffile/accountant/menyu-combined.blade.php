@@ -8,7 +8,7 @@
 	<meta name="Description" content="Enter your description here"/>
 	<title>Title</title>
 	<style>
-		@page { margin: 5mm 5mm 5mm 5mm; }
+		@page { margin: 10mm 10mm 10mm 10mm; }
 		body{
 			font-family: DejaVu Sans;
 			font-size: 7px;
@@ -83,9 +83,22 @@
 			font-size: 5px;
 			overflow: visible;
 		}
+
 		
 		/* Background colorlarni olib tashlash */
-		
+		.product-name-short {
+			font-size: 4.5px;
+			line-height: 1.0;
+			white-space: normal;       /* bir qatorda */
+			display: inline-block;
+			width: 55px;               /* aniq kenglik (aylantirilganda balandlik) */
+			max-width: 55px;           /* maksimal kenglik */
+			text-align: center;
+			overflow: hidden;
+			word-wrap: break-word;
+			max-height: 15px;          /* balandlikni cheklash */
+			text-overflow: ellipsis;
+		}
 		/* Qator balandligini kamaytirish */
 		tr {
 			height: 20px;
@@ -153,7 +166,7 @@
 									$col++;
 								@endphp
                           	 		<th class='vrt-header product-column' style="height: 100px">
-                          	 			<span>{{ $product['product_name'] }}</span>
+                          	 			<span class="product-name-short">{{ $product['product_name'] }}</span>
                           	 		</th>
 								@endif
 							 @endforeach
