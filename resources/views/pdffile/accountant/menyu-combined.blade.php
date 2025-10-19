@@ -88,7 +88,7 @@
 			text-align: center;
 			overflow: hidden;
 			word-wrap: break-word;
-			max-height: 12px;          /* balandlikni cheklash */
+			max-height: 95px;          /* balandlikni cheklash */
 			text-overflow: ellipsis;
 		}
 		
@@ -109,11 +109,6 @@
 		}
 		
 		/* Maxsulotlar va taom nomlari uchun kulrang */
-		thead tr,
-		thead th,
-		thead td {
-			background-color:rgb(247, 247, 247) !important;
-		}
 		
 		/* Footer qatorlari uchun och sariq rang */
 		.footer-row {
