@@ -414,7 +414,7 @@ class StorageController extends Controller
             $orderProductStructures = order_product_structure::where('order_product_name_id', $order->id)
                 ->join('products', 'products.id', '=', 'order_product_structures.product_name_id')
                 ->join('sizes', 'sizes.id', '=', 'products.size_name_id')
-                ->get(['order_product_structures.id', 'products.size_name_id', 'order_product_structures.product_name_id', 'order_product_structures.product_weight', 'products.product_name', 'sizes.size_name', 'products.div', 'order_product_structures.actual_weight', 'products.sort']);
+                ->get(['order_product_structures.id', 'products.size_name_id', 'order_product_structures.product_name_id', 'order_product_structures.product_weight', 'products.product_name', 'sizes.size_name', 'products.div', 'order_product_structures.actual_weight', 'products.sort', 'products.package_size']);
             // dd($orderProductStructures);
             foreach($orderProductStructures as $structure) {
                 $productId = $structure->product_name_id;
@@ -425,7 +425,8 @@ class StorageController extends Controller
                         'name' => $structure->product_name,
                         'unit' => $structure->size_name,
                         'unit_id' => $structure->size_name_id,
-                        'sort' => $structure->sort ?? 0
+                        'sort' => $structure->sort ?? 0,
+                        'package_size' => $structure->package_size ?? 0
                     ];
                 }
             }
@@ -451,6 +452,7 @@ class StorageController extends Controller
         foreach($allProducts as $product) {
             $productData[$product['id']] = [
                 'name' => $product['name'],
+                'package_size' => $product['package_size'],
                 'unit' => $product['unit'],
                 'unit_id' => $product['unit_id'],
                 'kindergartens' => [],
@@ -464,8 +466,7 @@ class StorageController extends Controller
                     $structure = order_product_structure::where('order_product_name_id', $order->id)
                         ->where('product_name_id', $product['id'])
                         ->first();
-                }
-                
+                }                
                 $weight = $structure ? $structure->product_weight : 0;
                 $productData[$product['id']]['kindergartens'][$kindergarten['id']] = $weight;
                 $productData[$product['id']]['total'] += $weight;
