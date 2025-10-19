@@ -2762,8 +2762,8 @@ class AccountantController extends Controller
                         }
                     }
                     
-                    // Menyu PDF yaratish
-                    $pdf_menu = \PDF::loadView('pdffile.technolog.activmenu', [
+                    // Menyu PDF yaratish - yangi combined blade fayldan
+                    $pdf_menu = \PDF::loadView('pdffile.accountant.menyu-combined', [
                         'protsent' => $protsent,
                         'day' => $day_info,
                         'productallcount' => $productallcount,
