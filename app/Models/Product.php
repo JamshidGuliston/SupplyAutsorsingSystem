@@ -15,6 +15,7 @@ class Product extends Model
         'product_image',
         'norm_cat_id',
         'div',
+        'package_size',
         'sort',
         'hide',
         'proteins',
