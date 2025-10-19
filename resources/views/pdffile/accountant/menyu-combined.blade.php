@@ -71,7 +71,8 @@
 			-o-transform: rotate(-90deg);
 			transform: rotate(-90deg);
 
-			white-space: normal;       /* birinchi bir qatorda */
+			white-space: normal;  
+			text-align: center;     /* birinchi bir qatorda */
 			width: 100px;               /* aniq kenglik (burilgandan keyin balandlik) */
 			overflow: visible;         /* hamma ko'rinsin */
 			font-size: 5.5px;
@@ -105,6 +106,7 @@
 			padding: 0px !important;
 			height: 95px;
 			vertical-align: middle;
+			text-align: center;
 			position: relative;
 		}
 		
@@ -202,8 +204,8 @@
 								?>
 			                        <tr style="{{ $bg_color }}">
 			                        	@if($loop->index == 1)
-												<th scope="row" rowspan="<?php echo 2 * (count($row)-1); ?>" class='vrt-header' style="height: 60px; background-color: #ffffff;">
-													<span>{{ $row[0]['mealtime'] }}</span>
+												<th scope="row" rowspan="<?php echo 2 * (count($row)-1); ?>" class='vrt-header product-column' style="height: 60px; background-color: #ffffff;">
+													<span class="product-name-short">{{ $row[0]['mealtime'] }}</span>
 												</th>
 			                            @endif
 			                            <td scope="row" rowspan="2" class="align-baseline" style="padding: 2px; background-color: #ffffff;"><?php echo $item['foodname'] ?></td>
