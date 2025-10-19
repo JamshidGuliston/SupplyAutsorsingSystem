@@ -2784,6 +2784,10 @@ class AccountantController extends Controller
                     $pdf_menu->setOption('page-size', 'A4');
                     $pdf_menu->setOption('orientation', 'landscape');
                     $pdf_menu->setOption('encoding', 'UTF-8');
+                    $pdf_without->setOption('margin-top', 10mm);
+                    $pdf_without->setOption('margin-bottom', 10mm);
+                    $pdf_without->setOption('margin-left', 10mm);
+                    $pdf_without->setOption('margin-right', 10mm);
                     
                     $file_menu = $tempDir . '/0_menu_' . $day->id . '_' . $age->id . '_' . $menu_counter . '_' . $timestamp . '.pdf';
                     file_put_contents($file_menu, $pdf_menu->output());
