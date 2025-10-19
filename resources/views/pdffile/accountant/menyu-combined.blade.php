@@ -8,14 +8,14 @@
 	<meta name="Description" content="Enter your description here"/>
 	<title>Title</title>
 	<style>
-		@page { margin: 3mm 3mm 3mm 3mm; }
+		@page { margin: 10mm 10mm 10mm 10mm; }
 		body{
 			font-family: DejaVu Sans;
 			font-size: 7px;
 			background-position: top left;
 			background-repeat: no-repeat;
 			background-size: 100%;
-			width:100%;
+			width:95%;
 		}
 		.column {
 			float: left;
