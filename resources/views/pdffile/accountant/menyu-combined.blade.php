@@ -159,7 +159,7 @@
                           <tr>
                           	 <th style="width:1.2%;"></th>
                           	 <th style="width:9%;">Махсулотлар номи</th>
-                          	 <th class='vrt-header' style="width:1.5%;"><?php echo '<span>Таом вазни</span>';?></th>
+                          	 <th class='vrt-header product-column' style="width:1.5%;"><span class="product-name-short">Таом вазни</span></th>
 							   <?php $col = 0; ?>
 							 @foreach($products as $product)
 							 	@if(isset($product['yes']))
@@ -170,17 +170,16 @@
 									$first = $parts[0] ?? '';
 									$second = $parts[1] ?? '';
 									$third = $parts[2] ?? '';
+									$fourth = $parts[3] ?? '';
+									$fifth = $parts[4] ?? '';
+									$sixth = $parts[5] ?? '';
+									$seventh = $parts[6] ?? '';
+									$eighth = $parts[7] ?? '';
+									$ninth = $parts[8] ?? '';
+									$tenth = $parts[9] ?? '';
 									
-									// Faqat 1-2 ta so'zni olish (juda uzun bo'lmasligi uchun)
-									$shortName = $first;
-									if($second && strlen($shortName . ' ' . $second) <= 15) {
-										$shortName .= ' ' . $second;
-									}
-									
-									// Agar juda uzun bo'lsa, faqat birinchi so'zni olish
-									if(strlen($shortName) > 18) {
-										$shortName = $first;
-									}
+									// 7 ta so'zni olish
+									$shortName = $first . ' ' . $second . ' ' . $third . ' ' . $fourth . ' ' . $fifth . ' ' . $sixth . ' ' . $seventh . ' ' . $eighth . ' ' . $ninth . ' ' . $tenth;
 								@endphp
                           	 		<th class='vrt-header product-column' style="padding: 0px; height: 100px">
                           	 			<span class="product-name-short">{{ $shortName }}</span>
