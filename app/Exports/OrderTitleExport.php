@@ -33,7 +33,7 @@ class OrderTitleExport implements WithMultipleSheets
         $this->allProductStructures = order_product_structure::whereIn('order_product_name_id', $orderIds)
             ->join('products', 'products.id', '=', 'order_product_structures.product_name_id')
             ->join('sizes', 'sizes.id', '=', 'products.size_name_id')
-            ->get(['order_product_structures.id', 'order_product_structures.order_product_name_id', 'products.size_name_id', 'order_product_structures.product_name_id', 'order_product_structures.product_weight', 'products.product_name', 'sizes.size_name', 'products.div', 'order_product_structures.actual_weight', 'products.sort']);
+            ->get(['order_product_structures.id', 'order_product_structures.order_product_name_id', 'products.size_name_id', 'order_product_structures.product_name_id', 'order_product_structures.product_weight', 'products.product_name', 'sizes.size_name', 'products.div', 'order_product_structures.actual_weight', 'products.sort', 'products.package_size']);
     }
     
     public function sheets(): array
@@ -120,7 +120,8 @@ class OrderTitleRegionExport implements \Maatwebsite\Excel\Concerns\FromArray, \
                     'name' => $structure->product_name,
                     'unit' => $structure->size_name,
                     'unit_id' => $structure->size_name_id,
-                    'sort' => $structure->sort ?? 0
+                    'sort' => $structure->sort ?? 0,
+                    'package_size' => $structure->package_size ?? 0
                 ];
             }
         }
@@ -136,6 +137,7 @@ class OrderTitleRegionExport implements \Maatwebsite\Excel\Concerns\FromArray, \
                 'name' => $product['name'],
                 'unit' => $product['unit'],
                 'unit_id' => $product['unit_id'],
+                'package_size' => $product['package_size'],
                 'kindergartens' => [],
                 'total' => 0
             ];
@@ -186,26 +188,58 @@ class OrderTitleRegionExport implements \Maatwebsite\Excel\Concerns\FromArray, \
         $headings[] = 'Жами';
         $data[] = $headings;
         
+        // Har bir bog'cha uchun jami yig'indisini hisoblash
+        $counts = [];
+        foreach($this->kindergartens as $kindergarten) {
+            $counts[$kindergarten['id']] = 0;
+        }
+        
         // 3-qatordan: Ma'lumotlar
         $counter = 1;
         foreach($this->productData as $productId => $product) {
+            $package_size = $product['package_size'] ?? 0;
+            $summ = 0;
+            
             $row = [
                 $counter++,
                 $product['name'],
-                $product['unit'],
+                (($package_size != null && $package_size > 0)) ? 'Дона' : $product['unit'],
             ];
             
-            // Har bir bog'cha uchun qiymat
+            // Har bir bog'cha uchun qiymat (PDF dagi kabi hisoblash)
             foreach($this->kindergartens as $kindergarten) {
                 $weight = $product['kindergartens'][$kindergarten['id']] ?? 0;
-                $row[] = $weight > 0 ? number_format($weight, 2, '.', '') : '';
+                
+                // Package_size bo'yicha hisoblash (PDF dagi kabi)
+                $displayValue = 0;
+                if($package_size != null && $package_size > 0) {
+                    $displayValue = $weight / $package_size;
+                } else {
+                    $displayValue = $weight;
+                }
+                
+                // Counts ga qo'shish (faqat unit_id != 3 bo'lgan mahsulotlar uchun)
+                if($product['unit_id'] != 3) {
+                    $counts[$kindergarten['id']] += $displayValue;
+                }
+                
+                $summ += $displayValue;
+                $row[] = $displayValue > 0 ? number_format($displayValue, 0, '.', '') : '';
             }
             
             // Jami
-            $row[] = number_format($product['total'], 2, '.', '');
+            $row[] = number_format($summ, 0, '.', '');
             
             $data[] = $row;
         }
+        
+        // Oxirgi qator: Jami yig'indisi
+        $totalRow = ['', 'Жами', ''];
+        foreach($this->kindergartens as $kindergarten) {
+            $totalRow[] = number_format($counts[$kindergarten['id']], 0, '.', '');
+        }
+        $totalRow[] = '';
+        $data[] = $totalRow;
         
         return $data;
     }
@@ -228,7 +262,7 @@ class OrderTitleRegionExport implements \Maatwebsite\Excel\Concerns\FromArray, \
     
     public function styles(\PhpOffice\PhpSpreadsheet\Worksheet\Worksheet $sheet)
     {
-        $lastRow = count($this->productData) + 2; // +2 chunki 1-qator title, 2-qator header
+        $lastRow = count($this->productData) + 3; // +3 chunki 1-qator title, 2-qator header, oxirgi qator Jami
         // 3 = A,B,C | kindergartens + 1 = Jami ustuni
         $lastColumnIndex = 3 + count($this->kindergartens) + 1;
         $lastColumn = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($lastColumnIndex);
@@ -269,7 +303,7 @@ class OrderTitleRegionExport implements \Maatwebsite\Excel\Concerns\FromArray, \
             ]
         ]);
         
-        // Data style (3-qatordan)
+        // Data style (3-qatordan oxirgi qatorgacha)
         $sheet->getStyle('A3:' . $lastColumn . $lastRow)->applyFromArray([
             'borders' => [
                 'allBorders' => ['borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN]
@@ -280,11 +314,24 @@ class OrderTitleRegionExport implements \Maatwebsite\Excel\Concerns\FromArray, \
         ]);
         
         // Jami ustuni
-        $sheet->getStyle($lastColumn . '3:' . $lastColumn . $lastRow)->applyFromArray([
+        $sheet->getStyle($lastColumn . '3:' . $lastColumn . ($lastRow-1))->applyFromArray([
             'font' => ['bold' => true],
             'fill' => [
                 'fillType' => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID,
                 'startColor' => ['rgb' => 'C8E6C9']
+            ]
+        ]);
+        
+        // Oxirgi qator (Jami yig'indisi) - ko'k rangli
+        $sheet->getStyle('A' . $lastRow . ':' . $lastColumn . $lastRow)->applyFromArray([
+            'font' => ['bold' => true],
+            'fill' => [
+                'fillType' => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID,
+                'startColor' => ['rgb' => 'd9edf7'] // PDF dagi kabi och ko'k
+            ],
+            'alignment' => [
+                'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER,
+                'vertical' => \PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER
             ]
         ]);
         

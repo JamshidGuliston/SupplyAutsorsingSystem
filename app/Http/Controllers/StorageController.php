@@ -1242,7 +1242,7 @@ class StorageController extends Controller
                                 $result = ceil($actual_weight / $prod->package_size) * $prod->package_size;
                             }
                             else{
-                                $result = round($actual_weight, 1);
+                                $result = (round($actual_weight, 1) == 0) ? round($actual_weight, 2) : round($actual_weight, 1);
                             }
                         }
                         order_product_structure::create([

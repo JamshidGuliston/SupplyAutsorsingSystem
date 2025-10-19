@@ -75,7 +75,7 @@
             </div>
         </div>
         <div class="form-group row">
-            <label for="staticEmail" class="col-sm-2 col-form-label">Пакет миқдори</label>
+            <label for="staticEmail" class="col-sm-2 col-form-label">Қадоқ миқдори</label>
             <div class="col-sm-10">
                 <input type="text" name="package_size" class="form-control" id="staticEmail" value="{{ $product->package_size }}">
             </div>
