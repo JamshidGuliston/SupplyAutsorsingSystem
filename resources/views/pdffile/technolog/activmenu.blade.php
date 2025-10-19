@@ -74,7 +74,7 @@
 			-o-transform: rotate(-90deg);
 			transform: rotate(-90deg);
 
-			white-space: nowrap;       /* birinchi bir qatorda */
+			white-space: normal;       /* birinchi bir qatorda */
 			width: 100px;               /* aniq kenglik (burilgandan keyin balandlik) */
 			overflow: visible;         /* hamma ko'rinsin */
 			font-size: 5.5px;
