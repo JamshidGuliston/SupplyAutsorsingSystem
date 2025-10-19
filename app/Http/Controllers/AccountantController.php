@@ -2692,7 +2692,7 @@ class AccountantController extends Controller
                     if($menu->count() == 0) continue;
                     
                     // Har safar yangi products olish (Collection sifatida)
-                    $products = Product::where('hide', 1)->orderBy('sort', 'ASC')->get()->map(function($product) {
+                    $products = Product::orderBy('sort', 'ASC')->get()->map(function($product) {
                         return [
                             'id' => $product->id,
                             'product_name' => $product->product_name,
@@ -2783,10 +2783,6 @@ class AccountantController extends Controller
                     
                     $pdf_menu->setOption('page-size', 'A4');
                     $pdf_menu->setOption('orientation', 'landscape');
-                    $pdf_menu->setOption('margin-top', 3);
-                    $pdf_menu->setOption('margin-bottom', 3);
-                    $pdf_menu->setOption('margin-left', 3);
-                    $pdf_menu->setOption('margin-right', 3);
                     $pdf_menu->setOption('encoding', 'UTF-8');
                     $pdf_menu->setOption('enable-local-file-access', true);
                     $pdf_menu->setOption('print-media-type', true);
