@@ -84,13 +84,24 @@
 			line-height: 1.0;
 			white-space: normal;       /* bir qatorda */
 			display: inline-block;
-			width: 60px;               /* aniq kenglik (aylantirilganda balandlik) */
-			max-width: 60px;           /* maksimal kenglik */
+			width: 55px;               /* aniq kenglik (aylantirilganda balandlik) */
+			max-width: 55px;           /* maksimal kenglik */
 			text-align: center;
 			overflow: hidden;
 			word-wrap: break-word;
-			max-height: 95px;          /* balandlikni cheklash */
+			max-height: 15px;          /* balandlikni cheklash */
 			text-overflow: ellipsis;
+		}
+		
+		/* Ovqat vaqti uchun */
+		.mealtime-header {
+			font-size: 5px;
+			line-height: 1.0;
+			white-space: nowrap;
+			display: inline-block;
+			width: 50px;
+			text-align: center;
+			overflow: hidden;
 		}
 		
 		/* Qator balandligini kamaytirish */
@@ -111,6 +122,11 @@
 		}
 		
 		/* Maxsulotlar va taom nomlari uchun kulrang */
+		thead tr,
+		thead th,
+		thead td {
+			background-color:rgb(247, 247, 247) !important;
+		}
 		
 		/* Footer qatorlari uchun och sariq rang */
 		.footer-row {
@@ -204,8 +220,8 @@
 								?>
 			                        <tr style="{{ $bg_color }}">
 			                        	@if($loop->index == 1)
-												<th scope="row" rowspan="<?php echo 2 * (count($row)-1); ?>" class='vrt-header' style="height: 60px; background-color: #ffffff;">
-													<span class="product-name-short">{{ $row[0]['mealtime'] }}</span>
+												<th scope="row" rowspan="<?php echo 2 * (count($row)-1); ?>" class='vrt-header' style="height: 60px; background-color: #ffffff; padding: 0px;">
+													<span class="mealtime-header">{{ $row[0]['mealtime'] }}</span>
 												</th>
 			                            @endif
 			                            <td scope="row" rowspan="2" class="align-baseline" style="padding: 2px; background-color: #ffffff;"><?php echo $item['foodname'] ?></td>
