@@ -83,11 +83,13 @@
 			line-height: 1.0;
 			white-space: normal;       /* bir qatorda */
 			display: inline-block;
-			max-width: 90px;          /* burilishdan oldin kenglik */
+			width: 60px;               /* aniq kenglik (aylantirilganda balandlik) */
+			max-width: 60px;           /* maksimal kenglik */
 			text-align: center;
 			overflow: hidden;
 			word-wrap: break-word;
-			max-height: 18px;
+			max-height: 12px;          /* balandlikni cheklash */
+			text-overflow: ellipsis;
 		}
 		
 		/* Qator balandligini kamaytirish */
@@ -97,11 +99,11 @@
 		
 		/* Maxsulot ustunlari uchun */
 		.product-column {
-			width: 1.8% !important;
-			max-width: 1.8%;
+			width: 2% !important;
+			max-width: 2%;
 			overflow: hidden;
 			padding: 0px !important;
-			height: 100px;
+			height: 95px;
 			vertical-align: middle;
 			position: relative;
 		}
@@ -168,9 +170,25 @@
 							 	@if(isset($product['yes']))
 								 @php
 									$col++;
+									// Maxsulot nomini so'zlarga bo'lish
+									$parts = explode(' ', $product['product_name']);
+									$first = $parts[0] ?? '';
+									$second = $parts[1] ?? '';
+									$third = $parts[2] ?? '';
+									
+									// Faqat 1-2 ta so'zni olish (juda uzun bo'lmasligi uchun)
+									$shortName = $first;
+									if($second && strlen($shortName . ' ' . $second) <= 15) {
+										$shortName .= ' ' . $second;
+									}
+									
+									// Agar juda uzun bo'lsa, faqat birinchi so'zni olish
+									if(strlen($shortName) > 18) {
+										$shortName = $first;
+									}
 								@endphp
                           	 		<th class='vrt-header product-column' style="padding: 0px; height: 100px">
-                          	 			<span class="product-name-short">{{ $product['product_name'] }}</span>
+                          	 			<span class="product-name-short">{{ $shortName }}</span>
                           	 		</th>
 								@endif
 							 @endforeach
