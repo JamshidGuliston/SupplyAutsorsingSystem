@@ -87,7 +87,14 @@
 			overflow: visible;         /* hamma ko'rinsin */
 			font-size: 8px;
 		}
+
 		.vrt-headermealtime {
+			text-align: center;
+			vertical-align: middle;
+			position: relative;
+		}
+
+		.vrt-headermealtime span{
 			display: inline-block;
 			text-align: center;
 			-webkit-transform: rotate(-90deg);
