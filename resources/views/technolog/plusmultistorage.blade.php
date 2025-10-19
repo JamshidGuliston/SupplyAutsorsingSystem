@@ -231,6 +231,7 @@
     <div class="row">
         <div class="col-md-6">
             <b>+ Шу ойда qo'shilgan махсулотлар</b>
+            <button style="margin-left: 10px;" class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#ModalQoldiqOlish">Qoldiq olish</button>
         </div>
         <div class="col-md-3">
             <b>Боғча: {{ $kingar->kingar_name }}</b>
@@ -472,5 +473,63 @@
             }
         })
     });
+
 </script>
+
+<!-- Qoldiq olish modal oynasi -->
+<div class="modal fade" id="ModalQoldiqOlish" tabindex="-1" aria-labelledby="ModalQoldiqOlishLabel" aria-hidden="true">
+<div class="modal-dialog  modal-lg">
+        <div class="modal-content">
+            <div class="modal-header bg-info">
+                <h5 class="modal-title text-white" id="exampleModalLabel">Qoldiqni qo'shish</h5>
+                <button type="button" class="btn-close " data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form action="{{route('technolog.addResidualStorage')}}" method="POST">
+                @csrf
+                <input type="hidden" name="kingarden_id" value="{{ $kingar->id }}">
+                <div class="modal-body">
+                    <div class="col-sm-12">
+                        <select class="form-select" name="day_id" aria-label="Default select example" required>
+                            <option value="">Sana tanlang</option>
+                            @foreach($days as $row)
+                                <option value="{{$row['id']}}">{{ $row['day_number'].'.'.$row['month_name'].' '.$row['year_name'] }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <label>Izoh</label>
+                            <input class="form-control" name="title" value="{{ time().' '.$kingar->kingar_name }}" required>
+                        </div>
+                    </div> 
+                    <hr> 
+                    <table class="table table-light table-striped table-hover" style="width: calc(100% - 2rem)!important;">
+                        <thead>
+                            <tr>
+                                <th scope="col">ID</th>
+                                <th scope="col">Maxsulot</th>
+                                <th scope="col">O'lchami</th>
+                                <th scope="col">Narxi</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php $i = 0; ?>
+                            @foreach($products as $all)
+                                <tr>
+                                    <td scope="row">{{ ++$i }}</td>
+                                    <td>{{ $all->product_name }}</td>
+                                    <td>{{ $all->size_name }}</td>
+                                    <td style="width: 50px;"><input type="text" name="weights[{{ $all->id }}]"  placeholder="{{ '1 '.$all->size_name.' '.$all->product_name.' narxi' }}" value="0"></td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn add-age btn-primary text-white">saqlash</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
 @endsection

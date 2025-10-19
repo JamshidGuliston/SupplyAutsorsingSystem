@@ -239,6 +239,7 @@ Route::group(['prefix' => 'technolog', 'middleware' => ['isTechnolog', 'auth']],
     Route::post('saveProductExpense', [TechnologController::class, 'saveProductExpense'])->name('technolog.saveProductExpense');
     Route::post('plusmultimodadd', [TechnologController::class, 'plusmultimodadd'])->name('technolog.plusmultimodadd');
     Route::get('plusmultistorage/{id}/{monthid}', [TechnologController::class, 'plusmultistorage'])->name('technolog.plusmultistorage');
+    Route::post('addResidualStorage', [TechnologController::class, 'addResidualStorage'])->name('technolog.addResidualStorage');
     Route::get('plusmultistoragePDF/{id}/{monthid}', [TechnologController::class, 'plusmultistoragePDF'])->name('technolog.plusmultistoragePDF');
     Route::get('plusmultistorageExcel/{id}/{monthid}', [TechnologController::class, 'plusmultistorageExcel'])->name('technolog.plusmultistorageExcel');
     Route::post('editMinusStorage', [TechnologController::class, 'editMinusStorage'])->name('technolog.editMinusStorage');

@@ -2539,6 +2539,34 @@ class TechnologController extends Controller
         return \Excel::download(new \App\Exports\MinusmultistorageExport($kid, $monthid), 'minusmultistorage_'.$king->kingar_name.'_'.$month->month_name.'.xlsx');
     }
 
+    public function addResidualStorage(Request $request){
+        // dd($request->all());
+        foreach($request->weights as $key => $value){
+            $check = plus_multi_storage::where('day_id', $request->day_id)
+                ->where('kingarden_name_d', $request->kingarden_id)
+                ->where('product_name_id', $key)
+                ->where('residual', 1)
+                ->first();
+            if($check){
+                $check->update([
+                    'product_weight' => $value,
+                ]);
+            }
+            else{
+                plus_multi_storage::create([
+                    'day_id' => $request->day_id,
+                    'kingarden_name_d' => $request->kingarden_id,
+                    'product_name_id' => $key,
+                    'shop_id' => -1,
+                    'order_product_id' => 0,
+                    'product_weight' => $value ?? 0,
+                    'residual' => 1,
+                ]);
+            }
+        }
+        return redirect()->route('technolog.plusmultistorage', ['id' => $request->kingarden_id, 'monthid' => 0]);
+    }
+
     public function plusmultistorage(Request $request, $kid, $monthid){
         $king = Kindgarden::where('id', $kid)->first();
         $ill = $monthid;
@@ -2546,6 +2574,7 @@ class TechnologController extends Controller
         if($monthid == 0){
             $monthid = Month::where('month_active', 1)->first()->id;
         }
+        $products = Product::where('hide', 1)->join('sizes', 'products.size_name_id', '=', 'sizes.id')->get(['products.id', 'products.product_name', 'sizes.size_name']);
         // Faqat joriy yilga tegishli oylarni olish
         $months = Month::where('yearid', $year->id)->get();
         $days = Day::where('year_id', $year->id)->where('month_id', Month::where('id', $monthid)->first()->id)->get();
@@ -2653,7 +2682,7 @@ class TechnologController extends Controller
             }
         }
         
-        return view('technolog.plusmultistorage', ['plusproducts' => $plusproducts, 'minusproducts' => $minusproducts, 'residualProducts' => $residualProducts, 'kingar' => $king, 'days' => $days, 'months' => $months, 'monthid' => $ill, 'year' => $year]); 
+        return view('technolog.plusmultistorage', ['plusproducts' => $plusproducts, 'minusproducts' => $minusproducts, 'residualProducts' => $residualProducts,'products' => $products, 'kingar' => $king, 'days' => $days, 'months' => $months, 'monthid' => $ill, 'year' => $year]); 
     }
 
     public function plusmultistoragePDF(Request $request, $kid, $monthid){
