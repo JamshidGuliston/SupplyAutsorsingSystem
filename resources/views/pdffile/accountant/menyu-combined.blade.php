@@ -62,30 +62,13 @@
 			border-bottom: 1px solid black;
 			padding: 0px;
 		}
-		.vrt-header span{
-			display: inline-block;
+		.vrt-header {
 			text-align: center;
-			-webkit-transform: rotate(-90deg);
-			-moz-transform: rotate(-90deg);
-			-ms-transform: rotate(-90deg);
-			-o-transform: rotate(-90deg);
-			transform: rotate(-90deg);
-
-			white-space: normal;
-			width: 100px;
-			overflow: visible;
+			vertical-align: middle;
 			font-size: 5.5px;
-		}
-		
-		/* Maxsulot nomlari uchun */
-		.product-name-short {
-			font-size: 5px;
-			line-height: 1.0;
-			white-space: normal;
-			display: inline-block;
-			max-width: 95px;
-			text-align: center;
-			overflow: visible;
+			line-height: 1.1;
+			word-wrap: break-word;
+			padding: 2px !important;
 		}
 		
 		/* Qator balandligini kamaytirish */
@@ -95,10 +78,13 @@
 		
 		/* Maxsulot ustunlari uchun */
 		.product-column {
-			width: 1.6% !important;
-			max-width: 1.6%;
-			overflow: hidden;
-			padding: 0px !important;
+			width: 2% !important;
+			max-width: 2%;
+			font-size: 5px;
+			line-height: 1.0;
+			word-wrap: break-word;
+			padding: 1px !important;
+			vertical-align: top;
 		}
 		
 		/* Maxsulotlar va taom nomlari uchun kulrang */
@@ -106,6 +92,7 @@
 		thead th,
 		thead td {
 			background-color:rgb(247, 247, 247) !important;
+			height: 40px;
 		}
 		
 		/* Footer qatorlari uchun och sariq rang */
@@ -155,29 +142,16 @@
                     <table style="width:100%; table-layout: fixed; margin-top: 25px;">
                         <thead>
                           <tr>
-                          	 <th style="width:1.2%;"></th>
-                          	 <th style="width:9%;">Махсулотлар номи</th>
-                          	 <th class='vrt-header' style="width:1.5%;"><?php echo '<span>Таом вазни</span>';?></th>
+                          	 <th style="width:1%;"></th>
+                          	 <th style="width:8%;">Махсулотлар номи</th>
+                          	 <th class='vrt-header' style="width:1.2%;">Таом вазни</th>
 							   <?php $col = 0; ?>
 							 @foreach($products as $product)
 							 	@if(isset($product['yes']))
 								 @php
 									$col++;
-									$parts = explode(' ', $product['product_name']);
-									$first = $parts[0];
-									$second = isset($parts[1]) ? $parts[1] : '';
-									$third = isset($parts[2]) ? $parts[2] : '';
-									$fourth = isset($parts[3]) ? $parts[3] : '';
-									$fifth = isset($parts[4]) ? $parts[4] : '';
-									$sixth = isset($parts[5]) ? $parts[5] : '';
-									$seventh = isset($parts[6]) ? $parts[6] : '';
-									$eighth = isset($parts[7]) ? $parts[7] : '';
-									$ninth = isset($parts[8]) ? $parts[8] : '';
-									$tenth = isset($parts[9]) ? $parts[9] : '';
 								@endphp
-                          	 		<th class='vrt-header product-column' style="padding: 0px; height: 100px">
-                          	 			<span class="product-name-short"><?php echo $first.' '.$second.' '.$third.' '.$fourth.' '.$fifth.' '.$sixth.' '.$seventh.' '.$eighth.' '.$ninth.' '.$tenth; ?></span>
-                          	 		</th>
+                          	 		<th class='vrt-header product-column'>{{ $product['product_name'] }}</th>
 								@endif
 							 @endforeach
                           </tr>
@@ -196,7 +170,7 @@
 								?>
 			                        <tr style="{{ $bg_color }}">
 			                        	@if($loop->index == 1)
-												<th scope="row" rowspan="<?php echo 2 * (count($row)-1); ?>" class='vrt-header' style="padding: 0px; height: 60px; background-color: #ffffff;"><?php echo '<span>'. $row[0]['mealtime'] .'</span>'; ?></th>
+												<th scope="row" rowspan="<?php echo 2 * (count($row)-1); ?>" class='vrt-header' style="height: 60px; background-color: #ffffff;">{{ $row[0]['mealtime'] }}</th>
 			                            @endif
 			                            <td scope="row" rowspan="2" class="align-baseline" style="padding: 2px; background-color: #ffffff;"><?php echo $item['foodname'] ?></td>
 			                            <td scope="row" rowspan="2" class="align-baseline" style="padding: 0px; background-color: #ffffff;"><?php echo $item['foodweight'] ?></td>
