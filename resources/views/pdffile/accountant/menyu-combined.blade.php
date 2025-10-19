@@ -82,7 +82,7 @@
 			transform: rotate(-90deg);
 			white-space: normal;
 			vertical-align: middle;
-			width: 100px;
+			width: 150px;
 			font-size: 8px;
 			overflow: visible;
 		}
@@ -94,8 +94,8 @@
 			line-height: 1.0;
 			white-space: normal;       /* bir qatorda */
 			display: inline-block;
-			width: 95px;               /* aniq kenglik (aylantirilganda balandlik) */
-			max-width: 100px;           /* maksimal kenglik */
+			width: 130px;               /* aniq kenglik (aylantirilganda balandlik) */
+			max-width: 150px;           /* maksimal kenglik */
 			text-align: center;
 			vertical-align: middle;
 			overflow: hidden;
@@ -110,6 +110,8 @@
 		
 		/* Maxsulot ustunlari uchun */
 		.product-column {
+			vertical-align: middle;
+			text-align: center;
 			overflow: hidden;
 			padding: 0px !important;
 		}
