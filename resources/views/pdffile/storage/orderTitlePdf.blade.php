@@ -83,11 +83,14 @@
 							@endphp
 
 							@foreach($productData as $row)
-								@php $summ = 0; @endphp
+								@php 
+								$summ = 0; 
+								$package_size = $row['package_size'] ?? 0;
+								@endphp
 								<tr>
 									<td>{{ $tr++ }}</td>
 									<td><b>{{ mb_substr($row['name'], 0, 15) }}</b></td>
-									<td>{{ ($row['package_size'] != null) ? $row['unit'] : "Дона"  }}</td>
+									<td>{{ ($package_size == 0) ? $row['unit'] : "Дона"  }}</td>
 
 									@foreach($kindergartens as $kID => $kindergarten)
 										@if($kindergarten['region_id'] == $key)
@@ -95,12 +98,12 @@
 												@php $counts[$kindergarten['id']] += $row['kindergartens'][$kindergarten['id']] ?? 0; @endphp
 											@else
 												@if(($row['unit_id'] ?? null) != 3)
-													@php $counts[$kindergarten['id']] = ($row['package_size'] != null) ? $row['kindergartens'][$kindergarten['id']] ?? 0 : $row['kindergartens'][$kindergarten['id']] / $row['package_size']; @endphp
+													@php $counts[$kindergarten['id']] = ($package_size == 0) ? $row['kindergartens'][$kindergarten['id']] : $row['kindergartens'][$kindergarten['id']] / $package_size; @endphp
 												@endif
 											@endif
 
-											<td>{{ ($row['package_size'] != null) ? number_format($row['kindergartens'][$kindergarten['id']] ?? 0, 1) : $row['kindergartens'][$kindergarten['id']] / $row['package_size'] }}</td>
-											@php $summ += ($row['package_size'] != null) ? $row['kindergartens'][$kindergarten['id']] ?? 0 : $row['kindergartens'][$kindergarten['id']] / $row['package_size']; @endphp
+											<td>{{ $package_size == 0 ? number_format($row['kindergartens'][$kindergarten['id']]) : $row['kindergartens'][$kindergarten['id']] / $package_size }}</td>
+											@php $summ += ($package_size == 0) ? $row['kindergartens'][$kindergarten['id']] : $row['kindergartens'][$kindergarten['id']] / $package_size; @endphp
 										@endif
 									@endforeach
 
