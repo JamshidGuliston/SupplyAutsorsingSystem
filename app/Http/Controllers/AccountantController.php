@@ -2778,7 +2778,6 @@ class AccountantController extends Controller
                     $pdf_menu->setPaper('A4', 'landscape');
                     $pdf_menu->setOptions([
                         'encoding' => 'UTF-8',
-                        'defaultFont' => 'DejaVu Sans',
                         'dpi' => 150,
                         'image-quality' => 100,
                         'margin-top' => 5,
