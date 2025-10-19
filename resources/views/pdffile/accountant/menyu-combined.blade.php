@@ -80,8 +80,8 @@
 			-ms-transform: rotate(-90deg);
 			-o-transform: rotate(-90deg);
 			transform: rotate(-90deg);
-			height: 30px;
-    		width: 85px;
+			height: 74px;
+    		width: 100px;
 			white-space: normal;  
 			text-align: center;     /* birinchi bir qatorda */
 			overflow: visible;         /* hamma ko'rinsin */
