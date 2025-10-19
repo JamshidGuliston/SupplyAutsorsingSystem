@@ -94,6 +94,7 @@
 
 									@foreach($kindergartens as $kID => $kindergarten)
 										@if($kindergarten['region_id'] == $key)
+											@php $row['kindergartens'][$kindergarten['id']] = $row['kindergartens'][$kindergarten['id']] ?? 0; @endphp
 											@if(isset($counts[$kindergarten['id']]) && ($row['unit_id'] ?? null) != 3)
 												@php $counts[$kindergarten['id']] += $row['kindergartens'][$kindergarten['id']] ?? 0; @endphp
 											@else
