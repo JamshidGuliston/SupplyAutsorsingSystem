@@ -56,53 +56,38 @@
 		th{
 			border: 1px solid black;
 			padding: 0px;
+			text-align: center;
+			vertical-align: middle;
 		}
 		td{
 			border-right: 1px solid black;
 			border-bottom: 1px solid black;
 			padding: 0px;
 		}
+		.vrt-header {
+			text-align: center;
+			vertical-align: middle;
+			position: relative;
+		}
+		
 		.vrt-header span{
 			display: inline-block;
-			text-align: center;
 			-webkit-transform: rotate(-90deg);
 			-moz-transform: rotate(-90deg);
 			-ms-transform: rotate(-90deg);
 			-o-transform: rotate(-90deg);
 			transform: rotate(-90deg);
-
-			white-space: normal;  
-			text-align: center;     /* birinchi bir qatorda */
-			width: 100px;               /* aniq kenglik (burilgandan keyin balandlik) */
-			overflow: visible;         /* hamma ko'rinsin */
-			font-size: 5.5px;
-		}
-		
-		/* Maxsulot nomlari uchun */
-		.product-name-short {
-			font-size: 4.5px;
-			line-height: 1.0;
-			white-space: normal;       /* bir qatorda */
-			display: inline-block;
-			width: 55px;               /* aniq kenglik (aylantirilganda balandlik) */
-			max-width: 55px;           /* maksimal kenglik */
-			text-align: center;
-			overflow: hidden;
-			word-wrap: break-word;
-			max-height: 15px;          /* balandlikni cheklash */
-			text-overflow: ellipsis;
-		}
-		
-		/* Ovqat vaqti uchun */
-		.mealtime-header {
-			font-size: 5px;
-			line-height: 1.0;
 			white-space: nowrap;
-			display: inline-block;
-			width: 50px;
-			text-align: center;
-			overflow: hidden;
+			font-size: 5px;
+			position: absolute;
+			left: 50%;
+			top: 50%;
+			transform-origin: center center;
+			margin-left: -2px;
+			margin-top: -25px;
 		}
+		
+		/* Background colorlarni olib tashlash */
 		
 		/* Qator balandligini kamaytirish */
 		tr {
@@ -115,23 +100,9 @@
 			max-width: 2%;
 			overflow: hidden;
 			padding: 0px !important;
-			height: 95px;
-			vertical-align: middle;
-			text-align: center;
-			position: relative;
+			height: 100px;
 		}
 		
-		/* Maxsulotlar va taom nomlari uchun kulrang */
-		thead tr,
-		thead th,
-		thead td {
-			background-color:rgb(247, 247, 247) !important;
-		}
-		
-		/* Footer qatorlari uchun och sariq rang */
-		.footer-row {
-			background-color:rgb(253, 250, 221) !important;
-		}
 	</style>
 </head>
 <body>
@@ -177,30 +148,15 @@
                           <tr>
                           	 <th style="width:1.2%;"></th>
                           	 <th style="width:9%;">Махсулотлар номи</th>
-                          	 <th class='vrt-header product-column' style="width:1.5%;"><span class="product-name-short">Таом вазни</span></th>
+                          	 <th class='vrt-header product-column' style="width:1.5%;"><span>Таом вазни</span></th>
 							   <?php $col = 0; ?>
 							 @foreach($products as $product)
 							 	@if(isset($product['yes']))
 								 @php
 									$col++;
-									// Maxsulot nomini so'zlarga bo'lish
-									$parts = explode(' ', $product['product_name']);
-									$first = $parts[0] ?? '';
-									$second = $parts[1] ?? '';
-									$third = $parts[2] ?? '';
-									$fourth = $parts[3] ?? '';
-									$fifth = $parts[4] ?? '';
-									$sixth = $parts[5] ?? '';
-									$seventh = $parts[6] ?? '';
-									$eighth = $parts[7] ?? '';
-									$ninth = $parts[8] ?? '';
-									$tenth = $parts[9] ?? '';
-									
-									// 7 ta so'zni olish
-									$shortName = $first . ' ' . $second . ' ' . $third . ' ' . $fourth . ' ' . $fifth . ' ' . $sixth . ' ' . $seventh . ' ' . $eighth . ' ' . $ninth . ' ' . $tenth;
 								@endphp
-                          	 		<th class='vrt-header product-column' style="padding: 0px; height: 100px">
-                          	 			<span class="product-name-short">{{ $shortName }}</span>
+                          	 		<th class='vrt-header product-column' style="height: 100px">
+                          	 			<span>{{ $product['product_name'] }}</span>
                           	 		</th>
 								@endif
 							 @endforeach
@@ -220,8 +176,8 @@
 								?>
 			                        <tr style="{{ $bg_color }}">
 			                        	@if($loop->index == 1)
-												<th scope="row" rowspan="<?php echo 2 * (count($row)-1); ?>" class='vrt-header' style="height: 60px; background-color: #ffffff; padding: 0px;">
-													<span class="mealtime-header">{{ $row[0]['mealtime'] }}</span>
+												<th scope="row" rowspan="<?php echo 2 * (count($row)-1); ?>" class='vrt-header' style="height: 60px;">
+													<span>{{ $row[0]['mealtime'] }}</span>
 												</th>
 			                            @endif
 			                            <td scope="row" rowspan="2" class="align-baseline" style="padding: 2px; background-color: #ffffff;"><?php echo $item['foodname'] ?></td>
