@@ -112,6 +112,17 @@
 			padding: 0px !important;
 			height: 100px;
 		}
+
+		/* Ovqat vaqti uchun */
+		.mealtime-header {
+			font-size: 5px;
+			line-height: 1.0;
+			white-space: nowrap;
+			display: inline-block;
+			width: 50px;
+			text-align: center;
+			overflow: hidden;
+		}
 		
 	</style>
 </head>
@@ -158,7 +169,7 @@
                           <tr>
                           	 <th style="width:1.2%;"></th>
                           	 <th style="width:9%;">Махсулотлар номи</th>
-                          	 <th class='vrt-header product-column' style="width:1.5%;"><span>Таом вазни</span></th>
+                          	 <th class='vrt-header product-column' style="width:1.5%;"><span class="product-name-short">Таом вазни</span></th>
 							   <?php $col = 0; ?>
 							 @foreach($products as $product)
 							 	@if(isset($product['yes']))
@@ -187,7 +198,7 @@
 			                        <tr style="{{ $bg_color }}">
 			                        	@if($loop->index == 1)
 												<th scope="row" rowspan="<?php echo 2 * (count($row)-1); ?>" class='vrt-header' style="height: 60px;">
-													<span>{{ $row[0]['mealtime'] }}</span>
+													<span class="mealtime-header">{{ $row[0]['mealtime'] }}</span>
 												</th>
 			                            @endif
 			                            <td scope="row" rowspan="2" class="align-baseline" style="padding: 2px; background-color: #ffffff;"><?php echo $item['foodname'] ?></td>
