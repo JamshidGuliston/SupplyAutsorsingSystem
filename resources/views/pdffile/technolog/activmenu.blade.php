@@ -95,6 +95,7 @@
 		
 		/* Ovqat vaqti uchun */
 		.mealtime-header {
+			vertical-align: middle;
 			font-size: 5px;
 			line-height: 1.0;
 			white-space: nowrap;
