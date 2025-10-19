@@ -72,19 +72,16 @@
 		
 		.vrt-header span{
 			display: inline-block;
+			text-align: center;
 			-webkit-transform: rotate(-90deg);
 			-moz-transform: rotate(-90deg);
 			-ms-transform: rotate(-90deg);
 			-o-transform: rotate(-90deg);
 			transform: rotate(-90deg);
-			white-space: nowrap;
+			white-space: normal;
+			width: 100px;
 			font-size: 5px;
-			position: absolute;
-			left: 50%;
-			top: 50%;
-			transform-origin: center center;
-			margin-left: -2px;
-			margin-top: -25px;
+			overflow: visible;
 		}
 		
 		/* Background colorlarni olib tashlash */

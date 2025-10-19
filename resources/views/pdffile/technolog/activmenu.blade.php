@@ -105,11 +105,6 @@
 		}
 		
 		/* Maxsulotlar va taom nomlari uchun kulrang */
-		thead tr,
-		thead th,
-		thead td {
-			background-color:rgb(247, 247, 247) !important; /* Kulrang */
-		}
 		
 		/* Footer qatorlari uchun och sariq rang */
 		.footer-row {
