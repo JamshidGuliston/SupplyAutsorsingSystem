@@ -62,15 +62,30 @@
 			border-bottom: 1px solid black;
 			padding: 0px;
 		}
-		.vrt-header {
+		.vrt-header span{
+			display: inline-block;
 			text-align: center;
-			vertical-align: middle;
+			-webkit-transform: rotate(-90deg);
+			-moz-transform: rotate(-90deg);
+			-ms-transform: rotate(-90deg);
+			-o-transform: rotate(-90deg);
+			transform: rotate(-90deg);
+
+			white-space: normal;       /* birinchi bir qatorda */
+			width: 100px;               /* aniq kenglik (burilgandan keyin balandlik) */
+			overflow: visible;         /* hamma ko'rinsin */
 			font-size: 5.5px;
+		}
+		
+		/* Maxsulot nomlari uchun */
+		.product-name-short {
+			font-size: 5px;
 			line-height: 1.0;
-			padding: 2px !important;
-			height: 95px;
-			writing-mode: vertical-rl;
-			text-orientation: mixed;
+			white-space: normal;       /* bir qatorda */
+			display: inline-block;
+			max-width: 95px;          /* burilishdan oldin kenglik */
+			text-align: center;
+			overflow: visible;
 		}
 		
 		/* Qator balandligini kamaytirish */
@@ -78,13 +93,12 @@
 			height: 20px;
 		}
 		
-		/* Maxsulot ustunlari uchun - vertikal */
+		/* Maxsulot ustunlari uchun */
 		.product-column {
 			width: 1.6% !important;
 			max-width: 1.6%;
-			font-size: 5px;
-			line-height: 1.0;
-			padding: 1px !important;
+			overflow: hidden;
+			padding: 0px !important;
 		}
 		
 		/* Maxsulotlar va taom nomlari uchun kulrang */
@@ -92,7 +106,6 @@
 		thead th,
 		thead td {
 			background-color:rgb(247, 247, 247) !important;
-			height: 95px;
 		}
 		
 		/* Footer qatorlari uchun och sariq rang */
@@ -142,16 +155,18 @@
                     <table style="width:100%; table-layout: fixed; margin-top: 25px;">
                         <thead>
                           <tr>
-                          	 <th style="width:1%;"></th>
-                          	 <th style="width:8%;">Махсулотлар номи</th>
-                          	 <th class='vrt-header' style="width:1.2%;">Таом вазни</th>
+                          	 <th style="width:1.2%;"></th>
+                          	 <th style="width:9%;">Махсулотлар номи</th>
+                          	 <th class='vrt-header' style="width:1.5%;"><?php echo '<span>Таом вазни</span>';?></th>
 							   <?php $col = 0; ?>
 							 @foreach($products as $product)
 							 	@if(isset($product['yes']))
 								 @php
 									$col++;
 								@endphp
-                          	 		<th class='vrt-header product-column'>{{ $product['product_name'] }}</th>
+                          	 		<th class='vrt-header product-column' style="padding: 0px; height: 100px">
+                          	 			<span class="product-name-short">{{ $product['product_name'] }}</span>
+                          	 		</th>
 								@endif
 							 @endforeach
                           </tr>
@@ -170,7 +185,9 @@
 								?>
 			                        <tr style="{{ $bg_color }}">
 			                        	@if($loop->index == 1)
-												<th scope="row" rowspan="<?php echo 2 * (count($row)-1); ?>" class='vrt-header' style="height: 60px; background-color: #ffffff;">{{ $row[0]['mealtime'] }}</th>
+												<th scope="row" rowspan="<?php echo 2 * (count($row)-1); ?>" class='vrt-header' style="height: 60px; background-color: #ffffff;">
+													<span>{{ $row[0]['mealtime'] }}</span>
+												</th>
 			                            @endif
 			                            <td scope="row" rowspan="2" class="align-baseline" style="padding: 2px; background-color: #ffffff;"><?php echo $item['foodname'] ?></td>
 			                            <td scope="row" rowspan="2" class="align-baseline" style="padding: 0px; background-color: #ffffff;"><?php echo $item['foodweight'] ?></td>
