@@ -108,12 +108,12 @@
 		thead tr,
 		thead th,
 		thead td {
-			background-color: #d3d3d3 !important; /* Kulrang */
+			background-color:rgb(235, 235, 235) !important; /* Kulrang */
 		}
 		
 		/* Footer qatorlari uchun och sariq rang */
 		.footer-row {
-			background-color: #fffacd !important; /* Och sariq */
+			background-color:rgb(253, 250, 221) !important; /* Och sariq */
 		}
 	</style>
 </head>
@@ -347,7 +347,7 @@
 										for($t = 0; $t < count($products); $t++){
 											if(isset($products[$t]['yes']) and isset($total_weight[$products[$t]['id']])){
 											?>
-												<td style="padding: 0px"><?php printf("%01.3f", $total_weight[$products[$t]['id']]); ?></td>
+												<td style="padding: 0px;"><b><?php printf("%01.3f", $total_weight[$products[$t]['id']]); ?></b></td>
 											<?php	
 											}
 											elseif(isset($products[$t]['yes'])){
