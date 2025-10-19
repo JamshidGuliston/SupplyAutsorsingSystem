@@ -93,13 +93,9 @@
 			line-height: 1.0;
 			white-space: normal;       /* bir qatorda */
 			display: inline-block;
-			width: 115px;               /* aniq kenglik (aylantirilganda balandlik) */
-			max-width: 120px;           /* maksimal kenglik */
 			text-align: center;
 			overflow: hidden;
 			word-wrap: break-word;
-			height: 73px;
-			max-height: 75px;          /* balandlikni cheklash */
 			text-overflow: ellipsis;
 		}
 		/* Qator balandligini kamaytirish */
@@ -113,7 +109,6 @@
 			max-width: 2%;
 			overflow: hidden;
 			padding: 0px !important;
-			height: 95px;
 			vertical-align: middle;
 			text-align: center;
 			position: relative;
