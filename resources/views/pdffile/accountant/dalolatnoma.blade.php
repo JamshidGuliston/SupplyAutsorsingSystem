@@ -194,7 +194,7 @@
 
     <!-- Kirish matni -->
     <div class="intro-text">
-        Бизлар қуйидаги имзо чекувчилар {{ $autorser['company_name'] ?? 'ASIA BEST DISTRIBUTION SERVICE' }} директори Б.Тажибaев бир томондан ва {{ $buyurtmachi['company_name'] ?? 'Олмалик шахар 3-сони ДМТТ директори' }} иккинчи томондан <br>{{ $contract_data ?? '25111006442027' }}даги шартнома асосида қуйидаги миқдорда бажарилганлиги ҳақида туздик:
+        Бизлар қуйидаги имзо чекувчилар {{ $autorser['company_name'] ?? 'ASIA BEST DISTRIBUTION SERVICE' }} директори {{ $autorser['company_director'] ?? 'B.Tajibaev' }} бир томондан ва {{ $buyurtmachi['company_name'] ?? 'Олмалик шахар 3-сони ДМТТ директори' }} иккинчи томондан <br>{{ $contract_data ?? '25111006442027' }}даги шартнома асосида қуйидаги миқдорда бажарилганлиги ҳақида туздик:
     </div>
 
     <!-- Jadval -->
@@ -261,7 +261,7 @@
         <div class="footer-section">
             <div class="signature-title">Аутсорсер:</div>
             <div class="signature-info">{{ $autorser['company_name'] ?? 'ASIA BEST DISTRIBUTION SERVICE' }}</div>
-            <div class="signature-info">директори: $autorser['company_director']</div>
+            <div class="signature-info">директори: {{ $autorser['company_director'] ?? 'B.Tajibaev' }}</div>
             <div class="signature-line"></div>
         </div>
         
