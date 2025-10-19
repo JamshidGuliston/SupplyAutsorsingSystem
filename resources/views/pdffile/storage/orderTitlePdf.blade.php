@@ -98,11 +98,11 @@
 												@php $counts[$kindergarten['id']] += $row['kindergartens'][$kindergarten['id']] ?? 0; @endphp
 											@else
 												@if(($row['unit_id'] ?? null) != 3)
-													@php $counts[$kindergarten['id']] = ($package_size == 0) ? $row['kindergartens'][$kindergarten['id']] : $row['kindergartens'][$kindergarten['id']] / $package_size; @endphp
+													@php $counts[$kindergarten['id']] += ($package_size == 0) ? $row['kindergartens'][$kindergarten['id']] : $row['kindergartens'][$kindergarten['id']] / $package_size; @endphp
 												@endif
 											@endif
 
-											<td>{{ $package_size == 0 ? number_format($row['kindergartens'][$kindergarten['id']]) : $row['kindergartens'][$kindergarten['id']] / $package_size }}</td>
+											<td>{{ $package_size == 0 ? number_format($row['kindergartens'][$kindergarten['id']], 1) : $row['kindergartens'][$kindergarten['id']] / $package_size }}</td>
 											@php $summ += ($package_size == 0) ? $row['kindergartens'][$kindergarten['id']] : $row['kindergartens'][$kindergarten['id']] / $package_size; @endphp
 										@endif
 									@endforeach
