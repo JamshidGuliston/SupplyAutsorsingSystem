@@ -80,10 +80,8 @@
 			-ms-transform: rotate(-90deg);
 			-o-transform: rotate(-90deg);
 			transform: rotate(-90deg);
-
 			white-space: normal;  
 			text-align: center;     /* birinchi bir qatorda */
-			width: 100px;               /* aniq kenglik (burilgandan keyin balandlik) */
 			overflow: visible;         /* hamma ko'rinsin */
 			font-size: 8px;
 		}
@@ -95,12 +93,13 @@
 			line-height: 1.0;
 			white-space: normal;       /* bir qatorda */
 			display: inline-block;
-			width: 55px;               /* aniq kenglik (aylantirilganda balandlik) */
-			max-width: 55px;           /* maksimal kenglik */
+			width: 115px;               /* aniq kenglik (aylantirilganda balandlik) */
+			max-width: 120px;           /* maksimal kenglik */
 			text-align: center;
 			overflow: hidden;
 			word-wrap: break-word;
-			max-height: 15px;          /* balandlikni cheklash */
+			height: 73px;
+			max-height: 75px;          /* balandlikni cheklash */
 			text-overflow: ellipsis;
 		}
 		/* Qator balandligini kamaytirish */
@@ -122,11 +121,10 @@
 
 		/* Ovqat vaqti uchun */
 		.mealtime-header {
-			font-size: 5px;
+			font-size: 7px;
 			line-height: 1.0;
 			white-space: nowrap;
 			display: inline-block;
-			width: 50px;
 			text-align: center;
 			overflow: hidden;
 		}
@@ -183,7 +181,7 @@
 								 @php
 									$col++;
 								@endphp
-                          	 		<th class='vrt-header product-column' style="height: 100px">
+                          	 		<th class='vrt-header product-column' style="height: 120px">
                           	 			<span class="product-name-short">{{ $product['product_name'] }}</span>
                           	 		</th>
 								@endif
