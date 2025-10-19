@@ -10,10 +10,10 @@
 	<!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"> -->
 	<title>Title</title>
 	<style>
-		@page { margin: 10mm 10mm 10mm 10mm; }
+		@page { margin: 3mm 3mm 3mm 3mm; }
 		body{
 			font-family: DejaVu Sans;
-			font-size: 7px;
+			font-size: 6.5px;
 			background-position: top left;
 			background-repeat: no-repeat;
 			background-size: 100%;
@@ -74,19 +74,19 @@
 			-o-transform: rotate(-90deg);
 			transform: rotate(-90deg);
 
-			white-space: normal;       /* birinchi bir qatorda */
-			width: 100px;               /* aniq kenglik (burilgandan keyin balandlik) */
+			white-space: nowrap;       /* birinchi bir qatorda */
+			width: 70px;               /* aniq kenglik (burilgandan keyin balandlik) */
 			overflow: visible;         /* hamma ko'rinsin */
-			font-size: 6px;
+			font-size: 5.5px;
 		}
 		
 		/* Maxsulot nomlari uchun */
 		.product-name-short {
-			font-size: 5.5px;
+			font-size: 5px;
 			line-height: 1.0;
-			white-space: normal;       /* bir qatorda */
+			white-space: nowrap;       /* bir qatorda */
 			display: inline-block;
-			max-width: 95px;          /* burilishdan oldin kenglik */
+			max-width: 65px;          /* burilishdan oldin kenglik */
 			text-align: center;
 			overflow: visible;
 		}
@@ -98,8 +98,8 @@
 		
 		/* Maxsulot ustunlari uchun */
 		.product-column {
-			width: 1.8% !important;
-			max-width: 1.8%;
+			width: 1.6% !important;
+			max-width: 1.6%;
 			overflow: hidden;
 			padding: 0px !important;
 		}
@@ -160,9 +160,9 @@
                     <table style="width:100%; table-layout: fixed; margin-top: 25px;">
                         <thead>
                           <tr>
-                          	 <th style="width:1.5%;"></th>
-                          	 <th style="width:10%;">Махсулотлар номи</th>
-                          	 <th class='vrt-header' style="width:1.8%;"><?php echo '<span>Таом вазни</span>';?></th>
+                          	 <th style="width:1.2%;"></th>
+                          	 <th style="width:9%;">Махсулотлар номи</th>
+                          	 <th class='vrt-header' style="width:1.5%;"><?php echo '<span>Таом вазни</span>';?></th>
 							   <?php $col = 0; ?>
 							 @foreach($products as $product)
 							 	@if(isset($product['yes']))
