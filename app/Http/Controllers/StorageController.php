@@ -1237,7 +1237,12 @@ class StorageController extends Controller
                             $result = round($actual_weight);
                         }
                         else{
-                            $result = round($actual_weight, 1);
+                            if($prod->package_size != null){
+                                $result = round($actual_weight / $prod->package_size) * $prod->package_size;
+                            }
+                            else{
+                                $result = round($actual_weight, 1);
+                            }
                         }
                         order_product_structure::create([
                             'order_product_name_id' => $order->id,

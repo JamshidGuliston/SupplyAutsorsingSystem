@@ -1548,6 +1548,7 @@ class TechnologController extends Controller
                 'category_name_id' => $request['catid'],
                 'norm_cat_id' => $request['normid'],
                 'div' => $request['div'],
+                'package_size' => $request['package_size'],
                 'sort' => $request['sort'],
                 'hide' => $request['hide'],
                 'proteins' => $request['proteins'] ?? 0,

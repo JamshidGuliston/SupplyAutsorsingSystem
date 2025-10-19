@@ -74,6 +74,12 @@
                 <input type="text" name="div" class="form-control" id="staticEmail" value="{{ $product->div }}" required>
             </div>
         </div>
+        <div class="form-group row">
+            <label for="staticEmail" class="col-sm-2 col-form-label">Пакет миқдори</label>
+            <div class="col-sm-10">
+                <input type="text" name="package_size" class="form-control" id="staticEmail" value="{{ $product->package_size }}" required>
+            </div>
+        </div>
 
         <div class="form-group row">
             <label for="staticEmail" class="col-sm-2 col-form-label">Тартиби</label>
@@ -149,15 +155,4 @@
 @endsection
 
 @section('script')
-@if(session('status'))
-<script> 
-    // alert('{{ session("status") }}');
-    swal({
-        title: "Ajoyib!",
-        text: "{{ session('status') }}",
-        icon: "success",
-        button: "ok",
-    });
-</script>
-@endif
 @endsection
