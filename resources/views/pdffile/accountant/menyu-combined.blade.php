@@ -81,6 +81,7 @@
 			-o-transform: rotate(-90deg);
 			transform: rotate(-90deg);
 			white-space: normal;
+			vertical-align: middle;
 			width: 100px;
 			font-size: 8px;
 			overflow: visible;
@@ -96,9 +97,10 @@
 			width: 95px;               /* aniq kenglik (aylantirilganda balandlik) */
 			max-width: 100px;           /* maksimal kenglik */
 			text-align: center;
+			vertical-align: middle;
 			overflow: hidden;
 			word-wrap: break-word;
-			max-height: 20px;          /* balandlikni cheklash */
+			max-height: 15px;          /* balandlikni cheklash */
 			text-overflow: ellipsis;
 		}
 		/* Qator balandligini kamaytirish */
