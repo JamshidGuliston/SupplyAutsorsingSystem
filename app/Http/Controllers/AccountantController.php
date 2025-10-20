@@ -2537,7 +2537,7 @@ class AccountantController extends Controller
         
         // Hisob-faktura raqami va sanasi
         if(is_null(env('INVOICE_NUMBER'))){
-            $invoice_number = $kindgar->number_of_org.'/'.$days->last()->month_id % 12 == 0 ? 12 : $days->last()->month_id % 12;
+            $invoice_number = $kindgar->number_of_org.'/'.$days->last()->month_id;
         }else{
             $invoice_number = $days->last()->month_id.'/'.env('INVOICE_NUMBER');
         }
