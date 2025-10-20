@@ -158,7 +158,7 @@
                     <h4 class="mb-1">{{$titlemenu->menu_name}}</h4>
                     <p class="mb-0 text-muted">
                         <strong>Mavsum:</strong> {{$titlemenu->season->season_name ?? 'Noma\'lum'}} | 
-                        <strong>Yaratilgan:</strong> {{$titlemenu->created_at->format('d.m.Y H:i')}}
+                        <strong>Yaratilgan:</strong> {{ $titlemenu->created_at }}
                     </p>
                     @if($titlemenu->description)
                         <p class="mb-0"><strong>Tavsif:</strong> {{$titlemenu->description}}</p>
