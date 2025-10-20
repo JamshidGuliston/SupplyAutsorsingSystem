@@ -2535,11 +2535,12 @@ class AccountantController extends Controller
         $contract_data = $contract_env ? explode(',', $contract_env)[$region->id - 1] ?? " ______ '______' ___________ 2025 й"
             : " ______ '______' ___________ 2025 й";
         
+        $month_number = $days->last()->month_id % 12 == 0 ? 12 : $days->last()->month_id % 12;
         // Hisob-faktura raqami va sanasi
         if(is_null(env('INVOICE_NUMBER'))){
-            $invoice_number = $kindgar->number_of_org.'/'.$days->last()->month_id;
+            $invoice_number = $kindgar->number_of_org.'/'.$month_number;
         }else{
-            $invoice_number = $days->last()->month_id.'/'.env('INVOICE_NUMBER');
+            $invoice_number = $month_number.'/'.env('INVOICE_NUMBER');
         }
         $invoice_date = $days->last()->created_at->format('d.m.Y');
         
