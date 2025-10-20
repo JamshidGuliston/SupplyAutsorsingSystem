@@ -367,7 +367,7 @@
 								@endif
                         </tbody>
                       </table>
-					  <div class="row" style="margin-top: 15px;">
+					  <!-- <div class="row" style="margin-top: 15px;">
 							<div class="column">
 								<p style="text-align: center;"><strong> Бир нафар {{ $menu[0]['age_name'] }}ли бола учун:</strong> <?php echo number_format($protsent->eater_cost, 0, ',', ' '); ?> so'm</p>
 							</div>
@@ -377,7 +377,7 @@
 							<div class="column">
 								
 							</div>
-					   </div>
+					   </div> -->
                        <div class="row" style="margin-top: 15px;">
 					   @if(env('WORKERSFORMENU') == "true")
 					   		<div class="column">
@@ -399,7 +399,7 @@
 								<p style="text-align: center;"><strong>{{ env('MENU_SIGNATURE') }}:</strong> __________________;</p>
 							</div>
 							<div class="column">
-								<p style="text-align: right;"><strong>ДМТТ рахбари: </strong> __________________;</p>
+								<p style="text-align: right;"><strong>Ошпаз: </strong> __________________;</p>
 							</div>
 					   </div>
                 </div>

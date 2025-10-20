@@ -201,9 +201,15 @@
 	<div class="footer-section">
 		<div class="footer-column">
 			<strong>Аутсорсер директори:</strong> ____________________
+		    <br/>
+			<br/>
+			<strong>Бухгалтер:</strong> ____________________
 		</div>
 		<div class="footer-column">
 			<strong>ДМТТ рахбари:</strong> ____________________
+			<br/>
+			<br/>
+			<strong>Ошпаз:</strong> ____________________
 		</div>
 		<div class="footer-column">
 			<strong>Хамшира:</strong> ____________________

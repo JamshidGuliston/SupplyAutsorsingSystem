@@ -352,9 +352,15 @@
     <div class="footer">
         <div class="footer-section">
             <div class="signature-label">Аутсорсер директори: ____________________________</div>
+            <br/>
+            <br/>
+            <div class="signature-label">Бухгалтер: ____________________________</div>
         </div>
         <div class="footer-section">
             <div class="signature-label">Буюртмачи директори: ____________________________</div>
+            <br/>
+            <br/>
+            <div class="signature-label">Хамшира: ____________________________</div>
         </div>
     </div>
 </body>
