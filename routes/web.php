@@ -32,6 +32,7 @@ Route::get('/', function () {
 Route::get('/showmenu/{kid}/{did}/{aid}', [TestController::class, 'showmenu']);
 // ommaga ochiq bot orqali taxminiy menyuni ko'rish
 Route::get('/nextdaymenuPDF/{kid}/{aid}', [TestController::class, 'nextdaymenuPDF']);
+Route::get('/nextdaymenuPDF/{kid}/{aid}/image', [TestController::class, 'nextdaymenuPDFImage']);
 Route::get('/nextdaysecondmenuPDF/{kid}', [TestController::class, 'nextdaysecondmenuPDF']);
 Route::get('/nextdaysomenakladnoyPDF/{kid}', [TestController::class, 'nextdaysomenakladnoyPDF']);
 Route::get('/nextnakladnoyPDF/{kid}', [TestController::class, 'nextnakladnoyPDF']);
@@ -39,7 +40,9 @@ Route::get('/gow', [TestController::class, 'addchilds']);
 
 // ommaga ochiq bot orqali haqiqiy menyuni ko'rish
 Route::get('/activmenuPDF/{day}/{kid}/{aid}', [TestController::class, 'activmenuPDF']);
+Route::get('/activmenuPDF/{day}/{kid}/image', [TestController::class, 'activmenuPDFImage']);
 Route::get('/activsecondmenuPDF/{day}/{kid}', [TestController::class, 'activsecondmenuPDF']);
+Route::get('/activsecondmenuPDF/{day}/{kid}/image', [TestController::class, 'activsecondmenuPDFImage']);
 Route::get('/activnakladPDF/{day}/{kid}', [TestController::class, 'activnakladPDF']);
 // ommaga ochiq shoplar uchun
 Route::get('nextdayshoppdf/{id}', [TestController::class, 'nextdayshoppdf'])->name('technolog.nextdayshoppdf');

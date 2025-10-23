@@ -209,6 +209,253 @@ class TestController extends Controller
 		}
 	}
 
+	public function nextdaymenuPDFImage(Request $request, $gid, $ageid)
+	{
+		$menu = Nextday_namber::where([
+			['kingar_name_id', '=', $gid],
+			['king_age_name_id', '=', $ageid]
+		])
+		->join('kindgardens', 'nextday_nambers.kingar_name_id', '=', 'kindgardens.id')
+        ->join('age_ranges', 'nextday_nambers.king_age_name_id', '=', 'age_ranges.id')->get();
+		$taomnoma = Titlemenu::where('id', $menu[0]['kingar_menu_id'])->first();
+		
+		$products = Product::where('hide', 1)
+		    ->leftjoin('sizes', 'sizes.id', '=', 'products.size_name_id')
+			->orderBy('sort', 'ASC')->get(['products.*', 'sizes.size_name']);
+		
+		$menuitem = Menu_composition::where('title_menu_id', $menu[0]['kingar_menu_id'])
+                        ->where('age_range_id', $ageid)
+                        ->join('meal_times', 'menu_compositions.menu_meal_time_id', '=', 'meal_times.id')
+                        ->join('food', 'menu_compositions.menu_food_id', '=', 'food.id')
+                        ->join('products', 'menu_compositions.product_name_id', '=', 'products.id')
+                        ->join('sizes', 'sizes.id', '=', 'products.size_name_id')
+                        ->orderBy('menu_meal_time_id')
+                        ->get();
+
+        // xodimlar ovqati uchun
+        $day = Day::join('months', 'months.id', '=', 'days.month_id')
+				->join('years', 'years.id', '=', 'days.year_id')
+				->orderBy('days.id', 'DESC')->first(['days.day_number','days.id as id', 'months.month_name', 'years.year_name']);
+        
+        $workerfood = titlemenu_food::where('day_id', $day->id)
+                    ->where('worker_age_id', $ageid)
+                    ->where('titlemenu_id', $menu[0]['kingar_menu_id'])
+                    ->get();
+        
+		$costs = bycosts::where('day_id', bycosts::where('region_name_id', Kindgarden::where('id', $gid)->first()->region_id)->orderBy('day_id', 'DESC')->first()->day_id)->where('region_name_id', Kindgarden::where('id', $gid)->first()->region_id)->orderBy('day_id', 'DESC')->get();
+		$narx = [];
+		foreach($costs as $row){
+			if(!isset($narx[$row->praduct_name_id])){
+				$narx[$row->praduct_name_id] = $row->price_cost;
+			}
+		}
+        $nextdaymenuitem = [];
+        $workerproducts = [];
+        // kamchilik bor boshlangich qiymat berishda
+        $productallcount = array_fill(1, 500, 0);
+        
+        foreach($menuitem as $item){
+            $nextdaymenuitem[$item->menu_meal_time_id][0]['mealtime'] = $item->meal_time_name; 
+            $nextdaymenuitem[$item->menu_meal_time_id][$item->menu_food_id][$item->product_name_id] = $item->weight;
+            $nextdaymenuitem[$item->menu_meal_time_id][$item->menu_food_id]['foodname'] = $item->food_name; 
+            $productallcount[$item->product_name_id] += $item->weight;
+            for($i = 0; $i<count($products); $i++){
+                if(empty($products[$i]['yes']) and $products[$i]['id'] == $item->product_name_id){
+                    $products[$i]['yes'] = 1;
+                }
+            }
+        }
+
+        // Xodimlar uchun ovqat gramajlarini hisoblash
+        $workerproducts = array_fill(1, 500, 0);
+        foreach($workerfood as $tr){
+            // Tushlikdagi birinchi ovqat va nondan yeyishadi
+            if(isset($nextdaymenuitem[3][$tr->food_id])){
+                foreach($nextdaymenuitem[3][$tr->food_id] as $key => $value){
+                    if($key != 'foodname' and $key != 'foodweight'){
+                        $workerproducts[$key] += $value; 
+                    }
+                }
+            }
+        }
+
+		// oy va yilni o'zgartirish
+		$today = new \DateTime();
+		$nextWorkDay = clone $today;
+		$nextWorkDay->modify('+1 day');
+
+		// dam olish kunlari: 6 = shanba, 7 = yakshanba
+		while (in_array($nextWorkDay->format('N'), [6, 7])) {
+			$nextWorkDay->modify('+1 day');
+		}
+
+		$day->day_number = $nextWorkDay->format('d');
+		$day->month_name = $nextWorkDay->format('F');
+		$day->year_name = $nextWorkDay->format('Y');
+
+		// PDF ni rasmga aylantirish
+		try {
+			// Log qo'shish
+			\Log::info('PDF Image generation started for garden: ' . $gid . ', age: ' . $ageid);
+			
+			$pdf = \PDF::loadView('pdffile.technolog.alltable', [
+				'narx' => $narx,
+				'day' => $day,
+				'productallcount' => $productallcount,
+				'workerproducts' => $workerproducts,
+				'menu' => $menu,
+				'menuitem' => $nextdaymenuitem,
+				'products' => $products,
+				'workerfood' => $workerfood,
+				'taomnoma' => $taomnoma
+			]);
+
+			$pdf->setPaper('A4', 'landscape')
+				->setOptions([
+					'encoding' => 'UTF-8',
+					'enable-javascript' => true,
+					'javascript-delay' => 1000,
+					'enable-smart-shrinking' => true,
+					'no-stop-slow-scripts' => true,
+					'disable-smart-shrinking' => false,
+					'print-media-type' => true,
+					'dpi' => 300,
+					'image-quality' => 100,
+					'margin-top' => 10,
+					'margin-right' => 10,
+					'margin-bottom' => 10,
+					'margin-left' => 10,
+					'enable-local-file-access' => true,
+					'load-error-handling' => 'ignore',
+					'load-media-error-handling' => 'ignore',
+				]);
+
+			// PDF ni rasmga aylantirish
+			$pdfContent = $pdf->output();
+			$tempPdfPath = storage_path('app/temp_menu_' . $gid . '_' . $ageid . '.pdf');
+			file_put_contents($tempPdfPath, $pdfContent);
+			
+			\Log::info('PDF created successfully at: ' . $tempPdfPath);
+
+			// Imagick mavjudligini tekshirish
+			if (class_exists('Imagick')) {
+				\Log::info('Imagick is available');
+				try {
+					$imagick = new \Imagick();
+					$imagick->setResolution(300, 300);
+					$imagick->readImage($tempPdfPath);
+					$imagick->setImageFormat('jpeg');
+					$imagick->setImageCompressionQuality(90);
+					
+					// Faqat birinchi sahifani olish
+					$imagick->setIteratorIndex(0);
+					$imagick = $imagick->getImage();
+					
+					// Rasm o'lchamini optimallashtirish - keng va baland
+					$imagick->scaleImage(1200, 0);
+					
+					$imageContent = $imagick->getImageBlob();
+					$imagick->clear();
+					$imagick->destroy();
+					
+					\Log::info('Image created successfully with Imagick');
+				} catch (\ImagickException $e) {
+					\Log::error('Imagick error: ' . $e->getMessage());
+					throw $e;
+				}
+			} else {
+				\Log::info('Imagick not available, using fallback');
+				// Fallback: oddiy rasm yaratish
+				$imageContent = $this->createFallbackImage($gid, $ageid);
+			}
+
+			// Temp faylni o'chirish
+			if (file_exists($tempPdfPath)) {
+				unlink($tempPdfPath);
+			}
+
+			return response($imageContent)
+				->header('Content-Type', 'image/jpeg')
+				->header('Content-Disposition', 'inline; filename="menu_preview.jpg"')
+				->header('Cache-Control', 'public, max-age=3600');
+
+		} catch (\Exception $e) {
+			\Log::error('PDF Image generation error: ' . $e->getMessage());
+			\Log::error('Stack trace: ' . $e->getTraceAsString());
+			
+			// Xatolik bo'lsa, oddiy rasm qaytarish
+			$imageContent = $this->createFallbackImage($gid, $ageid);
+			
+			return response($imageContent)
+				->header('Content-Type', 'image/jpeg')
+				->header('Content-Disposition', 'inline; filename="error.jpg"');
+		}
+	}
+
+	private function createFallbackImage($gid, $ageid)
+	{
+		// Fallback rasm yaratish
+		$width = 800;
+		$height = 600;
+		
+		// Rasm yaratish
+		$image = imagecreate($width, $height);
+		
+		// Ranglar
+		$bgColor = imagecolorallocate($image, 255, 255, 255); // Oq fon
+		$textColor = imagecolorallocate($image, 0, 0, 0); // Qora matn
+		$headerColor = imagecolorallocate($image, 52, 144, 220); // Ko'k sarlavha
+		$borderColor = imagecolorallocate($image, 200, 200, 200); // Chegara
+		
+		// Fon to'ldirish
+		imagefill($image, 0, 0, $bgColor);
+		
+		// Chegara chizish
+		imagerectangle($image, 10, 10, $width-10, $height-10, $borderColor);
+		
+		// Sarlavha maydoni
+		imagefilledrectangle($image, 20, 20, $width-20, 80, $headerColor);
+		
+		// Matn qo'shish
+		$title = "TAXMINIY MENYU";
+		$subtitle = "Bog'cha ID: " . $gid . " | Yosh guruhi: " . $ageid;
+		$message = "PDF rasmga aylantirish imkoniyati mavjud emas";
+		$instruction = "PDF faylni yuklab olish uchun 'Yuklab olish' tugmasini bosing";
+		
+		// Matn o'lchamlari
+		$fontSize = 4;
+		$titleX = ($width - strlen($title) * imagefontwidth($fontSize)) / 2;
+		$subtitleX = ($width - strlen($subtitle) * imagefontwidth(3)) / 2;
+		$messageX = ($width - strlen($message) * imagefontwidth(3)) / 2;
+		$instructionX = ($width - strlen($instruction) * imagefontwidth(2)) / 2;
+		
+		// Matn chizish
+		imagestring($image, $fontSize, $titleX, 35, $title, $textColor);
+		imagestring($image, 3, $subtitleX, 120, $subtitle, $textColor);
+		imagestring($image, 3, $messageX, 200, $message, $textColor);
+		imagestring($image, 2, $instructionX, 250, $instruction, $textColor);
+		
+		// Qo'shimcha ma'lumot
+		$info1 = "Bu rasm taxminiy menyu ko'rinishini namoyish etadi";
+		$info2 = "To'liq ma'lumot uchun PDF faylni yuklab oling";
+		$info3 = "Sana: " . date('d.m.Y');
+		
+		imagestring($image, 2, ($width - strlen($info1) * imagefontwidth(2)) / 2, 300, $info1, $textColor);
+		imagestring($image, 2, ($width - strlen($info2) * imagefontwidth(2)) / 2, 320, $info2, $textColor);
+		imagestring($image, 2, ($width - strlen($info3) * imagefontwidth(2)) / 2, 350, $info3, $textColor);
+		
+		// Rasmni buffer ga yozish
+		ob_start();
+		imagejpeg($image, null, 90);
+		$imageContent = ob_get_contents();
+		ob_end_clean();
+		
+		// Xotirani tozalash
+		imagedestroy($image);
+		
+		return $imageContent;
+	}
+
 	public function activmenuPDF(Request $request, $today, $gid, $ageid)
 	{
 		$menu = Number_children::where([
@@ -1227,6 +1474,458 @@ class TestController extends Controller
 		else{
 			$dompdf->stream($name);	
 		}
+	}
+
+	public function activmenuPDFImage(Request $request, $today, $gid, $ageid)
+	{
+		$menu = Number_children::where([
+			['kingar_name_id', '=', $gid],
+			['day_id', '=', $today],
+			['king_age_name_id', '=', $ageid]
+		])->join('kindgardens', 'number_childrens.kingar_name_id', '=', 'kindgardens.id')
+		->join('titlemenus', 'number_childrens.kingar_menu_id', '=', 'titlemenus.id')
+        ->join('age_ranges', 'number_childrens.king_age_name_id', '=', 'age_ranges.id')->get();
+		// dd($menu);  
+		$products = Product::where('hide', 1)
+			->orderBy('sort', 'ASC')->get();
+		
+		$menuitem = Active_menu::where('day_id', $today)
+						->where('title_menu_id', $menu[0]['kingar_menu_id'])
+                        ->where('age_range_id', $ageid)
+                        ->join('meal_times', 'active_menus.menu_meal_time_id', '=', 'meal_times.id')
+                        ->join('food', 'active_menus.menu_food_id', '=', 'food.id')
+                        ->join('products', 'active_menus.product_name_id', '=', 'products.id')
+                        ->orderBy('menu_meal_time_id')
+						->orderBy('menu_food_id')
+                        ->get();	
+		
+        $day = Day::where('days.id', $today)
+			->join('months', 'months.id', '=', 'days.month_id')
+			->join('years', 'years.id', '=', 'days.year_id')
+			->orderBy('days.id', 'DESC')
+			->first(['days.day_number','days.id as id', 'months.month_name', 'months.id as month_id', 'years.year_name']);
+        // dd($day);
+        $workerfood = titlemenu_food::where('day_id', ($today-1))
+                    ->where('worker_age_id', $ageid)
+                    ->where('titlemenu_id', $menu[0]['kingar_menu_id'])
+                    ->get();
+
+		if($day->month_id % 12 == 0){
+			$month_id = 12;
+		}else{
+			$month_id = $day->month_id % 12;
+		}
+        $protsent = Protsent::where('region_id', Kindgarden::where('id', $gid)->first()->region_id)
+		                    ->where('start_date', '<=', $day->year_name.'-'.$month_id.'-'.$day->day_number)
+		                    ->where('end_date', '>=', $day->year_name.'-'.$month_id.'-'.$day->day_number)
+		                    ->get();
+		
+		$costs = bycosts::where('day_id', bycosts::where('region_name_id', Kindgarden::where('id', $gid)->first()->region_id)->orderBy('day_id', 'DESC')->first()->day_id)->where('region_name_id', Kindgarden::where('id', $gid)->first()->region_id)->orderBy('day_id', 'DESC')->get();
+		$narx = [];
+		foreach($costs as $row){
+			if(!isset($narx[$row->praduct_name_id])){
+				$narx[$row->praduct_name_id] = $row->price_cost;
+			}
+		}
+        $nextdaymenuitem = [];
+        $workerproducts = [];
+        // kamchilik bor boshlangich qiymat berishda
+        $productallcount = array_fill(1, 500, 0);
+		// dd($menuitem);
+        foreach($menuitem as $item){
+            $nextdaymenuitem[$item->menu_meal_time_id][0]['mealtime'] = $item->meal_time_name; 
+            $nextdaymenuitem[$item->menu_meal_time_id][$item->menu_food_id][$item->product_name_id] = $item->weight;
+            $nextdaymenuitem[$item->menu_meal_time_id][$item->menu_food_id]['foodname'] = $item->food_name; 
+            $productallcount[$item->product_name_id] += $item->weight;
+            for($i = 0; $i<count($products); $i++){
+                if(empty($products[$i]['yes']) and $products[$i]['id'] == $item->product_name_id){
+                    $products[$i]['yes'] = 1;
+                }
+            }
+        }
+
+        // Xodimlar uchun ovqat gramajlarini hisoblash
+        $workerproducts = array_fill(1, 500, 0);
+        foreach($workerfood as $tr){
+            // Tushlikdagi birinchi ovqat va nondan yeyishadi
+            if(isset($nextdaymenuitem[3][$tr->food_id])){
+                foreach($nextdaymenuitem[3][$tr->food_id] as $key => $value){
+                    if($key != 'foodname' and $key != 'foodweight'){
+                        $workerproducts[$key] += $value; 
+                        // Xodimlar gramajini ham productallcount ga qo'shish
+                        // $productallcount[$key] += $value;
+                    }
+                }
+            }
+        }
+
+		// PDF ni rasmga aylantirish
+		try {
+			// Log qo'shish
+			\Log::info('Active menu PDF Image generation started for day: ' . $today . ', garden: ' . $gid . ', age: ' . $ageid);
+			
+			$pdf = \PDF::loadView('pdffile.technolog.alltable', [
+				'narx' => $narx,
+				'day' => $day,
+				'productallcount' => $productallcount,
+				'workerproducts' => $workerproducts,
+				'menu' => $menu,
+				'menuitem' => $nextdaymenuitem,
+				'products' => $products,
+				'workerfood' => $workerfood,
+				'taomnoma' => $menu[0]
+			]);
+
+			$pdf->setPaper('A4', 'landscape')
+				->setOptions([
+					'encoding' => 'UTF-8',
+					'enable-javascript' => true,
+					'javascript-delay' => 1000,
+					'enable-smart-shrinking' => true,
+					'no-stop-slow-scripts' => true,
+					'disable-smart-shrinking' => false,
+					'print-media-type' => true,
+					'dpi' => 300,
+					'image-quality' => 100,
+					'margin-top' => 10,
+					'margin-right' => 10,
+					'margin-bottom' => 10,
+					'margin-left' => 10,
+					'enable-local-file-access' => true,
+					'load-error-handling' => 'ignore',
+					'load-media-error-handling' => 'ignore',
+				]);
+
+			// PDF ni rasmga aylantirish
+			$pdfContent = $pdf->output();
+			$tempPdfPath = storage_path('app/temp_active_menu_' . $today . '_' . $gid . '_' . $ageid . '.pdf');
+			file_put_contents($tempPdfPath, $pdfContent);
+			
+			\Log::info('Active menu PDF created successfully at: ' . $tempPdfPath);
+
+			// Imagick mavjudligini tekshirish
+			if (class_exists('Imagick')) {
+				\Log::info('Imagick is available for active menu');
+				try {
+					$imagick = new \Imagick();
+					$imagick->setResolution(300, 300);
+					$imagick->readImage($tempPdfPath);
+					$imagick->setImageFormat('jpeg');
+					$imagick->setImageCompressionQuality(90);
+					
+					// Faqat birinchi sahifani olish
+					$imagick->setIteratorIndex(0);
+					$imagick = $imagick->getImage();
+					
+					// Rasm o'lchamini optimallashtirish - keng va baland
+					$imagick->scaleImage(1200, 0);
+					
+					$imageContent = $imagick->getImageBlob();
+					$imagick->clear();
+					$imagick->destroy();
+					
+					\Log::info('Active menu image created successfully with Imagick');
+				} catch (\ImagickException $e) {
+					\Log::error('Imagick error for active menu: ' . $e->getMessage());
+					throw $e;
+				}
+			} else {
+				\Log::info('Imagick not available for active menu, using fallback');
+				// Fallback: oddiy rasm yaratish
+				$imageContent = $this->createActiveMenuFallbackImage($today, $gid, $day);
+			}
+
+			// Temp faylni o'chirish
+			if (file_exists($tempPdfPath)) {
+				unlink($tempPdfPath);
+			}
+
+			return response($imageContent)
+				->header('Content-Type', 'image/jpeg')
+				->header('Content-Disposition', 'inline; filename="active_menu_preview.jpg"')
+				->header('Cache-Control', 'public, max-age=3600');
+
+		} catch (\Exception $e) {
+			\Log::error('Active menu PDF Image generation error: ' . $e->getMessage());
+			\Log::error('Stack trace: ' . $e->getTraceAsString());
+			
+			// Xatolik bo'lsa, oddiy rasm qaytarish
+			$imageContent = $this->createActiveMenuFallbackImage($today, $gid, null);
+			
+			return response($imageContent)
+				->header('Content-Type', 'image/jpeg')
+				->header('Content-Disposition', 'inline; filename="error.jpg"');
+		}
+	}
+
+	public function activsecondmenuPDFImage(Request $request, $today, $gid)
+	{
+		try {
+			// Log qo'shish
+			\Log::info('Active menu PDF Image generation started for day: ' . $today . ', garden: ' . $gid);
+			
+			$products = Product::orderBy('sort', 'ASC')->get();
+			$nextdaymenuitem = [];
+			$workerproducts = [];
+			$region_id = Kindgarden::where('id', $gid)->first()->region_id;
+			$ages = Kindgarden::where('id', $gid)->with('age_range')->first();
+			
+			// kamchilik bor boshlangich qiymat berishda
+			$foundday = bycosts::where('day_id', '<=', $today)->where('region_name_id', Kindgarden::where('id', $gid)->first()->region_id)->orderBy('day_id', 'DESC')->first();
+			$narx = array_fill(1, 500, 0);
+			if(empty($foundday)){
+				$costs = [];
+			}else{
+				$costs = bycosts::where('day_id', $foundday->day_id)->where('region_name_id', $region_id)->orderBy('day_id', 'DESC')->get();
+			}
+			foreach($costs as $row){
+				$narx[$row->praduct_name_id] = $row->price_cost;
+			}
+			$workerproducts = array_fill(1, 500, 0);
+			$productallcount = array_fill(1, 500, 0);
+			$menuage = [];
+			$ages = Age_range::all();
+			foreach($ages as $age){
+				$allproductagesumm[$age->id] = array_fill(1, 500, 0);
+			}
+			foreach($ages as $age){
+				$menu = Number_children::where([
+					['kingar_name_id', '=', $gid],
+					['day_id', '=', $today],
+					['king_age_name_id', '=', $age->id]
+					])
+					->join('kindgardens', 'number_childrens.kingar_name_id', '=', 'kindgardens.id')
+					->join('age_ranges', 'number_childrens.king_age_name_id', '=', 'age_ranges.id')->get();
+				
+				if($menu->count()>0)
+					array_push($menuage, $menu);
+
+				if(count($menu) == 0){
+					continue;
+				}
+				
+				$menuitem = Active_menu::where('day_id', $today)
+								->where('title_menu_id', $menu[0]['kingar_menu_id'])
+								->where('age_range_id', $age->id)
+								->join('meal_times', 'active_menus.menu_meal_time_id', '=', 'meal_times.id')
+								->join('food', 'active_menus.menu_food_id', '=', 'food.id')
+								->join('products', 'active_menus.product_name_id', '=', 'products.id')
+								->orderBy('menu_meal_time_id')
+								->orderBy('menu_food_id')
+								->get();	
+
+				// xodimlar ovqati uchun
+				$day = Day::where('days.id', $today)
+					->join('months', 'months.id', '=', 'days.month_id')
+					->join('years', 'years.id', '=', 'days.year_id')
+					->orderBy('days.id', 'DESC')
+					->first(['days.day_number','days.id as id', 'months.month_name', 'months.id as month_id', 'years.year_name']);
+				
+				$workerfood = titlemenu_food::where('day_id', ($today-1))
+							->where('worker_age_id', $age->id)
+							->where('titlemenu_id', $menu[0]['kingar_menu_id'])
+							->get();
+				
+				foreach($menuitem as $item){
+					if(empty($nextdaymenuitem[$item->menu_meal_time_id][$item->menu_food_id]['product'][$item->product_name_id])){
+						$nextdaymenuitem[$item->menu_meal_time_id][$item->menu_food_id]['product'][$item->product_name_id] = 0;
+					}
+					$nextdaymenuitem[$item->menu_meal_time_id][$item->menu_food_id][$age->id][$item->product_name_id]['one'] = $item->weight;
+					$nextdaymenuitem[$item->menu_meal_time_id][$item->menu_food_id][$age->id]['age_name'] = $menu[0]['age_name'];
+					$nextdaymenuitem[$item->menu_meal_time_id][$item->menu_food_id]['foodname'] = $item->food_name; 
+					$nextdaymenuitem[$item->menu_meal_time_id][$item->menu_food_id]['foodweight'] = $item->food_weight; 
+					$nextdaymenuitem[$item->menu_meal_time_id]['mealtime'] = $item->meal_time_name; 
+					$productallcount[$item->product_name_id] += ($item->weight * $menu[0]['kingar_children_number']) / $item->div;
+					$allproductagesumm[$age->id][$item->product_name_id] += ($item->weight * $menu[0]['kingar_children_number']) / $item->div * $narx[$item->product_name_id];
+					$nextdaymenuitem[$item->menu_meal_time_id][$item->menu_food_id]['product'][$item->product_name_id] += ($item->weight * $menu[0]['kingar_children_number']) / $item->div;
+					
+					for($i = 0; $i<count($products); $i++){
+						if(empty($products[$i]['yes']) and $products[$i]['id'] == $item->product_name_id){
+							$products[$i]['yes'] = 1;
+						}
+					}
+				}
+				
+				if($age->id == 4 and $workerfood->count() > 0){
+					foreach($workerfood as $tr){
+						foreach($nextdaymenuitem[3][$tr->food_id][4] as $key => $value){
+							if($key != 'age_name'){
+								$workerproducts[$key] += $value['one'];
+							} 
+							array_push($workerproducts, $nextdaymenuitem[3][$tr->food_id]);
+						}
+					}
+				}
+			}
+			
+			foreach($nextdaymenuitem as $key => $item){
+				$nextdaymenuitem[$key]['rows'] = count($item)-1;
+				foreach($item as $rkey => $row){
+					if($rkey == 'mealtime'){
+						continue;
+					}
+					$nextdaymenuitem[$key]['rows'] += count($row)-3;
+				}
+			}
+			
+			// % nds ustama
+			$dateString = sprintf(
+				'%04d-%02d-%02d',
+				$day->year_name,
+				($day->month_id % 12 == 0 ? 12 : $day->month_id % 12),
+				$day->day_number
+			);
+			
+			$protsent = Protsent::where('region_id', $region_id)->where('start_date', '<=', $dateString)->where('end_date', '>=', $dateString)->get();
+			
+			if(!$protsent){
+				$protsent = new Protsent();
+				$protsent->where('age_range_id', 3)->eater_cost = 0;
+				$protsent->where('age_range_id', 4)->eater_cost = 0;
+			}
+
+			// PDF ni rasmga aylantirish
+			$dompdf = new Dompdf('UTF-8');
+			$html = mb_convert_encoding(view('pdffile.technolog.activsecondmenu', [
+				'narx' => $narx,
+				'day' => $day, 
+				'agesumm' => $allproductagesumm, 
+				'productallcount' => $productallcount, 
+				'workerproducts' => $workerproducts,
+				'menu' => $menuage, 
+				'menuitem' => $nextdaymenuitem, 
+				'products' => $products, 
+				'workerfood' => $workerfood, 
+				'protsent' => $protsent
+			]), 'HTML-ENTITIES', 'UTF-8');
+			
+			$dompdf->loadHtml($html);
+			$dompdf->setPaper('A4');
+			$dompdf->render();
+			
+			$pdfContent = $dompdf->output();
+			$tempPdfPath = storage_path('app/temp_active_menu_' . $today . '_' . $gid . '.pdf');
+			file_put_contents($tempPdfPath, $pdfContent);
+			
+			\Log::info('Active menu PDF created successfully at: ' . $tempPdfPath);
+
+			// Imagick mavjudligini tekshirish
+			if (class_exists('Imagick')) {
+				\Log::info('Imagick is available for active menu');
+				try {
+					$imagick = new \Imagick();
+					$imagick->setResolution(300, 300);
+					$imagick->readImage($tempPdfPath);
+					$imagick->setImageFormat('jpeg');
+					$imagick->setImageCompressionQuality(90);
+					
+					// Faqat birinchi sahifani olish
+					$imagick->setIteratorIndex(0);
+					$imagick = $imagick->getImage();
+					
+					// Rasm o'lchamini optimallashtirish - keng va baland
+					$imagick->scaleImage(1200, 0);
+					
+					$imageContent = $imagick->getImageBlob();
+					$imagick->clear();
+					$imagick->destroy();
+					
+					\Log::info('Active menu image created successfully with Imagick');
+				} catch (\ImagickException $e) {
+					\Log::error('Imagick error for active menu: ' . $e->getMessage());
+					throw $e;
+				}
+			} else {
+				\Log::info('Imagick not available for active menu, using fallback');
+				// Fallback: oddiy rasm yaratish
+				$imageContent = $this->createActiveMenuFallbackImage($today, $gid, $day);
+			}
+
+			// Temp faylni o'chirish
+			if (file_exists($tempPdfPath)) {
+				unlink($tempPdfPath);
+			}
+
+			return response($imageContent)
+				->header('Content-Type', 'image/jpeg')
+				->header('Content-Disposition', 'inline; filename="active_menu_preview.jpg"')
+				->header('Cache-Control', 'public, max-age=3600');
+
+		} catch (\Exception $e) {
+			\Log::error('Active menu PDF Image generation error: ' . $e->getMessage());
+			\Log::error('Stack trace: ' . $e->getTraceAsString());
+			
+			// Xatolik bo'lsa, oddiy rasm qaytarish
+			$imageContent = $this->createActiveMenuFallbackImage($today, $gid, null);
+			
+			return response($imageContent)
+				->header('Content-Type', 'image/jpeg')
+				->header('Content-Disposition', 'inline; filename="error.jpg"');
+		}
+	}
+
+	private function createActiveMenuFallbackImage($today, $gid, $day)
+	{
+		// Fallback rasm yaratish
+		$width = 800;
+		$height = 600;
+		
+		// Rasm yaratish
+		$image = imagecreate($width, $height);
+		
+		// Ranglar
+		$bgColor = imagecolorallocate($image, 255, 255, 255); // Oq fon
+		$textColor = imagecolorallocate($image, 0, 0, 0); // Qora matn
+		$headerColor = imagecolorallocate($image, 220, 53, 69); // Qizil sarlavha (haqiqiy menyu uchun)
+		$borderColor = imagecolorallocate($image, 200, 200, 200); // Chegara
+		
+		// Fon to'ldirish
+		imagefill($image, 0, 0, $bgColor);
+		
+		// Chegara chizish
+		imagerectangle($image, 10, 10, $width-10, $height-10, $borderColor);
+		
+		// Sarlavha maydoni
+		imagefilledrectangle($image, 20, 20, $width-20, 80, $headerColor);
+		
+		// Matn qo'shish
+		$title = "HAQIQIY MENYU";
+		$subtitle = "Kun: " . $today . " | Bog'cha ID: " . $gid;
+		$message = "PDF rasmga aylantirish imkoniyati mavjud emas";
+		$instruction = "PDF faylni yuklab olish uchun 'Yuklab olish' tugmasini bosing";
+		
+		// Matn o'lchamlari
+		$fontSize = 4;
+		$titleX = ($width - strlen($title) * imagefontwidth($fontSize)) / 2;
+		$subtitleX = ($width - strlen($subtitle) * imagefontwidth(3)) / 2;
+		$messageX = ($width - strlen($message) * imagefontwidth(3)) / 2;
+		$instructionX = ($width - strlen($instruction) * imagefontwidth(2)) / 2;
+		
+		// Matn chizish
+		imagestring($image, $fontSize, $titleX, 35, $title, $textColor);
+		imagestring($image, 3, $subtitleX, 120, $subtitle, $textColor);
+		imagestring($image, 3, $messageX, 200, $message, $textColor);
+		imagestring($image, 2, $instructionX, 250, $instruction, $textColor);
+		
+		// Qo'shimcha ma'lumot
+		$info1 = "Bu rasm haqiqiy menyu ko'rinishini namoyish etadi";
+		$info2 = "To'liq ma'lumot uchun PDF faylni yuklab oling";
+		$info3 = "Sana: " . date('d.m.Y');
+		
+		imagestring($image, 2, ($width - strlen($info1) * imagefontwidth(2)) / 2, 300, $info1, $textColor);
+		imagestring($image, 2, ($width - strlen($info2) * imagefontwidth(2)) / 2, 320, $info2, $textColor);
+		imagestring($image, 2, ($width - strlen($info3) * imagefontwidth(2)) / 2, 350, $info3, $textColor);
+		
+		// Rasmni buffer ga yozish
+		ob_start();
+		imagejpeg($image, null, 90);
+		$imageContent = ob_get_contents();
+		ob_end_clean();
+		
+		// Xotirani tozalash
+		imagedestroy($image);
+		
+		return $imageContent;
 	}
     
 	// Hozirgi kungacha ishlatilgan maxsulotlarni minus_multi_storajega yozish /////////////////////////////////////////////////////////////////////////////////////////////////

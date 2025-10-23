@@ -79,7 +79,7 @@
 						?>
 						<p>сана: {{ $day->day_number.".". $MID .".".$day->year_name." йил" }}</p>
 					</center>
-					Кимдан:<b> Нишон инвест МЧЖ </b><br>  
+					Кимдан:<b> {{ env('COMPANY_NAME') }} </b><br>  
 					Кимга: <b> {{ $king['kingar_name'] }}</b>
                 </div>
                 <div class="col-md-3">

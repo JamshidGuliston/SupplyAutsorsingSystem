@@ -65,6 +65,36 @@
     
 
     
+    /* Menu preview uchun stillar */
+    .menu-preview-image {
+        cursor: pointer;
+        transition: transform 0.2s ease;
+    }
+    
+    .menu-preview-image:hover {
+        transform: scale(1.02);
+    }
+    
+    .menu-preview-container {
+        position: relative;
+    }
+    
+    /* Zoom modal uchun stillar */
+    .modal-fullscreen .modal-body {
+        background-color: #f8f9fa;
+    }
+    
+    .modal-fullscreen img {
+        max-width: 100vw;
+        max-height: 100vh;
+        object-fit: contain;
+    }
+    
+    /* Modal oynaning atrofi uchun */
+    .modal-backdrop {
+        background-color: rgba(0, 0, 0, 0.3) !important;
+    }
+    
     /* Gap responsive */
     @media (max-width: 768px) {
         .d-flex.gap-2 {
@@ -123,6 +153,32 @@
     </div>
 </div>
 
+<!-- Taxminiy menyu rasm ko'rinishi uchun modal -->
+<div class="modal fade" id="menuPreviewModal" tabindex="-1" aria-labelledby="menuPreviewModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-fullscreen">
+        <div class="modal-content">
+            <div class="modal-header bg-primary">
+                <h5 class="modal-title text-white" id="menuPreviewModalLabel">Taxminiy menyu ko'rinishi</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body text-center" style="padding: 10px; overflow: auto;">
+                <div id="menuPreviewContainer">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Yuklanmoqda...</span>
+                    </div>
+                    <p class="mt-2">Menyu yuklanmoqda...</p>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Yopish</button>
+                <button type="button" class="btn btn-primary" onclick="downloadMenuFromPreview()">
+                    <i class="fas fa-download"></i> Yuklab olish
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <!-- End -->
 <div class="modal fade" id="Modalsadd" tabindex="-1" aria-labelledby="exampleModalLabelsadd" aria-hidden="true">
     <div class="modal-dialog  modal-lg">
@@ -172,7 +228,7 @@
     <a href="/chef/home" ><i class="fas fa-tachometer-alt me-3"></i>Qayta yuklash</a>
     <br>
     <!-- Bog'cha nomini ko'rsatish -->
-    <p><b>Bog'cha: {{ $kindgarden->kingar_name }}</b></p>
+    <h3><b>Bog'cha: {{ $kindgarden->kingar_name }}</b></h3>
     <div class="row g-3 my-2">
     @if(intval(date("H")) >= 8 and intval(date("H")) < 16 and $sendchildcount->count() == 0)
     <form method="POST" action="{{route('chef.sendnumbers')}}">
@@ -217,7 +273,7 @@
                     <p><i>Eslatma: menyu har kuni soat 10 dan keyin yangilanadi</i></p>
                     <p><small class="text-muted"><i class="fas fa-info-circle"></i> PDF faylni yuklab olish uchun tugmani bosing</small></p>
                     <div class="d-flex gap-2">
-                        <a href="/activsecondmenuPDF/{{ $day->id }}/{{ $kindgarden->id }}" 
+                        <a href="/activmenuPDF/{{ $day->id }}/{{ $kindgarden->id }}" 
                             class="btn btn-success d-flex align-items-center justify-content-center gap-2" 
                             style="width: 100%;" 
                             download>
@@ -226,9 +282,10 @@
                         <button type="button" 
                             class="btn btn-info d-flex align-items-center justify-content-center gap-2" 
                             style="width: 100%;" 
-                            onclick="shareMenuToTelegram('{{ $day->day_number.".".$day->month_name.".".$day->year_name }}', '/activsecondmenuPDF/{{ $day->id }}/{{ $kindgarden->id }}')">
-                            <i class="fab fa-telegram"></i> Share
+                            onclick="showActiveMenuPreview('{{ $day->id }}', '{{ $kindgarden->id }}', '{{ $day->day_number.".".$day->month_name.".".$day->year_name }}')">
+                            <i class="fas fa-eye"></i> Ko'rish
                         </button>
+                        
                     </div>
                 <!-- </form> -->
             </div>
@@ -240,7 +297,7 @@
             <div class="p-3 bg-white shadow-sm align-items-center rounded">
                 <!-- <form action="/nextdaysecondmenuPDF/{{ $kindgarden->id }}" method="get" download> -->
                 @foreach($kindgarden->age_range as $row)
-                    <p><b>Keyingi {{$row->age_name}} uchun taomnoma: </b></p>
+                    <p><b>Keyingi ish kuni uchun taomnoma: {{$row->age_name}}</b></p>
                     <p><small class="text-muted"><i class="fas fa-info-circle"></i> PDF faylni yuklab olish uchun tugmani bosing</small></p>
                     <div class="d-flex gap-2 mt-2">
                         <a href="/nextdaymenuPDF/{{ $kindgarden->id }}/{{ $row->id }}" 
@@ -249,6 +306,12 @@
                             download>
                                 <i class="fas fa-download"></i> Yuklab olish
                         </a>
+                        <button type="button" 
+                            class="btn btn-info d-flex align-items-center justify-content-center gap-2" 
+                            style="width: 100%;" 
+                            onclick="showMenuPreview('{{ $kindgarden->id }}', '{{ $row->id }}', '{{ $row->age_name }}')">
+                            <i class="fas fa-eye"></i> Ko'rish
+                        </button>
                         <!-- <button type="button" 
                             class="btn btn-info d-flex align-items-center justify-content-center gap-2" 
                             style="width: 100%;" 
@@ -472,6 +535,176 @@
                 window.open(window.location.origin + fileUrl, '_blank');
             }, 2000);
         }
+    }
+    
+    // Taxminiy menyu rasm ko'rinishini ko'rsatish
+    function showMenuPreview(gardenId, ageId, ageName) {
+        // Modal oynani ochish
+        var modal = new bootstrap.Modal(document.getElementById('menuPreviewModal'));
+        modal.show();
+        
+        // Modal sarlavhasini yangilash
+        document.getElementById('menuPreviewModalLabel').textContent = 'Taxminiy menyu ko\'rinishi - ' + ageName;
+        
+        // Loading ko'rsatish
+        var container = document.getElementById('menuPreviewContainer');
+        container.innerHTML = `
+            <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Yuklanmoqda...</span>
+            </div>
+            <p class="mt-2">Menyu yuklanmoqda...</p>
+        `;
+        
+        // Rasm URL yaratish
+        var imageUrl = '/nextdaymenuPDF/' + gardenId + '/' + ageId + '/image';
+        
+        // Rasmni yuklash
+        var img = new Image();
+        img.onload = function() {
+            container.innerHTML = `         
+                <div class="menu-preview-container">
+                    <img src="${imageUrl}" 
+                         class="img-fluid menu-preview-image" 
+                         alt="Taxminiy menyu" 
+                         style="width: 100%; height: auto; border: none; border-radius: 4px;"
+                         onclick="zoomImage(this)">
+                    <div class="mt-2">
+                        <small class="text-muted">
+                            <i class="fas fa-info-circle"></i> 
+                            Rasmni kattalashtirish uchun ustiga bosing
+                        </small>
+                    </div>
+                </div>
+            `;
+            
+            // PDF yuklab olish URL ni saqlash
+            window.currentMenuPdfUrl = '/nextdaymenuPDF/' + gardenId + '/' + ageId;
+        };
+        
+        img.onerror = function() {
+            container.innerHTML = `
+                <div class="alert alert-danger" role="alert">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    Rasm yuklanmadi. Iltimos, qaytadan urinib ko'ring.
+                </div>
+            `;
+        };
+        
+        img.src = imageUrl;
+    }
+    
+    // Rasmni kattalashtirish
+    function zoomImage(img) {
+        // Mavjud zoom modal mavjudligini tekshirish
+        var existingModal = document.getElementById('imageZoomModal');
+        if (existingModal) {
+            existingModal.remove();
+        }
+        
+        // Yangi zoom modal yaratish
+        var zoomModal = document.createElement('div');
+        zoomModal.id = 'imageZoomModal';
+        zoomModal.className = 'modal fade';
+        zoomModal.setAttribute('tabindex', '-1');
+        zoomModal.innerHTML = `
+            <div class="modal-dialog modal-fullscreen">
+                <div class="modal-content bg-light">
+                    <div class="modal-header border-0 bg-primary">
+                        <h5 class="modal-title text-white">Taxminiy menyu - Katta ko'rinish</h5>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body d-flex align-items-center justify-content-center p-0 bg-light">
+                        <img src="${img.src}" 
+                             class="img-fluid" 
+                             alt="Taxminiy menyu - Katta ko'rinish"
+                             style="max-width: 100%; max-height: 100%; object-fit: contain;">
+                    </div>
+                    <div class="modal-footer border-0 bg-light">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Yopish</button>
+                        <button type="button" class="btn btn-primary" onclick="downloadMenuFromPreview()">
+                            <i class="fas fa-download"></i> PDF Yuklab olish
+                        </button>
+                    </div>
+                </div>
+            </div>
+        `;
+        
+        // Modal ni body ga qo'shish
+        document.body.appendChild(zoomModal);
+        
+        // Modal ni ko'rsatish
+        var modal = new bootstrap.Modal(zoomModal);
+        modal.show();
+        
+        // Modal yopilganda uni o'chirish
+        zoomModal.addEventListener('hidden.bs.modal', function() {
+            zoomModal.remove();
+        });
+    }
+    
+    // PDF yuklab olish
+    function downloadMenuFromPreview() {
+        if (window.currentMenuPdfUrl) {
+            window.open(window.currentMenuPdfUrl, '_blank');
+        } else {
+            showNotification('PDF fayl topilmadi!', 'error');
+        }
+    }
+    
+    // Haqiqiy menyu rasm ko'rinishini ko'rsatish
+    function showActiveMenuPreview(dayId, gardenId, menuDate) {
+        // Modal oynani ochish
+        var modal = new bootstrap.Modal(document.getElementById('menuPreviewModal'));
+        modal.show();
+        
+        // Modal sarlavhasini yangilash
+        document.getElementById('menuPreviewModalLabel').textContent = 'Haqiqiy menyu ko\'rinishi - ' + menuDate;
+        
+        // Loading ko'rsatish
+        var container = document.getElementById('menuPreviewContainer');
+        container.innerHTML = `
+            <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Yuklanmoqda...</span>
+            </div>
+            <p class="mt-2">Haqiqiy menyu yuklanmoqda...</p>
+        `;
+        
+        // Rasm URL yaratish
+        var imageUrl = '/activmenuPDF/' + dayId + '/' + gardenId + '/image';
+        
+        // Rasmni yuklash
+        var img = new Image();
+        img.onload = function() {
+            container.innerHTML = `
+                <div class="menu-preview-container">
+                    <img src="${imageUrl}" 
+                         class="img-fluid menu-preview-image" 
+                         alt="Haqiqiy menyu" 
+                         style="width: 100%; height: auto; border: none; border-radius: 4px;"
+                         onclick="zoomImage(this)">
+                    <div class="mt-2">
+                        <small class="text-muted">
+                            <i class="fas fa-info-circle"></i> 
+                            Rasmni kattalashtirish uchun ustiga bosing
+                        </small>
+                    </div>
+                </div>
+            `;
+            
+            // PDF yuklab olish URL ni saqlash
+            window.currentMenuPdfUrl = '/activmenuPDF/' + dayId + '/' + gardenId;
+        };
+        
+        img.onerror = function() {
+            container.innerHTML = `
+                <div class="alert alert-danger" role="alert">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    Haqiqiy menyu rasmi yuklanmadi. Iltimos, qaytadan urinib ko'ring.
+                </div>
+            `;
+        };
+        
+        img.src = imageUrl;
     }
 </script>
 @if(session('status'))

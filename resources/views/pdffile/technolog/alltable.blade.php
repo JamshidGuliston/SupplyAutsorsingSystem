@@ -18,6 +18,7 @@
             padding: 0;
             width: 100%;
             color: #000;
+            background-color: white;
         }
         
         .header-info {
@@ -29,18 +30,20 @@
         .main-table {
             width: 100%;
             border-collapse: collapse;
-            border: 2px solid #000;
+            border: none;
             table-layout: fixed;
+            background-color: white;
         }
         
         .main-table th,
         .main-table td {
-            border: 1px solid #000;        /* 1px → 1.5px */
+            border: 0.5px solid #ccc;
             padding: 2px;
             text-align: center;
             vertical-align: middle;
             word-wrap: break-word;
             overflow: hidden;
+            background-color: white;
         }
         
         .main-table th {

@@ -14,6 +14,7 @@
 		body{
 			font-family: DejaVu Sans;
 			font-size: 8.5px;
+			background-color: white;
 			background-image: url(images/bg.jpg);
 			background-position: top left;
 			background-repeat: no-repeat;
@@ -46,44 +47,48 @@
 		} */
 		table{
 			border-collapse: collapse;
-			border: 1px solid black;
+			border: none;
 			width: 100%;
-			border-right: 1px solid black !important;
+			background-color: white;
 		}
 		thead{
-			border: 1px solid black;
+			border: none;
+			background-color: white;
 		}
 		td {
 			text-align: center;
 			width: auto;
 			overflow: hidden;
 			word-wrap: break-word;
+			background-color: white;
 		}
 		th{
-			border: 1px solid black;
+			border: none;
 			padding: 0px;
+			background-color: white;
 		}
 		td{
-			border-right: 0.5px solid black;
-			border-bottom: 1px solid black;
+			border-right: 0.5px solid #ccc;
+			border-bottom: 0.5px solid #ccc;
 			padding: 0px;
+			background-color: white;
 		}
 		
 		/* Oxirgi ustun uchun o'ng chiziq */
 		table td:last-child,
 		table th:last-child {
-			border-right: 1px solid black !important;
+			border-right: none !important;
 		}
 		
 		/* Barcha oxirgi ustunlar uchun o'ng chiziq */
 		table tr td:last-child,
 		table tr th:last-child {
-			border-right: 1px solid black !important;
+			border-right: none !important;
 		}
 		
 		/* Oxirgi qator uchun pastki chiziq */
 		table tr:last-child td {
-			border-bottom: 1px solid black !important;
+			border-bottom: none !important;
 		}
 		.vrt-header span{
 			display: inline-block;
