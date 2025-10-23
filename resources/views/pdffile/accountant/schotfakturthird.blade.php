@@ -283,7 +283,7 @@
                 @foreach($kindgar->age_range as $age)
                     @php
                         // F17 = bolalar soni * eater_cost
-                        $f17 = $total_number_children[$age->id] * ($costs[$age->id]->eater_cost ?? 0) - ($total_number_children[$age->id] * ($costs[$age->id]->eater_cost ?? 0) * (($costs[$age->id]->nds ?? 0) / 100));
+                        $f17 = $total_number_children[$age->id] * ($costs[$age->id]->eater_cost ?? 0) /(1 + (($costs[$age->id]->nds ?? 0) / 100));
                         $sum_base += $f17;
                         
                         // H17 = F17 * nds/100
