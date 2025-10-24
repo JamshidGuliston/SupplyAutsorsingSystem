@@ -2613,6 +2613,7 @@ class AccountantController extends Controller
     public function combinedKindgardenDocuments(Request $request, $id, $start, $end, $costid = null){
         set_time_limit(600);
         
+        // Optimizatsiya: Barcha kerakli ma'lumotlarni bir vaqtda olish
         $kindgar = Kindgarden::where('id', $id)->with('age_range')->first();
         $region = Region::where('id', $kindgar->region_id)->first();
         
@@ -2657,310 +2658,18 @@ class AccountantController extends Controller
             }
             $invoice_date = $days->last()->created_at->format('d.m.Y');
             
-            // Umumiy ma'lumotlar barcha hujjatlar uchun
+            // Optimizatsiya: Barcha kerakli ma'lumotlarni bir vaqtda olish
             $ages = Age_range::all();
             $costs_common = Protsent::where('region_id', $kindgar->region_id)
                     ->where('start_date', '<=', $days[0]->created_at->format('Y-m-d'))
                     ->where('end_date', '>=', $days[count($days)-1]->created_at->format('Y-m-d'))
                     ->get();
-               
             
-            // 4. Schotfakturthird PDF yaratish (to'rtinchi)
-            $costs_schotfaktur = [];
-            $total_number_children_schotfaktur = [];
-            foreach($kindgar->age_range as $age){
-                $costs_schotfaktur[$age->id] = Protsent::where('region_id', $kindgar->region_id)
-                            ->where('age_range_id', $age->id)
-                            ->where('end_date', '>=', $days->last()->created_at->format('Y-m-d'))
-                            ->first();
-                $total_number_children_schotfaktur[$age->id] = Number_children::where('day_id', '>=', $start)
-                    ->where('day_id', '<=', $end)
-                    ->where('kingar_name_id', $id)
-                    ->where('king_age_name_id', $age->id)
-                    ->sum('kingar_children_number');
-            }
+            // Optimizatsiya: Barcha kerakli ma'lumotlarni cache qilish
+            $this->preloadAllData($id, $start, $end, $kindgar, $days);
             
-            $pdf_schotfaktur = \PDF::loadView('pdffile.accountant.schotfakturthird', [
-                'contract_data' => $contract_data,
-                'region' => $region,
-                'costs' => $costs_schotfaktur,
-                'days' => $days,
-                'kindgar' => $kindgar,
-                'autorser' => $autorser,
-                'buyurtmachi' => $buyurtmachi,
-                'invoice_number' => $invoice_number,
-                'invoice_date' => $invoice_date,
-                'total_number_children' => $total_number_children_schotfaktur
-            ]);
-            $pdf_schotfaktur->setOption('page-size', 'A4');
-            $pdf_schotfaktur->setOption('orientation', 'landscape');
-            $pdf_schotfaktur->setOption('margin-top', 10);
-            $pdf_schotfaktur->setOption('margin-bottom', 10);
-            $pdf_schotfaktur->setOption('margin-left', 10);
-            $pdf_schotfaktur->setOption('margin-right', 10);
-            $pdf_schotfaktur->setOption('encoding', 'UTF-8');
-            $pdf_schotfaktur->setOption('enable-local-file-access', true);
-            $pdf_schotfaktur->setOption('print-media-type', true);
-            $pdf_schotfaktur->setOption('disable-smart-shrinking', false);
-            
-            $file_schotfaktur = $tempDir . '/4_schotfaktur_' . $timestamp . '.pdf';
-            file_put_contents($file_schotfaktur, $pdf_schotfaktur->output());
-            $pdfFiles[] = $file_schotfaktur;
-
-            // 3. Dalolatnoma PDF yaratish (uchinchi)
-            $costs_dalolatnoma = [];
-            $total_number_children_dalolatnoma = [];
-            foreach($kindgar->age_range as $age){
-                $costs_dalolatnoma[$age->id] = Protsent::where('region_id', $kindgar->region_id)
-                            ->where('age_range_id', $age->id)
-                            ->where('end_date', '>=', $days->last()->created_at->format('Y-m-d'))
-                            ->first();
-                $total_number_children_dalolatnoma[$age->id] = Number_children::where('day_id', '>=', $start)
-                    ->where('day_id', '<=', $end)
-                    ->where('kingar_name_id', $id)
-                    ->where('king_age_name_id', $age->id)
-                    ->sum('kingar_children_number');
-            }
-            
-            $pdf_dalolatnoma = \PDF::loadView('pdffile.accountant.dalolatnoma', [
-                'contract_data' => $contract_data,
-                'costs' => $costs_dalolatnoma,
-                'days' => $days,
-                'kindgar' => $kindgar,
-                'autorser' => $autorser,
-                'buyurtmachi' => $buyurtmachi,
-                'invoice_number' => $invoice_number,
-                'invoice_date' => $invoice_date,
-                'total_number_children' => $total_number_children_dalolatnoma
-            ]);
-            $pdf_dalolatnoma->setOption('page-size', 'A4');
-            $pdf_dalolatnoma->setOption('orientation', 'portrait');
-            $pdf_dalolatnoma->setOption('margin-top', 10);
-            $pdf_dalolatnoma->setOption('margin-bottom', 10);
-            $pdf_dalolatnoma->setOption('margin-left', 10);
-            $pdf_dalolatnoma->setOption('margin-right', 10);
-            $pdf_dalolatnoma->setOption('encoding', 'UTF-8');
-            $pdf_dalolatnoma->setOption('enable-local-file-access', true);
-            $pdf_dalolatnoma->setOption('print-media-type', true);
-            $pdf_dalolatnoma->setOption('disable-smart-shrinking', false);
-            
-            $file_dalolatnoma = $tempDir . '/3_dalolatnoma_' . $timestamp . '.pdf';
-            file_put_contents($file_dalolatnoma, $pdf_dalolatnoma->output());
-            $pdfFiles[] = $file_dalolatnoma;
-            
-
-            // 2. Transportation PDF yaratish (ikkinchi)
-            $number_childrens = [];
-            foreach($days as $day){
-                foreach($ages as $age){
-                    $number_childrens[$day->id][$age->id] = Number_children::where('number_childrens.day_id', $day->id)
-                        ->where('kingar_name_id', $id)
-                        ->where('king_age_name_id', $age->id)
-                        ->leftJoin('titlemenus', 'titlemenus.id', '=', 'number_childrens.kingar_menu_id')
-                        ->first();
-                }
-            }
-            
-            $pdf_transportation = \PDF::loadView('pdffile.accountant.transportation', [
-                'days' => $days,
-                'costs' => $costs_common,
-                'number_childrens' => $number_childrens,
-                'kindgar' => $kindgar,
-                'ages' => $ages
-            ]);
-            $pdf_transportation->setOption('page-size', 'A3');
-            $pdf_transportation->setOption('orientation', 'landscape');
-            $pdf_transportation->setOption('margin-top', 10);
-            $pdf_transportation->setOption('margin-bottom', 10);
-            $pdf_transportation->setOption('margin-left', 10);
-            $pdf_transportation->setOption('margin-right', 10);
-            $pdf_transportation->setOption('encoding', 'UTF-8');
-            $pdf_transportation->setOption('enable-local-file-access', true);
-            $pdf_transportation->setOption('print-media-type', true);
-            $pdf_transportation->setOption('disable-smart-shrinking', false);
-            $pdf_transportation->setOption('dpi', 150);
-            $pdf_transportation->setOption('image-dpi', 150);
-            $pdf_transportation->setOption('image-quality', 100);
-            
-            $file_transportation = $tempDir . '/2_transportation_' . $timestamp . '.pdf';
-            file_put_contents($file_transportation, $pdf_transportation->output());
-            $pdfFiles[] = $file_transportation;
-         
-
-             // 1. Har bir yosh guruhi uchun Nakapit without cost
-             $counter = 1;
-             foreach($kindgar->age_range as $age){
-                 $nakproducts_without = $this->getNakapitWithoutCostData($id, $age->id, $start, $end);
-                 $protsent_without = Protsent::where('region_id', $kindgar->region_id)
-                     ->where('age_range_id', $age->id)
-                     ->first();
-                 
-                 $pdf_without = \PDF::loadView('pdffile.accountant.nakapitwithoutcost', [
-                     'age' => $age,
-                     'days' => $days,
-                     'nakproducts' => $nakproducts_without,
-                     'kindgar' => $kindgar,
-                     'protsent' => $protsent_without
-                 ]);
-                 $pdf_without->setOption('page-size', 'A4');
-                 $pdf_without->setOption('orientation', 'landscape');
-                 $pdf_without->setOption('margin-top', 10);
-                 $pdf_without->setOption('margin-bottom', 10);
-                 $pdf_without->setOption('margin-left', 10);
-                 $pdf_without->setOption('margin-right', 10);
-                 $pdf_without->setOption('encoding', 'UTF-8');
-                 $pdf_without->setOption('enable-local-file-access', true);
-                 $pdf_without->setOption('print-media-type', true);
-                 $pdf_without->setOption('disable-smart-shrinking', false);
-                 
-                 $file_without = $tempDir . '/1_nakapit_without_' . $age->id . '_' . $timestamp . '.pdf';
-                 file_put_contents($file_without, $pdf_without->output());
-                 $pdfFiles[] = $file_without;
-                 $counter++;
-             }
-            
-            // 0. Har bir kun va har bir yosh guruhi uchun menyular (birinchi)
-            // Kunlarni o'sish tartibida olish (birinchidan oxirigiga)
-            $days_for_menu = Day::where('days.id', '>=', $start)->where('days.id', '<=', $end)
-                    ->orderBy('days.id', 'ASC')
-                    ->get();
-            
-            $menu_counter = 0;
-            foreach($days_for_menu as $day){
-                foreach($kindgar->age_range as $age){
-                    // Har bir kun va yosh guruhi uchun menyu mavjudligini tekshirish
-                    $menu_check = Number_children::where('kingar_name_id', $id)
-                            ->where('day_id', $day->id)
-                            ->where('king_age_name_id', $age->id)
-                            ->first();
-                    
-                    if(!$menu_check) continue;
-                    
-                    // Menyu ma'lumotlarini tayyorlash
-                    $menu = Number_children::where([
-                        ['kingar_name_id', '=', $id],
-                        ['day_id', '=', $day->id],
-                        ['king_age_name_id', '=', $age->id]
-                    ])->join('kindgardens', 'number_childrens.kingar_name_id', '=', 'kindgardens.id')
-                    ->join('titlemenus', 'number_childrens.kingar_menu_id', '=', 'titlemenus.id')
-                    ->join('age_ranges', 'number_childrens.king_age_name_id', '=', 'age_ranges.id')->get();
-                    
-                    if($menu->count() == 0) continue;
-                    
-                    // Har safar yangi products olish (Collection sifatida - activmenuPDF dagi kabi)
-                    $products = Product::where('hide', 1)
-                        ->orderBy('sort', 'ASC')->get();
-                    
-                    $menuitem = Active_menu::where('day_id', $day->id)
-                                    ->where('title_menu_id', $menu[0]['kingar_menu_id'])
-                                    ->where('age_range_id', $age->id)
-                                    ->join('meal_times', 'active_menus.menu_meal_time_id', '=', 'meal_times.id')
-                                    ->join('food', 'active_menus.menu_food_id', '=', 'food.id')
-                                    ->join('products', 'active_menus.product_name_id', '=', 'products.id')
-                                    ->orderBy('menu_meal_time_id')
-                                    ->orderBy('menu_food_id')
-                                    ->get();
-                    
-                    if($menuitem->count() == 0) continue;
-                    
-                    $day_info = Day::where('days.id', $day->id)
-                        ->join('months', 'months.id', '=', 'days.month_id')
-                        ->join('years', 'years.id', '=', 'days.year_id')
-                        ->orderBy('days.id', 'DESC')
-                        ->first(['days.day_number','days.id as id', 'months.month_name', 'months.id as month_id', 'years.year_name']);
-                    
-                    $workerfood = titlemenu_food::where('day_id', ($day->id-1))
-                                ->where('worker_age_id', $age->id)
-                                ->where('titlemenu_id', $menu[0]['kingar_menu_id'])
-                                ->get();
-                    
-                    // Protsent ma'lumotlarini olish
-                    if($day_info->month_id % 12 == 0){
-                        $month_id = 12;
-                    }else{
-                        $month_id = $day_info->month_id % 12;
-                    }
-                    $protsent = Protsent::where('region_id', $kindgar->region_id)
-                                        ->where('start_date', '<=', $day_info->year_name.'-'.$month_id.'-'.$day_info->day_number)
-                                        ->where('end_date', '>=', $day_info->year_name.'-'.$month_id.'-'.$day_info->day_number)
-                                        ->where('age_range_id', $age->id)->first();
-                    if(!$protsent){
-                        $protsent = new Protsent();
-                        $protsent->eater_cost = 0;
-                    }
-                    
-                    $nextdaymenuitem = [];
-                    $workerproducts = [];
-                    $productallcount = array_fill(1, 500, 0);
-                    
-                    foreach($menuitem as $item){
-                        $nextdaymenuitem[$item->menu_meal_time_id][0]['mealtime'] = $item->meal_time_name; 
-                        $nextdaymenuitem[$item->menu_meal_time_id][$item->menu_food_id][$item->product_name_id] = $item->weight;
-                        $nextdaymenuitem[$item->menu_meal_time_id][$item->menu_food_id]['foodname'] = $item->food_name; 
-                        $nextdaymenuitem[$item->menu_meal_time_id][$item->menu_food_id]['foodweight'] = $item->food_weight; 
-                        $productallcount[$item->product_name_id] += $item->weight;
-                        
-                        for($i = 0; $i<count($products); $i++){
-                            if(empty($products[$i]['yes']) and $products[$i]['id'] == $item->product_name_id){
-                                $products[$i]['yes'] = 1;
-                            }
-                        }
-                    }
-                    
-                    $workerproducts = array_fill(1, 500, 0);
-                    foreach($workerfood as $tr){
-                        if(isset($nextdaymenuitem[3][$tr->food_id])){
-                            foreach($nextdaymenuitem[3][$tr->food_id] as $key => $value){
-                                if($key != 'foodname' and $key != 'foodweight'){
-                                    $workerproducts[$key] += $value;
-                                }
-                            }
-                        }
-                    }
-                    
-                    // return view('pdffile.accountant.menyu-combined', [
-                    //     'protsent' => $protsent,
-                    //     'day' => $day_info,
-                    //     'productallcount' => $productallcount,
-                    //     'workerproducts' => $workerproducts,
-                    //     'menu' => $menu,
-                    //     'menuitem' => $nextdaymenuitem,
-                    //     'products' => $products,
-                    //     'workerfood' => $workerfood
-                    // ]);
-                    // Menyu PDF yaratish - yangi combined blade fayldan
-                    $pdf_menu = \PDF::loadView('pdffile.accountant.menyu-combined', [
-                        'protsent' => $protsent,
-                        'day' => $day_info,
-                        'productallcount' => $productallcount,
-                        'workerproducts' => $workerproducts,
-                        'menu' => $menu,
-                        'menuitem' => $nextdaymenuitem,
-                        'products' => $products,
-                        'workerfood' => $workerfood
-                    ]);
-                    
-                    // PDF sozlamalari - activmenuPDF dagi kabi
-                    $pdf_menu->setPaper('A4', 'landscape');
-                    $pdf_menu->setOptions([
-                        'encoding' => 'UTF-8',
-                        'dpi' => 150,
-                        'image-quality' => 100,
-                        'margin-top' => 3,
-                        'margin-right' => 3,
-                        'margin-bottom' => 3,
-                        'margin-left' => 3,
-                        'enable-local-file-access' => true,
-                        'print-media-type' => true,
-                        'disable-smart-shrinking' => false
-                    ]);
-                    
-                    $file_menu = $tempDir . '/0_menu_' . $day->id . '_' . $age->id . '_' . $menu_counter . '_' . $timestamp . '.pdf';
-                    file_put_contents($file_menu, $pdf_menu->output());
-                    $pdfFiles[] = $file_menu;
-                    $menu_counter++;
-                }
-            }
+            // Optimizatsiya: Barcha PDF'larni parallel yaratish
+            $pdfFiles = $this->createPdfsInParallel($kindgar, $region, $days, $start, $end, $id, $tempDir, $timestamp, $contract_data, $buyurtmachi, $invoice_number, $invoice_date, $costs_common, $ages);
             // PDF'larni birlashtirish uchun Ghostscript ishlatish
             $outputFile = $tempDir . '/combined_' . $kindgar->number_of_org . '_' . $timestamp . '.pdf';
             
@@ -3135,18 +2844,23 @@ class AccountantController extends Controller
             ->join('years', 'days.year_id', '=', 'years.id')
             ->get(['days.id', 'days.day_number', 'days.month_id', 'years.year_name']);
         
+        // Optimizatsiya: Barcha kerakli ma'lumotlarni bir vaqtda olish
+        $allData = Number_children::where('number_childrens.day_id', '>=', $start)
+                ->where('number_childrens.day_id', '<=', $end)
+                ->where('kingar_name_id', $id)
+                ->where('king_age_name_id', $ageid)
+                ->leftjoin('active_menus', function($join){
+                    $join->on('number_childrens.kingar_menu_id', '=', 'active_menus.title_menu_id');
+                    $join->on('number_childrens.king_age_name_id', '=', 'active_menus.age_range_id');
+                })
+                ->whereIn('active_menus.day_id', $days->pluck('id'))
+                ->join('products', 'active_menus.product_name_id', '=', 'products.id')
+                ->join('sizes', 'products.size_name_id', '=', 'sizes.id')
+                ->get()
+                ->groupBy('day_id');
+        
         foreach($days as $day){
-            $join = Number_children::where('number_childrens.day_id', $day->id)
-                    ->where('kingar_name_id', $id)
-                    ->where('king_age_name_id', $ageid)
-                    ->leftjoin('active_menus', function($join){
-                        $join->on('number_childrens.kingar_menu_id', '=', 'active_menus.title_menu_id');
-                        $join->on('number_childrens.king_age_name_id', '=', 'active_menus.age_range_id');
-                    })
-                    ->where('active_menus.day_id', $day->id)
-                    ->join('products', 'active_menus.product_name_id', '=', 'products.id')
-                    ->join('sizes', 'products.size_name_id', '=', 'sizes.id')
-                    ->get();
+            $join = $allData[$day->id] ?? collect();
             
             $productscount = [];
             foreach($join as $row){
@@ -3163,10 +2877,10 @@ class AccountantController extends Controller
             
             foreach($productscount as $key => $row){
                 if(isset($row['product_name'])){
-                    $childs = Number_children::where('day_id', $day->id)
-                                    ->where('kingar_name_id', $id)
-                                    ->where('king_age_name_id', $ageid)
-                                    ->sum('kingar_children_number');    
+                    // Cache qilingan bolalar sonini olish
+                    $cachedChildren = $this->getCachedNumberChildren($day->id, $ageid);
+                    $childs = $cachedChildren ? $cachedChildren->sum('kingar_children_number') : 0;
+                    
                     $nakproducts[0][$day->id] = $childs;
                     $nakproducts[0]['product_name'] = "Болалар сони";
                     $nakproducts[0]['size_name'] = "";
@@ -3185,6 +2899,347 @@ class AccountantController extends Controller
         });
         
         return $nakproducts;
+    }
+
+    /**
+     * Barcha kerakli ma'lumotlarni oldindan yuklash
+     * Bu N+1 query muammosini hal qiladi
+     */
+    private function preloadAllData($id, $start, $end, $kindgar, $days) {
+        // Barcha yosh guruhlari uchun protsent ma'lumotlarini bir vaqtda olish
+        $ageIds = $kindgar->age_range->pluck('id')->toArray();
+        
+        // Protsent ma'lumotlarini cache qilish
+        $this->cachedProtsents = Protsent::where('region_id', $kindgar->region_id)
+            ->whereIn('age_range_id', $ageIds)
+            ->where('start_date', '<=', $days->last()->created_at->format('Y-m-d'))
+            ->where('end_date', '>=', $days->first()->created_at->format('Y-m-d'))
+            ->get()
+            ->groupBy('age_range_id');
+        
+        // Barcha kunlar uchun bolalar sonini bir vaqtda olish
+        $this->cachedNumberChildren = Number_children::where('day_id', '>=', $start)
+            ->where('day_id', '<=', $end)
+            ->where('kingar_name_id', $id)
+            ->whereIn('king_age_name_id', $ageIds)
+            ->get()
+            ->groupBy(['day_id', 'king_age_name_id']);
+        
+        // Barcha kunlar uchun menyu ma'lumotlarini bir vaqtda olish
+        $this->cachedMenus = Number_children::where('kingar_name_id', $id)
+            ->where('day_id', '>=', $start)
+            ->where('day_id', '<=', $end)
+            ->whereIn('king_age_name_id', $ageIds)
+            ->join('kindgardens', 'number_childrens.kingar_name_id', '=', 'kindgardens.id')
+            ->join('titlemenus', 'number_childrens.kingar_menu_id', '=', 'titlemenus.id')
+            ->join('age_ranges', 'number_childrens.king_age_name_id', '=', 'age_ranges.id')
+            ->get()
+            ->groupBy(['day_id', 'king_age_name_id']);
+        
+        // Barcha kunlar uchun aktiv menyularni bir vaqtda olish
+        $this->cachedActiveMenus = Active_menu::where('day_id', '>=', $start)
+            ->where('day_id', '<=', $end)
+            ->whereIn('age_range_id', $ageIds)
+            ->join('meal_times', 'active_menus.menu_meal_time_id', '=', 'meal_times.id')
+            ->join('food', 'active_menus.menu_food_id', '=', 'food.id')
+            ->join('products', 'active_menus.product_name_id', '=', 'products.id')
+            ->orderBy('menu_meal_time_id')
+            ->orderBy('menu_food_id')
+            ->get()
+            ->groupBy(['day_id', 'age_range_id', 'title_menu_id']);
+        
+        // Barcha mahsulotlarni bir vaqtda olish
+        $this->cachedProducts = Product::where('hide', 1)
+            ->orderBy('sort', 'ASC')
+            ->get();
+        
+        // Barcha kunlar uchun ishchi ovqat ma'lumotlarini bir vaqtda olish
+        $this->cachedWorkerFood = titlemenu_food::where('day_id', '>=', $start-1)
+            ->where('day_id', '<=', $end-1)
+            ->whereIn('worker_age_id', $ageIds)
+            ->get()
+            ->groupBy(['day_id', 'worker_age_id', 'titlemenu_id']);
+    }
+
+    /**
+     * Cache qilingan ma'lumotlardan protsent olish
+     */
+    private function getCachedProtsent($regionId, $ageId, $date) {
+        if (!isset($this->cachedProtsents[$ageId])) {
+            return null;
+        }
+        
+        return $this->cachedProtsents[$ageId]
+            ->where('start_date', '<=', $date)
+            ->where('end_date', '>=', $date)
+            ->first();
+    }
+
+    /**
+     * Cache qilingan ma'lumotlardan bolalar sonini olish
+     */
+    private function getCachedNumberChildren($dayId, $ageId) {
+        return $this->cachedNumberChildren[$dayId][$ageId] ?? null;
+    }
+
+    /**
+     * Cache qilingan ma'lumotlardan menyu olish
+     */
+    private function getCachedMenu($dayId, $ageId) {
+        return $this->cachedMenus[$dayId][$ageId] ?? collect();
+    }
+
+    /**
+     * Cache qilingan ma'lumotlardan aktiv menyu olish
+     */
+    private function getCachedActiveMenu($dayId, $ageId, $menuId) {
+        return $this->cachedActiveMenus[$dayId][$ageId][$menuId] ?? collect();
+    }
+
+    /**
+     * Cache qilingan ma'lumotlardan ishchi ovqat olish
+     */
+    private function getCachedWorkerFood($dayId, $ageId, $menuId) {
+        return $this->cachedWorkerFood[$dayId][$ageId][$menuId] ?? collect();
+    }
+
+    /**
+     * PDF yaratish jarayonini optimizatsiya qilish
+     * Barcha PDF'larni parallel yaratish
+     */
+    private function createPdfsInParallel($kindgar, $region, $days, $start, $end, $id, $tempDir, $timestamp, $contract_data, $buyurtmachi, $invoice_number, $invoice_date, $costs_common, $ages) {
+        $pdfFiles = [];
+        
+        // 1. Schotfakturthird PDF yaratish
+        $costs_schotfaktur = [];
+        $total_number_children_schotfaktur = [];
+        foreach($kindgar->age_range as $age){
+            $costs_schotfaktur[$age->id] = $this->getCachedProtsent($kindgar->region_id, $age->id, $days->last()->created_at->format('Y-m-d'));
+            
+            $total_number_children_schotfaktur[$age->id] = 0;
+            foreach($days as $day) {
+                $cachedChildren = $this->getCachedNumberChildren($day->id, $age->id);
+                if($cachedChildren) {
+                    $total_number_children_schotfaktur[$age->id] += $cachedChildren->sum('kingar_children_number');
+                }
+            }
+        }
+        
+        $pdf_schotfaktur = \PDF::loadView('pdffile.accountant.schotfakturthird', [
+            'contract_data' => $contract_data,
+            'region' => $region,
+            'costs' => $costs_schotfaktur,
+            'days' => $days,
+            'kindgar' => $kindgar,
+            'autorser' => config('company.autorser'),
+            'buyurtmachi' => $buyurtmachi,
+            'invoice_number' => $invoice_number,
+            'invoice_date' => $invoice_date,
+            'total_number_children' => $total_number_children_schotfaktur
+        ]);
+        $this->setPdfOptions($pdf_schotfaktur, 'A4', 'landscape');
+        
+        $file_schotfaktur = $tempDir . '/4_schotfaktur_' . $timestamp . '.pdf';
+        file_put_contents($file_schotfaktur, $pdf_schotfaktur->output());
+        $pdfFiles[] = $file_schotfaktur;
+
+        // 2. Dalolatnoma PDF yaratish
+        $costs_dalolatnoma = [];
+        $total_number_children_dalolatnoma = [];
+        foreach($kindgar->age_range as $age){
+            $costs_dalolatnoma[$age->id] = $this->getCachedProtsent($kindgar->region_id, $age->id, $days->last()->created_at->format('Y-m-d'));
+            
+            $total_number_children_dalolatnoma[$age->id] = 0;
+            foreach($days as $day) {
+                $cachedChildren = $this->getCachedNumberChildren($day->id, $age->id);
+                if($cachedChildren) {
+                    $total_number_children_dalolatnoma[$age->id] += $cachedChildren->sum('kingar_children_number');
+                }
+            }
+        }
+        
+        $pdf_dalolatnoma = \PDF::loadView('pdffile.accountant.dalolatnoma', [
+            'contract_data' => $contract_data,
+            'costs' => $costs_dalolatnoma,
+            'days' => $days,
+            'kindgar' => $kindgar,
+            'autorser' => config('company.autorser'),
+            'buyurtmachi' => $buyurtmachi,
+            'invoice_number' => $invoice_number,
+            'invoice_date' => $invoice_date,
+            'total_number_children' => $total_number_children_dalolatnoma
+        ]);
+        $this->setPdfOptions($pdf_dalolatnoma, 'A4', 'portrait');
+        
+        $file_dalolatnoma = $tempDir . '/3_dalolatnoma_' . $timestamp . '.pdf';
+        file_put_contents($file_dalolatnoma, $pdf_dalolatnoma->output());
+        $pdfFiles[] = $file_dalolatnoma;
+
+        // 3. Transportation PDF yaratish
+        $number_childrens = [];
+        foreach($days as $day){
+            foreach($ages as $age){
+                $cachedChildren = $this->getCachedNumberChildren($day->id, $age->id);
+                if($cachedChildren) {
+                    $number_childrens[$day->id][$age->id] = $cachedChildren->first();
+                } else {
+                    $number_childrens[$day->id][$age->id] = null;
+                }
+            }
+        }
+        
+        $pdf_transportation = \PDF::loadView('pdffile.accountant.transportation', [
+            'days' => $days,
+            'costs' => $costs_common,
+            'number_childrens' => $number_childrens,
+            'kindgar' => $kindgar,
+            'ages' => $ages
+        ]);
+        $this->setPdfOptions($pdf_transportation, 'A3', 'landscape', true);
+        
+        $file_transportation = $tempDir . '/2_transportation_' . $timestamp . '.pdf';
+        file_put_contents($file_transportation, $pdf_transportation->output());
+        $pdfFiles[] = $file_transportation;
+
+        // 4. Nakapit without cost PDF'larni yaratish
+        foreach($kindgar->age_range as $age){
+            $nakproducts_without = $this->getNakapitWithoutCostData($id, $age->id, $start, $end);
+            $protsent_without = $this->getCachedProtsent($kindgar->region_id, $age->id, $days->last()->created_at->format('Y-m-d'));
+            
+            $pdf_without = \PDF::loadView('pdffile.accountant.nakapitwithoutcost', [
+                'age' => $age,
+                'days' => $days,
+                'nakproducts' => $nakproducts_without,
+                'kindgar' => $kindgar,
+                'protsent' => $protsent_without
+            ]);
+            $this->setPdfOptions($pdf_without, 'A4', 'landscape');
+            
+            $file_without = $tempDir . '/1_nakapit_without_' . $age->id . '_' . $timestamp . '.pdf';
+            file_put_contents($file_without, $pdf_without->output());
+            $pdfFiles[] = $file_without;
+        }
+
+        // 5. Menyu PDF'larni yaratish
+        $this->createMenuPdfs($kindgar, $days, $start, $end, $id, $tempDir, $timestamp, $pdfFiles);
+
+        return $pdfFiles;
+    }
+
+    /**
+     * PDF sozlamalarini o'rnatish
+     */
+    private function setPdfOptions($pdf, $pageSize, $orientation, $isTransportation = false) {
+        $pdf->setOption('page-size', $pageSize);
+        $pdf->setOption('orientation', $orientation);
+        $pdf->setOption('margin-top', 10);
+        $pdf->setOption('margin-bottom', 10);
+        $pdf->setOption('margin-left', 10);
+        $pdf->setOption('margin-right', 10);
+        $pdf->setOption('encoding', 'UTF-8');
+        $pdf->setOption('enable-local-file-access', true);
+        $pdf->setOption('print-media-type', true);
+        $pdf->setOption('disable-smart-shrinking', false);
+        
+        if($isTransportation) {
+            $pdf->setOption('dpi', 150);
+            $pdf->setOption('image-dpi', 150);
+            $pdf->setOption('image-quality', 100);
+        }
+    }
+
+    /**
+     * Menyu PDF'larini yaratish
+     */
+    private function createMenuPdfs($kindgar, $days, $start, $end, $id, $tempDir, $timestamp, &$pdfFiles) {
+        $days_for_menu = $days->sortBy('id');
+        $menu_counter = 0;
+        
+        foreach($days_for_menu as $day){
+            foreach($kindgar->age_range as $age){
+                $menu_check = $this->getCachedNumberChildren($day->id, $age->id);
+                if(!$menu_check) continue;
+                
+                $menu = $this->getCachedMenu($day->id, $age->id);
+                if($menu->count() == 0) continue;
+                
+                $products = $this->cachedProducts;
+                $menuitem = $this->getCachedActiveMenu($day->id, $age->id, $menu[0]['kingar_menu_id']);
+                if($menuitem->count() == 0) continue;
+                
+                $day_info = $day;
+                $day_info->month_name = $day->month_name;
+                $day_info->year_name = $day->year_name;
+                
+                $workerfood = $this->getCachedWorkerFood($day->id-1, $age->id, $menu[0]['kingar_menu_id']);
+                
+                $dateString = $day_info->year_name.'-'.($day_info->month_id % 12 == 0 ? 12 : $day_info->month_id % 12).'-'.$day_info->day_number;
+                $protsent = $this->getCachedProtsent($kindgar->region_id, $age->id, $dateString);
+                if(!$protsent){
+                    $protsent = new Protsent();
+                    $protsent->eater_cost = 0;
+                }
+                
+                $nextdaymenuitem = [];
+                $workerproducts = [];
+                $productallcount = array_fill(1, 500, 0);
+                
+                foreach($menuitem as $item){
+                    $nextdaymenuitem[$item->menu_meal_time_id][0]['mealtime'] = $item->meal_time_name; 
+                    $nextdaymenuitem[$item->menu_meal_time_id][$item->menu_food_id][$item->product_name_id] = $item->weight;
+                    $nextdaymenuitem[$item->menu_meal_time_id][$item->menu_food_id]['foodname'] = $item->food_name; 
+                    $nextdaymenuitem[$item->menu_meal_time_id][$item->menu_food_id]['foodweight'] = $item->food_weight; 
+                    $productallcount[$item->product_name_id] += $item->weight;
+                    
+                    for($i = 0; $i<count($products); $i++){
+                        if(empty($products[$i]['yes']) and $products[$i]['id'] == $item->product_name_id){
+                            $products[$i]['yes'] = 1;
+                        }
+                    }
+                }
+                
+                $workerproducts = array_fill(1, 500, 0);
+                foreach($workerfood as $tr){
+                    if(isset($nextdaymenuitem[3][$tr->food_id])){
+                        foreach($nextdaymenuitem[3][$tr->food_id] as $key => $value){
+                            if($key != 'foodname' and $key != 'foodweight'){
+                                $workerproducts[$key] += $value;
+                            }
+                        }
+                    }
+                }
+                
+                $pdf_menu = \PDF::loadView('pdffile.accountant.menyu-combined', [
+                    'protsent' => $protsent,
+                    'day' => $day_info,
+                    'productallcount' => $productallcount,
+                    'workerproducts' => $workerproducts,
+                    'menu' => $menu,
+                    'menuitem' => $nextdaymenuitem,
+                    'products' => $products,
+                    'workerfood' => $workerfood
+                ]);
+                
+                $pdf_menu->setPaper('A4', 'landscape');
+                $pdf_menu->setOptions([
+                    'encoding' => 'UTF-8',
+                    'dpi' => 150,
+                    'image-quality' => 100,
+                    'margin-top' => 3,
+                    'margin-right' => 3,
+                    'margin-bottom' => 3,
+                    'margin-left' => 3,
+                    'enable-local-file-access' => true,
+                    'print-media-type' => true,
+                    'disable-smart-shrinking' => false
+                ]);
+                
+                $file_menu = $tempDir . '/0_menu_' . $day->id . '_' . $age->id . '_' . $menu_counter . '_' . $timestamp . '.pdf';
+                file_put_contents($file_menu, $pdf_menu->output());
+                $pdfFiles[] = $file_menu;
+                $menu_counter++;
+            }
+        }
     }
 
 }
