@@ -94,7 +94,7 @@
                     	@if(isset($row['product_name']))
                         <tr>
                             <td scope="row">{{ $tr++ }}</td>
-                    		<td><?php printf($row['product_name']) ?></td>
+                    		<td>{{ $row['product_name'] }}</td>
                     		<?php $summ = 0; ?>
                     		@foreach($ages as $age)
                     			@if(isset($row[$age['id'].'-children']))

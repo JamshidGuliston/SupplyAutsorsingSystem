@@ -47,6 +47,8 @@ use App\Models\Take_small_base;
 use App\Models\titlemenu_food;
 use App\Models\typeofwork;
 use App\Models\User;
+use App\Models\ChildrenCountHistory;
+use App\Models\Notification;
 use App\Models\StorageChangeLog;
 use Database\Seeders\TypeOfWorkSeeder;
 use Telegram\Bot\Api;
@@ -234,6 +236,8 @@ class TechnologController extends Controller
             }
             $activ = Kindgarden::where('hide', 1)->get();
             $temp = Temporary::all();
+            // yangi kun uchun bolalar soni o'zgartirish tarixini olish
+            $childrenCountHistory = ChildrenCountHistory::where('created_at', '>=', date('Y-m-d 00:00:00'))->get();
             $nextday = Nextday_namber::join('kindgardens', 'nextday_nambers.kingar_name_id', '=', 'kindgardens.id')
                             ->leftjoin('temporaries', function($join){
                                 $join->on('nextday_nambers.kingar_name_id', '=', 'temporaries.kingar_name_id');
@@ -308,7 +312,8 @@ class TechnologController extends Controller
                 'gardens' => $gar, 
                 'activ' => $activ, 
                 'allmenus' => $allmenus,
-                'shopOrderStatus' => $shopOrderStatus
+                'shopOrderStatus' => $shopOrderStatus,
+                'childrenCountHistory' => $childrenCountHistory
             ]);
         }
     }
@@ -6060,6 +6065,140 @@ class TechnologController extends Controller
             return response()->json([
                 'success' => false,
                 'message' => 'Xatolik: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
+     * Bolalar soni o'zgartirish tarixini olish
+     */
+    public function getChildrenCountHistory($gardenId, $ageId)
+    {
+        try {
+            $history = ChildrenCountHistory::where('kingar_name_id', $gardenId)
+                ->where('king_age_name_id', $ageId)
+                ->with('changedBy')
+                ->orderBy('changed_at', 'desc')
+                ->get()
+                ->map(function ($record) {
+                    return [
+                        'old_children_count' => $record->old_children_count,
+                        'new_children_count' => $record->new_children_count,
+                        'changed_by_name' => $record->changedBy ? $record->changedBy->name : 'Noma\'lum',
+                        'changed_at_formatted' => $record->changed_at->setTimezone('Asia/Tashkent')->format('d.m.Y H:i'),
+                        'change_reason' => $record->change_reason
+                    ];
+                });
+
+            return response()->json([
+                'success' => true,
+                'history' => $history
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Xatolik yuz berdi: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
+     * Notificationlarni olish
+     */
+    public function getNotifications()
+    {
+        try {
+            $notifications = Notification::getUnreadForUser(auth()->user()->id);
+            
+            return response()->json([
+                'success' => true,
+                'notifications' => $notifications,
+                'count' => $notifications->count()
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Xatolik yuz berdi: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
+     * Notification ni o'qilgan deb belgilash
+     */
+    public function markNotificationAsRead($notificationId)
+    {
+        try {
+            $notification = Notification::where('id', $notificationId)
+                ->where('notifiable_type', User::class)
+                ->where('notifiable_id', auth()->user()->id)
+                ->first();
+
+            if ($notification) {
+                $notification->markAsRead();
+                return response()->json(['success' => true]);
+            }
+
+            return response()->json(['success' => false, 'message' => 'Notification topilmadi'], 404);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Xatolik yuz berdi: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
+     * Barcha notificationlarni o'qilgan deb belgilash
+     */
+    public function markAllNotificationsAsRead()
+    {
+        try {
+            Notification::where('notifiable_type', User::class)
+                ->where('notifiable_id', auth()->user()->id)
+                ->whereNull('read_at')
+                ->update(['read_at' => now()]);
+
+            return response()->json(['success' => true]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Xatolik yuz berdi: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
+     * Test notification yaratish
+     */
+    public function createTestNotification()
+    {
+        try {
+            $data = [
+                'garden_name' => 'Test Bog\'cha',
+                'age_name' => 'Test Yosh Guruhi',
+                'old_count' => 10,
+                'new_count' => 15,
+                'changed_by' => 'Test User',
+                'changed_at' => now()->setTimezone('Asia/Tashkent')->format('d.m.Y H:i'),
+                'message' => 'Test notification - bu test xabari'
+            ];
+
+            $notification = Notification::createNotification(
+                'children_count_changed',
+                auth()->user(),
+                $data
+            );
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Test notification yaratildi',
+                'notification' => $notification
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Xatolik yuz berdi: ' . $e->getMessage()
             ], 500);
         }
     }

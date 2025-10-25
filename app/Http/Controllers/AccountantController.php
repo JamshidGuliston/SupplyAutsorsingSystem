@@ -901,7 +901,7 @@ class AccountantController extends Controller
         
         // Buyurtmachi ma'lumotlari
         $buyurtmachi = [
-            'company_name' => $region->region_name.' ММТБга тасарруфидаги '.$kindgar->number_of_org .'-сонли ДМТТ' ?? '',
+            'company_name' => $region->region_name.' ММТБ тасарруфидаги '.$kindgar->number_of_org .'-сонли ДМТТ' ?? '',
             'address' => $region->region_name,
             'inn' => '________________',
             'bank_account' => '___________________________________',
@@ -2652,10 +2652,12 @@ class AccountantController extends Controller
             ];
             
             if(is_null(env('INVOICE_NUMBER'))){
-                $invoice_number = $kindgar->number_of_org .'/'. $days->last()->month_id % 12 == 0 ? 12 : $days->last()->month_id % 12;
+                $invoice_number = $days->last()->month_id % 12 == 0 ? 12 : $days->last()->month_id % 12;
+                $invoice_number = $invoice_number - 6;
             }else{
                 $invoice_number = $days->last()->month_id.'/'.env('INVOICE_NUMBER');
             }
+            $invoice_number = $kindgar->number_of_org .' / '.$invoice_number;
             $invoice_date = $days->last()->created_at->format('d.m.Y');
             
             // Optimizatsiya: Barcha kerakli ma'lumotlarni bir vaqtda olish

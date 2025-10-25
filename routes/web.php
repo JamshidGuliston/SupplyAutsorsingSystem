@@ -333,6 +333,15 @@ Route::group(['prefix' => 'technolog', 'middleware' => ['isTechnolog', 'auth']],
     // Copy children numbers functionality
     Route::post('copy-children-numbers', [TechnologController::class, 'copyChildrenNumbers'])->name('technolog.copyChildrenNumbers');
     Route::post('restore-children-numbers', [TechnologController::class, 'restoreChildrenNumbers'])->name('technolog.restoreChildrenNumbers');
+    
+    // Bolalar soni tarixi
+    Route::get('children-count-history/{gardenId}/{ageId}', [TechnologController::class, 'getChildrenCountHistory'])->name('technolog.children_count_history');
+    
+    // Notificationlar
+    Route::get('notifications', [TechnologController::class, 'getNotifications'])->name('technolog.notifications');
+    Route::post('notifications/{id}/read', [TechnologController::class, 'markNotificationAsRead'])->name('technolog.notification.read');
+    Route::post('notifications/read-all', [TechnologController::class, 'markAllNotificationsAsRead'])->name('technolog.notifications.read_all');
+    Route::post('notifications/test', [TechnologController::class, 'createTestNotification'])->name('technolog.notifications.test');
 });
 
 
@@ -342,6 +351,12 @@ Route::group(['prefix' => 'chef', 'middleware' => ['isChef', 'auth']], function 
     Route::post('sendnumbers', [ChefController::class, 'sendnumbers'])->name('chef.sendnumbers');
     Route::post('minusproducts', [ChefController::class, 'minusproducts'])->name('chef.minusproducts');
     Route::post('right', [ChefController::class, 'right'])->name('chef.right');
+    
+    // Bolalar soni tarixi
+    Route::get('children-count-history', [ChefController::class, 'childrenCountHistory'])->name('chef.children_count_history');
+    Route::post('update-children-count', [ChefController::class, 'updateChildrenCount'])->name('chef.update_children_count');
+    Route::post('update-children-count-by-chef', [ChefController::class, 'updateChildrenCountByChef'])->name('chef.update_children_count_by_chef');
+    Route::post('clear-nextday-numbers', [ChefController::class, 'clearNextdayNumbers'])->name('chef.clear_nextday_numbers');
 });
 
 Route::group(['prefix' => 'accountant', 'middleware' => ['isAccountant', 'auth']], function () {

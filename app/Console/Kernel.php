@@ -16,6 +16,12 @@ class Kernel extends ConsoleKernel
     protected function schedule(Schedule $schedule)
     {
         // $schedule->command('inspire')->hourly();
+        
+        // Har kuni ertalab soat 6:00 da Nextday_namber jadvalini tozalash
+        $schedule->command('nextday:clear')
+                 ->dailyAt('06:00')
+                 ->timezone('Asia/Tashkent')
+                 ->withoutOverlapping();
     }
 
     /**

@@ -330,8 +330,8 @@
                 <td><strong>{{ number_format($total_children_9_10, 0, ',', ' ') }}</strong></td>
                 <td><strong>{{ number_format($total_children_4, 0, ',', ' ') }}</strong></td>
                 <td><strong>{{ number_format($total_children_all, 0, ',', ' ') }}</strong></td>
-                <td><strong>{{ number_format($total_cost_9_10, 2, ',', ' ') }}</strong></td>
-                <td><strong>{{ number_format($total_cost_4, 2, ',', ' ') }}</strong></td>
+                <td><strong></strong></td>
+                <td><strong></strong></td>
                 <td><strong>{{ number_format($total_delivery_9_10, 2, ',', ' ') }}</strong></td>
                 <td><strong>{{ number_format($total_delivery_4, 2, ',', ' ') }}</strong></td>
                 <td><strong>{{ number_format($total_delivery_all, 2, ',', ' ') }}</strong></td>

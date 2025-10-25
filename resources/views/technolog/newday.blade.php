@@ -233,6 +233,57 @@
         margin-left: 1rem !important;
         margin-right: 1rem !important;
     }
+    
+    /* Notification stillar */
+    .notification-panel .dropdown-menu {
+        border: 1px solid #dee2e6;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+    
+    .notification-item {
+        padding: 12px 16px;
+        border-bottom: 1px solid #f8f9fa;
+        transition: background-color 0.2s ease;
+    }
+    
+    .notification-item:hover {
+        background-color: #f8f9fa;
+    }
+    
+    .notification-item.unread {
+        background-color: #e3f2fd;
+        border-left: 3px solid #2196f3;
+    }
+    
+    .notification-item .notification-content {
+        font-size: 14px;
+        line-height: 1.4;
+    }
+    
+    .notification-item .notification-time {
+        font-size: 12px;
+        color: #6c757d;
+        margin-top: 4px;
+    }
+    
+    .notification-item .notification-actions {
+        margin-top: 8px;
+    }
+    
+    .notification-item .btn-sm {
+        font-size: 11px;
+        padding: 2px 8px;
+    }
+    
+    .notification-badge {
+        animation: pulse 2s infinite;
+    }
+    
+    @keyframes pulse {
+        0% { transform: scale(1); }
+        50% { transform: scale(1.1); }
+        100% { transform: scale(1); }
+    }
 </style>
 @endsection
 @section('leftmenu')
@@ -755,6 +806,36 @@
 </div>
 <!-- Copy children numbers modal -->
 
+<!-- History Modal -->
+<div class="modal fade" id="historyModal" tabindex="-1" aria-labelledby="historyModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header bg-primary">
+                <h5 class="modal-title text-white" id="historyModalLabel">Bolalar soni o'zgartirish tarixi</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="history-info mb-3">
+                    <h6 class="history-garden-name text-primary"></h6>
+                    <h6 class="history-age-name text-info"></h6>
+                </div>
+                <div class="history-content">
+                    <div class="text-center">
+                        <div class="spinner-border text-primary" role="status">
+                            <span class="visually-hidden">Yuklanmoqda...</span>
+                        </div>
+                        <p class="mt-2">Tarix yuklanmoqda...</p>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Yopish</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- History Modal -->
+
 <!-- DELETE Modal 2 - Birinchi jadval uchun -->
 <!-- Modal -->
 <div class="modal fade" id="deleteModal2" tabindex="-1" aria-labelledby="deleteModalLabel1" aria-hidden="true">
@@ -788,6 +869,32 @@
             <b>Taxminiy menyular</b>
         </div>
         <div class="col-md-6 text-end">
+            <!-- Notification panel -->
+            <div class="notification-panel d-inline-block">
+                <button class="btn btn-outline-primary position-relative" id="notificationBtn" data-bs-toggle="dropdown" aria-expanded="false">
+                    <i class="fas fa-bell"></i>
+                    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" id="notificationCount" style="display: none;">
+                        0
+                    </span>
+                </button>
+                <ul class="dropdown-menu dropdown-menu-end notification-dropdown" style="width: 350px; max-height: 400px; overflow-y: auto;">
+                    <li class="dropdown-header d-flex justify-content-between align-items-center">
+                        <span>Xabarlar</span>
+                        <button class="btn btn-sm btn-outline-secondary" id="markAllReadBtn" style="display: none;">
+                            <i class="fas fa-check-double"></i> Barchasini o'qilgan deb belgilash
+                        </button>
+                    </li>
+                    <li><hr class="dropdown-divider"></li>
+                    <li id="notificationList">
+                        <div class="text-center p-3">
+                            <div class="spinner-border spinner-border-sm text-primary" role="status">
+                                <span class="visually-hidden">Yuklanmoqda...</span>
+                            </div>
+                            <p class="mt-2 mb-0">Xabarlar yuklanmoqda...</p>
+                        </div>
+                    </li>
+                </ul>
+            </div>
             <!-- <a href="{{ route('technolog.downloadAllKindergartensMenusPDF') }}" class="btn btn-success" title="Barcha bog'chalar uchun alohida PDF fayllarini ZIP arxiv qilish">
                 <i class="fas fa-download me-1"></i>Barcha menyularni ZIP arxiv qilish
             </a> -->
@@ -912,27 +1019,38 @@
                         @foreach($ages as $age)
                         @if(isset($row[$age->id]))
                             @php
-                                $status = '#f8f882';
-                                $status_icon = "<i class='fas fa-question' style='color:rgb(238, 65, 65); font-size: 14px; cursor: pointer;'></i>";
-                                $st = $temp->where('kingar_name_id', $row['kingar_name_id'])->where('age_id', $age->id)->first();
-                                if(isset($st->age_number) and $st->age_number == $row[$age->id][1]){
-                                    $status = '#93ff93';
-                                    $status_icon = "<i class='fas fa-check' style='color:rgb(18, 141, 13); font-size: 14px; cursor: pointer;'></i>";
-                                }
+                                // Bugungi kun uchun bolalar soni o'zgartirish tarixini tekshirish
+                                $todayHistory = $childrenCountHistory->where('kingar_name_id', $row['kingar_name_id'])
+                                    ->where('king_age_name_id', $age->id)
+                                    ->where('created_at', '>=', date('Y-m-d 00:00:00'))
+                                    ->where('created_at', '<=', date('Y-m-d 23:59:59'))
+                                    ->first();
                                 
-                                if(isset($row['created_at']) and isset($row['updated_at'])){
-                                    if($row['created_at']->format('Y-m-d H:i:s') != $row['updated_at']->format('Y-m-d H:i:s')){
-                                        $status = '#c2f6dc';
-                                        $status_icon = "<i class='fas fa-check' style='color:rgb(18, 141, 13); font-size: 14px; cursor: pointer;'></i>";
-                                    }
+                                // Default holat - o'zgartirish yo'q
+                                $status = '#f8f882'; // Sariq rang
+                                $status_icon = "<i class='fas fa-question' style='color:rgb(238, 65, 65); font-size: 14px; cursor: pointer;' title='Bugungi kun uchun o'zgartirish yo'q'></i>";
+                                
+                                // Agar bugungi kun uchun o'zgartirish mavjud bo'lsa
+                                if($todayHistory) {
+                                    $status = '#93ff93'; // Yashil rang
+                                    $status_icon = "<i class='fas fa-check' style='color:rgb(18, 141, 13); font-size: 14px; cursor: pointer;' title='Bugungi kun uchun o'zgartirish mavjud'></i>";
                                 }
                             @endphp
                             <td style="background-color: {{ $status }};">
                               {{ $row[$age->id][1]."  " }}
-                               @if($row[$age->id][2] != null and $st->age_number != $row[$age->id][1])
+                               @if($row[$age->id][2] != null and isset($todayHistory) and $todayHistory->new_children_count != $row[$age->id][1])
                                 <i class="far fa-envelope envelope-notification" title="Yangi xabarnoma mavjud!"></i> 
                                @endif
                                <i class="ch_countedit far fa-edit" data-nextrow-id="{{ $row[$age->id][0]; }}" data-child-count="{{ $row[$age->id][1]; }}" data-temprow-id="{{ $row[$age->id][2]; }}" data-tempchild-count="{{ $row[$age->id][3]; }}" data-kinga-name="{{ $row['kingar_name'] }}" data-bs-toggle="modal" data-bs-target="#chcountModal" style="color: #727213; font-size: 14px; cursor: pointer;"></i>
+                               <i class="history-btn fas fa-history" 
+                                  data-garden-id="{{ $row['kingar_name_id'] }}" 
+                                  data-age-id="{{ $age->id }}" 
+                                  data-garden-name="{{ $row['kingar_name'] }}" 
+                                  data-age-name="{{ $age->age_name }}"
+                                  data-bs-toggle="modal" 
+                                  data-bs-target="#historyModal" 
+                                  style="color: #2196f3; font-size: 14px; cursor: pointer; margin-left: 5px;" 
+                                  title="O'zgartirish tarixini ko'rish"></i>
                                <div class="status-icon-container">
                                    {!! $status_icon !!}
                                </div>
@@ -1534,6 +1652,69 @@
             $('.age-title').text(ageName + ' yosh guruhi uchun bolalar sonini nusxalash');
         });
 
+        // History modal
+        $('.history-btn').click(function() {
+            var gardenId = $(this).attr('data-garden-id');
+            var ageId = $(this).attr('data-age-id');
+            var gardenName = $(this).attr('data-garden-name');
+            var ageName = $(this).attr('data-age-name');
+            
+            // Modal sarlavhasini yangilash
+            $('.history-garden-name').text('Bog\'cha: ' + gardenName);
+            $('.history-age-name').text('Yosh guruhi: ' + ageName);
+            
+            // Loading ko'rsatish
+            $('.history-content').html(`
+                <div class="text-center">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Yuklanmoqda...</span>
+                    </div>
+                    <p class="mt-2">Tarix yuklanmoqda...</p>
+                </div>
+            `);
+            
+            // AJAX orqali tarixni olish
+            $.ajax({
+                url: '/technolog/children-count-history/' + gardenId + '/' + ageId,
+                method: 'GET',
+                success: function(response) {
+                    if (response.success && response.history.length > 0) {
+                        var historyHtml = '<div class="table-responsive"><table class="table table-striped table-hover">';
+                        historyHtml += '<thead class="table-primary"><tr><th>Eski son</th><th>Yangi son</th><th>O\'zgartirgan</th><th>Vaqt</th><th>Sabab</th></tr></thead><tbody>';
+                        
+                        response.history.forEach(function(record) {
+                            historyHtml += '<tr>';
+                            historyHtml += '<td>' + (record.old_children_count || 'N/A') + '</td>';
+                            historyHtml += '<td><strong>' + record.new_children_count + '</strong></td>';
+                            historyHtml += '<td>' + record.changed_by_name + '</td>';
+                            historyHtml += '<td>' + record.changed_at_formatted + '</td>';
+                            historyHtml += '<td>' + (record.change_reason || '-') + '</td>';
+                            historyHtml += '</tr>';
+                        });
+                        
+                        historyHtml += '</tbody></table></div>';
+                        $('.history-content').html(historyHtml);
+                    } else {
+                        $('.history-content').html(`
+                            <div class="text-center py-4">
+                                <i class="fas fa-history fa-3x text-muted mb-3"></i>
+                                <h5 class="text-muted">Hech qanday o'zgartirish tarixi yo'q</h5>
+                                <p class="text-muted">Bu bog'cha va yosh guruhi uchun hali hech qanday o'zgartirish kiritilmagan</p>
+                            </div>
+                        `);
+                    }
+                },
+                error: function() {
+                    $('.history-content').html(`
+                        <div class="alert alert-danger">
+                            <i class="fas fa-exclamation-triangle"></i>
+                            Tarixni yuklashda xatolik yuz berdi. Iltimos, qaytadan urinib ko'ring.
+                        </div>
+                    `);
+                }
+            });
+        });
+
         // Restore children numbers
         $('.restore-children-btn').click(function() {
             var ageId = $(this).attr('data-age-id');
@@ -1822,6 +2003,172 @@
                 }
             });
         });
+        
+        // Notification funksionalligi
+        loadNotifications();
+        
+        // Har 30 soniyada notificationlarni tekshirish
+        setInterval(loadNotifications, 30000);
+        
+        // Test notification tugmasi
+        $('#testNotificationBtn').on('click', function() {
+            var btn = $(this);
+            var icon = btn.find('i');
+            
+            // Loading holatini ko'rsatish
+            icon.removeClass('fa-bell').addClass('fa-spinner fa-spin');
+            btn.prop('disabled', true);
+            
+            $.ajax({
+                url: '{{ route("technolog.notifications.test") }}',
+                method: 'POST',
+                data: {
+                    _token: '{{ csrf_token() }}'
+                },
+                success: function(response) {
+                    if (response.success) {
+                        showNotification('Test notification yaratildi!', 'success');
+                        // Notificationlarni qayta yuklash
+                        loadNotifications();
+                    } else {
+                        showNotification(response.message || 'Xatolik yuz berdi!', 'error');
+                    }
+                },
+                error: function(xhr) {
+                    var errorMessage = 'Xatolik yuz berdi!';
+                    if (xhr.responseJSON && xhr.responseJSON.message) {
+                        errorMessage = xhr.responseJSON.message;
+                    }
+                    showNotification(errorMessage, 'error');
+                },
+                complete: function() {
+                    icon.removeClass('fa-spinner fa-spin').addClass('fa-bell');
+                    btn.prop('disabled', false);
+                }
+            });
+        });
+        
+        // Notification tugmasini bosganda
+        $('#notificationBtn').on('click', function() {
+            loadNotifications();
+        });
+        
+        // Barcha notificationlarni o'qilgan deb belgilash
+        $('#markAllReadBtn').on('click', function() {
+            markAllNotificationsAsRead();
+        });
+        
+        // Notificationlarni yuklash
+        function loadNotifications() {
+            $.ajax({
+                url: '{{ route("technolog.notifications") }}',
+                method: 'GET',
+                success: function(response) {
+                    if (response.success) {
+                        updateNotificationUI(response.notifications, response.count);
+                    }
+                },
+                error: function() {
+                    console.log('Notificationlarni yuklashda xatolik');
+                }
+            });
+        }
+        
+        // Notification UI ni yangilash
+        function updateNotificationUI(notifications, count) {
+            var $count = $('#notificationCount');
+            var $list = $('#notificationList');
+            var $markAllBtn = $('#markAllReadBtn');
+            
+            // Count ni yangilash
+            if (count > 0) {
+                $count.text(count).show().addClass('notification-badge');
+                $markAllBtn.show();
+            } else {
+                $count.hide().removeClass('notification-badge');
+                $markAllBtn.hide();
+            }
+            
+            // Notification listini yangilash
+            if (notifications.length > 0) {
+                var html = '';
+                notifications.forEach(function(notification) {
+                    var isUnread = !notification.read_at;
+                    var timeAgo = getTimeAgo(notification.created_at);
+                    
+                    html += '<div class="notification-item ' + (isUnread ? 'unread' : '') + '" data-id="' + notification.id + '">';
+                    html += '<div class="notification-content">' + notification.data.message + '</div>';
+                    html += '<div class="notification-time">' + timeAgo + '</div>';
+                    if (isUnread) {
+                        html += '<div class="notification-actions">';
+                        html += '<button class="btn btn-sm btn-outline-primary mark-read-btn" data-id="' + notification.id + '">O\'qilgan deb belgilash</button>';
+                        html += '</div>';
+                    }
+                    html += '</div>';
+                });
+                $list.html(html);
+            } else {
+                $list.html('<div class="text-center p-3"><i class="fas fa-bell-slash fa-2x text-muted mb-2"></i><p class="text-muted mb-0">Hech qanday xabar yo\'q</p></div>');
+            }
+            
+            // Mark as read tugmalarini bog'lash
+            $('.mark-read-btn').on('click', function() {
+                var notificationId = $(this).data('id');
+                markNotificationAsRead(notificationId);
+            });
+        }
+        
+        // Notification ni o'qilgan deb belgilash
+        function markNotificationAsRead(notificationId) {
+            $.ajax({
+                url: '{{ route("technolog.notification.read", ":id") }}'.replace(':id', notificationId),
+                method: 'POST',
+                data: {
+                    _token: '{{ csrf_token() }}'
+                },
+                success: function(response) {
+                    if (response.success) {
+                        // UI dan o'chirish
+                        $('.notification-item[data-id="' + notificationId + '"]').removeClass('unread').find('.notification-actions').remove();
+                        // Count ni yangilash
+                        loadNotifications();
+                    }
+                }
+            });
+        }
+        
+        // Barcha notificationlarni o'qilgan deb belgilash
+        function markAllNotificationsAsRead() {
+            $.ajax({
+                url: '{{ route("technolog.notifications.read_all") }}',
+                method: 'POST',
+                data: {
+                    _token: '{{ csrf_token() }}'
+                },
+                success: function(response) {
+                    if (response.success) {
+                        loadNotifications();
+                        showNotification('Barcha xabarlar o\'qilgan deb belgilandi', 'success');
+                    }
+                }
+            });
+        }
+        
+        // Vaqt hisoblash funksiyasi
+        function getTimeAgo(dateString) {
+            var date = new Date(dateString);
+            var now = new Date();
+            var diff = now - date;
+            
+            var minutes = Math.floor(diff / 60000);
+            var hours = Math.floor(diff / 3600000);
+            var days = Math.floor(diff / 86400000);
+            
+            if (minutes < 1) return 'Hozir';
+            if (minutes < 60) return minutes + ' daqiqa oldin';
+            if (hours < 24) return hours + ' soat oldin';
+            return days + ' kun oldin';
+        }
         
     });
 </script>

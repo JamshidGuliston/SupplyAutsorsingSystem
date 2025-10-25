@@ -333,7 +333,7 @@
                 <!-- Ustama qatori -->
                 <tr>
                     <td>{{ $tr++ }}</td>
-                    <td class="product-name">Аутсорсинг хизмати устамаси</td>
+                    <td class="product-name">Аутсорсинг хизмати устамаси ({{ $costs[4]->raise ?? 0 }})</td>
                     <td>cум</td>
                     <td>1</td>
                     <td>{{ number_format($f18, 2) }}</td>

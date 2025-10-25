@@ -104,6 +104,38 @@
             width: 100% !important;
         }
     }
+    
+    /* Card ko'rinishi uchun qo'shimcha stillar */
+    .card.border-primary {
+        transition: all 0.3s ease;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    
+    .card.border-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+    }
+    
+    .card-header.bg-primary {
+        background: linear-gradient(135deg, #007bff 0%, #0056b3 100%) !important;
+    }
+    
+    .card-footer.bg-light {
+        background-color: #f8f9fa !important;
+        border-top: 1px solid #dee2e6;
+    }
+    
+    .badge.bg-success {
+        font-size: 1rem;
+        padding: 0.5rem 0.75rem;
+    }
+    
+    /* Responsive card layout */
+    @media (max-width: 768px) {
+        .col-md-6.col-lg-4 {
+            margin-bottom: 1rem;
+        }
+    }
 </style>
 @endsection
 
@@ -179,6 +211,44 @@
     </div>
 </div>
 
+<!-- Bolalar sonini o'zgartirish modal -->
+<div class="modal fade" id="editChildrenCountModal" tabindex="-1" aria-labelledby="editChildrenCountModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form action="{{ route('chef.update_children_count_by_chef') }}" method="POST">
+                @csrf
+                <div class="modal-header bg-warning">
+                    <h5 class="modal-title text-white" id="editChildrenCountModalLabel">Bolalar sonini o'zgartirish</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="age_name_display" class="form-label">Yosh guruhi:</label>
+                        <input type="text" class="form-control" id="age_name_display" readonly>
+                        <input type="hidden" name="age_id" id="age_id">
+                    </div>
+                    <div class="mb-3">
+                        <label for="current_count_display" class="form-label">Joriy son:</label>
+                        <input type="text" class="form-control" id="current_count_display" readonly>
+                    </div>
+                    <div class="mb-3">
+                        <label for="new_count" class="form-label">Yangi son: <span class="text-danger">*</span></label>
+                        <input type="number" class="form-control" name="new_count" id="new_count" min="0" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="reason" class="form-label">Sabab:</label>
+                        <textarea class="form-control" name="reason" id="reason" rows="3" placeholder="O'zgartirish sababini yozing..."></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Bekor qilish</button>
+                    <button type="submit" class="btn btn-warning">Saqlash</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
 <!-- End -->
 <div class="modal fade" id="Modalsadd" tabindex="-1" aria-labelledby="exampleModalLabelsadd" aria-hidden="true">
     <div class="modal-dialog  modal-lg">
@@ -225,12 +295,11 @@
 </div>
 <!-- end -->
 <div class="container-fluid px-4">
-    <a href="/chef/home" ><i class="fas fa-tachometer-alt me-3"></i>Qayta yuklash</a>
     <br>
     <!-- Bog'cha nomini ko'rsatish -->
     <h3><b>Bog'cha: {{ $kindgarden->kingar_name }}</b></h3>
     <div class="row g-3 my-2">
-    @if(intval(date("H")) >= 8 and intval(date("H")) < 16 and $sendchildcount->count() == 0)
+    @if(intval(date("H")) >= 3 and intval(date("H")) < 16 and $sendchildcount->count() == 0)
     <form method="POST" action="{{route('chef.sendnumbers')}}">
         @csrf
         <input type="hidden" name="kingar_id" value="{{ $kindgarden->id }}">
@@ -250,6 +319,82 @@
     </form>
     @else
         <p><b>Бугунги болалар сони қабул қилинди</b></p>
+        @if(session('success'))
+            <div class="alert alert-success">
+                {{ session('success') }}
+            </div>
+        @endif
+        @if(session('error'))
+            <div class="alert alert-danger">
+                {{ session('error') }}
+            </div>
+        @endif
+        
+        <!-- Bugungi kun uchun bolalar soni ko'rsatish va o'zgartirish -->
+        @if($todayChildrenCount->count() > 0)
+        <div class="row g-3 my-2">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="row g-3">
+                            @foreach($todayChildrenCount->groupBy('king_age_name_id') as $ageId => $history)
+                                @php
+                                    $latestRecord = $history->first();
+                                    $ageRange = $latestRecord->ageRange;
+                                @endphp
+                                <div class="col-md-6 col-lg-4">
+                                    <div class="card border-primary h-100">
+                                        <div class="card-header bg-primary text-white">
+                                            <h6 class="mb-0">
+                                                <i class="fas fa-users me-2"></i>{{ $ageRange->age_name ?? 'Noma\'lum' }}
+                                            </h6>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="row mb-2">
+                                                <div class="col-6">
+                                                    <small class="text-muted">Oxirgi son:</small>
+                                                </div>
+                                                <div class="col-6 text-end">
+                                                    <span class="badge bg-success fs-6">{{ $latestRecord->new_children_count }}</span>
+                                                </div>
+                                            </div>
+                                            <div class="row mb-2">
+                                                <div class="col-6">
+                                                    <small class="text-muted">O'zgartirgan:</small>
+                                                </div>
+                                                <div class="col-6 text-end">
+                                                    <small class="text-muted">{{ $latestRecord->changedBy->name ?? 'Noma\'lum' }}</small>
+                                                </div>
+                                            </div>
+                                            @if($latestRecord->change_reason)
+                                            <div class="row mb-3">
+                                                <div class="col-12">
+                                                    <small class="text-muted">Sabab:</small>
+                                                    <p class="mb-0 small text-muted">{{ $latestRecord->change_reason }}</p>
+                                                </div>
+                                            </div>
+                                            @endif
+                                        </div>
+                                        <div class="card-footer bg-light">
+                                            <button class="btn btn-sm btn-outline-primary w-100" 
+                                                    data-bs-toggle="modal" 
+                                                    data-bs-target="#editChildrenCountModal"
+                                                    data-age-id="{{ $ageId }}"
+                                                    data-age-name="{{ $ageRange->age_name ?? 'Noma\'lum' }}"
+                                                    data-current-count="{{ $latestRecord->new_children_count }}"
+                                                    title="Bolalar sonini o'zgartirish">
+                                                <i class="fas fa-edit me-1"></i> O'zgartirish
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            @endforeach
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        @endif
     @endif
     </div>
     @if(isset($inproducts[0]))
@@ -650,6 +795,21 @@
             showNotification('PDF fayl topilmadi!', 'error');
         }
     }
+    
+    // Bolalar sonini o'zgartirish modal
+    $('#editChildrenCountModal').on('show.bs.modal', function (event) {
+        var button = $(event.relatedTarget);
+        var ageId = button.data('age-id');
+        var ageName = button.data('age-name');
+        var currentCount = button.data('current-count');
+        
+        var modal = $(this);
+        modal.find('#age_id').val(ageId);
+        modal.find('#age_name_display').val(ageName);
+        modal.find('#current_count_display').val(currentCount);
+        modal.find('#new_count').val(currentCount);
+        modal.find('#reason').val('');
+    });
     
     // Haqiqiy menyu rasm ko'rinishini ko'rsatish
     function showActiveMenuPreview(dayId, gardenId, menuDate) {

@@ -21,6 +21,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use App\Models\Certificate;
+use App\Models\ChildrenCountHistory;
+use App\Models\Notification;
 
 class ChefController extends Controller
 {
@@ -29,7 +31,15 @@ class ChefController extends Controller
         date_default_timezone_set('Asia/Tashkent');
         $user = User::where('id', auth()->user()->id)->with('kindgarden')->first();
         $kindgarden = Kindgarden::where('id', $user->kindgarden[0]['id'])->with('age_range')->first();
-        $sendchildcount = Temporary::where('kingar_name_id', $user->kindgarden[0]['id'])->get();
+        $sendchildcount = ChildrenCountHistory::where('kingar_name_id', $kindgarden->id)->where('created_at', '>=', now()->subHours(12))->get();
+        
+        // Bugungi kun uchun bolalar soni tarixini olish
+        $todayChildrenCount = ChildrenCountHistory::where('kingar_name_id', $kindgarden->id)
+            ->where('created_at', '>=', date('Y-m-d 00:00:00'))
+            ->where('created_at', '<=', date('Y-m-d 23:59:59'))
+            ->with(['ageRange', 'changedBy'])
+            ->orderBy('changed_at', 'desc')
+            ->get();
         $productall = Product::join('sizes', 'sizes.id', '=', 'products.size_name_id')
                     ->get(['products.id', 'products.product_name', 'sizes.size_name']);
         $day = Day::join('months', 'months.id', '=', 'days.month_id')
@@ -70,7 +80,7 @@ class ChefController extends Controller
                     ->get();
         }
         // dd($productall);
-        return view('chef.home', compact('productall', 'kindgarden', 'sendchildcount', 'day', 'bool', 'inproducts'));
+        return view('chef.home', compact('productall', 'kindgarden', 'sendchildcount', 'day', 'bool', 'inproducts', 'todayChildrenCount'));
     }
     public function minusproducts(Request $request){
         $bool = minus_multi_storage::where('day_id', $request->dayid + 1)->where('kingarden_name_id', $request->kindgarid)->get();
@@ -105,17 +115,44 @@ class ChefController extends Controller
     public function sendnumbers(Request $request)
     {
         // dd($request->all());
-        $row = Temporary::where('kingar_name_id', $request->kingar_id)->get();
-        if($row->count() == 0){
+        $row = Nextday_namber::where('kingar_name_id', $request->kingar_id)->get();
+        if($row != null){
             foreach($request->agecount as  $key => $value){
-                Temporary::create([
-                    'kingar_name_id' => $request->kingar_id,
-                    'age_id' => $key,
-                    'age_number' => $value
-                ]);
+                try {
+                    $currentRecord = $row->where('king_age_name_id', $key)->first();
+                    $oldCount = $currentRecord->kingar_children_number;
+                    
+                    // Tarixni saqlash
+                    ChildrenCountHistory::create([
+                        'kingar_name_id' => $request->kingar_id,
+                        'king_age_name_id' => $key,
+                        'old_children_count' => $oldCount,
+                        'new_children_count' => $value,
+                        'changed_by' => auth()->user()->id,
+                        'changed_at' => now(),
+                        'change_reason' => 'Oshpaz tomonidan kunlik bolalar soni yuborildi'
+                    ]);
+                    
+                    // Technologlarga notification yuborish
+                    Notification::createChildrenCountChangeNotification(
+                        $request->kingar_id,
+                        $key,
+                        $oldCount,
+                        $value,
+                        auth()->user()->id
+                    );
+                    
+                    $currentRecord->update(['kingar_children_number' => $value]);
+                } catch (\Exception $e) {
+                    $age = Age_range::where('id', $key)->first();
+                    return redirect()->route('chef.home')->with('error', 'Xatolik yuz berdi: ' . $age->age_name . ' keyingi ish kuni uchun qo\'shilmagan: ' . $e->getMessage());
+                }
             }
         }
-        return redirect()->route('chef.home');
+        else{
+            return redirect()->route('chef.home')->with('error', 'Keyingi ish kuni uchun ma\'lumotlar mavjud emas');
+        }
+        return redirect()->route('chef.home')->with('success', 'Muvaffaqiyatli qo\'shildi');
     }
 
     public function right(Request $request)
@@ -161,5 +198,140 @@ class ChefController extends Controller
         $expiringCertificates = Certificate::expiringSoon()->get();
         
         return view('chef.certificates', compact('certificates', 'expiringCertificates'));
+    }
+
+    /**
+     * Bolalar soni tarixini ko'rsatish
+     */
+    public function childrenCountHistory(Request $request)
+    {
+        $user = User::where('id', auth()->user()->id)->with('kindgarden')->first();
+        $kindgardenId = $user->kindgarden[0]['id'];
+        
+        $history = ChildrenCountHistory::getHistoryForKindgarden($kindgardenId);
+        
+        return view('chef.children_count_history', compact('history'));
+    }
+
+    /**
+     * Nextday_namber jadvalini har kuni tozalash
+     * Bu funksiya har kuni ertalab ishga tushirilishi kerak
+     */
+    public function clearNextdayNumbers()
+    {
+        try {
+            // Barcha Nextday_namber ma'lumotlarini o'chirish
+            Nextday_namber::truncate();
+            
+            // Yoki soft delete ishlatish mumkin
+            // Nextday_namber::query()->delete();
+            
+            return response()->json([
+                'success' => true,
+                'message' => 'Nextday_namber jadvali muvaffaqiyatli tozalandi'
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Xatolik yuz berdi: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
+     * Bolalar sonini qo'lda o'zgartirish (admin uchun)
+     */
+    public function updateChildrenCount(Request $request)
+    {
+        $request->validate([
+            'kingar_name_id' => 'required|exists:kindgardens,id',
+            'king_age_name_id' => 'required|exists:age_ranges,id',
+            'new_count' => 'required|integer|min:0',
+            'reason' => 'nullable|string|max:255'
+        ]);
+
+        try {
+            $nextdayRecord = Nextday_namber::where('kingar_name_id', $request->kingar_name_id)
+                ->where('king_age_name_id', $request->king_age_name_id)
+                ->first();
+
+            if (!$nextdayRecord) {
+                return redirect()->back()->with('error', 'Ma\'lumot topilmadi');
+            }
+
+            $oldCount = $nextdayRecord->kingar_children_number;
+
+            // Tarixni saqlash
+            ChildrenCountHistory::create([
+                'kingar_name_id' => $request->kingar_name_id,
+                'king_age_name_id' => $request->king_age_name_id,
+                'old_children_count' => $oldCount,
+                'new_children_count' => $request->new_count,
+                'changed_by' => auth()->user()->id,
+                'changed_at' => now(),
+                'change_reason' => $request->reason ?? 'Admin tomonidan qo\'lda o\'zgartirildi'
+            ]);
+
+            // Yangi sonni saqlash
+            $nextdayRecord->update(['kingar_children_number' => $request->new_count]);
+
+            return redirect()->back()->with('success', 'Bolalar soni muvaffaqiyatli o\'zgartirildi');
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'Xatolik yuz berdi: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Oshpaz tomonidan bolalar sonini o'zgartirish
+     */
+    public function updateChildrenCountByChef(Request $request)
+    {
+        $request->validate([
+            'age_id' => 'required|exists:age_ranges,id',
+            'new_count' => 'required|integer|min:0',
+            'reason' => 'nullable|string|max:255'
+        ]);
+
+        try {
+            $user = User::where('id', auth()->user()->id)->with('kindgarden')->first();
+            $kindgardenId = $user->kindgarden[0]['id'];
+
+            $nextdayRecord = Nextday_namber::where('kingar_name_id', $kindgardenId)
+                ->where('king_age_name_id', $request->age_id)
+                ->first();
+
+            if (!$nextdayRecord) {
+                return redirect()->back()->with('error', 'Ma\'lumot topilmadi');
+            }
+
+            $oldCount = $nextdayRecord->kingar_children_number;
+
+            // Tarixni saqlash
+            ChildrenCountHistory::create([
+                'kingar_name_id' => $kindgardenId,
+                'king_age_name_id' => $request->age_id,
+                'old_children_count' => $oldCount,
+                'new_children_count' => $request->new_count,
+                'changed_by' => auth()->user()->id,
+                'changed_at' => now(),
+                'change_reason' => $request->reason ?? 'Oshpaz tomonidan qo\'lda o\'zgartirildi'
+            ]);
+            
+            // notification yuborish
+            Notification::createChildrenCountChangeNotification(
+                $kindgardenId,
+                $request->age_id,
+                $oldCount,
+                $request->new_count,
+                auth()->user()->id
+            );
+
+            // Yangi sonni saqlash
+            $nextdayRecord->update(['kingar_children_number' => $request->new_count]);
+
+            return redirect()->back()->with('success', 'Bolalar soni muvaffaqiyatli o\'zgartirildi');
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'Xatolik yuz berdi: ' . $e->getMessage());
+        }
     }
 }
