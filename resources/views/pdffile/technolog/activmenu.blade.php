@@ -73,7 +73,7 @@
 
 			white-space: normal;  
 			text-align: center;     /* birinchi bir qatorda */
-			width: 130px;               /* aniq kenglik (burilgandan keyin balandlik) */
+			width: 90px;               /* aniq kenglik (burilgandan keyin balandlik) */
 			overflow: visible;         /* hamma ko'rinsin */
 			font-size: 5.5px;
 		}
@@ -84,8 +84,8 @@
 			line-height: 1.0;
 			white-space: normal;       /* bir qatorda */
 			display: inline-block;
-			width: 130px;               /* aniq kenglik (aylantirilganda balandlik) */
-			max-width: 140px;           /* maksimal kenglik */
+			width: 100px;               /* aniq kenglik (aylantirilganda balandlik) */
+			max-width: 100px;           /* maksimal kenglik */
 			text-align: center;
 			overflow: hidden;
 			word-wrap: break-word;
