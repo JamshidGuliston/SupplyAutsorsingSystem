@@ -3109,7 +3109,7 @@ class AccountantController extends Controller
             'kindgar' => $kindgar,
             'ages' => $ages
         ]);
-        $this->setPdfOptions($pdf_transportation, 'A4', 'landscape', true);
+        $this->setPdfOptions($pdf_transportation, 'A3', 'landscape', true);
         
         $file_transportation = $tempDir . '/2_transportation_' . $timestamp . '.pdf';
         file_put_contents($file_transportation, $pdf_transportation->output());

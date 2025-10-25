@@ -159,7 +159,7 @@
 </head>
 <body>
     <div class="header-info">
-        <strong>Боғча номи: {{ $menu[0]['kingar_name'] }}</strong> | 
+        <strong>ДМТТ номи: {{ $menu[0]['kingar_name'] }}</strong> | 
         <strong>Таомнома: {{ $taomnoma['menu_name'] }}</strong><br>
         <strong>Сана: {{ $day['day_number'] }}.{{ $day['month_name'] }}.{{ $day['year_name'] }}-й учун</strong> | 
         <strong>{{ $menu[0]['age_name'] }}ли болалар сони: {{ $menu[0]['kingar_children_number'] }}</strong> | 
