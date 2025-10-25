@@ -116,7 +116,7 @@
 			max-width: 2%;
 			overflow: hidden;
 			padding: 0px !important;
-			height: 150px;
+			height: 100px;
 			vertical-align: middle;
 			text-align: center;
 			position: relative;
