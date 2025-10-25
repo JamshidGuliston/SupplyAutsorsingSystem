@@ -3169,9 +3169,22 @@ class AccountantController extends Controller
                 $menu = $this->getCachedMenu($day->id, $age->id);
                 if($menu->count() == 0) continue;
                 
-                $products = $this->cachedProducts;
+                // Faqat o'sha kunda ishlatilgan maxsulotlarni olish
                 $menuitem = $this->getCachedActiveMenu($day->id, $age->id, $menu[0]['kingar_menu_id']);
                 if($menuitem->count() == 0) continue;
+                
+                // O'sha kunda ishlatilgan maxsulot ID'larni olish
+                $usedProductIds = $menuitem->pluck('product_name_id')->unique();
+                
+                // Faqat o'sha kunda ishlatilgan maxsulotlarni filter qilish
+                $products = $this->cachedProducts->filter(function($product) use ($usedProductIds) {
+                    return $usedProductIds->contains($product['id']);
+                })->values()->toArray();
+                
+                // Har bir maxsulotni "yes" qilish
+                foreach($products as $key => $product) {
+                    $products[$key]['yes'] = 1;
+                }
                 
                 $day_info = $day;
                 $day_info->month_name = $day->month_name;
@@ -3196,12 +3209,6 @@ class AccountantController extends Controller
                     $nextdaymenuitem[$item->menu_meal_time_id][$item->menu_food_id]['foodname'] = $item->food_name; 
                     $nextdaymenuitem[$item->menu_meal_time_id][$item->menu_food_id]['foodweight'] = $item->food_weight; 
                     $productallcount[$item->product_name_id] += $item->weight;
-                    
-                    for($i = 0; $i<count($products); $i++){
-                        if(empty($products[$i]['yes']) and $products[$i]['id'] == $item->product_name_id){
-                            $products[$i]['yes'] = 1;
-                        }
-                    }
                 }
                 
                 $workerproducts = array_fill(1, 500, 0);
