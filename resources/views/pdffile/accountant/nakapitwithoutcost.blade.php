@@ -54,9 +54,9 @@
 	}
 	
 	th.date-header {
-		height: 100px;
-		width: 30px;
-		min-width: 30px;
+		height: 60px;
+		width: 15px;
+		min-width: 20px;
 		text-align: center;
 		vertical-align: middle;
 		position: relative;
@@ -75,7 +75,7 @@
 		font-size: 6px;
 		line-height: 1.2;
 		width: 50px;
-		height: 20px;
+		height: 15px;
 		position: absolute;
 		top: 50%;
 		left: 50%;
