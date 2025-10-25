@@ -376,7 +376,11 @@ class AccountantController extends Controller
                 return $a["sort"] > $b["sort"];
             }
         });
-       
+
+        // blade faylini brawser uchun ko'rsat
+        return view('pdffile.accountant.nakapitwithoutcost', compact('age', 'days', 'nakproducts', 'kindgar', 'protsent'));
+
+
         $pdf = \PDF::loadView('pdffile.accountant.nakapitwithoutcost', compact('age', 'days', 'nakproducts', 'kindgar', 'protsent'));
         $pdf->setOption('page-size', 'A4');
         $pdf->setOption('orientation', 'portrait');
