@@ -171,7 +171,7 @@
 									$qrImage = base64_encode(file_get_contents(public_path('images/directorsign.png')));
 								@endphp
 								<img src="data:image/jpeg;base64,{{ $qrImage }}" 
-									style="width:250px; position:absolute; left: 180px; text-align: right;">
+									style="width:180px; position:absolute; left: 180px; text-align: right;">
 							</div>
 					</div>
 				@else
@@ -405,7 +405,7 @@
 									$qrImage = base64_encode(file_get_contents(public_path('images/buxgaltersign.png')));
 								@endphp
 								<img src="data:image/jpeg;base64,{{ $qrImage }}" 
-									style="width:180px; position:absolute; left: 0px; text-align: left;">
+									style="width:160px; position:absolute; left: 0px; text-align: left;">
 							</div>
 						@else
 							<div class="column" style="margin-top: -10px;">
@@ -417,11 +417,9 @@
 							</div>
 						@endif
 							<div class="column">
-								<br/>
 								<p style="text-align: center;"><strong>{{ env('MENU_SIGNATURE') }}:</strong> __________________;</p>
 							</div>
 							<div class="column">
-								<br/>
 								<p style="text-align: right;"><strong>ДМТТ рахбари: </strong> __________________;</p>
 							</div>
 					   </div>
