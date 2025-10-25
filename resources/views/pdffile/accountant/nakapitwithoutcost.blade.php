@@ -49,7 +49,6 @@
 		text-align: center;
 		vertical-align: middle;
 		font-weight: bold;
-		background-color: #f0f0f0;
 		white-space: nowrap;
 	}
 	
