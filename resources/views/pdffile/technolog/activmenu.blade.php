@@ -109,7 +109,7 @@
 			position: absolute;
 			text-align: right;
 			right: 0px;
-			top: -30px;
+			top: -40px;
 		}
 		/* Qator balandligini kamaytirish */
 		tr {
@@ -171,7 +171,7 @@
 									$qrImage = base64_encode(file_get_contents(public_path('images/directorsign.png')));
 								@endphp
 								<img src="data:image/jpeg;base64,{{ $qrImage }}" 
-									style="width:170px; position:absolute; left: 180px; text-align: right;">
+									style="width:250px; position:absolute; left: 180px; text-align: right;">
 							</div>
 					</div>
 				@else
@@ -405,7 +405,7 @@
 									$qrImage = base64_encode(file_get_contents(public_path('images/buxgaltersign.png')));
 								@endphp
 								<img src="data:image/jpeg;base64,{{ $qrImage }}" 
-									style="width:200px; position:absolute; left: 0px; text-align: left;">
+									style="width:180px; position:absolute; left: 0px; text-align: left;">
 							</div>
 						@else
 							<div class="column" style="margin-top: -10px;">
