@@ -54,13 +54,19 @@
 	}
 	
 	th.date-header {
-		writing-mode: vertical-rl;
-		text-orientation: mixed;
-		transform: rotate(180deg);
-		height: 80px;
-		width: 20px;
+		display: inline-block;
+		text-align: center;
+		-webkit-transform: rotate(-90deg);
+		-moz-transform: rotate(-90deg);
+		-ms-transform: rotate(-90deg);
+		-o-transform: rotate(-90deg);
+		transform: rotate(-90deg);
+		white-space: nowrap;
 		font-size: 6px;
 		line-height: 1.2;
+		height: 80px;
+		width: 20px;
+		vertical-align: middle;
 	}
 	
 	td {
@@ -149,7 +155,9 @@
 							$month_id = $day->month_id % 12;
 						}
 					?>
-					<th class="date-header">{{ sprintf("%02d.%02d.%d", $day->day_number, $month_id, $day->year_name) }}</th>
+					<th class="date-header">
+						<span>{{ sprintf("%02d.%02d.%d", $day->day_number, $month_id, $day->year_name) }}</span>
+					</th>
 				@endforeach
 				<th rowspan="2">Жами</th>
 			</tr>
