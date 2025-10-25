@@ -108,6 +108,13 @@
 	th.date-header, td.date-cell {
 		width: 8%;
 		min-width: 30px;
+		white-space: wrap;
+	}
+	
+	td.size-name {
+		max-width: 150px;
+		white-space: wrap;
+		word-wrap: break-word;
 	}
 	
 	tr:first-child th {
@@ -201,7 +208,7 @@
 					@if($row['product_name'] != "Болалар сони")
 						<td>{{ ++$row_number }}</td>
 						<td class="product-name">{{ $row['product_name'] }}</td>
-						<td>{{ $row['size_name'] ?? '' }}</td>
+						<td class="size-name">{{ $row['size_name'] ?? '' }}</td>
 					@else
 						<td colspan="3"><strong>{{ $row['product_name'] }}</strong></td>
 					@endif
