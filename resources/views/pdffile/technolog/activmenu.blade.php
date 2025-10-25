@@ -105,6 +105,11 @@
 			overflow: hidden;
 		}
 		
+		.director-sign {
+			position: absolute;
+			right: 0px;
+			top: -20px;
+		}
 		/* Qator balandligini kamaytirish */
 		tr {
 			height: 20px;
@@ -157,7 +162,7 @@
 								}
 							?>
 							</div>
-							<div class="column_top">
+							<div class="column_top director-sign">
 								<!-- <h5><b>ТАСДИҚЛАЙМАН</b></h5>
 								<p style="text-align: center;">{{ env('COMPANY_NAME') }}</p>
 								<p>Рахбари ______________________</p> -->
