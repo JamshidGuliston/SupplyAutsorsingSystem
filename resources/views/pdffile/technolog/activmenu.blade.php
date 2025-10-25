@@ -135,7 +135,7 @@
 		thead tr,
 		thead th,
 		thead td {
-			background-color:rgb(247, 247, 247) !important;
+			/* background-color:rgb(247, 247, 247) !important; */
 		}
 		
 		/* Footer qatorlari uchun och sariq rang */
@@ -174,7 +174,7 @@
 									$qrImage = base64_encode(file_get_contents(public_path('images/directorsign.png')));
 								@endphp
 								<img src="data:image/jpeg;base64,{{ $qrImage }}" 
-									style="width:175px; position:absolute; left: 180px; text-align: right;">
+									style="width:220px; position:absolute; left: 180px; text-align: right;">
 							</div>
 					</div>
 				@else
