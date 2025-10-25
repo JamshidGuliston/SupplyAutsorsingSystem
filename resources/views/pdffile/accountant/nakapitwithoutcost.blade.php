@@ -49,7 +49,7 @@
 		text-align: center;
 		vertical-align: middle;
 		font-weight: bold;
-		background-color: #f0f0f0
+		background-color: #f0f0f0;
 		white-space: nowrap;
 	}
 	
@@ -72,15 +72,15 @@
 		-o-transform: rotate(-90deg);
 		transform: rotate(-90deg);
 		white-space: nowrap;
-		font-size: 6px;
 		line-height: 1.2;
 		width: 50px;
 		height: 15px;
 		position: absolute;
 		top: 50%;
 		left: 50%;
-		margin-top: -10px;
-		margin-left: -40px;
+		margin-top: -7.5px;
+		margin-left: -25px;
+		transform-origin: center center;
 	}
 	
 	td {
