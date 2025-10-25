@@ -7,7 +7,7 @@
 <style>
 	@page { 
 		size: A4 portrait;
-		margin: 5mm 5mm 5mm 5mm;
+		margin: 5mm 5mm 3mm 5mm;
 	}
 	
 	* {
@@ -18,7 +18,7 @@
 	
 	body {
 		font-family: 'DejaVu Sans', Arial, sans-serif;
-		font-size: 8px;
+		font-size: 9px;
 		width: 100%;
 		padding: 5px;
 	}
@@ -49,7 +49,7 @@
 		text-align: center;
 		vertical-align: middle;
 		font-weight: bold;
-		background-color: #f0f0f0;
+		background-color: #f0f0f0
 		white-space: nowrap;
 	}
 	
@@ -74,7 +74,7 @@
 		white-space: nowrap;
 		font-size: 6px;
 		line-height: 1.2;
-		width: 80px;
+		width: 50px;
 		height: 20px;
 		position: absolute;
 		top: 50%;
