@@ -403,7 +403,7 @@
 									style="width:200px; position:absolute; left: 0px; text-align: left;">
 							</div>
 						@else
-							<div class="column">
+							<div class="column" style="margin-top: -10px;">
 								@php
 									$qrImage = base64_encode(file_get_contents(public_path('images/qrmanzil.jpg')));
 								@endphp
