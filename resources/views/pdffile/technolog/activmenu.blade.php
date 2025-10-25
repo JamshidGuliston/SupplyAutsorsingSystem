@@ -392,7 +392,12 @@
                        <div class="row" style="margin-top: 5px;">
 					   @if(env('WORKERSFORMENU') == "true")
 					   		<div class="column">
-								<p style="text-align: center;"><strong> Технолог:</strong> __________________;</p>
+								<!-- <p style="text-align: center;"><strong> Технолог:</strong> __________________;</p> -->
+								@php
+									$qrImage = base64_encode(file_get_contents(public_path('images/texnologsign.png')));
+								@endphp
+								<img src="data:image/jpeg;base64,{{ $qrImage }}" 
+									style="width:200px; position:absolute; left: 0px; text-align: left;">
 							</div>
 							<div class="column">
 								<!-- <p style="text-align: center;"><strong> Бухгалтер:</strong> __________________;</p> -->
