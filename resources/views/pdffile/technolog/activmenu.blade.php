@@ -389,7 +389,7 @@
 								
 							</div>
 					   </div>
-                       <div class="row" style="margin-top: 15px;">
+                       <div class="row" style="margin-top: 5px;">
 					   @if(env('WORKERSFORMENU') == "true")
 					   		<div class="column">
 								<p style="text-align: center;"><strong> Технолог:</strong> __________________;</p>
@@ -412,9 +412,11 @@
 							</div>
 						@endif
 							<div class="column">
+								<br/>
 								<p style="text-align: center;"><strong>{{ env('MENU_SIGNATURE') }}:</strong> __________________;</p>
 							</div>
 							<div class="column">
+								<br/>
 								<p style="text-align: right;"><strong>ДМТТ рахбари: </strong> __________________;</p>
 							</div>
 					   </div>
