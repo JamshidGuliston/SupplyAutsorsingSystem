@@ -2016,7 +2016,7 @@ class AccountantController extends Controller
         }
         // make snappy pdf
         $pdf = \PDF::loadView('pdffile.accountant.transportation', compact('days', 'costs', 'number_childrens', 'kindgar', 'ages'));
-        $pdf->setPaper('A3', 'landscape');
+        $pdf->setPaper('A4', 'landscape');
         $pdf->setOptions(['dpi' => 150]);
         return $pdf->stream('transportation.pdf');
 
@@ -3087,7 +3087,15 @@ class AccountantController extends Controller
             foreach($ages as $age){
                 $cachedChildren = $this->getCachedNumberChildren($day->id, $age->id);
                 if($cachedChildren) {
-                    $number_childrens[$day->id][$age->id] = $cachedChildren->first();
+                    $child = $cachedChildren->first();
+                    // Menu nomini olish
+                    $menu = $this->getCachedMenu($day->id, $age->id);
+                    if($menu && $menu->count() > 0) {
+                        $child->menu_name = $menu->first()->menu_name ?? '';
+                    } else {
+                        $child->menu_name = '';
+                    }
+                    $number_childrens[$day->id][$age->id] = $child;
                 } else {
                     $number_childrens[$day->id][$age->id] = null;
                 }
@@ -3101,7 +3109,7 @@ class AccountantController extends Controller
             'kindgar' => $kindgar,
             'ages' => $ages
         ]);
-        $this->setPdfOptions($pdf_transportation, 'A3', 'landscape', true);
+        $this->setPdfOptions($pdf_transportation, 'A4', 'landscape', true);
         
         $file_transportation = $tempDir . '/2_transportation_' . $timestamp . '.pdf';
         file_put_contents($file_transportation, $pdf_transportation->output());
