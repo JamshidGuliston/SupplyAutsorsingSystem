@@ -35,7 +35,7 @@
 		border-collapse: collapse;
 		border: 2px solid #000;
 		width: 100%;
-		table-layout: auto;
+		table-layout: fixed;
 		font-size: 7px;
 	}
 	
@@ -54,6 +54,16 @@
 	}
 	
 	th.date-header {
+		height: 100px;
+		width: 30px;
+		min-width: 30px;
+		text-align: center;
+		vertical-align: middle;
+		position: relative;
+		padding: 5px;
+	}
+	
+	th.date-header span {
 		display: inline-block;
 		text-align: center;
 		-webkit-transform: rotate(-90deg);
@@ -64,9 +74,13 @@
 		white-space: nowrap;
 		font-size: 6px;
 		line-height: 1.2;
-		height: 80px;
-		width: 20px;
-		vertical-align: middle;
+		width: 80px;
+		height: 20px;
+		position: absolute;
+		top: 50%;
+		left: 50%;
+		margin-top: -10px;
+		margin-left: -40px;
 	}
 	
 	td {
@@ -83,6 +97,18 @@
 		white-space: normal;
 		word-wrap: break-word;
 		max-width: 150px;
+	}
+	
+	/* Ustun kengliklari */
+	th:nth-child(1), td:nth-child(1) { width: 5%; }  /* № */
+	th:nth-child(2), td:nth-child(2) { width: 25%; } /* Mahsulot nomi */
+	th:nth-child(3), td:nth-child(3) { width: 10%; } /* O'lchov birligi */
+	th:last-child, td:last-child { width: 8%; }      /* Jami */
+	
+	/* Sanalar ustunlari uchun */
+	th.date-header, td.date-cell {
+		width: 8%;
+		min-width: 30px;
 	}
 	
 	tr:first-child th {
@@ -146,7 +172,6 @@
 			<tr>
 				<th rowspan="2">№</th>
 				<th colspan="2">Махсулотлар номи ва Ўлчов бирлиги</th>
-				<!-- <th rowspan="2">сана</th> -->
 				@foreach($days as $day)
 					<?php
 						if($day->month_id % 12 == 0){
@@ -160,6 +185,9 @@
 					</th>
 				@endforeach
 				<th rowspan="2">Жами</th>
+			</tr>
+			<tr>
+				<!-- Ikkinchi qator uchun bo'sh qator -->
 			</tr>
 		</thead>
 		<tbody>
@@ -183,7 +211,7 @@
 					
 					@foreach($days as $day)
 						@if(isset($row[$day['id']]))
-							<td>
+							<td class="date-cell">
 							@if($row['product_name'] == "Болалар сони")
 								<strong>{{ $row[$day['id']] }}</strong>
 								<?php  
@@ -198,7 +226,7 @@
 							@endif
 							</td>
 						@else
-							<td>0</td>
+							<td class="date-cell">0</td>
 						@endif
 					@endforeach
 					
