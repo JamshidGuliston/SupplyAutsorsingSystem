@@ -351,16 +351,17 @@
     <!-- Footer qismi -->
     <div class="footer">
         <div class="footer-section">
-            <div class="signature-label">Аутсорсер директори: ____________________________</div>
-            <br/>
-            <br/>
-            <div class="signature-label">Бухгалтер: ____________________________</div>
+            <div class="signature-title">Аутсорсер:</div>
+            <div class="signature-info">{{ env('COMPANY_NAME') ?? 'ASIA BEST DISTRIBUTION SERVICE' }}</div>
+            <div class="signature-info">директори: {{ env('COMPANY_DIRECTOR') ?? 'B.Tajibaev' }}</div>
+            <div class="signature-line"></div>
         </div>
+        
         <div class="footer-section">
-            <div class="signature-label">Буюртмачи директори: ____________________________</div>
-            <br/>
-            <br/>
-            <div class="signature-label">Хамшира: ____________________________</div>
+            <div class="signature-title">Истемолчи:</div>
+            <div class="signature-info">{{ $kindgar->number_of_org ?? '3' }}-сон ДМТТ</div>
+            <div class="signature-info">Директори</div>
+            <div class="signature-line"></div>
         </div>
     </div>
 </body>
