@@ -2887,7 +2887,8 @@ class AccountantController extends Controller
                     $nakproducts[0][$day->id] = $childs;
                     $nakproducts[0]['product_name'] = "Болалар сони";
                     $nakproducts[0]['size_name'] = "";
-                    $nakproducts[$key][$day->id] = ($row[$ageid]*$row[$ageid.'-children']) / $row[$ageid.'div'];
+                    // Asosiy funksiyadagi kabi hisoblash: (weight * children) / div
+                    $nakproducts[$key][$day->id] = ($row[$ageid] * $row[$ageid.'-children']) / $row[$ageid.'div'];
                     $nakproducts[$key]['product_name'] = $row['product_name'];
                     $nakproducts[$key]['sort'] = $row[$ageid.'sort'];
                     $nakproducts[$key]['size_name'] = $row['size_name'];
