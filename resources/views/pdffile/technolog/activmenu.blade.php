@@ -171,7 +171,7 @@
 									$qrImage = base64_encode(file_get_contents(public_path('images/directorsign.png')));
 								@endphp
 								<img src="data:image/jpeg;base64,{{ $qrImage }}" 
-									style="width:180px; position:absolute; left:10px; text-align: right;">
+									style="width:140px; position:absolute; left:10px; text-align: right;">
 							</div>
 					</div>
 				@else
