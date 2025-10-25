@@ -99,20 +99,20 @@
 	}
 	
 	/* Ustun kengliklari */
-	th:nth-child(1), td:nth-child(1) { width: 5%; }  /* № */
+	th:nth-child(1), td:nth-child(1) { width: 3%; }  /* № */
 	th:nth-child(2), td:nth-child(2) { width: 28%; } /* Mahsulot nomi */
 	th:nth-child(3), td:nth-child(3) { width: 5%; } /* O'lchov birligi */
 	th:last-child, td:last-child { width: 8%; }      /* Jami */
 	
 	/* Sanalar ustunlari uchun */
 	th.date-header, td.date-cell {
-		width: 8%;
+		width: 7%;
 		min-width: 30px;
 		white-space: wrap;
 	}
 	
 	.size-name {
-		max-width: 150px;
+		max-width: 50px;
 		white-space: wrap;
 		word-wrap: break-word;
 	}
