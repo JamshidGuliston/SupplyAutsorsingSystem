@@ -109,7 +109,7 @@
 			position: absolute;
 			text-align: right;
 			right: 0px;
-			top: -25px;
+			top: -30px;
 		}
 		/* Qator balandligini kamaytirish */
 		tr {
@@ -171,7 +171,7 @@
 									$qrImage = base64_encode(file_get_contents(public_path('images/directorsign.png')));
 								@endphp
 								<img src="data:image/jpeg;base64,{{ $qrImage }}" 
-									style="width:120; position:absolute; left:10px;">
+									style="width:180px; position:absolute; left:10px; text-align: right;">
 							</div>
 					</div>
 				@else
