@@ -36,7 +36,7 @@
 		border: 2px solid #000;
 		width: 100%;
 		table-layout: fixed;
-		font-size: 7px;
+		font-size: 8px;
 	}
 	
 	thead {
@@ -100,8 +100,8 @@
 	
 	/* Ustun kengliklari */
 	th:nth-child(1), td:nth-child(1) { width: 5%; }  /* № */
-	th:nth-child(2), td:nth-child(2) { width: 25%; } /* Mahsulot nomi */
-	th:nth-child(3), td:nth-child(3) { width: 10%; } /* O'lchov birligi */
+	th:nth-child(2), td:nth-child(2) { width: 28%; } /* Mahsulot nomi */
+	th:nth-child(3), td:nth-child(3) { width: 5%; } /* O'lchov birligi */
 	th:last-child, td:last-child { width: 8%; }      /* Jami */
 	
 	/* Sanalar ustunlari uchun */
@@ -111,7 +111,7 @@
 		white-space: wrap;
 	}
 	
-	td.size-name {
+	.size-name {
 		max-width: 150px;
 		white-space: wrap;
 		word-wrap: break-word;
