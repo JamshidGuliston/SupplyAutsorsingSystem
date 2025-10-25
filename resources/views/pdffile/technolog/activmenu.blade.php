@@ -42,7 +42,9 @@
 		table{
 			border-collapse: collapse;
 			border: 1px solid black;
-			width: 100%;	
+			width: 100%;
+			position: relative;
+			z-index: 1;
 		}
 		thead{
 			border: 1px solid black;
@@ -110,6 +112,7 @@
 			text-align: right;
 			right: 0px;
 			top: -40px;
+			z-index: 10;
 		}
 		/* Qator balandligini kamaytirish */
 		tr {
