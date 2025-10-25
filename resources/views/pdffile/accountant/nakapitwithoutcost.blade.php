@@ -6,7 +6,7 @@
 <title>Nakapit without cost</title>
 <style>
 	@page { 
-		size: A4 landscape;
+		size: A4 portrait;
 		margin: 5mm 5mm 5mm 5mm;
 	}
 	
@@ -51,6 +51,16 @@
 		font-weight: bold;
 		background-color: #f0f0f0;
 		white-space: nowrap;
+	}
+	
+	th.date-header {
+		writing-mode: vertical-rl;
+		text-orientation: mixed;
+		transform: rotate(180deg);
+		height: 80px;
+		width: 20px;
+		font-size: 6px;
+		line-height: 1.2;
 	}
 	
 	td {
@@ -139,7 +149,7 @@
 							$month_id = $day->month_id % 12;
 						}
 					?>
-					<th>{{ sprintf("%02d.%02d.%d", $day->day_number, $month_id, $day->year_name) }}</th>
+					<th class="date-header">{{ sprintf("%02d.%02d.%d", $day->day_number, $month_id, $day->year_name) }}</th>
 				@endforeach
 				<th rowspan="2">Жами</th>
 			</tr>

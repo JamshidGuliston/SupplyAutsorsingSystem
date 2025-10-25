@@ -379,7 +379,7 @@ class AccountantController extends Controller
        
         $pdf = \PDF::loadView('pdffile.accountant.nakapitwithoutcost', compact('age', 'days', 'nakproducts', 'kindgar', 'protsent'));
         $pdf->setOption('page-size', 'A4');
-        $pdf->setOption('orientation', 'landscape');
+        $pdf->setOption('orientation', 'portrait');
         $pdf->setOption('margin-top', 10);
         $pdf->setOption('margin-bottom', 10);
         $pdf->setOption('margin-left', 10);
@@ -3115,7 +3115,7 @@ class AccountantController extends Controller
                 'kindgar' => $kindgar,
                 'protsent' => $protsent_without
             ]);
-            $this->setPdfOptions($pdf_without, 'A4', 'landscape');
+            $this->setPdfOptions($pdf_without, 'A4', 'portrait');
             
             $file_without = $tempDir . '/1_nakapit_without_' . $age->id . '_' . $timestamp . '.pdf';
             file_put_contents($file_without, $pdf_without->output());
