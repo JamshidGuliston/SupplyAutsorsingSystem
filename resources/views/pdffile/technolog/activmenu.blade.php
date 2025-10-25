@@ -107,8 +107,9 @@
 		
 		.director-sign {
 			position: absolute;
+			text-align: right;
 			right: 0px;
-			top: -20px;
+			top: -25px;
 		}
 		/* Qator balandligini kamaytirish */
 		tr {
