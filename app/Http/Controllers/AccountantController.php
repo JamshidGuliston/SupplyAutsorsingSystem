@@ -2848,19 +2848,21 @@ class AccountantController extends Controller
             ->get(['days.id', 'days.day_number', 'days.month_id', 'years.year_name']);
         
         // Optimizatsiya: Barcha kerakli ma'lumotlarni bir vaqtda olish
-        $allData = Number_children::where('number_childrens.day_id', '>=', $start)
-                ->where('number_childrens.day_id', '<=', $end)
-                ->where('kingar_name_id', $id)
-                ->where('king_age_name_id', $ageid)
-                ->leftjoin('active_menus', function($join){
-                    $join->on('number_childrens.kingar_menu_id', '=', 'active_menus.title_menu_id');
-                    $join->on('number_childrens.king_age_name_id', '=', 'active_menus.age_range_id');
-                })
-                ->whereIn('active_menus.day_id', $days->pluck('id'))
-                ->join('products', 'active_menus.product_name_id', '=', 'products.id')
-                ->join('sizes', 'products.size_name_id', '=', 'sizes.id')
-                ->get()
-                ->groupBy('day_id');
+        // Asosiy funksiyadagi kabi har bir kun uchun alohida query
+        $allData = [];
+        foreach($days as $day){
+            $allData[$day->id] = Number_children::where('number_childrens.day_id', $day->id)
+                    ->where('kingar_name_id', $id)
+                    ->where('king_age_name_id', $ageid)
+                    ->leftjoin('active_menus', function($join){
+                        $join->on('number_childrens.kingar_menu_id', '=', 'active_menus.title_menu_id');
+                        $join->on('number_childrens.king_age_name_id', '=', 'active_menus.age_range_id');
+                    })
+                    ->where('active_menus.day_id', $day->id)
+                    ->join('products', 'active_menus.product_name_id', '=', 'products.id')
+                    ->join('sizes', 'products.size_name_id', '=', 'sizes.id')
+                    ->get();
+        }
         
         foreach($days as $day){
             $join = $allData[$day->id] ?? collect();
