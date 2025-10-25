@@ -19,7 +19,7 @@
 		}
 		.column {
 			float: left;
-			text-align: center;
+			text-align: left;
 			width: 25%;
 		}
 		.column_top {
@@ -400,7 +400,7 @@
 									$qrImage = base64_encode(file_get_contents(public_path('images/buxgaltersign.png')));
 								@endphp
 								<img src="data:image/jpeg;base64,{{ $qrImage }}" 
-									style="width:200px; position:absolute; left: 0px; top: -15px; text-align: left;">
+									style="width:200px; position:absolute; left: 0px; text-align: left;">
 							</div>
 						@else
 							<div class="column">
