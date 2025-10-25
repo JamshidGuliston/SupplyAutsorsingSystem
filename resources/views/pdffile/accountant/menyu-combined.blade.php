@@ -12,7 +12,7 @@
 		body{
 			font-family: DejaVu Sans;
 			margin: 10px 10px 10px 15px;
-			font-size: 8px;
+			font-size: 10px;
 			background-position: top left;
 			background-repeat: no-repeat;
 			background-size: 100%;
