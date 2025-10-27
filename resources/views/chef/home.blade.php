@@ -960,32 +960,16 @@
     let lastTouchDistance = 0;
     let lastTapTime = 0;
 
-    // Haqiqiy menyu modalini ko'rsatish
+    // Haqiqiy menyu PDF ni to'g'ridan-to'g'ri ochish
     function showActiveMenuModal(dayId, gardenId, ageId, ageName, menuDate) {
-        currentMenuData = {
-            type: 'active',
-            dayId: dayId,
-            gardenId: gardenId,
-            ageId: ageId,
-            ageName: ageName,
-            menuDate: menuDate
-        };
+        // PDF URL yaratish
+        const pdfUrl = '/activmenuPDF/' + dayId + '/' + gardenId + '/' + ageId;
 
-        // Modal title ni o'rnatish
-        document.getElementById('zoomMenuTitle').textContent =
-            'Haqiqiy menyu - ' + ageName + ' - ' + menuDate;
+        // PDF ni yangi tabda ochish
+        window.open(pdfUrl, '_blank');
 
-        // Image URL yaratish - cache busting uchun timestamp qo'shamiz
-        currentImageUrl = '/activmenuPDF/' + dayId + '/' + gardenId + '/' + ageId + '/image?t=' + new Date().getTime();
-        currentPdfUrl = '/activmenuPDF/' + dayId + '/' + gardenId + '/' + ageId;
-
-        // PDF download link ni o'rnatish
-        document.getElementById('downloadPdfLink').href = currentPdfUrl;
-
-        // Modal ni ko'rsatish
-        loadMenuImage();
-        const modal = new bootstrap.Modal(document.getElementById('zoomMenuModal'));
-        modal.show();
+        // Notification ko'rsatish
+        showNotification('PDF yangi tabda ochildi', 'success');
     }
 
     // Taxminiy menyu modalini ko'rsatish
