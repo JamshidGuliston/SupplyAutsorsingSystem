@@ -1575,113 +1575,17 @@ class TestController extends Controller
             }
         }
 
-		// PDF ni rasmga aylantirish (taxminiy menyuga moslashtirilgan)
+		// Eslatma: Haqiqiy menyu endi to'g'ridan-to'g'ri PDF formatida ochiladi
+		// Bu funksiya faqat eski havolalar uchun fallback rasm qaytaradi
 		try {
-			// Log qo'shish
-			\Log::info('Active menu PDF Image generation started for day: ' . $today . ', garden: ' . $gid . ', age: ' . $ageid);
+			\Log::info('Active menu image requested (deprecated) for day: ' . $today . ', garden: ' . $gid . ', age: ' . $ageid);
 
-			// VAQTINCHA TEST: Faqat fallback rasmni qaytaramiz
+			// Fallback rasm qaytarish
 			$imageContent = $this->createActiveMenuFallbackImage($today, $gid, $day);
 
 			return response($imageContent)
 				->header('Content-Type', 'image/jpeg')
-				->header('Content-Disposition', 'inline; filename="test_active_menu.jpg"')
-				->header('Cache-Control', 'public, max-age=3600')
-				->header('Access-Control-Allow-Origin', '*')
-				->header('Access-Control-Allow-Methods', 'GET, OPTIONS')
-				->header('Access-Control-Allow-Headers', 'Content-Type');
-
-			// Original code (commented for test)
-			/*
-			\Log::info('Menu count: ' . count($menu));
-			\Log::info('Protsent: ' . ($protsent ? 'exists' : 'null'));
-			\Log::info('Products count: ' . count($products));
-			\Log::info('Menuitem count: ' . count($nextdaymenuitem));
-
-			// VAQTINCHA TEST: alltable.blade.php ishlatamiz
-			$pdf = \PDF::loadView('pdffile.technolog.alltable', [
-				'protsent' => $protsent,
-				'day' => $day,
-				'productallcount' => $productallcount,
-				'workerproducts' => $workerproducts,
-				'menu' => $menu,
-				'menuitem' => $nextdaymenuitem,
-				'products' => $products,
-				'workerfood' => $workerfood,
-				'taomnoma' => $menu[0]
-			]);
-
-			\Log::info('PDF view loaded successfully');
-			*/
-
-			// Qolgan kod ishlamaydi chunki yuqorida return qilib yuborildi
-				->setOptions([
-					'encoding' => 'UTF-8',
-					'enable-javascript' => true,
-					'javascript-delay' => 1000,
-					'enable-smart-shrinking' => true,
-					'no-stop-slow-scripts' => true,
-					'disable-smart-shrinking' => false,
-					'print-media-type' => true,
-					'dpi' => 300,
-					'image-quality' => 100,
-					'margin-top' => 10,
-					'margin-right' => 10,
-					'margin-bottom' => 10,
-					'margin-left' => 10,
-					'enable-local-file-access' => true,
-					'load-error-handling' => 'ignore',
-					'load-media-error-handling' => 'ignore',
-				]);
-
-			// PDF ni rasmga aylantirish
-			$pdfContent = $pdf->output();
-			$tempPdfPath = storage_path('app/temp_active_menu_' . $today . '_' . $gid . '_' . $ageid . '.pdf');
-			file_put_contents($tempPdfPath, $pdfContent);
-			
-			\Log::info('Active menu PDF created successfully at: ' . $tempPdfPath);
-
-			// Imagick mavjudligini tekshirish
-			if (class_exists('Imagick')) {
-				\Log::info('Imagick is available for active menu');
-				try {
-					$imagick = new \Imagick();
-					$imagick->setResolution(300, 300);
-					$imagick->readImage($tempPdfPath);
-					$imagick->setImageFormat('jpeg');
-					$imagick->setImageCompressionQuality(90);
-					
-					// Faqat birinchi sahifani olish
-					$imagick->setIteratorIndex(0);
-					$imagick = $imagick->getImage();
-					
-					// Rasm o'lchamini optimallashtirish - keng va baland
-					$imagick->scaleImage(1200, 0);
-					
-					$imageContent = $imagick->getImageBlob();
-					$imagick->clear();
-					$imagick->destroy();
-					
-					\Log::info('Active menu image created successfully with Imagick');
-				} catch (\ImagickException $e) {
-					\Log::error('Imagick error for active menu: ' . $e->getMessage());
-					// Imagick xatoligi bo'lsa, fallback rasm yaratish
-					$imageContent = $this->createActiveMenuFallbackImage($today, $gid, $day);
-				}
-			} else {
-				\Log::info('Imagick not available for active menu, using fallback');
-				// Fallback: oddiy rasm yaratish
-				$imageContent = $this->createActiveMenuFallbackImage($today, $gid, $day);
-			}
-
-			// Temp faylni o'chirish
-			if (file_exists($tempPdfPath)) {
-				unlink($tempPdfPath);
-			}
-
-			return response($imageContent)
-				->header('Content-Type', 'image/jpeg')
-				->header('Content-Disposition', 'inline; filename="active_menu_preview.jpg"')
+				->header('Content-Disposition', 'inline; filename="active_menu.jpg"')
 				->header('Cache-Control', 'public, max-age=3600')
 				->header('Access-Control-Allow-Origin', '*')
 				->header('Access-Control-Allow-Methods', 'GET, OPTIONS')
