@@ -1628,7 +1628,8 @@ class TestController extends Controller
 					\Log::info('Active menu image created successfully with Imagick');
 				} catch (\ImagickException $e) {
 					\Log::error('Imagick error for active menu: ' . $e->getMessage());
-					throw $e;
+					// Imagick xatoligi bo'lsa, fallback rasm yaratish
+					$imageContent = $this->createActiveMenuFallbackImage($today, $gid, $day);
 				}
 			} else {
 				\Log::info('Imagick not available for active menu, using fallback');
@@ -1840,7 +1841,8 @@ class TestController extends Controller
 					\Log::info('Active menu image created successfully with Imagick');
 				} catch (\ImagickException $e) {
 					\Log::error('Imagick error for active menu: ' . $e->getMessage());
-					throw $e;
+					// Imagick xatoligi bo'lsa, fallback rasm yaratish
+					$imageContent = $this->createActiveMenuFallbackImage($today, $gid, $day);
 				}
 			} else {
 				\Log::info('Imagick not available for active menu, using fallback');

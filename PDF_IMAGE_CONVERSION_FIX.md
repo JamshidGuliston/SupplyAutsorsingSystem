@@ -3,8 +3,11 @@
 ## Muammo
 Haqiqiy menyuni ko'rsatishda "PDF rasmga aylantirish imkoniyati mavjud emas" xabari ko'rsatilmoqda.
 
+## Sabab
+`activmenu.blade.php` faylida PNG rasmlar ishlatilgan va bu PDFni rasmga aylantirishda xatolikka sabab bo'lmoqda. Taxminiy menyu (`alltable.blade.php`) da rasmlar ishlatilmagan va shuning uchun yaxshi ishlaydi.
+
 ## Yechim
-Taxminiy menyu juda yaxshi ishlayotganini ko'rib, haqiqiy menyuni taxminiy menyuga moslashtirildi.
+`activmenu.blade.php` dan PNG rasmlarni olib tashladik va oddiy matn bilan almashtirdik.
 
 ## O'zgarishlar
 
@@ -21,10 +24,16 @@ Taxminiy menyu juda yaxshi ishlayotganini ko'rib, haqiqiy menyuni taxminiy menyu
 ### 3. Routes (web.php)
 - Ghostscript tekshirish route olib tashlandi
 
+### 4. PDF Template (activmenu.blade.php)
+- PNG rasmlar olib tashlandi
+- Oddiy matn bilan almashtirildi
+- Taxminiy menyu (`alltable.blade.php`) kabi qilindi
+
 ## Natija
 Endi haqiqiy menyu taxminiy menyu kabi oddiy va samarali ishlaydi:
 - Imagick mavjud bo'lsa - PDFni rasmga aylantiradi
 - Imagick mavjud bo'lmasa - fallback rasm ko'rsatadi
+- PNG rasmlar xatolikka sabab bo'lmaydi
 - Xatoliklar bilan ishlash yaxshilandi
 
 ## Test Qilish
