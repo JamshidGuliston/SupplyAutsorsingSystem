@@ -1566,7 +1566,8 @@ class TestController extends Controller
 			// Log qo'shish
 			\Log::info('Active menu PDF Image generation started for day: ' . $today . ', garden: ' . $gid . ', age: ' . $ageid);
 
-			$pdf = \PDF::loadView('pdffile.technolog.activmenu', [
+			// VAQTINCHA TEST: alltable.blade.php ishlatamiz
+			$pdf = \PDF::loadView('pdffile.technolog.alltable', [
 				'protsent' => $protsent,
 				'day' => $day,
 				'productallcount' => $productallcount,
@@ -1574,7 +1575,8 @@ class TestController extends Controller
 				'menu' => $menu,
 				'menuitem' => $nextdaymenuitem,
 				'products' => $products,
-				'workerfood' => $workerfood
+				'workerfood' => $workerfood,
+				'taomnoma' => $menu[0]
 			]);
 
 			$pdf->setPaper('A4', 'landscape')
