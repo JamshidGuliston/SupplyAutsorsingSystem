@@ -179,8 +179,8 @@
 									}
 								@endphp
 								@if($qrImage)
-									<!-- <img src="data:image/jpeg;base64,{{ $qrImage }}"
-										style="width:220px; position:absolute; left: 140px; text-align: right;"> -->
+									<img src="data:image/jpeg;base64,{{ $qrImage }}"
+										style="width:220px; position:absolute; left: 140px; text-align: right;">
 								@endif
 							</div>
 					</div>
@@ -412,8 +412,8 @@
 									}
 								@endphp
 								@if($texnologImage)
-									<!-- <img src="data:image/jpeg;base64,{{ $texnologImage }}"
-										style="width:200px; position:absolute; left: 0px; text-align: left;"> -->
+									<img src="data:image/jpeg;base64,{{ $texnologImage }}"
+										style="width:200px; position:absolute; left: 0px; text-align: left;">
 								@endif
 							</div>
 							<div class="column">
@@ -427,8 +427,8 @@
 									}
 								@endphp
 								@if($buxgalterImage)
-									<!-- <img src="data:image/jpeg;base64,{{ $buxgalterImage }}"
-										style="width:160px; position:absolute; left: 0px; text-align: left;"> -->
+									<img src="data:image/jpeg;base64,{{ $buxgalterImage }}"
+										style="width:160px; position:absolute; left: 0px; text-align: left;">
 								@endif
 							</div>
 						@else
