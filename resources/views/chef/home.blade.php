@@ -1027,6 +1027,9 @@
 
         const img = document.getElementById('zoomMenuImage');
 
+        // CORS uchun crossOrigin ni o'rnatish (PNG yuklab olish uchun kerak)
+        img.crossOrigin = 'anonymous';
+
         img.onload = function() {
             document.getElementById('zoomLoading').style.display = 'none';
             document.getElementById('zoomControls').style.display = 'flex';

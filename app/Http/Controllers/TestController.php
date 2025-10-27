@@ -377,7 +377,10 @@ class TestController extends Controller
 			return response($imageContent)
 				->header('Content-Type', 'image/jpeg')
 				->header('Content-Disposition', 'inline; filename="menu_preview.jpg"')
-				->header('Cache-Control', 'public, max-age=3600');
+				->header('Cache-Control', 'public, max-age=3600')
+				->header('Access-Control-Allow-Origin', '*')
+				->header('Access-Control-Allow-Methods', 'GET, OPTIONS')
+				->header('Access-Control-Allow-Headers', 'Content-Type');
 
 		} catch (\Exception $e) {
 			\Log::error('PDF Image generation error: ' . $e->getMessage());
@@ -385,10 +388,13 @@ class TestController extends Controller
 			
 			// Xatolik bo'lsa, oddiy rasm qaytarish
 			$imageContent = $this->createFallbackImage($gid, $ageid);
-			
+
 			return response($imageContent)
 				->header('Content-Type', 'image/jpeg')
-				->header('Content-Disposition', 'inline; filename="error.jpg"');
+				->header('Content-Disposition', 'inline; filename="error.jpg"')
+				->header('Access-Control-Allow-Origin', '*')
+				->header('Access-Control-Allow-Methods', 'GET, OPTIONS')
+				->header('Access-Control-Allow-Headers', 'Content-Type');
 		}
 	}
 
@@ -1643,7 +1649,10 @@ class TestController extends Controller
 			return response($imageContent)
 				->header('Content-Type', 'image/png')
 				->header('Content-Disposition', 'inline; filename="active_menu_preview.png"')
-				->header('Cache-Control', 'public, max-age=3600');
+				->header('Cache-Control', 'public, max-age=3600')
+				->header('Access-Control-Allow-Origin', '*')
+				->header('Access-Control-Allow-Methods', 'GET, OPTIONS')
+				->header('Access-Control-Allow-Headers', 'Content-Type');
 
 		} catch (\Exception $e) {
 			\Log::error('Active menu PDF Image generation error: ' . $e->getMessage());
@@ -1654,7 +1663,10 @@ class TestController extends Controller
 
 			return response($imageContent)
 				->header('Content-Type', 'image/png')
-				->header('Content-Disposition', 'inline; filename="error.png"');
+				->header('Content-Disposition', 'inline; filename="error.png"')
+				->header('Access-Control-Allow-Origin', '*')
+				->header('Access-Control-Allow-Methods', 'GET, OPTIONS')
+				->header('Access-Control-Allow-Headers', 'Content-Type');
 		}
 	}
 
