@@ -1561,7 +1561,7 @@ class TestController extends Controller
             }
         }
 
-		// PDF ni rasmga aylantirish
+		// PDF ni rasmga aylantirish (taxminiy menyuga moslashtirilgan)
 		try {
 			// Log qo'shish
 			\Log::info('Active menu PDF Image generation started for day: ' . $today . ', garden: ' . $gid . ', age: ' . $ageid);
@@ -1580,31 +1580,28 @@ class TestController extends Controller
 			$pdf->setPaper('A4', 'landscape')
 				->setOptions([
 					'encoding' => 'UTF-8',
-					'defaultFont' => 'DejaVu Sans',
+					'enable-javascript' => true,
+					'javascript-delay' => 1000,
+					'enable-smart-shrinking' => true,
+					'no-stop-slow-scripts' => true,
+					'disable-smart-shrinking' => false,
+					'print-media-type' => true,
 					'dpi' => 300,
 					'image-quality' => 100,
-					'margin-top' => 5,
-					'margin-right' => 5,
-					'margin-bottom' => 5,
-					'margin-left' => 5,
+					'margin-top' => 10,
+					'margin-right' => 10,
+					'margin-bottom' => 10,
+					'margin-left' => 10,
 					'enable-local-file-access' => true,
-					'print-media-type' => true,
-					'disable-smart-shrinking' => false,
 					'load-error-handling' => 'ignore',
 					'load-media-error-handling' => 'ignore',
-					'isHtml5ParserEnabled' => true,
-					'isRemoteEnabled' => true,
-					'debugKeepTemp' => false,
-					'no-outline' => true,
-					'disable-external-links' => false,
-					'disable-internal-links' => false,
 				]);
 
 			// PDF ni rasmga aylantirish
 			$pdfContent = $pdf->output();
 			$tempPdfPath = storage_path('app/temp_active_menu_' . $today . '_' . $gid . '_' . $ageid . '.pdf');
 			file_put_contents($tempPdfPath, $pdfContent);
-
+			
 			\Log::info('Active menu PDF created successfully at: ' . $tempPdfPath);
 
 			// Imagick mavjudligini tekshirish
@@ -1614,8 +1611,8 @@ class TestController extends Controller
 					$imagick = new \Imagick();
 					$imagick->setResolution(300, 300);
 					$imagick->readImage($tempPdfPath);
-					$imagick->setImageFormat('png');
-					$imagick->setImageCompressionQuality(95);
+					$imagick->setImageFormat('jpeg');
+					$imagick->setImageCompressionQuality(90);
 					
 					// Faqat birinchi sahifani olish
 					$imagick->setIteratorIndex(0);
@@ -1645,8 +1642,8 @@ class TestController extends Controller
 			}
 
 			return response($imageContent)
-				->header('Content-Type', 'image/png')
-				->header('Content-Disposition', 'inline; filename="active_menu_preview.png"')
+				->header('Content-Type', 'image/jpeg')
+				->header('Content-Disposition', 'inline; filename="active_menu_preview.jpg"')
 				->header('Cache-Control', 'public, max-age=3600')
 				->header('Access-Control-Allow-Origin', '*')
 				->header('Access-Control-Allow-Methods', 'GET, OPTIONS')
@@ -1655,13 +1652,13 @@ class TestController extends Controller
 		} catch (\Exception $e) {
 			\Log::error('Active menu PDF Image generation error: ' . $e->getMessage());
 			\Log::error('Stack trace: ' . $e->getTraceAsString());
-
+			
 			// Xatolik bo'lsa, oddiy rasm qaytarish
-			$imageContent = $this->createActiveMenuFallbackImage($today, $gid, null);
+			$imageContent = $this->createActiveMenuFallbackImage($today, $gid, $day);
 
 			return response($imageContent)
-				->header('Content-Type', 'image/png')
-				->header('Content-Disposition', 'inline; filename="error.png"')
+				->header('Content-Type', 'image/jpeg')
+				->header('Content-Disposition', 'inline; filename="error.jpg"')
 				->header('Access-Control-Allow-Origin', '*')
 				->header('Access-Control-Allow-Methods', 'GET, OPTIONS')
 				->header('Access-Control-Allow-Headers', 'Content-Type');
@@ -1874,9 +1871,10 @@ class TestController extends Controller
 		}
 	}
 
+
 	private function createActiveMenuFallbackImage($today, $gid, $day)
 	{
-		// Fallback rasm yaratish
+		// Fallback rasm yaratish (taxminiy menyuga moslashtirilgan)
 		$width = 800;
 		$height = 600;
 		
@@ -1920,7 +1918,7 @@ class TestController extends Controller
 		// Qo'shimcha ma'lumot
 		$info1 = "Bu rasm haqiqiy menyu ko'rinishini namoyish etadi";
 		$info2 = "To'liq ma'lumot uchun PDF faylni yuklab oling";
-		$info3 = "Sana: " . date('d.m.Y');
+		$info3 = "Sana: " . ($day ? $day->day_number . '.' . $day->month_name . '.' . $day->year_name : date('d.m.Y'));
 		
 		imagestring($image, 2, ($width - strlen($info1) * imagefontwidth(2)) / 2, 300, $info1, $textColor);
 		imagestring($image, 2, ($width - strlen($info2) * imagefontwidth(2)) / 2, 320, $info2, $textColor);

@@ -1045,7 +1045,14 @@
 
         img.onerror = function() {
             document.getElementById('zoomLoading').innerHTML =
-                '<div class="alert alert-danger"><i class="fas fa-exclamation-triangle"></i> Rasm yuklanmadi</div>';
+                '<div class="alert alert-warning text-center">' +
+                '<i class="fas fa-exclamation-triangle fa-2x mb-3"></i>' +
+                '<h5>Rasm yuklanmadi</h5>' +
+                '<p class="mb-2">PDFni rasmga aylantirishda muammo yuz berdi.</p>' +
+                '<p class="mb-0">' +
+                '<strong>Yechim:</strong> PDF faylni to\'g\'ridan-to\'g\'ri yuklab oling' +
+                '</p>' +
+                '</div>';
         };
 
         // Yangi rasmni yuklash
