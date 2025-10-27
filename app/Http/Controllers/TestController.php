@@ -1600,7 +1600,7 @@ class TestController extends Controller
 			$pdfContent = $pdf->output();
 			$tempPdfPath = storage_path('app/temp_active_menu_' . $today . '_' . $gid . '_' . $ageid . '.pdf');
 			file_put_contents($tempPdfPath, $pdfContent);
-			
+
 			\Log::info('Active menu PDF created successfully at: ' . $tempPdfPath);
 
 			// Imagick mavjudligini tekshirish
@@ -1610,8 +1610,8 @@ class TestController extends Controller
 					$imagick = new \Imagick();
 					$imagick->setResolution(300, 300);
 					$imagick->readImage($tempPdfPath);
-					$imagick->setImageFormat('jpeg');
-					$imagick->setImageCompressionQuality(90);
+					$imagick->setImageFormat('png');
+					$imagick->setImageCompressionQuality(95);
 					
 					// Faqat birinchi sahifani olish
 					$imagick->setIteratorIndex(0);
@@ -1641,20 +1641,20 @@ class TestController extends Controller
 			}
 
 			return response($imageContent)
-				->header('Content-Type', 'image/jpeg')
-				->header('Content-Disposition', 'inline; filename="active_menu_preview.jpg"')
+				->header('Content-Type', 'image/png')
+				->header('Content-Disposition', 'inline; filename="active_menu_preview.png"')
 				->header('Cache-Control', 'public, max-age=3600');
 
 		} catch (\Exception $e) {
 			\Log::error('Active menu PDF Image generation error: ' . $e->getMessage());
 			\Log::error('Stack trace: ' . $e->getTraceAsString());
-			
+
 			// Xatolik bo'lsa, oddiy rasm qaytarish
 			$imageContent = $this->createActiveMenuFallbackImage($today, $gid, null);
-			
+
 			return response($imageContent)
-				->header('Content-Type', 'image/jpeg')
-				->header('Content-Disposition', 'inline; filename="error.jpg"');
+				->header('Content-Type', 'image/png')
+				->header('Content-Disposition', 'inline; filename="error.png"');
 		}
 	}
 

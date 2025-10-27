@@ -40,7 +40,7 @@ Route::get('/gow', [TestController::class, 'addchilds']);
 
 // ommaga ochiq bot orqali haqiqiy menyuni ko'rish
 Route::get('/activmenuPDF/{day}/{kid}/{aid}', [TestController::class, 'activmenuPDF']);
-Route::get('/activmenuPDF/{day}/{kid}/image', [TestController::class, 'activmenuPDFImage']);
+Route::get('/activmenuPDF/{day}/{kid}/{aid}/image', [TestController::class, 'activmenuPDFImage']);
 Route::get('/activsecondmenuPDF/{day}/{kid}', [TestController::class, 'activsecondmenuPDF']);
 Route::get('/activsecondmenuPDF/{day}/{kid}/image', [TestController::class, 'activsecondmenuPDFImage']);
 Route::get('/activnakladPDF/{day}/{kid}', [TestController::class, 'activnakladPDF']);

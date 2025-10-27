@@ -185,6 +185,161 @@
             transform: translateY(0);
         }
     }
+
+    /* Zamonaviy Zoom Modal stillar */
+    .zoom-menu-modal {
+        z-index: 9999;
+    }
+
+    .zoom-menu-modal .modal-dialog {
+        max-width: 95vw;
+        width: 95vw;
+        height: 95vh;
+        margin: 2.5vh auto;
+    }
+
+    .zoom-menu-modal .modal-content {
+        height: 100%;
+        border: none;
+        border-radius: 12px;
+        overflow: hidden;
+    }
+
+    .zoom-menu-modal .modal-header {
+        background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+        color: white;
+        border: none;
+        padding: 1rem 1.5rem;
+    }
+
+    .zoom-menu-modal .modal-body {
+        padding: 0;
+        background-color: #2c2c2c;
+        overflow: hidden;
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .zoom-image-container {
+        width: 100%;
+        height: 100%;
+        overflow: auto;
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: grab;
+    }
+
+    .zoom-image-container:active {
+        cursor: grabbing;
+    }
+
+    .zoom-image-container img {
+        max-width: none;
+        display: block;
+        transition: transform 0.2s ease-out;
+        user-select: none;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+    }
+
+    .zoom-controls {
+        position: absolute;
+        bottom: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: rgba(0, 0, 0, 0.7);
+        padding: 10px 20px;
+        border-radius: 50px;
+        display: flex;
+        gap: 10px;
+        align-items: center;
+        z-index: 10;
+        backdrop-filter: blur(10px);
+    }
+
+    .zoom-controls button {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        border: none;
+        background: rgba(255, 255, 255, 0.9);
+        color: #333;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.2s ease;
+        font-size: 18px;
+        font-weight: bold;
+    }
+
+    .zoom-controls button:hover {
+        background: white;
+        transform: scale(1.1);
+    }
+
+    .zoom-controls button:active {
+        transform: scale(0.95);
+    }
+
+    .zoom-level {
+        color: white;
+        font-size: 14px;
+        font-weight: 500;
+        min-width: 60px;
+        text-align: center;
+    }
+
+    .zoom-menu-modal .modal-footer {
+        background: #f8f9fa;
+        border-top: 1px solid #dee2e6;
+        padding: 1rem 1.5rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    /* Loading spinner */
+    .zoom-loading {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        z-index: 5;
+    }
+
+    /* Mobile optimizations */
+    @media (max-width: 768px) {
+        .zoom-menu-modal .modal-dialog {
+            max-width: 100vw;
+            width: 100vw;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .zoom-menu-modal .modal-content {
+            border-radius: 0;
+        }
+
+        .zoom-controls {
+            bottom: 80px;
+        }
+
+        .zoom-controls button {
+            width: 50px;
+            height: 50px;
+            font-size: 20px;
+        }
+    }
+
+    /* Touch-friendly */
+    .touch-device .zoom-image-container {
+        touch-action: none;
+    }
 </style>
 @endsection
 
@@ -437,49 +592,28 @@
     <div class="row g-3 my-2">
         <div class="col-md-3">
             <div class="p-3 bg-white shadow-sm align-items-center rounded">
-                <!-- <form action="/activsecondmenuPDF/{{ $day->id }}/{{ $kindgarden->id }}" method="get"> -->
-                    <p><b>Haqiqiy Menyu: </b>sana: {{ $day->day_number.".".$day->month_name.".".$day->year_name }}</p>
-                    <p><i>Eslatma: menyu har kuni soat 10 dan keyin yangilanadi</i></p>
-                    <!-- Shu joyda menyu rasmi  ko'rinsin -->
-                    <p><small class="text-muted"><i class="fas fa-info-circle"></i> PDF faylni yuklab olish uchun tugmani bosing</small></p>
-                    <div class="d-flex gap-2">
-                        <a href="/activmenuPDF/{{ $day->id }}/{{ $kindgarden->id }}/4" 
-                            class="btn btn-success d-flex align-items-center justify-content-center gap-2" 
-                            style="width: 100%;" 
-                            download>
-                                <i class="fas fa-download"></i> Yuklab olish
-                        </a>
-                        <button type="button" 
-                            class="btn btn-info d-flex align-items-center justify-content-center gap-2" 
-                            style="width: 100%;" 
-                            onclick="showActiveMenuInline('{{ $day->id }}', '{{ $kindgarden->id }}', '{{ $day->day_number.".".$day->month_name.".".$day->year_name }}')">
+                <p><b>Haqiqiy Menyu: </b>sana: {{ $day->day_number.".".$day->month_name.".".$day->year_name }}</p>
+                <p><i>Eslatma: menyu har kuni soat 10 dan keyin yangilanadi</i></p>
+
+                @foreach($kindgarden->age_range as $row)
+                    <p><b>{{$row->age_name}}</b></p>
+                    <p><small class="text-muted"><i class="fas fa-info-circle"></i> Menyuni ko'rish yoki PDF yuklab olish</small></p>
+                    <div class="d-flex gap-2 mt-2">
+                        <button type="button"
+                            class="btn btn-info d-flex align-items-center justify-content-center gap-2"
+                            style="width: 100%;"
+                            onclick="showActiveMenuModal('{{ $day->id }}', '{{ $kindgarden->id }}', '{{ $row->id }}', '{{ $row->age_name }}', '{{ $day->day_number.".".$day->month_name.".".$day->year_name }}')">
                             <i class="fas fa-eye"></i> Ko'rish
                         </button>
-                        
+                        <a href="/activmenuPDF/{{ $day->id }}/{{ $kindgarden->id }}/{{ $row->id }}"
+                            class="btn btn-success d-flex align-items-center justify-content-center gap-2"
+                            style="width: 100%;"
+                            download>
+                            <i class="fas fa-download"></i> PDF
+                        </a>
                     </div>
-                    
-                    <!-- Inline menyu ko'rinishi -->
-                    <div id="activeMenuContainer" style="display: none; margin-top: 20px;">
-                        <div class="card">
-                            <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
-                                <h6 class="mb-0">
-                                    <i class="fas fa-utensils me-2"></i>Haqiqiy menyu ko'rinishi
-                                </h6>
-                                <button type="button" class="btn btn-sm btn-outline-light" onclick="hideActiveMenu()">
-                                    <i class="fas fa-times"></i> Yopish
-                                </button>
-                            </div>
-                            <div class="card-body p-0">
-                                <div id="activeMenuImageContainer" class="text-center">
-                                    <div class="spinner-border text-primary" role="status">
-                                        <span class="visually-hidden">Yuklanmoqda...</span>
-                                    </div>
-                                    <p class="mt-2">Menyu yuklanmoqda...</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                <!-- </form> -->
+                    <br>
+                @endforeach
             </div>
         </div>
     </div>
@@ -490,49 +624,22 @@
                 <!-- <form action="/nextdaysecondmenuPDF/{{ $kindgarden->id }}" method="get" download> -->
                 @foreach($kindgarden->age_range as $row)
                     <p><b>Keyingi ish kuni uchun taomnoma: {{$row->age_name}}</b></p>
-                    <p><small class="text-muted"><i class="fas fa-info-circle"></i> PDF faylni yuklab olish uchun tugmani bosing</small></p>
+                    <p><small class="text-muted"><i class="fas fa-info-circle"></i> Menyuni ko'rish yoki PDF yuklab olish</small></p>
                     <div class="d-flex gap-2 mt-2">
-                        <a href="/nextdaymenuPDF/{{ $kindgarden->id }}/{{ $row->id }}" 
-                            class="btn btn-primary d-flex align-items-center justify-content-center gap-2" 
-                            style="width: 100%;" 
-                            download>
-                                <i class="fas fa-download"></i> Yuklab olish
-                        </a>
-                        <button type="button" 
-                            class="btn btn-info d-flex align-items-center justify-content-center gap-2" 
-                            style="width: 100%;" 
-                            onclick="showMenuInline('{{ $kindgarden->id }}', '{{ $row->id }}', '{{ $row->age_name }}')">
+                        <button type="button"
+                            class="btn btn-info d-flex align-items-center justify-content-center gap-2"
+                            style="width: 100%;"
+                            onclick="showTaxminiyMenuModal('{{ $kindgarden->id }}', '{{ $row->id }}', '{{ $row->age_name }}')">
                             <i class="fas fa-eye"></i> Ko'rish
                         </button>
-                        <!-- <button type="button" 
-                            class="btn btn-info d-flex align-items-center justify-content-center gap-2" 
-                            style="width: 100%;" 
-                            onclick="shareTaxminiyMenuToTelegram('{{ $kindgarden->kingar_name }}', '/nextdaysecondmenuPDF/{{ $kindgarden->id }}')">
-                            <i class="fab fa-telegram"></i> Share
-                        </button> -->
+                        <a href="/nextdaymenuPDF/{{ $kindgarden->id }}/{{ $row->id }}"
+                            class="btn btn-primary d-flex align-items-center justify-content-center gap-2"
+                            style="width: 100%;"
+                            download>
+                            <i class="fas fa-download"></i> PDF
+                        </a>
                     </div>
-                    
-                    <!-- Inline taxminiy menyu ko'rinishi -->
-                    <div id="menuContainer_{{ $row->id }}" style="display: none; margin-top: 20px;">
-                        <div class="card">
-                            <div class="card-header bg-info text-white d-flex justify-content-between align-items-center">
-                                <h6 class="mb-0">
-                                    <i class="fas fa-calendar-alt me-2"></i>Taxminiy menyu - {{ $row->age_name }}
-                                </h6>
-                                <button type="button" class="btn btn-sm btn-outline-light" onclick="hideMenu('{{ $row->id }}')">
-                                    <i class="fas fa-times"></i> Yopish
-                                </button>
-                            </div>
-                            <div class="card-body p-0">
-                                <div id="menuImageContainer_{{ $row->id }}" class="text-center">
-                                    <div class="spinner-border text-primary" role="status">
-                                        <span class="visually-hidden">Yuklanmoqda...</span>
-                                    </div>
-                                    <p class="mt-2">Menyu yuklanmoqda...</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                    <br>
                 @endforeach
                 <!-- </form> -->
                 @if($bool->count() == 0)
@@ -557,6 +664,67 @@
         </div>
     </div>
     @endif
+
+<!-- Zamonaviy Zoom Modal -->
+<div class="modal fade zoom-menu-modal" id="zoomMenuModal" tabindex="-1" aria-labelledby="zoomMenuModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-fullscreen">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="zoomMenuModalLabel">
+                    <i class="fas fa-utensils me-2"></i>
+                    <span id="zoomMenuTitle">Menyu</span>
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <!-- Loading spinner -->
+                <div class="zoom-loading" id="zoomLoading">
+                    <div class="spinner-border text-light" role="status" style="width: 3rem; height: 3rem;">
+                        <span class="visually-hidden">Yuklanmoqda...</span>
+                    </div>
+                </div>
+
+                <!-- Image container -->
+                <div class="zoom-image-container" id="zoomImageContainer">
+                    <img src="" alt="Menu" id="zoomMenuImage">
+                </div>
+
+                <!-- Zoom controls -->
+                <div class="zoom-controls" id="zoomControls" style="display: none;">
+                    <button onclick="zoomOut()" title="Kichiklashtirish">
+                        <i class="fas fa-minus"></i>
+                    </button>
+                    <div class="zoom-level" id="zoomLevel">100%</div>
+                    <button onclick="zoomIn()" title="Kattalashtirish">
+                        <i class="fas fa-plus"></i>
+                    </button>
+                    <button onclick="resetZoom()" title="Asl o'lchamga qaytarish">
+                        <i class="fas fa-undo"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <div>
+                    <small class="text-muted">
+                        <i class="fas fa-info-circle"></i>
+                        Mouse wheel, pinch yoki ikki marta bosish orqali zoom qilishingiz mumkin
+                    </small>
+                </div>
+                <div>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        <i class="fas fa-times"></i> Yopish
+                    </button>
+                    <button type="button" class="btn btn-primary" onclick="downloadMenuImageAsPNG()">
+                        <i class="fas fa-download"></i> PNG yuklab olish
+                    </button>
+                    <a href="#" id="downloadPdfLink" class="btn btn-success" download>
+                        <i class="fas fa-file-pdf"></i> PDF yuklab olish
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 </div>
 @endsection
 
@@ -766,190 +934,340 @@
         modal.find('#new_count').val(currentCount);
         modal.find('#reason').val('');
     });
-    
-    // Haqiqiy menyu inline ko'rinishini ko'rsatish
-    function showActiveMenuInline(dayId, gardenId, menuDate) {
-        // Container ni ko'rsatish
-        var container = document.getElementById('activeMenuContainer');
-        container.style.display = 'block';
-        container.classList.add('menu-container');
-        
-        // Loading ko'rsatish
-        var imageContainer = document.getElementById('activeMenuImageContainer');
-        imageContainer.innerHTML = `
-            <div class="spinner-border text-primary" role="status">
-                <span class="visually-hidden">Yuklanmoqda...</span>
-            </div>
-            <p class="mt-2">Haqiqiy menyu yuklanmoqda...</p>
-        `;
-        
-        // Rasm URL yaratish
-        var imageUrl = '/activmenuPDF/' + dayId + '/' + gardenId + '/4/image';
-        
-        // Rasmni yuklash
-        var img = new Image();
-        img.onload = function() {
-            imageContainer.innerHTML = `
-                <div class="menu-inline-container">
-                    <img src="${imageUrl}" 
-                         class="menu-inline-image" 
-                         alt="Haqiqiy menyu" 
-                         onclick="zoomImageInline(this, 'Haqiqiy menyu - ${menuDate}')">
-                    <div class="mt-2 p-2">
-                        <small class="text-muted">
-                            <i class="fas fa-info-circle"></i> 
-                            Rasmni kattalashtirish uchun ustiga bosing
-                        </small>
-                    </div>
-                </div>
-            `;
-            
-            // PDF yuklab olish URL ni saqlash
-            window.currentActiveMenuPdfUrl = '/activmenuPDF/' + dayId + '/' + gardenId + '/4';
+
+    // Eski inline funksiyalar olib tashlandi - endi zamonaviy zoom modal ishlatiladi
+
+    // ============================================
+    // ZAMONAVIY ZOOM MODAL FUNKSIYALARI
+    // ============================================
+
+    // Global zoom variables
+    let currentZoom = 1;
+    let minZoom = 0.5;
+    let maxZoom = 3;
+    let currentImageUrl = '';
+    let currentPdfUrl = '';
+    let currentMenuData = {};
+
+    // Pan variables
+    let isPanning = false;
+    let startX = 0;
+    let startY = 0;
+    let translateX = 0;
+    let translateY = 0;
+
+    // Touch variables
+    let lastTouchDistance = 0;
+    let lastTapTime = 0;
+
+    // Haqiqiy menyu modalini ko'rsatish
+    function showActiveMenuModal(dayId, gardenId, ageId, ageName, menuDate) {
+        currentMenuData = {
+            type: 'active',
+            dayId: dayId,
+            gardenId: gardenId,
+            ageId: ageId,
+            ageName: ageName,
+            menuDate: menuDate
         };
-        
-        img.onerror = function() {
-            imageContainer.innerHTML = `
-                <div class="alert alert-danger" role="alert">
-                    <i class="fas fa-exclamation-triangle"></i>
-                    Haqiqiy menyu rasmi yuklanmadi. Iltimos, qaytadan urinib ko'ring.
-                </div>
-            `;
-        };
-        
-        img.src = imageUrl;
-        
-        // Sahifani rasmga scroll qilish
-        container.scrollIntoView({ behavior: 'smooth' });
-    }
-    
-    // Haqiqiy menyuni yashirish
-    function hideActiveMenu() {
-        var container = document.getElementById('activeMenuContainer');
-        container.style.display = 'none';
-    }
-    
-    // Taxminiy menyu inline ko'rinishini ko'rsatish
-    function showMenuInline(gardenId, ageId, ageName) {
-        // Container ni ko'rsatish
-        var container = document.getElementById('menuContainer_' + ageId);
-        container.style.display = 'block';
-        container.classList.add('menu-container');
-        
-        // Loading ko'rsatish
-        var imageContainer = document.getElementById('menuImageContainer_' + ageId);
-        imageContainer.innerHTML = `
-            <div class="spinner-border text-primary" role="status">
-                <span class="visually-hidden">Yuklanmoqda...</span>
-            </div>
-            <p class="mt-2">Taxminiy menyu yuklanmoqda...</p>
-        `;
-        
-        // Rasm URL yaratish
-        var imageUrl = '/nextdaymenuPDF/' + gardenId + '/' + ageId + '/image';
-        
-        // Rasmni yuklash
-        var img = new Image();
-        img.onload = function() {
-            imageContainer.innerHTML = `
-                <div class="menu-inline-container">
-                    <img src="${imageUrl}" 
-                         class="menu-inline-image" 
-                         alt="Taxminiy menyu - ${ageName}" 
-                         onclick="zoomImageInline(this, 'Taxminiy menyu - ${ageName}')">
-                    <div class="mt-2 p-2">
-                        <small class="text-muted">
-                            <i class="fas fa-info-circle"></i> 
-                            Rasmni kattalashtirish uchun ustiga bosing
-                        </small>
-                    </div>
-                </div>
-            `;
-            
-            // PDF yuklab olish URL ni saqlash
-            window.currentMenuPdfUrl = '/nextdaymenuPDF/' + gardenId + '/' + ageId;
-        };
-        
-        img.onerror = function() {
-            imageContainer.innerHTML = `
-                <div class="alert alert-danger" role="alert">
-                    <i class="fas fa-exclamation-triangle"></i>
-                    Taxminiy menyu rasmi yuklanmadi. Iltimos, qaytadan urinib ko'ring.
-                </div>
-            `;
-        };
-        
-        img.src = imageUrl;
-        
-        // Sahifani rasmga scroll qilish
-        container.scrollIntoView({ behavior: 'smooth' });
-    }
-    
-    // Taxminiy menyuni yashirish
-    function hideMenu(ageId) {
-        var container = document.getElementById('menuContainer_' + ageId);
-        container.style.display = 'none';
-    }
-    
-    // Inline rasmni kattalashtirish
-    function zoomImageInline(img, title) {
-        // Mavjud zoom modal mavjudligini tekshirish
-        var existingModal = document.getElementById('imageZoomModal');
-        if (existingModal) {
-            existingModal.remove();
-        }
-        
-        // Yangi zoom modal yaratish
-        var zoomModal = document.createElement('div');
-        zoomModal.id = 'imageZoomModal';
-        zoomModal.className = 'modal fade zoom-modal';
-        zoomModal.setAttribute('tabindex', '-1');
-        zoomModal.innerHTML = `
-            <div class="modal-dialog modal-fullscreen">
-                <div class="modal-content bg-light">
-                    <div class="modal-header border-0 bg-primary">
-                        <h5 class="modal-title text-white">${title} - Katta ko'rinish</h5>
-                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body d-flex align-items-center justify-content-center p-0 bg-light">
-                        <img src="${img.src}" 
-                             class="img-fluid" 
-                             alt="${title} - Katta ko'rinish"
-                             style="max-width: 100%; max-height: 100%; object-fit: contain;">
-                    </div>
-                    <div class="modal-footer border-0 bg-light">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Yopish</button>
-                        <button type="button" class="btn btn-primary" onclick="downloadCurrentMenu()">
-                            <i class="fas fa-download"></i> PDF Yuklab olish
-                        </button>
-                    </div>
-                </div>
-            </div>
-        `;
-        
-        // Modal ni body ga qo'shish
-        document.body.appendChild(zoomModal);
-        
+
+        // Modal title ni o'rnatish
+        document.getElementById('zoomMenuTitle').textContent =
+            'Haqiqiy menyu - ' + ageName + ' - ' + menuDate;
+
+        // Image URL yaratish
+        currentImageUrl = '/activmenuPDF/' + dayId + '/' + gardenId + '/' + ageId + '/image';
+        currentPdfUrl = '/activmenuPDF/' + dayId + '/' + gardenId + '/' + ageId;
+
+        // PDF download link ni o'rnatish
+        document.getElementById('downloadPdfLink').href = currentPdfUrl;
+
         // Modal ni ko'rsatish
-        var modal = new bootstrap.Modal(zoomModal);
+        loadMenuImage();
+        const modal = new bootstrap.Modal(document.getElementById('zoomMenuModal'));
         modal.show();
-        
-        // Modal yopilganda uni o'chirish
-        zoomModal.addEventListener('hidden.bs.modal', function() {
-            zoomModal.remove();
-        });
     }
-    
-    // Joriy menyuni yuklab olish
-    function downloadCurrentMenu() {
-        if (window.currentMenuPdfUrl) {
-            window.open(window.currentMenuPdfUrl, '_blank');
-        } else if (window.currentActiveMenuPdfUrl) {
-            window.open(window.currentActiveMenuPdfUrl, '_blank');
-        } else {
-            showNotification('PDF fayl topilmadi!', 'error');
+
+    // Taxminiy menyu modalini ko'rsatish
+    function showTaxminiyMenuModal(gardenId, ageId, ageName) {
+        currentMenuData = {
+            type: 'taxminiy',
+            gardenId: gardenId,
+            ageId: ageId,
+            ageName: ageName
+        };
+
+        // Modal title ni o'rnatish
+        document.getElementById('zoomMenuTitle').textContent =
+            'Taxminiy menyu - ' + ageName;
+
+        // Image URL yaratish
+        currentImageUrl = '/nextdaymenuPDF/' + gardenId + '/' + ageId + '/image';
+        currentPdfUrl = '/nextdaymenuPDF/' + gardenId + '/' + ageId;
+
+        // PDF download link ni o'rnatish
+        document.getElementById('downloadPdfLink').href = currentPdfUrl;
+
+        // Modal ni ko'rsatish
+        loadMenuImage();
+        const modal = new bootstrap.Modal(document.getElementById('zoomMenuModal'));
+        modal.show();
+    }
+
+    // Rasmni yuklash
+    function loadMenuImage() {
+        // Reset zoom
+        currentZoom = 1;
+        translateX = 0;
+        translateY = 0;
+
+        // Loading ni ko'rsatish
+        document.getElementById('zoomLoading').style.display = 'block';
+        document.getElementById('zoomControls').style.display = 'none';
+
+        const img = document.getElementById('zoomMenuImage');
+
+        img.onload = function() {
+            document.getElementById('zoomLoading').style.display = 'none';
+            document.getElementById('zoomControls').style.display = 'flex';
+            updateZoomDisplay();
+
+            // Initialize event listeners
+            initZoomEventListeners();
+        };
+
+        img.onerror = function() {
+            document.getElementById('zoomLoading').innerHTML =
+                '<div class="alert alert-danger"><i class="fas fa-exclamation-triangle"></i> Rasm yuklanmadi</div>';
+        };
+
+        img.src = currentImageUrl;
+    }
+
+    // Zoom event listeners ni initialize qilish
+    function initZoomEventListeners() {
+        const img = document.getElementById('zoomMenuImage');
+        const container = document.getElementById('zoomImageContainer');
+
+        // Mouse wheel zoom
+        container.addEventListener('wheel', handleMouseWheel, { passive: false });
+
+        // Pan (drag) functionality
+        img.addEventListener('mousedown', handlePanStart);
+        document.addEventListener('mousemove', handlePanMove);
+        document.addEventListener('mouseup', handlePanEnd);
+
+        // Touch events
+        container.addEventListener('touchstart', handleTouchStart, { passive: false });
+        container.addEventListener('touchmove', handleTouchMove, { passive: false });
+        container.addEventListener('touchend', handleTouchEnd, { passive: false });
+    }
+
+    // Zoom In
+    function zoomIn() {
+        if (currentZoom < maxZoom) {
+            currentZoom = Math.min(currentZoom + 0.25, maxZoom);
+            updateZoomDisplay();
         }
     }
+
+    // Zoom Out
+    function zoomOut() {
+        if (currentZoom > minZoom) {
+            currentZoom = Math.max(currentZoom - 0.25, minZoom);
+            updateZoomDisplay();
+        }
+    }
+
+    // Reset Zoom
+    function resetZoom() {
+        currentZoom = 1;
+        translateX = 0;
+        translateY = 0;
+        updateZoomDisplay();
+    }
+
+    // Zoom display ni yangilash
+    function updateZoomDisplay() {
+        const img = document.getElementById('zoomMenuImage');
+        img.style.transform = `translate(${translateX}px, ${translateY}px) scale(${currentZoom})`;
+        document.getElementById('zoomLevel').textContent = Math.round(currentZoom * 100) + '%';
+    }
+
+    // Mouse wheel zoom handler
+    function handleMouseWheel(e) {
+        e.preventDefault();
+
+        const delta = e.deltaY > 0 ? -0.1 : 0.1;
+        const newZoom = currentZoom + delta;
+
+        if (newZoom >= minZoom && newZoom <= maxZoom) {
+            currentZoom = newZoom;
+            updateZoomDisplay();
+        }
+    }
+
+    // Pan start handler
+    function handlePanStart(e) {
+        if (currentZoom > 1) {
+            isPanning = true;
+            startX = e.clientX - translateX;
+            startY = e.clientY - translateY;
+            document.getElementById('zoomImageContainer').style.cursor = 'grabbing';
+        }
+    }
+
+    // Pan move handler
+    function handlePanMove(e) {
+        if (isPanning) {
+            translateX = e.clientX - startX;
+            translateY = e.clientY - startY;
+            updateZoomDisplay();
+        }
+    }
+
+    // Pan end handler
+    function handlePanEnd() {
+        isPanning = false;
+        document.getElementById('zoomImageContainer').style.cursor = 'grab';
+    }
+
+    // Touch start handler (pinch va double tap uchun)
+    function handleTouchStart(e) {
+        if (e.touches.length === 2) {
+            // Pinch zoom start
+            lastTouchDistance = getTouchDistance(e.touches);
+        } else if (e.touches.length === 1) {
+            // Check for double tap
+            const currentTime = new Date().getTime();
+            const tapLength = currentTime - lastTapTime;
+
+            if (tapLength < 300 && tapLength > 0) {
+                // Double tap detected
+                handleDoubleTap();
+            }
+
+            lastTapTime = currentTime;
+
+            // Pan start
+            if (currentZoom > 1) {
+                isPanning = true;
+                startX = e.touches[0].clientX - translateX;
+                startY = e.touches[0].clientY - translateY;
+            }
+        }
+    }
+
+    // Touch move handler
+    function handleTouchMove(e) {
+        if (e.touches.length === 2) {
+            // Pinch zoom
+            e.preventDefault();
+            const touchDistance = getTouchDistance(e.touches);
+            const delta = (touchDistance - lastTouchDistance) * 0.01;
+
+            const newZoom = currentZoom + delta;
+            if (newZoom >= minZoom && newZoom <= maxZoom) {
+                currentZoom = newZoom;
+                updateZoomDisplay();
+            }
+
+            lastTouchDistance = touchDistance;
+        } else if (e.touches.length === 1 && isPanning) {
+            // Pan move
+            e.preventDefault();
+            translateX = e.touches[0].clientX - startX;
+            translateY = e.touches[0].clientY - startY;
+            updateZoomDisplay();
+        }
+    }
+
+    // Touch end handler
+    function handleTouchEnd(e) {
+        if (e.touches.length === 0) {
+            isPanning = false;
+            lastTouchDistance = 0;
+        }
+    }
+
+    // Get distance between two touches
+    function getTouchDistance(touches) {
+        const dx = touches[0].clientX - touches[1].clientX;
+        const dy = touches[0].clientY - touches[1].clientY;
+        return Math.sqrt(dx * dx + dy * dy);
+    }
+
+    // Double tap handler
+    function handleDoubleTap() {
+        if (currentZoom === 1) {
+            currentZoom = 1.5;
+        } else {
+            currentZoom = 1;
+            translateX = 0;
+            translateY = 0;
+        }
+        updateZoomDisplay();
+    }
+
+    // PNG formatda yuklab olish
+    function downloadMenuImageAsPNG() {
+        const img = document.getElementById('zoomMenuImage');
+
+        // Canvas yaratish
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
+
+        // Canvas o'lchamini rasm o'lchamiga moslash
+        canvas.width = img.naturalWidth;
+        canvas.height = img.naturalHeight;
+
+        // Rasmni canvas ga chizish
+        ctx.drawImage(img, 0, 0);
+
+        // PNG formatda download
+        canvas.toBlob(function(blob) {
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+
+            // Filename yaratish
+            let filename = 'menu';
+            if (currentMenuData.type === 'active') {
+                filename = 'haqiqiy_menu_' + currentMenuData.ageName + '_' + currentMenuData.menuDate;
+            } else {
+                filename = 'taxminiy_menu_' + currentMenuData.ageName;
+            }
+            filename = filename.replace(/\s+/g, '_').replace(/[^\w\-_.]/g, '') + '.png';
+
+            a.href = url;
+            a.download = filename;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+
+            showNotification('Rasm PNG formatda yuklab olindi!', 'success');
+        }, 'image/png');
+    }
+
+    // Modal yopilganda event listeners ni tozalash
+    document.getElementById('zoomMenuModal').addEventListener('hidden.bs.modal', function() {
+        const img = document.getElementById('zoomMenuImage');
+        const container = document.getElementById('zoomImageContainer');
+
+        // Remove event listeners
+        container.removeEventListener('wheel', handleMouseWheel);
+        img.removeEventListener('mousedown', handlePanStart);
+        document.removeEventListener('mousemove', handlePanMove);
+        document.removeEventListener('mouseup', handlePanEnd);
+        container.removeEventListener('touchstart', handleTouchStart);
+        container.removeEventListener('touchmove', handleTouchMove);
+        container.removeEventListener('touchend', handleTouchEnd);
+
+        // Reset zoom
+        currentZoom = 1;
+        translateX = 0;
+        translateY = 0;
+    });
 </script>
 @if(session('status'))
 <script> 
