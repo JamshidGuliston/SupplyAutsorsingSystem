@@ -1524,24 +1524,19 @@ class TestController extends Controller
         $protsent = Protsent::where('region_id', Kindgarden::where('id', $gid)->first()->region_id)
 		                    ->where('start_date', '<=', $day->year_name.'-'.$month_id.'-'.$day->day_number)
 		                    ->where('end_date', '>=', $day->year_name.'-'.$month_id.'-'.$day->day_number)
-		                    ->get();
-		
-		$costs = bycosts::where('day_id', bycosts::where('region_name_id', Kindgarden::where('id', $gid)->first()->region_id)->orderBy('day_id', 'DESC')->first()->day_id)->where('region_name_id', Kindgarden::where('id', $gid)->first()->region_id)->orderBy('day_id', 'DESC')->get();
-		$narx = [];
-		foreach($costs as $row){
-			if(!isset($narx[$row->praduct_name_id])){
-				$narx[$row->praduct_name_id] = $row->price_cost;
-			}
+		                    ->where('age_range_id', $ageid)->first();
+		if(!$protsent){
+			$protsent = new Protsent();
+			$protsent->eater_cost = 0;
 		}
         $nextdaymenuitem = [];
         $workerproducts = [];
-        // kamchilik bor boshlangich qiymat berishda
         $productallcount = array_fill(1, 500, 0);
-		// dd($menuitem);
         foreach($menuitem as $item){
-            $nextdaymenuitem[$item->menu_meal_time_id][0]['mealtime'] = $item->meal_time_name; 
+            $nextdaymenuitem[$item->menu_meal_time_id][0]['mealtime'] = $item->meal_time_name;
             $nextdaymenuitem[$item->menu_meal_time_id][$item->menu_food_id][$item->product_name_id] = $item->weight;
-            $nextdaymenuitem[$item->menu_meal_time_id][$item->menu_food_id]['foodname'] = $item->food_name; 
+            $nextdaymenuitem[$item->menu_meal_time_id][$item->menu_food_id]['foodname'] = $item->food_name;
+            $nextdaymenuitem[$item->menu_meal_time_id][$item->menu_food_id]['foodweight'] = $item->food_weight;
             $productallcount[$item->product_name_id] += $item->weight;
             for($i = 0; $i<count($products); $i++){
                 if(empty($products[$i]['yes']) and $products[$i]['id'] == $item->product_name_id){
@@ -1569,37 +1564,39 @@ class TestController extends Controller
 		try {
 			// Log qo'shish
 			\Log::info('Active menu PDF Image generation started for day: ' . $today . ', garden: ' . $gid . ', age: ' . $ageid);
-			
-			$pdf = \PDF::loadView('pdffile.technolog.alltable', [
-				'narx' => $narx,
+
+			$pdf = \PDF::loadView('pdffile.technolog.activmenu', [
+				'protsent' => $protsent,
 				'day' => $day,
 				'productallcount' => $productallcount,
 				'workerproducts' => $workerproducts,
 				'menu' => $menu,
 				'menuitem' => $nextdaymenuitem,
 				'products' => $products,
-				'workerfood' => $workerfood,
-				'taomnoma' => $menu[0]
+				'workerfood' => $workerfood
 			]);
 
 			$pdf->setPaper('A4', 'landscape')
 				->setOptions([
 					'encoding' => 'UTF-8',
-					'enable-javascript' => true,
-					'javascript-delay' => 1000,
-					'enable-smart-shrinking' => true,
-					'no-stop-slow-scripts' => true,
-					'disable-smart-shrinking' => false,
-					'print-media-type' => true,
+					'defaultFont' => 'DejaVu Sans',
 					'dpi' => 300,
 					'image-quality' => 100,
-					'margin-top' => 10,
-					'margin-right' => 10,
-					'margin-bottom' => 10,
-					'margin-left' => 10,
+					'margin-top' => 5,
+					'margin-right' => 5,
+					'margin-bottom' => 5,
+					'margin-left' => 5,
 					'enable-local-file-access' => true,
+					'print-media-type' => true,
+					'disable-smart-shrinking' => false,
 					'load-error-handling' => 'ignore',
 					'load-media-error-handling' => 'ignore',
+					'isHtml5ParserEnabled' => true,
+					'isRemoteEnabled' => true,
+					'debugKeepTemp' => false,
+					'no-outline' => true,
+					'disable-external-links' => false,
+					'disable-internal-links' => false,
 				]);
 
 			// PDF ni rasmga aylantirish
