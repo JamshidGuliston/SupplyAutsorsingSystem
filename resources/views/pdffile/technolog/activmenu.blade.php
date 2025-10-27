@@ -11,7 +11,7 @@
 		@page { margin: 10mm 10mm 10mm 10mm; }
 		body{
 			font-family: DejaVu Sans;
-			font-size: 7px;
+			font-size: 8px;
 			background-position: top left;
 			background-repeat: no-repeat;
 			background-size: 100%;
@@ -77,12 +77,12 @@
 			text-align: center;     /* birinchi bir qatorda */
 			width: 90px;               /* aniq kenglik (burilgandan keyin balandlik) */
 			overflow: visible;         /* hamma ko'rinsin */
-			font-size: 5.5px;
+			font-size: 7px;
 		}
 		
 		/* Maxsulot nomlari uchun */
 		.product-name-short {
-			font-size: 4.5px;
+			font-size: 7px;
 			line-height: 1.0;
 			white-space: normal;       /* bir qatorda */
 			display: inline-block;
@@ -98,7 +98,7 @@
 		/* Ovqat vaqti uchun */
 		.mealtime-header {
 			vertical-align: middle;
-			font-size: 5px;
+			font-size: 7px;
 			line-height: 1.0;
 			white-space: nowrap;
 			display: inline-block;
