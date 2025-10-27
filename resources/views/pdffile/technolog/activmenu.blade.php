@@ -448,10 +448,10 @@
 							</div>
 						@endif
 							<div class="column">
-								<p style="text-align: center;"><strong>{{ env('MENU_SIGNATURE') }}:</strong> __________________;</p>
+								<p style="text-align: center;"><strong>{{ explore(',', env('MENU_SIGNATURE'))[0] }}:</strong> __________________;</p>
 							</div>
 							<div class="column">
-								<p style="text-align: right;"><strong>ДМТТ рахбари: </strong> __________________;</p>
+								<p style="text-align: right;"><strong>{{ explore(',', env('MENU_SIGNATURE'))[1] }}: </strong> __________________;</p>
 							</div>
 					   </div>
                 </div>
