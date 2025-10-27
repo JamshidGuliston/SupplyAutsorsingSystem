@@ -171,10 +171,17 @@
 								<p style="text-align: center;">{{ env('COMPANY_NAME') }}</p>
 								<p>Рахбари ______________________</p> -->
 								@php
-									$qrImage = base64_encode(file_get_contents(public_path('images/directorsign.png')));
+									$directorSignPath = public_path('images/directorsign.png');
+									if (file_exists($directorSignPath)) {
+										$qrImage = base64_encode(file_get_contents($directorSignPath));
+									} else {
+										$qrImage = '';
+									}
 								@endphp
-								<img src="data:image/jpeg;base64,{{ $qrImage }}" 
-									style="width:220px; position:absolute; left: 140px; text-align: right;">
+								@if($qrImage)
+									<img src="data:image/jpeg;base64,{{ $qrImage }}"
+										style="width:220px; position:absolute; left: 140px; text-align: right;">
+								@endif
 							</div>
 					</div>
 				@else
@@ -397,26 +404,47 @@
 					   		<div class="column">
 								<!-- <p style="text-align: center;"><strong> Технолог:</strong> __________________;</p> -->
 								@php
-									$qrImage = base64_encode(file_get_contents(public_path('images/texnologsign.png')));
+									$texnologSignPath = public_path('images/texnologsign.png');
+									if (file_exists($texnologSignPath)) {
+										$texnologImage = base64_encode(file_get_contents($texnologSignPath));
+									} else {
+										$texnologImage = '';
+									}
 								@endphp
-								<img src="data:image/jpeg;base64,{{ $qrImage }}" 
-									style="width:200px; position:absolute; left: 0px; text-align: left;">
+								@if($texnologImage)
+									<img src="data:image/jpeg;base64,{{ $texnologImage }}"
+										style="width:200px; position:absolute; left: 0px; text-align: left;">
+								@endif
 							</div>
 							<div class="column">
 								<!-- <p style="text-align: center;"><strong> Бухгалтер:</strong> __________________;</p> -->
 								@php
-									$qrImage = base64_encode(file_get_contents(public_path('images/buxgaltersign.png')));
+									$buxgalterSignPath = public_path('images/buxgaltersign.png');
+									if (file_exists($buxgalterSignPath)) {
+										$buxgalterImage = base64_encode(file_get_contents($buxgalterSignPath));
+									} else {
+										$buxgalterImage = '';
+									}
 								@endphp
-								<img src="data:image/jpeg;base64,{{ $qrImage }}" 
-									style="width:160px; position:absolute; left: 0px; text-align: left;">
+								@if($buxgalterImage)
+									<img src="data:image/jpeg;base64,{{ $buxgalterImage }}"
+										style="width:160px; position:absolute; left: 0px; text-align: left;">
+								@endif
 							</div>
 						@else
 							<div class="column" style="margin-top: -10px;">
 								@php
-									$qrImage = base64_encode(file_get_contents(public_path('images/qrmanzil.jpg')));
+									$qrManzilPath = public_path('images/qrmanzil.jpg');
+									if (file_exists($qrManzilPath)) {
+										$qrManzilImage = base64_encode(file_get_contents($qrManzilPath));
+									} else {
+										$qrManzilImage = '';
+									}
 								@endphp
-								<img src="data:image/jpeg;base64,{{ $qrImage }}" 
-									style="width:120; position:absolute; left:10px;">
+								@if($qrManzilImage)
+									<img src="data:image/jpeg;base64,{{ $qrManzilImage }}"
+										style="width:120; position:absolute; left:10px;">
+								@endif
 							</div>
 						@endif
 							<div class="column">

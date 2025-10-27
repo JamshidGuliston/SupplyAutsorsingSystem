@@ -1491,9 +1491,10 @@ class TestController extends Controller
 		])->join('kindgardens', 'number_childrens.kingar_name_id', '=', 'kindgardens.id')
 		->join('titlemenus', 'number_childrens.kingar_menu_id', '=', 'titlemenus.id')
         ->join('age_ranges', 'number_childrens.king_age_name_id', '=', 'age_ranges.id')->get();
-		// dd($menu);  
+		// dd($menu);
 		$products = Product::where('hide', 1)
-			->orderBy('sort', 'ASC')->get();
+			->leftjoin('sizes', 'sizes.id', '=', 'products.size_name_id')
+			->orderBy('sort', 'ASC')->get(['products.*', 'sizes.size_name', 'sizes.div']);
 		
 		$menuitem = Active_menu::where('day_id', $today)
 						->where('title_menu_id', $menu[0]['kingar_menu_id'])
