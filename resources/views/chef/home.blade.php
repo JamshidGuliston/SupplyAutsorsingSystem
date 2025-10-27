@@ -1264,7 +1264,11 @@
         canvas.width = img.naturalWidth;
         canvas.height = img.naturalHeight;
 
-        // Rasmni canvas ga chizish
+        // Oq fonni chizish (qora fon muammosini bartaraf etish)
+        ctx.fillStyle = '#FFFFFF';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        // Rasmni canvas ga chizish (oq fon ustiga)
         ctx.drawImage(img, 0, 0);
 
         // PNG formatda download
