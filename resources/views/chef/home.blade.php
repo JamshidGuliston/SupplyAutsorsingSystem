@@ -960,16 +960,60 @@
     let lastTouchDistance = 0;
     let lastTapTime = 0;
 
-    // Haqiqiy menyu PDF ni to'g'ridan-to'g'ri ochish
+    // Haqiqiy menyu PDF ni modal oynada ko'rsatish
     function showActiveMenuModal(dayId, gardenId, ageId, ageName, menuDate) {
+        currentMenuData = {
+            type: 'active',
+            dayId: dayId,
+            gardenId: gardenId,
+            ageId: ageId,
+            ageName: ageName,
+            menuDate: menuDate
+        };
+
+        // Modal title ni o'rnatish
+        document.getElementById('zoomMenuTitle').textContent =
+            'Haqiqiy menyu - ' + ageName + ' - ' + menuDate;
+
         // PDF URL yaratish
         const pdfUrl = '/activmenuPDF/' + dayId + '/' + gardenId + '/' + ageId;
+        currentPdfUrl = pdfUrl;
 
-        // PDF ni yangi tabda ochish
-        window.open(pdfUrl, '_blank');
+        // PDF download link ni o'rnatish
+        document.getElementById('downloadPdfLink').href = pdfUrl;
 
-        // Notification ko'rsatish
-        showNotification('PDF yangi tabda ochildi', 'success');
+        // Rasm o'rniga PDF iframe ni ko'rsatish
+        const imageContainer = document.getElementById('zoomImageContainer');
+        const zoomImage = document.getElementById('zoomMenuImage');
+        const zoomControls = document.getElementById('zoomControls');
+        const pngDownloadBtn = document.querySelector('[onclick*="downloadImageAsPNG"]');
+
+        // Image va zoom controls ni yashirish
+        zoomImage.style.display = 'none';
+        zoomControls.style.display = 'none';
+        if (pngDownloadBtn) pngDownloadBtn.style.display = 'none';
+
+        // Agar iframe mavjud bo'lsa, o'chirish
+        let existingIframe = document.getElementById('pdfIframe');
+        if (existingIframe) {
+            existingIframe.remove();
+        }
+
+        // Yangi iframe yaratish
+        const iframe = document.createElement('iframe');
+        iframe.id = 'pdfIframe';
+        iframe.src = pdfUrl;
+        iframe.style.width = '100%';
+        iframe.style.height = '600px';
+        iframe.style.border = 'none';
+        imageContainer.appendChild(iframe);
+
+        // Loading ni yashirish
+        document.getElementById('zoomLoading').style.display = 'none';
+
+        // Modal ni ko'rsatish
+        const modal = new bootstrap.Modal(document.getElementById('zoomMenuModal'));
+        modal.show();
     }
 
     // Taxminiy menyu modalini ko'rsatish
@@ -1252,6 +1296,8 @@
     document.getElementById('zoomMenuModal').addEventListener('hidden.bs.modal', function() {
         const img = document.getElementById('zoomMenuImage');
         const container = document.getElementById('zoomImageContainer');
+        const zoomControls = document.getElementById('zoomControls');
+        const pngDownloadBtn = document.querySelector('[onclick*="downloadImageAsPNG"]');
 
         // Remove event listeners
         container.removeEventListener('wheel', handleMouseWheel);
@@ -1270,10 +1316,20 @@
         // Rasmni tozalash (cache muammosini bartaraf etish)
         img.src = '';
         img.style.transform = '';
+        img.style.display = 'block'; // Qayta ko'rsatish
 
         // Loading va controls ni yashirish
         document.getElementById('zoomLoading').style.display = 'none';
-        document.getElementById('zoomControls').style.display = 'none';
+        zoomControls.style.display = 'none';
+
+        // PNG download tugmasini qayta ko'rsatish
+        if (pngDownloadBtn) pngDownloadBtn.style.display = 'inline-block';
+
+        // PDF iframe ni o'chirish
+        const pdfIframe = document.getElementById('pdfIframe');
+        if (pdfIframe) {
+            pdfIframe.remove();
+        }
     });
 </script>
 @if(session('status'))
