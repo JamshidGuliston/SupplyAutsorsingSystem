@@ -1491,10 +1491,24 @@ class TestController extends Controller
 		])->join('kindgardens', 'number_childrens.kingar_name_id', '=', 'kindgardens.id')
 		->join('titlemenus', 'number_childrens.kingar_menu_id', '=', 'titlemenus.id')
         ->join('age_ranges', 'number_childrens.king_age_name_id', '=', 'age_ranges.id')->get();
-		// dd($menu);
+
+		// Ma'lumot mavjudligini tekshirish
+		if ($menu->isEmpty()) {
+			\Log::error('No menu data found for day: ' . $today . ', garden: ' . $gid . ', age: ' . $ageid);
+
+			// Fallback rasm yaratish
+			$imageContent = $this->createActiveMenuFallbackImage($today, $gid, null);
+			return response($imageContent)
+				->header('Content-Type', 'image/jpeg')
+				->header('Content-Disposition', 'inline; filename="no_menu.jpg"')
+				->header('Access-Control-Allow-Origin', '*')
+				->header('Access-Control-Allow-Methods', 'GET, OPTIONS')
+				->header('Access-Control-Allow-Headers', 'Content-Type');
+		}
+
+		// activmenuPDF funksiyasidek products olish (sizes join qilmasdan)
 		$products = Product::where('hide', 1)
-			->leftjoin('sizes', 'sizes.id', '=', 'products.size_name_id')
-			->orderBy('sort', 'ASC')->get(['products.*', 'sizes.size_name', 'sizes.div']);
+			->orderBy('sort', 'ASC')->get();
 		
 		$menuitem = Active_menu::where('day_id', $today)
 						->where('title_menu_id', $menu[0]['kingar_menu_id'])
@@ -1566,6 +1580,24 @@ class TestController extends Controller
 			// Log qo'shish
 			\Log::info('Active menu PDF Image generation started for day: ' . $today . ', garden: ' . $gid . ', age: ' . $ageid);
 
+			// VAQTINCHA TEST: Faqat fallback rasmni qaytaramiz
+			$imageContent = $this->createActiveMenuFallbackImage($today, $gid, $day);
+
+			return response($imageContent)
+				->header('Content-Type', 'image/jpeg')
+				->header('Content-Disposition', 'inline; filename="test_active_menu.jpg"')
+				->header('Cache-Control', 'public, max-age=3600')
+				->header('Access-Control-Allow-Origin', '*')
+				->header('Access-Control-Allow-Methods', 'GET, OPTIONS')
+				->header('Access-Control-Allow-Headers', 'Content-Type');
+
+			// Original code (commented for test)
+			/*
+			\Log::info('Menu count: ' . count($menu));
+			\Log::info('Protsent: ' . ($protsent ? 'exists' : 'null'));
+			\Log::info('Products count: ' . count($products));
+			\Log::info('Menuitem count: ' . count($nextdaymenuitem));
+
 			// VAQTINCHA TEST: alltable.blade.php ishlatamiz
 			$pdf = \PDF::loadView('pdffile.technolog.alltable', [
 				'protsent' => $protsent,
@@ -1579,7 +1611,10 @@ class TestController extends Controller
 				'taomnoma' => $menu[0]
 			]);
 
-			$pdf->setPaper('A4', 'landscape')
+			\Log::info('PDF view loaded successfully');
+			*/
+
+			// Qolgan kod ishlamaydi chunki yuqorida return qilib yuborildi
 				->setOptions([
 					'encoding' => 'UTF-8',
 					'enable-javascript' => true,
