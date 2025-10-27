@@ -975,8 +975,8 @@
         document.getElementById('zoomMenuTitle').textContent =
             'Haqiqiy menyu - ' + ageName + ' - ' + menuDate;
 
-        // Image URL yaratish
-        currentImageUrl = '/activmenuPDF/' + dayId + '/' + gardenId + '/' + ageId + '/image';
+        // Image URL yaratish - cache busting uchun timestamp qo'shamiz
+        currentImageUrl = '/activmenuPDF/' + dayId + '/' + gardenId + '/' + ageId + '/image?t=' + new Date().getTime();
         currentPdfUrl = '/activmenuPDF/' + dayId + '/' + gardenId + '/' + ageId;
 
         // PDF download link ni o'rnatish
@@ -1001,8 +1001,8 @@
         document.getElementById('zoomMenuTitle').textContent =
             'Taxminiy menyu - ' + ageName;
 
-        // Image URL yaratish
-        currentImageUrl = '/nextdaymenuPDF/' + gardenId + '/' + ageId + '/image';
+        // Image URL yaratish - cache busting uchun timestamp qo'shamiz
+        currentImageUrl = '/nextdaymenuPDF/' + gardenId + '/' + ageId + '/image?t=' + new Date().getTime();
         currentPdfUrl = '/nextdaymenuPDF/' + gardenId + '/' + ageId;
 
         // PDF download link ni o'rnatish
@@ -1027,6 +1027,10 @@
 
         const img = document.getElementById('zoomMenuImage');
 
+        // Eski rasmni tozalash (cache muammosini bartaraf etish)
+        img.src = '';
+        img.style.transform = '';
+
         // CORS uchun crossOrigin ni o'rnatish (PNG yuklab olish uchun kerak)
         img.crossOrigin = 'anonymous';
 
@@ -1044,6 +1048,7 @@
                 '<div class="alert alert-danger"><i class="fas fa-exclamation-triangle"></i> Rasm yuklanmadi</div>';
         };
 
+        // Yangi rasmni yuklash
         img.src = currentImageUrl;
     }
 
@@ -1270,6 +1275,14 @@
         currentZoom = 1;
         translateX = 0;
         translateY = 0;
+
+        // Rasmni tozalash (cache muammosini bartaraf etish)
+        img.src = '';
+        img.style.transform = '';
+
+        // Loading va controls ni yashirish
+        document.getElementById('zoomLoading').style.display = 'none';
+        document.getElementById('zoomControls').style.display = 'none';
     });
 </script>
 @if(session('status'))
