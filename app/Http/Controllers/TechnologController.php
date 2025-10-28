@@ -6203,4 +6203,80 @@ class TechnologController extends Controller
         }
     }
 
+    /**
+     * Barcha menyular ro'yxatini olish
+     */
+    public function getAllMenus()
+    {
+        try {
+            $menus = Titlemenu::leftjoin('seasons', 'titlemenus.menu_season_id', '=', 'seasons.id')
+                ->get(['titlemenus.id', 'titlemenus.menu_name', 'seasons.season_name']);
+
+            return response()->json([
+                'success' => true,
+                'menus' => $menus
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Xatolik yuz berdi: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
+     * Tanlangan menyuni active_menus jadvaliga ko'chirish
+     */
+    public function assignMenuToActive(Request $request)
+    {
+        try {
+            $request->validate([
+                'day_id' => 'required|integer',
+                'kingar_name_id' => 'required|integer',
+                'age_range_id' => 'required|integer',
+                'title_menu_id' => 'required|integer'
+            ]);
+
+            $dayId = $request->day_id;
+            $kingarId = $request->kingar_name_id;
+            $ageId = $request->age_range_id;
+            $menuId = $request->title_menu_id;
+
+            // 2. Menu_compositions dan ma'lumotlarni olish
+            $compositions = Menu_composition::where('title_menu_id', $menuId)
+                ->where('age_range_id', $ageId)
+                ->get();
+
+            // 3. Active_menus ga ko'chirish
+            foreach ($compositions as $comp) {
+                Active_menu::create([
+                    'day_id' => $dayId,
+                    'title_menu_id' => $menuId,
+                    'menu_meal_time_id' => $comp->menu_meal_time_id,
+                    'menu_food_id' => $comp->menu_food_id,
+                    'product_name_id' => $comp->product_name_id,
+                    'age_range_id' => $ageId,
+                    'weight' => $comp->weight
+                ]);
+            }
+
+            // 4. Number_childrens jadvalidagi kingar_menu_id ni yangilash
+            Number_children::where('day_id', $dayId)
+                ->where('kingar_name_id', $kingarId)
+                ->where('king_age_name_id', $ageId)
+                ->update(['kingar_menu_id' => $menuId]);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Menyu muvaffaqiyatli o\'zgartirildi!'
+            ]);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Xatolik yuz berdi: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
 }

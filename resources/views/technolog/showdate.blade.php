@@ -223,6 +223,46 @@
     </div>
 </div>
 
+<!-- Menyuni o'zgartirish Modal -->
+<div class="modal fade" id="changeMenuModal" tabindex="-1" aria-labelledby="changeMenuModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header bg-primary">
+                <h5 class="modal-title text-white" id="changeMenuModalLabel">Menyuni o'zgartirish</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="mb-3">
+                    <label class="form-label"><strong>Bog'cha:</strong> <span id="modal-kindgarden-name"></span></label>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label"><strong>Yosh guruhi:</strong> <span id="modal-age-name"></span></label>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label"><strong>Joriy menyu:</strong> <span id="modal-current-menu"></span></label>
+                </div>
+                <hr>
+                <div class="mb-3">
+                    <label for="select-menu" class="form-label"><strong>Yangi menyuni tanlang:</strong></label>
+                    <select class="form-select" id="select-menu" required>
+                        <option value="">-- Menyuni tanlang --</option>
+                    </select>
+                </div>
+                <div class="alert alert-warning">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <strong>Diqqat:</strong> Menyuni o'zgartirganda, Faqat shu muassasauchun avvalgi menyu ma'lumotlari o'chiriladi va yangi menyu tarkibi ushbu kun jadvaliga ko'chiriladi.
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Bekor qilish</button>
+                <button type="button" class="btn btn-primary" onclick="saveMenuChange()">
+                    <i class="fas fa-save"></i> Saqlash
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <div class="date">
     <!-- <div class="lline"></div> -->
     <div class = "year first-text fw-bold">
@@ -353,7 +393,18 @@
                            title="Xodimlar sonini o'zgartirish">
                         </i>
                     </td>
-                    <td><a href="/activsecondmenuPDF/{{ $aday }}/{{ $row['kingar_name_id'] }}" target="_blank"><i class="far fa-file-pdf" style="color: dodgerblue; font-size: 18px;"></i></a></td>
+                    <td>
+                        <a href="/activsecondmenuPDF/{{ $aday }}/{{ $row['kingar_name_id'] }}" target="_blank"><i class="far fa-file-pdf" style="color: dodgerblue; font-size: 18px;"></i></a>
+                        <i class="fas fa-edit text-primary ms-2 change-menu-btn"
+                           style="cursor: pointer; font-size: 16px;"
+                           data-bs-toggle="modal"
+                           data-bs-target="#changeMenuModal"
+                           data-day-id="{{ $aday }}"
+                           data-kingar-name-id="{{ $row['kingar_name_id'] }}"
+                           data-kindgarden-name="{{ $row['kingar_name'] }}"
+                           title="Menyuni o'zgartirish">
+                        </i>
+                    </td>
                     @foreach($ages as $age)
                     @if(isset($row[$age->id]))
                         <td>
@@ -363,7 +414,22 @@
                             <i class="far fa-envelope" style="color: #c40c0c"></i> 
                             @endif
                         </td>
-                        <td><a href="/activmenuPDF/{{ $aday }}/{{ $row['kingar_name_id'] }}/{{ $age->id }}" target="_blank"><i class="far fa-file-pdf" style="color: dodgerblue; font-size: 18px;"></i></a></td>
+                        <td>
+                            <a href="/activmenuPDF/{{ $aday }}/{{ $row['kingar_name_id'] }}/{{ $age->id }}" target="_blank"><i class="far fa-file-pdf" style="color: dodgerblue; font-size: 18px;"></i></a>
+                            <i class="fas fa-edit text-success ms-2 change-age-menu-btn"
+                               style="cursor: pointer; font-size: 16px;"
+                               data-bs-toggle="modal"
+                               data-bs-target="#changeMenuModal"
+                               data-day-id="{{ $aday }}"
+                               data-kingar-name-id="{{ $row['kingar_name_id'] }}"
+                               data-kindgarden-name="{{ $row['kingar_name'] }}"
+                               data-age-id="{{ $age->id }}"
+                               data-age-name="{{ $age->age_name }}"
+                               data-current-menu-id="{{ $row[$age->id][4] ?? '' }}"
+                               data-current-menu-name="{{ $row[$age->id][5] ?? 'Tanlanmagan' }}"
+                               title="Menyuni o'zgartirish - {{ $age->age_name }}">
+                            </i>
+                        </td>
                     @else
                         <td>{{ ' ' }}</td>
                         <td>{{ ' ' }}</td>
@@ -906,6 +972,111 @@
                 }
             });
         });
+
+        // ==========================================
+        // MENYUNI O'ZGARTIRISH FUNKSIYALARI
+        // ==========================================
+
+        let currentMenuChangeData = {};
+
+        // Modal ochilganda
+        $('.change-age-menu-btn').click(function() {
+            var dayId = $(this).data('day-id');
+            var kingarId = $(this).data('kingar-name-id');
+            var kindgardenName = $(this).data('kindgarden-name');
+            var ageId = $(this).data('age-id');
+            var ageName = $(this).data('age-name');
+            var currentMenuId = $(this).data('current-menu-id');
+            var currentMenuName = $(this).data('current-menu-name');
+
+            currentMenuChangeData = {
+                day_id: dayId,
+                kingar_name_id: kingarId,
+                age_range_id: ageId
+            };
+
+            // Modal ma'lumotlarini to'ldirish
+            $('#modal-kindgarden-name').text(kindgardenName);
+            $('#modal-age-name').text(ageName);
+            $('#modal-current-menu').text(currentMenuName);
+
+            // Menyular ro'yxatini olish
+            loadMenusList(currentMenuId);
+        });
+
+        // Barcha bog'chalar uchun menyu o'zgartirish (eski funksiya)
+        $('.change-menu-btn').click(function() {
+            alert('Bu funksiya har bir yosh guruhi uchun alohida ishlaydi. Iltimos, yosh guruhi ustunidagi qalamcha belgisini bosing.');
+        });
+
+        // Menyular ro'yxatini yuklash
+        function loadMenusList(currentMenuId) {
+            $.ajax({
+                url: '/technolog/get-all-menus',
+                method: 'GET',
+                success: function(response) {
+                    if (response.success) {
+                        var selectMenu = $('#select-menu');
+                        selectMenu.empty();
+                        selectMenu.append('<option value="">-- Menyuni tanlang --</option>');
+
+                        response.menus.forEach(function(menu) {
+                            var selected = (menu.id == currentMenuId) ? 'selected' : '';
+                            selectMenu.append(
+                                '<option value="' + menu.id + '" ' + selected + '>' +
+                                menu.menu_name + ' (' + menu.season_name + ')' +
+                                '</option>'
+                            );
+                        });
+                    }
+                },
+                error: function() {
+                    alert('Menyular ro\'yxatini yuklashda xatolik yuz berdi!');
+                }
+            });
+        }
+
+        // Menyuni saqlash
+        window.saveMenuChange = function() {
+            var menuId = $('#select-menu').val();
+
+            if (!menuId) {
+                alert('Iltimos, menyuni tanlang!');
+                return;
+            }
+
+            if (!confirm('Menyuni o\'zgartirishni tasdiqlaysizmi?')) {
+                return;
+            }
+
+            var data = {
+                ...currentMenuChangeData,
+                title_menu_id: menuId,
+                _token: $('meta[name="csrf-token"]').attr('content')
+            };
+
+            $.ajax({
+                url: '{{ route("technolog.assignMenuToActive") }}',
+                method: 'POST',
+                data: data,
+                success: function(response) {
+                    if (response.success) {
+                        alert(response.message);
+                        $('#changeMenuModal').modal('hide');
+                        location.reload();
+                    } else {
+                        alert('Xatolik: ' + response.message);
+                    }
+                },
+                error: function(xhr) {
+                    var message = 'Xatolik yuz berdi!';
+                    if (xhr.responseJSON && xhr.responseJSON.message) {
+                        message = xhr.responseJSON.message;
+                    }
+                    alert(message);
+                }
+            });
+        };
     });
 </script>
 @endsection
