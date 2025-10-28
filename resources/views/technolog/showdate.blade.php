@@ -395,7 +395,7 @@
                     </td>
                     <td>
                         <a href="/activsecondmenuPDF/{{ $aday }}/{{ $row['kingar_name_id'] }}" target="_blank"><i class="far fa-file-pdf" style="color: dodgerblue; font-size: 18px;"></i></a>
-                        <i class="fas fa-edit text-primary ms-2 change-menu-btn"
+                        <!-- <i class="fas fa-edit text-primary ms-2 change-menu-btn"
                            style="cursor: pointer; font-size: 16px;"
                            data-bs-toggle="modal"
                            data-bs-target="#changeMenuModal"
@@ -403,7 +403,7 @@
                            data-kingar-name-id="{{ $row['kingar_name_id'] }}"
                            data-kindgarden-name="{{ $row['kingar_name'] }}"
                            title="Menyuni o'zgartirish">
-                        </i>
+                        </i> -->
                     </td>
                     @foreach($ages as $age)
                     @if(isset($row[$age->id]))
@@ -415,6 +415,7 @@
                             @endif
                         </td>
                         <td>
+                            {{ $row[$age->id][5] ?? ' ' }}
                             <a href="/activmenuPDF/{{ $aday }}/{{ $row['kingar_name_id'] }}/{{ $age->id }}" target="_blank"><i class="far fa-file-pdf" style="color: dodgerblue; font-size: 18px;"></i></a>
                             <i class="fas fa-edit text-success ms-2 change-age-menu-btn"
                                style="cursor: pointer; font-size: 16px;"

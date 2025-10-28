@@ -377,8 +377,10 @@ class TechnologController extends Controller
         $months = Month::where('yearid', $y_id)->get();
         $ages = Age_range::all();
         $nextday = Number_children::where('day_id', $day)->join('kindgardens', 'number_childrens.kingar_name_id', '=', 'kindgardens.id')
+                        ->leftjoin('titlemenus', 'number_childrens.kingar_menu_id', '=', 'titlemenus.id')
                         ->orderby('number_childrens.kingar_name_id', 'ASC')
                         ->get();
+        
         $nextdayitem = array();
         $loo = 0;
         $days = Day::where('month_id', $m_id)
@@ -400,7 +402,7 @@ class TechnologController extends Controller
         for($i = 0; $i < count($nextday); $i++){
             $nextdayitem[$loo]['kingar_name_id'] = $nextday[$i]->kingar_name_id;
             $nextdayitem[$loo]['kingar_name'] = $nextday[$i]->kingar_name;
-            $nextdayitem[$loo][$nextday[$i]->king_age_name_id] = array($nextday[$i]->id, $nextday[$i]->kingar_children_number, $nextday[$i]->tempid, $nextday[$i]->age_number, $nextday[$i]->kingar_menu_id);
+            $nextdayitem[$loo][$nextday[$i]->king_age_name_id] = array($nextday[$i]->id, $nextday[$i]->kingar_children_number, $nextday[$i]->tempid, $nextday[$i]->age_number, $nextday[$i]->kingar_menu_id, $nextday[$i]->menu_name);
             $nextdayitem[$loo]['workers_count'] = $nextday[$i]->workers_count;
             if ($i + 1 < count($nextday) and $nextday[$i + 1]->kingar_name_id != $nextdayitem[$loo]['kingar_name_id']) {
                 $loo++;
