@@ -2222,11 +2222,22 @@ class TechnologController extends Controller
     }
 
     public function editnextcheldren(Request $request){
-        // soat
+        
         date_default_timezone_set('Asia/Tashkent');
         $d = strtotime("-8 hours 30 minutes");
+        $currentRecord = Nextday_namber::where('id', $request->nextrow)->first();
+        
         Nextday_namber::where('id', $request->nextrow)
                     ->update(['kingar_children_number' => $request->agecount]);
+        ChildrenCountHistory::create([
+            'kingar_name_id' => $currentRecord->kingar_name_id,
+            'king_age_name_id' => $currentRecord->king_age_name_id,
+            'old_children_count' => $currentRecord->kingar_children_number,
+            'new_children_count' => $request->agecount,
+            'changed_by' => auth()->user()->id,
+            'changed_at' => now(),
+            'change_reason' => 'Admin tomonidan qo\'lda o\'zgartirildi'
+        ]);
 
         return redirect()->route('technolog.sendmenu', ['day' => date("d-F-Y", $d)]);
     }

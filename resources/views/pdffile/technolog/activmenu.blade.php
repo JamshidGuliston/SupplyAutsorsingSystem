@@ -442,11 +442,14 @@
 									}
 								@endphp
 								@if($qrManzilImage)
-									<!-- <img src="data:image/jpeg;base64,{{ $qrManzilImage }}"
-										style="width:120; position:absolute; left:10px;"> -->
+									<img src="data:image/jpeg;base64,{{ $qrManzilImage }}"
+										style="width:120; position:absolute; left:10px;">
 								@endif
 							</div>
 						@endif
+						    <div class="column">
+								
+							</div>
 							<div class="column">
 								<p style="text-align: center;"><strong>{{ explode(',', env('MENU_SIGNATURE'))[0] }}:</strong> __________________;</p>
 							</div>

@@ -951,7 +951,7 @@
 
     <div class="container-fluid">
         <div class="table-responsive mx-2">
-            <table class="table table-light table-bordered table-striped table-hover" id="secondTable">
+            <table class="table table-light table-bordered table-hover" id="secondTable">
                 <thead>
                     <tr>
                         <th scope="col" rowspan="2">ID</th>
@@ -1027,12 +1027,12 @@
                                     ->first();
                                 
                                 // Default holat - o'zgartirish yo'q
-                                $status = '#f8f882'; // Sariq rang
+                                $status = '#ffffca'; // Sariq rang
                                 $status_icon = "<i class='fas fa-question' style='color:rgb(238, 65, 65); font-size: 14px; cursor: pointer;' title='Bugungi kun uchun o'zgartirish yo'q'></i>";
                                 
                                 // Agar bugungi kun uchun o'zgartirish mavjud bo'lsa
                                 if($todayHistory) {
-                                    $status = '#93ff93'; // Yashil rang
+                                    $status = '#bfffbf'; // Yashil rang
                                     $status_icon = "<i class='fas fa-check' style='color:rgb(18, 141, 13); font-size: 14px; cursor: pointer;' title='Bugungi kun uchun o'zgartirish mavjud'></i>";
                                 }
                             @endphp
