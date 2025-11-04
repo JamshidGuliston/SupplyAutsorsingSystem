@@ -451,7 +451,7 @@
 								
 							</div>
 							<div class="column">
-								<p style="text-align: center;"><strong>{{ explode(',', env('MENU_SIGNATURE'))[0] }}:</strong> __________________;</p>
+								<p style="text-align: left;"><strong>{{ explode(',', env('MENU_SIGNATURE'))[0] }}:</strong> __________________;</p>
 							</div>
 							<div class="column">
 								<p style="text-align: right;"><strong>{{ explode(',', env('MENU_SIGNATURE'))[1] }}: </strong> __________________;</p>
