@@ -447,9 +447,6 @@
 								@endif
 							</div>
 						@endif
-						    <div class="column">
-								
-							</div>
 							<div class="column">
 								<p style="text-align: left;"><strong>{{ explode(',', env('MENU_SIGNATURE'))[0] }}:</strong> __________________;</p>
 							</div>
