@@ -11,7 +11,7 @@
 		@page { margin: 10mm 10mm 10mm 10mm; }
 		body{
 			font-family: DejaVu Sans;
-			font-size: 8px;
+			font-size: 7px;
 			background-position: top left;
 			background-repeat: no-repeat;
 			background-size: 100%;
