@@ -15,7 +15,7 @@
             font-family: 'DejaVu Sans', Arial, sans-serif;
             margin: 0;
             padding: 0;
-            font-size: 14px;
+            font-size: 13px;
             line-height: 1.3;
             color: #000;
         }
@@ -202,8 +202,7 @@
 <body>
     <!-- Header qismi -->
     <div class="header">
-        <div class="invoice-title">СЧЁТ-ФАКТУРА</div>
-        <div class="invoice-number">№ {{ $invoice_number ?? "_________________________________" }}</div>
+        <div class="invoice-title">СЧЁТ-ФАКТУРА  № {{ $invoice_number ?? "_________________________________" }}</div>
         <div class="invoice-date">{{ $invoice_date."  й" ?? "_________________________________" }}</div>
         <div class="invoice-date">{{ "Хизмат кўрсатиш шартномаси: ".$contract_data }}</div>
     </div>
