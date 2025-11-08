@@ -11,7 +11,7 @@
 		@page { margin: 10mm 10mm 10mm 10mm; }
 		body{
 			font-family: DejaVu Sans;
-			font-size: 8px;
+			font-size: 7px;
 			background-position: top left;
 			background-repeat: no-repeat;
 			background-size: 100%;
@@ -390,10 +390,10 @@
                       </table>
 					  <div class="row" style="margin-top: 15px;">
 							<div class="column">
-								<p style="text-align: center;"><strong> Бир нафар {{ $menu[0]['age_name'] }}ли бола учун:</strong> <?php echo number_format($protsent->eater_cost, 0, ',', ' '); ?> so'm</p>
+								<!-- <p style="text-align: center;"><strong> Бир нафар {{ $menu[0]['age_name'] }}ли бола учун:</strong> <?php echo number_format($protsent->eater_cost, 0, ',', ' '); ?> so'm</p> -->
 							</div>
 							<div class="column">
-								<p style="text-align: center;"><strong> Жами сарфланган сумма:</strong> {{  number_format($menu[0]['kingar_children_number']*$protsent->eater_cost, 0, ',', ' '); }}</p>
+								<!-- <p style="text-align: center;"><strong> Жами сарфланган сумма:</strong> {{  number_format($menu[0]['kingar_children_number']*$protsent->eater_cost, 0, ',', ' '); }}</p> -->
 							</div>
 							<div class="column">
 								
@@ -447,11 +447,8 @@
 								@endif
 							</div>
 						@endif
-						    <div class="column">
-								
-							</div>
 							<div class="column">
-								<p style="text-align: center;"><strong>{{ explode(',', env('MENU_SIGNATURE'))[0] }}:</strong> __________________;</p>
+								<p style="text-align: left;"><strong>{{ explode(',', env('MENU_SIGNATURE'))[0] }}:</strong> __________________;</p>
 							</div>
 							<div class="column">
 								<p style="text-align: right;"><strong>{{ explode(',', env('MENU_SIGNATURE'))[1] }}: </strong> __________________;</p>
