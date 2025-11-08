@@ -304,27 +304,52 @@
             <div class="modal-header">
                 <!-- <h5 class="modal-title" id="exampleModalLabel">Продукт хисоби</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button> -->
-                <div class="row">
-                    <div class="col-md-5">
-                        <div class="product-select">
-                            <select id="onemenu" class="form-select" onchange="changeFunc();" aria-label="Default select example">
-                                <option value="">3-7 ёш меню</option>
-                                @foreach($menus as $row)
-                                <option value="{{$row['id']}}">{{$row['menu_name']}} ({{$row['season_name']}})</option>
-                                @endforeach
-                            </select>
-                        </div>
-                    </div>
-                    <div class="col-md-5">
-                        <div class="product-select">
-                            <select id="twomenu" class="form-select" aria-label="Default select example">
-                                <option value="">Қисқа гурух меню</option>
-                                @foreach($menus as $row)
-                                <option value="{{$row['id']}}">{{$row['menu_name']}} ({{$row['season_name']}})</option>
-                                @endforeach
-                            </select>
-                        </div>
-                    </div>
+                <div class="row" id="menu-selects-container">
+                    @if(isset($ageRanges) && $ageRanges->count() > 0)
+                        @php
+                            $ageRangesCount = $ageRanges->count();
+                            // Har bir yosh toifasi uchun column kengligini hisoblash
+                            // Plus tugmasi uchun col-md-2 ajratilgan, qolgan joy yosh toifalariga taqsimlanadi
+                            // Agar 3 ta bo'lsa: (12-2)/3 = 3.33, har biri col-md-3 yoki col-md-4
+                            // Agar 2 ta bo'lsa: (12-2)/2 = 5, har biri col-md-5
+                            // Agar 1 ta bo'lsa: col-md-10
+                            if($ageRangesCount == 3) {
+                                $colClass = 'col-md-3';
+                            } elseif($ageRangesCount == 2) {
+                                $colClass = 'col-md-5';
+                            } elseif($ageRangesCount == 1) {
+                                $colClass = 'col-md-10';
+                            } else {
+                                $colClass = 'col-md-2';
+                            }
+                        @endphp
+                        @foreach($ageRanges as $index => $ageRange)
+                            @php
+                                $ageRangeMenus = isset($menusByAgeRange[$ageRange->id]['menus']) ? $menusByAgeRange[$ageRange->id]['menus'] : collect();
+                                // Select ID-larni dinamik yaratish
+                                $selectId = 'menu_' . $ageRange->id;
+                            @endphp
+                            <div class="{{ $colClass }}">
+                                <div class="product-select">
+                                    <select id="{{ $selectId }}" class="form-select age-range-select" 
+                                            data-age-range-id="{{ $ageRange->id }}"
+                                            onchange="changeFunc({{ $ageRange->id }});"
+                                            aria-label="Default select example">
+                                        <option value="">{{ $ageRange->age_name }} меню</option>
+                                        @if($ageRangeMenus->count() > 0)
+                                            @foreach($ageRangeMenus as $row)
+                                            <option value="{{$row['id']}}">{{$row['menu_name']}} ({{$row['season_name']}})</option>
+                                            @endforeach
+                                        @else
+                                            @foreach($menus as $row)
+                                            <option value="{{$row['id']}}">{{$row['menu_name']}} ({{$row['season_name']}})</option>
+                                            @endforeach
+                                        @endif
+                                    </select>
+                                </div>
+                            </div>
+                        @endforeach
+                    @endif
                     <div class="col-md-2">
                         <div class="product-select">
                             <i class="fas fa-plus me-2" style="color:#23b242; cursor: pointer; padding-top: 10px"></i>
@@ -335,14 +360,17 @@
                 </div>  
             </div>
             <div class="modal-body">
-                <div class="table">
+                <div class="table">     
                     <table style="width:100%">
                         <thead style="background-color: floralwhite;">
                             <tr>
                                 <th scope="col">...</th>
-                                <th scope="col" style="text-align: center;">3-7 ёш</th>
+                            @if(isset($ageRanges) && $ageRanges->count() > 0)
+                                @foreach($ageRanges as $index => $ageRange)
+                                    <th scope="col" style="text-align: center;">{{ $ageRange->age_name }}</th>
+                                @endforeach
+                            @endif
                                 <th scope="col" style="text-align: center;">Ходимлар</th>
-                                <th scope="col" style="text-align: center;">Қисқа гурух</th>
                             </tr>
                         </thead>
                         <tbody class="addfood">    
@@ -689,45 +717,113 @@
 
 @section('script')
 <script>
-    function changeFunc() {
-        var selectBox = document.getElementById("onemenu");
+    function changeFunc(ageRangeId) {
+        var selectId = 'menu_' + ageRangeId;
+        var selectBox = document.getElementById(selectId);
+        if (!selectBox) return;
+        
         var menuid = selectBox.options[selectBox.selectedIndex].value;
         var div = $('.afternoon');
-        $.ajax({
-            method: "GET",
-            url: '/storage/getworkerfoods',
-            data: {
-                'menuid': menuid,
-            },
-            success: function(data) {
-                div.html(data);
-            }
-        })
+        
+        if (menuid && menuid != "") {
+            $.ajax({
+                method: "GET",
+                url: '/storage/getworkerfoods',
+                data: {
+                    'menuid': menuid,
+                },
+                success: function(data) {
+                    div.html(data);
+                }
+            });
+        } else {
+            div.html('');
+        }
     }
     $(document).ready(function() {
         var tr = 0;
         $('.fa-plus').click(function() {
-            var onemenuid = $('#onemenu').val();
-            var onemenutext = $('#onemenu option:selected').text();
+            var ageRanges = @json($ageRanges ?? []);
             var div = $('.addfood');
-            var twomenuid = $('#twomenu').val();
-            var twomenutext = $('#twomenu option:selected').text();
-            var chkArray = [];
-            if(onemenuid == "" || twomenuid == "")
-            {
-                alert("Menyu tanlang!");
-            }
-            else{
-                tr++;
-                var bb = 0;
-                $("input:checkbox[id=vehicle]:checked").each(function(){
-                    bb = 1;
-                    div.append("<input type='hidden' name='workerfoods["+tr+"]["+$(this).val()+"]' value="+onemenuid+">");
-                });
+            var hasSelectedMenu = false;
+            var selectedMenus = [];
+            var workerMenuSelected = false;
+            
+            // Har bir yosh toifasi uchun tanlangan menyuni tekshirish
+            ageRanges.forEach(function(ageRange) {
+                var ageRangeId = ageRange.id;
+                var ageRangeName = ageRange.age_name;
+                var selectId = 'menu_' + ageRangeId;
                 
-                div.append("<tr><td>"+tr+"-кун</td><td><input type='hidden' name='onemenu["+tr+"][4]' value="+onemenuid+"><input type='hidden' name='onemenu["+tr+"][1]' value="+onemenuid+"><input type='hidden' name='onemenu["+tr+"][2]' value="+onemenuid+">"+onemenutext+"</td><td>"+(bb ? "+":"-")+"</td><td><input type='hidden' name='onemenu["+tr+"][3]' value="+twomenuid+">"+twomenutext+"</td></tr>");
+                var menuId = $('#' + selectId).val();
+                var menuText = $('#' + selectId + ' option:selected').text();
+                
+                if(menuId && menuId != "") {
+                    hasSelectedMenu = true;
+                    selectedMenus.push({
+                        ageRangeId: ageRangeId,
+                        ageRangeName: ageRangeName,
+                        menuId: menuId,
+                        menuText: menuText,
+                        selectId: selectId
+                    });
+                }
+            });
+            
+            // Xodimlar uchun tanlangan menyuni tekshirish
+            // Xodimlar uchun birinchi yosh toifasidagi menyu ishlatiladi
+            var workerMenuId = '';
+            var workerMenuText = '';
+            if(ageRanges.length > 0) {
+                var firstAgeRangeId = ageRanges[0].id;
+                var firstSelectId = 'menu_' + firstAgeRangeId;
+                $("input:checkbox[id=vehicle]:checked").each(function(){
+                    workerMenuSelected = true;
+                    workerMenuId = $('#' + firstSelectId).val();
+                    workerMenuText = $('#' + firstSelectId + ' option:selected').text();
+                });
             }
             
+            // Agar hech qanday menyu tanlanmagan bo'lsa
+            if(!hasSelectedMenu && !workerMenuSelected) {
+                alert("Kamida bitta menyu tanlang!");
+                return;
+            }
+            
+            // Jadvalga yangi qator qo'shish
+            tr++;
+            var rowHtml = '<tr>';
+            rowHtml += '<td>' + tr + '-кун</td>';
+            
+            // Har bir yosh toifasi uchun ustun qo'shish
+            ageRanges.forEach(function(ageRange) {
+                var ageRangeId = ageRange.id;
+                var selectId = 'menu_' + ageRangeId;
+                
+                var menuId = $('#' + selectId).val();
+                var menuText = $('#' + selectId + ' option:selected').text();
+                
+                if(menuId && menuId != "") {
+                    // Yangi format uchun - har bir yosh toifasi uchun alohida
+                    rowHtml += '<td><input type="hidden" name="menus['+tr+']['+ageRangeId+']" value="'+menuId+'">'+menuText+'</td>';
+                } else {
+                    rowHtml += '<td>-</td>';
+                }
+            });
+            
+            // Xodimlar ustuni
+            if(workerMenuSelected && workerMenuId) {
+                rowHtml += '<td>+</td>';
+                // Hidden input qo'shish
+                $("input:checkbox[id=vehicle]:checked").each(function(){
+                    div.append('<input type="hidden" name="workerfoods['+tr+']['+$(this).val()+']" value="'+workerMenuId+'">');
+                });
+            } else {
+                rowHtml += '<td>-</td>';
+            }
+            
+            rowHtml += '</tr>';
+            div.append(rowHtml);
         });
     });
     

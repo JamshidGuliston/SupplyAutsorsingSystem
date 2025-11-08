@@ -29,6 +29,7 @@ use App\Models\Titlemenu;
 use App\Models\Groupweight;
 use App\Models\Weightproduct;
 use App\Models\User;
+use App\Models\Age_range;
 use App\Models\Year;
 use App\Models\Payment;
 use App\Models\Sale;
@@ -302,7 +303,39 @@ class StorageController extends Controller
     }
 
     public function addmultisklad(Request $request){
-        $menus = Titlemenu::join('seasons', 'seasons.id', '=', 'titlemenus.menu_season_id')->get(['titlemenus.id', 'titlemenus.menu_name', 'seasons.season_name']);
+        // Barcha menyular
+        $allMenus = Titlemenu::join('seasons', 'seasons.id', '=', 'titlemenus.menu_season_id')
+            ->with('age_range')
+            ->get(['titlemenus.id', 'titlemenus.menu_name', 'seasons.season_name']);
+        
+        // Barcha yosh guruhlarni olish
+        $ageRanges = Age_range::orderBy('id')->get();
+        
+        // Har bir yosh guruhiga tegishli menyularni ajratib olish
+        $menusByAgeRange = [];
+        foreach ($ageRanges as $ageRange) {
+            $menusByAgeRange[$ageRange->id] = [
+                'age_range' => $ageRange,
+                'menus' => $allMenus->filter(function($menu) use ($ageRange) {
+                    return $menu->age_range->contains('id', $ageRange->id);
+                })->map(function($menu) {
+                    return [
+                        'id' => $menu->id,
+                        'menu_name' => $menu->menu_name,
+                        'season_name' => $menu->season_name
+                    ];
+                })->values()
+            ];
+        }
+        
+        // Eski format uchun barcha menyular (qolgan joylar uchun)
+        $menus = $allMenus->map(function($menu) {
+            return [
+                'id' => $menu->id,
+                'menu_name' => $menu->menu_name,
+                'season_name' => $menu->season_name
+            ];
+        });
         
         $gardens = Kindgarden::where('hide', 1)->get();
         $product_categories = Product_category::with('products')->get();
@@ -310,8 +343,8 @@ class StorageController extends Controller
         
         $orders = order_product::where('shop_id', 0)->where('parent_id', null)->orderby('id', 'DESC')->get();
         $days = $this->days();
-        // dd($menus);
-        return view('storage.addmultisklad', compact('orders','gardens', 'menus', 'days', 'product_categories', 'products'));
+        
+        return view('storage.addmultisklad', compact('orders','gardens', 'menus', 'ageRanges', 'menusByAgeRange', 'days', 'product_categories', 'products'));
     }
     
     // order_title bo'yicha guruhlangan ma'lumotlarni olish
@@ -1174,6 +1207,7 @@ class StorageController extends Controller
     }
 
     public function newordersklad(Request $request){
+        // dd($request->all());
         $kindproducts = [];
         $kindworkerproducts = [];
         // Hisobot qilinishi kerak bo'lgan bog'chalar sikli
@@ -1202,7 +1236,7 @@ class StorageController extends Controller
             $kind = Kindgarden::where('id', $garden)->with('age_range')->first(); // joriy bog'cha yosh toifalari bilan
             $dataOfWeight['garden_name'] = $kind->kingar_name;
             // O'quvchilar uchun menyu sikli
-            foreach($request->onemenu as $tr => $day){
+            foreach($request->menus as $tr => $day){
                 // Bog'cha yosh toifalari bo'yicha sikl
                 foreach($kind->age_range as $age){
                     // $ch = Number_children::where('kingar_name_id', $garden)->where('king_age_name_id', $age->id)->orderby('day_id', 'DESC')->first();
