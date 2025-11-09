@@ -190,7 +190,7 @@
                 <th colspan="3">Буюртма бўйича бола сони</th>
                 <th colspan="2">Бир нафар болага сарфланган харажат НДС билан</th>
                 <th colspan="3">Жами етказиб бериш харажат НДС билан</th>
-                @foreach($kindgar->age_range as $age)
+                @foreach($ages as $age)
                     <th colspan="4">Жами етказиб бериш харажатлари <br/>{{ "(".$age->description.")" }}</th>
                 @endforeach
                 <th rowspan="2" class="final-total-col">Жами етказиб бериш суммаси (НДС билан)</th>
@@ -205,7 +205,7 @@
                 <th>9-10,5 соатлик гуруҳ</th>
                 <th>4 соатлик гуруҳ</th>
                 <th>Жами</th>
-                @foreach($kindgar->age_range as $age)
+                @foreach($ages as $age)
                     <th>Сумма (безНДС)</th>
                     <th>Устама ҳақ {{$costs->where('age_range_id', 4)->first()->raise ?? 0}}%</th>
                     <th>ҚҚС (НДС) {{$costs->where('age_range_id', 4)->first()->nds ?? 0}}%</th>
