@@ -279,6 +279,7 @@ class StorageController extends Controller
     public function addr_products(Request $request){
         // dd($request->all());
         $id = $request->month_id;
+        $yearid = $request->yearid;
         $products = $request->productsid;
         $weights = $request->weights;
         $costs = $request->costs;
@@ -299,7 +300,7 @@ class StorageController extends Controller
             ]);
         }
     
-        return redirect()->route('storage.addedproducts', $id);
+        return redirect()->route('storage.addedproducts', ['year' => 0, 'id' => 0]);
     }
 
     public function addmultisklad(Request $request){
