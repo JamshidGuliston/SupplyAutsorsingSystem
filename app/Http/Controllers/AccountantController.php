@@ -1998,7 +1998,7 @@ class AccountantController extends Controller
             ->join('months', 'months.id', '=', 'days.month_id')
             ->join('years', 'years.id', '=', 'days.year_id')
             ->get(['days.id', 'days.day_number', 'months.month_name', 'years.year_name', 'days.created_at']);
-        $ages = Age_range::all();
+        $ages = Age_range::where('parent_id', null)->get();
         $costs = Protsent::where('region_id', $kindgar->region_id)
                 ->where('start_date', '<=', $days[0]->created_at->format('Y-m-d'))
                 ->where('end_date', '>=', $days[count($days)-1]->created_at->format('Y-m-d'))
@@ -2096,7 +2096,7 @@ class AccountantController extends Controller
             ->join('months', 'months.id', '=', 'days.month_id')
             ->join('years', 'years.id', '=', 'days.year_id')
             ->get(['days.id', 'days.day_number', 'months.month_name', 'years.year_name', 'days.created_at']);
-        $ages = Age_range::all();
+        $ages = Age_range::where('parent_id', null)->get();
         $costs = Protsent::where('region_id', $id)
                 ->where('start_date', '<=', $days[0]->created_at->format('Y-m-d'))
                 ->where('end_date', '>=', $days[count($days)-1]->created_at->format('Y-m-d'))

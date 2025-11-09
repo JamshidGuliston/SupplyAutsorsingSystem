@@ -12,10 +12,15 @@ class Age_range extends Model
 
     protected $fillable = [
         'age_name',
-        'description'
+        'description',
+        'parent_id'
     ];
 
-    // public function kindgarden(){
-    //     return $this->belongsToMany(Kindgarden::class);
-    // }
+    public function parent(){
+        return $this->belongsTo(Age_range::class, 'parent_id');
+    }
+
+    public function children(){
+        return $this->hasMany(Age_range::class, 'parent_id');
+    }
 }
