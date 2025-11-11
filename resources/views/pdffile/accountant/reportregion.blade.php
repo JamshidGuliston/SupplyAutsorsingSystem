@@ -37,6 +37,14 @@
             padding: 8px 4px;
             text-align: center;
             vertical-align: middle;
+        }
+
+        th {
+            white-space: nowrap;
+            font-size: 13px;
+        }
+
+        td {
             white-space: wrap;
         }
         

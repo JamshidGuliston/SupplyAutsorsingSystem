@@ -2214,7 +2214,7 @@ class AccountantController extends Controller
         if(is_null(env('INVOICE_NUMBER'))){
             $invoice_number = $days->last()->month_id.'-'. $id;
         }else{
-            $invoice_number = $days->last()->month_id.'/'.env('INVOICE_NUMBER');
+            $invoice_number = env('INVOICE_NUMBER');
         }
         $invoice_date = $days->last()->created_at->format('d.m.Y');
         
@@ -2295,7 +2295,7 @@ class AccountantController extends Controller
         if(is_null(env('INVOICE_NUMBER'))){
             $invoice_number = $id.'-'.$days->last()->month_id;
         }else{
-            $invoice_number = $days->last()->month_id.'/'.env('INVOICE_NUMBER');
+            $invoice_number = env('INVOICE_NUMBER');
         }
         $invoice_date = $days->last()->created_at->format('d.m.Y');
         
