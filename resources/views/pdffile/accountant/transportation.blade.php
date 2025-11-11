@@ -179,7 +179,16 @@
     <div class="header">
         {{ $kindgar->kingar_name }} да {{ $days[0]->day_number }}-{{ $days[count($days)-1]->day_number }} {{ $days[0]->month_name }} {{ $days[0]->year_name }} йил кунлари болалар катнови ва аутсорсинг хизмати харажатлари тўғрисида маълумот
     </div>
-    
+    @if($kindgar->age_range->where('id', '=', 4)->count() > 0)
+        @php
+            $main_age_id = 4;
+        @endphp
+    @endif
+    @if($kindgar->age_range->where('id', '=', 5)->count() > 0)
+        @php
+            $main_age_id = 5;
+        @endphp
+    @endif
     <div class="table-container">
         <table>
             <!-- Asosiy sarlavha qatorlari -->
@@ -190,27 +199,34 @@
                 <th colspan="3">Буюртма бўйича бола сони</th>
                 <th colspan="2">Бир нафар болага сарфланган харажат НДС билан</th>
                 <th colspan="3">Жами етказиб бериш харажат НДС билан</th>
-                @foreach($ages as $age)
-                    <th colspan="4">Жами етказиб бериш харажатлари <br/>{{ "(".$age->description.")" }}</th>
-                @endforeach
+                <th colspan="4">Жами етказиб бериш харажатлари <br/>{{ "(".$ages[0]->description.")" }}</th>
+                @php
+                    $age3_7description = "____";
+                @endphp
+                @php
+                    $age3_7description = $kindgar->age_range->where('id', '=', $main_age_id)->first()->description;
+                @endphp
+                <th colspan="4">Жами етказиб бериш харажатлари <br/>{{ "(".$kindgar->age_range->where('id', '=', $main_age_id)->first()->description.")" }}</th>
                 <th rowspan="2" class="final-total-col">Жами етказиб бериш суммаси (НДС билан)</th>
             </tr>
             
             <tr class="sub-header">
-                <th>9-10,5 соатлик гуруҳ</th>
+                <th>{{ $age3_7description }}</th>
                 <th>4 соатлик гуруҳ</th>
                 <th>Жами</th>
-                <th>9-10,5 соатлик гуруҳ</th>
+                <th>{{ $age3_7description }}</th>
                 <th>4 соатлик гуруҳ</th>
-                <th>9-10,5 соатлик гуруҳ</th>
+                <th>{{ $age3_7description }}</th>
                 <th>4 соатлик гуруҳ</th>
                 <th>Жами</th>
-                @foreach($ages as $age)
-                    <th>Сумма (безНДС)</th>
-                    <th>Устама ҳақ {{$costs->where('age_range_id', 4)->first()->raise ?? 0}}%</th>
-                    <th>ҚҚС (НДС) {{$costs->where('age_range_id', 4)->first()->nds ?? 0}}%</th>
-                    <th>Жами сумма</th>
-                @endforeach
+                <th>Сумма (безНДС)</th>
+                <th>Устама ҳақ {{$costs->where('age_range_id', 4)->first()->raise ?? 0}}%</th>
+                <th>ҚҚС (НДС) {{$costs->where('age_range_id', 4)->first()->nds ?? 0}}%</th>
+                <th>Жами сумма</th>
+                <th>Сумма (безНДС)</th>
+                <th>Устама ҳақ {{$costs->where('age_range_id', 4)->first()->raise ?? 0}}%</th>
+                <th>ҚҚС (НДС) {{$costs->where('age_range_id', 4)->first()->nds ?? 0}}%</th>
+                <th>Жами сумма</th>
             </tr>
             
             <!-- Ma'lumot qatorlari -->
@@ -246,7 +262,7 @@
                     $children_4 = 0;
                     
                     foreach($number_childrens[$day->id] as $age_id => $child) {
-                        if($age_id == 4) { // 9-10.5 soatlik guruh
+                        if($age_id == $main_age_id) { // 9-10.5 soatlik guruh
                             $menu_name = $child->menu_name ?? '';
                             $children_9_10 += $child->kingar_children_number ?? 0;
                         } elseif($age_id == 3) { // 4 soatlik guruh
@@ -255,11 +271,10 @@
                     }
                     
                     $children_all = $children_9_10 + $children_4;
-
-                    $eater_cost9_10 = $costs->where('age_range_id', 4)->first()->eater_cost ?? 0;
+                    $eater_cost9_10 = $costs->where('age_range_id', $main_age_id)->first()->eater_cost ?? 0;
                     $eater_cost4 = $costs->where('age_range_id', 3)->first()->eater_cost ?? 0;
-                    $raise = $costs->where('age_range_id', 4)->first()->raise ?? 0;
-                    $nds = $costs->where('age_range_id', 4)->first()->nds ?? 0;
+                    $raise = $costs->where('age_range_id', $main_age_id)->first()->raise ?? 0;
+                    $nds = $costs->where('age_range_id', $main_age_id)->first()->nds ?? 0;
                     
                     // Narxlarni olish
                     $cost_9_10 = $eater_cost9_10; // 9-10.5 soatlik guruh uchun narx
