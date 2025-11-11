@@ -309,11 +309,11 @@
                 
                 @php
                     // F18 = F17 * raise
-                    $f18 = $sum_base * (($costs[4]->raise ?? 0) / 100);
+                    $f18 = $sum_base * (($costs[$age->id]->raise ?? 0) / 100);
                     $sum_raise = $f18;
                     
                     // H18 = F18 * nds/100
-                    $h18 = $f18 * (($costs[4]->nds ?? 0) / 100);
+                    $h18 = $f18 * (($costs[$age->id]->nds ?? 0) / 100);
                     $qqs_raise = $h18;
                     
                     // I18 = H18 + F18
@@ -333,12 +333,12 @@
                 <!-- Ustama qatori -->
                 <tr>
                     <td>{{ $tr++ }}</td>
-                    <td class="product-name">Аутсорсинг хизмати устамаси ({{ $costs[4]->raise ?? 0 }}%)</td>
+                    <td class="product-name">Аутсорсинг хизмати устамаси ({{ $costs[$age->id]->raise ?? 0 }}%)</td>
                     <td>cум</td>
                     <td>1</td>
                     <td>{{ number_format($f18, 2) }}</td>
                     <td>{{ number_format($f18, 2) }}</td>
-                    <td>{{ $costs[4]->nds ?? 0 }}%</td>
+                    <td>{{ $costs[$age->id]->nds ?? 0 }}%</td>
                     <td>{{ number_format($h18, 2) }}</td>
                     <td>{{ number_format($i18, 2) }}</td>
                 </tr>
