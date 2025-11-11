@@ -217,7 +217,7 @@
                 <tr>
                     <td class="number-col">{{ $tr++ }}</td>
                     <td class="work-name-col">
-                        {{ $buyurtmachi['address'] ?? 'Олмалик шахар' }} {{ $kindgar->number_of_org ?? '3' }}-сон МТТ {{ $age->description ?? '9-10,5 соатлик' }} гуруҳ тарбияланувчилари учун {{ $days->first()->year_name ?? '2025' }} йил {{ $days->first()->day_number ?? '02' }}-{{ $days->last()->day_number ?? '19' }} {{ $days->first()->month_name ?? 'сентябр' }}да аутсорсинг асосида кунига уч маҳал овқатланишни ташкил этиш бўйича:
+                        {{ $buyurtmachi['address'] ?? 'Олмалик шахар' }} {{ $kindgar->number_of_org ?? '3' }}-сон МТТ {{ $age->description ?? '9-10,5 соатлик' }} тарбияланувчилари учун {{ $days->first()->year_name ?? '2025' }} йил {{ $days->first()->day_number ?? '02' }}-{{ $days->last()->day_number ?? '19' }} {{ $days->first()->month_name ?? 'сентябр' }}да аутсорсинг асосида кунига уч маҳал овқатланишни ташкил этиш бўйича:
                     </td>
                     <td class="amount-col">
                         @php
@@ -231,10 +231,10 @@
                 
                 <tr>
                     <td class="number-col">{{ $tr++ }}</td>
-                    <td class="work-name-col">Аутсорсинг хизмати ({{ $costs[$age->id]->raise ?? '28,5' }}%)</td>
+                    <td class="work-name-col">Аутсорсинг хизмати ({{ $costs[$age->id]->raise ?? '0' }}%)</td>
                     <td class="amount-col">
                         @php
-                            $outsourcing_amount = $total_amount * (($costs[$age->id]->raise ?? 28.5) / 100);
+                            $outsourcing_amount = $total_amount * (($costs[$age->id]->raise ?? 0) / 100);
                             $total_amount += $outsourcing_amount;
                         @endphp
                         {{ number_format($outsourcing_amount, 2, '.', ' ') }}
