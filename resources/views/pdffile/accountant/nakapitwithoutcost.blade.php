@@ -54,8 +54,8 @@
 	
 	th.date-header {
 		height: 60px;
-		width: 15px;
-		min-width: 20px;
+		width: auto;
+		min-width: 30px;
 		text-align: center;
 		vertical-align: middle;
 		position: relative;
@@ -178,6 +178,10 @@
 			<tr>
 				<th rowspan="2">№</th>
 				<th colspan="2">Махсулотлар номи ва Ўлчов бирлиги</th>
+				<th colspan="{{ count($days) }}">Болалар сони</th>
+				<th rowspan="2">Жами</th>
+			</tr>
+			<tr>
 				@foreach($days as $day)
 					<?php
 						if($day->month_id % 12 == 0){
@@ -190,10 +194,6 @@
 						<span>{{ sprintf("%02d.%02d.%d", $day->day_number, $month_id, $day->year_name) }}</span>
 					</th>
 				@endforeach
-				<th rowspan="2">Жами</th>
-			</tr>
-			<tr>
-				<!-- Ikkinchi qator uchun bo'sh qator -->
 			</tr>
 		</thead>
 		<tbody>
