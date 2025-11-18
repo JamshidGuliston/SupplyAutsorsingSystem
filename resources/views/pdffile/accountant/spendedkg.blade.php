@@ -164,19 +164,28 @@
 					@endforeach
 				</tbody>
 			</table>
-					<div class="column">
-					    @php
-							$qrImage = base64_encode(file_get_contents(public_path('images/qrmanzil.jpg')));
-						@endphp
-						<img src="data:image/jpeg;base64,{{ $qrImage }}" 
-							style="width:120; position:absolute; left:10px;">
-					</div>
-					<div class="column">
-						<p></p>
-						<p style="text-align: center;"><strong>ДМТТ рахбари: </strong> __________________;</p>
-					</div>
+            <div class="footer-section">
+                <div class="footer-column">
+                    <strong>Аутсорсер:</strong><br>
+                    {{ env('COMPANY_NAME') ?? 'B.Tajibaev' }}<br>
+                    директори: {{ env('COMPANY_DIRECTOR') ?? 'B.Tajibaev' }} ________________________
+                    <br/>
+                    <br/>
+                    <br/>
+                    <strong>Бухгалтер:</strong> ____________________
                 </div>
-            </div>
+                <div class="footer-column">
+                    <strong>{{ $kindgar->number_of_org ?? '3' }}-сон ДМТТ рахбари:</strong> ____________________
+                    <br/>
+                    <br/>
+                    <br/>
+                    <strong>Ошпаз:</strong> ____________________
+                </div>
+                <div class="footer-column">
+                    <strong>Хамшира:</strong> ____________________
+                </div>
+              </div>
+            </div>	
         </div>
     </div>
 </bod>
