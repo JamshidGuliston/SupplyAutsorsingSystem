@@ -92,7 +92,7 @@
 								$mth = $days[0]->month_id % 12;
 							}
 						?>
-						<center><b>{{ $kindgar->kingar_name }} да <?php printf('%04d', $days->first()->year_name) ?> йил <?php echo $days->first()->day_number."-".$days->last()->day_number ?> <?php echo $month->month_name ?> кунларида сарфланган озиқ-овқат маҳсулотлар тўғрисида маълумот</b></center>
+						<center><b>{{ $kindgar->kingar_name }} да <?php printf('%04d', $days->first()->year_name) ?> йил <?php echo $days->first()->day_number."-".$days->last()->day_number ?> <?php echo $days->first()->month_name ?> кунларида сарфланган озиқ-овқат маҳсулотлар тўғрисида маълумот</b></center>
 					</div>
                 </div>
                 <table style="width:100%; table-layout: fixed;">
