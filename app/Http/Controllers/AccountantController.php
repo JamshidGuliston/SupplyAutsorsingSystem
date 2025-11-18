@@ -426,7 +426,7 @@ class AccountantController extends Controller
                     $productscount[$row->product_name_id]['size_name'] = $row->size_name;
                 }
                 if($age->id != 3){
-                    $foods = titlemenu_food::where('day_id', $day->id-1)->where('age_range_id', $age->id)->get();
+                    $foods = titlemenu_food::where('day_id', $day->id-1)->where('worker_age_id', $age->id)->get();
                 }else{
                     $foods = [];
                 }
