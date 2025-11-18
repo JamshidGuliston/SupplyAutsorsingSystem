@@ -415,7 +415,7 @@ class AccountantController extends Controller
                 // dd($join);
                 $productscount = [];
                 foreach($join as $row){
-                    if(!isset($productscount[$row->product_name_id][$ageid])){
+                    if(!isset($productscount[$row->product_name_id][$age->id])){
                         $productscount[$row->product_name_id][$age->id] = 0;
                     }
                     $productscount[$row->product_name_id][$age->id] += $row->weight;
