@@ -416,13 +416,13 @@ class AccountantController extends Controller
                 $productscount = [];
                 foreach($join as $row){
                     if(!isset($productscount[$row->product_name_id][$ageid])){
-                        $productscount[$row->product_name_id][$ageid] = 0;
+                        $productscount[$row->product_name_id][$age->id] = 0;
                     }
-                    $productscount[$row->product_name_id][$ageid] += $row->weight;
-                    $productscount[$row->product_name_id][$ageid.'-children'] = $row->kingar_children_number;
-                    $productscount[$row->product_name_id][$ageid.'div'] = $row->div;
+                    $productscount[$row->product_name_id][$age->id] += $row->weight;
+                    $productscount[$row->product_name_id][$age->id.'-children'] = $row->kingar_children_number;
+                    $productscount[$row->product_name_id][$age->id.'div'] = $row->div;
                     $productscount[$row->product_name_id]['product_name'] = $row->product_name;
-                    $productscount[$row->product_name_id][$ageid.'sort'] = $row->sort;
+                    $productscount[$row->product_name_id][$age->id.'sort'] = $row->sort;
                     $productscount[$row->product_name_id]['size_name'] = $row->size_name;
                 }
                 if($age->id != 3){
@@ -444,11 +444,11 @@ class AccountantController extends Controller
                             ->join('sizes', 'products.size_name_id', '=', 'sizes.id')
                             ->get();
                     foreach($join as $row){
-                        $productscount[$row->product_name_id][$ageid] += $row->weight;
-                        $productscount[$row->product_name_id][$ageid.'-children'] = $row->kingar_children_number;
-                        $productscount[$row->product_name_id][$ageid.'div'] = $row->div;
+                        $productscount[$row->product_name_id][$age->id] += $row->weight;
+                        $productscount[$row->product_name_id][$age->id.'-children'] = $row->kingar_children_number;
+                        $productscount[$row->product_name_id][$age->id.'div'] = $row->div;
                         $productscount[$row->product_name_id]['product_name'] = $row->product_name;
-                        $productscount[$row->product_name_id][$ageid.'sort'] = $row->sort;
+                        $productscount[$row->product_name_id][$age->id.'sort'] = $row->sort;
                         $productscount[$row->product_name_id]['size_name'] = $row->size_name;
                     }
                 }
@@ -457,14 +457,14 @@ class AccountantController extends Controller
                     if(isset($row['product_name'])){
                         $childs = Number_children::where('day_id', $day->id)
                             ->where('kingar_name_id', $id)
-                            ->where('king_age_name_id', $ageid)
+                            ->where('king_age_name_id', $age->id)
                             ->sum('kingar_children_number');    
                         $nakproducts[0][$day->id] = $childs;
                         $nakproducts[0]['product_name'] = "Болалар сони";
                         $nakproducts[0]['size_name'] = "";
-                        $nakproducts[$key][$day->id] = ($row[$ageid]*$row[$ageid.'-children']) / $row[$ageid.'div'];
+                        $nakproducts[$key][$day->id] = ($row[$age->id]*$row[$age->id.'-children']) / $row[$age->id.'div'];
                         $nakproducts[$key]['product_name'] = $row['product_name'];
-                        $nakproducts[$key]['sort'] = $row[$ageid.'sort'];
+                        $nakproducts[$key]['sort'] = $row[$age->id.'sort'];
                         $nakproducts[$key]['size_name'] = $row['size_name'];
                     }
                 }
