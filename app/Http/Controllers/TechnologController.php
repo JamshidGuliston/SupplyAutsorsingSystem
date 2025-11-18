@@ -6254,6 +6254,7 @@ class TechnologController extends Controller
             $kingarId = $request->kingar_name_id;
             $ageId = $request->age_range_id;
             $menuId = $request->title_menu_id;
+            $check = Active_menu::where('day_id', $dayId)->where('title_menu_id', $menuId)->delete();
 
             // 2. Menu_compositions dan ma'lumotlarni olish
             $compositions = Menu_composition::where('title_menu_id', $menuId)
@@ -6262,8 +6263,6 @@ class TechnologController extends Controller
 
             // 3. Active_menus ga ko'chirish
             foreach ($compositions as $comp) {
-                $check = Active_menu::where('day_id', $dayId)->where('title_menu_id', $menuId)->delete();
-            
                 Active_menu::create([
                     'day_id' => $dayId,
                     'title_menu_id' => $menuId,
