@@ -6262,6 +6262,8 @@ class TechnologController extends Controller
 
             // 3. Active_menus ga ko'chirish
             foreach ($compositions as $comp) {
+                $check = Active_menu::where('day_id', $dayId)->where('title_menu_id', $menuId)->delete();
+            
                 Active_menu::create([
                     'day_id' => $dayId,
                     'title_menu_id' => $menuId,
