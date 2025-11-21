@@ -515,7 +515,13 @@
             html += '<a href="/accountant/combined-documentsexcel/'+kindid+'/'+start+'/'+end+'/'+cost+'" target="_blank" class="report-link excel">';
             html += '<i class="far fa-file-excel"></i>Excel';
             html += '</a>';
-            html += '</div>';
+            html += '<span class="me-2">Jami KG:</span>';
+            html += '<a href="/accountant/spendedkg/'+kindid+'/'+start+'/'+end+'/'+cost+'" target="_blank" class="report-link pdf">';
+            html += '<i class="far fa-file-pdf"></i>PDF';
+            html += '</a>';
+            html += '<a href="/accountant/spendedkgexcel/'+kindid+'/'+start+'/'+end+'/'+cost+'" target="_blank" class="report-link excel">';
+            html += '<i class="far fa-file-excel"></i>Excel';
+            html += '</a>';
             html += '</div>';
             html += '</div>';
             

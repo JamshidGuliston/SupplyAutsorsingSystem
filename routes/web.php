@@ -359,6 +359,7 @@ Route::group(['prefix' => 'chef', 'middleware' => ['isChef', 'auth']], function 
     Route::post('update-children-count', [ChefController::class, 'updateChildrenCount'])->name('chef.update_children_count');
     Route::post('update-children-count-by-chef', [ChefController::class, 'updateChildrenCountByChef'])->name('chef.update_children_count_by_chef');
     Route::post('clear-nextday-numbers', [ChefController::class, 'clearNextdayNumbers'])->name('chef.clear_nextday_numbers');
+
 });
 
 Route::group(['prefix' => 'accountant', 'middleware' => ['isAccountant', 'auth']], function () {
@@ -410,6 +411,8 @@ Route::group(['prefix' => 'accountant', 'middleware' => ['isAccountant', 'auth']
     Route::get('modsofproducts', [AccountantController::class, 'modsofproducts']);
     Route::get('getingcosts', [AccountantController::class, 'getingcosts']);
     Route::get('getreportlargebase', [AccountantController::class, 'getreportlargebase']);
+    Route::get('spendedkg/{id}/{start}/{end}/{costid}', [AccountantController::class, 'spendedkg'])->name('accountant.spendedkg');
+    Route::get('spendedkgexcel/{id}/{start}/{end}/{costid}', [AccountantController::class, 'spendedkgexcel'])->name('accountant.spendedkgexcel');
 
     // Protsents routes
     Route::post('addprotsent', [AccountantController::class, 'addprotsent'])->name('accountant.addprotsent');
