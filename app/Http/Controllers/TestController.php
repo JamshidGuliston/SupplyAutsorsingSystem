@@ -150,7 +150,14 @@ class TestController extends Controller
 
 		// Snappy bilan PDF yaratish
 		try {
-			$pdf = \PDF::loadView('pdffile.technolog.alltable', [
+			
+			$dompdf = new Dompdf();
+			$dompdf->set_option('defaultFont', 'DejaVu Sans');
+			$dompdf->set_option('isHtml5ParserEnabled', true);
+			$dompdf->set_option('isRemoteEnabled', true);
+			$dompdf->set_option('isFontSubsettingEnabled', true);
+			
+			$html = view('pdffile.technolog.alltable', [
 				'narx' => $narx,
 				'day' => $day,
 				'productallcount' => $productallcount,
@@ -160,35 +167,58 @@ class TestController extends Controller
 				'products' => $products,
 				'workerfood' => $workerfood,
 				'taomnoma' => $taomnoma
-			]);
-
-			$pdf->setPaper('A4', 'landscape')
-				->setOptions([
-					'encoding' => 'UTF-8',
-					'enable-javascript' => true,
-					'javascript-delay' => 1000,
-					'enable-smart-shrinking' => true,
-					'no-stop-slow-scripts' => true,
-					'disable-smart-shrinking' => false,
-					'print-media-type' => true,
-					'dpi' => 300,
-					'image-quality' => 100,
-					'margin-top' => 10,
-					'margin-right' => 10,
-					'margin-bottom' => 10,
-					'margin-left' => 10,
-					'enable-local-file-access' => true,
-					'load-error-handling' => 'ignore',
-					'load-media-error-handling' => 'ignore',
-				]);
-
+			])->render();
+			
+			$dompdf->loadHtml($html);
+			$dompdf->setPaper('A4', 'landscape');
 			$name = $day['id'].'-'.$gid.'-'.$ageid."taxminiy.pdf";
+			$dompdf->render();
+			
+			return $dompdf->stream($name, ['Attachment' => 0]);
+			// $pdf = \PDF::loadView('pdffile.technolog.alltable', [
+			// 	'narx' => $narx,
+			// 	'day' => $day,
+			// 	'productallcount' => $productallcount,
+			// 	'workerproducts' => $workerproducts,
+			// 	'menu' => $menu,
+			// 	'menuitem' => $nextdaymenuitem,
+			// 	'products' => $products,
+			// 	'workerfood' => $workerfood,
+			// 	'taomnoma' => $taomnoma
+			// ]);
 
-			return $pdf->stream($name, ['Attachment' => 0]);
+			// $pdf->setPaper('A4', 'landscape')
+			// 	->setOptions([
+			// 		'encoding' => 'UTF-8',
+			// 		'enable-javascript' => true,
+			// 		'javascript-delay' => 1000,
+			// 		'enable-smart-shrinking' => true,
+			// 		'no-stop-slow-scripts' => true,
+			// 		'disable-smart-shrinking' => false,
+			// 		'print-media-type' => true,
+			// 		'dpi' => 300,
+			// 		'image-quality' => 100,
+			// 		'margin-top' => 10,
+			// 		'margin-right' => 10,
+			// 		'margin-bottom' => 10,
+			// 		'margin-left' => 10,
+			// 		'enable-local-file-access' => true,
+			// 		'load-error-handling' => 'ignore',
+			// 		'load-media-error-handling' => 'ignore',
+			// 	]);
+
+			// $name = $day['id'].'-'.$gid.'-'.$ageid."taxminiy.pdf";
+
+			// return $pdf->stream($name, ['Attachment' => 0]);
 		} catch (\Exception $e) {
 			// Snappy ishlamasa, DomPDF ishlatish
-			$dompdf = new Dompdf('UTF-8');
-			$html = mb_convert_encoding(view('pdffile.technolog.alltable', [
+			$dompdf = new Dompdf();
+			$dompdf->set_option('defaultFont', 'DejaVu Sans');
+			$dompdf->set_option('isHtml5ParserEnabled', true);
+			$dompdf->set_option('isRemoteEnabled', true);
+			$dompdf->set_option('isFontSubsettingEnabled', true);
+			
+			$html = view('pdffile.technolog.alltable', [
 				'narx' => $narx,
 				'day' => $day,
 				'productallcount' => $productallcount,
@@ -198,7 +228,7 @@ class TestController extends Controller
 				'products' => $products,
 				'workerfood' => $workerfood,
 				'taomnoma' => $taomnoma
-			]), 'HTML-ENTITIES', 'UTF-8');
+			])->render();
 			
 			$dompdf->loadHtml($html);
 			$dompdf->setPaper('A4', 'landscape');
@@ -295,9 +325,6 @@ class TestController extends Controller
 
 		// PDF ni rasmga aylantirish
 		try {
-			// Log qo'shish
-			\Log::info('PDF Image generation started for garden: ' . $gid . ', age: ' . $ageid);
-			
 			$pdf = \PDF::loadView('pdffile.technolog.alltable', [
 				'narx' => $narx,
 				'day' => $day,
@@ -335,8 +362,6 @@ class TestController extends Controller
 			$tempPdfPath = storage_path('app/temp_menu_' . $gid . '_' . $ageid . '.pdf');
 			file_put_contents($tempPdfPath, $pdfContent);
 			
-			\Log::info('PDF created successfully at: ' . $tempPdfPath);
-
 			// Imagick mavjudligini tekshirish
 			if (class_exists('Imagick')) {
 				\Log::info('Imagick is available');
@@ -358,13 +383,11 @@ class TestController extends Controller
 					$imagick->clear();
 					$imagick->destroy();
 					
-					\Log::info('Image created successfully with Imagick');
 				} catch (\ImagickException $e) {
 					\Log::error('Imagick error: ' . $e->getMessage());
 					throw $e;
 				}
 			} else {
-				\Log::info('Imagick not available, using fallback');
 				// Fallback: oddiy rasm yaratish
 				$imageContent = $this->createFallbackImage($gid, $ageid);
 			}
@@ -383,9 +406,6 @@ class TestController extends Controller
 				->header('Access-Control-Allow-Headers', 'Content-Type');
 
 		} catch (\Exception $e) {
-			\Log::error('PDF Image generation error: ' . $e->getMessage());
-			\Log::error('Stack trace: ' . $e->getTraceAsString());
-			
 			// Xatolik bo'lsa, oddiy rasm qaytarish
 			$imageContent = $this->createFallbackImage($gid, $ageid);
 

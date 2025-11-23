@@ -18,6 +18,7 @@ use App\Exports\SvodExport;
 use App\Exports\ReportProductsOfRegionExport;
 use App\Exports\DalolatnomaExport;
 use App\Exports\RegionDalolatnomaExport;
+use App\Exports\SpendedkgExport;
 use App\Models\Age_range;
 use App\Models\bycosts;
 use App\Models\Active_menu;
@@ -397,7 +398,8 @@ class AccountantController extends Controller
         $nakproducts = [];
         $days = Day::where('days.id', '>=', $start)->where('days.id', '<=', $end)
             ->join('years', 'days.year_id', '=', 'years.id')
-            ->get(['days.id', 'days.day_number', 'days.month_id', 'years.year_name']);
+            ->join('months', 'days.month_id', '=', 'months.id')
+            ->get(['days.id', 'days.day_number', 'days.month_id', 'years.year_name', 'months.month_name']);
         $allproducts = [];
         foreach($days as $day){
             foreach($kindgar->age_range as $age){

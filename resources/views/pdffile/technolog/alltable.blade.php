@@ -12,7 +12,7 @@
         
         body {
             font-family: "DejaVu Sans", Arial, sans-serif;
-            font-size: 10px;
+            font-size: 8px;
             line-height: 1.2;
             margin: 0;
             padding: 0;
@@ -22,9 +22,9 @@
         }
         
         .header-info {
-            margin-bottom: 10px;
-            font-size: 10px;
-            line-height: 1.3;
+            margin-bottom: 8px;
+            font-size: 8px;
+            line-height: 1.2;
         }
         
         .main-table {
@@ -48,11 +48,11 @@
         
         .main-table th {
             font-weight: bold;
-            font-size: 10px;       /* 2px → 1.5px (barcha borderlar bir xil) */
+            font-size: 8px;
         }
         
         .main-table td {
-            font-size: 10px;
+            font-size: 8px;
         }
         
         /* Vertikal matn uchun (Bolalar/Xodimlar ustunlari) */
@@ -68,23 +68,24 @@
         }
         
         .product-name {
-			font-size: 8px;
+			font-size: 7px;
             font-weight: bold;
             text-align: left;
-            padding: 3px;
+            padding: 2px;
         }
         
         .meal-time {
             writing-mode: vertical-rl;
             text-orientation: mixed;
             font-weight: bold;
+            font-size: 7px;
         }
         
         .food-name {
-			width: 80px;
+			width: 70px;
             text-align: left;
             padding: 2px;
-            font-size: 10px;
+            font-size: 8px;
         }
         
         .summary-row {
@@ -114,42 +115,29 @@
         
         /* Fixed column widths */
         .col-1 { width: 2%; }
-        .col-2 { width: 8%; font-size: 10px; }
-        .col-product { width: 20px; }
+        .col-2 { width: 8%; font-size: 8px; }
+        .col-product { width: 18px; }
 		
-        .vrt-header span{
-            display: inline-block;
-            text-align: center;
-            -webkit-transform: rotate(-90deg);
-            -moz-transform: rotate(-90deg);
-            -ms-transform: rotate(-90deg);
-            -o-transform: rotate(-90deg);
-            transform: rotate(-90deg);
-            transform-origin: center center;
-
-            white-space: normal;       /* bir necha qatorga ruxsat */
-            max-width: 100px;          /* burilishdan oldin maksimal kenglik */
-            width: auto;               /* avtomatik kenglik */
-            overflow: visible;         /* hamma ko'rinsin */
-            word-wrap: break-word;     /* uzun so'zlarni bo'lish */
-        }
-        
-        /* Maxsulot nomlari uchun */
-        .product-name-short {
-            font-size: 7px;
-            line-height: 1;
-            white-space: normal;       /* bir necha qatorga ruxsat */
-            word-wrap: break-word;     /* uzun so'zlarni bo'lish */
-            display: inline-block;
-            max-width: 100px;          /* burilishdan oldin kenglik */
-            text-align: center;
+        .vrt-header {
+            text-align: center !important;
+            vertical-align: middle !important;
+            writing-mode: vertical-rl;
+            -webkit-writing-mode: vertical-rl;
+            -ms-writing-mode: tb-rl;
+            text-orientation: mixed;
+            white-space: normal;
+            word-wrap: break-word;
+            overflow: hidden;
+            font-size: 6px;
+            line-height: 1.1;
+            padding: 1px;
         }
 		
 		/* Maxsulot ustunlari uchun */
 		.product-column {
 			width: 2.5% !important;
 			max-width: 2.5%;
-			overflow: visible;
+			overflow: hidden;
 			height: 100px;
 			min-height: 100px;
 		}
@@ -176,23 +164,21 @@
                 @foreach($products as $product)
                     @if(isset($product['yes']))
                         @php $col++; @endphp
-                        <th class='vrt-header product-column' style="padding: 0px; height: 100px">
-                        <span class="product-name-short">{{ implode(' ', array_slice(explode(' ', $product['product_name']), 0, 6)) }}</span>
-						</th>
+                        <th class='vrt-header product-column' style="height: 100px;">{{ implode(' ', array_slice(explode(' ', $product['product_name']), 0, 6)) }}</th>
                     @endif
                 @endforeach
             </tr>
             <tr>
                 @foreach($products as $product)
                     @if(isset($product['yes']))
-                        <th style="font-size: 6px;">{{ $product['size_name'] }}</th>
+                        <th style="font-size: 5px;">{{ $product['size_name'] }}</th>
                     @endif
                 @endforeach
             </tr>
             <tr>
                 @foreach($products as $product)
                     @if(isset($product['yes']))
-                        <th style="font-size: 6px;">{{ $product['div'] }}</th>
+                        <th style="font-size: 5px;">{{ $product['div'] }}</th>
                     @endif
                 @endforeach
             </tr>
@@ -207,11 +193,9 @@
                     @endif
                     <tr>
                         @if($loop->index == 1)
-                        <th class="vrt-header meal-time" rowspan="{{ 2 * (count($row)-1) }}">
-								<span class="product-name-short">{{ $row[0]['mealtime'] }}</span>
-						</th>
+                        <th class="vrt-header meal-time" rowspan="{{ 2 * (count($row)-1) }}">{{ $row[0]['mealtime'] }}</th>
                         @endif
-                        <td class="food-name" rowspan="2" style="width: 40px;">{{ $item['foodname'] }}</td>
+                        <td class="food-name" rowspan="2" style="width: 60px; font-size: 7px;">{{ $item['foodname'] }}</td>
                         @foreach($products as $product)
                             @if(isset($product['yes']) && isset($item[$product['id']]))
                                 <td style="background-color: #e6f3ff;">
@@ -236,11 +220,7 @@
             
             <!-- Bolalar bo'limi -->
             <tr class="children-section">
-                <th class="vrt-header col-product" rowspan="5">
-					<span class="product-name-short">
-						Болалар
-					</span>
-				</th>
+                <th class="vrt-header col-product" rowspan="5">Болалар</th>
                 <td class="summary-row">Жами миқдори</td>
                 @foreach($products as $product)
                     @if(isset($product['yes']) && isset($productallcount[$product['id']]))
@@ -285,11 +265,7 @@
             
             <!-- Xodimlar bo'limi -->
             <tr class="workers-section">
-                <th class="vrt-header col-product" rowspan="5">
-					<span class="product-name-short">
-						Ходимлар
-					</span>
-				</th>
+                <th class="vrt-header col-product" rowspan="5">Ходимлар</th>
                 <td class="summary-row">Жами миқдори</td>
                 @foreach($products as $product)
                     @if(isset($product['yes']) && isset($workerproducts[$product['id']]))
