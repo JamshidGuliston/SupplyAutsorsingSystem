@@ -12,7 +12,7 @@
         
         body {
             font-family: "DejaVu Sans", Arial, sans-serif;
-            font-size: 10px;
+            font-size: 8px;
             line-height: 1.2;
             margin: 0;
             padding: 0;
@@ -68,12 +68,11 @@
         
         .vertical-text span {
             display: block;
-            transform: rotate(-90deg);
+            transform: rotate(-360deg);
             transform-origin: center;
             width: 80px;
             height: 20px;
             margin-top: 30px;
-            margin-left: -30px;
             font-size: 10px;
             line-height: 1.1;
             text-align: center;
@@ -82,7 +81,6 @@
         .product-name {
 			font-size: 8px;
             font-weight: bold;
-            text-align: left;
             padding: 3px;
         }
         
@@ -150,10 +148,7 @@
 
 		.vertical-text {
 			writing-mode: vertical-rl;   /* matnni vertikal qiladi (yuqoridan pastga) */
-			-webkit-writing-mode: vertical-rl;
-			-ms-writing-mode: tb-rl;
-
-			transform: rotate(180deg);   /* teskari qilib pastdan tepaga chiqaradi */
+			  /* teskari qilib pastdan tepaga chiqaradi */
 			transform-origin: center center;
 			text-align: center;
 			white-space: nowrap;
