@@ -448,10 +448,15 @@
 							</div>
 						@endif
 							<div class="column">
-								<p style="text-align: left;"><strong>{{ explode(',', env('MENU_SIGNATURE'))[0] }}:</strong> __________________;</p>
+								@php
+									$menuSignatures = explode(',', env('MENU_SIGNATURE', ''));
+									$firstSignature = trim($menuSignatures[0] ?? '');
+									$secondSignature = trim($menuSignatures[1] ?? '');
+								@endphp
+								<p style="text-align: left;"><strong>{{ $firstSignature }}:</strong> __________________;</p>
 							</div>
 							<div class="column">
-								<p style="text-align: right;"><strong>{{ explode(',', env('MENU_SIGNATURE'))[1] }}: </strong> __________________;</p>
+								<p style="text-align: right;"><strong>{{ $secondSignature }}: </strong> __________________;</p>
 							</div>
 					   </div>
                 </div>
