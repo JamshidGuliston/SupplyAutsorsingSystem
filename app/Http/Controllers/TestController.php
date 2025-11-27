@@ -136,28 +136,10 @@ class TestController extends Controller
 		$day->month_name = $nextWorkDay->format('F');
 		$day->year_name = $nextWorkDay->format('Y');
 
-		// return view('pdffile.technolog.alltable', [
-		// 	'narx' => $narx,
-		// 	'day' => $day,
-		// 	'productallcount' => $productallcount,
-		// 	'workerproducts' => $workerproducts,
-		// 	'menu' => $menu,
-		// 	'menuitem' => $nextdaymenuitem,
-		// 	'products' => $products,
-		// 	'workerfood' => $workerfood,
-		// 	'taomnoma' => $taomnoma
-		// ]);
 
 		// Snappy bilan PDF yaratish
 		try {
-			
-			$dompdf = new Dompdf();
-			$dompdf->set_option('defaultFont', 'DejaVu Sans');
-			$dompdf->set_option('isHtml5ParserEnabled', true);
-			$dompdf->set_option('isRemoteEnabled', true);
-			$dompdf->set_option('isFontSubsettingEnabled', true);
-			
-			$html = view('pdffile.technolog.alltable', [
+			$pdf = \PDF::loadView('pdffile.technolog.alltable', [
 				'narx' => $narx,
 				'day' => $day,
 				'productallcount' => $productallcount,
@@ -167,49 +149,31 @@ class TestController extends Controller
 				'products' => $products,
 				'workerfood' => $workerfood,
 				'taomnoma' => $taomnoma
-			])->render();
-			
-			$dompdf->loadHtml($html);
-			$dompdf->setPaper('A4', 'landscape');
+			]);
+
+			$pdf->setPaper('A4', 'landscape')
+				->setOptions([
+					'encoding' => 'UTF-8',
+					'enable-javascript' => true,
+					'javascript-delay' => 1000,
+					'enable-smart-shrinking' => true,
+					'no-stop-slow-scripts' => true,
+					'disable-smart-shrinking' => false,
+					'print-media-type' => true,
+					'dpi' => 300,
+					'image-quality' => 100,
+					'margin-top' => 10,
+					'margin-right' => 10,
+					'margin-bottom' => 10,
+					'margin-left' => 10,
+					'enable-local-file-access' => true,
+					'load-error-handling' => 'ignore',
+					'load-media-error-handling' => 'ignore',
+				]);
+
 			$name = $day['id'].'-'.$gid.'-'.$ageid."taxminiy.pdf";
-			$dompdf->render();
-			
-			return $dompdf->stream($name, ['Attachment' => 0]);
-			// $pdf = \PDF::loadView('pdffile.technolog.alltable', [
-			// 	'narx' => $narx,
-			// 	'day' => $day,
-			// 	'productallcount' => $productallcount,
-			// 	'workerproducts' => $workerproducts,
-			// 	'menu' => $menu,
-			// 	'menuitem' => $nextdaymenuitem,
-			// 	'products' => $products,
-			// 	'workerfood' => $workerfood,
-			// 	'taomnoma' => $taomnoma
-			// ]);
 
-			// $pdf->setPaper('A4', 'landscape')
-			// 	->setOptions([
-			// 		'encoding' => 'UTF-8',
-			// 		'enable-javascript' => true,
-			// 		'javascript-delay' => 1000,
-			// 		'enable-smart-shrinking' => true,
-			// 		'no-stop-slow-scripts' => true,
-			// 		'disable-smart-shrinking' => false,
-			// 		'print-media-type' => true,
-			// 		'dpi' => 300,
-			// 		'image-quality' => 100,
-			// 		'margin-top' => 10,
-			// 		'margin-right' => 10,
-			// 		'margin-bottom' => 10,
-			// 		'margin-left' => 10,
-			// 		'enable-local-file-access' => true,
-			// 		'load-error-handling' => 'ignore',
-			// 		'load-media-error-handling' => 'ignore',
-			// 	]);
-
-			// $name = $day['id'].'-'.$gid.'-'.$ageid."taxminiy.pdf";
-
-			// return $pdf->stream($name, ['Attachment' => 0]);
+			return $pdf->stream($name, ['Attachment' => 0]);
 		} catch (\Exception $e) {
 			// Snappy ishlamasa, DomPDF ishlatish
 			$dompdf = new Dompdf();
