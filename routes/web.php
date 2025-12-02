@@ -216,6 +216,7 @@ Route::group(['prefix' => 'technolog', 'middleware' => ['isTechnolog', 'auth']],
     Route::post('createmenu', [TechnologController::class, 'createmenu'])->name('technolog.createmenu');
     Route::get('menuitem/{id}', [TechnologController::class, 'menuitem'])->name('technolog.menuitem');
     Route::get('menuitemshow/{id}', [TechnologController::class, 'menuitemshow'])->name('technolog.menuitemshow');
+    Route::post('updateMenuAgeRange', [TechnologController::class, 'updateMenuAgeRange'])->name('technolog.updateMenuAgeRange');
     Route::get('getfood', [TechnologController::class, 'getfood'])->name('technolog.getfood');
     Route::get('getfoodcomposition', [TechnologController::class, 'getfoodcomposition'])->name('technolog.getfoodcomposition');
     Route::post('createmenucomposition', [TechnologController::class, 'createmenucomposition'])->name('technolog.createmenucomposition');

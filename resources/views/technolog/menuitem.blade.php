@@ -96,6 +96,50 @@
     </div>
 </div>
 
+<!-- Age Range Edit Modal -->
+<div class="modal fade" id="editAgeRangeModal" tabindex="-1" aria-labelledby="editAgeRangeModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form action="{{route('technolog.updateMenuAgeRange')}}" method="POST">
+                @csrf
+                <input type="hidden" name="menu_id" value="{{$titlemenu->id}}">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editAgeRangeModalLabel">Menyu yosh toifasini o'zgartirish</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="alert alert-info">
+                        <small><i class="fas fa-info-circle"></i> Bu menyu uchun bir yoki bir nechta yosh toifasini tanlang. Tanlangan yosh toifalar uchun menu_compositions jadvalidagi barcha yozuvlarning age_range_id maydoni yangilanadi.</small>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Yosh toifalarini tanlang</label>
+                        @php
+                            $selectedAgeIds = $titlemenu->age_range->pluck('id')->toArray();
+                        @endphp
+                        @foreach(\App\Models\Age_range::all() as $age)
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="age_range_ids[]" value="{{$age->id}}"
+                                    id="age_{{$age->id}}"
+                                    {{in_array($age->id, $selectedAgeIds) ? 'checked' : ''}}>
+                                <label class="form-check-label" for="age_{{$age->id}}">
+                                    {{$age->age_name}}
+                                    @if($age->description)
+                                        <small class="text-muted">({{$age->description}})</small>
+                                    @endif
+                                </label>
+                            </div>
+                        @endforeach
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Bekor qilish</button>
+                    <button type="submit" class="btn btn-success">O'zgartirish</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
 <!-- AddModal -->
 <div class="modal editesmodal fade" id="addModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-xl">
@@ -205,10 +249,20 @@
                 <div class="col-md-8">
                     <h4 class="mb-1">{{$titlemenu->menu_name}}</h4>
                     <p class="mb-0 text-muted">
-                        <strong>Mavsum:</strong> {{$titlemenu->season_name ?? 'Noma\'lum'}} | 
+                        <strong>Mavsum:</strong> {{$titlemenu->season_name ?? 'Noma\'lum'}} |
                         <strong>Yaratilgan:</strong> {{ isset($titlemenu->created_at) ? $titlemenu->created_at->format('d.m.Y H:i') : 'Noma\'lum' }} |
                         <strong>Tartib raqami:</strong> {{$titlemenu->order_number ?? 'Noma\'lum'}} |
                         <strong>Qisqa nomi:</strong> {{$titlemenu->short_name ?? 'Noma\'lum'}}
+                    </p>
+                    <p class="mb-0 text-muted">
+                        <strong>Yosh toifasi:</strong>
+                        @if($titlemenu->age_range && count($titlemenu->age_range) > 0)
+                            @foreach($titlemenu->age_range as $index => $age)
+                                {{ $age->age_name }}@if($index < count($titlemenu->age_range) - 1), @endif
+                            @endforeach
+                        @else
+                            Noma'lum
+                        @endif
                     </p>
                     @if($titlemenu->description)
                         <p class="mb-0"><strong>Tavsif:</strong> {{$titlemenu->description}}</p>
@@ -218,6 +272,9 @@
                     <div class="titlemenu-actions">
                         <button class="btn btn-outline-primary btn-sm me-2" data-bs-toggle="modal" data-bs-target="#editTitlemenuModal">
                             <i class="fas fa-edit"></i> O'zgartirish
+                        </button>
+                        <button class="btn btn-outline-success btn-sm" data-bs-toggle="modal" data-bs-target="#editAgeRangeModal">
+                            <i class="fas fa-users"></i> Yosh toifasini o'zgartirish
                         </button>
                     </div>
                 </div>

@@ -1890,7 +1890,41 @@ class TechnologController extends Controller
         return redirect()->route('technolog.menuitem', $titlemenu->id)
                         ->with('success', 'Menyu muvaffaqiyatli yangilandi!');
     }
-    //  copy 
+
+    public function updateMenuAgeRange(Request $request)
+    {
+        $request->validate([
+            'menu_id' => 'required|integer|exists:titlemenus,id',
+            'age_range_ids' => 'required|array|min:1',
+            'age_range_ids.*' => 'integer|exists:age_ranges,id'
+        ]);
+
+        $menuId = $request->menu_id;
+        $newAgeRangeId = $request->age_range_ids[0]; // Birinchi tanlangan age_range_id ni olish
+
+        try {
+            DB::beginTransaction();
+
+            // 1. Titlemenu_age_range jadvalini yangilash
+            $titlemenu = Titlemenu::findOrFail($menuId);
+            $titlemenu->age_range()->sync($request->age_range_ids);
+
+            // 2. Menu_compositions jadvalidagi barcha yozuvlarning age_range_id ni yangilash
+            Menu_composition::where('title_menu_id', $menuId)
+                ->update(['age_range_id' => $newAgeRangeId]);
+
+            DB::commit();
+
+            return redirect()->route('technolog.menuitem', $menuId)
+                            ->with('success', 'Yosh toifasi muvaffaqiyatli yangilandi!');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return redirect()->route('technolog.menuitem', $menuId)
+                            ->with('error', 'Xatolik yuz berdi: ' . $e->getMessage());
+        }
+    }
+
+    //  copy
     public function menuitemshow(Request $request, $id)
     {
         $times = Meal_time::all();
