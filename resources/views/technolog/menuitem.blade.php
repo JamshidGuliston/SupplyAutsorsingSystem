@@ -109,18 +109,19 @@
                 </div>
                 <div class="modal-body">
                     <div class="alert alert-info">
-                        <small><i class="fas fa-info-circle"></i> Bu menyu uchun bir yoki bir nechta yosh toifasini tanlang. Tanlangan yosh toifalar uchun menu_compositions jadvalidagi barcha yozuvlarning age_range_id maydoni yangilanadi.</small>
+                        <small><i class="fas fa-info-circle"></i> Bu menyu uchun bitta yosh toifasini tanlang. Tanlangan yosh toifa uchun menu_compositions jadvalidagi barcha yozuvlarning age_range_id maydoni yangilanadi.</small>
                     </div>
                     <div class="mb-3">
-                        <label class="form-label">Yosh toifalarini tanlang</label>
+                        <label class="form-label">Yosh toifasini tanlang</label>
                         @php
                             $selectedAgeIds = $titlemenu->age_range->pluck('id')->toArray();
+                            $currentAgeId = !empty($selectedAgeIds) ? $selectedAgeIds[0] : null;
                         @endphp
                         @foreach(\App\Models\Age_range::all() as $age)
                             <div class="form-check">
-                                <input class="form-check-input" type="checkbox" name="age_range_ids[]" value="{{$age->id}}"
+                                <input class="form-check-input" type="radio" name="age_range_id" value="{{$age->id}}"
                                     id="age_{{$age->id}}"
-                                    {{in_array($age->id, $selectedAgeIds) ? 'checked' : ''}}>
+                                    {{$currentAgeId == $age->id ? 'checked' : ''}} required>
                                 <label class="form-check-label" for="age_{{$age->id}}">
                                     {{$age->age_name}}
                                     @if($age->description)

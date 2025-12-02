@@ -1895,19 +1895,18 @@ class TechnologController extends Controller
     {
         $request->validate([
             'menu_id' => 'required|integer|exists:titlemenus,id',
-            'age_range_ids' => 'required|array|min:1',
-            'age_range_ids.*' => 'integer|exists:age_ranges,id'
+            'age_range_id' => 'required|integer|exists:age_ranges,id'
         ]);
 
         $menuId = $request->menu_id;
-        $newAgeRangeId = $request->age_range_ids[0]; // Birinchi tanlangan age_range_id ni olish
+        $newAgeRangeId = $request->age_range_id;
 
         try {
             DB::beginTransaction();
 
             // 1. Titlemenu_age_range jadvalini yangilash
             $titlemenu = Titlemenu::findOrFail($menuId);
-            $titlemenu->age_range()->sync($request->age_range_ids);
+            $titlemenu->age_range()->sync([$newAgeRangeId]);
 
             // 2. Menu_compositions jadvalidagi barcha yozuvlarning age_range_id ni yangilash
             Menu_composition::where('title_menu_id', $menuId)
