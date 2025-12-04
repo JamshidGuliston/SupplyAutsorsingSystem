@@ -720,7 +720,7 @@
     function changeFunc(ageRangeId) {
         var selectId = 'menu_' + ageRangeId;
         var selectBox = document.getElementById(selectId);
-        if (!selectBox) return;
+        if (!selectBox || ageRangeId != 4) return;
         
         var menuid = selectBox.options[selectBox.selectedIndex].value;
         var div = $('.afternoon');
@@ -775,7 +775,7 @@
             var workerMenuId = '';
             var workerMenuText = '';
             if(ageRanges.length > 0) {
-                var firstAgeRangeId = ageRanges[0].id;
+                var firstAgeRangeId = ageRanges[1].id;
                 var firstSelectId = 'menu_' + firstAgeRangeId;
                 $("input:checkbox[id=vehicle]:checked").each(function(){
                     workerMenuSelected = true;
