@@ -428,7 +428,7 @@ class AccountantController extends Controller
                     $productscount[$row->product_name_id]['size_name'] = $row->size_name;
                 }
                 if($age->id != 3){
-                    $foods = titlemenu_food::where('day_id', $day->id-1)->where('worker_age_id', $age->id)->get();
+                    $foods = titlemenu_food::where('day_id', $day->id-1)->where('worker_age_id', 4)->get();
                 }else{
                     $foods = [];
                 }
@@ -446,12 +446,7 @@ class AccountantController extends Controller
                             ->join('sizes', 'products.size_name_id', '=', 'sizes.id')
                             ->get();
                     foreach($join as $row){
-                        $productscount[$row->product_name_id][$age->id] += $row->weight;
-                        $productscount[$row->product_name_id][$age->id.'-children'] = $row->kingar_children_number;
-                        $productscount[$row->product_name_id][$age->id.'div'] = $row->div;
-                        $productscount[$row->product_name_id]['product_name'] = $row->product_name;
-                        $productscount[$row->product_name_id][$age->id.'sort'] = $row->sort;
-                        $productscount[$row->product_name_id]['size_name'] = $row->size_name;
+                        $productscount[$row->product_name_id][$age->id."-worker"] = $row->weight * $row->workers_count;
                     }
                 }
 
@@ -464,7 +459,7 @@ class AccountantController extends Controller
                         $nakproducts[0][$day->id] = $childs;
                         $nakproducts[0]['product_name'] = "Болалар сони";
                         $nakproducts[0]['size_name'] = "";
-                        $nakproducts[$key][$day->id] = ($row[$age->id]*$row[$age->id.'-children']) / $row[$age->id.'div'];
+                        $nakproducts[$key][$day->id] = ($row[$age->id]*$row[$age->id.'-children']) / $row[$age->id.'div'] + $row[$age->id."-worker"] / $row[$age->id.'div'];
                         $nakproducts[$key]['product_name'] = $row['product_name'];
                         $nakproducts[$key]['sort'] = $row[$age->id.'sort'];
                         $nakproducts[$key]['size_name'] = $row['size_name'];
