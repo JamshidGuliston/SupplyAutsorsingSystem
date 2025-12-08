@@ -459,7 +459,7 @@ class AccountantController extends Controller
                         $nakproducts[0][$day->id] = $childs;
                         $nakproducts[0]['product_name'] = "Болалар сони";
                         $nakproducts[0]['size_name'] = "";
-                        $nakproducts[$key][$day->id] = ($row[$age->id]*$row[$age->id.'-children']) / $row[$age->id.'div'] + $row[$age->id."-worker"] / $row[$age->id.'div'];
+                        $nakproducts[$key][$day->id] = ($row[$age->id]*$row[$age->id.'-children']) / $row[$age->id.'div'] + (isset($row[$age->id."-worker"]) ? $row[$age->id."-worker"] / $row[$age->id.'div'] : 0);
                         $nakproducts[$key]['product_name'] = $row['product_name'];
                         $nakproducts[$key]['sort'] = $row[$age->id.'sort'];
                         $nakproducts[$key]['size_name'] = $row['size_name'];
