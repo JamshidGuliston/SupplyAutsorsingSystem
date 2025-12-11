@@ -87,15 +87,7 @@ class SpendedkgExport implements FromArray, WithStyles, WithColumnWidths, WithEv
                             ->join('sizes', 'products.size_name_id', '=', 'sizes.id')
                             ->get();
                     foreach($join as $row){
-                        if(!isset($productscount[$row->product_name_id][$age->id])){
-                            $productscount[$row->product_name_id][$age->id] = 0;
-                        }
-                        $productscount[$row->product_name_id][$age->id] += $row->weight;
-                        $productscount[$row->product_name_id][$age->id.'-children'] = $row->kingar_children_number;
-                        $productscount[$row->product_name_id][$age->id.'div'] = $row->div;
-                        $productscount[$row->product_name_id]['product_name'] = $row->product_name;
-                        $productscount[$row->product_name_id][$age->id.'sort'] = $row->sort;
-                        $productscount[$row->product_name_id]['size_name'] = $row->size_name;
+                        $productscount[$row->product_name_id][$age->id."-worker"] = $row->weight * $row->workers_count;
                     }
                 }
 
@@ -112,7 +104,7 @@ class SpendedkgExport implements FromArray, WithStyles, WithColumnWidths, WithEv
                         if(!isset($nakproducts[$key][$day->id])){
                             $nakproducts[$key][$day->id] = 0;
                         }
-                        $nakproducts[$key][$day->id] += ($row[$age->id]*$row[$age->id.'-children']) / $row[$age->id.'div'];
+                        $nakproducts[$key][$day->id] = ($row[$age->id]*$row[$age->id.'-children']) / $row[$age->id.'div'] + (isset($row[$age->id."-worker"]) ? $row[$age->id."-worker"] / $row[$age->id.'div'] : 0);
                         $nakproducts[$key]['product_name'] = $row['product_name'];
                         $nakproducts[$key]['sort'] = $row[$age->id.'sort'];
                         $nakproducts[$key]['size_name'] = $row['size_name'];
