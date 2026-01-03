@@ -14,7 +14,7 @@ class AddParentIdToTitlemenusTable extends Migration
     public function up()
     {
         Schema::table('titlemenus', function (Blueprint $table) {
-            $table->unsignedBigInteger('parent_id')->nullable()->after('menu_season_id');
+            $table->unsignedInteger('parent_id')->nullable()->after('menu_season_id');
             $table->foreign('parent_id')->references('id')->on('titlemenus')->onDelete('cascade');
         });
     }
