@@ -1812,12 +1812,15 @@ class TechnologController extends Controller
     public function addtitlemenu(Request $request, $id)
     {
         $ages = Age_range::all();
-        // Shu season uchun mavjud parent menyularni olish
-        $parentMenus = Titlemenu::where('menu_season_id', $id)
-                                ->whereNull('parent_id')
-                                ->orderBy('menu_name', 'ASC')
-                                ->get(['id', 'menu_name']);
-        return view('technolog.addtitlemenu', compact('id', 'ages', 'parentMenus'));
+
+        // Barcha seasonlar va ularning ierarxik menyularini olish
+        $seasons = Season::with(['titlemenus' => function($query) {
+            $query->whereNull('parent_id')
+                  ->with('children')
+                  ->orderBy('menu_name', 'ASC');
+        }])->orderBy('season_name', 'ASC')->get();
+
+        return view('technolog.addtitlemenu', compact('id', 'ages', 'seasons'));
     }
 
     public function createmenu(Request $request)

@@ -13,4 +13,9 @@ class Season extends Model
         'season_image',
         'hide'
     ];
+
+    // Season ga tegishli barcha titlemenular
+    public function titlemenus(){
+        return $this->hasMany(Titlemenu::class, 'menu_season_id');
+    }
 }

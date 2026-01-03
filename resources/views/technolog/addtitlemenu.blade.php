@@ -54,9 +54,16 @@
             <label for="parentMenu" class="col-sm-2 col-form-label">Parent menyu:</label>
             <div class="col-sm-6">
                 <select name="parent_id" class="form-select" id="parentMenu">
-                    <option value="">-- Asosiy menyu (parent) --</option>
-                    @foreach($parentMenus as $parent)
-                        <option value="{{ $parent->id }}">{{ $parent->menu_name }}</option>
+                    <option value="">-- Yangi asosiy menyu (parent) --</option>
+                    @foreach($seasons as $season)
+                        <optgroup label="━━ {{ $season->season_name }} ━━">
+                            @foreach($season->titlemenus as $parent)
+                                <option value="{{ $parent->id }}">{{ $parent->menu_name }}</option>
+                                @foreach($parent->children as $child)
+                                    <option value="{{ $child->id }}">&nbsp;&nbsp;&nbsp;└─ {{ $child->menu_name }}</option>
+                                @endforeach
+                            @endforeach
+                        </optgroup>
                     @endforeach
                 </select>
                 <small class="text-muted">Agar tanlasangiz, yangi menyu child bo'ladi</small>
