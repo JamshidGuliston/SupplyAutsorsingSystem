@@ -82,6 +82,79 @@
         </div>
     </div>
 
+    <!-- Hisobot filterlari -->
+    <div class="card mb-4">
+        <div class="card-header bg-info text-white">
+            <h6 class="mb-0">
+                <i class="fas fa-filter me-2"></i>Hisobot parametrlari
+            </h6>
+        </div>
+        <div class="card-body">
+            <form id="reportFilterForm">
+                <div class="row">
+                    <!-- Sana turi -->
+                    <div class="col-md-3 mb-3">
+                        <label for="date_type" class="form-label">Hisobot turi</label>
+                        <select class="form-select" id="date_type" name="date_type">
+                            <option value="daily">Kunlik</option>
+                            <option value="monthly">Oylik</option>
+                            <option value="range">Sanadan-sanaga</option>
+                        </select>
+                    </div>
+
+                    <!-- Boshlang'ich sana -->
+                    <div class="col-md-3 mb-3" id="start_date_container">
+                        <label for="start_date" class="form-label">Sana / Boshlanish</label>
+                        <input type="date" class="form-control" id="start_date" name="start_date" value="{{ date('Y-m-d') }}">
+                    </div>
+
+                    <!-- Tugash sanasi (faqat range uchun) -->
+                    <div class="col-md-3 mb-3" id="end_date_container" style="display: none;">
+                        <label for="end_date" class="form-label">Tugash sanasi</label>
+                        <input type="date" class="form-control" id="end_date" name="end_date" value="{{ date('Y-m-d') }}">
+                    </div>
+
+                    <!-- Tuman filter -->
+                    <div class="col-md-3 mb-3">
+                        <label for="region_id" class="form-label">Tuman</label>
+                        <select class="form-select" id="region_id" name="region_id">
+                            <option value="">Barchasi</option>
+                            @php
+                                $regions = \App\Models\Region::orderBy('region_name')->get();
+                            @endphp
+                            @foreach($regions as $region)
+                                <option value="{{ $region->id }}">{{ $region->region_name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+
+                    <!-- Do'kon filter -->
+                    <div class="col-md-3 mb-3">
+                        <label for="shop_id" class="form-label">Yetkazuvchi</label>
+                        <select class="form-select" id="shop_id" name="shop_id">
+                            <option value="">Barchasi</option>
+                            @foreach($shops as $shop)
+                                <option value="{{ $shop->id }}">{{ $shop->shop_name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Hisobot tugmalari -->
+                <div class="row mt-3">
+                    <div class="col-12">
+                        <button type="button" class="btn btn-danger" id="generatePdfBtn">
+                            <i class="fas fa-file-pdf me-1"></i>PDF yuklash
+                        </button>
+                        <button type="button" class="btn btn-success" id="generateExcelBtn">
+                            <i class="fas fa-file-excel me-1"></i>Excel yuklash
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <!-- Sana tanlash -->
     <div class="date mb-4">
         <div class="year first-text fw-bold">
@@ -219,7 +292,7 @@
     $(document).ready(function() {
         // Faol sana ustunini belgilash
         $('.day__item.active').addClass('fw-bold');
-        
+
         // Hover effektlari
         $('.shop-card').hover(
             function() {
@@ -229,6 +302,37 @@
                 $(this).find('.shop-header').css('background', 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)');
             }
         );
+
+        // Sana turi o'zgarganda
+        $('#date_type').on('change', function() {
+            const dateType = $(this).val();
+
+            if (dateType === 'range') {
+                $('#end_date_container').show();
+                $('#start_date_container label').text('Boshlanish sanasi');
+            } else {
+                $('#end_date_container').hide();
+                if (dateType === 'daily') {
+                    $('#start_date_container label').text('Sana');
+                } else if (dateType === 'monthly') {
+                    $('#start_date_container label').text('Oy');
+                }
+            }
+        });
+
+        // PDF yuklash
+        $('#generatePdfBtn').on('click', function() {
+            const formData = $('#reportFilterForm').serialize();
+            const url = '/storage/shops-history-report-pdf?' + formData;
+            window.open(url, '_blank');
+        });
+
+        // Excel yuklash
+        $('#generateExcelBtn').on('click', function() {
+            const formData = $('#reportFilterForm').serialize();
+            const url = '/storage/shops-history-report-excel?' + formData;
+            window.location.href = url;
+        });
     });
 </script>
 @endsection 

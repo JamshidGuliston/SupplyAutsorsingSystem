@@ -3618,4 +3618,351 @@ class StorageController extends Controller
             return redirect()->back()->with('error', 'Xatolik yuz berdi: ' . $e->getMessage());
         }
     }
+
+    public function shopsHistoryReportPdf(Request $request)
+    {
+        try {
+            // Filterlarni olish
+            $dateType = $request->input('date_type', 'daily'); // daily, monthly, range
+            $startDate = $request->input('start_date');
+            $endDate = $request->input('end_date');
+            $regionId = $request->input('region_id');
+            $shopId = $request->input('shop_id');
+
+            // Date range aniqlash
+            $dayQuery = Day::query()->with(['month', 'year']);
+
+            if ($dateType === 'daily' && $startDate) {
+                // Sanani parse qilib Day modelidan topish
+                $dateObj = \Carbon\Carbon::parse($startDate);
+                $day = Day::whereHas('month', function($q) use ($dateObj) {
+                    $q->where('month_active', $dateObj->month);
+                })
+                ->whereHas('year', function($q) use ($dateObj) {
+                    $q->where('year_name', $dateObj->year);
+                })
+                ->where('day_number', $dateObj->day)
+                ->first();
+
+                if ($day) {
+                    $dayQuery->where('id', $day->id);
+                } else {
+                    // Agar sana topilmasa, oxirgi kunni olish
+                    $dayQuery->orderBy('id', 'DESC')->limit(1);
+                }
+            } elseif ($dateType === 'monthly' && $startDate) {
+                // Oylik hisobot uchun shu oydagi barcha kunlarni olish
+                $dateObj = \Carbon\Carbon::parse($startDate);
+                $dayQuery->whereHas('month', function($q) use ($dateObj) {
+                    $q->where('month_active', $dateObj->month);
+                })
+                ->whereHas('year', function($q) use ($dateObj) {
+                    $q->where('year_name', $dateObj->year);
+                });
+            } elseif ($dateType === 'range' && $startDate && $endDate) {
+                // Sanalar oralig'i uchun
+                $startDateObj = \Carbon\Carbon::parse($startDate);
+                $endDateObj = \Carbon\Carbon::parse($endDate);
+
+                // Boshlanish va tugash kunlarini topish
+                $startDay = Day::whereHas('month', function($q) use ($startDateObj) {
+                    $q->where('month_active', $startDateObj->month);
+                })
+                ->whereHas('year', function($q) use ($startDateObj) {
+                    $q->where('year_name', $startDateObj->year);
+                })
+                ->where('day_number', $startDateObj->day)
+                ->first();
+
+                $endDay = Day::whereHas('month', function($q) use ($endDateObj) {
+                    $q->where('month_active', $endDateObj->month);
+                })
+                ->whereHas('year', function($q) use ($endDateObj) {
+                    $q->where('year_name', $endDateObj->year);
+                })
+                ->where('day_number', $endDateObj->day)
+                ->first();
+
+                if ($startDay && $endDay) {
+                    $dayQuery->whereBetween('id', [$startDay->id, $endDay->id]);
+                }
+            } else {
+                // Default: oxirgi kun
+                $day = Day::orderBy('id', 'DESC')->first();
+                $dayQuery->where('id', $day->id);
+            }
+
+            $days = $dayQuery->get();
+            $dayIds = $days->pluck('id')->toArray();
+
+            // order_product ma'lumotlarini olish
+            $ordersQuery = order_product::with([
+                'kinggarden.region',
+                'orderProductStructures.product.size',
+                'shop'
+            ])
+            ->whereIn('day_id', $dayIds)
+            ->whereNotNull('shop_id');
+
+            if ($shopId) {
+                $ordersQuery->where('shop_id', $shopId);
+            }
+
+            $orders = $ordersQuery->get();
+
+            // Ma'lumotlarni tuman bo'yicha guruplash
+            $reportData = [];
+
+            foreach ($orders as $order) {
+                if (!$order->kinggarden || !$order->kinggarden->region) {
+                    continue;
+                }
+
+                $regionName = $order->kinggarden->region->region_name;
+                $kindgardenId = $order->kinggarden->id;
+                $numberOrg = $order->kinggarden->number_of_org ?? 'N/A';
+
+                // Region filterni tekshirish
+                if ($regionId && $order->kinggarden->region_id != $regionId) {
+                    continue;
+                }
+
+                if (!isset($reportData[$regionName])) {
+                    $reportData[$regionName] = [
+                        'kindgardens' => [],
+                        'products' => []
+                    ];
+                }
+
+                // Bog'chani qo'shish
+                if (!isset($reportData[$regionName]['kindgardens'][$kindgardenId])) {
+                    $reportData[$regionName]['kindgardens'][$kindgardenId] = [
+                        'number_org' => $numberOrg,
+                        'name' => $order->kinggarden->kingar_name
+                    ];
+                }
+
+                // Maxsulotlarni qo'shish
+                foreach ($order->orderProductStructures as $structure) {
+                    $productId = $structure->product_name_id;
+                    $productName = $structure->product->product_name ?? 'N/A';
+                    $sizeName = $structure->product->size->size_name ?? 'N/A';
+                    $weight = $structure->product_weight ?? 0;
+
+                    if (!isset($reportData[$regionName]['products'][$productId])) {
+                        $reportData[$regionName]['products'][$productId] = [
+                            'name' => $productName,
+                            'size' => $sizeName,
+                            'kindgardens' => []
+                        ];
+                    }
+
+                    if (!isset($reportData[$regionName]['products'][$productId]['kindgardens'][$kindgardenId])) {
+                        $reportData[$regionName]['products'][$productId]['kindgardens'][$kindgardenId] = 0;
+                    }
+
+                    $reportData[$regionName]['products'][$productId]['kindgardens'][$kindgardenId] += $weight;
+                }
+            }
+
+            // PDF generatsiya
+            $dompdf = new \Dompdf\Dompdf();
+            $options = new \Dompdf\Options();
+            $options->setIsHtml5ParserEnabled(true);
+            $options->setIsRemoteEnabled(true);
+            $options->setDefaultFont('DejaVu Sans');
+            $dompdf->setOptions($options);
+
+            $html = mb_convert_encoding(
+                view('pdffile.storage.shopsHistoryReport', compact('reportData', 'days', 'dateType')),
+                'HTML-ENTITIES',
+                'UTF-8'
+            );
+
+            $dompdf->loadHtml($html);
+            $dompdf->setPaper('A4', 'landscape');
+            $dompdf->render();
+
+            // Fayl nomini yaratish
+            $fileName = 'shops_report_' . date('Y-m-d_H-i-s') . '.pdf';
+            $filePath = storage_path('shopsHistory/' . $fileName);
+
+            // Papka mavjudligini tekshirish
+            if (!file_exists(storage_path('shopsHistory'))) {
+                mkdir(storage_path('shopsHistory'), 0777, true);
+            }
+
+            // Faylni saqlash
+            file_put_contents($filePath, $dompdf->output());
+
+            // Faylni yuklab olish
+            return $dompdf->stream($fileName, ['Attachment' => 0]);
+
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'Xatolik: ' . $e->getMessage());
+        }
+    }
+
+    public function shopsHistoryReportExcel(Request $request)
+    {
+        try {
+            // Filterlarni olish
+            $dateType = $request->input('date_type', 'daily');
+            $startDate = $request->input('start_date');
+            $endDate = $request->input('end_date');
+            $regionId = $request->input('region_id');
+            $shopId = $request->input('shop_id');
+
+            // Date range aniqlash
+            $dayQuery = Day::query()->with(['month', 'year']);
+
+            if ($dateType === 'daily' && $startDate) {
+                // Sanani parse qilib Day modelidan topish
+                $dateObj = \Carbon\Carbon::parse($startDate);
+                $day = Day::whereHas('month', function($q) use ($dateObj) {
+                    $q->where('month_active', $dateObj->month);
+                })
+                ->whereHas('year', function($q) use ($dateObj) {
+                    $q->where('year_name', $dateObj->year);
+                })
+                ->where('day_number', $dateObj->day)
+                ->first();
+
+                if ($day) {
+                    $dayQuery->where('id', $day->id);
+                } else {
+                    // Agar sana topilmasa, oxirgi kunni olish
+                    $dayQuery->orderBy('id', 'DESC')->limit(1);
+                }
+            } elseif ($dateType === 'monthly' && $startDate) {
+                // Oylik hisobot uchun shu oydagi barcha kunlarni olish
+                $dateObj = \Carbon\Carbon::parse($startDate);
+                $dayQuery->whereHas('month', function($q) use ($dateObj) {
+                    $q->where('month_active', $dateObj->month);
+                })
+                ->whereHas('year', function($q) use ($dateObj) {
+                    $q->where('year_name', $dateObj->year);
+                });
+            } elseif ($dateType === 'range' && $startDate && $endDate) {
+                // Sanalar oralig'i uchun
+                $startDateObj = \Carbon\Carbon::parse($startDate);
+                $endDateObj = \Carbon\Carbon::parse($endDate);
+
+                // Boshlanish va tugash kunlarini topish
+                $startDay = Day::whereHas('month', function($q) use ($startDateObj) {
+                    $q->where('month_active', $startDateObj->month);
+                })
+                ->whereHas('year', function($q) use ($startDateObj) {
+                    $q->where('year_name', $startDateObj->year);
+                })
+                ->where('day_number', $startDateObj->day)
+                ->first();
+
+                $endDay = Day::whereHas('month', function($q) use ($endDateObj) {
+                    $q->where('month_active', $endDateObj->month);
+                })
+                ->whereHas('year', function($q) use ($endDateObj) {
+                    $q->where('year_name', $endDateObj->year);
+                })
+                ->where('day_number', $endDateObj->day)
+                ->first();
+
+                if ($startDay && $endDay) {
+                    $dayQuery->whereBetween('id', [$startDay->id, $endDay->id]);
+                }
+            } else {
+                // Default: oxirgi kun
+                $day = Day::orderBy('id', 'DESC')->first();
+                $dayQuery->where('id', $day->id);
+            }
+
+            $days = $dayQuery->get();
+            $dayIds = $days->pluck('id')->toArray();
+
+            // order_product ma'lumotlarini olish
+            $ordersQuery = order_product::with([
+                'kinggarden.region',
+                'orderProductStructures.product.size',
+                'shop'
+            ])
+            ->whereIn('day_id', $dayIds)
+            ->whereNotNull('shop_id');
+
+            if ($shopId) {
+                $ordersQuery->where('shop_id', $shopId);
+            }
+
+            $orders = $ordersQuery->get();
+
+            // Ma'lumotlarni tuman bo'yicha guruplash
+            $reportData = [];
+
+            foreach ($orders as $order) {
+                if (!$order->kinggarden || !$order->kinggarden->region) {
+                    continue;
+                }
+
+                $regionName = $order->kinggarden->region->region_name;
+                $kindgardenId = $order->kinggarden->id;
+                $numberOrg = $order->kinggarden->number_of_org ?? 'N/A';
+
+                // Region filterni tekshirish
+                if ($regionId && $order->kinggarden->region_id != $regionId) {
+                    continue;
+                }
+
+                if (!isset($reportData[$regionName])) {
+                    $reportData[$regionName] = [
+                        'kindgardens' => [],
+                        'products' => []
+                    ];
+                }
+
+                // Bog'chani qo'shish
+                if (!isset($reportData[$regionName]['kindgardens'][$kindgardenId])) {
+                    $reportData[$regionName]['kindgardens'][$kindgardenId] = [
+                        'number_org' => $numberOrg,
+                        'name' => $order->kinggarden->kingar_name
+                    ];
+                }
+
+                // Maxsulotlarni qo'shish
+                foreach ($order->orderProductStructures as $structure) {
+                    $productId = $structure->product_name_id;
+                    $productName = $structure->product->product_name ?? 'N/A';
+                    $sizeName = $structure->product->size->size_name ?? 'N/A';
+                    $weight = $structure->product_weight ?? 0;
+
+                    if (!isset($reportData[$regionName]['products'][$productId])) {
+                        $reportData[$regionName]['products'][$productId] = [
+                            'name' => $productName,
+                            'size' => $sizeName,
+                            'kindgardens' => []
+                        ];
+                    }
+
+                    if (!isset($reportData[$regionName]['products'][$productId]['kindgardens'][$kindgardenId])) {
+                        $reportData[$regionName]['products'][$productId]['kindgardens'][$kindgardenId] = 0;
+                    }
+
+                    $reportData[$regionName]['products'][$productId]['kindgardens'][$kindgardenId] += $weight;
+                }
+            }
+
+            // Fayl nomi
+            $fileName = 'shops_report_' . date('Y-m-d_H-i-s') . '.xlsx';
+            $filePath = storage_path('shopsHistory/' . $fileName);
+
+            // Papka mavjudligini tekshirish
+            if (!file_exists(storage_path('shopsHistory'))) {
+                mkdir(storage_path('shopsHistory'), 0777, true);
+            }
+
+            // Excel export qilish
+            return Excel::download(new \App\Exports\ShopsHistoryReportExport($reportData, $days, $dateType), $fileName);
+
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'Xatolik: ' . $e->getMessage());
+        }
+    }
 }
