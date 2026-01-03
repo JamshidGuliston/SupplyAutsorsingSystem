@@ -234,54 +234,6 @@
         @endforelse
     </div> -->
 
-    <!-- Umumiy statistika -->
-    @if($shops->count() > 0)
-    <div class="row mt-4">
-        <div class="col-12">
-            <div class="card">
-                <div class="card-header bg-primary text-white">
-                    <h6 class="mb-0">
-                        <i class="fas fa-chart-bar me-2"></i>Kunlik statistika
-                    </h6>
-                </div>
-                <div class="card-body">
-                    <div class="row text-center">
-                        <div class="col-md-3">
-                            <div class="stat-item">
-                                <h4 class="text-primary">{{ $shops->count() }}</h4>
-                                <small class="text-muted">Jami yetkazuvchilar</small>
-                            </div>
-                        </div>
-                        <div class="col-md-3">
-                            <div class="stat-item">
-                                <h4 class="text-success">
-                                    {{ collect($orders)->filter(function($order) { return $order->count() > 0; })->count() }}
-                                </h4>
-                                <small class="text-muted">Faol yetkazuvchilar</small>
-                            </div>
-                        </div>
-                        <div class="col-md-3">
-                            <div class="stat-item">
-                                <h4 class="text-info">
-                                    {{ collect($orders)->sum(function($order) { return $order->count(); }) }}
-                                </h4>
-                                <small class="text-muted">Jami buyurtmalar</small>
-                            </div>
-                        </div>
-                        <div class="col-md-3">
-                            <div class="stat-item">
-                                <h4 class="text-warning">
-                                    {{ number_format(collect($orders)->flatten()->sum('weight'), 2) }} kg
-                                </h4>
-                                <small class="text-muted">Jami og'irlik</small>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    @endif
 </div>
 @endsection
 
