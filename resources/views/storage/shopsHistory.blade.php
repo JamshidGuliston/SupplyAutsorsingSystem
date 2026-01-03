@@ -156,7 +156,7 @@
     </div>
 
     <!-- Sana tanlash -->
-    <div class="date mb-4">
+    <!-- <div class="date mb-4">
         <div class="year first-text fw-bold">
             {{ $day->year->year_name }}
         </div>
@@ -173,12 +173,11 @@
             <a href="/storage/shops-history/{{ $day->id+1 }}/" class="month__item">{{ $day->year->year_name + 1 }}</a>
         </div>
         <div class="day">
-            <!-- -->
         </div>
-    </div>
+    </div> -->
 
     <!-- Yetkazuvchilar jadvali -->
-    <div class="row">
+    <!-- <div class="row">
         @forelse($shops as $shop)
         <div class="col-md-6 col-lg-4 mb-4">
             <div class="card shop-card">
@@ -223,7 +222,7 @@
                     @endif
                 </div>
             </div>
-        </div>
+        </div> -->
         @empty
         <div class="col-12">
             <div class="alert alert-info text-center">
