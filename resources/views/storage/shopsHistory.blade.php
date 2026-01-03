@@ -223,7 +223,7 @@
                 </div>
             </div>
         </div> -->
-        @empty
+        <!-- @empty
         <div class="col-12">
             <div class="alert alert-info text-center">
                 <i class="fas fa-info-circle fa-2x mb-2"></i>
@@ -232,7 +232,7 @@
             </div>
         </div>
         @endforelse
-    </div>
+    </div> -->
 
     <!-- Umumiy statistika -->
     @if($shops->count() > 0)
