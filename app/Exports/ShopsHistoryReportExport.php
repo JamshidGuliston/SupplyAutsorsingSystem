@@ -40,41 +40,63 @@ class ShopsHistoryReportExport implements FromArray, WithStyles, WithColumnWidth
             $data[] = [$regionName . ' tumani'];
             $data[] = [''];
 
-            // Jadval header qurish
-            $headerRow = ['Maxsulot nomi', 'O\'lchov birligi'];
             $kindgardensOrdered = collect($regionData['kindgardens'])->sortBy('number_org');
+            $maxColumnsPerTable = 12; // Maksimal ustunlar soni bitta jadvalda
+            $kindgardenChunks = $kindgardensOrdered->chunk($maxColumnsPerTable);
+            $totalChunks = $kindgardenChunks->count();
 
-            foreach ($kindgardensOrdered as $kindgardenId => $kindgarden) {
-                $headerRow[] = $kindgarden['number_org'];
-            }
-            $headerRow[] = 'Jami';
+            foreach ($kindgardenChunks as $chunkIndex => $kindgardenChunk) {
+                $isLastChunk = ($chunkIndex == $totalChunks - 1);
 
-            $data[] = $headerRow;
-
-            // Maxsulotlar qatorlarini qurish
-            foreach ($regionData['products'] as $productId => $product) {
-                $row = [
-                    $product['name'],
-                    $product['size']
-                ];
-
-                $rowTotal = 0;
-
-                // Har bir bog'cha uchun miqdorni qo'shish
-                foreach ($kindgardensOrdered as $kindgardenId => $kindgarden) {
-                    $weight = $product['kindgardens'][$kindgardenId] ?? 0;
-                    $row[] = $weight > 0 ? round($weight, 2) : '-';
-                    $rowTotal += $weight;
+                // Agar davomi bo'lsa, sarlavha qo'shamiz
+                if ($chunkIndex > 0) {
+                    $data[] = ['Davomi (' . ($chunkIndex + 1) . '-qism):'];
                 }
 
-                // Jami ustuni
-                $row[] = round($rowTotal, 2);
+                // Jadval header qurish
+                $headerRow = ['Maxsulot nomi', 'O\'lchov birligi'];
 
-                $data[] = $row;
+                foreach ($kindgardenChunk as $kindgardenId => $kindgarden) {
+                    $headerRow[] = $kindgarden['number_org'];
+                }
+
+                // Faqat oxirgi chunkda Jami ustunini qo'shamiz
+                if ($isLastChunk) {
+                    $headerRow[] = 'Jami';
+                }
+
+                $data[] = $headerRow;
+
+                // Maxsulotlar qatorlarini qurish
+                foreach ($regionData['products'] as $productId => $product) {
+                    $row = [
+                        $product['name'],
+                        $product['size']
+                    ];
+
+                    // Har bir bog'cha uchun miqdorni qo'shish (faqat joriy chunk)
+                    foreach ($kindgardenChunk as $kindgardenId => $kindgarden) {
+                        $weight = $product['kindgardens'][$kindgardenId] ?? 0;
+                        $row[] = $weight > 0 ? round($weight, 2) : '-';
+                    }
+
+                    // Faqat oxirgi chunkda umumiy jamini qo'shamiz
+                    if ($isLastChunk) {
+                        $grandTotal = 0;
+                        foreach ($kindgardensOrdered as $kId => $kg) {
+                            $grandTotal += $product['kindgardens'][$kId] ?? 0;
+                        }
+                        $row[] = round($grandTotal, 2);
+                    }
+
+                    $data[] = $row;
+                }
+
+                // Bo'sh qator (chunklar orasida)
+                $data[] = [''];
             }
 
             // Bo'sh qator (tumanlararasida ajratish uchun)
-            $data[] = [''];
             $data[] = [''];
         }
 
@@ -157,51 +179,71 @@ class ShopsHistoryReportExport implements FromArray, WithStyles, WithColumnWidth
                                 'horizontal' => Alignment::HORIZONTAL_CENTER,
                             ],
                         ]);
+                    }
 
-                        // Keyingi qator jadval headeri bo'ladi
-                        $tableHeaderRow = $currentRow + 2;
-                        if ($tableHeaderRow <= $highestRow) {
-                            $sheet->getStyle('A' . $tableHeaderRow . ':' . $highestColumn . $tableHeaderRow)
+                    // "Davomi" sarlavhasini formatlash
+                    if (is_string($cellValue) && strpos($cellValue, 'Davomi') !== false) {
+                        $sheet->mergeCells('A' . $currentRow . ':' . $highestColumn . $currentRow);
+                        $sheet->getStyle('A' . $currentRow)->applyFromArray([
+                            'font' => [
+                                'bold' => true,
+                                'size' => 11,
+                                'color' => ['rgb' => '4a5568'],
+                            ],
+                            'alignment' => [
+                                'horizontal' => Alignment::HORIZONTAL_LEFT,
+                            ],
+                        ]);
+                    }
+
+                    // Jadval header (Maxsulot nomi, O'lchov birligi...)
+                    if (is_string($cellValue) && $cellValue === 'Maxsulot nomi') {
+                        $tableHeaderRow = $currentRow;
+                        $sheet->getStyle('A' . $tableHeaderRow . ':' . $highestColumn . $tableHeaderRow)
+                              ->applyFromArray([
+                                  'font' => ['bold' => true],
+                                  'fill' => [
+                                      'fillType' => Fill::FILL_SOLID,
+                                      'startColor' => ['rgb' => 'F0F0F0'],
+                                  ],
+                                  'borders' => [
+                                      'allBorders' => ['borderStyle' => Border::BORDER_THIN],
+                                  ],
+                                  'alignment' => [
+                                      'horizontal' => Alignment::HORIZONTAL_CENTER,
+                                      'vertical' => Alignment::VERTICAL_CENTER,
+                                  ],
+                              ]);
+
+                        // Ma'lumotlar qismiga border qo'llash
+                        $dataStartRow = $tableHeaderRow + 1;
+                        $dataEndRow = $dataStartRow;
+
+                        // Ma'lumotlar oxirini topish
+                        while ($dataEndRow <= $highestRow &&
+                               !empty($sheet->getCell('A' . $dataEndRow)->getValue()) &&
+                               $sheet->getCell('A' . $dataEndRow)->getValue() !== 'Maxsulot nomi' &&
+                               strpos($sheet->getCell('A' . $dataEndRow)->getValue(), 'tumani') === false &&
+                               strpos($sheet->getCell('A' . $dataEndRow)->getValue(), 'Davomi') === false) {
+                            $dataEndRow++;
+                        }
+                        $dataEndRow--;
+
+                        if ($dataStartRow <= $dataEndRow) {
+                            $sheet->getStyle('A' . $dataStartRow . ':' . $highestColumn . $dataEndRow)
                                   ->applyFromArray([
-                                      'font' => ['bold' => true],
-                                      'fill' => [
-                                          'fillType' => Fill::FILL_SOLID,
-                                          'startColor' => ['rgb' => 'F0F0F0'],
-                                      ],
                                       'borders' => [
                                           'allBorders' => ['borderStyle' => Border::BORDER_THIN],
                                       ],
-                                      'alignment' => [
-                                          'horizontal' => Alignment::HORIZONTAL_CENTER,
-                                          'vertical' => Alignment::VERTICAL_CENTER,
-                                      ],
                                   ]);
 
-                            // Ma'lumotlar qismiga border qo'llash
-                            $dataStartRow = $tableHeaderRow + 1;
-                            $dataEndRow = $dataStartRow;
+                            // Number format for numeric columns
+                            $sheet->getStyle('C' . $dataStartRow . ':' . $highestColumn . $dataEndRow)
+                                  ->getNumberFormat()->setFormatCode('#,##0.00');
 
-                            // Ma'lumotlar oxirini topish
-                            while ($dataEndRow <= $highestRow &&
-                                   !empty($sheet->getCell('A' . $dataEndRow)->getValue()) &&
-                                   strpos($sheet->getCell('A' . $dataEndRow)->getValue(), 'tumani') === false) {
-                                $dataEndRow++;
-                            }
-                            $dataEndRow--;
-
-                            if ($dataStartRow <= $dataEndRow) {
-                                $sheet->getStyle('A' . $dataStartRow . ':' . $highestColumn . $dataEndRow)
-                                      ->applyFromArray([
-                                          'borders' => [
-                                              'allBorders' => ['borderStyle' => Border::BORDER_THIN],
-                                          ],
-                                      ]);
-
-                                // Number format for numeric columns
-                                $sheet->getStyle('C' . $dataStartRow . ':' . $highestColumn . $dataEndRow)
-                                      ->getNumberFormat()->setFormatCode('#,##0.00');
-
-                                // Jami ustuniga bold style
+                            // Jami ustuniga bold style (oxirgi ustun)
+                            $lastColValue = $sheet->getCell($highestColumn . $tableHeaderRow)->getValue();
+                            if ($lastColValue === 'Jami') {
                                 $sheet->getStyle($highestColumn . $dataStartRow . ':' . $highestColumn . $dataEndRow)
                                       ->getFont()->setBold(true);
                             }

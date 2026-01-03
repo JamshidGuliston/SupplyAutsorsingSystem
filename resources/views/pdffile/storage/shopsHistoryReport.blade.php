@@ -128,48 +128,75 @@
             <div class="region-section">
                 <div class="region-title">{{ $regionName }} tumani</div>
 
-                <table>
-                    <thead>
-                        <tr>
-                            <th style="width: 25%;">Maxsulot nomi</th>
-                            <th style="width: 10%;">O'lchov birligi</th>
+                @php
+                    $kindgardensOrdered = collect($regionData['kindgardens'])->sortBy('number_org');
+                    $kindgardenCount = $kindgardensOrdered->count();
+                    $maxColumnsPerTable = 12; // Maksimal ustunlar soni bitta jadvalda
+                    $kindgardenChunks = $kindgardensOrdered->chunk($maxColumnsPerTable);
+                    $totalChunks = $kindgardenChunks->count();
+                @endphp
 
-                            @php
-                                $kindgardensOrdered = collect($regionData['kindgardens'])->sortBy('number_org');
-                                $kindgardenCount = $kindgardensOrdered->count();
-                                $columnWidth = $kindgardenCount > 0 ? (60 / $kindgardenCount) : 10;
-                            @endphp
+                @foreach($kindgardenChunks as $chunkIndex => $kindgardenChunk)
+                    @php
+                        $isLastChunk = ($chunkIndex == $totalChunks - 1);
+                        $chunkCount = $kindgardenChunk->count();
+                        $columnWidth = $chunkCount > 0 ? (60 / $chunkCount) : 10;
+                    @endphp
 
-                            @foreach($kindgardensOrdered as $kindgardenId => $kindgarden)
-                                <th style="width: {{ $columnWidth }}%;">{{ $kindgarden['number_org'] }}</th>
-                            @endforeach
+                    @if($chunkIndex > 0)
+                        <div style="margin-top: 15px; font-weight: bold; font-size: 10px; color: #4a5568;">
+                            Davomi ({{ $chunkIndex + 1 }}-qism):
+                        </div>
+                    @endif
 
-                            <th style="width: 10%;">Jami</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach($regionData['products'] as $productId => $product)
+                    <table>
+                        <thead>
                             <tr>
-                                <td>{{ $product['name'] }}</td>
-                                <td>{{ $product['size'] }}</td>
+                                <th style="width: 25%;">Maxsulot nomi</th>
+                                <th style="width: 10%;">O'lchov birligi</th>
 
-                                @php
-                                    $rowTotal = 0;
-                                @endphp
-
-                                @foreach($kindgardensOrdered as $kindgardenId => $kindgarden)
-                                    @php
-                                        $weight = $product['kindgardens'][$kindgardenId] ?? 0;
-                                        $rowTotal += $weight;
-                                    @endphp
-                                    <td>{{ $weight > 0 ? number_format($weight, 2, '.', '') : '-' }}</td>
+                                @foreach($kindgardenChunk as $kindgardenId => $kindgarden)
+                                    <th style="width: {{ $columnWidth }}%;">{{ $kindgarden['number_org'] }}</th>
                                 @endforeach
 
-                                <td>{{ number_format($rowTotal, 2, '.', '') }}</td>
+                                @if($isLastChunk)
+                                    <th style="width: 10%;">Jami</th>
+                                @endif
                             </tr>
-                        @endforeach
-                    </tbody>
-                </table>
+                        </thead>
+                        <tbody>
+                            @foreach($regionData['products'] as $productId => $product)
+                                <tr>
+                                    <td>{{ $product['name'] }}</td>
+                                    <td>{{ $product['size'] }}</td>
+
+                                    @php
+                                        $rowTotal = 0;
+                                    @endphp
+
+                                    @foreach($kindgardenChunk as $kindgardenId => $kindgarden)
+                                        @php
+                                            $weight = $product['kindgardens'][$kindgardenId] ?? 0;
+                                            $rowTotal += $weight;
+                                        @endphp
+                                        <td>{{ $weight > 0 ? number_format($weight, 2, '.', '') : '-' }}</td>
+                                    @endforeach
+
+                                    @if($isLastChunk)
+                                        @php
+                                            // Barcha bog'chalar bo'yicha umumiy jami
+                                            $grandTotal = 0;
+                                            foreach($kindgardensOrdered as $kId => $kg) {
+                                                $grandTotal += $product['kindgardens'][$kId] ?? 0;
+                                            }
+                                        @endphp
+                                        <td>{{ number_format($grandTotal, 2, '.', '') }}</td>
+                                    @endif
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                @endforeach
             </div>
         @endforeach
     @else
