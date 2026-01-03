@@ -2417,7 +2417,7 @@ class StorageController extends Controller
         }else{
             $day = Day::where('id', $day)->first();
         }
-        $shops = Shop::where('type_id', 2)->get();
+        $shops = Shop::where('type_id', 1)->get();
         $orders = [];
         $months = Month::where('yearid', $day->year->id)->get();
         foreach($shops as $shop){
@@ -3695,14 +3695,17 @@ class StorageController extends Controller
             $days = $dayQuery->get();
             $dayIds = $days->pluck('id')->toArray();
 
-            // order_product ma'lumotlarini olish
+            // order_product ma'lumotlarini olish (faqat type_id = 1 bo'lgan shoplar)
             $ordersQuery = order_product::with([
                 'kinggarden.region',
                 'orderProductStructures.product.size',
                 'shop'
             ])
             ->whereIn('day_id', $dayIds)
-            ->whereNotNull('shop_id');
+            ->whereNotNull('shop_id')
+            ->whereHas('shop', function($q) {
+                $q->where('type_id', 1);
+            });
 
             if ($shopId) {
                 $ordersQuery->where('shop_id', $shopId);
@@ -3879,14 +3882,17 @@ class StorageController extends Controller
             $days = $dayQuery->get();
             $dayIds = $days->pluck('id')->toArray();
 
-            // order_product ma'lumotlarini olish
+            // order_product ma'lumotlarini olish (faqat type_id = 1 bo'lgan shoplar)
             $ordersQuery = order_product::with([
                 'kinggarden.region',
                 'orderProductStructures.product.size',
                 'shop'
             ])
             ->whereIn('day_id', $dayIds)
-            ->whereNotNull('shop_id');
+            ->whereNotNull('shop_id')
+            ->whereHas('shop', function($q) {
+                $q->where('type_id', 1);
+            });
 
             if ($shopId) {
                 $ordersQuery->where('shop_id', $shopId);
