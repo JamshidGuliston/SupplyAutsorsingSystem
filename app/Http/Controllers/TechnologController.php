@@ -1778,16 +1778,31 @@ class TechnologController extends Controller
 
     public function menus(Request $request, $id)
     {
-        $menus = Titlemenu::leftjoin('seasons', 'titlemenus.menu_season_id', '=', 'seasons.id')
+        // Faqat parent menyularni olish (parent_id = null)
+        $menus = Titlemenu::with('children')
+                    ->leftjoin('seasons', 'titlemenus.menu_season_id', '=', 'seasons.id')
                     ->where('titlemenus.menu_season_id', $id)
+                    ->whereNull('titlemenus.parent_id')
+                    ->orderBy('titlemenus.order_number', 'ASC')
                     ->orderBy('titlemenus.id', 'DESC')
-                    ->get(['titlemenus.id', 'titlemenus.menu_name', 'seasons.season_name']);
+                    ->get(['titlemenus.id', 'titlemenus.menu_name', 'titlemenus.parent_id', 'seasons.season_name']);
+
         $works = Nextday_namber::all();
         for($i = 0; $i < count($menus); $i++){
             $menus[$i]['us'] = 0;
             foreach($works as $row){
                 if($row->kingar_menu_id == $menus[$i]['id']){
                     $menus[$i]['us'] = 1;
+                }
+            }
+
+            // Child menyular uchun ham 'us' flagni qo'shish
+            foreach($menus[$i]->children as $child){
+                $child['us'] = 0;
+                foreach($works as $row){
+                    if($row->kingar_menu_id == $child->id){
+                        $child['us'] = 1;
+                    }
                 }
             }
         }
@@ -1797,7 +1812,12 @@ class TechnologController extends Controller
     public function addtitlemenu(Request $request, $id)
     {
         $ages = Age_range::all();
-        return view('technolog.addtitlemenu', compact('id', 'ages'));
+        // Shu season uchun mavjud parent menyularni olish
+        $parentMenus = Titlemenu::where('menu_season_id', $id)
+                                ->whereNull('parent_id')
+                                ->orderBy('menu_name', 'ASC')
+                                ->get(['id', 'menu_name']);
+        return view('technolog.addtitlemenu', compact('id', 'ages', 'parentMenus'));
     }
 
     public function createmenu(Request $request)
@@ -1805,7 +1825,8 @@ class TechnologController extends Controller
         // dd($request->all());
         $menu = Titlemenu::create([
             'menu_name' => $request->name,
-            'menu_season_id' => $request->seasonid
+            'menu_season_id' => $request->seasonid,
+            'parent_id' => $request->parent_id ?? null
         ]);
 
         $age = $request->yongchek;
@@ -1986,9 +2007,11 @@ class TechnologController extends Controller
             $ages[$loop++] = $age->id;
         }
 
+        // Nusxa child sifatida yaratiladi
         $newtitlemenu = Titlemenu::create([
             'menu_name' => $request->newmenuname,
-            'menu_season_id' => $request->seasonid
+            'menu_season_id' => $request->seasonid,
+            'parent_id' => $request->menuid  // Original menyu parent bo'ladi
         ]);
 
         $newtitlemenu->age_range()->sync($ages);

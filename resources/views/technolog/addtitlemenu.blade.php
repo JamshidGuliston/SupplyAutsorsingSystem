@@ -49,6 +49,20 @@
                 <input type="text" name="name" class="form-control" id="staticEmail" required>
             </div>
         </div>
+
+        <div class="form-group row">
+            <label for="parentMenu" class="col-sm-2 col-form-label">Parent menyu:</label>
+            <div class="col-sm-6">
+                <select name="parent_id" class="form-select" id="parentMenu">
+                    <option value="">-- Asosiy menyu (parent) --</option>
+                    @foreach($parentMenus as $parent)
+                        <option value="{{ $parent->id }}">{{ $parent->menu_name }}</option>
+                    @endforeach
+                </select>
+                <small class="text-muted">Agar tanlasangiz, yangi menyu child bo'ladi</small>
+            </div>
+        </div>
+
         <div class="form-group row">
 
             <label for="inputPassword" class="col-sm-2 col-form-label">Bolalar guruhi</label>
