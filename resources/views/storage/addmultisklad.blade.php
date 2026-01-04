@@ -325,26 +325,38 @@
                         @endphp
                         @foreach($ageRanges as $index => $ageRange)
                             @php
-                                $ageRangeMenus = isset($menusByAgeRange[$ageRange->id]['menus']) ? $menusByAgeRange[$ageRange->id]['menus'] : collect();
+                                // Ushbu age_range uchun seasonlarni olish
+                                $seasons = isset($seasonsByAgeRange[$ageRange->id]) ? $seasonsByAgeRange[$ageRange->id] : collect();
                                 // Select ID-larni dinamik yaratish
                                 $selectId = 'menu_' . $ageRange->id;
                             @endphp
                             <div class="{{ $colClass }}">
                                 <div class="product-select">
-                                    <select id="{{ $selectId }}" class="form-select age-range-select" 
+                                    <select id="{{ $selectId }}" class="form-select age-range-select"
                                             data-age-range-id="{{ $ageRange->id }}"
                                             onchange="changeFunc({{ $ageRange->id }});"
                                             aria-label="Default select example">
                                         <option value="">{{ $ageRange->age_name }} меню</option>
-                                        @if($ageRangeMenus->count() > 0)
-                                            @foreach($ageRangeMenus as $row)
-                                            <option value="{{$row['id']}}">{{$row['menu_name']}} ({{$row['season_name']}})</option>
-                                            @endforeach
-                                        @else
-                                            @foreach($menus as $row)
-                                            <option value="{{$row['id']}}">{{$row['menu_name']}} ({{$row['season_name']}})</option>
-                                            @endforeach
-                                        @endif
+                                        @foreach($seasons as $season)
+                                            @if($season->titlemenus && $season->titlemenus->count() > 0)
+                                                <optgroup label="━━ {{ $season->season_name }} ━━">
+                                                    @foreach($season->titlemenus as $parent)
+                                                        <option value="{{ $parent->id }}">{{ $parent->menu_name }}</option>
+                                                        @if($parent->children && $parent->children->count() > 0)
+                                                            @foreach($parent->children as $child)
+                                                                @php
+                                                                    // Child menyuni faqat agar u shu age_range ga tegishli bo'lsa ko'rsatish
+                                                                    $hasAgeRange = $child->age_range->contains('id', $ageRange->id);
+                                                                @endphp
+                                                                @if($hasAgeRange)
+                                                                    <option value="{{ $child->id }}">&nbsp;&nbsp;&nbsp;└─ {{ $child->menu_name }}</option>
+                                                                @endif
+                                                            @endforeach
+                                                        @endif
+                                                    @endforeach
+                                                </optgroup>
+                                            @endif
+                                        @endforeach
                                     </select>
                                 </div>
                             </div>

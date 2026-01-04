@@ -307,12 +307,28 @@ class StorageController extends Controller
         // Barcha menyular
         $allMenus = Titlemenu::join('seasons', 'seasons.id', '=', 'titlemenus.menu_season_id')
             ->with('age_range')
-            ->get(['titlemenus.id', 'titlemenus.menu_name', 'seasons.season_name']);
-        
+            ->get(['titlemenus.id', 'titlemenus.menu_name', 'titlemenus.parent_id', 'titlemenus.menu_season_id', 'seasons.season_name']);
+
         // Barcha yosh guruhlarni olish
         $ageRanges = Age_range::orderBy('id')->get();
-        
-        // Har bir yosh guruhiga tegishli menyularni ajratib olish
+
+        // Barcha seasonlarni ierarxik tuzilmada olish (har bir age_range uchun)
+        $seasonsByAgeRange = [];
+        foreach ($ageRanges as $ageRange) {
+            // Ushbu age_range uchun barcha seasonlarni olish
+            $seasons = Season::with(['titlemenus' => function($query) use ($ageRange) {
+                $query->whereNull('parent_id')
+                      ->with(['children', 'age_range'])
+                      ->whereHas('age_range', function($q) use ($ageRange) {
+                          $q->where('age_ranges.id', $ageRange->id);
+                      })
+                      ->orderBy('menu_name', 'ASC');
+            }])->orderBy('season_name', 'ASC')->get();
+
+            $seasonsByAgeRange[$ageRange->id] = $seasons;
+        }
+
+        // Har bir yosh guruhiga tegishli menyularni ajratib olish (eski format uchun)
         $menusByAgeRange = [];
         foreach ($ageRanges as $ageRange) {
             $menusByAgeRange[$ageRange->id] = [
@@ -328,7 +344,7 @@ class StorageController extends Controller
                 })->values()
             ];
         }
-        
+
         // Eski format uchun barcha menyular (qolgan joylar uchun)
         $menus = $allMenus->map(function($menu) {
             return [
@@ -337,15 +353,15 @@ class StorageController extends Controller
                 'season_name' => $menu->season_name
             ];
         });
-        
+
         $gardens = Kindgarden::where('hide', 1)->get();
         $product_categories = Product_category::with('products')->get();
         $products = Product::with('category')->get();
-        
+
         $orders = order_product::where('shop_id', 0)->where('parent_id', null)->orderby('id', 'DESC')->get();
         $days = $this->days();
-        
-        return view('storage.addmultisklad', compact('orders','gardens', 'menus', 'ageRanges', 'menusByAgeRange', 'days', 'product_categories', 'products'));
+
+        return view('storage.addmultisklad', compact('orders','gardens', 'menus', 'ageRanges', 'menusByAgeRange', 'seasonsByAgeRange', 'days', 'product_categories', 'products'));
     }
     
     // order_title bo'yicha guruhlangan ma'lumotlarni olish
