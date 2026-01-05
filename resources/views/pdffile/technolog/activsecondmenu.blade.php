@@ -47,12 +47,12 @@
 		} */
 		table{
 			border-collapse: collapse;
-			border: none;
+			border: 1px solid black;
 			width: 100%;
 			background-color: white;
 		}
 		thead{
-			border: none;
+			border: 1px solid black;
 			background-color: white;
 		}
 		td {
@@ -63,32 +63,14 @@
 			background-color: white;
 		}
 		th{
-			border: none;
+			border: 1px solid black;
 			padding: 0px;
 			background-color: white;
 		}
 		td{
-			border-right: 0.5px solid #ccc;
-			border-bottom: 0.5px solid #ccc;
+			border: 1px solid black;
 			padding: 0px;
 			background-color: white;
-		}
-		
-		/* Oxirgi ustun uchun o'ng chiziq */
-		table td:last-child,
-		table th:last-child {
-			border-right: none !important;
-		}
-		
-		/* Barcha oxirgi ustunlar uchun o'ng chiziq */
-		table tr td:last-child,
-		table tr th:last-child {
-			border-right: none !important;
-		}
-		
-		/* Oxirgi qator uchun pastki chiziq */
-		table tr:last-child td {
-			border-bottom: none !important;
 		}
 		.vrt-header span{
 			display: inline-block;
@@ -200,7 +182,7 @@
 					</tbody>
 				</table>
                 <div class="table" id="table_with_data">
-                    <table style="width:100%; table-layout: fixed; border-right: 1px solid black !important;">
+                    <table style="width:100%; table-layout: fixed; border: 1px solid black !important;">
                         <thead>
                           <tr>
                           	 <th style="width:2%;"></th>
