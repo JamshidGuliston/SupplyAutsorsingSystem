@@ -10,7 +10,7 @@
 	<!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"> -->
 	<title>Title</title>
 	<style>
-		@page { margin: 0.3in 0.1in 0in 0.3in; }
+		@page { margin: 0.3in 0.3in 0in 0.3in; }
 		body{
 			font-family: DejaVu Sans;
 			font-size: 8.5px;
@@ -48,7 +48,7 @@
 		table{
 			border-collapse: collapse;
 			border: 1px solid black;
-			width: 98%;
+			width: 100%;
 			background-color: white;
 		}
 		thead{
@@ -195,7 +195,10 @@
 								 	$col++;
 									$shortname=substr($product['product_name'],0,21);
 								?>
-                          	 		<th class='vrt-header' style="padding: 0px; width: 4%; height: 80px">
+									@php
+										$yesCount = $products->where('yes', true)->count();
+									@endphp
+                          	 		<th class='vrt-header' style="padding: 0; width: {{ $yesCount > 0 ? 76 / $yesCount : 0 }}%; height: 80px">
                           	 	<?php 
                           	 		$productName = $product['product_name'];
                           	 		$words = explode(' ', $productName);
