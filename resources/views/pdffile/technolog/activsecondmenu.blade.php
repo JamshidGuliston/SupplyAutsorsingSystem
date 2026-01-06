@@ -197,7 +197,6 @@
 								?>
 									@php
 										$yesCount = $products->where('yes', true)->count();
-										dd($yesCount);
 									@endphp
                           	 		<th class='vrt-header' style="padding: 0; width: 3%; height: 80px">
                           	 	<?php 
