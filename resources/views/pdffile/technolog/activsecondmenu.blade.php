@@ -130,8 +130,9 @@
 			white-space: nowrap;
 		}
 		.vrt-header-weight {
-			height: 20px !important;
-			min-height: 20px;
+			height: 40px !important;
+			width: 20px !important;
+			min-height: 30px;
 			vertical-align: middle;
 		}
 	</style>
