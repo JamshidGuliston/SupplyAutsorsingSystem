@@ -182,7 +182,7 @@
 					</tbody>
 				</table>
                 <div class="table" id="table_with_data">
-                    <table style="width:98%; table-layout: auto; border: 1px solid black !important;">
+                    <table style="width:99.5%; table-layout: auto; border: 1px solid black !important;">
                         <thead>
                           <tr>
                           	 <th style="width:8px;"></th>
