@@ -111,8 +111,8 @@
 		
 		/* Yacheyka balandligini oshirish */
 		.vrt-header {
-			height: 80px !important;
-			min-height: 80px;
+			height: 40px !important;
+			min-height: 40px;
 			vertical-align: middle;
 		}
 		.vrt-header-weight span{
@@ -130,9 +130,9 @@
 			white-space: nowrap;
 		}
 		.vrt-header-weight {
-			height: 40px !important;
-			width: 20px !important;
-			min-height: 30px;
+			height: 20px !important;
+			width: 10px !important;
+			min-height: 15px;
 			vertical-align: middle;
 		}
 	</style>
@@ -186,9 +186,9 @@
                     <table style="width:100%; table-layout: auto; border: 1px solid black !important;">
                         <thead>
                           <tr>
-                          	 <th style="width:5px; height: 5px;"></th>
+                          	 <th style="width:3px; height: 3px;"></th>
                           	 <th style="width:100px; min-width: 80px;">Махсулотлар номи</th>
-                          	 <th class='vrt-header' style="width:4px; height: 4px"><?php echo '<span>Таом вазни</span>';?></th>
+                          	 <th class='vrt-header' style="width:2px; height: 2px"><?php echo '<span>Таом вазни</span>';?></th>
 							   <?php $col = 0; ?>
 							 @foreach($products as $product)
 							 	@if(isset($product['yes']))
@@ -196,7 +196,7 @@
 								 	$col++;
 									$shortname=substr($product['product_name'],0,21);
 								?>
-                          	 		<th class='vrt-header' style="padding: 0px; max-width: 20px; height: 80px">
+                          	 		<th class='vrt-header' style="padding: 0px; max-width: 20px; height: 40px">
                           	 	<?php 
                           	 		$productName = $product['product_name'];
                           	 		$words = explode(' ', $productName);
@@ -230,7 +230,7 @@
 									@endif
 									<tr style="background-color: rgb(236, 243, 243)">
 										@if($loop->index == 0)
-										<td scope="row" rowspan="<?php echo $mealtime['rows']; ?>" class='vrt-header'  style="padding: 0px; height: 30px;"><?php echo '<span><b>'. $mealtime['mealtime'] .'</b></span>'; ?></td>
+										<td scope="row" rowspan="<?php echo $mealtime['rows']; ?>" class='vrt-header'  style="padding: 0px; height: 15px;"><?php echo '<span><b>'. $mealtime['mealtime'] .'</b></span>'; ?></td>
 										@endif
 										<td class="" style="padding-left: 4px; text-align:left"><?php echo $food['foodname'] ?></td>
 										<td rowspan="{{ count($food)-2 }}" class='vrt-header-weight'  style="padding: 0px; font-size: 5px"><?php echo '<span>'.$food['foodweight'].'</span>'; ?></td>
