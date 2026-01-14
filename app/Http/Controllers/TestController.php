@@ -1450,7 +1450,7 @@ class TestController extends Controller
 		$dompdf->loadHtml($html);
 
 		// (Optional) Setup the paper size and orientation
-		$dompdf->setPaper('A3');
+		$dompdf->setPaper('A4');
 		// $customPaper = array(0,0,360,360);
 		// $dompdf->setPaper($customPaper);
 		$name = $day['id']."activemenu.pdf";

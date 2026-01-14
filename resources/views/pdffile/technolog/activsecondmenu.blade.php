@@ -324,7 +324,7 @@
 								?>
 								@endif
 								@endforeach
-								 <td colspan="{{ count($products) }}" style="padding: 0px; font-size: 5px;"><?= round($summa, 2); ?></td>
+								 <td colspan="{{ $col }}" style="padding: 0px; font-size: 5px;"><?= round($summa, 2); ?></td>
                             </tr>
 							<tr>
 								<td style="padding: 0px; font-size: 5px;">Хокимят нархида 1 бола харажати</td>
@@ -339,17 +339,17 @@
 								?>
 								@endif
 								@endforeach
-								 <td colspan="{{ count($products) }}" style="padding: 0px; font-size: 5px;"><?= round($value['number'] > 0 ? $summa / $value['number'] : 0, 2); ?></td>
+								 <td colspan="{{ $col }}" style="padding: 0px; font-size: 5px;"><?= round($value['number'] > 0 ? $summa / $value['number'] : 0, 2); ?></td>
                             </tr>
 							<tr>
 								<td style="padding: 0px; font-size: 5px;">Шартнома бўйича тасдиқланган 1 бола харажати</td>
 								<td style="padding: 0px; font-size: 5px;"></td>
-								 <td colspan="{{ count($products) }}" style="padding: 0px; font-size: 5px;"><?= round($protsent->where('age_range_id', $key)->first()->eater_cost ?? 0, 2); ?></td>
+								 <td colspan="{{ $col }}" style="padding: 0px; font-size: 5px;"><?= round($protsent->where('age_range_id', $key)->first()->eater_cost ?? 0, 2); ?></td>
                             </tr>
 							<tr>
 								<td style="padding: 0px; font-size: 5px;">Шартнома бўйича жами сарфланган маблаг</td>
 								<td style="padding: 0px; font-size: 5px;"></td>
-								 <td colspan="{{ count($products) }}" style="padding: 0px; font-size: 5px;"><?= round(($protsent->where('age_range_id', $key)->first()->eater_cost ?? 0) * $value['number'], 2); ?></td>
+								 <td colspan="{{ $col }}" style="padding: 0px; font-size: 5px;"><?= round(($protsent->where('age_range_id', $key)->first()->eater_cost ?? 0) * $value['number'], 2); ?></td>
                             </tr>
 							@endforeach
 							<tr style="border-top: 2px solid black;">
@@ -438,7 +438,7 @@
 									}
 								}
 								?>
-								<td colspan="{{ count($products) }}" style="padding: 0px;"><?php printf("%01.3f", $chcost); ?></td>
+								<td colspan="{{ $col }}" style="padding: 0px;"><?php printf("%01.3f", $chcost); ?></td>
 							</tr>
                         </tbody>
                       </table>
