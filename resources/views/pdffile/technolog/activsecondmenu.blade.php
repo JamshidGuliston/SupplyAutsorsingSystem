@@ -13,7 +13,7 @@
 		@page { margin: 0.3in 0.1in 0in 0.3in; }
 		body{
 			font-family: DejaVu Sans;
-			font-size: 7px;
+			font-size: 8.5px;
 			background-color: white;
 			background-image: url(images/bg.jpg);
 			background-position: top left;
@@ -185,9 +185,9 @@
                     <table style="width:100%; table-layout: auto; border: 1px solid black !important;">
                         <thead>
                           <tr>
-                          	 <th style="width:1%;"></th>
+                          	 <th style="width:8px;"></th>
                           	 <th style="width:15%; min-width: 80px;">Махсулотлар номи</th>
-                          	 <th class='vrt-header' style="width:1%;"><?php echo '<span>Таом вазни</span>';?></th>
+                          	 <th class='vrt-header' style="width:8px;"><?php echo '<span>Таом вазни</span>';?></th>
 							   <?php $col = 0; ?>
 							 @foreach($products as $product)
 							 	@if(isset($product['yes']))
@@ -195,7 +195,7 @@
 								 	$col++;
 									$shortname=substr($product['product_name'],0,21);
 								?>
-                          	 		<th class='vrt-header' style="padding: 0px; width: 20px; height: 80px">
+                          	 		<th class='vrt-header' style="padding: 0px; max-width: 15px; height: 80px">
                           	 	<?php 
                           	 		$productName = $product['product_name'];
                           	 		$words = explode(' ', $productName);
