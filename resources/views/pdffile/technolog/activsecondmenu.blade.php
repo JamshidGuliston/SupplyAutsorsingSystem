@@ -10,11 +10,7 @@
 	<!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"> -->
 	<title>Title</title>
 	<style>
-<<<<<<< HEAD
 		@page { margin: 0.3in 0.1in 0in 0.3in; }
-=======
-		@page { margin: 0.2in 0.15in 0in 0.15in; }
->>>>>>> 5da887edfc399ce6c40e80340362849e2467134b
 		body{
 			font-family: DejaVu Sans;
 			font-size: 7px;
@@ -199,11 +195,7 @@
 								 	$col++;
 									$shortname=substr($product['product_name'],0,21);
 								?>
-<<<<<<< HEAD
                           	 		<th class='vrt-header' style="padding: 0px; width: 20px; height: 80px">
-=======
-                          	 		<th class='vrt-header' style="padding: 0px; min-width: 15px; height: 80px">
->>>>>>> 5da887edfc399ce6c40e80340362849e2467134b
                           	 	<?php 
                           	 		$productName = $product['product_name'];
                           	 		$words = explode(' ', $productName);
