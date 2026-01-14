@@ -182,7 +182,7 @@
 					</tbody>
 				</table>
                 <div class="table" id="table_with_data">
-                    <table style="width:99.5%; table-layout: auto; border: 1px solid black !important;">
+                    <table style="width:100%; table-layout: auto; border: 1px solid black !important;">
                         <thead>
                           <tr>
                           	 <th style="width:5px; height: 5px;"></th>
@@ -195,7 +195,7 @@
 								 	$col++;
 									$shortname=substr($product['product_name'],0,21);
 								?>
-                          	 		<th class='vrt-header' style="padding: 0px; max-width: 18px; height: 80px">
+                          	 		<th class='vrt-header' style="padding: 0px; max-width: 20px; height: 80px">
                           	 	<?php 
                           	 		$productName = $product['product_name'];
                           	 		$words = explode(' ', $productName);
