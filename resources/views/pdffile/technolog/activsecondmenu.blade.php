@@ -10,10 +10,14 @@
 	<!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"> -->
 	<title>Title</title>
 	<style>
+<<<<<<< HEAD
 		@page { margin: 0.3in 0.1in 0in 0.3in; }
+=======
+		@page { margin: 0.2in 0.15in 0in 0.15in; }
+>>>>>>> 5da887edfc399ce6c40e80340362849e2467134b
 		body{
 			font-family: DejaVu Sans;
-			font-size: 8.5px;
+			font-size: 7px;
 			background-color: white;
 			background-image: url(images/bg.jpg);
 			background-position: top left;
@@ -81,8 +85,8 @@
 			-o-transform: rotate(-90deg);
 			transform: rotate(-90deg);
 			white-space: nowrap;
-			font-size: 6px;
-			line-height: 1.2;
+			font-size: 5px;
+			line-height: 1.1;
 		}
 		
 		/* Ikki qatorlik yozish uchun */
@@ -95,16 +99,16 @@
 		}
 		
 		.vrt-header .two-line .line1 {
-			font-size: 6px;
-			line-height: 1.1;
+			font-size: 5px;
+			line-height: 1.0;
 			display: block;
 			margin-bottom: 1px;
 			white-space: nowrap;
 		}
-		
+
 		.vrt-header .two-line .line2 {
-			font-size: 6px;
-			line-height: 1.1;
+			font-size: 5px;
+			line-height: 1.0;
 			display: block;
 			white-space: nowrap;
 		}
@@ -124,8 +128,8 @@
 			-o-transform: rotate(-90deg);
 			transform: rotate(-90deg);
 			white-space: nowrap;
-			font-size: 6px;
-			line-height: 1.1;
+			font-size: 5px;
+			line-height: 1.0;
 			display: block;
 			white-space: nowrap;
 		}
@@ -182,12 +186,12 @@
 					</tbody>
 				</table>
                 <div class="table" id="table_with_data">
-                    <table style="width:100%; table-layout: fixed; border: 1px solid black !important;">
+                    <table style="width:100%; table-layout: auto; border: 1px solid black !important;">
                         <thead>
                           <tr>
-                          	 <th style="width:2%;"></th>
-                          	 <th style="width:20%;">Махсулотлар номи</th>
-                          	 <th class='vrt-header' style="width:2%;"><?php echo '<span>Таом вазни</span>';?></th>
+                          	 <th style="width:1%;"></th>
+                          	 <th style="width:15%; min-width: 80px;">Махсулотлар номи</th>
+                          	 <th class='vrt-header' style="width:1%;"><?php echo '<span>Таом вазни</span>';?></th>
 							   <?php $col = 0; ?>
 							 @foreach($products as $product)
 							 	@if(isset($product['yes']))
@@ -195,7 +199,11 @@
 								 	$col++;
 									$shortname=substr($product['product_name'],0,21);
 								?>
+<<<<<<< HEAD
                           	 		<th class='vrt-header' style="padding: 0px; width: 20px; height: 80px">
+=======
+                          	 		<th class='vrt-header' style="padding: 0px; min-width: 15px; height: 80px">
+>>>>>>> 5da887edfc399ce6c40e80340362849e2467134b
                           	 	<?php 
                           	 		$productName = $product['product_name'];
                           	 		$words = explode(' ', $productName);
@@ -232,7 +240,7 @@
 										<td scope="row" rowspan="<?php echo $mealtime['rows']; ?>" class='vrt-header'  style="padding: 0px; height: 60px;"><?php echo '<span><b>'. $mealtime['mealtime'] .'</b></span>'; ?></td>
 										@endif
 										<td class="" style="padding-left: 4px; text-align:left"><?php echo $food['foodname'] ?></td>
-										<td rowspan="{{ count($food)-2 }}" class='vrt-header-weight'  style="padding: 0px; font-family: 5px"><?php echo '<span>'.$food['foodweight'].'</span>'; ?></td>
+										<td rowspan="{{ count($food)-2 }}" class='vrt-header-weight'  style="padding: 0px; font-size: 5px"><?php echo '<span>'.$food['foodweight'].'</span>'; ?></td>
 										<?php
 										for($t = 0; $t < count($products); $t++){
 											if(isset($products[$t]['yes']) and isset($food['product'][$products[$t]['id']])){
