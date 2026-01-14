@@ -293,10 +293,12 @@ class ReportInOutExport implements FromArray, WithStyles, WithColumnWidths, With
                 $lastColumn = $this->getLastColumn();
 
                 // Sarlavhalarni birlashtiramiz
-                $event->sheet->mergeCells('A1:' . $lastColumn . '1');
-                $event->sheet->mergeCells('A2:' . $lastColumn . '2');
-                $event->sheet->mergeCells('A3:' . $lastColumn . '3');
-                $event->sheet->mergeCells('A4:' . $lastColumn . '4');
+                if ($lastColumn && $lastColumn != 'A') {
+                    $event->sheet->mergeCells('A1:' . $lastColumn . '1');
+                    $event->sheet->mergeCells('A2:' . $lastColumn . '2');
+                    $event->sheet->mergeCells('A3:' . $lastColumn . '3');
+                    $event->sheet->mergeCells('A4:' . $lastColumn . '4');
+                }
 
                 // Birinchi qator sarlavhalari uchun merge
                 $event->sheet->mergeCells('A6:A7'); // TR
@@ -305,15 +307,18 @@ class ReportInOutExport implements FromArray, WithStyles, WithColumnWidths, With
                 $event->sheet->mergeCells('D6:D7'); // O'tgan oydan
 
                 // Har bir kun uchun 9 ta ustunni merge qilish (1-qator sarlavhalar)
-                $column = 'E';
+                $colIndex = 5; // E ustunidan boshlash (1-based: A=1, B=2, ..., E=5)
                 foreach($this->days as $day){
-                    $endColumn = chr(ord($column) + 8); // 9 ta ustun
-                    $event->sheet->mergeCells($column . '6:' . $endColumn . '6');
-                    $column = chr(ord($endColumn) + 1);
+                    $startCol = $this->getColumnLetter($colIndex);
+                    $endCol = $this->getColumnLetter($colIndex + 8); // 9 ta ustun (0 dan 8 gacha)
+                    $event->sheet->mergeCells($startCol . '6:' . $endCol . '6');
+                    $colIndex += 9; // keyingi kun uchun
                 }
 
-                // Jami farqlar uchun merge
-                $event->sheet->mergeCells($column . '6:' . chr(ord($column) + 2) . '6');
+                // Jami farqlar uchun merge (3 ta ustun)
+                $startCol = $this->getColumnLetter($colIndex);
+                $endCol = $this->getColumnLetter($colIndex + 2);
+                $event->sheet->mergeCells($startCol . '6:' . $endCol . '6');
 
                 // Text wrapping
                 $lastRow = count($this->products) + 7;
@@ -329,16 +334,16 @@ class ReportInOutExport implements FromArray, WithStyles, WithColumnWidths, With
         // Har bir kun uchun 9 ta ustun
         // Jami farqlar uchun 3 ta ustun
         $columnCount = 4 + (count($this->days) * 9) + 3;
-        return $this->numberToColumnLetter($columnCount);
+        return $this->getColumnLetter($columnCount);
     }
 
-    private function numberToColumnLetter($num)
+    private function getColumnLetter($columnNumber)
     {
         $letter = '';
-        while ($num > 0) {
-            $num--;
-            $letter = chr(65 + ($num % 26)) . $letter;
-            $num = intval($num / 26);
+        while ($columnNumber > 0) {
+            $modulo = ($columnNumber - 1) % 26;
+            $letter = chr(65 + $modulo) . $letter;
+            $columnNumber = intval(($columnNumber - $modulo) / 26);
         }
         return $letter;
     }
