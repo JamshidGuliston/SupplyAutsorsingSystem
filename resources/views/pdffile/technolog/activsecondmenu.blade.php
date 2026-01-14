@@ -195,7 +195,7 @@
 								 	$col++;
 									$shortname=substr($product['product_name'],0,21);
 								?>
-                          	 		<th class='vrt-header' style="padding: 0px; max-width: 15px; height: 80px">
+                          	 		<th class='vrt-header' style="padding: 0px; max-width: 18px; height: 80px">
                           	 	<?php 
                           	 		$productName = $product['product_name'];
                           	 		$words = explode(' ', $productName);
@@ -229,7 +229,7 @@
 									@endif
 									<tr style="background-color: rgb(236, 243, 243)">
 										@if($loop->index == 0)
-										<td scope="row" rowspan="<?php echo $mealtime['rows']; ?>" class='vrt-header'  style="padding: 0px; height: 60px;"><?php echo '<span><b>'. $mealtime['mealtime'] .'</b></span>'; ?></td>
+										<td scope="row" rowspan="<?php echo $mealtime['rows']; ?>" class='vrt-header'  style="padding: 0px; height: 30px;"><?php echo '<span><b>'. $mealtime['mealtime'] .'</b></span>'; ?></td>
 										@endif
 										<td class="" style="padding-left: 4px; text-align:left"><?php echo $food['foodname'] ?></td>
 										<td rowspan="{{ count($food)-2 }}" class='vrt-header-weight'  style="padding: 0px; font-size: 5px"><?php echo '<span>'.$food['foodweight'].'</span>'; ?></td>
@@ -276,44 +276,44 @@
 							@foreach($oneEater as $key => $value)
 							<tr>
                                 <th scope="row" rowspan="8" class='vrt-header' style="padding: 0px; border-top: solid black"><span>{{ $value['age_name'] }}</span></th>
-								<td style="padding: 0px; font-size: 5px;">1 та бола учун гр</td>
-								<td style="padding: 0px; font-size: 5px;"></td>
+								<td style="padding: 0px; font-size: 7px;">1 та бола учун гр</td>
+								<td style="padding: 0px; font-size: 7px;"></td>
 								@foreach($products as $product)
 							 	@if(isset($product['yes']) and isset($value[$product['id']]))
-											<td style="padding: 0px; font-size: 5px;"><?= round($value[$product['id']], 2); ?></td>
+											<td style="padding: 0px; font-size: 7px;"><?= round($value[$product['id']], 2); ?></td>
 								@endif
 								@endforeach
 							</tr>
 							<tr>
-								<td style="padding: 0px; font-size: 5px;">Жами микдори</td>
-								<td style="padding: 0px; font-size: 5px;"></td>
+								<td style="padding: 0px; font-size: 7px;">Жами микдори</td>
+								<td style="padding: 0px; font-size: 7px;"></td>
 								@foreach($products as $product)
 							 	@if(isset($product['yes']) and isset($value[$product['id']]))
-												<td style="padding: 0px; font-size: 5px;"><?= round(($value[$product['id']] * $value['number']) / $product['div'], 2); ?></td>
+												<td style="padding: 0px; font-size: 7px;"><?= round(($value[$product['id']] * $value['number']) / $product['div'], 2); ?></td>
 								@endif
 								@endforeach
 							</tr>
 							<tr>
-								<td style="padding: 0px; font-size: 5px;">Нархи</td>
+								<td style="padding: 0px; font-size: 7px;">Нархи</td>
                                 <td></td>
                                 @foreach($products as $product)
 							 	@if(isset($product['yes']) and isset($value[$product['id']]))
-											<td style="padding: 0px; font-size: 5px;"><?= round($narx[$product['id']], 2); ?></td>
+											<td style="padding: 0px; font-size: 7px;"><?= round($narx[$product['id']], 2); ?></td>
 								@endif
 								@endforeach
                             </tr>
 							<tr>
-								<td style="padding: 0px; font-size: 5px;">Суммаси</td>
+								<td style="padding: 0px; font-size: 7px;">Суммаси</td>
 								<td></td>
 								@foreach($products as $product)
 							 	@if(isset($product['yes']) and isset($value[$product['id']]))
-											<td style="padding: 0px; font-size: 5px;"><?= round(($value[$product['id']] * $value['number']) / $product['div'] * $narx[$product['id']], 2); ?></td>
+											<td style="padding: 0px; font-size: 7px;"><?= round(($value[$product['id']] * $value['number']) / $product['div'] * $narx[$product['id']], 2); ?></td>
 								@endif
 								@endforeach
                             </tr>
 							<tr>
-								<td style="padding: 0px; font-size: 5px;">Хокимят нархида жами харажат</td>
-								<td style="padding: 0px; font-size: 5px;"></td>
+								<td style="padding: 0px; font-size: 7px;">Хокимят нархида жами харажат</td>
+								<td style="padding: 0px; font-size: 7px;"></td>
 								<?php
 									$summa = 0;
 								?>
@@ -324,11 +324,11 @@
 								?>
 								@endif
 								@endforeach
-								 <td colspan="{{ $col }}" style="padding: 0px; font-size: 5px;"><?= round($summa, 2); ?></td>
+								 <td colspan="{{ $col }}" style="padding: 0px; font-size: 7px;"><?= round($summa, 2); ?></td>
                             </tr>
 							<tr>
-								<td style="padding: 0px; font-size: 5px;">Хокимят нархида 1 бола харажати</td>
-								<td style="padding: 0px; font-size: 5px;"></td>
+								<td style="padding: 0px; font-size: 7px;">Хокимят нархида 1 бола харажати</td>
+								<td style="padding: 0px; font-size: 7px;"></td>
 								<?php
 									$summa = 0;
 								?>
@@ -339,17 +339,17 @@
 								?>
 								@endif
 								@endforeach
-								 <td colspan="{{ $col }}" style="padding: 0px; font-size: 5px;"><?= round($value['number'] > 0 ? $summa / $value['number'] : 0, 2); ?></td>
+								 <td colspan="{{ $col }}" style="padding: 0px; font-size: 7px;"><?= round($value['number'] > 0 ? $summa / $value['number'] : 0, 2); ?></td>
                             </tr>
 							<tr>
-								<td style="padding: 0px; font-size: 5px;">Шартнома бўйича тасдиқланган 1 бола харажати</td>
-								<td style="padding: 0px; font-size: 5px;"></td>
-								 <td colspan="{{ $col }}" style="padding: 0px; font-size: 5px;"><?= round($protsent->where('age_range_id', $key)->first()->eater_cost ?? 0, 2); ?></td>
+								<td style="padding: 0px; font-size: 7px;">Шартнома бўйича тасдиқланган 1 бола харажати</td>
+								<td style="padding: 0px; font-size: 7px;"></td>
+								 <td colspan="{{ $col }}" style="padding: 0px; font-size: 7px;"><?= round($protsent->where('age_range_id', $key)->first()->eater_cost ?? 0, 2); ?></td>
                             </tr>
 							<tr>
-								<td style="padding: 0px; font-size: 5px;">Шартнома бўйича жами сарфланган маблаг</td>
-								<td style="padding: 0px; font-size: 5px;"></td>
-								 <td colspan="{{ $col }}" style="padding: 0px; font-size: 5px;"><?= round(($protsent->where('age_range_id', $key)->first()->eater_cost ?? 0) * $value['number'], 2); ?></td>
+								<td style="padding: 0px; font-size: 7px;">Шартнома бўйича жами сарфланган маблаг</td>
+								<td style="padding: 0px; font-size: 7px;"></td>
+								 <td colspan="{{ $col }}" style="padding: 0px; font-size: 7px;"><?= round(($protsent->where('age_range_id', $key)->first()->eater_cost ?? 0) * $value['number'], 2); ?></td>
                             </tr>
 							@endforeach
 							<tr style="border-top: 2px solid black;">
