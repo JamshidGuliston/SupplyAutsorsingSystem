@@ -185,9 +185,9 @@
                     <table style="width:99.5%; table-layout: auto; border: 1px solid black !important;">
                         <thead>
                           <tr>
-                          	 <th style="width:8px;"></th>
-                          	 <th style="width:150px; min-width: 80px;">Махсулотлар номи</th>
-                          	 <th class='vrt-header' style="width:8px;"><?php echo '<span>Таом вазни</span>';?></th>
+                          	 <th style="width:5px; height: 5px;"></th>
+                          	 <th style="width:100px; min-width: 80px;">Махсулотлар номи</th>
+                          	 <th class='vrt-header' style="width:4px; height: 4px"><?php echo '<span>Таом вазни</span>';?></th>
 							   <?php $col = 0; ?>
 							 @foreach($products as $product)
 							 	@if(isset($product['yes']))
