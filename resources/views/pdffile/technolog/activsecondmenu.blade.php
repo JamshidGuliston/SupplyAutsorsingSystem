@@ -140,7 +140,7 @@
     <div class="container-fluid">
         <div class="row mt-5">
             <div class="col-md-12">
-				<table style="border: none !important; width: 100%;">
+				<table style="border: none !important; width: 98%;">
 					<tbody>
 						<tr>
 							<td style="text-align: left; border: none !important; width: 33%;">
@@ -182,11 +182,11 @@
 					</tbody>
 				</table>
                 <div class="table" id="table_with_data">
-                    <table style="width:100%; table-layout: auto; border: 1px solid black !important;">
+                    <table style="width:98%; table-layout: auto; border: 1px solid black !important;">
                         <thead>
                           <tr>
                           	 <th style="width:8px;"></th>
-                          	 <th style="width:15%; min-width: 80px;">Махсулотлар номи</th>
+                          	 <th style="width:150px; min-width: 80px;">Махсулотлар номи</th>
                           	 <th class='vrt-header' style="width:8px;"><?php echo '<span>Таом вазни</span>';?></th>
 							   <?php $col = 0; ?>
 							 @foreach($products as $product)
