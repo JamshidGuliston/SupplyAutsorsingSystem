@@ -219,20 +219,20 @@ class ReportInOutExport implements FromArray, WithStyles, WithColumnWidths, With
         ];
 
         // Har bir kun uchun 9 ta ustun
-        $column = 'E';
+        $colIndex = 5; // E ustunidan boshlash
         foreach($this->days as $day){
             for($i = 0; $i < 9; $i++){
-                $widths[$column] = 10;
-                $column++;
+                $widths[$this->getColumnLetter($colIndex)] = 10;
+                $colIndex++;
             }
         }
 
         // Jami farqlar uchun 3 ta ustun
-        $widths[$column] = 12;
-        $column++;
-        $widths[$column] = 12;
-        $column++;
-        $widths[$column] = 12;
+        $widths[$this->getColumnLetter($colIndex)] = 12;
+        $colIndex++;
+        $widths[$this->getColumnLetter($colIndex)] = 12;
+        $colIndex++;
+        $widths[$this->getColumnLetter($colIndex)] = 12;
 
         return $widths;
     }
