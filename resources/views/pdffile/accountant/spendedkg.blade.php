@@ -13,7 +13,7 @@
 	 @page { margin: 0.2in 0.2in 0.2in 0.2in; }
 	body{
 		font-family: DejaVu Sans;
-		font-size:6px;
+		font-size: 8px;
 		/* background-image: url(images/bg.jpg); */
 		background-position: top left;
 		background-repeat: no-repeat;
@@ -70,6 +70,20 @@
     content: "";
     display: table;
     clear: both;
+  }
+
+  /* Footer section - gorizontal */
+  .footer-section {
+    width: 100%;
+    margin-top: 20px;
+    display: table;
+  }
+  .footer-column {
+    display: table-cell;
+    width: 33.33%;
+    text-align: left;
+    vertical-align: top;
+    padding: 5px;
   }
 </style>
 </head>
@@ -168,25 +182,19 @@
                 <div class="footer-column">
                     <strong>Аутсорсер:</strong><br>
                     {{ env('COMPANY_NAME') ?? 'B.Tajibaev' }}<br>
-                    директори: {{ env('COMPANY_DIRECTOR') ?? 'B.Tajibaev' }} ________________________
-                    <br/>
-                    <br/>
-                    <br/>
-                    <strong>Бухгалтер:</strong> ____________________
+                    директори: {{ env('COMPANY_DIRECTOR') ?? 'B.Tajibaev' }} ______________
                 </div>
                 <div class="footer-column">
-                    <strong>{{ $kindgar->number_of_org ?? '3' }}-сон ДМТТ рахбари:</strong> ____________________
-                    <br/>
-                    <br/>
-                    <br/>
-                    <strong>Ошпаз:</strong> ____________________
+                    <strong>Бухгалтер:</strong> ______________<br><br>
+                    <strong>{{ $kindgar->number_of_org ?? '3' }}-сон ДМТТ рахбари:</strong> ______________
                 </div>
                 <div class="footer-column">
-                    <strong>Хамшира:</strong> ____________________
+                    <strong>Ошпаз:</strong> ______________<br><br>
+                    <strong>Хамшира:</strong> ______________
                 </div>
-              </div>
+            </div>
             </div>	
         </div>
     </div>
-</bod>
-<html>
+</body>
+</html>
