@@ -182,15 +182,15 @@
                 <div class="footer-column">
                     <strong>Аутсорсер:</strong><br>
                     {{ env('COMPANY_NAME') ?? 'B.Tajibaev' }}<br>
-                    директори: {{ env('COMPANY_DIRECTOR') ?? 'B.Tajibaev' }} ______________
+                    директори: {{ env('COMPANY_DIRECTOR') ?? 'B.Tajibaev' }} ________________
                 </div>
                 <div class="footer-column">
-                    <strong>Бухгалтер:</strong> ______________<br><br>
-                    <strong>{{ $kindgar->number_of_org ?? '3' }}-сон ДМТТ рахбари:</strong> ______________
+                    <strong>Бухгалтер:</strong> ___________________________<br><br>
+                    <strong>{{ $kindgar->number_of_org ?? '3' }}-сон ДМТТ рахбари:</strong> ________________
                 </div>
                 <div class="footer-column">
-                    <strong>Ошпаз:</strong> ______________<br><br>
-                    <strong>Хамшира:</strong> ______________
+                    <strong>Ошпаз:</strong> ____________________________<br><br>
+                    <strong>Хамшира:</strong> ________________
                 </div>
             </div>
             </div>	
