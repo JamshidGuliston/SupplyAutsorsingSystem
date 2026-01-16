@@ -116,11 +116,17 @@
 						<b>{{ "№ ".$days[0]['month_id'].'-'.$kind->id }}</b>
                         <i class="fas fa-store-alt" style="font-size: 14px;"> {{ $kind->kingar_name." /" }}</i>
 						<span>{{ $days[0]['month_name']." oyi                      " }}</span>
-						<form action="{{route('technolog.reportinoutpdf')}}" method="GET" target="_blank">
+						<form action="{{route('technolog.reportinoutpdf')}}" method="GET" target="_blank" style="display: inline-block; margin-right: 10px;">
 							@csrf
 							<input type="hidden" name="kindergarden_id" value="{{ $kind->id }}">
 							<input type="hidden" name="month_id" value="{{ $days[0]['month_id'] }}">
 							<button type="submit" class="btn add-age btn-primary text-white">PDF</button>
+						</form>
+						<form action="{{route('technolog.reportinoutexcel')}}" method="GET" target="_blank" style="display: inline-block;">
+							@csrf
+							<input type="hidden" name="kindergarden_id" value="{{ $kind->id }}">
+							<input type="hidden" name="month_id" value="{{ $days[0]['month_id'] }}">
+							<button type="submit" class="btn add-age btn-success text-white">Excel</button>
 						</form>
 					</div>
                 </div>
