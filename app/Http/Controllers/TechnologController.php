@@ -4287,8 +4287,7 @@ class TechnologController extends Controller
                         // Xodimlar soni
                         $workersCount = Number_children::where('day_id', $day->id)
                             ->where('kingar_name_id', $kindgarden->id)
-                            ->where('king_age_name_id', 4) // 3-7 yosh uchun xodimlar
-                            // ->orWhere('king_age_name_id', 5) // kechki uchun xodimlar
+                            ->whereIn('king_age_name_id', [4, 5]) // 3-7 yosh uchun xodimlar
                             ->sum('workers_count');
                         
                         $kindgardenData['days'][$day->id] = [
