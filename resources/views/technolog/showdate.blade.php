@@ -300,6 +300,43 @@
     </div>
 </div>
 
+<!-- Yangi sana qo'shish Modal -->
+<div class="modal fade" id="addDayModal" tabindex="-1" aria-labelledby="addDayModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form id="add-day-form">
+                @csrf
+                <input type="hidden" name="year_id" value="{{ $y_id }}">
+                <input type="hidden" name="month_id" value="{{ $m_id }}">
+                <div class="modal-header bg-primary">
+                    <h5 class="modal-title text-white" id="addDayModalLabel">
+                        <i class="fas fa-calendar-plus me-2"></i>Yangi sana qo'shish
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle me-2"></i>
+                        <strong>{{ $year->year_name }}</strong> yil,
+                        <strong>@foreach($months as $month)@if($month->id == $m_id){{ $month->month_name }}@endif @endforeach</strong> oyi uchun yangi kun qo'shiladi
+                    </div>
+                    <div class="mb-3">
+                        <label for="day_number" class="form-label">Kun raqamini kiriting:</label>
+                        <input type="number" class="form-control" id="day_number" name="day_number" min="1" max="31" required placeholder="1-31">
+                        <small class="text-muted">1 dan 31 gacha bo'lgan raqam kiriting</small>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Bekor qilish</button>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-plus me-1"></i>Qo'shish
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
 <!-- O'chirilgan qatorlarni ko'rish Modal -->
 <div class="modal fade" id="deletedRecordsModal" tabindex="-1" aria-labelledby="deletedRecordsModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg">
@@ -411,6 +448,9 @@
         @foreach($days as $day)
             <a href="/technolog/showdate/{{ $day->year_id }}/{{ $day->month_id }}/{{ $day->id }}" class="day__item {{ ( $day->id == $aday) ? 'active' : null }}">{{ $day->day_number }}</a>
         @endforeach
+        <button type="button" class="btn btn-success btn-sm ms-3" data-bs-toggle="modal" data-bs-target="#addDayModal" title="Yangi kun qo'shish" style="border-radius: 50%; width: 36px; height: 36px; padding: 0;">
+            <i class="fas fa-plus"></i>
+        </button>
     </div>
     <!-- <div class="lline"></div> -->
 </div>
@@ -1470,6 +1510,50 @@
                     }
                     showNotification(errorMessage, 'error');
                     btn.prop('disabled', false).html(originalText);
+                }
+            });
+        });
+
+        // ==========================================
+        // YANGI KUN QO'SHISH FUNKSIYALARI
+        // ==========================================
+
+        // Yangi kun qo'shish formasi
+        $('#add-day-form').submit(function(e) {
+            e.preventDefault();
+
+            var form = $(this);
+            var submitBtn = form.find('button[type="submit"]');
+            var originalText = submitBtn.html();
+
+            submitBtn.prop('disabled', true).html('<i class="fas fa-spinner fa-spin"></i> Qo\'shilmoqda...');
+
+            $.ajax({
+                url: '{{ route("technolog.storeDay") }}',
+                method: 'POST',
+                data: form.serialize(),
+                success: function(response) {
+                    if (response.success) {
+                        showNotification(response.message, 'success');
+                        $('#addDayModal').modal('hide');
+                        form[0].reset();
+                        // Yangi qo'shilgan kunga yo'naltirish
+                        setTimeout(function() {
+                            window.location.href = '/technolog/showdate/{{ $y_id }}/{{ $m_id }}/' + response.day_id;
+                        }, 1500);
+                    } else {
+                        showNotification(response.message, 'error');
+                    }
+                },
+                error: function(xhr) {
+                    var errorMessage = 'Xatolik yuz berdi!';
+                    if (xhr.responseJSON && xhr.responseJSON.message) {
+                        errorMessage = xhr.responseJSON.message;
+                    }
+                    showNotification(errorMessage, 'error');
+                },
+                complete: function() {
+                    submitBtn.prop('disabled', false).html(originalText);
                 }
             });
         });

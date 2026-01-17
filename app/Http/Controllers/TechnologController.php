@@ -588,9 +588,49 @@ class TechnologController extends Controller
         }
     }
 
+    // Yangi kun qo'shish (showdate sahifasi uchun)
+    public function storeDay(Request $request)
+    {
+        try {
+            $request->validate([
+                'year_id' => 'required|integer',
+                'month_id' => 'required|integer',
+                'day_number' => 'required|integer|min:1|max:31'
+            ]);
 
+            // Bu kun allaqachon mavjudligini tekshirish
+            $existing = Day::where('year_id', $request->year_id)
+                ->where('month_id', $request->month_id)
+                ->where('day_number', $request->day_number)
+                ->first();
 
-    
+            if ($existing) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Bu kun allaqachon mavjud! (' . $request->day_number . '-kun)'
+                ], 400);
+            }
+
+            // Yangi kun yaratish
+            $newDay = Day::create([
+                'year_id' => $request->year_id,
+                'month_id' => $request->month_id,
+                'day_number' => $request->day_number
+            ]);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Yangi kun muvaffaqiyatli qo\'shildi! (' . $request->day_number . '-kun)',
+                'day_id' => $newDay->id
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Xatolik yuz berdi: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
     // O'tgan kunlar uchun ma'lumot qo'shish
     public function addPastDaysData(Request $request)
     {
