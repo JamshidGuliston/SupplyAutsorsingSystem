@@ -1900,7 +1900,8 @@ class TechnologController extends Controller
             'menu_season_id' => 'required|integer|exists:seasons,id',
             'description' => 'nullable|string',
             'short_name' => 'nullable|string|max:255',
-            'order_number' => 'nullable|integer'
+            'order_number' => 'nullable|integer',
+            'parent_id' => 'nullable|integer|exists:titlemenus,id'
         ]);
 
         $titlemenu = Titlemenu::findOrFail($request->id);
@@ -1908,7 +1909,8 @@ class TechnologController extends Controller
             'menu_name' => $request->menu_name,
             'short_name' => $request->short_name,
             'order_number' => $request->order_number,
-            'menu_season_id' => $request->menu_season_id
+            'menu_season_id' => $request->menu_season_id,
+            'parent_id' => $request->parent_id
         ]);
 
         return redirect()->route('technolog.menuitem', $titlemenu->id)

@@ -86,6 +86,18 @@
                         <label for="description" class="form-label">Tavsif</label>
                         <textarea class="form-control" id="description" name="description" rows="3">{{$titlemenu->description ?? ''}}</textarea>
                     </div>
+                    <div class="mb-3">
+                        <label for="parent_id" class="form-label">Parent menyu</label>
+                        <select class="form-select" id="parent_id" name="parent_id">
+                            <option value="">-- Parent menyu tanlang (ixtiyoriy) --</option>
+                            @foreach(\App\Models\Titlemenu::where('id', '!=', $titlemenu->id)->orderBy('menu_name')->get() as $menu)
+                                <option value="{{$menu->id}}" {{$titlemenu->parent_id == $menu->id ? 'selected' : ''}}>
+                                    {{$menu->menu_name}}
+                                </option>
+                            @endforeach
+                        </select>
+                        <small class="text-muted">Bu menyu qaysi menyuning ichida joylashganligini belgilang</small>
+                    </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Bekor qilish</button>
