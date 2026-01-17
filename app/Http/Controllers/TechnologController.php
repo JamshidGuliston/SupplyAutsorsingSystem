@@ -491,6 +491,103 @@ class TechnologController extends Controller
         }
     }
 
+    // O'chirilgan qatorlarni olish (showdate sahifasi uchun)
+    public function getDeletedNumberChildren(Request $request)
+    {
+        try {
+            $dayId = $request->input('day_id');
+
+            $deletedRecords = Number_children::onlyTrashed()
+                ->where('day_id', $dayId)
+                ->with(['kindergarten', 'ageRange'])
+                ->get()
+                ->map(function ($record) {
+                    return [
+                        'id' => $record->id,
+                        'kingar_name_id' => $record->kingar_name_id,
+                        'kingar_name' => $record->kindergarten ? $record->kindergarten->kingar_name : 'Noma\'lum',
+                        'king_age_name_id' => $record->king_age_name_id,
+                        'age_name' => $record->ageRange ? $record->ageRange->age_name : 'Noma\'lum',
+                        'kingar_children_number' => $record->kingar_children_number,
+                        'workers_count' => $record->workers_count,
+                        'deleted_at' => $record->deleted_at->format('d.m.Y H:i')
+                    ];
+                });
+
+            return response()->json([
+                'success' => true,
+                'data' => $deletedRecords
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Xatolik yuz berdi: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    // O'chirilgan qatorni tiklash (showdate sahifasi uchun)
+    public function restoreNumberChildren(Request $request)
+    {
+        try {
+            $request->validate([
+                'id' => 'required|integer'
+            ]);
+
+            $record = Number_children::onlyTrashed()->find($request->id);
+
+            if (!$record) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Tiklanadigan yozuv topilmadi!'
+                ], 404);
+            }
+
+            $record->restore();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Muvaffaqiyatli tiklandi!'
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Xatolik yuz berdi: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    // Barcha o'chirilgan qatorlarni tiklash (showdate sahifasi uchun)
+    public function restoreAllNumberChildren(Request $request)
+    {
+        try {
+            $request->validate([
+                'day_id' => 'required|integer'
+            ]);
+
+            $restored = Number_children::onlyTrashed()
+                ->where('day_id', $request->day_id)
+                ->restore();
+
+            if ($restored > 0) {
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Muvaffaqiyatli tiklandi! (' . $restored . ' ta yozuv)'
+                ]);
+            } else {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Tiklanadigan ma\'lumot topilmadi!'
+                ], 404);
+            }
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Xatolik yuz berdi: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
 
 
     

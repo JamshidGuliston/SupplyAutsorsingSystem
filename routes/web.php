@@ -165,6 +165,9 @@ Route::group(['prefix' => 'technolog', 'middleware' => ['isTechnolog', 'auth']],
     Route::get('showdate/{year}/{month}/{day}', [TechnologController::class, 'showdate'])->name('technolog.showdate');
     Route::post('store-number-children', [TechnologController::class, 'storeNumberChildren'])->name('technolog.storeNumberChildren');
     Route::post('soft-delete-number-children', [TechnologController::class, 'softDeleteNumberChildren'])->name('technolog.softDeleteNumberChildren');
+    Route::post('get-deleted-number-children', [TechnologController::class, 'getDeletedNumberChildren'])->name('technolog.getDeletedNumberChildren');
+    Route::post('restore-number-children', [TechnologController::class, 'restoreNumberChildren'])->name('technolog.restoreNumberChildren');
+    Route::post('restore-all-number-children', [TechnologController::class, 'restoreAllNumberChildren'])->name('technolog.restoreAllNumberChildren');
     Route::post('assign-menu-to-active', [TechnologController::class, 'assignMenuToActive'])->name('technolog.assignMenuToActive');
     Route::get('get-all-menus', [TechnologController::class, 'getAllMenus'])->name('technolog.getAllMenus');
     Route::post('add-past-days-data', [TechnologController::class, 'addPastDaysData'])->name('technolog.addPastDaysData');

@@ -300,6 +300,59 @@
     </div>
 </div>
 
+<!-- O'chirilgan qatorlarni ko'rish Modal -->
+<div class="modal fade" id="deletedRecordsModal" tabindex="-1" aria-labelledby="deletedRecordsModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header bg-warning">
+                <h5 class="modal-title" id="deletedRecordsModalLabel">
+                    <i class="fas fa-trash-restore me-2"></i>O'chirilgan qatorlar
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div id="deleted-records-loading" class="text-center py-4">
+                    <i class="fas fa-spinner fa-spin fa-2x"></i>
+                    <p class="mt-2">Yuklanmoqda...</p>
+                </div>
+                <div id="deleted-records-content" style="display: none;">
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle"></i>
+                        <strong>{{ @$day->day_number }}.{{ @$day->month_name }}.{{ @$day->year_name }}</strong> sanasi uchun o'chirilgan qatorlar
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table table-striped table-hover" id="deletedRecordsTable">
+                            <thead class="table-dark">
+                                <tr>
+                                    <th>#</th>
+                                    <th>Bog'cha nomi</th>
+                                    <th>Yosh guruhi</th>
+                                    <th>Bolalar soni</th>
+                                    <th>Xodimlar</th>
+                                    <th>O'chirilgan vaqti</th>
+                                    <th>Amal</th>
+                                </tr>
+                            </thead>
+                            <tbody id="deleted-records-tbody">
+                                <!-- Dinamik to'ldiriladi -->
+                            </tbody>
+                        </table>
+                    </div>
+                    <div id="no-deleted-records" class="alert alert-secondary text-center" style="display: none;">
+                        <i class="fas fa-check-circle me-2"></i>O'chirilgan qatorlar mavjud emas
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Yopish</button>
+                <button type="button" class="btn btn-success" id="restore-all-btn" style="display: none;">
+                    <i class="fas fa-undo-alt me-1"></i>Hammasini tiklash
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <!-- Menyuni o'zgartirish Modal -->
 <div class="modal fade" id="changeMenuModal" tabindex="-1" aria-labelledby="changeMenuModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg">
@@ -419,10 +472,16 @@
                 <i class="fas fa-file-archive text-white"></i>
             </button>
         </div>
-        <div class="col-md-2">
-            <label class="form-label">Yangi qo'shish</label><br>
+        <div class="col-md-1">
+            <label class="form-label">Qo'shish</label><br>
             <button class="btn btn-danger" id="addKindergartenBtn" data-bs-toggle="modal" data-bs-target="#addKindergartenModal" title="Yangi bog'cha qo'shish">
                 <i class="fas fa-plus-circle text-white"></i>
+            </button>
+        </div>
+        <div class="col-md-1">
+            <label class="form-label">O'chirilganlar</label><br>
+            <button class="btn btn-warning" id="showDeletedBtn" data-bs-toggle="modal" data-bs-target="#deletedRecordsModal" title="O'chirilgan qatorlarni ko'rish">
+                <i class="fas fa-trash-restore text-white"></i>
             </button>
         </div>
     </div>
@@ -1268,6 +1327,148 @@
                     showNotification(errorMessage, 'error');
                 },
                 complete: function() {
+                    btn.prop('disabled', false).html(originalText);
+                }
+            });
+        });
+
+        // ==========================================
+        // O'CHIRILGAN QATORLARNI KO'RISH VA TIKLASH
+        // ==========================================
+
+        // Modal ochilganda o'chirilgan yozuvlarni yuklash
+        $('#deletedRecordsModal').on('show.bs.modal', function() {
+            loadDeletedRecords();
+        });
+
+        // O'chirilgan yozuvlarni yuklash funksiyasi
+        function loadDeletedRecords() {
+            $('#deleted-records-loading').show();
+            $('#deleted-records-content').hide();
+            $('#no-deleted-records').hide();
+            $('#restore-all-btn').hide();
+
+            $.ajax({
+                url: '{{ route("technolog.getDeletedNumberChildren") }}',
+                method: 'POST',
+                data: {
+                    _token: $('meta[name="csrf-token"]').attr('content'),
+                    day_id: {{ $aday }}
+                },
+                success: function(response) {
+                    $('#deleted-records-loading').hide();
+                    $('#deleted-records-content').show();
+
+                    if (response.success && response.data.length > 0) {
+                        var tbody = $('#deleted-records-tbody');
+                        tbody.empty();
+
+                        response.data.forEach(function(record, index) {
+                            var row = '<tr>' +
+                                '<td>' + (index + 1) + '</td>' +
+                                '<td>' + record.kingar_name + '</td>' +
+                                '<td>' + record.age_name + '</td>' +
+                                '<td>' + record.kingar_children_number + '</td>' +
+                                '<td>' + record.workers_count + '</td>' +
+                                '<td>' + record.deleted_at + '</td>' +
+                                '<td>' +
+                                    '<button class="btn btn-success btn-sm restore-single-btn" data-id="' + record.id + '">' +
+                                        '<i class="fas fa-undo"></i> Tiklash' +
+                                    '</button>' +
+                                '</td>' +
+                            '</tr>';
+                            tbody.append(row);
+                        });
+
+                        $('#deletedRecordsTable').show();
+                        $('#no-deleted-records').hide();
+                        $('#restore-all-btn').show();
+                    } else {
+                        $('#deletedRecordsTable').hide();
+                        $('#no-deleted-records').show();
+                        $('#restore-all-btn').hide();
+                    }
+                },
+                error: function(xhr) {
+                    $('#deleted-records-loading').hide();
+                    $('#deleted-records-content').show();
+                    $('#deletedRecordsTable').hide();
+                    $('#no-deleted-records').html('<i class="fas fa-exclamation-triangle me-2"></i>Xatolik yuz berdi').show();
+                }
+            });
+        }
+
+        // Bitta yozuvni tiklash
+        $(document).on('click', '.restore-single-btn', function() {
+            var btn = $(this);
+            var recordId = btn.data('id');
+            var originalText = btn.html();
+
+            btn.prop('disabled', true).html('<i class="fas fa-spinner fa-spin"></i>');
+
+            $.ajax({
+                url: '{{ route("technolog.restoreNumberChildren") }}',
+                method: 'POST',
+                data: {
+                    _token: $('meta[name="csrf-token"]').attr('content'),
+                    id: recordId
+                },
+                success: function(response) {
+                    if (response.success) {
+                        showNotification(response.message, 'success');
+                        loadDeletedRecords(); // Jadvalini yangilash
+                    } else {
+                        showNotification(response.message, 'error');
+                        btn.prop('disabled', false).html(originalText);
+                    }
+                },
+                error: function(xhr) {
+                    var errorMessage = 'Xatolik yuz berdi!';
+                    if (xhr.responseJSON && xhr.responseJSON.message) {
+                        errorMessage = xhr.responseJSON.message;
+                    }
+                    showNotification(errorMessage, 'error');
+                    btn.prop('disabled', false).html(originalText);
+                }
+            });
+        });
+
+        // Barcha o'chirilgan yozuvlarni tiklash
+        $('#restore-all-btn').click(function() {
+            var btn = $(this);
+            var originalText = btn.html();
+
+            if (!confirm('Barcha o\'chirilgan yozuvlarni tiklamoqchimisiz?')) {
+                return;
+            }
+
+            btn.prop('disabled', true).html('<i class="fas fa-spinner fa-spin"></i> Tiklanmoqda...');
+
+            $.ajax({
+                url: '{{ route("technolog.restoreAllNumberChildren") }}',
+                method: 'POST',
+                data: {
+                    _token: $('meta[name="csrf-token"]').attr('content'),
+                    day_id: {{ $aday }}
+                },
+                success: function(response) {
+                    if (response.success) {
+                        showNotification(response.message, 'success');
+                        $('#deletedRecordsModal').modal('hide');
+                        setTimeout(function() {
+                            location.reload();
+                        }, 1500);
+                    } else {
+                        showNotification(response.message, 'error');
+                        btn.prop('disabled', false).html(originalText);
+                    }
+                },
+                error: function(xhr) {
+                    var errorMessage = 'Xatolik yuz berdi!';
+                    if (xhr.responseJSON && xhr.responseJSON.message) {
+                        errorMessage = xhr.responseJSON.message;
+                    }
+                    showNotification(errorMessage, 'error');
                     btn.prop('disabled', false).html(originalText);
                 }
             });
