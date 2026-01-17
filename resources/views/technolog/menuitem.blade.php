@@ -87,12 +87,12 @@
                         <textarea class="form-control" id="description" name="description" rows="3">{{$titlemenu->description ?? ''}}</textarea>
                     </div>
                     <div class="mb-3">
-                        <label for="parent_id" class="form-label">Parent menyu</label>
+                        <label for="parent_id" class="form-label">Asosiy menyu</label>
                         <select class="form-select" id="parent_id" name="parent_id">
-                            <option value="">-- Parent menyu tanlang (ixtiyoriy) --</option>
+                            <option value="">-- Asosiy menyu tanlang (ixtiyoriy) --</option>
                             @foreach(\App\Models\Titlemenu::where('id', '!=', $titlemenu->id)->orderBy('menu_name')->get() as $menu)
                                 <option value="{{$menu->id}}" {{$titlemenu->parent_id == $menu->id ? 'selected' : ''}}>
-                                    {{$menu->menu_name}}
+                                    {{$menu->menu_name.' ('.\App\Models\Season::find($menu->menu_season_id)->season_name.')'}}
                                 </option>
                             @endforeach
                         </select>
