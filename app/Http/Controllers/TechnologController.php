@@ -412,9 +412,86 @@ class TechnologController extends Controller
         return view('technolog.showdate', ['year' => $year, 'y_id' => $y_id, 'm_id' => $m_id, 'aday' => $day, 'months' => $months,'days' => $days, 'ages' => $ages, 'nextdayitem' => $nextdayitem, 'usage_status' => $usage_status]);
     }
 
+    // Yangi bog'cha qo'shish (showdate sahifasi uchun)
+    public function storeNumberChildren(Request $request)
+    {
+        try {
+            $request->validate([
+                'day_id' => 'required|integer|exists:days,id',
+                'kingar_name_id' => 'required|integer|exists:kindgardens,id',
+                'king_age_name_id' => 'required|integer|exists:age_ranges,id',
+                'kingar_children_number' => 'required|integer|min:0',
+                'workers_count' => 'required|integer|min:0',
+                'kingar_menu_id' => 'nullable|integer|exists:titlemenus,id'
+            ]);
+
+            // Mavjud yozuvni tekshirish
+            $existing = Number_children::where('day_id', $request->day_id)
+                ->where('kingar_name_id', $request->kingar_name_id)
+                ->where('king_age_name_id', $request->king_age_name_id)
+                ->first();
+
+            if ($existing) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Bu bog\'cha va yosh guruhi uchun ma\'lumot allaqachon mavjud!'
+                ], 400);
+            }
+
+            Number_children::create([
+                'day_id' => $request->day_id,
+                'kingar_name_id' => $request->kingar_name_id,
+                'king_age_name_id' => $request->king_age_name_id,
+                'kingar_children_number' => $request->kingar_children_number,
+                'workers_count' => $request->workers_count,
+                'kingar_menu_id' => $request->kingar_menu_id
+            ]);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Bog\'cha muvaffaqiyatli qo\'shildi!'
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Xatolik yuz berdi: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    // Soft delete (showdate sahifasi uchun)
+    public function softDeleteNumberChildren(Request $request)
+    {
+        try {
+            $request->validate([
+                'day_id' => 'required|integer',
+                'kingar_name_id' => 'required|integer'
+            ]);
+
+            $deleted = Number_children::where('day_id', $request->day_id)
+                ->where('kingar_name_id', $request->kingar_name_id)
+                ->delete(); // SoftDeletes trait tufayli bu soft delete bo'ladi
+
+            if ($deleted > 0) {
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Muvaffaqiyatli o\'chirildi! (' . $deleted . ' ta yozuv)'
+                ]);
+            } else {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'O\'chiriladigan ma\'lumot topilmadi!'
+                ], 404);
+            }
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Xatolik yuz berdi: ' . $e->getMessage()
+            ], 500);
+        }
+    }
 
 
-    
 
     
     // O'tgan kunlar uchun ma'lumot qo'shish

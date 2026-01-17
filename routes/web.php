@@ -163,6 +163,8 @@ Route::group(['prefix' => 'technolog', 'middleware' => ['isTechnolog', 'auth']],
     Route::post('newday', [TechnologController::class, 'newday'])->name('technolog.newday');
     Route::get('sendmenu/{day}', [TechnologController::class, 'sendmenu'])->name('technolog.sendmenu');
     Route::get('showdate/{year}/{month}/{day}', [TechnologController::class, 'showdate'])->name('technolog.showdate');
+    Route::post('store-number-children', [TechnologController::class, 'storeNumberChildren'])->name('technolog.storeNumberChildren');
+    Route::post('soft-delete-number-children', [TechnologController::class, 'softDeleteNumberChildren'])->name('technolog.softDeleteNumberChildren');
     Route::post('assign-menu-to-active', [TechnologController::class, 'assignMenuToActive'])->name('technolog.assignMenuToActive');
     Route::get('get-all-menus', [TechnologController::class, 'getAllMenus'])->name('technolog.getAllMenus');
     Route::post('add-past-days-data', [TechnologController::class, 'addPastDaysData'])->name('technolog.addPastDaysData');

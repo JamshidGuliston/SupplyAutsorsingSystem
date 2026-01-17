@@ -223,6 +223,83 @@
     </div>
 </div>
 
+<!-- Yangi bog'cha qo'shish Modal -->
+<div class="modal fade" id="addKindergartenModal" tabindex="-1" aria-labelledby="addKindergartenModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form id="add-kindergarten-form">
+                @csrf
+                <input type="hidden" name="day_id" value="{{ $aday }}">
+                <div class="modal-header bg-success">
+                    <h5 class="modal-title text-white" id="addKindergartenModalLabel">Yangi bog'cha qo'shish</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="select-kindergarten" class="form-label">Bog'chani tanlang:</label>
+                        <select class="form-select" id="select-kindergarten" name="kingar_name_id" required>
+                            <option value="">-- Bog'chani tanlang --</option>
+                            @foreach(\App\Models\Kindgarden::where('hide', 1)->orderBy('kingar_name')->get() as $kg)
+                                <option value="{{ $kg->id }}">{{ $kg->kingar_name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="select-age-range" class="form-label">Yosh guruhini tanlang:</label>
+                        <select class="form-select" id="select-age-range" name="king_age_name_id" required>
+                            <option value="">-- Yosh guruhini tanlang --</option>
+                            @foreach(\App\Models\Age_range::all() as $age)
+                                <option value="{{ $age->id }}">{{ $age->age_name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="children-count" class="form-label">Bolalar soni:</label>
+                        <input type="number" class="form-control" id="children-count" name="kingar_children_number" min="0" value="0" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="workers-count-add" class="form-label">Xodimlar soni:</label>
+                        <input type="number" class="form-control" id="workers-count-add" name="workers_count" min="0" value="0" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="select-menu-add" class="form-label">Menyuni tanlang (ixtiyoriy):</label>
+                        <select class="form-select" id="select-menu-add" name="kingar_menu_id">
+                            <option value="">-- Menyuni tanlang --</option>
+                            @foreach(\App\Models\Titlemenu::orderBy('menu_name')->get() as $menu)
+                                <option value="{{ $menu->id }}">{{ $menu->menu_name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Bekor qilish</button>
+                    <button type="submit" class="btn btn-success">Qo'shish</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- O'chirish tasdiqlash Modal -->
+<div class="modal fade" id="deleteConfirmModal" tabindex="-1" aria-labelledby="deleteConfirmModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-danger">
+                <h5 class="modal-title text-white" id="deleteConfirmModalLabel">O'chirishni tasdiqlash</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>Siz <strong id="delete-kindergarten-name"></strong> ni o'chirmoqchimisiz?</p>
+                <p class="text-muted">Bu amal bekor qilinishi mumkin.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Bekor qilish</button>
+                <button type="button" class="btn btn-danger" id="confirm-delete-btn">O'chirish</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <!-- Menyuni o'zgartirish Modal -->
 <div class="modal fade" id="changeMenuModal" tabindex="-1" aria-labelledby="changeMenuModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg">
@@ -343,8 +420,11 @@
             </button>
         </div>
         <div class="col-md-2">
-            <!-- Boshqa tugmalar uchun joy -->
-        </div>      
+            <label class="form-label">Yangi qo'shish</label><br>
+            <button class="btn btn-danger" id="addKindergartenBtn" data-bs-toggle="modal" data-bs-target="#addKindergartenModal" title="Yangi bog'cha qo'shish">
+                <i class="fas fa-plus-circle text-white"></i>
+            </button>
+        </div>
     </div>
     
     <hr>
@@ -362,6 +442,7 @@
                 </th>
                 @endforeach
                 <th style="width: 70px;" rowspan="2">Maxsulotlar ishlatilganligi</th>
+                <th style="width: 50px;" rowspan="2">Amallar</th>
             </tr>
             <tr style="color: #888888;">
                 @foreach($ages as $age)
@@ -441,13 +522,24 @@
                             <i class="fas fa-check-circle" style="color: green;"></i>
                         @else
                             <i class="fas fa-times-circle" style="color: red;"></i>
-                            <i class="fas fa-carrot expense-btn" style="color: dodgerblue; font-size: 18px; margin-left: 10px; cursor: pointer;" 
-                               data-dayid="{{ $aday }}" 
-                               data-kingardenid="{{ $row['kingar_name_id'] }}" 
-                               data-toggle="modal" 
-                               data-target="#expenseModal" 
+                            <i class="fas fa-carrot expense-btn" style="color: dodgerblue; font-size: 18px; margin-left: 10px; cursor: pointer;"
+                               data-dayid="{{ $aday }}"
+                               data-kingardenid="{{ $row['kingar_name_id'] }}"
+                               data-toggle="modal"
+                               data-target="#expenseModal"
                                title="Sarflash">Sarflash</i>
                         @endif
+                    </td>
+                    <td>
+                        <i class="fas fa-trash-alt text-danger delete-row-btn"
+                           style="cursor: pointer;"
+                           data-bs-toggle="modal"
+                           data-bs-target="#deleteConfirmModal"
+                           data-day-id="{{ $aday }}"
+                           data-kingar-name-id="{{ $row['kingar_name_id'] }}"
+                           data-kindgarden-name="{{ $row['kingar_name'] }}"
+                           title="O'chirish">
+                        </i>
                     </td>
                 </tr>
             @endforeach
@@ -1078,6 +1170,108 @@
                 }
             });
         };
+
+        // ==========================================
+        // YANGI BOG'CHA QO'SHISH FUNKSIYALARI
+        // ==========================================
+
+        // Qo'shish formasi
+        $('#add-kindergarten-form').submit(function(e) {
+            e.preventDefault();
+
+            var form = $(this);
+            var submitBtn = form.find('button[type="submit"]');
+            var originalText = submitBtn.html();
+
+            submitBtn.prop('disabled', true).html('<i class="fas fa-spinner fa-spin"></i> Qo\'shilmoqda...');
+
+            $.ajax({
+                url: '{{ route("technolog.storeNumberChildren") }}',
+                method: 'POST',
+                data: form.serialize(),
+                success: function(response) {
+                    if (response.success) {
+                        showNotification(response.message, 'success');
+                        $('#addKindergartenModal').modal('hide');
+                        form[0].reset();
+                        setTimeout(function() {
+                            location.reload();
+                        }, 1500);
+                    } else {
+                        showNotification(response.message, 'error');
+                    }
+                },
+                error: function(xhr) {
+                    var errorMessage = 'Xatolik yuz berdi!';
+                    if (xhr.responseJSON && xhr.responseJSON.message) {
+                        errorMessage = xhr.responseJSON.message;
+                    }
+                    showNotification(errorMessage, 'error');
+                },
+                complete: function() {
+                    submitBtn.prop('disabled', false).html(originalText);
+                }
+            });
+        });
+
+        // ==========================================
+        // O'CHIRISH FUNKSIYALARI (SOFT DELETE)
+        // ==========================================
+
+        let deleteData = {};
+
+        // O'chirish tugmasi bosilganda
+        $('.delete-row-btn').click(function() {
+            var dayId = $(this).data('day-id');
+            var kingarNameId = $(this).data('kingar-name-id');
+            var kindgardenName = $(this).data('kindgarden-name');
+
+            deleteData = {
+                day_id: dayId,
+                kingar_name_id: kingarNameId
+            };
+
+            $('#delete-kindergarten-name').text(kindgardenName);
+        });
+
+        // O'chirishni tasdiqlash
+        $('#confirm-delete-btn').click(function() {
+            var btn = $(this);
+            var originalText = btn.html();
+
+            btn.prop('disabled', true).html('<i class="fas fa-spinner fa-spin"></i> O\'chirilmoqda...');
+
+            $.ajax({
+                url: '{{ route("technolog.softDeleteNumberChildren") }}',
+                method: 'POST',
+                data: {
+                    _token: $('meta[name="csrf-token"]').attr('content'),
+                    day_id: deleteData.day_id,
+                    kingar_name_id: deleteData.kingar_name_id
+                },
+                success: function(response) {
+                    if (response.success) {
+                        showNotification(response.message, 'success');
+                        $('#deleteConfirmModal').modal('hide');
+                        setTimeout(function() {
+                            location.reload();
+                        }, 1500);
+                    } else {
+                        showNotification(response.message, 'error');
+                    }
+                },
+                error: function(xhr) {
+                    var errorMessage = 'Xatolik yuz berdi!';
+                    if (xhr.responseJSON && xhr.responseJSON.message) {
+                        errorMessage = xhr.responseJSON.message;
+                    }
+                    showNotification(errorMessage, 'error');
+                },
+                complete: function() {
+                    btn.prop('disabled', false).html(originalText);
+                }
+            });
+        });
     });
 </script>
 @endsection
