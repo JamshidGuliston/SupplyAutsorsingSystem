@@ -90,7 +90,7 @@
                         <label for="parent_id" class="form-label">Asosiy menyu</label>
                         <select class="form-select" id="parent_id" name="parent_id">
                             <option value="">-- Asosiy menyu tanlang (ixtiyoriy) --</option>
-                            @foreach(\App\Models\Titlemenu::where('id', '!=', $titlemenu->id)->orderBy('menu_name')->get() as $menu)
+                            @foreach(\App\Models\Titlemenu::where('id', '!=', $titlemenu->id)->get() as $menu)
                                 <option value="{{$menu->id}}" {{$titlemenu->parent_id == $menu->id ? 'selected' : ''}}>
                                     {{$menu->menu_name.' ('.\App\Models\Season::find($menu->menu_season_id)->season_name.')'}}
                                 </option>
