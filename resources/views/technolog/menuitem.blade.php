@@ -66,11 +66,11 @@
                     </div>
                     <div class="mb-3">
                         <label for="short_name" class="form-label">Qisqa nomi</label>
-                        <input type="text" class="form-control" id="short_name" name="short_name" value="{{$titlemenu->short_name}}" required>
+                        <input type="text" class="form-control" id="short_name" name="short_name" value="{{$titlemenu->short_name}}">
                     </div>
                     <div class="mb-3">
                         <label for="order_number" class="form-label">Tartib raqami</label>
-                        <input type="number" class="form-control" id="order_number" name="order_number" value="{{$titlemenu->order_number}}" required>
+                        <input type="number" class="form-control" id="order_number" name="order_number" value="{{$titlemenu->order_number}}">
                     </div>
                     <div class="mb-3">
                         <label for="menu_season_id" class="form-label">Mavsum</label>
