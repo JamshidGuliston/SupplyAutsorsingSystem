@@ -84,6 +84,23 @@
     .product-input-row input {
         width: 120px;
     }
+
+    /* Collapse icon animation */
+    .collapse-icon {
+        transition: transform 0.3s ease;
+    }
+
+    .collapse-icon.rotated {
+        transform: rotate(90deg);
+    }
+
+    .shop-header:hover {
+        background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+    }
+
+    .shop-card .collapse {
+        border-top: 1px solid rgba(0,0,0,0.1);
+    }
 </style>
 @endsection
 
@@ -212,59 +229,66 @@
         @forelse($shops as $shop)
         <div class="col-md-6 col-lg-4">
             <div class="card shop-card">
-                <div class="shop-header">
-                    <div>
-                        <h6 class="mb-0">
-                            <i class="fas fa-store me-2"></i>{{ $shop->shop_name }}
-                        </h6>
-                        @if($shop->phone)
-                            <small class="opacity-75">{{ $shop->phone }}</small>
-                        @endif
-                    </div>
-                    <button type="button" class="btn btn-light btn-sm add-product-btn"
-                            data-shop-id="{{ $shop->id }}"
-                            data-shop-name="{{ $shop->shop_name }}"
-                            data-bs-toggle="modal"
-                            data-bs-target="#addProductModal"
-                            title="Maxsulot qo'shish">
-                        <i class="fas fa-plus"></i>
-                    </button>
-                </div>
-                <div class="card-body">
-                    @if(isset($orders[$shop->id]) && $orders[$shop->id]->count() > 0)
-                        <div class="mb-2">
-                            <span class="badge bg-success">
-                                {{ $orders[$shop->id]->count() }} ta yetkazma
-                            </span>
-                        </div>
-
-                        @foreach($orders[$shop->id] as $order)
-                        <div class="delivery-item">
-                            <div class="kindergarten-name">
-                                <i class="fas fa-building me-1"></i>
-                                {{ $order->kinggarden->kingar_name ?? 'Noma\'lum bog\'cha' }}
-                            </div>
-                            @if($order->orderProductStructures && $order->orderProductStructures->count() > 0)
-                                @foreach($order->orderProductStructures as $structure)
-                                <div class="product-row">
-                                    <span>{{ $structure->product->product_name ?? 'Noma\'lum' }}</span>
-                                    <span class="text-primary fw-bold">
-                                        {{ number_format($structure->product_weight, 2) }}
-                                        {{ $structure->product->size->size_name ?? 'kg' }}
-                                    </span>
-                                </div>
-                                @endforeach
-                            @else
-                                <small class="text-muted">Maxsulotlar yo'q</small>
+                <div class="shop-header" style="cursor: pointer;" data-bs-toggle="collapse" data-bs-target="#shopCollapse{{ $shop->id }}">
+                    <div class="d-flex align-items-center">
+                        <i class="fas fa-chevron-right collapse-icon me-2" id="collapseIcon{{ $shop->id }}"></i>
+                        <div>
+                            <h6 class="mb-0">
+                                <i class="fas fa-store me-2"></i>{{ $shop->shop_name }}
+                            </h6>
+                            @if($shop->phone)
+                                <small class="opacity-75">{{ $shop->phone }}</small>
                             @endif
                         </div>
-                        @endforeach
-                    @else
-                        <div class="no-orders">
-                            <i class="fas fa-inbox fa-2x mb-2"></i>
-                            <br>Bu kunda yetkazma yo'q
-                        </div>
-                    @endif
+                    </div>
+                    <div class="d-flex align-items-center">
+                        @if(isset($orders[$shop->id]) && $orders[$shop->id]->count() > 0)
+                            <span class="badge bg-success me-2">{{ $orders[$shop->id]->count() }}</span>
+                        @else
+                            <span class="badge bg-secondary me-2">0</span>
+                        @endif
+                        <button type="button" class="btn btn-light btn-sm add-product-btn"
+                                data-shop-id="{{ $shop->id }}"
+                                data-shop-name="{{ $shop->shop_name }}"
+                                data-bs-toggle="modal"
+                                data-bs-target="#addProductModal"
+                                title="Maxsulot qo'shish"
+                                onclick="event.stopPropagation();">
+                            <i class="fas fa-plus"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="collapse" id="shopCollapse{{ $shop->id }}">
+                    <div class="card-body">
+                        @if(isset($orders[$shop->id]) && $orders[$shop->id]->count() > 0)
+                            @foreach($orders[$shop->id] as $order)
+                            <div class="delivery-item">
+                                <div class="kindergarten-name">
+                                    <i class="fas fa-building me-1"></i>
+                                    {{ $order->kinggarden->kingar_name ?? 'Noma\'lum bog\'cha' }}
+                                </div>
+                                @if($order->orderProductStructures && $order->orderProductStructures->count() > 0)
+                                    @foreach($order->orderProductStructures as $structure)
+                                    <div class="product-row">
+                                        <span>{{ $structure->product->product_name ?? 'Noma\'lum' }}</span>
+                                        <span class="text-primary fw-bold">
+                                            {{ number_format($structure->product_weight, 2) }}
+                                            {{ $structure->product->size->size_name ?? 'kg' }}
+                                        </span>
+                                    </div>
+                                    @endforeach
+                                @else
+                                    <small class="text-muted">Maxsulotlar yo'q</small>
+                                @endif
+                            </div>
+                            @endforeach
+                        @else
+                            <div class="no-orders">
+                                <i class="fas fa-inbox fa-2x mb-2"></i>
+                                <br>Bu kunda yetkazma yo'q
+                            </div>
+                        @endif
+                    </div>
                 </div>
             </div>
         </div>
@@ -301,49 +325,46 @@
                         <strong>{{ $day->day_number }}.{{ $day->month->month_name }}.{{ $day->year->year_name }}</strong> sanasiga maxsulot qo'shish
                     </div>
 
-                    <!-- Bog'cha tanlash -->
-                    <div class="mb-3">
-                        <label for="kingar_name_id" class="form-label">Bog'cha tanlang *</label>
-                        <select class="form-select" id="kingar_name_id" name="kingar_name_id" required>
-                            <option value="">-- Bog'chani tanlang --</option>
-                            @foreach($kindergartens as $kg)
-                                <option value="{{ $kg->id }}">{{ $kg->kingar_name }}</option>
-                            @endforeach
-                        </select>
+                    <!-- Yuklanmoqda -->
+                    <div id="modal-loading" class="text-center py-4">
+                        <i class="fas fa-spinner fa-spin fa-2x"></i>
+                        <p class="mt-2">Ma'lumotlar yuklanmoqda...</p>
                     </div>
 
-                    <!-- Izoh -->
-                    <div class="mb-3">
-                        <label for="note" class="form-label">Izoh</label>
-                        <input type="text" class="form-control" id="note" name="note" placeholder="Ixtiyoriy izoh...">
-                    </div>
-
-                    <!-- Maxsulotlar ro'yxati -->
-                    <div class="mb-3">
-                        <label class="form-label">Maxsulotlar va miqdori *</label>
-                        <div class="border rounded p-3" style="max-height: 400px; overflow-y: auto;">
-                            @foreach($products as $index => $product)
-                            <div class="product-input-row">
-                                <span class="product-name">
-                                    {{ $product->product_name }}
-                                    <small class="text-muted">({{ $product->size->size_name ?? 'kg' }})</small>
-                                </span>
-                                <input type="hidden" name="products[{{ $index }}][product_id]" value="{{ $product->id }}">
-                                <input type="number"
-                                       class="form-control form-control-sm product-weight"
-                                       name="products[{{ $index }}][weight]"
-                                       value="0"
-                                       min="0"
-                                       step="0.01"
-                                       placeholder="0.00">
-                            </div>
-                            @endforeach
+                    <!-- Kontent -->
+                    <div id="modal-content" style="display: none;">
+                        <!-- Bog'cha tanlash -->
+                        <div class="mb-3">
+                            <label for="kingar_name_id" class="form-label">Bog'cha tanlang *</label>
+                            <select class="form-select" id="kingar_name_id" name="kingar_name_id" required>
+                                <option value="">-- Bog'chani tanlang --</option>
+                            </select>
                         </div>
+
+                        <!-- Izoh -->
+                        <div class="mb-3">
+                            <label for="note" class="form-label">Izoh</label>
+                            <input type="text" class="form-control" id="note" name="note" placeholder="Ixtiyoriy izoh...">
+                        </div>
+
+                        <!-- Maxsulotlar ro'yxati -->
+                        <div class="mb-3">
+                            <label class="form-label">Maxsulotlar va miqdori *</label>
+                            <div id="products-container" class="border rounded p-3" style="max-height: 400px; overflow-y: auto;">
+                                <!-- Dinamik to'ldiriladi -->
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Xatolik -->
+                    <div id="modal-error" class="alert alert-danger" style="display: none;">
+                        <i class="fas fa-exclamation-triangle me-2"></i>
+                        <span id="modal-error-text"></span>
                     </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Bekor qilish</button>
-                    <button type="submit" class="btn btn-primary">
+                    <button type="submit" class="btn btn-primary" id="modal-submit-btn">
                         <i class="fas fa-save me-1"></i>Saqlash
                     </button>
                 </div>
@@ -357,6 +378,17 @@
 @section('script')
 <script>
     $(document).ready(function() {
+        // Collapse ochilganda/yopilganda ikonkani aylantirish
+        $('.collapse').on('show.bs.collapse', function() {
+            const shopId = $(this).attr('id').replace('shopCollapse', '');
+            $('#collapseIcon' + shopId).addClass('rotated');
+        });
+
+        $('.collapse').on('hide.bs.collapse', function() {
+            const shopId = $(this).attr('id').replace('shopCollapse', '');
+            $('#collapseIcon' + shopId).removeClass('rotated');
+        });
+
         // Sana turi o'zgarganda
         $('#date_type').on('change', function() {
             const dateType = $(this).val();
@@ -395,12 +427,77 @@
 
             $('#modal_shop_id').val(shopId);
             $('#modal_shop_name').text(shopName);
-
-            // Formani tozalash
-            $('#addProductForm')[0].reset();
-            $('#modal_shop_id').val(shopId);
             $('input[name="day_id"]').val('{{ $day->id }}');
-            $('.product-weight').val(0);
+
+            // Modal holatini tozalash
+            $('#modal-loading').show();
+            $('#modal-content').hide();
+            $('#modal-error').hide();
+            $('#modal-submit-btn').prop('disabled', true);
+
+            // Shop maxsulotlari va bog'chalarini yuklash
+            $.ajax({
+                url: '{{ route("storage.getShopProductsAndKindergartens") }}',
+                method: 'POST',
+                data: {
+                    _token: '{{ csrf_token() }}',
+                    shop_id: shopId
+                },
+                success: function(response) {
+                    if (response.success) {
+                        // Bog'chalar ro'yxatini to'ldirish
+                        const kindergartenSelect = $('#kingar_name_id');
+                        kindergartenSelect.empty();
+                        kindergartenSelect.append('<option value="">-- Bog\'chani tanlang --</option>');
+
+                        if (response.kindergartens.length > 0) {
+                            response.kindergartens.forEach(function(kg) {
+                                kindergartenSelect.append('<option value="' + kg.id + '">' + kg.kingar_name + '</option>');
+                            });
+                        } else {
+                            kindergartenSelect.append('<option value="" disabled>Bu shopga bog\'cha biriktirilmagan</option>');
+                        }
+
+                        // Maxsulotlar ro'yxatini to'ldirish
+                        const productsContainer = $('#products-container');
+                        productsContainer.empty();
+
+                        if (response.products.length > 0) {
+                            response.products.forEach(function(product, index) {
+                                const productRow = '<div class="product-input-row">' +
+                                    '<span class="product-name">' + product.product_name +
+                                    ' <small class="text-muted">(' + product.size_name + ')</small></span>' +
+                                    '<input type="hidden" name="products[' + index + '][product_id]" value="' + product.id + '">' +
+                                    '<input type="number" class="form-control form-control-sm product-weight" ' +
+                                    'name="products[' + index + '][weight]" value="0" min="0" step="0.01" placeholder="0.00">' +
+                                    '</div>';
+                                productsContainer.append(productRow);
+                            });
+                        } else {
+                            productsContainer.html('<div class="text-center text-muted py-3">' +
+                                '<i class="fas fa-box-open fa-2x mb-2"></i><br>' +
+                                'Bu shopga maxsulot biriktirilmagan</div>');
+                        }
+
+                        $('#modal-loading').hide();
+                        $('#modal-content').show();
+                        $('#modal-submit-btn').prop('disabled', false);
+                    } else {
+                        $('#modal-loading').hide();
+                        $('#modal-error-text').text(response.message || 'Xatolik yuz berdi');
+                        $('#modal-error').show();
+                    }
+                },
+                error: function(xhr) {
+                    $('#modal-loading').hide();
+                    let errorMessage = 'Xatolik yuz berdi!';
+                    if (xhr.responseJSON && xhr.responseJSON.message) {
+                        errorMessage = xhr.responseJSON.message;
+                    }
+                    $('#modal-error-text').text(errorMessage);
+                    $('#modal-error').show();
+                }
+            });
         });
 
         // Maxsulot qo'shish formasi

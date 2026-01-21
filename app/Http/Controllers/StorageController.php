@@ -2543,6 +2543,48 @@ class StorageController extends Controller
         }
     }
 
+    // Shop uchun maxsulotlar va bog'chalarni olish
+    public function getShopProductsAndKindergartens(Request $request)
+    {
+        try {
+            $shopId = $request->input('shop_id');
+            $shop = Shop::with(['product.size', 'kindgarden'])->find($shopId);
+
+            if (!$shop) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Shop topilmadi!'
+                ], 404);
+            }
+
+            $products = $shop->product->map(function ($product) {
+                return [
+                    'id' => $product->id,
+                    'product_name' => $product->product_name,
+                    'size_name' => $product->size ? $product->size->size_name : 'kg'
+                ];
+            });
+
+            $kindergartens = $shop->kindgarden->map(function ($kg) {
+                return [
+                    'id' => $kg->id,
+                    'kingar_name' => $kg->kingar_name
+                ];
+            });
+
+            return response()->json([
+                'success' => true,
+                'products' => $products,
+                'kindergartens' => $kindergartens
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Xatolik yuz berdi: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
     public function intakinglargebase(Request $request, $id){
         $res = Take_product::select(
                         'take_products.id as tid',
