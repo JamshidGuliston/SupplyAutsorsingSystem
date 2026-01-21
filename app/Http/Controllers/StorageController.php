@@ -2417,23 +2417,7 @@ class StorageController extends Controller
             'taker_id' => $request->user_id,
             'outside_id' => $request->outid,
             'title' => $request->title,
-            'description' => "",            <?php
-            // ...existing code...
-            Route::group(['prefix' => 'storage', 'middleware' => ['isStorage', 'auth']], function () {
-                // ...existing code...
-            
-                // AJAX uchun kerakli route'lar (agar hozircha yo'q bo'lsa qo'shing)
-                Route::post('store-shop-order', [App\Http\Controllers\StorageController::class, 'storeShopOrder'])->name('storage.storeShopOrder');
-                Route::post('update-order-product-structure', [App\Http\Controllers\StorageController::class, 'updateOrderProductStructure'])->name('storage.updateOrderProductStructure');
-                Route::post('delete-order-product-structure', [App\Http\Controllers\StorageController::class, 'deleteOrderProductStructure'])->name('storage.deleteOrderProductStructure');
-            
-                // Hisobot eksportlari (GET so'rov bilan query string qabul qiladi)
-                Route::get('shops-history-report-pdf', [App\Http\Controllers\StorageController::class, 'shopsHistoryReportPdf'])->name('storage.shopsHistoryReportPdf');
-                Route::get('shops-history-report-excel', [App\Http\Controllers\StorageController::class, 'shopsHistoryReportExcel'])->name('storage.shopsHistoryReportExcel');
-            
-                // ...existing code...
-            });
-            // ...existing code...
+            'description' => ""
         ]);
 
         return redirect()->route('storage.takinglargebase');
