@@ -261,25 +261,42 @@
                 <div class="collapse" id="shopCollapse{{ $shop->id }}">
                     <div class="card-body">
                         @if(isset($orders[$shop->id]) && $orders[$shop->id]->count() > 0)
-                            @foreach($orders[$shop->id] as $order)
-                            <div class="delivery-item">
-                                <div class="kindergarten-name">
-                                    <i class="fas fa-building me-1"></i>
-                                    {{ $order->kinggarden->kingar_name ?? 'Noma\'lum bog\'cha' }}
-                                </div>
-                                @if($order->orderProductStructures && $order->orderProductStructures->count() > 0)
+                            @foreach($orders[$shop->id] ?? [] as $order)
+                            <div class="card mb-2 order-card" data-order-id="{{ $order->id }}">
+                                <div class="card-body">
+                                    <h6 class="card-title">{{ $order->kinggarden->kingar_name ?? 'Noma\'lum' }}</h6>
+
                                     @foreach($order->orderProductStructures as $structure)
-                                    <div class="product-row">
-                                        <span>{{ $structure->product->product_name ?? 'Noma\'lum' }}</span>
-                                        <span class="text-primary fw-bold">
-                                            {{ number_format($structure->product_weight, 2) }}
-                                            {{ $structure->product->size->size_name ?? 'kg' }}
-                                        </span>
-                                    </div>
+                                        <div class="d-flex align-items-center justify-content-between mb-2 product-row" id="structure-{{ $structure->id }}">
+                                            <div>
+                                                <strong>{{ $structure->product->product_name ?? 'Noma\'lum' }}</strong>
+                                                <div class="small text-muted">{{ $structure->product->size->size_name ?? '' }}</div>
+                                            </div>
+
+                                            <div class="text-end">
+                                                <span class="badge bg-primary me-2 structure-weight" data-id="{{ $structure->id }}">{{ number_format($structure->product_weight, 2, '.', '') }}</span>
+                                                <button type="button" class="btn btn-sm btn-outline-secondary btn-edit-structure" data-id="{{ $structure->id }}" data-weight="{{ $structure->product_weight }}" title="Tahrirlash">
+                                                    <i class="fa fa-pencil-alt"></i>
+                                                </button>
+                                                <button type="button" class="btn btn-sm btn-outline-danger btn-delete-structure" data-id="{{ $structure->id }}" title="O'chirish">
+                                                    <i class="fa fa-trash"></i>
+                                                </button>
+                                            </div>
+                                        </div>
                                     @endforeach
-                                @else
-                                    <small class="text-muted">Maxsulotlar yo'q</small>
-                                @endif
+
+                                    <!-- Add product small form (if you have inline add) -->
+                                    <form class="d-flex gap-2 mt-2 inline-add-product" data-order-id="{{ $order->id }}">
+                                        <select name="product_id" class="form-select form-select-sm product-select" required>
+                                            <option value="">Maxsulot tanlang</option>
+                                            @foreach($products as $p)
+                                                <option value="{{ $p->id }}">{{ $p->product_name }} ({{ $p->size->size_name ?? '' }})</option>
+                                            @endforeach
+                                        </select>
+                                        <input type="number" step="0.01" min="0" name="weight" class="form-control form-control-sm product-weight-input" placeholder="Og'irlik" required>
+                                        <button type="button" class="btn btn-sm btn-success btn-add-structure">Qo'shish</button>
+                                    </form>
+                                </div>
                             </div>
                             @endforeach
                         @else
@@ -371,6 +388,31 @@
             </form>
         </div>
     </div>
+</div>
+
+<!-- Edit modal -->
+<div class="modal fade" id="editStructureModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-sm">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Maxsulotni tahrirlash</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <form id="editStructureForm">
+          <input type="hidden" name="id" id="edit-structure-id">
+          <div class="mb-2">
+            <label class="form-label">Og'irlik</label>
+            <input type="number" step="0.01" min="0" class="form-control" name="weight" id="edit-structure-weight" required>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Bekor</button>
+        <button type="button" class="btn btn-primary" id="saveEditStructure">Saqlash</button>
+      </div>
+    </div>
+  </div>
 </div>
 
 @endsection
@@ -551,6 +593,100 @@
                 },
                 complete: function() {
                     submitBtn.prop('disabled', false).html(originalText);
+                }
+            });
+        });
+
+        // CSRF uchun
+        $.ajaxSetup({
+            headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') }
+        });
+
+        // Edit tugma
+        $(document).on('click', '.btn-edit-structure', function(){
+            var id = $(this).data('id');
+            var weight = $(this).data('weight');
+            $('#edit-structure-id').val(id);
+            $('#edit-structure-weight').val(weight);
+            var editModal = new bootstrap.Modal(document.getElementById('editStructureModal'));
+            editModal.show();
+        });
+
+        // Saqlash (update)
+        $('#saveEditStructure').on('click', function(){
+            var id = $('#edit-structure-id').val();
+            var weight = parseFloat($('#edit-structure-weight').val());
+            if (isNaN(weight) || weight < 0) {
+                alert('Iltimos to\'g\'ri og\'irlik kiriting');
+                return;
+            }
+
+            $.post("{{ route('storage.updateOrderProductStructure') }}", { id: id, weight: weight })
+            .done(function(res){
+                if(res.success){
+                    $('#structure-' + id).find('.structure-weight').text(weight.toFixed(2));
+                    $('#structure-' + id).find('.btn-edit-structure').data('weight', weight);
+                    bootstrap.Modal.getInstance(document.getElementById('editStructureModal')).hide();
+                } else {
+                    alert(res.message || 'Xatolik yuz berdi');
+                }
+            }).fail(function(xhr){
+                alert('So\'rov bajarilmadi: ' + (xhr.responseJSON?.message || xhr.statusText));
+            });
+        });
+
+        // Delete tugma
+        $(document).on('click', '.btn-delete-structure', function(){
+            if(!confirm("Bu mahsulotni o'chirmoqchimisiz?")) return;
+            var id = $(this).data('id');
+            $.post("{{ route('storage.deleteOrderProductStructure') }}", { id: id })
+            .done(function(res){
+                if(res.success){
+                    $('#structure-' + id).remove();
+                } else {
+                    alert(res.message || 'Xatolik yuz berdi');
+                }
+            }).fail(function(xhr){
+                alert('So\'rov bajarilmadi: ' + (xhr.responseJSON?.message || xhr.statusText));
+            });
+        });
+
+        // Inline add (client-side tekshiruv va AJAX submit)
+        $(document).on('click', '.btn-add-structure', function(){
+            var form = $(this).closest('form.inline-add-product');
+            var orderId = form.data('order-id');
+            var productId = form.find('select[name="product_id"]').val();
+            var weight = parseFloat(form.find('input[name="weight"]').val());
+
+            if(!productId){
+                alert('Maxsulot tanlang');
+                return;
+            }
+            if(isNaN(weight) || weight <= 0){
+                alert('Iltimos musbat og\'irlik kiriting');
+                return;
+            }
+
+            // AJAX qo'shish: to'liq struktura kerak bo'lsa, serverdagi route-ni moslang
+            $.ajax({
+                url: "{{ route('storage.storeShopOrder') }}",
+                method: "POST",
+                data: {
+                    shop_id: {{ $shop->id ?? 'null' }},
+                    day_id: {{ $day->id ?? 'null' }},
+                    kingar_name_id: '{{ $order->kingar_name_id ?? '' }}',
+                    products: [{ product_id: productId, weight: weight }]
+                },
+                success: function(resp){
+                    if(resp.success){
+                        // qaytgan ma'lumotga qarab UIni yangilang yoki sahifani refresh qiling
+                        location.reload();
+                    } else {
+                        alert(resp.message || 'Qo\'shishda xatolik');
+                    }
+                },
+                error: function(xhr){
+                    alert('So\'rov bajarilmadi: ' + (xhr.responseJSON?.message || xhr.statusText));
                 }
             });
         });

@@ -152,6 +152,15 @@ Route::group(['prefix' => 'storage', 'middleware' => ['isStorage', 'auth']], fun
     Route::post('get-shop-products-kindergartens', [StorageController::class, 'getShopProductsAndKindergartens'])->name('storage.getShopProductsAndKindergartens');
     Route::post('separate-orders', [StorageController::class, 'separateOrders'])->name('storage.separateOrders');
     Route::get('delete-order-product/{order_title}', [StorageController::class, 'deleteOrderProduct'])->name('storage.deleteOrderProduct');
+
+    Route::post('store-shop-order', [App\Http\Controllers\StorageController::class, 'storeShopOrder'])->name('storage.storeShopOrder');
+    Route::post('update-order-product-structure', [App\Http\Controllers\StorageController::class, 'updateOrderProductStructure'])->name('storage.updateOrderProductStructure');
+    Route::post('delete-order-product-structure', [App\Http\Controllers\StorageController::class, 'deleteOrderProductStructure'])->name('storage.deleteOrderProductStructure');
+
+    // Hisobot eksportlari (GET so'rov bilan query string qabul qiladi)
+    Route::get('shops-history-report-pdf', [App\Http\Controllers\StorageController::class, 'shopsHistoryReportPdf'])->name('storage.shopsHistoryReportPdf');
+    Route::get('shops-history-report-excel', [App\Http\Controllers\StorageController::class, 'shopsHistoryReportExcel'])->name('storage.shopsHistoryReportExcel');
+
 });
 
 Route::group(['prefix' => 'technolog', 'middleware' => ['isTechnolog', 'auth']], function () {

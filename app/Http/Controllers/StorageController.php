@@ -2417,7 +2417,23 @@ class StorageController extends Controller
             'taker_id' => $request->user_id,
             'outside_id' => $request->outid,
             'title' => $request->title,
-            'description' => "",
+            'description' => "",            <?php
+            // ...existing code...
+            Route::group(['prefix' => 'storage', 'middleware' => ['isStorage', 'auth']], function () {
+                // ...existing code...
+            
+                // AJAX uchun kerakli route'lar (agar hozircha yo'q bo'lsa qo'shing)
+                Route::post('store-shop-order', [App\Http\Controllers\StorageController::class, 'storeShopOrder'])->name('storage.storeShopOrder');
+                Route::post('update-order-product-structure', [App\Http\Controllers\StorageController::class, 'updateOrderProductStructure'])->name('storage.updateOrderProductStructure');
+                Route::post('delete-order-product-structure', [App\Http\Controllers\StorageController::class, 'deleteOrderProductStructure'])->name('storage.deleteOrderProductStructure');
+            
+                // Hisobot eksportlari (GET so'rov bilan query string qabul qiladi)
+                Route::get('shops-history-report-pdf', [App\Http\Controllers\StorageController::class, 'shopsHistoryReportPdf'])->name('storage.shopsHistoryReportPdf');
+                Route::get('shops-history-report-excel', [App\Http\Controllers\StorageController::class, 'shopsHistoryReportExcel'])->name('storage.shopsHistoryReportExcel');
+            
+                // ...existing code...
+            });
+            // ...existing code...
         ]);
 
         return redirect()->route('storage.takinglargebase');
@@ -2469,30 +2485,124 @@ class StorageController extends Controller
                 'products.*.weight' => 'required|numeric|min:0',
             ]);
 
-            // Yangi order_product yaratish
-            $orderProduct = order_product::create([
-                'shop_id' => $request->shop_id,
-                'day_id' => $request->day_id,
-                'kingar_name_id' => $request->kingar_name_id,
-                'order_title' => 'O\'tgan sana uchun qo\'shildi'.$request->shop_id,
-                'note' => $request->note ?? '',
-            ]);
+            // Mavjud order_product ni tekshirish (shu shop, shu kun, shu bog'cha uchun)
+            $orderProduct = order_product::where('shop_id', $request->shop_id)
+                ->where('day_id', $request->day_id)
+                ->where('kingar_name_id', $request->kingar_name_id)
+                ->first();
+
+            // Agar mavjud bo'lmasa, yangi yaratish
+            if (!$orderProduct) {
+                $orderProduct = order_product::create([
+                    'shop_id' => $request->shop_id,
+                    'day_id' => $request->day_id,
+                    'kingar_name_id' => $request->kingar_name_id,
+                    'order_title' => 'O\'tgan sana uchun qo\'shildi'.$request->shop_id,
+                    'document_processes_id' => 1,
+                    'note' => $request->note ?? '',
+                ]);
+            }
+
+            $addedCount = 0;
+            $skippedCount = 0;
 
             // Maxsulotlarni qo'shish
             foreach ($request->products as $product) {
                 if ($product['weight'] > 0) {
-                    order_product_structure::create([
-                        'order_product_name_id' => $orderProduct->id,
-                        'product_name_id' => $product['product_id'],
-                        'product_weight' => $product['weight'],
-                        'actual_weight' => $product['weight'],
-                    ]);
+                    // Maxsulot allaqachon mavjudligini tekshirish
+                    $existingStructure = order_product_structure::where('order_product_name_id', $orderProduct->id)
+                        ->where('product_name_id', $product['product_id'])
+                        ->first();
+
+                    if ($existingStructure) {
+                        // Mavjud bo'lsa, o'tkazib yuborish
+                        $skippedCount++;
+                    } else {
+                        // Mavjud bo'lmasa, yangi qo'shish
+                        order_product_structure::create([
+                            'order_product_name_id' => $orderProduct->id,
+                            'product_name_id' => $product['product_id'],
+                            'product_weight' => $product['weight'],
+                            'actual_weight' => $product['weight'],
+                        ]);
+                        $addedCount++;
+                    }
                 }
+            }
+
+            $message = $addedCount . ' ta maxsulot qo\'shildi.';
+            if ($skippedCount > 0) {
+                $message .= ' ' . $skippedCount . ' ta maxsulot allaqachon mavjud edi.';
             }
 
             return response()->json([
                 'success' => true,
-                'message' => 'Maxsulotlar muvaffaqiyatli qo\'shildi!'
+                'message' => $message
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Xatolik yuz berdi: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    // order_product_structure ni o'zgartirish
+    public function updateOrderProductStructure(Request $request)
+    {
+        try {
+            $request->validate([
+                'id' => 'required|integer',
+                'weight' => 'required|numeric|min:0',
+            ]);
+
+            $structure = order_product_structure::find($request->id);
+
+            if (!$structure) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Yozuv topilmadi!'
+                ], 404);
+            }
+
+            $structure->product_weight = $request->weight;
+            $structure->actual_weight = $request->weight;
+            $structure->save();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Muvaffaqiyatli o\'zgartirildi!'
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Xatolik yuz berdi: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    // order_product_structure ni o'chirish
+    public function deleteOrderProductStructure(Request $request)
+    {
+        try {
+            $request->validate([
+                'id' => 'required|integer',
+            ]);
+
+            $structure = order_product_structure::find($request->id);
+
+            if (!$structure) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Yozuv topilmadi!'
+                ], 404);
+            }
+
+            $structure->delete();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Muvaffaqiyatli o\'chirildi!'
             ]);
         } catch (\Exception $e) {
             return response()->json([
