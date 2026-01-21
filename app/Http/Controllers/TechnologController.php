@@ -612,12 +612,32 @@ class TechnologController extends Controller
                 ], 400);
             }
 
+            // Yil va oy ma'lumotlarini olish
+            $year = Year::find($request->year_id);
+            $month = Month::find($request->month_id);
+
+            // Oy raqamini aniqlash (month_en dan)
+            $monthNames = [
+                'january' => 1, 'february' => 2, 'march' => 3, 'april' => 4,
+                'may' => 5, 'june' => 6, 'july' => 7, 'august' => 8,
+                'september' => 9, 'october' => 10, 'november' => 11, 'december' => 12
+            ];
+            $monthNumber = $monthNames[strtolower($month->month_en)] ?? 1;
+
+            // Sana yaratish
+            $dateString = $year->year_name . '-' . str_pad($monthNumber, 2, '0', STR_PAD_LEFT) . '-' . str_pad($request->day_number, 2, '0', STR_PAD_LEFT) . ' 10:00:00';
+
             // Yangi kun yaratish
             $newDay = Day::create([
                 'year_id' => $request->year_id,
                 'month_id' => $request->month_id,
-                'day_number' => $request->day_number
+                'day_number' => $request->day_number,
             ]);
+
+            // created_at va updated_at ni yangilash
+            $newDay->created_at = $dateString;
+            $newDay->updated_at = $dateString;
+            $newDay->save();
 
             return response()->json([
                 'success' => true,

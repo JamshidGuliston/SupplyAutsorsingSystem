@@ -444,11 +444,13 @@
         @endforeach
         <a href="/technolog/showdate/{{ $year->id+1 }}/0/0" class="month__item">{{ $year->year_name + 1 }}</a>
     </div>
-    <div class="day">
-        @foreach($days as $day)
-            <a href="/technolog/showdate/{{ $day->year_id }}/{{ $day->month_id }}/{{ $day->id }}" class="day__item {{ ( $day->id == $aday) ? 'active' : null }}">{{ $day->day_number }}</a>
-        @endforeach
-        <button type="button" class="btn btn-success btn-sm ms-3" data-bs-toggle="modal" data-bs-target="#addDayModal" title="Yangi kun qo'shish" style="border-radius: 50%; width: 36px; height: 36px; padding: 0;">
+    <div class="day" style="justify-content: space-between; align-items: center;">
+        <div style="display: flex;">
+            @foreach($days as $day)
+                <a href="/technolog/showdate/{{ $day->year_id }}/{{ $day->month_id }}/{{ $day->id }}" class="day__item {{ ( $day->id == $aday) ? 'active' : null }}">{{ $day->day_number }}</a>
+            @endforeach
+        </div>
+        <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#addDayModal" title="Yangi kun qo'shish" style="border-radius: 50%; min-width: 34px; height: 34px; padding: 5px; font-size: 12px; line-height: 1;">
             <i class="fas fa-plus"></i>
         </button>
     </div>
