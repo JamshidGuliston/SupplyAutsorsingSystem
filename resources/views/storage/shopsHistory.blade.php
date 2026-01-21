@@ -284,18 +284,6 @@
                                             </div>
                                         </div>
                                     @endforeach
-
-                                    <!-- Add product small form (if you have inline add) -->
-                                    <form class="d-flex gap-2 mt-2 inline-add-product" data-order-id="{{ $order->id }}">
-                                        <select name="product_id" class="form-select form-select-sm product-select" required>
-                                            <option value="">Maxsulot tanlang</option>
-                                            @foreach($products as $p)
-                                                <option value="{{ $p->id }}">{{ $p->product_name }} ({{ $p->size->size_name ?? '' }})</option>
-                                            @endforeach
-                                        </select>
-                                        <input type="number" step="0.01" min="0" name="weight" class="form-control form-control-sm product-weight-input" placeholder="Og'irlik" required>
-                                        <button type="button" class="btn btn-sm btn-success btn-add-structure">Qo'shish</button>
-                                    </form>
                                 </div>
                             </div>
                             @endforeach
