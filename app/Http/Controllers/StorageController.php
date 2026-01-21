@@ -2433,13 +2433,114 @@ class StorageController extends Controller
         }else{
             $day = Day::where('id', $day)->first();
         }
-        $shops = Shop::where('type_id', 1)->get();
+        $shops = Shop::where('type_id', 1)->with('product')->get();
         $orders = [];
         $months = Month::where('yearid', $day->year->id)->get();
+        $days = Day::where('month_id', $day->month_id)
+            ->orderBy('day_number', 'ASC')
+            ->get();
+
+        // Har bir shop uchun buyurtmalarni bog'cha va maxsulotlar bilan olish
         foreach($shops as $shop){
-            $orders[$shop->id] = order_product::where('shop_id', $shop->id)->where('day_id', $day)->get();
+            $orders[$shop->id] = order_product::where('shop_id', $shop->id)
+                ->where('day_id', $day->id)
+                ->with(['kinggarden', 'orderProductStructures.product.size'])
+                ->get();
         }
-        return view('storage.shopsHistory', compact('shops', 'orders', 'day', 'months'));
+
+        // Barcha maxsulotlar
+        $products = Product::with('size')->orderBy('product_name')->get();
+        // Barcha bog'chalar
+        $kindergartens = Kindgarden::orderBy('kingar_name')->get();
+
+        return view('storage.shopsHistory', compact('shops', 'orders', 'day', 'months', 'days', 'products', 'kindergartens'));
+    }
+
+    // Shop uchun maxsulot qo'shish (o'tgan sanalar uchun)
+    public function storeShopOrder(Request $request)
+    {
+        try {
+            $request->validate([
+                'shop_id' => 'required|integer',
+                'day_id' => 'required|integer',
+                'kingar_name_id' => 'required|integer',
+                'products' => 'required|array',
+                'products.*.product_id' => 'required|integer',
+                'products.*.weight' => 'required|numeric|min:0',
+            ]);
+
+            // Yangi order_product yaratish
+            $orderProduct = order_product::create([
+                'shop_id' => $request->shop_id,
+                'day_id' => $request->day_id,
+                'kingar_name_id' => $request->kingar_name_id,
+                'order_title' => 'O\'tgan sana uchun qo\'shildi'.$request->shop_id,
+                'note' => $request->note ?? '',
+            ]);
+
+            // Maxsulotlarni qo'shish
+            foreach ($request->products as $product) {
+                if ($product['weight'] > 0) {
+                    order_product_structure::create([
+                        'order_product_name_id' => $orderProduct->id,
+                        'product_name_id' => $product['product_id'],
+                        'product_weight' => $product['weight'],
+                        'actual_weight' => $product['weight'],
+                    ]);
+                }
+            }
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Maxsulotlar muvaffaqiyatli qo\'shildi!'
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Xatolik yuz berdi: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    // Shop uchun bog'chalarga yetkazilgan maxsulotlarni olish
+    public function getShopDeliveries(Request $request)
+    {
+        try {
+            $shopId = $request->input('shop_id');
+            $dayId = $request->input('day_id');
+
+            $deliveries = order_product::where('shop_id', $shopId)
+                ->where('day_id', $dayId)
+                ->with(['kinggarden', 'orderProductStructures.product.size'])
+                ->get()
+                ->map(function ($order) {
+                    return [
+                        'id' => $order->id,
+                        'kindergarten' => $order->kinggarden ? $order->kinggarden->kingar_name : 'Noma\'lum',
+                        'kingar_name_id' => $order->kingar_name_id,
+                        'products' => $order->orderProductStructures->map(function ($structure) {
+                            return [
+                                'id' => $structure->id,
+                                'product_name' => $structure->product ? $structure->product->product_name : 'Noma\'lum',
+                                'size' => $structure->product && $structure->product->size ? $structure->product->size->size_name : '',
+                                'weight' => $structure->product_weight,
+                                'actual_weight' => $structure->actual_weight,
+                            ];
+                        }),
+                        'created_at' => $order->created_at ? $order->created_at->format('d.m.Y H:i') : ''
+                    ];
+                });
+
+            return response()->json([
+                'success' => true,
+                'data' => $deliveries
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Xatolik yuz berdi: ' . $e->getMessage()
+            ], 500);
+        }
     }
 
     public function intakinglargebase(Request $request, $id){

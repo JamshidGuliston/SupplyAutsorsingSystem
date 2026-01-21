@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('leftmenu')
-    @include('storage.sidemenu'); 
+    @include('storage.sidemenu');
 @endsection
 @section('css')
 <link href="/css/dates.css?ver=1.0" rel="stylesheet"/>
@@ -10,53 +10,79 @@
         transition: all 0.3s ease;
         border: none;
         box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        margin-bottom: 20px;
     }
-    
+
     .shop-card:hover {
         transform: translateY(-2px);
         box-shadow: 0 4px 8px rgba(0,0,0,0.15);
     }
-    
-    .order-item {
-        background-color: #f8f9fa;
-        border-left: 4px solid #007bff;
-        padding: 10px;
-        margin-bottom: 8px;
-        border-radius: 4px;
-    }
-    
-    .order-item:last-child {
-        margin-bottom: 0;
-    }
-    
-    .product-name {
-        font-weight: 600;
-        color: #495057;
-    }
-    
-    .product-quantity {
-        color: #6c757d;
-        font-size: 0.9rem;
-    }
-    
-    .no-orders {
-        text-align: center;
-        color: #6c757d;
-        font-style: italic;
-        padding: 20px;
-    }
-    
+
     .shop-header {
         background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         color: white;
         border-radius: 8px 8px 0 0;
+        padding: 15px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
     }
-    
+
+    .delivery-item {
+        background-color: #f8f9fa;
+        border-left: 4px solid #28a745;
+        padding: 12px;
+        margin-bottom: 10px;
+        border-radius: 4px;
+    }
+
+    .delivery-item .kindergarten-name {
+        font-weight: 600;
+        color: #495057;
+        margin-bottom: 8px;
+    }
+
+    .product-row {
+        display: flex;
+        justify-content: space-between;
+        padding: 4px 0;
+        border-bottom: 1px dashed #dee2e6;
+    }
+
+    .product-row:last-child {
+        border-bottom: none;
+    }
+
+    .no-orders {
+        text-align: center;
+        color: #6c757d;
+        font-style: italic;
+        padding: 30px;
+    }
+
     .date-navigation {
         background-color: #f8f9fa;
         border-radius: 8px;
         padding: 15px;
         margin-bottom: 20px;
+    }
+
+    .product-input-row {
+        display: flex;
+        align-items: center;
+        margin-bottom: 8px;
+        padding: 8px;
+        background: #f8f9fa;
+        border-radius: 4px;
+    }
+
+    .product-input-row .product-name {
+        flex: 1;
+        font-weight: 500;
+    }
+
+    .product-input-row input {
+        width: 120px;
     }
 </style>
 @endsection
@@ -79,6 +105,32 @@
                     <i class="fas fa-arrow-left me-1"></i>Orqaga
                 </a>
             </div>
+        </div>
+    </div>
+
+    <!-- Sana tanlash -->
+    <div class="date mb-4">
+        <div class="year first-text fw-bold text-center">
+            {{ $day->year->year_name }}
+        </div>
+        <div class="month">
+            @if($day->year->id != 1)
+                <a href="/storage/shopsHistory/0" class="month__item">{{ $day->year->year_name - 1 }}</a>
+            @endif
+            @foreach($months as $month)
+                <a href="/storage/shopsHistory/{{ \App\Models\Day::where('month_id', $month->id)->first()->id ?? $day->id }}"
+                   class="month__item {{ ( $month->id == $day->month_id ) ? 'active first-text' : 'second-text' }} fw-bold">
+                   {{ $month->month_name }}
+                </a>
+            @endforeach
+        </div>
+        <div class="day" style="flex-wrap: wrap;">
+            @foreach($days as $d)
+                <a href="/storage/shopsHistory/{{ $d->id }}"
+                   class="day__item {{ ( $d->id == $day->id ) ? 'active' : '' }}">
+                   {{ $d->day_number }}
+                </a>
+            @endforeach
         </div>
     </div>
 
@@ -155,105 +207,156 @@
         </div>
     </div>
 
-    <!-- Sana tanlash -->
-    <!-- <div class="date mb-4">
-        <div class="year first-text fw-bold">
-            {{ $day->year->year_name }}
-        </div>
-        <div class="month">
-            @if($day->year->id != 1)
-                <a href="/storage/shops-history/{{ $day->id-1 }}/" class="month__item">{{ $day->year->year_name - 1 }}</a>
-            @endif
-            @foreach($months as $month)
-                <a href="/storage/shops-history/{{ $day->id }}" 
-                   class="month__item {{ ( $month->month_active == 1 ) ? 'active first-text' : 'second-text' }} fw-bold">
-                   {{ $month->month_name }}
-                </a>
-            @endforeach
-            <a href="/storage/shops-history/{{ $day->id+1 }}/" class="month__item">{{ $day->year->year_name + 1 }}</a>
-        </div>
-        <div class="day">
-        </div>
-    </div> -->
-
-    <!-- Yetkazuvchilar jadvali -->
-    <!-- <div class="row">
+    <!-- Yetkazuvchilar ro'yxati -->
+    <div class="row">
         @forelse($shops as $shop)
-        <div class="col-md-6 col-lg-4 mb-4">
+        <div class="col-md-6 col-lg-4">
             <div class="card shop-card">
-                <div class="card-header shop-header">
-                    <h6 class="mb-0">
-                        <i class="fas fa-store me-2"></i>{{ $shop->shop_name }}
-                    </h6>
-                    @if($shop->kindgarden)
-                        <small class="opacity-75">{{ "" }}</small>
-                    @endif
+                <div class="shop-header">
+                    <div>
+                        <h6 class="mb-0">
+                            <i class="fas fa-store me-2"></i>{{ $shop->shop_name }}
+                        </h6>
+                        @if($shop->phone)
+                            <small class="opacity-75">{{ $shop->phone }}</small>
+                        @endif
+                    </div>
+                    <button type="button" class="btn btn-light btn-sm add-product-btn"
+                            data-shop-id="{{ $shop->id }}"
+                            data-shop-name="{{ $shop->shop_name }}"
+                            data-bs-toggle="modal"
+                            data-bs-target="#addProductModal"
+                            title="Maxsulot qo'shish">
+                        <i class="fas fa-plus"></i>
+                    </button>
                 </div>
                 <div class="card-body">
                     @if(isset($orders[$shop->id]) && $orders[$shop->id]->count() > 0)
                         <div class="mb-2">
                             <span class="badge bg-success">
-                                {{ $orders[$shop->id]->count() }} ta buyurtma
+                                {{ $orders[$shop->id]->count() }} ta yetkazma
                             </span>
                         </div>
-                        
+
                         @foreach($orders[$shop->id] as $order)
-                        <div class="order-item">
-                            <div class="product-name">
-                                {{ $order->product->product_name ?? 'Noma\'lum mahsulot' }}
+                        <div class="delivery-item">
+                            <div class="kindergarten-name">
+                                <i class="fas fa-building me-1"></i>
+                                {{ $order->kinggarden->kingar_name ?? 'Noma\'lum bog\'cha' }}
                             </div>
-                            <div class="product-quantity">
-                                <i class="fas fa-weight me-1"></i>
-                                {{ number_format($order->weight, 2) }} {{ $order->product->unit ?? 'kg' }}
-                            </div>
-                            @if($order->created_at)
-                                <small class="text-muted">
-                                    <i class="fas fa-clock me-1"></i>
-                                    {{ $order->created_at->format('H:i') }}
-                                </small>
+                            @if($order->orderProductStructures && $order->orderProductStructures->count() > 0)
+                                @foreach($order->orderProductStructures as $structure)
+                                <div class="product-row">
+                                    <span>{{ $structure->product->product_name ?? 'Noma\'lum' }}</span>
+                                    <span class="text-primary fw-bold">
+                                        {{ number_format($structure->product_weight, 2) }}
+                                        {{ $structure->product->size->size_name ?? 'kg' }}
+                                    </span>
+                                </div>
+                                @endforeach
+                            @else
+                                <small class="text-muted">Maxsulotlar yo'q</small>
                             @endif
                         </div>
                         @endforeach
                     @else
                         <div class="no-orders">
                             <i class="fas fa-inbox fa-2x mb-2"></i>
-                            <br>Bu kunda buyurtma yo'q
+                            <br>Bu kunda yetkazma yo'q
                         </div>
                     @endif
                 </div>
             </div>
-        </div> -->
-        <!-- @empty
+        </div>
+        @empty
         <div class="col-12">
             <div class="alert alert-info text-center">
                 <i class="fas fa-info-circle fa-2x mb-2"></i>
                 <h5>Hech qanday yetkazuvchi topilmadi</h5>
-                <p>Bu kunda faol yetkazuvchilar mavjud emas.</p>
             </div>
         </div>
         @endforelse
-    </div> -->
-
+    </div>
 </div>
+
+<!-- Maxsulot qo'shish Modal -->
+<div class="modal fade" id="addProductModal" tabindex="-1" aria-labelledby="addProductModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <form id="addProductForm">
+                @csrf
+                <input type="hidden" name="shop_id" id="modal_shop_id">
+                <input type="hidden" name="day_id" value="{{ $day->id }}">
+
+                <div class="modal-header bg-primary text-white">
+                    <h5 class="modal-title" id="addProductModalLabel">
+                        <i class="fas fa-plus-circle me-2"></i>Maxsulot qo'shish
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle me-2"></i>
+                        <strong id="modal_shop_name"></strong> uchun
+                        <strong>{{ $day->day_number }}.{{ $day->month->month_name }}.{{ $day->year->year_name }}</strong> sanasiga maxsulot qo'shish
+                    </div>
+
+                    <!-- Bog'cha tanlash -->
+                    <div class="mb-3">
+                        <label for="kingar_name_id" class="form-label">Bog'cha tanlang *</label>
+                        <select class="form-select" id="kingar_name_id" name="kingar_name_id" required>
+                            <option value="">-- Bog'chani tanlang --</option>
+                            @foreach($kindergartens as $kg)
+                                <option value="{{ $kg->id }}">{{ $kg->kingar_name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+
+                    <!-- Izoh -->
+                    <div class="mb-3">
+                        <label for="note" class="form-label">Izoh</label>
+                        <input type="text" class="form-control" id="note" name="note" placeholder="Ixtiyoriy izoh...">
+                    </div>
+
+                    <!-- Maxsulotlar ro'yxati -->
+                    <div class="mb-3">
+                        <label class="form-label">Maxsulotlar va miqdori *</label>
+                        <div class="border rounded p-3" style="max-height: 400px; overflow-y: auto;">
+                            @foreach($products as $index => $product)
+                            <div class="product-input-row">
+                                <span class="product-name">
+                                    {{ $product->product_name }}
+                                    <small class="text-muted">({{ $product->size->size_name ?? 'kg' }})</small>
+                                </span>
+                                <input type="hidden" name="products[{{ $index }}][product_id]" value="{{ $product->id }}">
+                                <input type="number"
+                                       class="form-control form-control-sm product-weight"
+                                       name="products[{{ $index }}][weight]"
+                                       value="0"
+                                       min="0"
+                                       step="0.01"
+                                       placeholder="0.00">
+                            </div>
+                            @endforeach
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Bekor qilish</button>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save me-1"></i>Saqlash
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
 @endsection
 
 @section('script')
 <script>
-    // Sana tanlash funksiyalari
     $(document).ready(function() {
-        // Faol sana ustunini belgilash
-        $('.day__item.active').addClass('fw-bold');
-
-        // Hover effektlari
-        $('.shop-card').hover(
-            function() {
-                $(this).find('.shop-header').css('background', 'linear-gradient(135deg, #764ba2 0%, #667eea 100%)');
-            },
-            function() {
-                $(this).find('.shop-header').css('background', 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)');
-            }
-        );
-
         // Sana turi o'zgarganda
         $('#date_type').on('change', function() {
             const dateType = $(this).val();
@@ -284,6 +387,76 @@
             const url = '/storage/shops-history-report-excel?' + formData;
             window.location.href = url;
         });
+
+        // Maxsulot qo'shish tugmasi bosilganda
+        $('.add-product-btn').on('click', function() {
+            const shopId = $(this).data('shop-id');
+            const shopName = $(this).data('shop-name');
+
+            $('#modal_shop_id').val(shopId);
+            $('#modal_shop_name').text(shopName);
+
+            // Formani tozalash
+            $('#addProductForm')[0].reset();
+            $('#modal_shop_id').val(shopId);
+            $('input[name="day_id"]').val('{{ $day->id }}');
+            $('.product-weight').val(0);
+        });
+
+        // Maxsulot qo'shish formasi
+        $('#addProductForm').on('submit', function(e) {
+            e.preventDefault();
+
+            const form = $(this);
+            const submitBtn = form.find('button[type="submit"]');
+            const originalText = submitBtn.html();
+
+            // Kamida bitta maxsulot kiritilganligini tekshirish
+            let hasProduct = false;
+            $('.product-weight').each(function() {
+                if (parseFloat($(this).val()) > 0) {
+                    hasProduct = true;
+                    return false;
+                }
+            });
+
+            if (!hasProduct) {
+                alert('Kamida bitta maxsulot miqdorini kiriting!');
+                return;
+            }
+
+            if (!$('#kingar_name_id').val()) {
+                alert('Bog\'chani tanlang!');
+                return;
+            }
+
+            submitBtn.prop('disabled', true).html('<i class="fas fa-spinner fa-spin"></i> Saqlanmoqda...');
+
+            $.ajax({
+                url: '{{ route("storage.storeShopOrder") }}',
+                method: 'POST',
+                data: form.serialize(),
+                success: function(response) {
+                    if (response.success) {
+                        alert(response.message);
+                        $('#addProductModal').modal('hide');
+                        location.reload();
+                    } else {
+                        alert(response.message || 'Xatolik yuz berdi!');
+                    }
+                },
+                error: function(xhr) {
+                    let errorMessage = 'Xatolik yuz berdi!';
+                    if (xhr.responseJSON && xhr.responseJSON.message) {
+                        errorMessage = xhr.responseJSON.message;
+                    }
+                    alert(errorMessage);
+                },
+                complete: function() {
+                    submitBtn.prop('disabled', false).html(originalText);
+                }
+            });
+        });
     });
 </script>
-@endsection 
+@endsection
