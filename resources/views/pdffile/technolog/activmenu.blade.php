@@ -231,7 +231,7 @@
                         <tbody>
 							<?php $row_counter = 0; ?>
                         	@foreach($menuitem as $row)
-								@foreach($row as $item)
+								@foreach($row as $key => $item)
 								@if($loop->index == 0)
 									@continue;
 									<?php $time = $item['mealtime']; ?>
@@ -247,7 +247,7 @@
 												</th>
 			                            @endif
 			                            <td scope="row" rowspan="2" class="align-baseline" style="padding: 2px; background-color: #ffffff;"><?php echo $item['foodname'] ?></td>
-										@if($item['food_id'] == 9)
+										@if($key == 9)
 							                <?php
 												for($t = 0; $t < count($products); $t++){
 			                            			if(isset($products[$t]['yes']) and isset($item[$products[$t]['id']])){
