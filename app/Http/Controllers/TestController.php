@@ -504,6 +504,7 @@ class TestController extends Controller
             $nextdaymenuitem[$item->menu_meal_time_id][0]['mealtime'] = $item->meal_time_name; 
             $nextdaymenuitem[$item->menu_meal_time_id][$item->menu_food_id][$item->product_name_id] = $item->weight;
             $nextdaymenuitem[$item->menu_meal_time_id][$item->menu_food_id]['foodname'] = $item->food_name; 
+			$nextdaymenuitem[$item->menu_meal_time_id][$item->menu_food_id]['food_id'] = $item->menu_food_id; 
             $nextdaymenuitem[$item->menu_meal_time_id][$item->menu_food_id]['foodweight'] = $item->food_weight; 
             $productallcount[$item->product_name_id] += $item->weight;
             for($i = 0; $i<count($products); $i++){

@@ -247,6 +247,15 @@
 												</th>
 			                            @endif
 			                            <td scope="row" rowspan="2" class="align-baseline" style="padding: 2px; background-color: #ffffff;"><?php echo $item['foodname'] ?></td>
+										@if($item['food_id'] == 9)
+							                <?php
+												for($t = 0; $t < count($products); $t++){
+			                            			if(isset($products[$t]['yes']) and isset($item[$products[$t]['id']])){
+														$item['foodweight'] = $item[$products[$t]['id']];
+			                            			}
+												}
+											?>
+										@endif
 			                            <td scope="row" rowspan="2" class="align-baseline" style="padding: 0px; background-color: #ffffff;"><?php echo $item['foodweight'] ?></td>
 			                            <?php
 			                            for($t = 0; $t < count($products); $t++){
