@@ -210,7 +210,7 @@
                         <tbody>
 							<?php $row_counter = 0; ?>
                         	@foreach($menuitem as $row)
-								@foreach($row as $item)
+								@foreach($row as $key => $item)
 								@if($loop->index == 0)
 									@continue;
 									<?php $time = $item['mealtime']; ?>
