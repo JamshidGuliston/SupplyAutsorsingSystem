@@ -378,9 +378,6 @@ class AccountantController extends Controller
             }
         });
 
-        return view('pdffile.accountant.nakapitwithoutcost', compact('age', 'days', 'nakproducts', 'kindgar', 'protsent'));
-
-
         $pdf = \PDF::loadView('pdffile.accountant.nakapitwithoutcost', compact('age', 'days', 'nakproducts', 'kindgar', 'protsent'));
         $pdf->setOption('page-size', 'A4');
         $pdf->setOption('orientation', 'portrait');

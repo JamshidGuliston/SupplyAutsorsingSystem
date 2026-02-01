@@ -210,10 +210,9 @@
 				<tr>
 					@if($row['product_name'] != "Болалар сони")
 						<td>{{ ++$row_number }}</td>
-						<td class="product-name">{{ $row['product_name'] }}</td>
-						<td class="size-name">{{ $row['size_name'] ?? '' }}</td>
+						<td class="product-name">{{ $row['product_name'] . " (" . $row['size_name'] ?? '' . ")" }}</td>
 					@else
-						<td colspan="3"><strong>{{ $row['product_name'] }}</strong></td>
+						<td colspan="2"><strong>{{ $row['product_name'] }}</strong></td>
 					@endif
 					
 					<?php $summ = 0; ?>
