@@ -41,6 +41,7 @@
 	
 	thead {
 		border: 2px solid #000;
+		display: table-row-group;
 	}
 	
 	th {
