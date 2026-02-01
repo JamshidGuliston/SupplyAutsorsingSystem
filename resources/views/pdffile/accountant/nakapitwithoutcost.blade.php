@@ -101,8 +101,8 @@
 	
 	/* Ustun kengliklari */
 	th:nth-child(1), td:nth-child(1) { width: 3%; }  /* № */
-	th:nth-child(2), td:nth-child(2) { width: 28%; } /* Mahsulot nomi */
-	th:nth-child(3), td:nth-child(3) { width: 5%; } /* O'lchov birligi */
+	th:nth-child(2), td:nth-child(2) { width: 31%; } /* Mahsulot nomi */
+	th:nth-child(3), td:nth-child(3) { width: 3%; }  /* O'lchov birligi */
 	th:last-child, td:last-child { width: 8%; }      /* Jami */
 	
 	/* Sanalar ustunlari uchun */
