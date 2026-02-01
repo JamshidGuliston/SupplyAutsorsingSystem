@@ -180,7 +180,7 @@
 		<thead>
 			<tr>
 				<th rowspan="2">№</th>
-				<th colspan="2">Махсулотлар номи</th>
+				<th>Махсулотлар номи</th>
 				@foreach($days as $day)
 					<?php
 						if($day->month_id % 12 == 0){
@@ -210,7 +210,7 @@
 				<tr>
 					@if($row['product_name'] != "Болалар сони")
 						<td>{{ ++$row_number }}</td>
-						<td class="product-name">{{ $row['product_name'] . " (" . $row['size_name'] ?? '' . ")" }}</td>
+						<td class="product-name">{{ $row['product_name'] . " (" . $row['size_name'] . ")" }}</td>
 					@else
 						<td colspan="2"><strong>{{ $row['product_name'] }}</strong></td>
 					@endif
