@@ -103,7 +103,7 @@
 	th:nth-child(1), td:nth-child(1) { width: 2.5%; }  /* № */
 	th:nth-child(2), td:nth-child(2) { width: 25%; }   /* Mahsulot nomi */
 	th:nth-child(3), td:nth-child(3) { width: 2.5%; }  /* O'lchov birligi */
-	th:last-child, td:last-child { width: 6%; }        /* Jami */
+	th:last-child, td:last-child { width: 8%; }        /* Jami */
 
 	/* Sanalar ustunlari uchun */
 	th.date-header, td.date-cell {
