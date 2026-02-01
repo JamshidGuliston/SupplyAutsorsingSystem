@@ -3213,7 +3213,7 @@ class AccountantController extends Controller
                 'kindgar' => $kindgar,
                 'protsent' => $protsent_without
             ]);
-            $this->setPdfOptions($pdf_without, 'A4', 'portrait');
+            $this->setPdfOptionsForNakapitWithoutCost($pdf_without, 'A4', 'portrait');
             
             $file_without = $tempDir . '/1_nakapit_without_' . $age->id . '_' . $timestamp . '.pdf';
             file_put_contents($file_without, $pdf_without->output());
@@ -3236,6 +3236,25 @@ class AccountantController extends Controller
         $pdf->setOption('margin-bottom', 10);
         $pdf->setOption('margin-left', 10);
         $pdf->setOption('margin-right', 10);
+        $pdf->setOption('encoding', 'UTF-8');
+        $pdf->setOption('enable-local-file-access', true);
+        $pdf->setOption('print-media-type', true);
+        $pdf->setOption('disable-smart-shrinking', false);
+        
+        if($isTransportation) {
+            $pdf->setOption('dpi', 150);
+            $pdf->setOption('image-dpi', 150);
+            $pdf->setOption('image-quality', 100);
+        }
+    }
+
+    private function setPdfOptionsForNakapitWithoutCost($pdf, $pageSize, $orientation, $isTransportation = false) {
+        $pdf->setOption('page-size', $pageSize);
+        $pdf->setOption('orientation', $orientation);
+        $pdf->setOption('margin-top', 3);
+        $pdf->setOption('margin-bottom', 2);
+        $pdf->setOption('margin-left', 5);
+        $pdf->setOption('margin-right', 5);
         $pdf->setOption('encoding', 'UTF-8');
         $pdf->setOption('enable-local-file-access', true);
         $pdf->setOption('print-media-type', true);
