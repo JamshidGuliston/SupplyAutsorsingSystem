@@ -100,16 +100,18 @@
 	}
 	
 	/* Ustun kengliklari */
-	th:nth-child(1), td:nth-child(1) { width: 3%; }  /* № */
-	th:nth-child(2), td:nth-child(2) { width: 31%; } /* Mahsulot nomi */
-	th:nth-child(3), td:nth-child(3) { width: 3%; }  /* O'lchov birligi */
-	th:last-child, td:last-child { width: 8%; }      /* Jami */
-	
+	th:nth-child(1), td:nth-child(1) { width: 2.5%; }  /* № */
+	th:nth-child(2), td:nth-child(2) { width: 25%; }   /* Mahsulot nomi */
+	th:nth-child(3), td:nth-child(3) { width: 2.5%; }  /* O'lchov birligi */
+	th:last-child, td:last-child { width: 6%; }        /* Jami */
+
 	/* Sanalar ustunlari uchun */
 	th.date-header, td.date-cell {
-		width: 7%;
-		min-width: 30px;
-		white-space: wrap;
+		width: 2.8%;
+		min-width: 18px;
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
 	}
 	
 	.size-name {
