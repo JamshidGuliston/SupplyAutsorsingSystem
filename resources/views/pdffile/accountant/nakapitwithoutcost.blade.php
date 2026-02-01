@@ -107,7 +107,7 @@
 
 	/* Sanalar ustunlari uchun */
 	th.date-header, td.date-cell {
-		width: 2.8%;
+		width: 7%;
 		min-width: 18px;
 		white-space: nowrap;
 		overflow: hidden;
