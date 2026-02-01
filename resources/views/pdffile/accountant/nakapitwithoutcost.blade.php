@@ -7,7 +7,7 @@
 <style>
 	@page { 
 		size: A4 portrait;
-		margin: 5mm 5mm 3mm 5mm;
+		margin: 5mm 3mm 3mm 3mm;
 	}
 	
 	* {
@@ -100,10 +100,10 @@
 	}
 	
 	/* Ustun kengliklari */
-	th:nth-child(1), td:nth-child(1) { width: 2.5%; }  /* № */
+	th:nth-child(1), td:nth-child(1) { width: 3%; }  /* № */
 	th:nth-child(2), td:nth-child(2) { width: 25%; }   /* Mahsulot nomi */
 	th:nth-child(3), td:nth-child(3) { width: 2.5%; }  /* O'lchov birligi */
-	th:last-child, td:last-child { width: 8%; }        /* Jami */
+	th:last-child, td:last-child { width: 10%; }        /* Jami */
 
 	/* Sanalar ustunlari uchun */
 	th.date-header, td.date-cell {
