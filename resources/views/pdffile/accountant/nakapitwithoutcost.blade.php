@@ -53,15 +53,16 @@
 	}
 	
 	th.date-header {
-		height: 60px;
-		width: 15px;
+		height: 70px;
+		width: 20px;
 		min-width: 20px;
 		text-align: center;
 		vertical-align: middle;
 		position: relative;
-		padding: 5px;
+		padding: 0;
+		overflow: hidden;
 	}
-	
+
 	th.date-header span {
 		display: inline-block;
 		text-align: center;
@@ -71,15 +72,16 @@
 		-o-transform: rotate(-90deg);
 		transform: rotate(-90deg);
 		white-space: nowrap;
-		line-height: 1.2;
-		width: 50px;
-		height: 15px;
+		line-height: 1;
+		width: 65px;
+		height: 20px;
 		position: absolute;
 		top: 50%;
 		left: 50%;
-		margin-top: -7.5px;
-		margin-left: -25px;
+		margin-top: -10px;
+		margin-left: -32.5px;
 		transform-origin: center center;
+		font-size: 7px;
 	}
 	
 	td {
