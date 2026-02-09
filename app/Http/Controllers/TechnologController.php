@@ -186,6 +186,66 @@ class TechnologController extends Controller
                 }
             }
         }
+        // yetkazib beruvchilarga zayavkalarni $endday->id kuniga saqlash
+        $shops = Shop::where('hide', 1)->with('kindgarden.region')->with('product')->get();
+        foreach($shops as $shop){
+            $orderProduct = array();
+            foreach($shop->kindgarden as $row){
+                $orderCheck = order_product::where('kingar_name_id', $row->id)->where('day_id', $endday->id)->where('shop_id', $shop->id)->first();
+                if(!$orderCheck){
+                    $orderProduct[$row->id] = order_product::create([
+                        'kingar_name_id' => $row->id,
+                        'day_id' => $endday->id,
+                        'order_title' => date("d-m-Y H:i")."Yetkazuvchi",
+                        'document_processes_id' => 4,
+                        'data_of_weight' => json_encode(now()),
+                        'to_menus' => json_encode([]),
+                        'shop_id' => $shop->id,
+                    ]);
+                }
+            }
+            foreach($shop->kindgarden as $row){
+                foreach($shop->product as $prod){
+                    $weight = 0;
+                    foreach($nextdays as $next){
+                        if($row->id == $next->kingar_name_id){
+                            $workeat = titlemenu_food::where('day_id', $endday->id)->get();
+                            $prlar = Menu_composition::where('title_menu_id', $next->kingar_menu_id)
+                                ->where('age_range_id', $next->king_age_name_id)
+                                ->where('product_name_id', $prod->id)
+                                ->get();
+                            foreach($prlar as $prw){
+                                $weight += $prw->weight * $next->kingar_children_number;
+                                if($next->king_age_name_id == 4){
+                                    $workeat = titlemenu_food::where('day_id', $endday->id)
+                                        ->where('food_id', $prw->menu_food_id)
+                                        ->get();
+                                    if($workeat->count() > 0){
+                                        $weight += $prw->weight * $next->workers_count;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    $calculatedWeight = $weight / $prod->div;
+                    $result = $calculatedWeight;
+                    if($prod->size_name_id == 3 or $prod->size_name_id == 2){
+                        $result = round($result);
+                    } else {
+                        $result = round($result, 1);
+                    }
+                    if(isset($orderProduct[$row->id])){
+                        order_product_structure::create([
+                            'order_product_name_id' => $orderProduct[$row->id]->id,
+                            'product_name_id' => $prod->id,
+                            'product_weight' => $result,
+                            'actual_weight' => $calculatedWeight,
+                        ]);
+                    }
+                }
+            }
+        }
+
         Nextday_namber::truncate();
 
         return redirect()->route('technolog.sendmenu', ['day' => date("d-F-Y", $d)]);
