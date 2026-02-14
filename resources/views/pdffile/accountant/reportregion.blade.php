@@ -152,18 +152,30 @@
             @foreach($kindgardens as $kindgarden)
                 @php
                     $row_number = $kindgarden->number_of_org;
-                    // Bolalar sonini hisoblash
-                    $children_3_7 = $number_childrens[$kindgarden->id][4] ?? 0; // 3-7 yosh
+                    // Bolalar sonini hisoblash (alohida age_id=4 va 5 uchun)
+                    $children_age4 = $number_childrens[$kindgarden->id][4] ?? 0; // 9-10.5 soatlik
+                    $children_age5 = $number_childrens[$kindgarden->id][5] ?? 0; // 10-12 soatlik
+                    $children_3_7 = $children_age4 + $children_age5; // Ko'rsatish uchun birlashtirilgan
                     $children_short = $number_childrens[$kindgarden->id][3] ?? 0; // Qisqa guruh 
                     
-                    // Narxlarni olish
-                    $price_3_7 = $costs->where('age_range_id', 4)->first()->eater_cost; // 3-7 yosh uchun narx
-                    $price_short = $costs->where('age_range_id', 3)->first()->eater_cost; // Qisqa guruh uchun narx
+                    // Narxlarni olish (har bir guruh uchun alohida)
+                    $price_age4 = $costs->where('age_range_id', 4)->first()->eater_cost ?? 0; // 9-10.5 soatlik
+                    $price_age5 = $costs->where('age_range_id', 5)->first()->eater_cost ?? 0; // 10-12 soatlik
+                    $price_short = $costs->where('age_range_id', 3)->first()->eater_cost ?? 0; // Qisqa guruh
+                    
+                    // O'rtacha narx (ko'rsatish uchun)
+                    if($children_3_7 > 0) {
+                        $price_3_7 = (($children_age4 * $price_age4) + ($children_age5 * $price_age5)) / $children_3_7;
+                    } else {
+                        $price_3_7 = $price_age4;
+                    }
+                    
                     // Jami narh
                     $total_price_3_7 += $price_3_7;
                     $total_price_short += $price_short;
-                    // Jami xarajat
-                    $total_cost_row = ($children_3_7 * $price_3_7) + ($children_short * $price_short);
+                    
+                    // Jami xarajat (har bir guruh uchun alohida hisoblash)
+                    $total_cost_row = ($children_age4 * $price_age4) + ($children_age5 * $price_age5) + ($children_short * $price_short);
                     
                     // QQSsiz jami xarajat
                     $cost_without_qqs = $total_cost_row / (1 + ($costs[0]->nds/100));

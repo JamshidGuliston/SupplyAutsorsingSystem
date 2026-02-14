@@ -37,7 +37,7 @@ class TransportationRegionExport implements FromArray, WithStyles, WithColumnWid
             ->join('months', 'months.id', '=', 'days.month_id')
             ->join('years', 'years.id', '=', 'days.year_id')
             ->get(['days.id', 'days.day_number', 'months.month_name', 'years.year_name', 'days.created_at']);
-        $ages = Age_range::where('parent_id', null)->get();
+        $ages = Age_range::all();
         $costs = Protsent::where('region_id', $this->id)
             ->where('start_date', '<=', $days[0]->created_at->format('Y-m-d'))
             ->where('end_date', '>=', $days[count($days) - 1]->created_at->format('Y-m-d'))
@@ -107,7 +107,7 @@ class TransportationRegionExport implements FromArray, WithStyles, WithColumnWid
                     $menu_name = $child->short_name ?? $child->menu_name ?? '';
                     continue;
                 }
-                if ($age_id == 4) { // 9-10.5 soatlik guruh
+                if ($age_id == 4 || $age_id == 5) { // 9-10.5 va 10-12 soatlik guruhlar
                     $children_9_10 += $child ?? 0;
                 }
                 elseif ($age_id == 3) { // 4 soatlik guruh

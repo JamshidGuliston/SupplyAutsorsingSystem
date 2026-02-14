@@ -72,7 +72,7 @@ class ReportRegionExport implements FromArray, WithStyles, WithColumnWidths, Wit
         $currentDataRow = 5; // Ma'lumotlar 5-qatordan boshlanadi
 
         foreach ($kindgardens as $kindgarden) {
-            $children_3_7 = $number_childrens[$kindgarden->id][4] ?? 0; // 3-7 yosh
+            $children_3_7 = ($number_childrens[$kindgarden->id][4] ?? 0) + ($number_childrens[$kindgarden->id][5] ?? 0); // 3-7 yosh (9-10.5 va 10-12 soatlik)
             $children_short = $number_childrens[$kindgarden->id][3] ?? 0; // Qisqa guruh 
 
             $price_3_7 = $costs->where('age_range_id', 4)->first()->eater_cost ?? 0; // 3-7 yosh uchun narx

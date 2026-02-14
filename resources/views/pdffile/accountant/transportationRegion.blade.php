@@ -265,34 +265,47 @@
             
             @foreach($days as $day)
                 @php
-                    // Bolalar sonini hisoblash
-                    $children_9_10 = 0;
-                    $children_4 = 0;
+                    // Bolalar sonini hisoblash (alohida age_id=4 va 5 uchun)
+                    $children_age4 = 0; // 9-10.5 soatlik
+                    $children_age5 = 0; // 10-12 soatlik
+                    $children_4 = 0; // 4 soatlik
                     foreach($number_childrens[$day->id] as $age_id => $child) {
                         if($age_id == "menu"){
                             $menu_name = $child->short_name ?? $child->menu_name ?? '';
                             continue;
                         }
                         if($age_id == 4) { // 9-10.5 soatlik guruh
-                            $children_9_10 += $child ?? 0;
+                            $children_age4 += $child ?? 0;
+                        } elseif($age_id == 5) { // 10-12 soatlik guruh
+                            $children_age5 += $child ?? 0;
                         } elseif($age_id == 3) { // 4 soatlik guruh
                             $children_4 += $child ?? 0;
                         }
                     }
                     
+                    // Ko'rsatish uchun birlashtirilgan bolalar soni
+                    $children_9_10 = $children_age4 + $children_age5;
                     $children_all = $children_9_10 + $children_4;
 
-                    $eater_cost9_10 = $costs->where('age_range_id', 4)->first()->eater_cost ?? 0;
+                    // Har bir guruh uchun narxlarni olish
+                    $eater_cost_age4 = $costs->where('age_range_id', 4)->first()->eater_cost ?? 0;
+                    $eater_cost_age5 = $costs->where('age_range_id', 5)->first()->eater_cost ?? 0;
                     $eater_cost4 = $costs->where('age_range_id', 3)->first()->eater_cost ?? 0;
                     $raise = $costs->where('age_range_id', 4)->first()->raise ?? 0;
                     $nds = $costs->where('age_range_id', 4)->first()->nds ?? 0;
                     
-                    // Narxlarni olish
-                    $cost_9_10 = $eater_cost9_10; // 9-10.5 soatlik guruh uchun narx
+                    // O'rtacha narx (ko'rsatish uchun) - vaznga qarab
+                    if($children_9_10 > 0) {
+                        $cost_9_10 = (($children_age4 * $eater_cost_age4) + ($children_age5 * $eater_cost_age5)) / $children_9_10;
+                    } else {
+                        $cost_9_10 = $eater_cost_age4;
+                    }
                     $cost_4 = $eater_cost4; // 4 soatlik guruh uchun narx
                     
-                    // Yetkazib berish xarajatlari
-                    $delivery_9_10 = $children_9_10 * $cost_9_10;
+                    // Yetkazib berish xarajatlari (har bir guruh uchun alohida hisoblash)
+                    $delivery_age4 = $children_age4 * $eater_cost_age4;
+                    $delivery_age5 = $children_age5 * $eater_cost_age5;
+                    $delivery_9_10 = $delivery_age4 + $delivery_age5; // Birlashtirilgan
                     $delivery_4 = $children_4 * $cost_4;
                     $delivery_all = $delivery_9_10 + $delivery_4;
                     
