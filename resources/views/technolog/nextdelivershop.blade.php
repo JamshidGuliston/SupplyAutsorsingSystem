@@ -36,8 +36,8 @@
             <a href="/technolog/nextdayshoppdf/{{ $shop['id'] }}" target="_blank" title="PDF ko'chirish">
                 <i class="far fa-file-pdf" style="color: #dc3545; font-size: 18px; margin-right: 10px;"></i>
             </a>
-            <b>CSV </b>
-            <a href="/technolog/nextdayshopexcel/{{ $shop['id'] }}" title="CSV ko'chirish (Excel da ochiladi)">
+            <b>Excel </b>
+            <a href="/technolog/nextdayshopexcel/{{ $shop['id'] }}" title="Excel ko'chirish (formatlangan)">
                 <i class="far fa-file-excel" style="color: #198754; font-size: 18px;"></i>
             </a>
         </div>
