@@ -1274,11 +1274,6 @@ class TechnologController extends Controller
                     $currentRow = 1;
 
                     foreach ($this->groupedByRegions as $regionId => $regionData) {
-                        // Har bir region uchun yangi sahifa (A4 ga sig'ishi uchun)
-                        if ($currentRow > 1) {
-                            $sheet->setBreak('A' . $currentRow, \PhpOffice\PhpSpreadsheet\Worksheet\Worksheet::BREAK_ROW);
-                        }
-
                         // Region sarlavhasi
                         $sheet->setCellValue('A' . $currentRow, $regionData['region_name'] . ' ХУДУДИ');
                         $sheet->mergeCells('A' . $currentRow . ':' . $this->getColumnLetter(2 + count($this->shop->product)) . $currentRow);
@@ -1401,7 +1396,16 @@ class TechnologController extends Controller
 
                         $sheet->getStyle('B' . $totalRow)->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_LEFT);
 
-                        $currentRow += 3; // Bo'sh qatorlar
+                        $currentRow++; // Jami qatoridan keyingi qator
+
+                        // Har bir region uchun sahifa uzilishi (oxirgi region emas bo'lsa)
+                        $regionKeys = array_keys($this->groupedByRegions);
+                        $lastRegionId = end($regionKeys);
+                        if ($regionId !== $lastRegionId) {
+                            $sheet->setBreak('A' . $currentRow, \PhpOffice\PhpSpreadsheet\Worksheet\Worksheet::BREAK_ROW);
+                        }
+
+                        $currentRow += 2; // Bo'sh qatorlar
                     }
 
                     // Ustunlar kengligini o'rnatish
