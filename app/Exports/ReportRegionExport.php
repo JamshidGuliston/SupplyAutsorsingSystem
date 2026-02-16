@@ -72,11 +72,25 @@ class ReportRegionExport implements FromArray, WithStyles, WithColumnWidths, Wit
         $currentDataRow = 5; // Ma'lumotlar 5-qatordan boshlanadi
 
         foreach ($kindgardens as $kindgarden) {
-            $children_3_7 = ($number_childrens[$kindgarden->id][4] ?? 0) + ($number_childrens[$kindgarden->id][5] ?? 0); // 3-7 yosh (9-10.5 va 10-12 soatlik)
+            // Bolalar soni (alohida)
+            $children_age4 = $number_childrens[$kindgarden->id][4] ?? 0; // 9-10.5 soatlik
+            $children_age5 = $number_childrens[$kindgarden->id][5] ?? 0; // 10-12 soatlik
+            $children_3_7 = $children_age4 + $children_age5; // 3-7 yosh umumiy
+
             $children_short = $number_childrens[$kindgarden->id][3] ?? 0; // Qisqa guruh 
 
-            $price_3_7 = $costs->where('age_range_id', 4)->first()->eater_cost ?? 0; // 3-7 yosh uchun narx
+            // Narxlar
+            $price_age4 = $costs->where('age_range_id', 4)->first()->eater_cost ?? 0;
+            $price_age5 = $costs->where('age_range_id', 5)->first()->eater_cost ?? 0;
             $price_short = $costs->where('age_range_id', 3)->first()->eater_cost ?? 0; // Qisqa guruh uchun narx
+
+            // O'rtacha narx 3-7 yosh uchun
+            if ($children_3_7 > 0) {
+                $price_3_7 = (($children_age4 * $price_age4) + ($children_age5 * $price_age5)) / $children_3_7;
+            }
+            else {
+                $price_3_7 = $price_age4;
+            }
 
             $row = [
                 $kindgarden->number_of_org . '-ДМТТ',

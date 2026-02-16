@@ -98,8 +98,9 @@ class TransportationRegionExport implements FromArray, WithStyles, WithColumnWid
 
         foreach ($days as $day) {
             // Bolalar sonini hisoblash
-            $children_9_10 = 0;
-            $children_4 = 0;
+            $children_age4 = 0; // 9-10.5 soatlik
+            $children_age5 = 0; // 10-12 soatlik
+            $children_4 = 0; // 4 soatlik
             $menu_name = '';
 
             foreach ($number_childrens[$day->id] as $age_id => $child) {
@@ -107,18 +108,34 @@ class TransportationRegionExport implements FromArray, WithStyles, WithColumnWid
                     $menu_name = $child->short_name ?? $child->menu_name ?? '';
                     continue;
                 }
-                if ($age_id == 4 || $age_id == 5) { // 9-10.5 va 10-12 soatlik guruhlar
-                    $children_9_10 += $child ?? 0;
+                if ($age_id == 4) { // 9-10.5 soatlik guruh
+                    $children_age4 += $child ?? 0;
+                }
+                elseif ($age_id == 5) { // 10-12 soatlik guruh
+                    $children_age5 += $child ?? 0;
                 }
                 elseif ($age_id == 3) { // 4 soatlik guruh
                     $children_4 += $child ?? 0;
                 }
             }
 
+            // Birlashtirilgan bolalar soni
+            $children_9_10 = $children_age4 + $children_age5;
             $children_all = $children_9_10 + $children_4;
 
-            $eater_cost9_10 = $costs->where('age_range_id', 4)->first()->eater_cost ?? 0;
+            // Narxlarni olish
+            $eater_cost_age4 = $costs->where('age_range_id', 4)->first()->eater_cost ?? 0;
+            $eater_cost_age5 = $costs->where('age_range_id', 5)->first()->eater_cost ?? 0;
             $eater_cost4 = $costs->where('age_range_id', 3)->first()->eater_cost ?? 0;
+
+            // O'rtacha narxni hisoblash (9-10.5 va 10-12 soatlik uchun)
+            if ($children_9_10 > 0) {
+                $eater_cost9_10 = (($children_age4 * $eater_cost_age4) + ($children_age5 * $eater_cost_age5)) / $children_9_10;
+            }
+            else {
+                // Bolalar bo'lmasa, default qilib 4-guruh narxini olamiz
+                $eater_cost9_10 = $eater_cost_age4;
+            }
 
             $row = [
                 $row_number++,
@@ -129,7 +146,7 @@ class TransportationRegionExport implements FromArray, WithStyles, WithColumnWid
                 '=D' . $currentDataRow . '+E' . $currentDataRow, // Jami bolalar soni
                 $eater_cost9_10,
                 $eater_cost4,
-                '=D' . $currentDataRow . '*G' . $currentDataRow, // Delivery 9-10.5
+                '=D' . $currentDataRow . '*G' . $currentDataRow, // Delivery 9-10.5 (O'rtacha narx bilan to'g'ri chiqadi)
                 '=E' . $currentDataRow . '*H' . $currentDataRow, // Delivery 4
                 '=I' . $currentDataRow . '+J' . $currentDataRow // Jami delivery
             ];
