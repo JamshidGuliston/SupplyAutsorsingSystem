@@ -877,9 +877,14 @@ class TechnologController extends Controller
                 if (empty($row[0])) continue;
 
                 $dateValue = $row[0]; // Sana
-                $childrenCount = isset($row[2]) ? (int)$row[2] : 0; // Bolalar soni
+                $childrenCount = isset($row[2]) && $row[2] !== null && $row[2] !== '' ? (int)$row[2] : null; // Bolalar soni
                 $ageRangeName = isset($row[3]) ? trim($row[3]) : ''; // Yosh toifasi
                 $menuName = isset($row[4]) ? trim($row[4]) : ''; // Menu
+
+                // Bolalar soni berilmagan bo'lsa - o'tkazib yuborish
+                if ($childrenCount === null || $childrenCount <= 0) {
+                    continue;
+                }
 
                 // Sanani parse qilish
                 $dayNumber = null;
@@ -974,13 +979,18 @@ class TechnologController extends Controller
                     $day->save();
                 }
 
-                // Yosh toifasini topish
+                // Yosh toifasini topish (ID yoki nom bo'yicha)
                 $ageRange = null;
-                if (!empty($ageRangeName)) {
-                    $ageRange = Age_range::where('age_name', $ageRangeName)->first();
-                    if (!$ageRange) {
-                        // Qisman qidirish
-                        $ageRange = Age_range::where('age_name', 'LIKE', '%' . $ageRangeName . '%')->first();
+                if (!empty($ageRangeName) || $ageRangeName === '0' || $ageRangeName === 0) {
+                    if (is_numeric($ageRangeName)) {
+                        // Raqam bo'lsa - ID sifatida qidirish
+                        $ageRange = Age_range::find((int)$ageRangeName);
+                    } else {
+                        // Matn bo'lsa - nom bo'yicha qidirish
+                        $ageRange = Age_range::where('age_name', $ageRangeName)->first();
+                        if (!$ageRange) {
+                            $ageRange = Age_range::where('age_name', 'LIKE', '%' . $ageRangeName . '%')->first();
+                        }
                     }
                 }
 
@@ -997,16 +1007,22 @@ class TechnologController extends Controller
                     continue;
                 }
 
-                // Menu topish
+                // Menu topish (ID yoki nom bo'yicha)
                 $menu = null;
-                if (!empty($menuName)) {
-                    $menu = Titlemenu::where('menu_name', $menuName)
-                        ->orWhere('short_name', $menuName)
-                        ->first();
-                    if (!$menu) {
-                        $menu = Titlemenu::where('menu_name', 'LIKE', '%' . $menuName . '%')
-                            ->orWhere('short_name', 'LIKE', '%' . $menuName . '%')
+                if (!empty($menuName) || $menuName === '0' || $menuName === 0) {
+                    if (is_numeric($menuName)) {
+                        // Raqam bo'lsa - ID sifatida qidirish
+                        $menu = Titlemenu::find((int)$menuName);
+                    } else {
+                        // Matn bo'lsa - nom bo'yicha qidirish
+                        $menu = Titlemenu::where('menu_name', $menuName)
+                            ->orWhere('short_name', $menuName)
                             ->first();
+                        if (!$menu) {
+                            $menu = Titlemenu::where('menu_name', 'LIKE', '%' . $menuName . '%')
+                                ->orWhere('short_name', 'LIKE', '%' . $menuName . '%')
+                                ->first();
+                        }
                     }
                 }
 

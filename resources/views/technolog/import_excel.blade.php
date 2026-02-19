@@ -100,22 +100,22 @@
                                 <td>03.02.2026</td>
                                 <td>Seshanba</td>
                                 <td>120</td>
-                                <td>3-7 yosh</td>
-                                <td>1-Menyu</td>
+                                <td>4</td>
+                                <td>1</td>
                             </tr>
                             <tr>
                                 <td>04.02.2026</td>
                                 <td>Chorshanba</td>
                                 <td>85</td>
-                                <td>1-3 yosh</td>
-                                <td>2-Menyu</td>
+                                <td>3</td>
+                                <td>2</td>
                             </tr>
                             <tr>
                                 <td>05.02.2026</td>
                                 <td>Payshanba</td>
                                 <td>95</td>
-                                <td>3-7 yosh</td>
-                                <td>3-Menyu</td>
+                                <td>4</td>
+                                <td>3</td>
                             </tr>
                         </tbody>
                     </table>
@@ -125,8 +125,8 @@
                     <strong>Qoidalar:</strong>
                     <ul class="mb-0 mt-1">
                         <li><strong>Sana</strong> ustuni: KK.OO.YYYY formatida (masalan: 03.02.2026)</li>
-                        <li><strong>Yosh toifasi</strong> ustuni: bazadagi age_name bilan mos kelishi kerak</li>
-                        <li><strong>Menu</strong> ustuni: bazadagi menu_name yoki short_name bilan mos kelishi kerak</li>
+                        <li><strong>Yosh toifasi</strong> ustuni: ID (raqam) yoki age_name (matn) bo'lishi mumkin</li>
+                        <li><strong>Menu</strong> ustuni: ID (raqam) yoki menu_name/short_name (matn) bo'lishi mumkin</li>
                         <li>Sana bazada mavjud bo'lmasa, avtomatik yaratiladi</li>
                     </ul>
                 </div>
