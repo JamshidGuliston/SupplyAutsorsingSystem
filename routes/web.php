@@ -187,6 +187,8 @@ Route::group(['prefix' => 'technolog', 'middleware' => ['isTechnolog', 'auth']],
     Route::get('get-kindergartens', [TechnologController::class, 'getKindergartens'])->name('technolog.getKindergartens');
     Route::get('get-age-ranges', [TechnologController::class, 'getAgeRanges'])->name('technolog.getAgeRanges');
     Route::post('assign-past-days', [TechnologController::class, 'assignPastDays'])->name('technolog.assignPastDays');
+    Route::get('import-excel', [TechnologController::class, 'importExcelPage'])->name('technolog.importExcelPage');
+    Route::post('import-excel', [TechnologController::class, 'importExcel'])->name('technolog.importExcel');
     Route::get('settings/{id}', [TechnologController::class, 'settings'])->name('technolog.settings');
     Route::post('updategarden', [TechnologController::class, 'updategarden'])->name('updategarden');
     Route::get('ageranges/{id}', [TechnologController::class, 'ageranges']);

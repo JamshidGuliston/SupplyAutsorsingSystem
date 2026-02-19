@@ -827,6 +827,251 @@ class TechnologController extends Controller
         }
     }
 
+    // Excel orqali ma'lumot yuklash sahifasi
+    public function importExcelPage()
+    {
+        $kindergartens = Kindgarden::where('hide', 1)->orderBy('kingar_name')->get();
+        return view('technolog.import_excel', compact('kindergartens'));
+    }
+
+    // Excel faylni import qilish
+    public function importExcel(Request $request)
+    {
+        try {
+            $request->validate([
+                'kindergarten_id' => 'required|integer|exists:kindgardens,id',
+                'excel_file' => 'required|file|mimes:xlsx,xls,csv|max:5120'
+            ]);
+
+            $kindergartenId = $request->kindergarten_id;
+            $file = $request->file('excel_file');
+
+            $monthNames = [
+                'january' => 1, 'february' => 2, 'march' => 3, 'april' => 4,
+                'may' => 5, 'june' => 6, 'july' => 7, 'august' => 8,
+                'september' => 9, 'october' => 10, 'november' => 11, 'december' => 12
+            ];
+
+            // Excel faylni o'qish
+            $data = \Maatwebsite\Excel\Facades\Excel::toArray(new class implements \Maatwebsite\Excel\Concerns\ToArray {
+                public function array(array $array) { return $array; }
+            }, $file);
+
+            if (empty($data) || empty($data[0])) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Excel fayl bo\'sh yoki noto\'g\'ri formatda!'
+                ], 400);
+            }
+
+            $rows = $data[0];
+            // Birinchi qatorni sarlavha deb o'tkazish
+            $header = array_shift($rows);
+
+            $details = [];
+            $successCount = 0;
+            $errorCount = 0;
+
+            foreach ($rows as $index => $row) {
+                // Bo'sh qatorni o'tkazish
+                if (empty($row[0])) continue;
+
+                $dateValue = $row[0]; // Sana
+                $childrenCount = isset($row[2]) ? (int)$row[2] : 0; // Bolalar soni
+                $ageRangeName = isset($row[3]) ? trim($row[3]) : ''; // Yosh toifasi
+                $menuName = isset($row[4]) ? trim($row[4]) : ''; // Menu
+
+                // Sanani parse qilish
+                $dayNumber = null;
+                $monthNumber = null;
+                $yearNumber = null;
+
+                if (is_numeric($dateValue)) {
+                    // Excel serial date format
+                    $dateObj = \PhpOffice\PhpSpreadsheet\Shared\Date::excelToDateTimeObject($dateValue);
+                    $dayNumber = (int)$dateObj->format('d');
+                    $monthNumber = (int)$dateObj->format('m');
+                    $yearNumber = (int)$dateObj->format('Y');
+                } elseif (is_string($dateValue)) {
+                    // String formatda sana (DD.MM.YYYY yoki DD/MM/YYYY yoki YYYY-MM-DD)
+                    $dateValue = str_replace('/', '.', $dateValue);
+                    if (preg_match('/^(\d{2})\.(\d{2})\.(\d{4})$/', $dateValue, $matches)) {
+                        $dayNumber = (int)$matches[1];
+                        $monthNumber = (int)$matches[2];
+                        $yearNumber = (int)$matches[3];
+                    } elseif (preg_match('/^(\d{4})-(\d{2})-(\d{2})/', $dateValue, $matches)) {
+                        $yearNumber = (int)$matches[1];
+                        $monthNumber = (int)$matches[2];
+                        $dayNumber = (int)$matches[3];
+                    }
+                }
+
+                if (!$dayNumber || !$monthNumber || !$yearNumber) {
+                    $errorCount++;
+                    $details[] = [
+                        'date' => $dateValue,
+                        'children_count' => $childrenCount,
+                        'age_range' => $ageRangeName,
+                        'menu' => $menuName,
+                        'status' => 'error',
+                        'message' => 'Sana formatini aniqlab bo\'lmadi'
+                    ];
+                    continue;
+                }
+
+                $dateStr = str_pad($dayNumber, 2, '0', STR_PAD_LEFT) . '.' . str_pad($monthNumber, 2, '0', STR_PAD_LEFT) . '.' . $yearNumber;
+
+                // Year topish yoki yaratish
+                $year = Year::where('year_name', $yearNumber)->first();
+                if (!$year) {
+                    $year = Year::create([
+                        'year_name' => $yearNumber,
+                        'year_active' => 0
+                    ]);
+                }
+
+                // Month topish yoki yaratish
+                $monthEnNames = [
+                    1 => 'January', 2 => 'February', 3 => 'March', 4 => 'April',
+                    5 => 'May', 6 => 'June', 7 => 'July', 8 => 'August',
+                    9 => 'September', 10 => 'October', 11 => 'November', 12 => 'December'
+                ];
+                $monthUzNames = [
+                    1 => 'Yanvar', 2 => 'Fevral', 3 => 'Mart', 4 => 'Aprel',
+                    5 => 'May', 6 => 'Iyun', 7 => 'Iyul', 8 => 'Avgust',
+                    9 => 'Sentyabr', 10 => 'Oktyabr', 11 => 'Noyabr', 12 => 'Dekabr'
+                ];
+
+                $month = Month::where('yearid', $year->id)
+                    ->where('month_en', strtolower($monthEnNames[$monthNumber]))
+                    ->first();
+
+                if (!$month) {
+                    $month = Month::create([
+                        'month_name' => $monthUzNames[$monthNumber],
+                        'month_en' => strtolower($monthEnNames[$monthNumber]),
+                        'yearid' => $year->id,
+                        'month_active' => 0
+                    ]);
+                }
+
+                // Day topish yoki yaratish
+                $day = Day::where('day_number', $dayNumber)
+                    ->where('month_id', $month->id)
+                    ->where('year_id', $year->id)
+                    ->first();
+
+                if (!$day) {
+                    $day = Day::create([
+                        'day_number' => $dayNumber,
+                        'month_id' => $month->id,
+                        'year_id' => $year->id
+                    ]);
+                    // created_at va updated_at ni to'g'ri sanaga o'rnatish
+                    $dateString = $yearNumber . '-' . str_pad($monthNumber, 2, '0', STR_PAD_LEFT) . '-' . str_pad($dayNumber, 2, '0', STR_PAD_LEFT) . ' 10:00:00';
+                    $day->created_at = $dateString;
+                    $day->updated_at = $dateString;
+                    $day->save();
+                }
+
+                // Yosh toifasini topish
+                $ageRange = null;
+                if (!empty($ageRangeName)) {
+                    $ageRange = Age_range::where('age_name', $ageRangeName)->first();
+                    if (!$ageRange) {
+                        // Qisman qidirish
+                        $ageRange = Age_range::where('age_name', 'LIKE', '%' . $ageRangeName . '%')->first();
+                    }
+                }
+
+                if (!$ageRange) {
+                    $errorCount++;
+                    $details[] = [
+                        'date' => $dateStr,
+                        'children_count' => $childrenCount,
+                        'age_range' => $ageRangeName,
+                        'menu' => $menuName,
+                        'status' => 'error',
+                        'message' => 'Yosh toifasi topilmadi: ' . $ageRangeName
+                    ];
+                    continue;
+                }
+
+                // Menu topish
+                $menu = null;
+                if (!empty($menuName)) {
+                    $menu = Titlemenu::where('menu_name', $menuName)
+                        ->orWhere('short_name', $menuName)
+                        ->first();
+                    if (!$menu) {
+                        $menu = Titlemenu::where('menu_name', 'LIKE', '%' . $menuName . '%')
+                            ->orWhere('short_name', 'LIKE', '%' . $menuName . '%')
+                            ->first();
+                    }
+                }
+
+                // Mavjud yozuvni tekshirish
+                $existing = Number_children::where('day_id', $day->id)
+                    ->where('kingar_name_id', $kindergartenId)
+                    ->where('king_age_name_id', $ageRange->id)
+                    ->first();
+
+                if ($existing) {
+                    // Mavjud bo'lsa yangilash
+                    $existing->update([
+                        'kingar_children_number' => $childrenCount,
+                        'kingar_menu_id' => $menu ? $menu->id : $existing->kingar_menu_id,
+                    ]);
+                    $successCount++;
+                    $details[] = [
+                        'date' => $dateStr,
+                        'children_count' => $childrenCount,
+                        'age_range' => $ageRangeName,
+                        'menu' => $menuName,
+                        'status' => 'success',
+                        'message' => 'Yangilandi'
+                    ];
+                } else {
+                    // Yangi yozuv yaratish
+                    Number_children::create([
+                        'day_id' => $day->id,
+                        'kingar_name_id' => $kindergartenId,
+                        'king_age_name_id' => $ageRange->id,
+                        'kingar_children_number' => $childrenCount,
+                        'workers_count' => 0,
+                        'kingar_menu_id' => $menu ? $menu->id : null,
+                    ]);
+                    $successCount++;
+                    $details[] = [
+                        'date' => $dateStr,
+                        'children_count' => $childrenCount,
+                        'age_range' => $ageRangeName,
+                        'menu' => $menuName,
+                        'status' => 'success',
+                        'message' => 'Qo\'shildi'
+                    ];
+                }
+            }
+
+            return response()->json([
+                'success' => true,
+                'message' => $successCount . ' ta qator muvaffaqiyatli import qilindi!',
+                'summary' => [
+                    'total' => $successCount + $errorCount,
+                    'success' => $successCount,
+                    'errors' => $errorCount
+                ],
+                'details' => $details
+            ]);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Xatolik yuz berdi: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
     public function deleteGarden(Request $request)
     {
         // dd($request->all());
