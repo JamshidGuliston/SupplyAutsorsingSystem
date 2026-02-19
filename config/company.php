@@ -17,8 +17,8 @@ return [
         'bank_account' => env('AUTSORSER_BANK_ACCOUNT', '2020 8000 0007 2639 3001'),
         'bank' => env('AUTSORSER_BANK', 'ДАТ "Асака Банк"'),
         'mfo' => env('AUTSORSER_MFO', '00373'),
-        'inn' => env('AUTSORSER_INN', '304 658 134'),
-        'phone' => env('AUTSORSER_PHONE', '(99) 603 55 53'),
+        'inn' => env('AUTSORSER_INN', '111 111 111'),
+        'phone' => env('AUTSORSER_PHONE', '(90) 000 00 09'),
     ],
 
     /*
