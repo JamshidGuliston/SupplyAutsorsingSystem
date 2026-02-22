@@ -2867,16 +2867,10 @@ class AccountantController extends Controller
             }
 
             // Natijani yuborish
-            if (str_ends_with($outputFile, '.zip')) {
-                $response = response()->download($outputFile, 'combined_' . $kindgar->number_of_org . '_' . date('Y-m-d') . '.zip', [
-                    'Content-Type' => 'application/zip',
-                ]);
-            } else {
-                $response = response()->file($outputFile, [
-                    'Content-Type' => 'application/pdf',
-                    'Content-Disposition' => 'inline; filename="combined_' . $kindgar->number_of_org . '_' . date('Y-m-d') . '.pdf"'
-                ]);
-            }
+            $response = response()->file($outputFile, [
+                'Content-Type' => 'application/pdf',
+                'Content-Disposition' => 'inline; filename="combined_' . $kindgar->number_of_org . '_' . date('Y-m-d') . '.pdf"'
+            ]);
 
             // Vaqtinchalik fayllarni o'chirish
             $response->deleteFileAfterSend(true);
@@ -2907,37 +2901,34 @@ class AccountantController extends Controller
 
     /**
      * PHP yordamida PDF'larni birlashtirish (Ghostscript mavjud bo'lmasa)
+     * setasign/fpdi paketi orqali
      */
     private function mergePdfsWithPhp($pdfFiles, $outputFile)
     {
-        // Cover page yaratish va barcha PDF'larni link qilish
-        $html = '<html><body>';
-        $html .= '<h1 style="text-align:center; margin-top: 200px;">Bog\'cha hujjatlari to\'plami</h1>';
-        $html .= '<p style="text-align:center;">Ushbu hujjat quyidagi hujjatlardan iborat:</p>';
-        $html .= '<ol style="text-align:center; list-style-position: inside;">';
-        $html .= '<li>Накапит (нархсиз, har bir yosh guruhi)</li>';
-        $html .= '<li>Транспортировка</li>';
-        $html .= '<li>Далолатнома</li>';
-        $html .= '<li>Хисоб-фактура</li>';
-        $html .= '</ol>';
-        $html .= '</body></html>';
+        try {
+            $fpdi = new \setasign\Fpdi\Fpdi();
+            $fpdi->SetAutoPageBreak(false);
 
-        // Agar oddiy birlashtirish ishlamasa, fayllarni ZIP qilish
-        $zipFile = str_replace('.pdf', '.zip', $outputFile);
-        $zip = new \ZipArchive();
-
-        if ($zip->open($zipFile, \ZipArchive::CREATE | \ZipArchive::OVERWRITE) === true) {
-            $counter = 1;
             foreach ($pdfFiles as $file) {
-                $zip->addFile($file, basename($file));
-                $counter++;
-            }
-            $zip->close();
-            return $zipFile;
-        }
+                if (!file_exists($file)) continue;
 
-        // Aks holda birinchi PDF ni qaytarish
-        return $pdfFiles[0];
+                $pageCount = $fpdi->setSourceFile($file);
+                for ($i = 1; $i <= $pageCount; $i++) {
+                    $tpl = $fpdi->importPage($i);
+                    $size = $fpdi->getTemplateSize($tpl);
+                    $orientation = ($size['width'] > $size['height']) ? 'L' : 'P';
+                    $fpdi->AddPage($orientation, [$size['width'], $size['height']]);
+                    $fpdi->useTemplate($tpl, 0, 0, $size['width'], $size['height']);
+                }
+            }
+
+            $fpdi->Output($outputFile, 'F');
+            return $outputFile;
+
+        } catch (\Exception $e) {
+            // FPDI ishlamasa, birinchi faylni qaytarish
+            return $pdfFiles[0] ?? $outputFile;
+        }
     }
 
     /**
