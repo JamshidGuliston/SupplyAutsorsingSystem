@@ -1038,6 +1038,7 @@ class TechnologController extends Controller
                         'kingar_children_number' => $childrenCount,
                         'kingar_menu_id' => $menu ? $menu->id : $existing->kingar_menu_id,
                     ]);
+                    $activeMenuId = $menu ? $menu->id : $existing->kingar_menu_id;
                     $successCount++;
                     $details[] = [
                         'date' => $dateStr,
@@ -1057,6 +1058,7 @@ class TechnologController extends Controller
                         'workers_count' => 0,
                         'kingar_menu_id' => $menu ? $menu->id : 1,
                     ]);
+                    $activeMenuId = $menu ? $menu->id : 1;
                     $successCount++;
                     $details[] = [
                         'date' => $dateStr,
@@ -1066,6 +1068,28 @@ class TechnologController extends Controller
                         'status' => 'success',
                         'message' => 'Qo\'shildi'
                     ];
+                }
+
+                // Active_menu ga menyu tarkibini qo'shish (agar mavjud bo'lmasa)
+                $findmenu = Active_menu::where('day_id', $day->id)
+                    ->where('title_menu_id', $activeMenuId)
+                    ->exists();
+                if (!$findmenu) {
+                    $menuitems = Menu_composition::where('title_menu_id', $activeMenuId)
+                        ->orderBy('menu_meal_time_id', 'ASC')
+                        ->orderBy('id', 'ASC')
+                        ->get();
+                    foreach ($menuitems as $menurow) {
+                        Active_menu::create([
+                            'day_id' => $day->id,
+                            'title_menu_id' => $menurow->title_menu_id,
+                            'menu_meal_time_id' => $menurow->menu_meal_time_id,
+                            'menu_food_id' => $menurow->menu_food_id,
+                            'product_name_id' => $menurow->product_name_id,
+                            'age_range_id' => $menurow->age_range_id,
+                            'weight' => $menurow->weight,
+                        ]);
+                    }
                 }
             }
 
