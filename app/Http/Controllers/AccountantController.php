@@ -2867,10 +2867,16 @@ class AccountantController extends Controller
             }
 
             // Natijani yuborish
-            $response = response()->file($outputFile, [
-                'Content-Type' => 'application/pdf',
-                'Content-Disposition' => 'inline; filename="combined_' . $kindgar->number_of_org . '_' . date('Y-m-d') . '.pdf"'
-            ]);
+            if (str_ends_with($outputFile, '.zip')) {
+                $response = response()->download($outputFile, 'combined_' . $kindgar->number_of_org . '_' . date('Y-m-d') . '.zip', [
+                    'Content-Type' => 'application/zip',
+                ]);
+            } else {
+                $response = response()->file($outputFile, [
+                    'Content-Type' => 'application/pdf',
+                    'Content-Disposition' => 'inline; filename="combined_' . $kindgar->number_of_org . '_' . date('Y-m-d') . '.pdf"'
+                ]);
+            }
 
             // Vaqtinchalik fayllarni o'chirish
             $response->deleteFileAfterSend(true);
@@ -2904,9 +2910,6 @@ class AccountantController extends Controller
      */
     private function mergePdfsWithPhp($pdfFiles, $outputFile)
     {
-        // Oddiy merger - barcha PDF fayllarni ketma-ket o'qish va yozish
-        $pdf = new \Barryvdh\Snappy\PdfWrapper();
-
         // Cover page yaratish va barcha PDF'larni link qilish
         $html = '<html><body>';
         $html .= '<h1 style="text-align:center; margin-top: 200px;">Bog\'cha hujjatlari to\'plami</h1>';
