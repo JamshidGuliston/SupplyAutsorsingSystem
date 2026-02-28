@@ -7,4 +7,5 @@
     <a href="/accountant/reports" class="list-group-item list-group-item-action bg-transparent second-text fw-bold {{Request::is('accountant/reports') ? 'active' : null }}"><i class="fas fa-cogs"></i> Hisobot</a>
     <a href="/accountant/reportsworker" class="list-group-item list-group-item-action bg-transparent second-text fw-bold {{Request::is('accountant/reportsworker') ? 'active' : null }}"><i class="fas fa-cogs"></i> Hisobot xodimlar</a>
     <a href="/accountant/income/0" class="list-group-item list-group-item-action bg-transparent second-text fw-bold {{Request::is('accountant/income/0') ? 'active' : null }}"><i class="fas fa-coins"></i> Daromad</a>
+    <a href="/accountant/contracts" class="list-group-item list-group-item-action bg-transparent second-text fw-bold {{Request::is('accountant/contracts*') ? 'active' : null }}"><i class="fas fa-file-contract me-2"></i> Shartnomalar</a>
 </div>

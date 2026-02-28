@@ -21,6 +21,7 @@ use App\Exports\RegionDalolatnomaExport;
 use App\Exports\SpendedkgExport;
 use App\Models\Age_range;
 use App\Models\bycosts;
+use App\Models\Contract;
 use App\Models\Active_menu;
 use App\Models\Day;
 use App\Models\Kindgarden;
@@ -328,7 +329,8 @@ class AccountantController extends Controller
         }
 
         // dd($days);
-        return view('accountant.kindreport', compact('days', 'nakproducts', 'yeardays', 'costsdays', 'costs', 'ages', 'kindgar', 'protsent'));
+        $contracts = Contract::getForKindgarden($kindgar->id, $kindgar->region_id);
+        return view('accountant.kindreport', compact('days', 'nakproducts', 'yeardays', 'costsdays', 'costs', 'ages', 'kindgar', 'protsent', 'contracts'));
     }
 
     public function nakapitwithoutcost(Request $request, $id, $ageid, $start, $end)
@@ -2776,7 +2778,7 @@ class AccountantController extends Controller
      * Tartib: nakapitwithoutcost, transportation, dalolatnoma, schotfakturthird
      * Har bir hujjat o'zining CSS va layout'ini saqlab qoladi
      */
-    public function combinedKindgardenDocuments(Request $request, $id, $start, $end, $costid = null)
+    public function combinedKindgardenDocuments(Request $request, $id, $start, $end, $costid = null, $contractid = null)
     {
         set_time_limit(600);
 
@@ -2801,8 +2803,22 @@ class AccountantController extends Controller
         try {
             // Umumiy ma'lumotlar
             $autorser = config('company.autorser');
-            $contract_env = env('CONTRACT_DATA');
-            $contract_data = $contract_env ? explode(',', $contract_env)[$region->id - 1] ?? " ______ '______' ___________ 2025 й"
+
+            // Shartnomani DB dan topish (contractid berilgan bo'lsa - o'sha, bo'lmasa avtomatik)
+            $contractObj = null;
+            if ($contractid) {
+                $contractObj = Contract::find($contractid);
+            }
+            if (!$contractObj) {
+                $contractObj = Contract::findForKindgarden(
+                    (int) $id,
+                    (int) $kindgar->region_id,
+                    $days->first()->created_at->format('Y-m-d'),
+                    $days->last()->created_at->format('Y-m-d')
+                );
+            }
+            $contract_data = $contractObj
+                ? '№ ' . $contractObj->contract_number . ' санаси: ' . $contractObj->contract_date->format('d.m.Y') . ' й'
                 : " ______ '______' ___________ 2025 й";
 
             $buyurtmachi = [

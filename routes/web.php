@@ -10,6 +10,7 @@ use App\Http\Controllers\ApiControllers\TelegramController;
 use App\Http\Controllers\BossController;
 use App\Http\Controllers\CertificateController;
 use App\Http\Controllers\CasherController;
+use App\Http\Controllers\ContractController;
 use App\Http\Controllers\HomeController;
 use Illuminate\Support\Facades\Auth;
 /*
@@ -411,7 +412,10 @@ Route::group(['prefix' => 'accountant', 'middleware' => ['isAccountant', 'auth']
     Route::get('dalolatnomaexcel/{id}/{start}/{end}', [AccountantController::class, 'dalolatnomaexcel'])->name('accountant.dalolatnomaexcel');
     
     // Birlashtirilgan hujjat - barcha 4 ta hujjatni bitta PDF da
-    Route::get('combined-documents/{id}/{start}/{end}/{costid?}', [AccountantController::class, 'combinedKindgardenDocuments'])->name('accountant.combined.documents');
+    Route::get('combined-documents/{id}/{start}/{end}/{costid?}/{contractid?}', [AccountantController::class, 'combinedKindgardenDocuments'])->name('accountant.combined.documents');
+
+    // Shartnomalar (Contracts)
+    Route::resource('contracts', ContractController::class)->except(['show']);
     
     Route::get('allschotfaktur/{id}/{start}/{end}/{costid}/{nds}/{ust}', [AccountantController::class, 'allschotfaktur'])->name('accountant.allschotfaktur');
     Route::get('schotfakturexcel/{id}/{ageid}/{start}/{end}/{costid}/{nds}/{ust}', [AccountantController::class, 'schotfakturexcel'])->name('accountant.schotfakturexcel');

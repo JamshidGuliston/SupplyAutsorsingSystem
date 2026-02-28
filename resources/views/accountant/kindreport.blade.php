@@ -289,6 +289,23 @@
                         </select>
                     </div>
                 </div>
+                <div class="row mt-2">
+                    <div class="col-sm-12">
+                        <label class="form-label mb-1"><i class="fas fa-file-contract me-1"></i>Shartnoma</label>
+                        <select class="form-select" id="contractid" onchange="changeFunc();">
+                            <option value="">— Shartnoma (avtomatik tanlanadi) —</option>
+                            @foreach($contracts as $c)
+                                <option value="{{ $c->id }}">
+                                    № {{ $c->contract_number }} &nbsp;|&nbsp;
+                                    Sana: {{ $c->contract_date->format('d.m.Y') }} &nbsp;|&nbsp;
+                                    {{ $c->start_date->format('d.m.Y') }} – {{ $c->end_date->format('d.m.Y') }}
+                                    @if($c->region) ({{ $c->region->region_name }}) @endif
+                                </option>
+                            @endforeach
+                        </select>
+                        <small class="text-muted">Bo'sh qoldirsangiz, sana oralig'iga mos shartnoma avtomatik tanlanadi.</small>
+                    </div>
+                </div>
                 <h5 class="menutitle"></h5>
                 <div class="urlpdf">
                 </div>
@@ -376,6 +393,7 @@
         var end = selectBox.options[selectBox.selectedIndex].value;
         var selectBox = document.getElementById("costdayid");
         var cost = selectBox.options[selectBox.selectedIndex].value;
+        var contractid = document.getElementById("contractid").value;
         var kindid = document.getElementById("kind").value; 
         var age_ranges = document.getElementById("age_ranges").value;
         var age_ranges = age_ranges.split(',');
@@ -509,7 +527,7 @@
             html += '<div class="report-category">';
             html += '<h6><i class="fas fa-file-invoice-dollar"></i> Умумий</h6>';
             html += '<div class="report-links">';
-            html += '<a href="/accountant/combined-documents/'+kindid+'/'+start+'/'+end+'/'+cost+'" target="_blank" class="report-link pdf">';
+            html += '<a href="/accountant/combined-documents/'+kindid+'/'+start+'/'+end+'/'+cost+'/'+(contractid||'')+'" target="_blank" class="report-link pdf">';
             html += '<i class="far fa-file-pdf"></i>PDF';
             html += '</a>';
             html += '<a href="/accountant/combined-documentsexcel/'+kindid+'/'+start+'/'+end+'/'+cost+'" target="_blank" class="report-link excel">';
