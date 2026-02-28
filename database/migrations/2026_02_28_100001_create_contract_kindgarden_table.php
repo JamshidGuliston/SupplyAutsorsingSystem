@@ -11,7 +11,9 @@ return new class extends Migration
         Schema::create('contract_kindgarden', function (Blueprint $table) {
             $table->id();
             $table->foreignId('contract_id')->constrained('contracts')->cascadeOnDelete();
-            $table->foreignId('kindgarden_id')->constrained('kindgardens')->cascadeOnDelete();
+            // kindgardens uses increments() (unsigned int), not bigIncrements
+            $table->unsignedInteger('kindgarden_id');
+            $table->foreign('kindgarden_id')->references('id')->on('kindgardens')->cascadeOnDelete();
             $table->unique(['contract_id', 'kindgarden_id']);
             $table->timestamps();
         });
