@@ -20,8 +20,8 @@ class ContractController extends Controller
 
     public function create()
     {
-        $regions = Region::where('hide', 0)->orWhereNull('hide')->orderBy('region_name')->get();
-        $kindgardens = Kindgarden::where('hide', 0)->orWhereNull('hide')->orderBy('kingar_name')->get();
+        $regions = Region::where('hide', 1)->orWhereNull('hide')->orderBy('region_name')->get();
+        $kindgardens = Kindgarden::where('hide', 1)->orWhereNull('hide')->orderBy('kingar_name')->get();
 
         return view('accountant.contracts.form', compact('regions', 'kindgardens'));
     }
