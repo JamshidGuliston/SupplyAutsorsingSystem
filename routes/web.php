@@ -413,6 +413,8 @@ Route::group(['prefix' => 'accountant', 'middleware' => ['isAccountant', 'auth']
     
     // Birlashtirilgan hujjat - barcha 4 ta hujjatni bitta PDF da
     Route::get('combined-documents/{id}/{start}/{end}/{costid?}/{contractid?}', [AccountantController::class, 'combinedKindgardenDocuments'])->name('accountant.combined.documents');
+    // Birlashtirilgan hujjat - Excel (faktura + dalolatnoma + qatnov + mahsulot sarfi + shartnoma)
+    Route::get('combined-documentsexcel/{id}/{start}/{end}/{costid?}', [AccountantController::class, 'combinedKindgardenDocumentsExcel'])->name('accountant.combined.documents.excel');
 
     // Shartnomalar (Contracts)
     Route::resource('contracts', ContractController::class)->except(['show']);

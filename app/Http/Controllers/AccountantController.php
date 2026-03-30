@@ -19,6 +19,7 @@ use App\Exports\ReportProductsOfRegionExport;
 use App\Exports\DalolatnomaExport;
 use App\Exports\RegionDalolatnomaExport;
 use App\Exports\SpendedkgExport;
+use App\Exports\CombinedKindgardenExcelExport;
 use App\Models\Age_range;
 use App\Models\bycosts;
 use App\Models\Contract;
@@ -2771,6 +2772,17 @@ class AccountantController extends Controller
             ),
             'svod_hisoboti_' . date('Y-m-d') . '.xlsx'
         );
+    }
+
+    /**
+     * Bog'cha uchun barcha hujjatlarni bitta Excel da birlashtirish
+     * Tartib: schotfaktura, dalolatnoma, qatnov, mahsulot sarfi, shartnoma
+     */
+    public function combinedKindgardenDocumentsExcel(Request $request, $id, $start, $end, $costid = null)
+    {
+        $kindgar = Kindgarden::where('id', $id)->first();
+        $filename = ($kindgar->number_of_org ?? $id) . '_combined_' . date('Y-m-d') . '.xlsx';
+        return Excel::download(new CombinedKindgardenExcelExport($id, $start, $end, $costid), $filename);
     }
 
     /**
