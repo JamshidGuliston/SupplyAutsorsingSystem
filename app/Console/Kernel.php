@@ -22,6 +22,8 @@ class Kernel extends ConsoleKernel
                  ->dailyAt('06:00')
                  ->timezone('Asia/Tashkent')
                  ->withoutOverlapping();
+
+        $schedule->command('attendance:cleanup-photos')->dailyAt('03:00');
     }
 
     /**
