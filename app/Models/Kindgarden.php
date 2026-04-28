@@ -19,7 +19,16 @@ class Kindgarden extends Model
         'worker_count',
         'worker_age_id',
         'number_of_org',
-        'hide'
+        'hide',
+        'lat',
+        'lng',
+        'geofence_radius'
+    ];
+
+    protected $casts = [
+        'lat' => 'float',
+        'lng' => 'float',
+        'geofence_radius' => 'integer',
     ];
 
     // Validation rules
