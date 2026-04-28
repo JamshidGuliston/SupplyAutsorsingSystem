@@ -61,6 +61,7 @@ class Kernel extends HttpKernel
         'isTechnolog' => \App\Http\Middleware\isTechnologMiddleware::class,
         'isAccountant' => \App\Http\Middleware\isAccountantMiddleware::class,
         'isChef' => \App\Http\Middleware\isChefMiddleware::class,
+        'isAddelkadir' => \App\Http\Middleware\isAddelkadirMiddleware::class,
         'auth.basic' => \Illuminate\Auth\Middleware\AuthenticateWithBasicAuth::class,
         'cache.headers' => \Illuminate\Http\Middleware\SetCacheHeaders::class,
         'can' => \Illuminate\Auth\Middleware\Authorize::class,
