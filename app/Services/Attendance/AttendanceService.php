@@ -193,4 +193,36 @@ class AttendanceService
         }
         return $row->fresh();
     }
+
+    public function recordLocationEvents(User $user, array $events): int
+    {
+        $kg = $user->kindgarden()->first();
+        if (!$kg || $kg->lat === null || $kg->lng === null) {
+            return 0;
+        }
+        $allowed = ['exit', 'enter', 'beacon'];
+
+        $rows = [];
+        foreach ($events as $e) {
+            if (!in_array($e['event_type'] ?? null, $allowed, true)) {
+                throw new \InvalidArgumentException('Invalid event_type: ' . ($e['event_type'] ?? 'null'));
+            }
+            $distance = $this->distance->meters((float) $kg->lat, (float) $kg->lng, (float) $e['lat'], (float) $e['lng']);
+            $rows[] = [
+                'user_id' => $user->id,
+                'kindgarden_id' => $kg->id,
+                'event_type' => $e['event_type'],
+                'happened_at' => Carbon::parse($e['happened_at']),
+                'lat' => $e['lat'],
+                'lng' => $e['lng'],
+                'distance_m' => $distance,
+                'is_mock' => (bool) ($e['is_mock'] ?? false),
+                'created_at' => now(),
+            ];
+        }
+        if ($rows) {
+            ChefLocationEvent::insert($rows);
+        }
+        return count($rows);
+    }
 }

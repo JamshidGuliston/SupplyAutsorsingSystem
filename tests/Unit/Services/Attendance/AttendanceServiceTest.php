@@ -214,4 +214,42 @@ class AttendanceServiceTest extends TestCase
             UploadedFile::fake()->image('o.jpg'),
             41.3112, 69.2797, now(), false);
     }
+
+    public function test_record_location_events_inserts_all_with_distance(): void
+    {
+        $events = [
+            ['event_type' => 'exit', 'lat' => 41.3200, 'lng' => 69.2797,
+             'happened_at' => now()->toIso8601String(), 'is_mock' => false],
+            ['event_type' => 'enter', 'lat' => 41.3112, 'lng' => 69.2797,
+             'happened_at' => now()->addMinutes(5)->toIso8601String(), 'is_mock' => false],
+        ];
+
+        $count = $this->svc->recordLocationEvents($this->chef, $events);
+
+        $this->assertSame(2, $count);
+        $this->assertSame(2, \App\Models\ChefLocationEvent::count());
+        $first = \App\Models\ChefLocationEvent::orderBy('id')->first();
+        $this->assertSame('exit', $first->event_type);
+        $this->assertGreaterThan(800, $first->distance_m);
+    }
+
+    public function test_record_location_events_skips_when_kindgarden_coords_missing(): void
+    {
+        $this->kg->update(['lat' => null, 'lng' => null]);
+        $count = $this->svc->recordLocationEvents($this->chef, [
+            ['event_type' => 'exit', 'lat' => 41.32, 'lng' => 69.28,
+             'happened_at' => now()->toIso8601String(), 'is_mock' => false],
+        ]);
+        $this->assertSame(0, $count);
+        $this->assertSame(0, \App\Models\ChefLocationEvent::count());
+    }
+
+    public function test_record_location_events_rejects_invalid_event_type(): void
+    {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->svc->recordLocationEvents($this->chef, [
+            ['event_type' => 'lunch', 'lat' => 41.31, 'lng' => 69.27,
+             'happened_at' => now()->toIso8601String(), 'is_mock' => false],
+        ]);
+    }
 }
