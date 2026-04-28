@@ -518,6 +518,7 @@ Route::group(['prefix' => 'addelkadir', 'middleware' => ['isAddelkadir', 'auth']
     Route::get('selfie/{id}/{type}', [AddelkadirController::class, 'selfie'])->name('addelkadir.selfie');
     Route::get('kindgardens', [AddelkadirController::class, 'kindgardens'])->name('addelkadir.kindgardens');
     Route::post('kindgardens/{id}', [AddelkadirController::class, 'updateKindgardenCoords'])->name('addelkadir.kindgardens.update');
+    Route::get('chefs', [AddelkadirController::class, 'chefs'])->name('addelkadir.chefs');
 });
 
 

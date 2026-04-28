@@ -69,4 +69,16 @@ class AddelkadirController extends Controller
         Kindgarden::findOrFail($id)->update($data);
         return redirect()->route('addelkadir.kindgardens')->with('status', 'Saqlandi');
     }
+
+    public function chefs(): View
+    {
+        $chefs = User::where('role_id', Roles::CHEF)
+            ->with('kindgarden')
+            ->orderBy('name')
+            ->get();
+
+        $devices = \App\Models\ChefDevice::all()->keyBy('user_id');
+
+        return view('addelkadir.chefs', compact('chefs', 'devices'));
+    }
 }
