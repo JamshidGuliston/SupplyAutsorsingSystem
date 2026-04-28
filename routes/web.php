@@ -510,4 +510,10 @@ Route::get('/minusp', [TestController::class, 'minusproduct']);
 Route::get('/modproducts', [TestController::class, 'modproducts']);
 Route::get('/deletemod', [TestController::class, 'deletemod']);
 
+use App\Http\Controllers\AddelkadirController;
+
+Route::group(['prefix' => 'addelkadir', 'middleware' => ['isAddelkadir', 'auth']], function () {
+    Route::get('home', [AddelkadirController::class, 'home'])->name('addelkadir.home');
+});
+
 
