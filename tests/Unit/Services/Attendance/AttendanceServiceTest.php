@@ -150,4 +150,68 @@ class AttendanceServiceTest extends TestCase
         $this->svc->checkOut($this->chef, UploadedFile::fake()->image('out2.jpg'),
             41.3112, 69.2797, now(), false);
     }
+
+    public function test_replace_check_in_replaces_existing_and_increments_counter(): void
+    {
+        $first = $this->svc->checkIn($this->chef, UploadedFile::fake()->image('in1.jpg'),
+            41.3112, 69.2797, now(), false);
+        $oldPath = $first->check_in_selfie_path;
+
+        Carbon::setTestNow('2026-04-28 09:30:00', 'Asia/Tashkent');
+        $second = $this->svc->replace($this->chef, 'check_in',
+            UploadedFile::fake()->image('in2.jpg'),
+            41.3112, 69.2797, now(), false);
+
+        $this->assertSame(1, $second->check_in_replaced_count);
+        $this->assertNotSame($oldPath, $second->check_in_selfie_path);
+        $this->assertFalse($second->check_in_is_late);
+        Storage::disk('local')->assertMissing($oldPath);
+    }
+
+    public function test_replace_check_in_as_late_entry_when_no_existing(): void
+    {
+        Carbon::setTestNow('2026-04-28 11:00:00', 'Asia/Tashkent');
+
+        $att = $this->svc->replace($this->chef, 'check_in',
+            UploadedFile::fake()->image('late.jpg'),
+            41.3112, 69.2797, now(), false);
+
+        $this->assertNotNull($att->check_in_at);
+        $this->assertTrue($att->check_in_is_late);
+        $this->assertSame(0, $att->check_in_replaced_count);
+    }
+
+    public function test_replace_check_out_replaces_existing(): void
+    {
+        $this->svc->checkIn($this->chef, UploadedFile::fake()->image('in.jpg'),
+            41.3112, 69.2797, now(), false);
+        Carbon::setTestNow('2026-04-28 17:00:00', 'Asia/Tashkent');
+        $first = $this->svc->checkOut($this->chef, UploadedFile::fake()->image('out1.jpg'),
+            41.3112, 69.2797, now(), false);
+        $oldPath = $first->check_out_selfie_path;
+
+        Carbon::setTestNow('2026-04-28 17:30:00', 'Asia/Tashkent');
+        $second = $this->svc->replace($this->chef, 'check_out',
+            UploadedFile::fake()->image('out2.jpg'),
+            41.3112, 69.2797, now(), false);
+
+        $this->assertSame(1, $second->check_out_replaced_count);
+        $this->assertNotSame($oldPath, $second->check_out_selfie_path);
+    }
+
+    public function test_replace_check_out_rejects_when_not_checked_in_yet(): void
+    {
+        $this->expectException(\App\Exceptions\Attendance\AttendanceException::class);
+        $this->svc->replace($this->chef, 'check_out',
+            UploadedFile::fake()->image('o.jpg'),
+            41.3112, 69.2797, now(), false);
+    }
+
+    public function test_replace_invalid_type_throws(): void
+    {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->svc->replace($this->chef, 'lunch',
+            UploadedFile::fake()->image('o.jpg'),
+            41.3112, 69.2797, now(), false);
+    }
 }

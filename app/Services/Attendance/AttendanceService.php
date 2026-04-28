@@ -120,4 +120,77 @@ class AttendanceService
             return $row->fresh();
         });
     }
+
+    public function replace(User $user, string $type, UploadedFile $photo, float $lat, float $lng, Carbon $capturedAt, bool $isMock): ChefAttendance
+    {
+        if (!in_array($type, ['check_in', 'check_out'], true)) {
+            throw new \InvalidArgumentException("Unsupported replace type: {$type}");
+        }
+
+        $kg = $this->resolveKindgarden($user);
+        $this->guardCapture($capturedAt, $isMock);
+        $distanceM = $this->guardGeofence($kg, $lat, $lng);
+
+        $today = $capturedAt->copy()->setTimezone('Asia/Tashkent')->toDateString();
+
+        return DB::transaction(function () use ($user, $kg, $type, $photo, $lat, $lng, $capturedAt, $distanceM, $today) {
+            $row = ChefAttendance::where('user_id', $user->id)->where('date', $today)->first();
+
+            if ($type === 'check_in') {
+                return $this->applyCheckInReplace($row, $user, $kg, $photo, $lat, $lng, $capturedAt, $distanceM, $today);
+            }
+            return $this->applyCheckOutReplace($row, $user, $photo, $lat, $lng, $capturedAt, $distanceM, $today);
+        });
+    }
+
+    private function applyCheckInReplace(?ChefAttendance $row, User $user, Kindgarden $kg, UploadedFile $photo, float $lat, float $lng, Carbon $capturedAt, int $distanceM, string $today): ChefAttendance
+    {
+        $isLateEntry = !$row || !$row->check_in_at;
+        $oldPath = $row?->check_in_selfie_path;
+        $newPath = $this->storage->store($photo, $user->id, 'check_in', $today);
+
+        $row = $row ?? new ChefAttendance([
+            'user_id' => $user->id,
+            'kindgarden_id' => $kg->id,
+            'date' => $today,
+        ]);
+        $row->fill([
+            'check_in_at' => $capturedAt,
+            'check_in_lat' => $lat,
+            'check_in_lng' => $lng,
+            'check_in_distance_m' => $distanceM,
+            'check_in_selfie_path' => $newPath,
+            'check_in_is_late' => $isLateEntry,
+            'check_in_replaced_count' => $isLateEntry ? 0 : ($row->check_in_replaced_count + 1),
+        ]);
+        $row->save();
+        if (!$isLateEntry && $oldPath) {
+            $this->storage->delete($oldPath);
+        }
+        return $row->fresh();
+    }
+
+    private function applyCheckOutReplace(?ChefAttendance $row, User $user, UploadedFile $photo, float $lat, float $lng, Carbon $capturedAt, int $distanceM, string $today): ChefAttendance
+    {
+        if (!$row || !$row->check_in_at) {
+            throw new \App\Exceptions\Attendance\NotCheckedInException();
+        }
+        $oldPath = $row->check_out_selfie_path;
+        $newPath = $this->storage->store($photo, $user->id, 'check_out', $today);
+
+        $isFirstCheckOut = $row->check_out_at === null;
+        $row->fill([
+            'check_out_at' => $capturedAt,
+            'check_out_lat' => $lat,
+            'check_out_lng' => $lng,
+            'check_out_distance_m' => $distanceM,
+            'check_out_selfie_path' => $newPath,
+            'check_out_replaced_count' => $isFirstCheckOut ? 0 : ($row->check_out_replaced_count + 1),
+        ])->save();
+
+        if (!$isFirstCheckOut && $oldPath) {
+            $this->storage->delete($oldPath);
+        }
+        return $row->fresh();
+    }
 }
