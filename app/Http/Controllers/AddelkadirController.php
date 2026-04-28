@@ -52,4 +52,21 @@ class AddelkadirController extends Controller
         abort_if(!$path, 404);
         return response()->file(storage_path('app/' . $path));
     }
+
+    public function kindgardens(): View
+    {
+        $items = Kindgarden::orderBy('id')->get();
+        return view('addelkadir.kindgardens', compact('items'));
+    }
+
+    public function updateKindgardenCoords(Request $request, int $id)
+    {
+        $data = $request->validate([
+            'lat' => 'required|numeric|between:-90,90',
+            'lng' => 'required|numeric|between:-180,180',
+            'geofence_radius' => 'required|integer|min:50|max:1000',
+        ]);
+        Kindgarden::findOrFail($id)->update($data);
+        return redirect()->route('addelkadir.kindgardens')->with('status', 'Saqlandi');
+    }
 }
