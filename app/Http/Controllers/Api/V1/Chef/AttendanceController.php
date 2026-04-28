@@ -43,6 +43,28 @@ class AttendanceController extends Controller
         return response()->json(['attendance' => $att]);
     }
 
+    public function today(Request $request): JsonResponse
+    {
+        $user = $request->user();
+        $kg = $user->kindgarden()->first();
+        $today = now()->setTimezone('Asia/Tashkent')->toDateString();
+
+        $row = $kg
+            ? \App\Models\ChefAttendance::where('user_id', $user->id)->where('date', $today)->first()
+            : null;
+
+        return response()->json([
+            'attendance' => $row,
+            'kindgarden' => $kg ? [
+                'id' => $kg->id,
+                'lat' => $kg->lat,
+                'lng' => $kg->lng,
+                'geofence_radius' => (int) ($kg->geofence_radius ?: 200),
+            ] : null,
+            'server_time' => now()->toIso8601String(),
+        ]);
+    }
+
     private function validateAttendancePayload(Request $request): array
     {
         $validated = $request->validate([
