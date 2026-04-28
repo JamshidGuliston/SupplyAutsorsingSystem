@@ -37,5 +37,14 @@ class Handler extends ExceptionHandler
         $this->reportable(function (Throwable $e) {
             //
         });
+
+        $this->renderable(function (\App\Exceptions\Attendance\AttendanceException $e, $request) {
+            if ($request->wantsJson() || $request->is('api/*')) {
+                return response()->json([
+                    'error' => $e->errorCode(),
+                    'message' => $e->getMessage(),
+                ] + $e->context(), $e->httpStatus());
+            }
+        });
     }
 }
