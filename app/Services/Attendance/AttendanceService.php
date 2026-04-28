@@ -90,4 +90,34 @@ class AttendanceService
         }
         return $distance;
     }
+
+    public function checkOut(User $user, UploadedFile $photo, float $lat, float $lng, Carbon $capturedAt, bool $isMock): ChefAttendance
+    {
+        $kg = $this->resolveKindgarden($user);
+        $this->guardCapture($capturedAt, $isMock);
+        $distanceM = $this->guardGeofence($kg, $lat, $lng);
+
+        $today = $capturedAt->copy()->setTimezone('Asia/Tashkent')->toDateString();
+
+        return DB::transaction(function () use ($user, $photo, $lat, $lng, $capturedAt, $distanceM, $today) {
+            $row = ChefAttendance::where('user_id', $user->id)->where('date', $today)->first();
+            if (!$row || !$row->check_in_at) {
+                throw new \App\Exceptions\Attendance\NotCheckedInException();
+            }
+            if ($row->check_out_at) {
+                throw new AlreadyCheckedOutException();
+            }
+
+            $path = $this->storage->store($photo, $user->id, 'check_out', $today);
+            $row->fill([
+                'check_out_at' => $capturedAt,
+                'check_out_lat' => $lat,
+                'check_out_lng' => $lng,
+                'check_out_distance_m' => $distanceM,
+                'check_out_selfie_path' => $path,
+            ])->save();
+
+            return $row->fresh();
+        });
+    }
 }

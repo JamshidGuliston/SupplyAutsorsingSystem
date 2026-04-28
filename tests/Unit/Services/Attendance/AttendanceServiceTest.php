@@ -4,6 +4,7 @@ namespace Tests\Unit\Services\Attendance;
 
 use App\Constants\Roles;
 use App\Exceptions\Attendance\AlreadyCheckedInException;
+use App\Exceptions\Attendance\AlreadyCheckedOutException;
 use App\Exceptions\Attendance\KindgardenCoordsNotSetException;
 use App\Exceptions\Attendance\MockGpsDetectedException;
 use App\Exceptions\Attendance\OutsideGeofenceException;
@@ -114,5 +115,39 @@ class AttendanceServiceTest extends TestCase
         $this->expectException(StaleCaptureException::class);
         $this->svc->checkIn($this->chef, UploadedFile::fake()->image('a.jpg'),
             41.3112, 69.2797, now()->subMinutes(10), false);
+    }
+
+    public function test_check_out_happy_path(): void
+    {
+        $this->svc->checkIn($this->chef, UploadedFile::fake()->image('in.jpg'),
+            41.3112, 69.2797, now(), false);
+
+        Carbon::setTestNow('2026-04-28 17:00:00', 'Asia/Tashkent');
+
+        $att = $this->svc->checkOut($this->chef, UploadedFile::fake()->image('out.jpg'),
+            41.3112, 69.2797, now(), false);
+
+        $this->assertNotNull($att->check_out_at);
+        Storage::disk('local')->assertExists($att->check_out_selfie_path);
+    }
+
+    public function test_check_out_rejects_when_not_checked_in(): void
+    {
+        $this->expectException(\App\Exceptions\Attendance\AttendanceException::class);
+        $this->svc->checkOut($this->chef, UploadedFile::fake()->image('out.jpg'),
+            41.3112, 69.2797, now(), false);
+    }
+
+    public function test_check_out_rejects_when_already_checked_out(): void
+    {
+        $this->svc->checkIn($this->chef, UploadedFile::fake()->image('in.jpg'),
+            41.3112, 69.2797, now(), false);
+        Carbon::setTestNow('2026-04-28 17:00:00', 'Asia/Tashkent');
+        $this->svc->checkOut($this->chef, UploadedFile::fake()->image('out.jpg'),
+            41.3112, 69.2797, now(), false);
+
+        $this->expectException(AlreadyCheckedOutException::class);
+        $this->svc->checkOut($this->chef, UploadedFile::fake()->image('out2.jpg'),
+            41.3112, 69.2797, now(), false);
     }
 }
