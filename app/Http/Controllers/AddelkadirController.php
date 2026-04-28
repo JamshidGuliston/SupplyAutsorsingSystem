@@ -30,4 +30,26 @@ class AddelkadirController extends Controller
             'today' => $today,
         ]);
     }
+
+    public function attendance(Request $request): View
+    {
+        $from = $request->input('from', now()->subDays(7)->toDateString());
+        $to = $request->input('to', now()->toDateString());
+
+        $rows = ChefAttendance::with('user', 'kindgarden')
+            ->whereBetween('date', [$from, $to])
+            ->orderByDesc('date')
+            ->paginate(50);
+
+        return view('addelkadir.attendance', compact('rows', 'from', 'to'));
+    }
+
+    public function selfie(Request $request, int $attendanceId, string $type)
+    {
+        abort_unless(in_array($type, ['check_in', 'check_out'], true), 404);
+        $att = ChefAttendance::findOrFail($attendanceId);
+        $path = $type === 'check_in' ? $att->check_in_selfie_path : $att->check_out_selfie_path;
+        abort_if(!$path, 404);
+        return response()->file(storage_path('app/' . $path));
+    }
 }
