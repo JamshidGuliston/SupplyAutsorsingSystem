@@ -22,6 +22,16 @@ class AttendanceController extends Controller
         return response()->json(['attendance' => $att]);
     }
 
+    public function checkOut(Request $request): JsonResponse
+    {
+        $data = $this->validateAttendancePayload($request);
+        $att = $this->svc->checkOut(
+            $request->user(), $data['photo'], $data['lat'], $data['lng'],
+            $data['captured_at'], $data['is_mock'],
+        );
+        return response()->json(['attendance' => $att]);
+    }
+
     private function validateAttendancePayload(Request $request): array
     {
         $validated = $request->validate([
