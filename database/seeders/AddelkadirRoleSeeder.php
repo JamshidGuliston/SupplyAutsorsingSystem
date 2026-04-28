@@ -3,22 +3,15 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\DB;
+use TCG\Voyager\Models\Role;
 
 class AddelkadirRoleSeeder extends Seeder
 {
     public function run(): void
     {
-        $exists = DB::table('roles')->where('id', 8)->exists();
-        if ($exists) {
-            return;
+        $role = Role::firstOrNew(['name' => 'addelkadir']);
+        if (!$role->exists) {
+            $role->fill(['display_name' => 'Addelkadir'])->save();
         }
-        DB::table('roles')->insert([
-            'id' => 8,
-            'name' => 'addelkadir',
-            'display_name' => 'Addelkadir',
-            'created_at' => now(),
-            'updated_at' => now(),
-        ]);
     }
 }

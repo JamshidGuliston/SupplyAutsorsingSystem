@@ -233,15 +233,14 @@ class AttendanceServiceTest extends TestCase
         $this->assertGreaterThan(800, $first->distance_m);
     }
 
-    public function test_record_location_events_skips_when_kindgarden_coords_missing(): void
+    public function test_record_location_events_throws_when_kindgarden_coords_missing(): void
     {
         $this->kg->update(['lat' => null, 'lng' => null]);
-        $count = $this->svc->recordLocationEvents($this->chef, [
+        $this->expectException(KindgardenCoordsNotSetException::class);
+        $this->svc->recordLocationEvents($this->chef, [
             ['event_type' => 'exit', 'lat' => 41.32, 'lng' => 69.28,
              'happened_at' => now()->toIso8601String(), 'is_mock' => false],
         ]);
-        $this->assertSame(0, $count);
-        $this->assertSame(0, \App\Models\ChefLocationEvent::count());
     }
 
     public function test_record_location_events_rejects_invalid_event_type(): void

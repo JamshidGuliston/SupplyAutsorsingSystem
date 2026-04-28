@@ -196,10 +196,10 @@ class AttendanceService
 
     public function recordLocationEvents(User $user, array $events): int
     {
-        $kg = $user->kindgarden()->first();
-        if (!$kg || $kg->lat === null || $kg->lng === null) {
+        if (empty($events)) {
             return 0;
         }
+        $kg = $this->resolveKindgarden($user);
         $allowed = ['exit', 'enter', 'beacon'];
 
         $rows = [];

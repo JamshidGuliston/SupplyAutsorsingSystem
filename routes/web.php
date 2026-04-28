@@ -512,7 +512,7 @@ Route::get('/deletemod', [TestController::class, 'deletemod']);
 
 use App\Http\Controllers\AddelkadirController;
 
-Route::group(['prefix' => 'addelkadir', 'middleware' => ['isAddelkadir', 'auth']], function () {
+Route::group(['prefix' => 'addelkadir', 'middleware' => ['auth', 'isAddelkadir']], function () {
     Route::get('home', [AddelkadirController::class, 'home'])->name('addelkadir.home');
     Route::get('attendance', [AddelkadirController::class, 'attendance'])->name('addelkadir.attendance');
     Route::get('selfie/{id}/{type}', [AddelkadirController::class, 'selfie'])->name('addelkadir.selfie');
