@@ -7,6 +7,19 @@ jest.mock('react-native-keychain', () => {
   };
 });
 
+// authStore now transitively imports the attendance flusher (which uses NetInfo)
+// and the FCM helper. Mock both so this unit test stays focused on auth state.
+jest.mock('../src/attendance/attendanceFlusher', () => ({
+  startFlusher: jest.fn(),
+  stopFlusher: jest.fn(),
+  flushOnce: jest.fn().mockResolvedValue({ sent: 0, failed: 0, remaining: 0 }),
+}));
+
+jest.mock('../src/push/fcm', () => ({
+  requestPushPermission: jest.fn().mockResolvedValue(false),
+  registerDeviceWithBackend: jest.fn().mockResolvedValue(undefined),
+}));
+
 import { useAuthStore } from '../src/auth/authStore';
 
 describe('authStore', () => {
