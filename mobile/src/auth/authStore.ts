@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import { saveToken, clearToken } from './tokenStore';
+import { startFlusher, stopFlusher } from '../attendance/attendanceFlusher';
 
 export interface AuthUser {
   id: number;
@@ -25,8 +26,10 @@ export const useAuthStore = create<AuthState>((set) => ({
   setSession: async (user, token) => {
     await saveToken(token);
     set({ user, status: 'authenticated' });
+    startFlusher();
   },
   clearSession: async () => {
+    stopFlusher();
     await clearToken();
     set({ user: null, status: 'unauthenticated' });
   },
