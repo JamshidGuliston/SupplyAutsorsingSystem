@@ -27,7 +27,14 @@ export function useSessionRestore(): void {
           useAuthStore.setState({ status: 'authenticated' });
           startFlusher();
         }
-      } catch {
+      } catch (e: any) {
+        const status = e?.response?.status;
+        // 401 is already handled by the api client interceptor (clears token).
+        // For 403 (role no longer allowed) or any other non-recoverable error,
+        // clear the stale token here so the next launch goes straight to login.
+        if (status === 403) {
+          await useAuthStore.getState().clearSession();
+        }
         if (!cancelled) setStatus('unauthenticated');
       }
     })();
