@@ -18,3 +18,15 @@ yarn-error.log
 /.vscode
 .osp
 .bin
+
+# React Native mobile project
+/mobile/node_modules
+/mobile/android/.gradle
+/mobile/android/app/build
+/mobile/android/build
+/mobile/android/local.properties
+/mobile/android/app/release/
+/mobile/ios/Pods
+/mobile/ios/build
+/mobile/.env
+/mobile/android/app/google-services.json
