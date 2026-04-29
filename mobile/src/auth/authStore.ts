@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import { saveToken, clearToken } from './tokenStore';
 import { startFlusher, stopFlusher } from '../attendance/attendanceFlusher';
+import { registerDeviceWithBackend } from '../push/fcm';
 
 export interface AuthUser {
   id: number;
@@ -27,6 +28,7 @@ export const useAuthStore = create<AuthState>((set) => ({
     await saveToken(token);
     set({ user, status: 'authenticated' });
     startFlusher();
+    void registerDeviceWithBackend('1.0.0').catch(() => { /* swallow — not critical */ });
   },
   clearSession: async () => {
     stopFlusher();
