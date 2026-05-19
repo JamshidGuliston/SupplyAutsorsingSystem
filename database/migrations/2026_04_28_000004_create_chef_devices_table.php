@@ -19,7 +19,8 @@ class CreateChefDevicesTable extends Migration
             $table->timestamps();
 
             $table->unique(['user_id', 'fcm_token'], 'uniq_user_token');
-            $table->foreign('user_id')->references('id')->on('users');
+            $table->index('user_id', 'idx_user_id');
+            // FK constraint intentionally omitted (see chef_attendances note).
         });
     }
 

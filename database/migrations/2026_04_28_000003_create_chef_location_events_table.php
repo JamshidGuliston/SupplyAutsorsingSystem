@@ -22,8 +22,7 @@ class CreateChefLocationEventsTable extends Migration
 
             $table->index(['user_id', 'happened_at'], 'idx_user_happened');
             $table->index(['kindgarden_id', 'happened_at'], 'idx_kindgarden_happened');
-            $table->foreign('user_id')->references('id')->on('users');
-            $table->foreign('kindgarden_id')->references('id')->on('kindgardens');
+            // FK constraints intentionally omitted (see chef_attendances note).
         });
     }
 

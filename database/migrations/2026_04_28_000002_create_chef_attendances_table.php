@@ -33,8 +33,11 @@ class CreateChefAttendancesTable extends Migration
 
             $table->unique(['user_id', 'date'], 'uniq_user_date');
             $table->index(['kindgarden_id', 'date'], 'idx_kindgarden_date');
-            $table->foreign('user_id')->references('id')->on('users');
-            $table->foreign('kindgarden_id')->references('id')->on('kindgardens');
+            $table->index('user_id', 'idx_user_id');
+            // FK constraints intentionally omitted: existing kindgardens.id
+            // and users.id may be INT (legacy increments()) while our column
+            // is BIGINT. Referential integrity is enforced at the service
+            // layer (AttendanceService::resolveKindgarden).
         });
     }
 
