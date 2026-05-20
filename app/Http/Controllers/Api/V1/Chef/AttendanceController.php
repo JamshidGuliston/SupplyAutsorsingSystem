@@ -43,6 +43,24 @@ class AttendanceController extends Controller
         return response()->json(['attendance' => $att]);
     }
 
+    public function undoCheckOut(Request $request): JsonResponse
+    {
+        $validated = $request->validate([
+            'lat' => 'required|numeric|between:-90,90',
+            'lng' => 'required|numeric|between:-180,180',
+            'captured_at' => 'required|date',
+            'is_mock' => 'required|boolean',
+        ]);
+        $att = $this->svc->undoCheckOut(
+            $request->user(),
+            (float) $validated['lat'],
+            (float) $validated['lng'],
+            Carbon::parse($validated['captured_at']),
+            (bool) $validated['is_mock'],
+        );
+        return response()->json(['attendance' => $att]);
+    }
+
     public function today(Request $request): JsonResponse
     {
         $user = $request->user();

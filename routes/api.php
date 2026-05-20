@@ -35,6 +35,7 @@ Route::prefix('v1')->group(function () {
             Route::post('check-in', [AttendanceController::class, 'checkIn']);
             Route::post('check-out', [AttendanceController::class, 'checkOut']);
             Route::post('replace', [AttendanceController::class, 'replace']);
+            Route::post('undo-check-out', [AttendanceController::class, 'undoCheckOut']);
             Route::get('today', [AttendanceController::class, 'today']);
         });
         Route::post('location-events', [LocationEventController::class, 'store'])

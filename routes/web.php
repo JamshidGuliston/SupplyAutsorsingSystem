@@ -516,6 +516,7 @@ Route::group(['prefix' => 'addelkadir', 'middleware' => ['auth', 'isAddelkadir']
     Route::get('home', [AddelkadirController::class, 'home'])->name('addelkadir.home');
     Route::get('attendance', [AddelkadirController::class, 'attendance'])->name('addelkadir.attendance');
     Route::get('selfie/{id}/{type}', [AddelkadirController::class, 'selfie'])->name('addelkadir.selfie');
+    Route::post('attendance/{id}/undo-check-out', [AddelkadirController::class, 'undoCheckOut'])->name('addelkadir.attendance.undo_check_out');
     Route::get('kindgardens', [AddelkadirController::class, 'kindgardens'])->name('addelkadir.kindgardens');
     Route::post('kindgardens/{id}', [AddelkadirController::class, 'updateKindgardenCoords'])->name('addelkadir.kindgardens.update');
     Route::get('chefs', [AddelkadirController::class, 'chefs'])->name('addelkadir.chefs');

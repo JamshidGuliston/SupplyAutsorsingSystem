@@ -11,7 +11,7 @@ class ChefAttendance extends Model
         'check_in_at', 'check_in_lat', 'check_in_lng', 'check_in_distance_m',
         'check_in_selfie_path', 'check_in_is_late', 'check_in_replaced_count',
         'check_out_at', 'check_out_lat', 'check_out_lng', 'check_out_distance_m',
-        'check_out_selfie_path', 'check_out_replaced_count',
+        'check_out_selfie_path', 'check_out_replaced_count', 'check_out_undo_count',
     ];
 
     protected $casts = [

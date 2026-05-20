@@ -6,7 +6,9 @@ use App\Models\ChefAttendance;
 use App\Models\Kindgarden;
 use App\Models\User;
 use App\Constants\Roles;
+use App\Services\Attendance\AttendanceService;
 use Illuminate\Http\Request;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
 
 class AddelkadirController extends Controller
@@ -68,6 +70,16 @@ class AddelkadirController extends Controller
         ]);
         Kindgarden::findOrFail($id)->update($data);
         return redirect()->route('addelkadir.kindgardens')->with('status', 'Saqlandi');
+    }
+
+    public function undoCheckOut(int $attendanceId, AttendanceService $svc): RedirectResponse
+    {
+        try {
+            $svc->adminUndoCheckOut($attendanceId);
+            return back()->with('status', 'Ketish bekor qilindi.');
+        } catch (\App\Exceptions\Attendance\NotCheckedOutException $e) {
+            return back()->with('error', $e->getMessage());
+        }
     }
 
     public function chefs(): View

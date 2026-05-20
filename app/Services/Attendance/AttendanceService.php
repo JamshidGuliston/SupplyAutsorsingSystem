@@ -121,6 +121,70 @@ class AttendanceService
         });
     }
 
+    /**
+     * Chef-initiated undo: clears check_out_* fields (the chef accidentally
+     * pressed "Ketdim"). Requires the chef to be physically inside the
+     * geofence (same checks as check-in) so this can't be abused remotely.
+     */
+    public function undoCheckOut(User $user, float $lat, float $lng, Carbon $capturedAt, bool $isMock): ChefAttendance
+    {
+        $kg = $this->resolveKindgarden($user);
+        $this->guardCapture($capturedAt, $isMock);
+        $this->guardGeofence($kg, $lat, $lng);
+
+        $today = $capturedAt->copy()->setTimezone('Asia/Tashkent')->toDateString();
+
+        return DB::transaction(function () use ($user, $today) {
+            $row = ChefAttendance::where('user_id', $user->id)->where('date', $today)->first();
+            if (!$row || !$row->check_out_at) {
+                throw new \App\Exceptions\Attendance\NotCheckedOutException();
+            }
+
+            $oldPath = $row->check_out_selfie_path;
+            $row->fill([
+                'check_out_at' => null,
+                'check_out_lat' => null,
+                'check_out_lng' => null,
+                'check_out_distance_m' => null,
+                'check_out_selfie_path' => null,
+                'check_out_undo_count' => $row->check_out_undo_count + 1,
+            ])->save();
+
+            if ($oldPath) {
+                $this->storage->delete($oldPath);
+            }
+            return $row->fresh();
+        });
+    }
+
+    /**
+     * Addelkadir-initiated undo by attendance row id. Same field clearing as
+     * the chef-side version but no geofence/mock checks — the admin is acting
+     * on behalf of the chef and may not be at the kindergarten.
+     */
+    public function adminUndoCheckOut(int $attendanceId): ChefAttendance
+    {
+        return DB::transaction(function () use ($attendanceId) {
+            $row = ChefAttendance::findOrFail($attendanceId);
+            if (!$row->check_out_at) {
+                throw new \App\Exceptions\Attendance\NotCheckedOutException();
+            }
+            $oldPath = $row->check_out_selfie_path;
+            $row->fill([
+                'check_out_at' => null,
+                'check_out_lat' => null,
+                'check_out_lng' => null,
+                'check_out_distance_m' => null,
+                'check_out_selfie_path' => null,
+                'check_out_undo_count' => $row->check_out_undo_count + 1,
+            ])->save();
+            if ($oldPath) {
+                $this->storage->delete($oldPath);
+            }
+            return $row->fresh();
+        });
+    }
+
     public function replace(User $user, string $type, UploadedFile $photo, float $lat, float $lng, Carbon $capturedAt, bool $isMock): ChefAttendance
     {
         if (!in_array($type, ['check_in', 'check_out'], true)) {
