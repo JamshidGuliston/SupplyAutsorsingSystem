@@ -17,11 +17,11 @@
         <td>{{ $r->date->format('Y-m-d') }}</td>
         <td>{{ optional($r->user)->name }}</td>
         <td>{{ optional($r->kindgarden)->kingar_name }}</td>
-        <td>{{ optional($r->check_in_at)->format('H:i') ?? '—' }}
+        <td>{{ $r->check_in_at ? $r->check_in_at->copy()->setTimezone('Asia/Tashkent')->format('H:i') : '—' }}
             @if($r->check_in_is_late)<span class="badge bg-warning">kech</span>@endif
             @if($r->check_in_replaced_count > 0)<span class="badge bg-info">o'zg.{{$r->check_in_replaced_count}}</span>@endif
         </td>
-        <td>{{ optional($r->check_out_at)->format('H:i') ?? '—' }}</td>
+        <td>{{ $r->check_out_at ? $r->check_out_at->copy()->setTimezone('Asia/Tashkent')->format('H:i') : '—' }}</td>
         <td>
             @if($r->check_in_selfie_path)
                 <a target="_blank" href="{{ route('addelkadir.selfie', [$r->id, 'check_in']) }}">in</a>

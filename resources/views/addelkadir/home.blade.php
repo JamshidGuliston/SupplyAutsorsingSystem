@@ -30,8 +30,8 @@
         <tr>
             <td>{{ optional($r->user)->name }}</td>
             <td>{{ optional($r->kindgarden)->kingar_name }}</td>
-            <td>{{ optional($r->check_in_at)->format('H:i') ?? '—' }} @if($r->check_in_is_late)<span class="badge bg-warning">kechikdi</span>@endif</td>
-            <td>{{ optional($r->check_out_at)->format('H:i') ?? '—' }}</td>
+            <td>{{ $r->check_in_at ? $r->check_in_at->copy()->setTimezone('Asia/Tashkent')->format('H:i') : '—' }} @if($r->check_in_is_late)<span class="badge bg-warning">kechikdi</span>@endif</td>
+            <td>{{ $r->check_out_at ? $r->check_out_at->copy()->setTimezone('Asia/Tashkent')->format('H:i') : '—' }}</td>
             <td>
                 @if($r->check_in_at && !$r->check_out_at)<span class="badge bg-success">Bog'chada</span>
                 @elseif($r->check_out_at)<span class="badge bg-secondary">Ketgan</span>
