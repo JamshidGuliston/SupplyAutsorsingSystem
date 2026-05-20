@@ -43,7 +43,7 @@ class RedirectIfAuthenticated
             elseif(Auth::guard($guard)->check() and auth()->user()->role_id == 7){
                 return redirect()->route('casher.home');
             }
-            elseif (Auth::guard($guard)->check() and auth()->user()->role_id == 8) {
+            elseif (Auth::guard($guard)->check() and auth()->user()->role_id == 10) {
                 return redirect()->route('addelkadir.home');
             }
 
