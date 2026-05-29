@@ -11,7 +11,7 @@
         <select name="chef_id" class="form-select">
             <option value="">Barcha oshpazlar</option>
             @foreach ($chefs as $c)
-                <option value="{{ $c->id }}" @selected($chefId == $c->id)>{{ $c->name }}</option>
+                <option value="{{ $c->id }}" @selected((int) $chefId === $c->id)>{{ $c->name }}</option>
             @endforeach
         </select>
     </div>
@@ -28,7 +28,7 @@
 
 <div class="card mb-3">
     <div class="card-body">
-        Bugun: <strong>{{ $counts['exit'] }}</strong> chiqish hodisasi &middot;
+        <strong>{{ $date }}</strong> uchun: <strong>{{ $counts['exit'] }}</strong> chiqish hodisasi &middot;
         Jami tashqarida: <strong>{{ $minutesOutside }}</strong> daq &middot;
         <strong>{{ $counts['beacon'] }}</strong> ta heartbeat &middot;
         <strong>{{ $counts['enter'] }}</strong> ta kirish

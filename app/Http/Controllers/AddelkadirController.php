@@ -115,6 +115,7 @@ class AddelkadirController extends Controller
 
         $events = $query->paginate(100)->withQueryString();
 
+        // Stats intentionally ignore $eventType so totals always reflect the full day.
         $allForStats = ChefLocationEvent::whereDate('happened_at', $date)
             ->when($chefId, fn ($q) => $q->where('user_id', $chefId))
             ->orderBy('happened_at')
