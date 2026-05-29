@@ -15,6 +15,7 @@
             <a class="text-white me-3" href="{{ url('addelkadir/attendance') }}">Davomat</a>
             <a class="text-white me-3" href="{{ url('addelkadir/kindgardens') }}">Bog'chalar</a>
             <a class="text-white me-3" href="{{ url('addelkadir/chefs') }}">Oshpazlar</a>
+            <a class="text-white me-3" href="{{ route('addelkadir.location-events') }}">Lokatsiya</a>
             <a class="text-white" href="{{ route('logout') }}"
                onclick="event.preventDefault();document.getElementById('logout-form').submit();">Chiqish</a>
             <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">@csrf</form>
