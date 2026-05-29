@@ -520,6 +520,7 @@ Route::group(['prefix' => 'addelkadir', 'middleware' => ['auth', 'isAddelkadir']
     Route::get('kindgardens', [AddelkadirController::class, 'kindgardens'])->name('addelkadir.kindgardens');
     Route::post('kindgardens/{id}', [AddelkadirController::class, 'updateKindgardenCoords'])->name('addelkadir.kindgardens.update');
     Route::get('chefs', [AddelkadirController::class, 'chefs'])->name('addelkadir.chefs');
+    Route::get('location-events', [AddelkadirController::class, 'locationEvents'])->name('addelkadir.location-events');
 });
 
 

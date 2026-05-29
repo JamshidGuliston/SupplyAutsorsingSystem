@@ -3,8 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\ChefAttendance;
+use App\Models\ChefLocationEvent;
 use App\Models\Kindgarden;
 use App\Models\User;
+use App\Services\Attendance\LocationEventSummary;
 use App\Constants\Roles;
 use App\Services\Attendance\AttendanceService;
 use Illuminate\Http\Request;
@@ -92,5 +94,46 @@ class AddelkadirController extends Controller
         $devices = \App\Models\ChefDevice::all()->keyBy('user_id');
 
         return view('addelkadir.chefs', compact('chefs', 'devices'));
+    }
+
+    public function locationEvents(Request $request, LocationEventSummary $summary): View
+    {
+        $date = $request->input('date', now()->setTimezone('Asia/Tashkent')->toDateString());
+        $chefId = $request->input('chef_id');
+        $eventType = $request->input('event_type');
+
+        $query = ChefLocationEvent::with('user', 'kindgarden')
+            ->whereDate('happened_at', $date)
+            ->orderBy('happened_at');
+
+        if ($chefId) {
+            $query->where('user_id', $chefId);
+        }
+        if (in_array($eventType, ['exit', 'enter', 'beacon'], true)) {
+            $query->where('event_type', $eventType);
+        }
+
+        $events = $query->paginate(100)->withQueryString();
+
+        $allForStats = ChefLocationEvent::whereDate('happened_at', $date)
+            ->when($chefId, fn ($q) => $q->where('user_id', $chefId))
+            ->orderBy('happened_at')
+            ->get(['event_type', 'happened_at']);
+
+        $counts = $summary->countByType($allForStats);
+        $minutesOutside = $summary->totalMinutesOutside($allForStats);
+
+        $chefs = User::where('role_id', Roles::CHEF)->orderBy('name')->get(['id', 'name']);
+
+        return view('addelkadir.location_events', [
+            'events' => $events,
+            'summary' => $summary,
+            'counts' => $counts,
+            'minutesOutside' => $minutesOutside,
+            'chefs' => $chefs,
+            'date' => $date,
+            'chefId' => $chefId,
+            'eventType' => $eventType,
+        ]);
     }
 }
