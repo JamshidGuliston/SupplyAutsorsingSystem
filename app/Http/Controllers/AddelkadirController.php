@@ -9,6 +9,7 @@ use App\Models\User;
 use App\Services\Attendance\LocationEventSummary;
 use App\Constants\Roles;
 use App\Services\Attendance\AttendanceService;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
@@ -102,8 +103,11 @@ class AddelkadirController extends Controller
         $chefId = $request->input('chef_id');
         $eventType = $request->input('event_type');
 
+        $dayStart = Carbon::parse($date, 'Asia/Tashkent')->startOfDay()->utc();
+        $dayEnd = Carbon::parse($date, 'Asia/Tashkent')->endOfDay()->utc();
+
         $query = ChefLocationEvent::with('user', 'kindgarden')
-            ->whereDate('happened_at', $date)
+            ->whereBetween('happened_at', [$dayStart, $dayEnd])
             ->orderBy('happened_at');
 
         if ($chefId) {
@@ -116,7 +120,7 @@ class AddelkadirController extends Controller
         $events = $query->paginate(100)->withQueryString();
 
         // Stats intentionally ignore $eventType so totals always reflect the full day.
-        $allForStats = ChefLocationEvent::whereDate('happened_at', $date)
+        $allForStats = ChefLocationEvent::whereBetween('happened_at', [$dayStart, $dayEnd])
             ->when($chefId, fn ($q) => $q->where('user_id', $chefId))
             ->orderBy('happened_at')
             ->get(['event_type', 'happened_at']);

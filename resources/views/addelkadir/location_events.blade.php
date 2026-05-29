@@ -11,16 +11,16 @@
         <select name="chef_id" class="form-select">
             <option value="">Barcha oshpazlar</option>
             @foreach ($chefs as $c)
-                <option value="{{ $c->id }}" @selected((int) $chefId === $c->id)>{{ $c->name }}</option>
+                <option value="{{ $c->id }}" {{ (int) $chefId === $c->id ? 'selected' : '' }}>{{ $c->name }}</option>
             @endforeach
         </select>
     </div>
     <div class="col-auto">
         <select name="event_type" class="form-select">
             <option value="">Barcha hodisalar</option>
-            <option value="exit" @selected($eventType === 'exit')>Chiqish</option>
-            <option value="enter" @selected($eventType === 'enter')>Kirish</option>
-            <option value="beacon" @selected($eventType === 'beacon')>Heartbeat</option>
+            <option value="exit" {{ $eventType === 'exit' ? 'selected' : '' }}>Chiqish</option>
+            <option value="enter" {{ $eventType === 'enter' ? 'selected' : '' }}>Kirish</option>
+            <option value="beacon" {{ $eventType === 'beacon' ? 'selected' : '' }}>Heartbeat</option>
         </select>
     </div>
     <div class="col-auto"><button class="btn btn-primary">Filtr</button></div>
