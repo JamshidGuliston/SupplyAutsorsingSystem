@@ -46,4 +46,36 @@ class LocationEventSummaryTest extends TestCase
         $this->assertSame(0, $counts['enter']);
         $this->assertSame(0, $counts['beacon']);
     }
+
+    public function test_total_minutes_outside_pairs_exit_enter(): void
+    {
+        $summary = new LocationEventSummary();
+        $events = [
+            ['event_type' => 'exit', 'happened_at' => '2026-05-22 13:00:00'],
+            ['event_type' => 'enter', 'happened_at' => '2026-05-22 13:15:00'],
+            ['event_type' => 'beacon', 'happened_at' => '2026-05-22 13:45:00'],
+            ['event_type' => 'exit', 'happened_at' => '2026-05-22 14:00:00'],
+            ['event_type' => 'enter', 'happened_at' => '2026-05-22 14:30:00'],
+        ];
+        $this->assertSame(45, $summary->totalMinutesOutside($events));
+    }
+
+    public function test_unclosed_exit_is_ignored(): void
+    {
+        $summary = new LocationEventSummary();
+        $events = [
+            ['event_type' => 'exit', 'happened_at' => '2026-05-22 13:00:00'],
+        ];
+        $this->assertSame(0, $summary->totalMinutesOutside($events));
+    }
+
+    public function test_no_exits_is_zero(): void
+    {
+        $summary = new LocationEventSummary();
+        $events = [
+            ['event_type' => 'beacon', 'happened_at' => '2026-05-22 10:00:00'],
+            ['event_type' => 'beacon', 'happened_at' => '2026-05-22 11:00:00'],
+        ];
+        $this->assertSame(0, $summary->totalMinutesOutside($events));
+    }
 }
