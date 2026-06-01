@@ -1,18 +1,7 @@
-// react-native-mmkv v4 only exports `MMKV` as a type; runtime construction
-// goes through `createMMKV`. Tests mock the module to expose `MMKV` as a
-// constructor, so we keep that shape and resolve the value lazily.
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const mmkvModule: any = require('react-native-mmkv');
-const MMKVCtor: any = mmkvModule.MMKV ?? mmkvModule.createMMKV;
+import { MMKV } from 'react-native-mmkv';
 
 const KEY = 'attendance.queue.v1';
-const storage: {
-  getString: (k: string) => string | undefined;
-  set: (k: string, v: string) => void;
-  delete: (k: string) => void;
-} = mmkvModule.MMKV
-  ? new MMKVCtor({ id: 'attendance' })
-  : MMKVCtor({ id: 'attendance' });
+const storage = new MMKV({ id: 'attendance' });
 
 export type QueueKind = 'check_in' | 'check_out' | 'replace_check_in' | 'replace_check_out' | 'location_events';
 

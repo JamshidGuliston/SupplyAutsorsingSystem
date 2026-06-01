@@ -30,3 +30,11 @@ yarn-error.log
 /mobile/ios/build
 /mobile/.env
 /mobile/android/app/google-services.json
+
+# Firebase service account / admin SDK credentials — NEVER commit these
+firebase_credentials.json
+firebase-credentials.json
+**/firebase_credentials.json
+**/firebase-credentials.json
+*-firebase-adminsdk-*.json
+storage/app/firebase-credentials.json
