@@ -24,6 +24,16 @@ class Kernel extends ConsoleKernel
                  ->withoutOverlapping();
 
         $schedule->command('attendance:cleanup-photos')->dailyAt('03:00');
+
+        $schedule->command('chef:morning-reminder')
+                 ->dailyAt('08:00')
+                 ->timezone('Asia/Tashkent')
+                 ->withoutOverlapping();
+
+        $schedule->command('chef:notify-missing-checkin')
+                 ->dailyAt('09:15')
+                 ->timezone('Asia/Tashkent')
+                 ->withoutOverlapping();
     }
 
     /**
