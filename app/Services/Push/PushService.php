@@ -32,12 +32,13 @@ class PushService
         }
         $perTokenReports = [];
         foreach ($report->getItems() as $item) {
-            $error = $item->error();
             $errorCode = null;
-            if ($error !== null) {
-                $errorCode = method_exists($error, 'errors')
-                    ? ($error->errors()[0]['reason'] ?? $error->getMessage())
-                    : $error->getMessage();
+            if (!$item->isSuccess()) {
+                if ($item->messageWasSentToUnknownToken() || $item->messageTargetWasInvalid()) {
+                    $errorCode = 'messaging/registration-token-not-registered';
+                } else {
+                    $errorCode = $item->error()?->getMessage();
+                }
             }
             $perTokenReports[] = [
                 'token' => $item->target()->value(),

@@ -15,6 +15,15 @@ class AppServiceProvider extends ServiceProvider
     public function register()
     {
         //
+        $this->app->singleton(\Kreait\Firebase\Contract\Messaging::class, function () {
+            $credentials = config('services.firebase.credentials_path');
+            if (!$credentials) {
+                throw new \RuntimeException('FIREBASE_CREDENTIALS env var is not set');
+            }
+            return (new \Kreait\Firebase\Factory())
+                ->withServiceAccount($credentials)
+                ->createMessaging();
+        });
     }
 
     /**
