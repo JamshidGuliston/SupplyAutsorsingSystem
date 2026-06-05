@@ -34,4 +34,9 @@ return [
         'group_id' => env('TELEGRAM_GROUP_ID'),
     ],
 
+    'firebase' => [
+        'credentials_path' => env('FIREBASE_CREDENTIALS'),
+        'project_id' => env('FIREBASE_PROJECT_ID', 'chefmobile-ab8a1'),
+    ],
+
 ];
