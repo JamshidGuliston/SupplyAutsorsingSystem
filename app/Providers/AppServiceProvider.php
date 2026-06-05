@@ -25,5 +25,6 @@ class AppServiceProvider extends ServiceProvider
     public function boot()
     {
         //
+        \App\Models\order_product::observe(\App\Observers\OrderProductObserver::class);
     }
 }
