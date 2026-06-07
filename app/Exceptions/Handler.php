@@ -46,5 +46,14 @@ class Handler extends ExceptionHandler
                 ] + $e->context(), $e->httpStatus());
             }
         });
+
+        $this->renderable(function (\App\Exceptions\ChildrenCount\ChildrenCountException $e, $request) {
+            if ($request->wantsJson() || $request->is('api/*')) {
+                return response()->json([
+                    'error' => $e->errorCode(),
+                    'message' => $e->getMessage(),
+                ] + $e->context(), $e->httpStatus());
+            }
+        });
     }
 }
