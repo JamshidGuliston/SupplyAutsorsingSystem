@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, StyleSheet } from 'react-native';
+import { View, Text, Image, TextInput, StyleSheet } from 'react-native';
 import { ScreenContainer } from '../components/ScreenContainer';
 import { PrimaryButton } from '../components/PrimaryButton';
 import { ErrorBanner } from '../components/ErrorBanner';
@@ -35,7 +35,11 @@ export function LoginScreen() {
   return (
     <ScreenContainer>
       <View style={styles.center}>
-        <Text style={styles.title}>Chef Mobile</Text>
+        <Image
+          source={require('../assets/global_tam_logo.jpg')}
+          style={styles.logo}
+          resizeMode="contain"
+        />
         <Text style={styles.subtitle}>Kirish</Text>
         <ErrorBanner message={error} />
         <TextInput
@@ -61,9 +65,9 @@ export function LoginScreen() {
 }
 
 const styles = StyleSheet.create({
-  center: { flex: 1, justifyContent: 'center' },
-  title: { fontSize: 28, fontWeight: '700', color: colors.textPrimary, marginBottom: 4 },
-  subtitle: { fontSize: 16, color: colors.textMuted, marginBottom: 24 },
+  center: { flex: 1, justifyContent: 'center', alignItems: 'center' },
+  logo: { width: 240, height: 102, marginBottom: 12 },
+  subtitle: { fontSize: 16, color: colors.textMuted, marginBottom: 24, alignSelf: 'center' },
   input: {
     borderWidth: 1,
     borderColor: colors.border,
