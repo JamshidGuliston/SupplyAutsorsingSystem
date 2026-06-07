@@ -28,6 +28,16 @@ export function mapServerError(payload: ServerErrorPayload | undefined): string 
       return 'Bu hisob mobil ilovaga kirishi mumkin emas.';
     case 'rate_limited':
       return 'Juda ko\'p urinish. Bir oz kuting va qayta urinib ko\'ring.';
+    case 'time_window_closed':
+      return 'Hozir yuborish vaqti emas (03:00 - 21:00 oralig\'ida bo\'lishi kerak).';
+    case 'already_submitted_today':
+      return 'Bugungi son allaqachon yuborilgan. O\'zgartirish kerak bo\'lsa texnologga murojaat qiling.';
+    case 'nextday_not_ready':
+      return 'Texnolog kelajak kun uchun menyu sozlamagan. Texnologga murojaat qiling.';
+    case 'invalid_age_for_kindgarden':
+      return 'Tanlangan yosh toifasi bog\'chaga tegishli emas.';
+    case 'kindgarden_not_assigned':
+      return 'Sizning hisobingizga bog\'cha biriktirilmagan. Addelkadirga murojaat qiling.';
     default:
       return payload.message || 'Noma\'lum xato. Qayta urinib ko\'ring.';
   }
