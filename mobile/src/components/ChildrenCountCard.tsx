@@ -55,7 +55,8 @@ export function ChildrenCountCard() {
     );
   }
 
-  const today = new Date().toISOString().slice(0, 10);
+  const TASHKENT_OFFSET_MS = 5 * 60 * 60 * 1000;
+  const today = new Date(Date.now() + TASHKENT_OFFSET_MS).toISOString().slice(0, 10);
 
   // State C: closed or nextday not ready
   if (!data.time_window.allowed || !data.nextday_ready) {
@@ -81,9 +82,7 @@ export function ChildrenCountCard() {
   // State B: submitted
   if (data.submitted) {
     const submittedTime = data.submitted_at
-      ? new Date(data.submitted_at).toLocaleTimeString('uz-UZ', {
-          hour: '2-digit', minute: '2-digit', timeZone: 'Asia/Tashkent',
-        })
+      ? new Date(new Date(data.submitted_at).getTime() + TASHKENT_OFFSET_MS).toISOString().slice(11, 16)
       : '';
     return (
       <View style={styles.card}>

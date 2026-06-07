@@ -3,6 +3,7 @@
 namespace App\Services\ChildrenCount;
 
 use App\Exceptions\ChildrenCount\AlreadySubmittedTodayException;
+use App\Exceptions\ChildrenCount\IncompleteSubmissionException;
 use App\Exceptions\ChildrenCount\InvalidAgeForKindgardenException;
 use App\Exceptions\ChildrenCount\KindgardenNotAssignedException;
 use App\Exceptions\ChildrenCount\NextdayNotReadyException;
@@ -101,10 +102,15 @@ class ChildrenCountService
         }
 
         $allowedAgeIds = $kindgarden->age_range->pluck('id')->map(fn ($i) => (int) $i)->all();
-        foreach ($counts as $ageId => $value) {
-            if (!in_array((int) $ageId, $allowedAgeIds, true)) {
-                throw new InvalidAgeForKindgardenException((int) $ageId);
+        $submittedAgeIds = array_map('intval', array_keys($counts));
+        foreach ($submittedAgeIds as $ageId) {
+            if (!in_array($ageId, $allowedAgeIds, true)) {
+                throw new InvalidAgeForKindgardenException($ageId);
             }
+        }
+        $missing = array_values(array_diff($allowedAgeIds, $submittedAgeIds));
+        if (!empty($missing)) {
+            throw new IncompleteSubmissionException($missing);
         }
 
         DB::transaction(function () use ($kindgarden, $counts, $nextdayRows, $user, $now) {

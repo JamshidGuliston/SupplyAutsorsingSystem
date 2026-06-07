@@ -36,6 +36,8 @@ export function mapServerError(payload: ServerErrorPayload | undefined): string 
       return 'Texnolog kelajak kun uchun menyu sozlamagan. Texnologga murojaat qiling.';
     case 'invalid_age_for_kindgarden':
       return 'Tanlangan yosh toifasi bog\'chaga tegishli emas.';
+    case 'incomplete_submission':
+      return 'Barcha yosh toifalari uchun son kiriting.';
     case 'kindgarden_not_assigned':
       return 'Sizning hisobingizga bog\'cha biriktirilmagan. Addelkadirga murojaat qiling.';
     default:

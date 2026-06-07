@@ -122,14 +122,30 @@ class ChildrenCountTest extends TestCase
 
         Sanctum::actingAs($chef);
         $this->postJson('/api/v1/chef/children-count', [
-            'counts' => [(string) $age1->id => 30],
+            'counts' => [(string) $age1->id => 30, (string) $age2->id => 20],
         ])->assertOk();
 
         $r = $this->postJson('/api/v1/chef/children-count', [
-            'counts' => [(string) $age1->id => 31],
+            'counts' => [(string) $age1->id => 31, (string) $age2->id => 21],
         ]);
         $r->assertStatus(422);
         $r->assertJsonPath('error', 'already_submitted_today');
+    }
+
+    public function test_submit_rejects_incomplete_submission(): void
+    {
+        Carbon::setTestNow(Carbon::parse('2026-06-01 10:00:00', 'Asia/Tashkent'));
+        [$chef, $kg, $age1, $age2] = $this->chefWithKindgarden();
+
+        Sanctum::actingAs($chef);
+        // Submit only age1, omitting age2
+        $r = $this->postJson('/api/v1/chef/children-count', [
+            'counts' => [(string) $age1->id => 30],
+        ]);
+
+        $r->assertStatus(422);
+        $r->assertJsonPath('error', 'incomplete_submission');
+        $r->assertJsonPath('missing_age_ids.0', $age2->id);
     }
 
     public function test_submit_rejects_age_not_in_kindgarden(): void
