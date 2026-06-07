@@ -40,5 +40,8 @@ Route::prefix('v1')->group(function () {
         });
         Route::post('location-events', [LocationEventController::class, 'store'])
             ->middleware('throttle:60,1');
+        Route::get('children-count/today', [\App\Http\Controllers\Api\V1\Chef\ChildrenCountController::class, 'today']);
+        Route::post('children-count', [\App\Http\Controllers\Api\V1\Chef\ChildrenCountController::class, 'submit'])
+            ->middleware('throttle:30,1');
     });
 });
