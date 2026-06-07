@@ -34,13 +34,15 @@ export function LoginScreen() {
 
   return (
     <ScreenContainer>
-      <View style={styles.center}>
-        <Image
-          source={require('../assets/global_tam_logo.jpg')}
-          style={styles.logo}
-          resizeMode="contain"
-        />
-        <Text style={styles.subtitle}>Kirish</Text>
+      <View style={styles.wrap}>
+        <View style={styles.headerArea}>
+          <Image
+            source={require('../assets/global_tam_logo.jpg')}
+            style={styles.logo}
+            resizeMode="contain"
+          />
+          <Text style={styles.subtitle}>Kirish</Text>
+        </View>
         <ErrorBanner message={error} />
         <TextInput
           style={styles.input}
@@ -65,16 +67,19 @@ export function LoginScreen() {
 }
 
 const styles = StyleSheet.create({
-  center: { flex: 1, justifyContent: 'center', alignItems: 'center' },
-  logo: { width: 240, height: 102, marginBottom: 12 },
-  subtitle: { fontSize: 16, color: colors.textMuted, marginBottom: 24, alignSelf: 'center' },
+  wrap: { flex: 1, justifyContent: 'center', paddingHorizontal: 8 },
+  headerArea: { alignItems: 'center', marginBottom: 24 },
+  logo: { width: 280, height: 120, marginBottom: 12 },
+  subtitle: { fontSize: 18, color: colors.textMuted },
   input: {
+    width: '100%',
     borderWidth: 1,
     borderColor: colors.border,
     backgroundColor: '#fff',
-    borderRadius: 8,
-    padding: 12,
-    fontSize: 16,
-    marginBottom: 12,
+    borderRadius: 10,
+    paddingHorizontal: 16,
+    paddingVertical: 16,
+    fontSize: 17,
+    marginBottom: 14,
   },
 });
