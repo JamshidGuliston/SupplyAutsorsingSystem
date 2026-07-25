@@ -1238,7 +1238,6 @@ const styles = StyleSheet.create({
 ```
 
 `title` va `accent` yonma-yon ikkita alohida `AppText` sifatida chiziladi, biri ikkinchisining ichiga joylashtirilmaydi. Joylashtirilgan `Text` da `@testing-library/react-native` birlashgan matnni ko'radi va `getByText('Keldingiz — ')` topilmaydi — shuning uchun qatorli joylashuv ishlatiladi.
-```
 
 ```tsx
 // mobile/src/components/PageHeader.tsx
@@ -2029,7 +2028,7 @@ Expected: `tsc` exit 0; 11 suite, 58 test o'tadi.
 
 `mobile/README.md` dagi "Quick start" bo'limidan keyin quyidagi bo'lim qo'shiladi:
 
-```markdown
+````markdown
 ## Native dependency — rebuild required
 
 `react-native-svg` is a native module. After pulling changes that add or
@@ -2043,7 +2042,7 @@ npx react-native run-android
 
 Symptom of skipping this: the app crashes on launch with
 `Invariant Violation: requireNativeComponent: "RNSVGSvgView" was not found`.
-```
+````
 
 Shu bilan birga "Tests" bo'limidagi jumla yangilanadi: `Currently 13 unit tests across 5 suites pass: tashkent helpers, tokenStore, error mapping, authStore, attendanceQueue.` → `Currently 58 tests across 11 suites pass: the five original logic suites plus render tests for AppText, Button, Field, Section/Divider, Banner/StatusLine/PageHeader and the SVG icons.`
 
