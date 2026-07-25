@@ -1,11 +1,15 @@
 import React from 'react';
-import { Text, View, StyleSheet, Alert } from 'react-native';
-import { ScreenContainer } from '../components/ScreenContainer';
-import { PrimaryButton } from '../components/PrimaryButton';
+import { View, StyleSheet, Alert } from 'react-native';
+import { Screen } from '../components/Screen';
+import { Section } from '../components/Section';
+import { PageHeader } from '../components/PageHeader';
+import { AppText } from '../components/AppText';
+import { Button } from '../components/Button';
 import { useAuthStore } from '../auth/authStore';
 import { stopFlusher } from '../attendance/attendanceFlusher';
 import { clearAll as clearQueue } from '../attendance/attendanceQueue';
 import { colors } from '../theme/colors';
+import { spacing } from '../theme/spacing';
 
 export function ProfileScreen() {
   const { user, clearSession } = useAuthStore();
@@ -30,28 +34,26 @@ export function ProfileScreen() {
   };
 
   return (
-    <ScreenContainer>
-      <View>
-        <Text style={styles.h1}>Profil</Text>
+    <Screen>
+      <PageHeader title="Profil" />
+      <Section>
         {user && (
-          <View style={styles.box}>
-            <Text style={styles.label}>Ism</Text>
-            <Text style={styles.val}>{user.name}</Text>
-            <Text style={styles.label}>Email</Text>
-            <Text style={styles.val}>{user.email}</Text>
+          <View>
+            <AppText variant="muted" color={colors.inkMuted}>Ism</AppText>
+            <AppText variant="bodyStrong">{user.name}</AppText>
+            <AppText variant="muted" color={colors.inkMuted} style={styles.gap}>Email</AppText>
+            <AppText variant="bodyStrong">{user.email}</AppText>
           </View>
         )}
-        <View style={{ marginTop: 24 }}>
-          <PrimaryButton label="Chiqish" variant="danger" onPress={onLogout} />
+        <View style={styles.logout}>
+          <Button label="Chiqish" variant="danger" onPress={onLogout} />
         </View>
-      </View>
-    </ScreenContainer>
+      </Section>
+    </Screen>
   );
 }
 
 const styles = StyleSheet.create({
-  h1: { fontSize: 24, fontWeight: '700', marginBottom: 16, color: colors.ink },
-  box: { backgroundColor: '#fff', borderRadius: 8, padding: 14, borderWidth: 1, borderColor: colors.rule },
-  label: { fontSize: 12, color: colors.inkMuted, marginTop: 8 },
-  val: { fontSize: 16, color: colors.ink, fontWeight: '600' },
+  gap: { marginTop: spacing.md },
+  logout: { marginTop: spacing.xl },
 });

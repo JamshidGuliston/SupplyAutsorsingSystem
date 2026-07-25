@@ -46,6 +46,20 @@ For HTTPS staging/production, no change is needed.
 4. Start Metro: `npx react-native start`.
 5. In another terminal: `npx react-native run-android` (with a device or emulator running).
 
+## Native dependency — rebuild required
+
+`react-native-svg` is a native module. After pulling changes that add or
+update it, `npm install` alone is not enough — Metro cannot ship native code
+over a running app. Rebuild the APK:
+
+```bash
+cd mobile && npm install
+npx react-native run-android
+```
+
+Symptom of skipping this: the app crashes on launch with
+`Invariant Violation: requireNativeComponent: "RNSVGSvgView" was not found`.
+
 ## Environments
 
 `react-native-config` reads from `.env` (default), `.env.staging`, or `.env.production`. Build flavor selection happens via Gradle:
@@ -60,7 +74,7 @@ Talks to a Laravel backend exposing `/api/v1/...` (Plan 1 of the parent project)
 
 ## Tests
 
-`npx jest` runs unit tests. Currently 13 unit tests across 5 suites pass: tashkent helpers, tokenStore, error mapping, authStore, attendanceQueue. E2E tests are not yet wired (planned for a future iteration).
+`npx jest` runs unit tests. Currently 60 tests across 11 suites pass: the five original logic suites plus render tests for AppText, Button, Field, Section/Divider, Banner/StatusLine/PageHeader and the SVG icons. E2E tests are not yet wired (planned for a future iteration).
 
 ## Folder layout
 
