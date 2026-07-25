@@ -17,7 +17,7 @@ export function Field({ label, style, testID, ...rest }: Props) {
       <TextInput
         {...rest}
         testID={testID}
-        style={[styles.input, style]}
+        style={[styles.input, style, styles.lockedInk]}
         placeholderTextColor={colors.inkFaint}
       />
     </View>
@@ -39,4 +39,5 @@ const styles = StyleSheet.create({
     color: colors.ink,
     backgroundColor: colors.surface,
   },
+  lockedInk: { color: colors.ink },
 });

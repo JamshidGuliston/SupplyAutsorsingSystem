@@ -53,4 +53,11 @@ describe('Field', () => {
     const { getByTestId } = render(<Field label="Email" testID="f" />);
     expect(flat(getByTestId('f')).minHeight).toBe(52);
   });
+
+  it('tashqaridan berilgan style matn rangini bekor qila olmaydi', () => {
+    const { getByTestId } = render(
+      <Field label="Email" testID="f" style={{ color: '#FFFFFF' }} />,
+    );
+    expect(flat(getByTestId('f')).color).toBe('#0D0D0D');
+  });
 });
