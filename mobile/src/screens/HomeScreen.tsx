@@ -19,6 +19,7 @@ export function HomeScreen() {
   return (
     <Screen>
       <ScrollView
+        keyboardShouldPersistTaps="handled"
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
       >
         <ChildrenCountSection />
