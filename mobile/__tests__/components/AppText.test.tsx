@@ -38,4 +38,31 @@ describe('AppText', () => {
     const { getByText } = render(<AppText variant={'yoq' as any}>Salom</AppText>);
     expect(flat(getByText('Salom')).fontSize).toBe(15);
   });
+
+  it('o\'ziga xos stil variantning asosini bekor qiladi', () => {
+    const { getByText } = render(
+      <AppText variant="h1" style={{ fontSize: 11 }}>
+        Davomat
+      </AppText>
+    );
+    expect(flat(getByText('Davomat')).fontSize).toBe(11);
+  });
+
+  it('o\'ziga xos stil color propni bekor qiladi', () => {
+    const { getByText } = render(
+      <AppText color="#EF5B3C" style={{ color: '#111111' }}>
+        Salom
+      </AppText>
+    );
+    expect(flat(getByText('Salom')).color).toBe('#111111');
+  });
+
+  it('color prop variantning asosida rangni bekor qiladi', () => {
+    const { getByText } = render(
+      <AppText variant="h1" color="#EF5B3C">
+        Davomat
+      </AppText>
+    );
+    expect(flat(getByText('Davomat')).color).toBe('#EF5B3C');
+  });
 });

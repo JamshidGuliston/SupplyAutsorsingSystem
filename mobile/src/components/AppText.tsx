@@ -6,7 +6,6 @@ import { colors } from '../theme/colors';
 type Props = TextProps & {
   variant?: TextVariant;
   color?: string;
-  style?: StyleProp<TextStyle>;
 };
 
 export function AppText({ variant = 'body', color = colors.ink, style, ...rest }: Props) {
