@@ -81,7 +81,7 @@ Talks to a Laravel backend exposing `/api/v1/...` (Plan 1 of the parent project)
 - `src/api/` — axios client, error mapping
 - `src/auth/` — keychain, login, session
 - `src/attendance/` — GPS, camera, queue, flusher, screens-data
-- `src/components/` — reusable UI primitives (ScreenContainer, PrimaryButton, ErrorBanner, OfflineIndicator)
+- `src/components/` — design-system primitives (AppText, Screen, Section, Field, Button, Banner, PageHeader, …) plus `icons/`
 - `src/navigation/` — RootNavigator, AuthStack, MainTabs
 - `src/screens/` — top-level screens (Login, Home, Attendance, Notifications, Profile)
 - `src/push/` — FCM token registration
