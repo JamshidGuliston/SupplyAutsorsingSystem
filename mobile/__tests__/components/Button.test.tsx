@@ -72,6 +72,23 @@ describe('Button', () => {
     expect(getByText('2/6 GPS koordinatasi olinmoqda...')).toBeTruthy();
   });
 
+  it('loading primary — marjon fon saqlanadi, kulrang bo\'lmaydi', () => {
+    const { getByTestId } = render(
+      <Button label="Kirish" onPress={() => {}} loading testID="b" />,
+    );
+    expect(flat(getByTestId('b')).backgroundColor).toBe('#EF5B3C');
+  });
+
+  it('loading outline — oq fon va 2px chegara saqlanadi', () => {
+    const { getByTestId } = render(
+      <Button label="Qayta" onPress={() => {}} variant="outline" loading testID="b" />,
+    );
+    const s = flat(getByTestId('b'));
+    expect(s.backgroundColor).toBe('#FFFFFF');
+    expect(s.borderWidth).toBe(2);
+    expect(s.borderColor).toBe('#0D0D0D');
+  });
+
   it('oddiy holatda onPress chaqiriladi', () => {
     const onPress = jest.fn();
     const { getByTestId } = render(<Button label="X" onPress={onPress} testID="b" />);
