@@ -43,7 +43,7 @@ Bu vazifa butun ilova bo'ylab rang nomlarini almashtiradi. Eski nomlar uchun ali
 
 **Interfaces:**
 - Consumes: —
-- Produces: `colors` (16 ta rang tokeni), `typography: Record<TextVariant, TextStyle>`, `TextVariant` tipi, `spacing`, `radius`, `hit`, `screen` obyektlari.
+- Produces: `colors` (18 ta rang tokeni), `typography: Record<TextVariant, TextStyle>`, `TextVariant` tipi, `spacing`, `radius`, `hit`, `screen` obyektlari.
 
 - [ ] **Step 1: `colors.ts` ni to'liq almashtirish**
 
