@@ -1,9 +1,15 @@
 import React, { useEffect, useState, useCallback } from 'react';
-import { Text, View, ScrollView, RefreshControl, StyleSheet } from 'react-native';
-import { ScreenContainer } from '../components/ScreenContainer';
-import { PrimaryButton } from '../components/PrimaryButton';
-import { ErrorBanner } from '../components/ErrorBanner';
+import { View, ScrollView, RefreshControl, StyleSheet } from 'react-native';
+import { Screen } from '../components/Screen';
+import { Section } from '../components/Section';
+import { Divider } from '../components/Divider';
+import { PageHeader } from '../components/PageHeader';
+import { Button } from '../components/Button';
+import { Banner } from '../components/Banner';
+import { StatusLine } from '../components/StatusLine';
+import { AppText } from '../components/AppText';
 import { colors } from '../theme/colors';
+import { spacing } from '../theme/spacing';
 import { useAttendanceStore } from '../attendance/attendanceStore';
 import { ensureLocation, ensureCamera } from '../attendance/permissions';
 import { getCurrentLocation } from '../attendance/locationService';
@@ -119,141 +125,112 @@ export function AttendanceScreen() {
   const checkedIn = !!today?.check_in_at;
   const checkedOut = !!today?.check_out_at;
 
+  const kgMeta = kindgarden
+    ? `radius ${kindgarden.geofence_radius}m` +
+      (kindgarden.lat != null
+        ? ` · ${kindgarden.lat.toFixed(4)}, ${kindgarden.lng?.toFixed(4)}`
+        : '')
+    : null;
+
   return (
-    <ScreenContainer>
-      <ScrollView
-        refreshControl={<RefreshControl refreshing={loading} onRefresh={refresh} />}
-      >
-        <Text style={styles.h1}>Davomat</Text>
-        {kindgarden && (
-          <Text style={styles.kg}>
-            Bog'cha #{kindgarden.id} · radius {kindgarden.geofence_radius}m
-            {kindgarden.lat != null && ` · ${kindgarden.lat.toFixed(4)}, ${kindgarden.lng?.toFixed(4)}`}
-          </Text>
-        )}
+    <Screen>
+      <ScrollView refreshControl={<RefreshControl refreshing={loading} onRefresh={refresh} />}>
+        <PageHeader
+          eyebrow={kindgarden ? `Bog'cha #${kindgarden.id}` : undefined}
+          title="Davomat"
+          meta={kgMeta}
+        />
+        <Divider />
 
-        <ErrorBanner message={actionError ?? error} />
-        {actionInfo && (
-          <View style={styles.infoBox}>
-            <Text style={styles.infoText}>{actionInfo}</Text>
-          </View>
-        )}
-        {progress && (
-          <View style={styles.progressBox}>
-            <Text style={styles.progressText}>{progress}</Text>
-          </View>
-        )}
-        {debugInfo && (
-          <View style={styles.debugBox}>
-            <Text style={styles.debugTitle}>Debug:</Text>
-            <Text style={styles.debugText}>{debugInfo}</Text>
-          </View>
-        )}
+        <Section>
+          <Banner tone="error" message={actionError ?? error} />
+          <Banner tone="success" message={actionInfo} />
 
-        <View style={styles.statusBox}>
-          <Text style={styles.muted}>BUGUN</Text>
-          {checkedIn ? (
-            <Text style={styles.statusOk}>
-              ✅ Keldim — {today!.check_in_at!.slice(11, 16)} ({today!.check_in_distance_m}m)
-              {today!.check_in_is_late && '  ⚠️ kechikkan'}
-            </Text>
+          <StatusLine
+            tone={checkedIn ? 'ok' : 'warn'}
+            title={checkedIn ? 'Keldingiz — ' : 'Hali kelmadingiz'}
+            accent={checkedIn ? today!.check_in_at!.slice(11, 16) : undefined}
+            detail={
+              checkedIn
+                ? `Bog'cha markazidan ${today!.check_in_distance_m}m` +
+                  (today!.check_in_is_late ? ' · kechikkan' : '')
+                : null
+            }
+          />
+        </Section>
+
+        <Divider />
+
+        <Section>
+          <StatusLine
+            tone={checkedOut ? 'ok' : checkedIn ? 'warn' : 'off'}
+            title={checkedOut ? 'Ketdingiz — ' : 'Hali ketmadingiz'}
+            accent={checkedOut ? today!.check_out_at!.slice(11, 16) : undefined}
+          />
+        </Section>
+
+        <Section style={styles.actions}>
+          {!checkedIn ? (
+            <Button
+              label="Keldim"
+              loadingLabel={progress}
+              onPress={() => onAction('check_in')}
+              loading={actionLoading === 'check_in'}
+            />
           ) : (
-            <Text style={styles.statusWarn}>⏰ Hali kelmadingiz</Text>
+            <Button
+              label="Kelishni qayta yuborish"
+              loadingLabel={progress}
+              variant="outline"
+              onPress={() => onAction('replace_check_in')}
+              loading={actionLoading === 'replace_check_in'}
+            />
           )}
-          {checkedOut && (
-            <Text style={styles.statusOk}>
-              ✅ Ketdim — {today!.check_out_at!.slice(11, 16)}
-            </Text>
+
+          <View style={styles.gap} />
+
+          {checkedIn && !checkedOut ? (
+            <Button
+              label="Ketdim"
+              loadingLabel={progress}
+              onPress={() => onAction('check_out')}
+              loading={actionLoading === 'check_out'}
+            />
+          ) : checkedOut ? (
+            <Button
+              label="Ketishni qayta yuborish"
+              loadingLabel={progress}
+              variant="outline"
+              onPress={() => onAction('replace_check_out')}
+              loading={actionLoading === 'replace_check_out'}
+            />
+          ) : (
+            <Button label="Ketdim" onPress={() => {}} disabled />
           )}
-        </View>
 
-        {!checkedIn ? (
-          <PrimaryButton
-            label="📷 Keldim"
-            variant="success"
-            onPress={() => onAction('check_in')}
-            loading={actionLoading === 'check_in'}
-          />
-        ) : (
-          <PrimaryButton
-            label="📷 Kelishni qayta yuborish"
-            onPress={() => onAction('replace_check_in')}
-            loading={actionLoading === 'replace_check_in'}
-          />
-        )}
-
-        <View style={{ height: 12 }} />
-
-        {checkedIn && !checkedOut ? (
-          <PrimaryButton
-            label="📷 Ketdim"
-            variant="danger"
-            onPress={() => onAction('check_out')}
-            loading={actionLoading === 'check_out'}
-          />
-        ) : checkedOut ? (
-          <PrimaryButton
-            label="📷 Ketishni qayta yuborish"
-            onPress={() => onAction('replace_check_out')}
-            loading={actionLoading === 'replace_check_out'}
-          />
-        ) : (
-          <PrimaryButton label="📷 Ketdim" onPress={() => {}} disabled />
-        )}
-
-        {!checkedIn && (
-          <View style={{ marginTop: 16 }}>
-            <Text style={styles.muted}>
+          {!checkedIn && (
+            <AppText variant="muted" color={colors.inkMuted} style={styles.hint}>
               Kelishni o'z vaqtida yuborolmadingizmi? Bog'chada turib yuqoridagi tugmani bosing —
               tizim avtomatik "kechikkan" deb belgilaydi.
-            </Text>
-          </View>
+            </AppText>
+          )}
+        </Section>
+
+        {__DEV__ && debugInfo && (
+          <Section style={styles.debug}>
+            <AppText variant="caption" color={colors.inkMuted}>
+              {debugInfo}
+            </AppText>
+          </Section>
         )}
       </ScrollView>
-    </ScreenContainer>
+    </Screen>
   );
 }
 
 const styles = StyleSheet.create({
-  h1: { fontSize: 24, fontWeight: '700', marginBottom: 4, color: colors.ink },
-  kg: { fontSize: 12, color: colors.inkMuted, marginBottom: 16 },
-  statusBox: {
-    backgroundColor: '#fff',
-    borderWidth: 1,
-    borderColor: colors.rule,
-    borderRadius: 8,
-    padding: 14,
-    marginBottom: 16,
-  },
-  infoBox: {
-    backgroundColor: '#E6F4EA',
-    borderWidth: 1,
-    borderColor: '#34A853',
-    borderRadius: 8,
-    padding: 12,
-    marginBottom: 12,
-  },
-  infoText: { color: '#1E4620', fontWeight: '600' },
-  progressBox: {
-    backgroundColor: '#FFF7E6',
-    borderWidth: 1,
-    borderColor: '#F4B400',
-    borderRadius: 8,
-    padding: 10,
-    marginBottom: 12,
-  },
-  progressText: { color: '#7A5C00', fontWeight: '600', fontSize: 13 },
-  debugBox: {
-    backgroundColor: '#F1F3F4',
-    borderWidth: 1,
-    borderColor: '#9AA0A6',
-    borderRadius: 8,
-    padding: 10,
-    marginBottom: 12,
-  },
-  debugTitle: { fontSize: 11, fontWeight: '700', color: '#3C4043', marginBottom: 4 },
-  debugText: { fontSize: 11, color: '#3C4043', fontFamily: 'monospace' },
-  muted: { fontSize: 11, color: colors.inkMuted },
-  statusOk: { fontSize: 16, color: colors.ok, marginTop: 6, fontWeight: '600' },
-  statusWarn: { fontSize: 16, color: colors.warn, marginTop: 6, fontWeight: '600' },
+  actions: { paddingTop: spacing.sm },
+  gap: { height: spacing.md },
+  hint: { marginTop: spacing.lg },
+  debug: { backgroundColor: colors.disabledBg },
 });
