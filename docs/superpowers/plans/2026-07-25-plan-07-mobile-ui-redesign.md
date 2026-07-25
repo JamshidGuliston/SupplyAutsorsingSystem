@@ -936,6 +936,7 @@ import React from 'react';
 import { View, TextInput, TextInputProps, StyleSheet } from 'react-native';
 import { AppText } from './AppText';
 import { colors } from '../theme/colors';
+import { typography } from '../theme/typography';
 import { radius, hit, spacing } from '../theme/spacing';
 
 type Props = TextInputProps & {
@@ -967,8 +968,8 @@ const styles = StyleSheet.create({
     borderRadius: radius.field,
     paddingHorizontal: 13,
     paddingVertical: 12,
-    fontSize: 15,
-    fontWeight: '600',
+    fontSize: typography.bodyStrong.fontSize,
+    fontWeight: typography.bodyStrong.fontWeight,
     color: colors.ink,
     backgroundColor: colors.surface,
   },
@@ -976,6 +977,8 @@ const styles = StyleSheet.create({
 ```
 
 `placeholderTextColor` `{...rest}` dan **keyin** yoziladi — shunda chaqiruvchi uni tasodifan tushirib qoldira olmaydi.
+
+Shrift o'lchami `typography.bodyStrong` dan olinadi, qo'lda yozilmaydi — shkala yagona manba bo'lib qoladi. `lineHeight` ataylab ko'chirilmaydi: Android'da `TextInput` ga `lineHeight` berilsa matn vertikal markazdan siljib, pastdan qirqilishi mumkin.
 
 - [ ] **Step 4: Testlarni ishga tushirish**
 
