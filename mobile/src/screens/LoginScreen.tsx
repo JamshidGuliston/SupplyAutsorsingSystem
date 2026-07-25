@@ -1,12 +1,14 @@
 import React, { useState } from 'react';
-import { View, Text, Image, TextInput, StyleSheet } from 'react-native';
-import { ScreenContainer } from '../components/ScreenContainer';
-import { PrimaryButton } from '../components/PrimaryButton';
-import { ErrorBanner } from '../components/ErrorBanner';
+import { View, Image, ScrollView, StyleSheet } from 'react-native';
+import { Screen } from '../components/Screen';
+import { Section } from '../components/Section';
+import { PageHeader } from '../components/PageHeader';
+import { Field } from '../components/Field';
+import { Button } from '../components/Button';
+import { Banner } from '../components/Banner';
 import { useAuthStore } from '../auth/authStore';
 import { login } from '../auth/loginApi';
 import { mapServerError } from '../api/errors';
-import { colors } from '../theme/colors';
 
 export function LoginScreen() {
   const [email, setEmail] = useState('');
@@ -33,53 +35,44 @@ export function LoginScreen() {
   };
 
   return (
-    <ScreenContainer>
-      <View style={styles.wrap}>
-        <View style={styles.headerArea}>
+    <Screen>
+      <ScrollView keyboardShouldPersistTaps="handled" contentContainerStyle={styles.scroll}>
+        <View style={styles.logoWrap}>
           <Image
             source={require('../assets/global_tam_logo.jpg')}
             style={styles.logo}
             resizeMode="contain"
           />
-          <Text style={styles.subtitle}>Kirish</Text>
         </View>
-        <ErrorBanner message={error} />
-        <TextInput
-          style={styles.input}
-          placeholder="Email"
-          autoCapitalize="none"
-          autoCorrect={false}
-          keyboardType="email-address"
-          value={email}
-          onChangeText={setEmail}
-        />
-        <TextInput
-          style={styles.input}
-          placeholder="Parol"
-          secureTextEntry
-          value={password}
-          onChangeText={setPassword}
-        />
-        <PrimaryButton label="Kirish" onPress={onSubmit} loading={loading} />
-      </View>
-    </ScreenContainer>
+        <PageHeader eyebrow="Oshpaz kabineti" title="Kirish" />
+        <Section style={styles.form}>
+          <Banner tone="error" message={error} />
+          <Field
+            label="Email"
+            placeholder="email@globaltam.uz"
+            autoCapitalize="none"
+            autoCorrect={false}
+            keyboardType="email-address"
+            value={email}
+            onChangeText={setEmail}
+          />
+          <Field
+            label="Parol"
+            placeholder="••••••••"
+            secureTextEntry
+            value={password}
+            onChangeText={setPassword}
+          />
+          <Button label="Kirish" onPress={onSubmit} loading={loading} />
+        </Section>
+      </ScrollView>
+    </Screen>
   );
 }
 
 const styles = StyleSheet.create({
-  wrap: { flex: 1, justifyContent: 'center', paddingHorizontal: 8 },
-  headerArea: { alignItems: 'center', marginBottom: 24 },
-  logo: { width: 280, height: 120, marginBottom: 12 },
-  subtitle: { fontSize: 18, color: colors.inkMuted },
-  input: {
-    width: '100%',
-    borderWidth: 1,
-    borderColor: colors.rule,
-    backgroundColor: '#fff',
-    borderRadius: 10,
-    paddingHorizontal: 16,
-    paddingVertical: 16,
-    fontSize: 17,
-    marginBottom: 14,
-  },
+  scroll: { flexGrow: 1, justifyContent: 'center' },
+  logoWrap: { alignItems: 'center', paddingTop: 26 },
+  logo: { width: 240, height: 96 },
+  form: { paddingTop: 2 },
 });
