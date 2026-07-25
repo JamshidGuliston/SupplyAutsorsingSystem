@@ -23,7 +23,8 @@ Har bir vazifaning talablari quyidagilarni o'z ichiga oladi:
 - **Ekran fayllarida hex rang, `fontSize` yoki `fontWeight` yozilmaydi.** Hammasi tokenlar va `AppText` orqali.
 - Yangi paket aniq versiya bilan qadaladi (`--save-exact`), `^` belgisisiz — loyihadagi mavjud amaliyot.
 - Import uslubi: to'g'ridan-to'g'ri fayl yo'li bilan (`import { Button } from '../components/Button'`). `theme/index.ts` va `components/index.ts` barrel fayllari bo'sh (`export {}`) holicha qoldiriladi — mavjud kod shu uslubda yozilgan.
-- Matn tili — o'zbekcha, mavjud ilovadagi so'zlar saqlanadi.
+- Matn tili — o'zbekcha. Mavjud xabarlar tarjima qilinmaydi va qayta yozilmaydi.
+- **Bezak elementlari bundan mustasno.** Matn ichidagi emoji (📷 ✅ ⏰ 📡), bullet belgilari va sababni takrorlovchi umumiy sarlavhalar C1 dizaynining bir qismi sifatida ataylab olib tashlanadi — bu matn yo'qotish emas, dizayn qarori. Ma'lumot beruvchi matn (xato sabablari, vaqt oynasi, holat vaqtlari, tugma yorliqlari) esa o'zgarishsiz saqlanadi.
 - Har vazifa oxirida commit qilinadi.
 
 **Spec'dan bitta chetlanish:** spec'da `okBg`/`warnBg` fonlarida matn rangi sifatida `ok`/`warn` ishlatilishi nazarda tutilgan edi. Kontrast hisoblanganda `#D08700` ustida `#FDF3E0` fonida atigi 2.7:1 chiqdi (WCAG AA uchun 4.5:1 kerak), `#14884A` esa 4.0:1. Shu sababli banner matni uchun ikkita qo'shimcha token kiritiladi: `okInk: '#0E6B39'` (5.9:1) va `warnInk: '#7A5200'` (6.2:1). Nuqta va chegara ranglari o'zgarishsiz `ok`/`warn` bo'lib qoladi.
