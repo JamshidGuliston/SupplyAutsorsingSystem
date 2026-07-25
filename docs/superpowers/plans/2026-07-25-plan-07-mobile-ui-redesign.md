@@ -18,6 +18,7 @@ Har bir vazifaning talablari quyidagilarni o'z ichiga oladi:
 
 - Barcha ish `mobile/` papkasida. Buyruqlar `mobile/` ichidan ishga tushiriladi.
 - **Boshlang'ich holat:** `npx jest` → 5 suite, 13 test o'tadi. `npx tsc --noEmit` → exit 0. Har vazifa oxirida ikkalasi ham shu holatda (yoki undan yaxshiroq) qolishi shart.
+- **Vazifalardagi kutilgan test raqamlari yo'l-yo'riq, mezon emas.** Review paytida topilgan kamchiliklar tuzatilganda testlar qo'shiladi va keyingi vazifalarning raqamlari eskiradi. Majburiy shart ikkitasi: butun suite yashil (bironta ham yiqilgan test yo'q) va `npx tsc --noEmit` exit 0. Raqam mos kelmasa — o'sha vazifa boshlanishidagi haqiqiy holatni o'lchang va o'zingiz qo'shgan testlar sonicha o'sganini tekshiring.
 - **Biznes mantiqqa tegilmaydi.** `react-query` chaqiruvlari, `onAction`, GPS/masofa hisobi, queue, `mapServerError`, auth — hech biri o'zgarmaydi. Faqat JSX va stillar almashadi.
 - **Ekran fayllarida hex rang, `fontSize` yoki `fontWeight` yozilmaydi.** Hammasi tokenlar va `AppText` orqali.
 - Yangi paket aniq versiya bilan qadaladi (`--save-exact`), `^` belgisisiz — loyihadagi mavjud amaliyot.
@@ -619,7 +620,7 @@ const styles = StyleSheet.create({
 - [ ] **Step 4: Testlarni ishga tushirish**
 
 Run: `npx jest && npx tsc --noEmit`
-Expected: 8 suite, 28 test o'tadi; `tsc` exit 0.
+Expected: 8 suite, 31 test o'tadi; `tsc` exit 0.
 
 - [ ] **Step 5: Commit**
 
@@ -838,7 +839,7 @@ const styles = StyleSheet.create({
 - [ ] **Step 4: Testlarni ishga tushirish**
 
 Run: `npx jest && npx tsc --noEmit`
-Expected: 9 suite, 36 test o'tadi; `tsc` exit 0.
+Expected: 9 suite, 39 test o'tadi; `tsc` exit 0.
 
 - [ ] **Step 5: Commit**
 
@@ -983,7 +984,7 @@ Shrift o'lchami `typography.bodyStrong` dan olinadi, qo'lda yozilmaydi — shkal
 - [ ] **Step 4: Testlarni ishga tushirish**
 
 Run: `npx jest && npx tsc --noEmit`
-Expected: 10 suite, 42 test o'tadi; `tsc` exit 0.
+Expected: 10 suite, 45 test o'tadi; `tsc` exit 0.
 
 - [ ] **Step 5: Commit**
 
@@ -1289,7 +1290,7 @@ const styles = StyleSheet.create({
 - [ ] **Step 4: Testlarni ishga tushirish**
 
 Run: `npx jest && npx tsc --noEmit`
-Expected: 11 suite, 55 test o'tadi; `tsc` exit 0.
+Expected: 11 suite, 58 test o'tadi; `tsc` exit 0.
 
 - [ ] **Step 5: Commit**
 
@@ -1398,7 +1399,7 @@ const styles = StyleSheet.create({
 - [ ] **Step 2: Kompilyatsiya va testlarni tekshirish**
 
 Run: `npx tsc --noEmit && npx jest`
-Expected: `tsc` exit 0; 11 suite, 55 test o'tadi.
+Expected: `tsc` exit 0; 11 suite, 58 test o'tadi.
 
 - [ ] **Step 3: Commit**
 
@@ -1646,7 +1647,7 @@ Logotip `HomeScreen` dan olib tashlandi — bog'cha nomi endi `PageHeader` ning 
 - [ ] **Step 4: Kompilyatsiya va testlarni tekshirish**
 
 Run: `npx tsc --noEmit && npx jest`
-Expected: `tsc` exit 0; 11 suite, 55 test o'tadi.
+Expected: `tsc` exit 0; 11 suite, 58 test o'tadi.
 
 - [ ] **Step 5: Commit**
 
@@ -1821,7 +1822,7 @@ Eski `progressBox` va `infoBox` `View` lari hamda ularga tegishli `styles` yozuv
 - [ ] **Step 2: Kompilyatsiya va testlarni tekshirish**
 
 Run: `npx tsc --noEmit && npx jest`
-Expected: `tsc` exit 0; 11 suite, 55 test o'tadi.
+Expected: `tsc` exit 0; 11 suite, 58 test o'tadi.
 
 - [ ] **Step 3: Debug oynasi yashiringanini kod bo'yicha tasdiqlash**
 
@@ -2022,7 +2023,7 @@ Expected: natija yo'q (exit 1).
 - [ ] **Step 6: Kompilyatsiya va testlarni tekshirish**
 
 Run: `npx tsc --noEmit && npx jest`
-Expected: `tsc` exit 0; 11 suite, 55 test o'tadi.
+Expected: `tsc` exit 0; 11 suite, 58 test o'tadi.
 
 - [ ] **Step 7: `README.md` ga native paket eslatmasini qo'shish**
 
@@ -2044,7 +2045,7 @@ Symptom of skipping this: the app crashes on launch with
 `Invariant Violation: requireNativeComponent: "RNSVGSvgView" was not found`.
 ```
 
-Shu bilan birga "Tests" bo'limidagi jumla yangilanadi: `Currently 13 unit tests across 5 suites pass: tashkent helpers, tokenStore, error mapping, authStore, attendanceQueue.` → `Currently 55 tests across 11 suites pass: the five original logic suites plus render tests for AppText, Button, Field, Section/Divider, Banner/StatusLine/PageHeader and the SVG icons.`
+Shu bilan birga "Tests" bo'limidagi jumla yangilanadi: `Currently 13 unit tests across 5 suites pass: tashkent helpers, tokenStore, error mapping, authStore, attendanceQueue.` → `Currently 58 tests across 11 suites pass: the five original logic suites plus render tests for AppText, Button, Field, Section/Divider, Banner/StatusLine/PageHeader and the SVG icons.`
 
 "Known limitations" ro'yxatiga tegilmaydi — undagi bandlar (mockGps native modul, dead-letter UI, Plan 4/5/6 ekranlari) bu ishga aloqador emas va hammasi hali ham o'z kuchida.
 
@@ -2105,7 +2106,7 @@ Topilgan nuqsonlar `docs/superpowers/plans/` dagi shu reja fayliga qo'shimcha bo
 Reja to'liq bajarilganda:
 
 - `npx tsc --noEmit` → exit 0
-- `npx jest` → 11 suite, 55 test o'tadi (boshlang'ich 5 suite / 13 testdan o'sgan)
+- `npx jest` → 11 suite, 58 test o'tadi (boshlang'ich 5 suite / 13 testdan o'sgan)
 - `mobile/src/screens/` va `mobile/src/components/` da bironta hex rang qolmaydi (`icons/` dan tashqari — u yerda ham rang prop orqali keladi)
 - Tungi rejimda login ishlaydi
 - Oshpaz debug ma'lumotlarini ko'rmaydi
