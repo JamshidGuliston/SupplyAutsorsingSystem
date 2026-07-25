@@ -17,7 +17,7 @@ export function ScreenContainer({ children }: { children: ReactNode }) {
 }
 
 const styles = StyleSheet.create({
-  safe: { flex: 1, backgroundColor: colors.bgLight },
+  safe: { flex: 1, backgroundColor: colors.surface },
   flex: { flex: 1 },
   body: { flex: 1, padding: 16 },
 });

@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import NetInfo from '@react-native-community/netinfo';
 import { peekAll } from '../attendance/attendanceQueue';
+import { colors } from '../theme/colors';
 
 export function OfflineIndicator() {
   const [online, setOnline] = useState<boolean>(true);
@@ -29,7 +30,7 @@ export function OfflineIndicator() {
 
 const styles = StyleSheet.create({
   box: { padding: 8, alignItems: 'center' },
-  offline: { backgroundColor: '#dc2626' },
-  queueing: { backgroundColor: '#f59e0b' },
+  offline: { backgroundColor: colors.danger },
+  queueing: { backgroundColor: colors.warn },
   text: { color: '#fff', fontSize: 12, fontWeight: '600' },
 });

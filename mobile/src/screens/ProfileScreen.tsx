@@ -50,8 +50,8 @@ export function ProfileScreen() {
 }
 
 const styles = StyleSheet.create({
-  h1: { fontSize: 24, fontWeight: '700', marginBottom: 16, color: colors.textPrimary },
-  box: { backgroundColor: '#fff', borderRadius: 8, padding: 14, borderWidth: 1, borderColor: colors.border },
-  label: { fontSize: 12, color: colors.textMuted, marginTop: 8 },
-  val: { fontSize: 16, color: colors.textPrimary, fontWeight: '600' },
+  h1: { fontSize: 24, fontWeight: '700', marginBottom: 16, color: colors.ink },
+  box: { backgroundColor: '#fff', borderRadius: 8, padding: 14, borderWidth: 1, borderColor: colors.rule },
+  label: { fontSize: 12, color: colors.inkMuted, marginTop: 8 },
+  val: { fontSize: 16, color: colors.ink, fontWeight: '600' },
 });

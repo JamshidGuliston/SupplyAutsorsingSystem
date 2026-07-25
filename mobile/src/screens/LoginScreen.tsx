@@ -70,11 +70,11 @@ const styles = StyleSheet.create({
   wrap: { flex: 1, justifyContent: 'center', paddingHorizontal: 8 },
   headerArea: { alignItems: 'center', marginBottom: 24 },
   logo: { width: 280, height: 120, marginBottom: 12 },
-  subtitle: { fontSize: 18, color: colors.textMuted },
+  subtitle: { fontSize: 18, color: colors.inkMuted },
   input: {
     width: '100%',
     borderWidth: 1,
-    borderColor: colors.border,
+    borderColor: colors.rule,
     backgroundColor: '#fff',
     borderRadius: 10,
     paddingHorizontal: 16,

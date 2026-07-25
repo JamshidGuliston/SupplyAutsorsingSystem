@@ -20,12 +20,12 @@ export function PrimaryButton({
   style?: ViewStyle;
 }) {
   const bg = disabled
-    ? colors.border
+    ? colors.rule
     : variant === 'success'
-    ? colors.success
+    ? colors.ok
     : variant === 'danger'
     ? colors.danger
-    : colors.primary;
+    : colors.brand;
   return (
     <Pressable
       onPress={onPress}

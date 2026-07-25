@@ -215,12 +215,12 @@ export function AttendanceScreen() {
 }
 
 const styles = StyleSheet.create({
-  h1: { fontSize: 24, fontWeight: '700', marginBottom: 4, color: colors.textPrimary },
-  kg: { fontSize: 12, color: colors.textMuted, marginBottom: 16 },
+  h1: { fontSize: 24, fontWeight: '700', marginBottom: 4, color: colors.ink },
+  kg: { fontSize: 12, color: colors.inkMuted, marginBottom: 16 },
   statusBox: {
     backgroundColor: '#fff',
     borderWidth: 1,
-    borderColor: colors.border,
+    borderColor: colors.rule,
     borderRadius: 8,
     padding: 14,
     marginBottom: 16,
@@ -253,7 +253,7 @@ const styles = StyleSheet.create({
   },
   debugTitle: { fontSize: 11, fontWeight: '700', color: '#3C4043', marginBottom: 4 },
   debugText: { fontSize: 11, color: '#3C4043', fontFamily: 'monospace' },
-  muted: { fontSize: 11, color: colors.textMuted },
-  statusOk: { fontSize: 16, color: colors.success, marginTop: 6, fontWeight: '600' },
-  statusWarn: { fontSize: 16, color: colors.warning, marginTop: 6, fontWeight: '600' },
+  muted: { fontSize: 11, color: colors.inkMuted },
+  statusOk: { fontSize: 16, color: colors.ok, marginTop: 6, fontWeight: '600' },
+  statusWarn: { fontSize: 16, color: colors.warn, marginTop: 6, fontWeight: '600' },
 });

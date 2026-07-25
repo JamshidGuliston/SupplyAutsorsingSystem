@@ -15,7 +15,7 @@ export function MainTabs() {
   return (
     <Tab.Navigator
       screenOptions={{
-        tabBarActiveTintColor: colors.primary,
+        tabBarActiveTintColor: colors.brand,
         headerShown: false,
       }}
     >
