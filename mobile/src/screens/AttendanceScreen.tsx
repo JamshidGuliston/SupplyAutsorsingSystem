@@ -126,10 +126,7 @@ export function AttendanceScreen() {
   const checkedOut = !!today?.check_out_at;
 
   const kgMeta = kindgarden
-    ? `radius ${kindgarden.geofence_radius}m` +
-      (kindgarden.lat != null
-        ? ` · ${kindgarden.lat.toFixed(4)}, ${kindgarden.lng?.toFixed(4)}`
-        : '')
+    ? `Ruxsat etilgan masofa: ${kindgarden.geofence_radius}m`
     : null;
 
   return (
