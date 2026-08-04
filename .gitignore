@@ -37,4 +37,14 @@ firebase-credentials.json
 **/firebase_credentials.json
 **/firebase-credentials.json
 *-firebase-adminsdk-*.json
+chefmobile-credentials.json
+**/chefmobile-credentials.json
+/storage/app/secrets/
 storage/app/firebase-credentials.json
+
+# Android release signing — the keystore and its passwords must NEVER be committed.
+# They live outside the repo: the .jks under ~/.android-keystores/ and the
+# CHEFMOBILE_* properties in ~/.gradle/gradle.properties.
+*.jks
+*.keystore
+!/mobile/android/app/debug.keystore

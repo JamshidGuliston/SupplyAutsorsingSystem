@@ -62,11 +62,72 @@ Symptom of skipping this: the app crashes on launch with
 
 ## Environments
 
-`react-native-config` reads from `.env` (default), `.env.staging`, or `.env.production`. Build flavor selection happens via Gradle:
+`react-native-config` reads the API base URL from an env file at build time.
 
-- Debug: `cd android && ./gradlew assembleDebug` — uses `.env`
-- Staging: `./gradlew assembleStagingRelease` — uses `.env.staging`
-- Production: `./gradlew assembleProductionRelease` — uses `.env.production`
+**There are no product flavors in this project** — only the `debug` and `release`
+build types. Earlier revisions of this README documented
+`assembleStagingRelease` / `assembleProductionRelease`; those Gradle tasks do
+not exist and never did.
+
+Because there is no flavor whose name matches `staging` or `production`,
+`assembleRelease` falls through to the default `.env`. Do not rely on that —
+name the file explicitly with the `ENVFILE` variable, so the build cannot
+silently pick up whatever `.env` happens to contain:
+
+```bash
+cd mobile/android
+ENVFILE=.env.production ./gradlew assembleRelease   # production API
+ENVFILE=.env.staging    ./gradlew assembleRelease   # staging API
+./gradlew assembleDebug                             # uses .env
+```
+
+Gradle prints `Reading env from: <file>` early in the build — check that line
+matches what you intended before shipping the APK.
+
+Note `.env` is gitignored, so a fresh clone has no `.env` at all and the build
+would warn and produce an app with no API URL. `.env.production` and
+`.env.staging` are committed.
+
+## Release build
+
+The release build is signed with a real keystore. **It is not in this repo and
+must never be.** The keystore lives at `~/.android-keystores/chefmobile-release.jks`
+and its credentials in `~/.gradle/gradle.properties`:
+
+```properties
+CHEFMOBILE_STORE_FILE=C:/Users/<you>/.android-keystores/chefmobile-release.jks
+CHEFMOBILE_KEY_ALIAS=chefmobile
+CHEFMOBILE_STORE_PASSWORD=...
+CHEFMOBILE_KEY_PASSWORD=...
+```
+
+Without those four properties a release build **fails with an explicit error**
+rather than falling back to the debug key — a debug-signed release installs
+fine, so that mistake would otherwise go unnoticed until the Play Store
+rejected it.
+
+```bash
+cd mobile/android
+ENVFILE=.env.production ./gradlew clean assembleRelease
+```
+
+Output: `android/app/build/outputs/apk/release/app-release.apk`
+
+**Back up the keystore.** Lose it and you can never ship an update that
+existing installs will accept — the app would have to be uninstalled and
+reinstalled on every phone.
+
+**Changing signing key breaks in-place updates.** Builds before v1.1.0 were
+signed with the debug key. A phone carrying one of those must uninstall the app
+before installing a release-signed APK; Android refuses to update across a
+signature change.
+
+Bump `versionCode` in `android/app/build.gradle` for every build you hand out,
+otherwise you cannot tell two APKs apart on a device.
+
+For Google Play you would want an app bundle (`./gradlew bundleRelease`,
+producing an `.aab`) rather than an APK, plus Play App Signing. Neither is set
+up here — the current setup targets APKs distributed by hand.
 
 ## Backend API
 
