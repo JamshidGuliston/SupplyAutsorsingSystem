@@ -37,7 +37,6 @@ export function Button({
   icon,
   loading = false,
   progress,
-  loadingLabel,
   disabled = false,
   style,
   testID,
@@ -49,7 +48,6 @@ export function Button({
   icon?: (p: IconProps) => JSX.Element;
   loading?: boolean;
   progress?: Progress | null;
-  loadingLabel?: string | null; // Task 9 da o'chiriladi
   disabled?: boolean;
   style?: StyleProp<ViewStyle>;
   testID?: string;
@@ -83,7 +81,7 @@ export function Button({
           />
           <View style={styles.row}>
             <ActivityIndicator color={tone.fg} />
-            <AppText variant={textVariant} color={tone.fg} style={styles.loadingLabel}>
+            <AppText variant={textVariant} color={tone.fg} style={styles.progressLabel}>
               {progress.label}
             </AppText>
             <AppText variant={textVariant} color={tone.fg} style={styles.step}>
@@ -92,14 +90,7 @@ export function Button({
           </View>
         </>
       ) : loading ? (
-        <View style={styles.row}>
-          <ActivityIndicator color={tone.fg} />
-          {!!loadingLabel && (
-            <AppText variant={textVariant} color={tone.fg} style={styles.loadingLabel}>
-              {loadingLabel}
-            </AppText>
-          )}
-        </View>
+        <ActivityIndicator color={tone.fg} />
       ) : (
         <View style={styles.row}>
           {icon && <View style={styles.icon}>{icon({ size: 18, color: tone.fg })}</View>}
@@ -129,6 +120,6 @@ const styles = StyleSheet.create({
   },
   row: { flexDirection: 'row', alignItems: 'center' },
   icon: { marginRight: 9 },
-  loadingLabel: { marginLeft: spacing.sm, flexShrink: 1 },
+  progressLabel: { marginLeft: spacing.sm, flexShrink: 1 },
   step: { marginLeft: spacing.sm, opacity: 0.6 },
 });

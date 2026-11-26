@@ -1,45 +1,61 @@
 import React, { useEffect, useState, useCallback } from 'react';
-import { View, ScrollView, RefreshControl, StyleSheet } from 'react-native';
-import { Screen } from '../components/Screen';
+import { View, RefreshControl, StyleSheet } from 'react-native';
+import { HeroScreen } from '../components/HeroScreen';
 import { Section } from '../components/Section';
-import { Divider } from '../components/Divider';
-import { PageHeader } from '../components/PageHeader';
-import { Button } from '../components/Button';
+import { Button, Progress } from '../components/Button';
 import { Banner } from '../components/Banner';
-import { StatusLine } from '../components/StatusLine';
+import { Card } from '../components/Card';
+import { Skeleton } from '../components/Skeleton';
 import { AppText } from '../components/AppText';
+import { CameraIcon } from '../components/icons/CameraIcon';
+import { AttendanceHero } from '../components/attendance/AttendanceHero';
+import { AttendanceTimeline } from '../components/attendance/AttendanceTimeline';
+import { LoadFailed } from '../components/childrenCount/LoadFailed';
 import { colors } from '../theme/colors';
-import { spacing } from '../theme/spacing';
 import { useAttendanceStore } from '../attendance/attendanceStore';
 import { ensureLocation, ensureCamera } from '../attendance/permissions';
 import { getCurrentLocation } from '../attendance/locationService';
 import { captureSelfie } from '../attendance/selfieCapture';
 import { isMockGpsAllowed } from '../attendance/mockGps';
-import { enqueue } from '../attendance/attendanceQueue';
+import { enqueue, queuedCaptureToday } from '../attendance/attendanceQueue';
 import { postCheckIn, postCheckOut, postReplace, SubmitParams } from '../attendance/attendanceApi';
-import { mapServerError } from '../api/errors';
+import { ActionKind, attendanceActions, buildTimeline } from '../attendance/timeline';
+import { mapServerError, userFacingError } from '../api/errors';
 import { isoNowUtc } from '../lib/tashkent';
 import { haversineMeters } from '../lib/distance';
 
-type ActionKind = 'check_in' | 'check_out' | 'replace_check_in' | 'replace_check_out';
+const STEPS = [
+  'Ruxsatlar tekshirilmoqda',
+  'Joylashuv aniqlanmoqda',
+  'Masofa hisoblanmoqda',
+  'Selfi olinmoqda',
+  'Serverga yuborilmoqda',
+  'Yangilanmoqda',
+] as const;
+
+const stepProgress = (step: number): Progress => ({
+  step,
+  total: STEPS.length,
+  label: STEPS[step - 1],
+});
 
 export function AttendanceScreen() {
-  const { today, kindgarden, loading, error, refresh } = useAttendanceStore();
+  const { today, kindgarden, loading, loaded, error, refresh } = useAttendanceStore();
   const [actionLoading, setActionLoading] = useState<ActionKind | null>(null);
   const [actionError, setActionError] = useState<string | null>(null);
-  const [actionInfo, setActionInfo] = useState<string | null>(null);
-  const [progress, setProgress] = useState<string | null>(null);
+  const [enqueued, setEnqueued] = useState(false);
+  const [progress, setProgress] = useState<Progress | null>(null);
   const [debugInfo, setDebugInfo] = useState<string | null>(null);
 
   useEffect(() => { void refresh(); }, [refresh]);
 
   const onAction = useCallback(async (kind: ActionKind) => {
     setActionError(null);
-    setActionInfo(null);
+    setEnqueued(false);
     setDebugInfo(null);
     setActionLoading(kind);
     try {
-      setProgress('1/6 Ruxsatlar tekshirilmoqda...');
+      setProgress(stepProgress(1));
       const loc = await ensureLocation();
       if (loc !== 'granted') {
         setActionError('Lokatsiya ruxsati kerak. Sozlamalarda yoqing.');
@@ -51,12 +67,12 @@ export function AttendanceScreen() {
         return;
       }
 
-      setProgress('2/6 GPS koordinatasi olinmoqda...');
+      setProgress(stepProgress(2));
       const fix = await getCurrentLocation(15_000);
       const allowed = await isMockGpsAllowed();
       const isMock = fix.isMock || allowed;
 
-      setProgress('3/6 Masofa hisoblanmoqda...');
+      setProgress(stepProgress(3));
       if (kindgarden?.lat == null || kindgarden?.lng == null) {
         setActionError('Bog\'cha koordinatalari sozlanmagan. Addelkadirga murojaat qiling.');
         setDebugInfo(`kindgarden: ${JSON.stringify(kindgarden)}`);
@@ -71,10 +87,10 @@ export function AttendanceScreen() {
         return;
       }
 
-      setProgress('4/6 Selfi olinmoqda...');
+      setProgress(stepProgress(4));
       const selfie = await captureSelfie();
 
-      setProgress('5/6 Serverga yuborilmoqda...');
+      setProgress(stepProgress(5));
       const params: SubmitParams = {
         lat: fix.lat,
         lng: fix.lng,
@@ -91,9 +107,9 @@ export function AttendanceScreen() {
         else if (kind === 'replace_check_in') await postReplace('check_in', params);
         else if (kind === 'replace_check_out') await postReplace('check_out', params);
 
-        setProgress('6/6 Yangilanmoqda...');
+        // Muvaffaqiyat banneri yo'q — natija vaqt chizig'ida yashil bo'lib ko'rinadi.
+        setProgress(stepProgress(6));
         await refresh();
-        setActionInfo(kind.includes('check_out') ? 'Ketish qabul qilindi ✅' : 'Kelish qabul qilindi ✅');
       } catch (apiErr: any) {
         const status = apiErr?.response?.status;
         const data = apiErr?.response?.data;
@@ -110,11 +126,11 @@ export function AttendanceScreen() {
           isMock: params.isMock,
           photoUri: params.photoUri,
         });
-        setActionInfo('Internet yo\'q. Navbatga qo\'shildi, ulanish tiklanganda yuboriladi.');
+        setEnqueued(true);
         setDebugInfo((prev) => `${prev ?? ''}\n\nNetwork error: ${apiErr?.message ?? 'unknown'}`);
       }
     } catch (e: any) {
-      setActionError(e?.message ?? 'Xato');
+      setActionError(userFacingError(e));
       setDebugInfo((prev) => `${prev ?? ''}\n\nException: ${e?.message ?? 'unknown'}\nStack: ${(e?.stack ?? '').slice(0, 200)}`);
     } finally {
       setProgress(null);
@@ -122,112 +138,96 @@ export function AttendanceScreen() {
     }
   }, [refresh, kindgarden]);
 
-  const checkedIn = !!today?.check_in_at;
-  const checkedOut = !!today?.check_out_at;
+  // Navbat MMKV dan sinxron o'qiladi: har render'da (jumladan onAction tugagandagi) yangi holat.
+  const timeline = buildTimeline(today, {
+    check_in: queuedCaptureToday('check_in'),
+    check_out: queuedCaptureToday('check_out'),
+  });
+  const { buttons, hint } = attendanceActions(timeline);
+  const sideBySide = buttons.length > 1 && buttons.every((b) => b.size === 'sm');
 
-  const kgMeta = kindgarden
-    ? `Ruxsat etilgan masofa: ${kindgarden.geofence_radius}m`
-    : null;
+  // Bugungi holat noma'lum bo'lsa (hali yuklanmagan yoki yuklab bo'lmagan) "Keldim" chizilmaydi —
+  // aks holda kelgan oshpaz "Hali kelmadingiz" ni ko'rib, ikkinchi marta bosadi.
+  const loadFailed = today === null && !!error;
+  const unknown = today === null && (loading || !loaded);
 
   return (
-    <Screen>
-      <ScrollView refreshControl={<RefreshControl refreshing={loading} onRefresh={refresh} />}>
-        <PageHeader
-          eyebrow={kindgarden ? `Bog'cha #${kindgarden.id}` : undefined}
-          title="Davomat"
-          meta={kgMeta}
-        />
-        <Divider />
+    <HeroScreen
+      hero={<AttendanceHero />}
+      refreshControl={
+        <RefreshControl refreshing={loading} onRefresh={refresh} colors={[colors.brand]} />
+      }
+    >
+      <Banner tone="error" message={actionError ?? (loadFailed ? null : error)} />
+      <Banner
+        tone="warn"
+        title="Navbatga qo'shildi."
+        message={enqueued ? 'Internet tiklanganda avtomatik yuboriladi.' : null}
+      />
 
-        <Section>
-          <Banner tone="error" message={actionError ?? error} />
-          <Banner tone="success" message={actionInfo} />
+      {loadFailed ? (
+        <LoadFailed message={error} onRetry={() => void refresh()} />
+      ) : unknown ? (
+        <Card testID="attendance-skeleton" style={styles.skeleton}>
+          <Skeleton width="60%" height={12} />
+          <Skeleton width="80%" height={12} />
+          <Skeleton width="45%" height={12} />
+        </Card>
+      ) : (
+        <AttendanceTimeline timeline={timeline} />
+      )}
 
-          <StatusLine
-            tone={checkedIn ? 'ok' : 'warn'}
-            title={checkedIn ? 'Keldingiz — ' : 'Hali kelmadingiz'}
-            accent={checkedIn ? today!.check_in_at!.slice(11, 16) : undefined}
-            detail={
-              checkedIn
-                ? `Bog'cha markazidan ${today!.check_in_distance_m}m` +
-                  (today!.check_in_is_late ? ' · kechikkan' : '')
-                : null
-            }
+      {actionLoading !== null ? (
+        <View style={styles.actions}>
+          <Button
+            label={progress?.label ?? ''}
+            onPress={() => {}}
+            loading
+            progress={progress}
+            testID="action-progress"
           />
-        </Section>
-
-        <Divider />
-
-        <Section>
-          <StatusLine
-            tone={checkedOut ? 'ok' : checkedIn ? 'warn' : 'off'}
-            title={checkedOut ? 'Ketdingiz — ' : 'Hali ketmadingiz'}
-            accent={checkedOut ? today!.check_out_at!.slice(11, 16) : undefined}
-          />
-        </Section>
-
-        <Section style={styles.actions}>
-          {!checkedIn ? (
-            <Button
-              label="Keldim"
-              loadingLabel={progress}
-              onPress={() => onAction('check_in')}
-              loading={actionLoading === 'check_in'}
-            />
-          ) : (
-            <Button
-              label="Kelishni qayta yuborish"
-              loadingLabel={progress}
-              variant="outline"
-              onPress={() => onAction('replace_check_in')}
-              loading={actionLoading === 'replace_check_in'}
-            />
-          )}
-
-          <View style={styles.gap} />
-
-          {checkedIn && !checkedOut ? (
-            <Button
-              label="Ketdim"
-              loadingLabel={progress}
-              onPress={() => onAction('check_out')}
-              loading={actionLoading === 'check_out'}
-            />
-          ) : checkedOut ? (
-            <Button
-              label="Ketishni qayta yuborish"
-              loadingLabel={progress}
-              variant="outline"
-              onPress={() => onAction('replace_check_out')}
-              loading={actionLoading === 'replace_check_out'}
-            />
-          ) : (
-            <Button label="Ketdim" onPress={() => {}} disabled />
-          )}
-
-          {!checkedIn && (
+        </View>
+      ) : !loadFailed && !unknown ? (
+        <>
+          {buttons.length > 0 ? (
+            <View style={[styles.actions, sideBySide && styles.sideBySide]}>
+              {buttons.map((b) => (
+                <Button
+                  key={b.kind}
+                  label={b.label}
+                  variant={b.variant}
+                  size={b.size}
+                  icon={b.icon === 'camera' ? CameraIcon : undefined}
+                  onPress={() => onAction(b.kind)}
+                  style={sideBySide ? styles.flex : undefined}
+                />
+              ))}
+            </View>
+          ) : null}
+          {hint ? (
             <AppText variant="muted" color={colors.inkMuted} style={styles.hint}>
-              Kelishni o'z vaqtida yuborolmadingizmi? Bog'chada turib yuqoridagi tugmani bosing —
-              tizim avtomatik "kechikkan" deb belgilaydi.
+              {hint}
             </AppText>
-          )}
-        </Section>
+          ) : null}
+        </>
+      ) : null}
 
-        {__DEV__ && debugInfo && (
-          <Section style={styles.debug}>
-            <AppText variant="caption" color={colors.inkMuted}>
-              {debugInfo}
-            </AppText>
-          </Section>
-        )}
-      </ScrollView>
-    </Screen>
+      {__DEV__ && debugInfo && (
+        <Section style={styles.debug}>
+          <AppText variant="caption" color={colors.inkMuted}>
+            {debugInfo}
+          </AppText>
+        </Section>
+      )}
+    </HeroScreen>
   );
 }
 
 const styles = StyleSheet.create({
-  actions: { paddingTop: spacing.sm },
-  gap: { height: spacing.md },
-  hint: { marginTop: spacing.lg },
+  skeleton: { padding: 14, gap: 10 },
+  actions: { marginTop: 14, gap: 10 },
+  sideBySide: { flexDirection: 'row', gap: 8 },
+  flex: { flex: 1 },
+  hint: { marginTop: 10, paddingHorizontal: 8, textAlign: 'center' },
   debug: { backgroundColor: colors.disabledBg },
 });
