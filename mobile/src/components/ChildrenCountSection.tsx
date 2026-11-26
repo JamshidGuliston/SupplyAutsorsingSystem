@@ -12,7 +12,7 @@ import {
   useChildrenCountToday,
   CHILDREN_COUNT_KEY,
 } from '../api/childrenCount';
-import { mapServerError, userFacingError, errorCode } from '../api/errors';
+import { userFacingError, errorCode } from '../api/errors';
 import { childrenCountView } from '../lib/childrenCountView';
 
 export function ChildrenCountSection() {
@@ -29,10 +29,9 @@ export function ChildrenCountSection() {
       setInputs({});
       setSubmitError(null);
     },
-    onError: (err: any) => {
-      const payload = err?.response?.data;
-      setSubmitError(payload ? mapServerError(payload) : err?.message ?? 'Xato');
-    },
+    // Server payload bo'lsa userFacingError mapServerError ga beradi (matnlar o'zgarmaydi);
+    // tarmoq / bo'sh javobda xom "Network Error" o'rniga tushunarli matn.
+    onError: (err) => setSubmitError(userFacingError(err)),
   });
 
   if (isLoading) {

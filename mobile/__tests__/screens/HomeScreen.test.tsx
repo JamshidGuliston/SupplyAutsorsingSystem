@@ -106,6 +106,32 @@ describe('HomeScreen', () => {
     expect(getByText('65')).toBeTruthy();
   });
 
+  it("yuborishda tarmoq xatosi: tushunarli banner, texnik matn yo'q", async () => {
+    getToday.mockResolvedValue({ data: state() });
+    post.mockRejectedValue(new Error('Network Error'));
+    const { findByLabelText, getByLabelText, getByText, findByText, queryByText } = renderHome();
+    fireEvent.changeText(await findByLabelText('1–3 yosh'), '18');
+    fireEvent.changeText(getByLabelText('3–7 yosh'), '42');
+    fireEvent.changeText(getByLabelText('Qisqa muddatli'), '5');
+    fireEvent.press(getByText('Yuborish'));
+    expect(await findByText("Internet bilan bog'lanib bo'lmadi. Qayta urinib ko'ring.")).toBeTruthy();
+    expect(queryByText('Network Error')).toBeNull();
+    expect(post).toHaveBeenCalledTimes(1);
+  });
+
+  it("yuborishda server xatosi matni mapServerError orqali o'zgarmagan", async () => {
+    getToday.mockResolvedValue({ data: state() });
+    post.mockRejectedValue({ response: { status: 422, data: { error: 'time_window_closed' } } });
+    const { findByLabelText, getByLabelText, getByText, findByText } = renderHome();
+    fireEvent.changeText(await findByLabelText('1–3 yosh'), '18');
+    fireEvent.changeText(getByLabelText('3–7 yosh'), '42');
+    fireEvent.changeText(getByLabelText('Qisqa muddatli'), '5');
+    fireEvent.press(getByText('Yuborish'));
+    expect(
+      await findByText("Hozir yuborish vaqti emas (03:00 - 21:00 oralig'ida bo'lishi kerak)."),
+    ).toBeTruthy();
+  });
+
   it("yuborilgan va vaqt yopiq: Yuborildi ko'rinadi, yopiq xabari yo'q", async () => {
     getToday.mockResolvedValue({
       data: state({
