@@ -1,3 +1,4 @@
+import { useQuery, UseQueryResult } from '@tanstack/react-query';
 import { api } from './client';
 
 export interface AgeRange {
@@ -30,4 +31,15 @@ export async function getTodayState(): Promise<ChildrenCountState> {
 export async function submitChildrenCount(counts: Record<number, number>): Promise<ChildrenCountState> {
   const r = await api.post<ChildrenCountState>('/chef/children-count', { counts });
   return r.data;
+}
+
+export const CHILDREN_COUNT_KEY = ['children-count', 'today'] as const;
+
+// Bosh, Davomat va Profil bitta kesh yozuvini ulashadi.
+export function useChildrenCountToday(): UseQueryResult<ChildrenCountState> {
+  return useQuery<ChildrenCountState>({
+    queryKey: CHILDREN_COUNT_KEY,
+    queryFn: getTodayState,
+    staleTime: 30_000,
+  });
 }
