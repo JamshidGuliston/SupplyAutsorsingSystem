@@ -59,5 +59,11 @@ class RouteServiceProvider extends ServiceProvider
         RateLimiter::for('api', function (Request $request) {
             return Limit::perMinute(60)->by(optional($request->user())->id ?: $request->ip());
         });
+
+        // Mobile login: 5 attempts/min per account. Keyed by email (not only IP) because
+        // behind Docker Desktop / the Timeweb proxy every client shares one IP.
+        RateLimiter::for('chef-login', function (Request $request) {
+            return Limit::perMinute(5)->by(mb_strtolower((string) $request->input('email')) . '|' . $request->ip());
+        });
     }
 }
