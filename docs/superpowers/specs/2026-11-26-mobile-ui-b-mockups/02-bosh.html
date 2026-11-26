@@ -1,0 +1,138 @@
+<style>
+  .row{display:flex;gap:26px;flex-wrap:wrap;justify-content:center;align-items:flex-start;margin-top:18px}
+  .col{display:flex;flex-direction:column;align-items:center;gap:10px}
+  .ph{width:300px;height:620px;border-radius:38px;background:#111;padding:10px;box-shadow:0 20px 50px rgba(0,0,0,.25)}
+  .sc{width:100%;height:100%;border-radius:30px;overflow:hidden;position:relative;font-family:Roboto,"Segoe UI",system-ui,sans-serif;color:#0D0D0D;background:#F7F6F4}
+  .sb{height:26px;display:flex;justify-content:space-between;align-items:center;font-size:11px;font-weight:600}
+  .tag{font-size:13px;font-weight:700;color:#444;text-align:center}
+  .tag small{display:block;font-weight:400;color:#888;font-size:12px;max-width:290px;margin-top:3px}
+  .hero{height:150px;background:linear-gradient(150deg,#F47A55 0%,#EF5B3C 45%,#D9431F 100%);position:relative;overflow:hidden;color:#fff;padding:0 20px}
+  .hero:before{content:"";position:absolute;width:200px;height:200px;border-radius:50%;background:rgba(255,255,255,.09);right:-60px;top:-70px}
+  .hero .hi{font-size:12px;opacity:.85;margin-top:12px}
+  .hero .kg{font-size:21px;font-weight:800;letter-spacing:-.5px;margin-top:2px;position:relative}
+  .chip{display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,.18);border-radius:999px;padding:4px 10px;font-size:11px;font-weight:600;margin-top:10px}
+  .sheet{position:absolute;top:128px;left:0;right:0;bottom:62px;background:#F7F6F4;border-radius:24px 24px 0 0;padding:18px 14px 0;overflow:hidden}
+  .h2{font-size:18px;font-weight:800;letter-spacing:-.4px;padding:0 4px}
+  .sub{font-size:11.5px;color:#77797E;padding:0 4px;margin-top:2px}
+  .card{background:#fff;border-radius:18px;box-shadow:0 4px 16px rgba(40,30,20,.06);margin-top:12px}
+  .ag{display:flex;align-items:center;justify-content:space-between;padding:11px 14px;border-bottom:1px solid #F0EFED}
+  .ag:last-child{border-bottom:0}
+  .ag .n{font-size:13.5px;font-weight:600}
+  .ag .s{font-size:10.5px;color:#9A9CA2}
+  .num{width:74px;height:40px;border-radius:12px;background:#F4F3F1;display:flex;align-items:center;justify-content:center;font-size:17px;font-weight:800}
+  .num.f{background:#fff;border:1.5px solid #EF5B3C;box-shadow:0 0 0 4px rgba(239,91,60,.12)}
+  .num.e{color:#C7C9CD;font-weight:600}
+  .tot{display:flex;justify-content:space-between;align-items:center;padding:12px 18px 0;font-size:12.5px;color:#55575c}
+  .tot b{font-size:18px;color:#0D0D0D}
+  .btn{height:50px;border-radius:14px;background:#0D0D0D;color:#fff;font-weight:700;display:flex;align-items:center;justify-content:center;font-size:15px;margin-top:12px}
+  .pill{display:inline-flex;align-items:center;gap:5px;border-radius:999px;padding:3px 9px;font-size:10.5px;font-weight:700}
+  .tabs{position:absolute;left:0;right:0;bottom:0;height:62px;background:#fff;box-shadow:0 -4px 16px rgba(0,0,0,.05);display:flex;justify-content:space-around;align-items:center;padding:0 6px}
+  .t{display:flex;flex-direction:column;align-items:center;gap:3px;font-size:10px;font-weight:600;color:#9A9CA2;width:64px}
+  .t .ib{width:48px;height:28px;border-radius:999px;display:flex;align-items:center;justify-content:center}
+  .t.on{color:#EF5B3C}
+  .t.on .ib{background:#FFE9E2}
+  .big{width:64px;height:64px;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto}
+</style>
+
+<h2>2 / 5 — Bosh sahifa (bolalar soni)</h2>
+<p class="subtitle">B uslubi: tepada marjon blok — bog'cha nomi va sana; pastida oq kartalar. Bu ekranning uchta holati bor, uchalasi ko'rsatilgan. Pastdagi tab panel ham yangilanadi (faol tab marjon rangli "kapsula" bilan).</p>
+
+<div class="row">
+
+  <!-- OCHIQ -->
+  <div class="col">
+    <div class="ph"><div class="sc">
+      <div class="hero">
+        <div class="sb"><span>9:41</span><span>▮▮▮ 100%</span></div>
+        <div class="hi">Xayrli tong, Dilnoza</div>
+        <div class="kg">12-son DMTT</div>
+        <div class="chip"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.4"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>Payshanba, 26-noyabr</div>
+      </div>
+      <div class="sheet">
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <div><div class="h2">Bolalar soni</div><div class="sub">Ertangi menyu uchun</div></div>
+          <span class="pill" style="background:#E7F4EC;color:#0E6B39"><span style="width:6px;height:6px;border-radius:50%;background:#14884A"></span>08:00–10:00 ochiq</span>
+        </div>
+        <div class="card">
+          <div class="ag"><div class="n">1–3 yosh</div><div class="num">18</div></div>
+          <div class="ag"><div class="n">3–7 yosh</div><div class="num f">42</div></div>
+          <div class="ag"><div class="n">Qisqa muddatli</div><div class="num e">0</div></div>
+        </div>
+        <div class="tot"><span>Jami</span><b>60 bola</b></div>
+        <div class="btn">Yuborish</div>
+      </div>
+      <div class="tabs">
+        <div class="t on"><div class="ib"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#EF5B3C" stroke-width="2.2"><path d="M3 11 12 4l9 7v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg></div>Bosh</div>
+        <div class="t"><div class="ib"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#9A9CA2" stroke-width="2"><path d="M12 21s-7-6.2-7-12a7 7 0 0 1 14 0c0 5.8-7 12-7 12z"/><circle cx="12" cy="9" r="2.5"/></svg></div>Davomat</div>
+        <div class="t"><div class="ib"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#9A9CA2" stroke-width="2"><path d="M6 16V11a6 6 0 0 1 12 0v5l2 2H4z"/><path d="M10 20a2 2 0 0 0 4 0"/></svg></div>Xabarlar</div>
+        <div class="t"><div class="ib"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#9A9CA2" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"/></svg></div>Profil</div>
+      </div>
+    </div></div>
+    <div class="tag">Holat 1 — Forma ochiq<small>har yosh guruhi alohida qatorda, raqam o'ngda katta. Pastda <b>"Jami"</b> avtomatik hisoblanadi (yangi).</small></div>
+  </div>
+
+  <!-- YUBORILGAN -->
+  <div class="col">
+    <div class="ph"><div class="sc">
+      <div class="hero">
+        <div class="sb"><span>9:41</span><span>▮▮▮ 100%</span></div>
+        <div class="hi">Xayrli tong, Dilnoza</div>
+        <div class="kg">12-son DMTT</div>
+        <div class="chip">Payshanba, 26-noyabr</div>
+      </div>
+      <div class="sheet">
+        <div class="card" style="margin-top:0;padding:20px 16px;text-align:center">
+          <div class="big" style="background:#E7F4EC"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#14884A" stroke-width="2.8"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg></div>
+          <div style="font-size:18px;font-weight:800;letter-spacing:-.4px;margin-top:10px">Yuborildi</div>
+          <div style="font-size:12px;color:#77797E;margin-top:2px">Bugun, 08:42 da</div>
+        </div>
+        <div class="card">
+          <div class="ag"><div class="n">1–3 yosh</div><b style="font-size:16px">18</b></div>
+          <div class="ag"><div class="n">3–7 yosh</div><b style="font-size:16px">42</b></div>
+          <div class="ag"><div class="n">Qisqa muddatli</div><b style="font-size:16px">0</b></div>
+          <div class="ag" style="background:#FAFAF9;border-radius:0 0 18px 18px"><div class="n">Jami</div><b style="font-size:16px">60</b></div>
+        </div>
+        <div style="font-size:11.5px;color:#77797E;text-align:center;margin-top:12px;padding:0 10px">O'zgartirish kerak bo'lsa, texnologga murojaat qiling.</div>
+      </div>
+      <div class="tabs">
+        <div class="t on"><div class="ib"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#EF5B3C" stroke-width="2.2"><path d="M3 11 12 4l9 7v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg></div>Bosh</div>
+        <div class="t"><div class="ib"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#9A9CA2" stroke-width="2"><path d="M12 21s-7-6.2-7-12a7 7 0 0 1 14 0c0 5.8-7 12-7 12z"/><circle cx="12" cy="9" r="2.5"/></svg></div>Davomat</div>
+        <div class="t"><div class="ib"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#9A9CA2" stroke-width="2"><path d="M6 16V11a6 6 0 0 1 12 0v5l2 2H4z"/><path d="M10 20a2 2 0 0 0 4 0"/></svg></div>Xabarlar</div>
+        <div class="t"><div class="ib"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#9A9CA2" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"/></svg></div>Profil</div>
+      </div>
+    </div></div>
+    <div class="tag">Holat 2 — Yuborilgan<small>katta yashil belgi va vaqt; yuborilgan sonlar kartada.</small></div>
+  </div>
+
+  <!-- YOPIQ -->
+  <div class="col">
+    <div class="ph"><div class="sc">
+      <div class="hero">
+        <div class="sb"><span>9:41</span><span>▮▮▮ 100%</span></div>
+        <div class="hi">Xayrli kun, Dilnoza</div>
+        <div class="kg">12-son DMTT</div>
+        <div class="chip">Payshanba, 26-noyabr</div>
+      </div>
+      <div class="sheet">
+        <div class="card" style="margin-top:0;padding:22px 16px;text-align:center">
+          <div class="big" style="background:#FDF3E0"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#D08700" stroke-width="2.4"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></div>
+          <div style="font-size:18px;font-weight:800;letter-spacing:-.4px;margin-top:10px">Hozir yuborish vaqti emas</div>
+          <div style="font-size:12px;color:#77797E;margin-top:4px;line-height:1.45">Bolalar soni har kuni<br><b style="color:#0D0D0D">08:00 – 10:00</b> oralig'ida yuboriladi</div>
+          <div style="display:flex;justify-content:center;gap:8px;margin-top:14px">
+            <span class="pill" style="background:#F4F3F1;color:#55575c">Hozir: 14:25</span>
+            <span class="pill" style="background:#F4F3F1;color:#55575c">Ertaga 08:00 da ochiladi</span>
+          </div>
+        </div>
+        <div style="font-size:11px;color:#9A9CA2;text-align:center;margin-top:14px">Pastga torting — yangilash</div>
+      </div>
+      <div class="tabs">
+        <div class="t on"><div class="ib"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#EF5B3C" stroke-width="2.2"><path d="M3 11 12 4l9 7v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg></div>Bosh</div>
+        <div class="t"><div class="ib"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#9A9CA2" stroke-width="2"><path d="M12 21s-7-6.2-7-12a7 7 0 0 1 14 0c0 5.8-7 12-7 12z"/><circle cx="12" cy="9" r="2.5"/></svg></div>Davomat</div>
+        <div class="t"><div class="ib"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#9A9CA2" stroke-width="2"><path d="M6 16V11a6 6 0 0 1 12 0v5l2 2H4z"/><path d="M10 20a2 2 0 0 0 4 0"/></svg></div>Xabarlar</div>
+        <div class="t"><div class="ib"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#9A9CA2" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"/></svg></div>Profil</div>
+      </div>
+    </div></div>
+    <div class="tag">Holat 3 — Vaqt yopiq<small>sariq soat belgisi, ruxsat etilgan vaqt katta ko'rsatiladi. (Menyu tayyor bo'lmasa — xuddi shu ko'rinish, boshqa matn bilan.)</small></div>
+  </div>
+
+</div>

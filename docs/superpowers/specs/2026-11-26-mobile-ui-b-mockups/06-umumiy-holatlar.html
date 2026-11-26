@@ -1,0 +1,119 @@
+<style>
+  .row{display:flex;gap:26px;flex-wrap:wrap;justify-content:center;align-items:flex-start;margin-top:18px}
+  .col{display:flex;flex-direction:column;align-items:center;gap:10px}
+  .ph{width:300px;height:620px;border-radius:38px;background:#111;padding:10px;box-shadow:0 20px 50px rgba(0,0,0,.25)}
+  .sc{width:100%;height:100%;border-radius:30px;overflow:hidden;position:relative;font-family:Roboto,"Segoe UI",system-ui,sans-serif;color:#0D0D0D;background:#F7F6F4}
+  .sb{height:26px;display:flex;justify-content:space-between;align-items:center;font-size:11px;font-weight:600}
+  .tag{font-size:13px;font-weight:700;color:#444;text-align:center}
+  .tag small{display:block;font-weight:400;color:#888;font-size:12px;max-width:290px;margin-top:3px}
+  .hero{height:150px;background:linear-gradient(150deg,#F47A55 0%,#EF5B3C 45%,#D9431F 100%);position:relative;overflow:hidden;color:#fff;padding:0 20px}
+  .hero:before{content:"";position:absolute;width:200px;height:200px;border-radius:50%;background:rgba(255,255,255,.09);right:-60px;top:-70px}
+  .hero .hi{font-size:12px;opacity:.85;margin-top:8px}
+  .hero .kg{font-size:21px;font-weight:800;letter-spacing:-.5px;margin-top:2px;position:relative}
+  .chip{display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,.18);border-radius:999px;padding:4px 10px;font-size:11px;font-weight:600;margin-top:10px;margin-right:4px}
+  .off{display:inline-flex;align-items:center;gap:6px;background:#fff;color:#C62828;border-radius:999px;padding:4px 10px 4px 8px;font-size:11px;font-weight:700;box-shadow:0 4px 10px rgba(0,0,0,.12);position:relative;z-index:2}
+  .sheet{position:absolute;top:128px;left:0;right:0;bottom:62px;background:#F7F6F4;border-radius:24px 24px 0 0;padding:16px 14px 0;overflow:hidden}
+  .card{background:#fff;border-radius:18px;box-shadow:0 4px 16px rgba(40,30,20,.06)}
+  .bn{display:flex;gap:10px;align-items:flex-start;border-radius:14px;padding:11px 12px;font-size:12px;line-height:1.4;margin-bottom:12px}
+  .bn .i{width:22px;height:22px;border-radius:50%;flex:none;display:flex;align-items:center;justify-content:center}
+  .st{display:flex;gap:12px;padding:14px 16px;position:relative}
+  .st .dot{width:34px;height:34px;border-radius:50%;flex:none;display:flex;align-items:center;justify-content:center}
+  .st .ttl{font-size:12px;color:#77797E;font-weight:600}
+  .st .val{font-size:20px;font-weight:800;letter-spacing:-.5px;margin-top:1px}
+  .st .det{font-size:11px;color:#77797E;margin-top:2px}
+  .line{position:absolute;left:32px;top:50px;bottom:-14px;width:2px;background:#EEEDEB}
+  .btn{height:52px;border-radius:14px;background:#0D0D0D;color:#fff;font-weight:700;display:flex;align-items:center;justify-content:center;gap:9px;font-size:15px;margin-top:12px}
+  .btn.out{background:#fff;color:#0D0D0D;border:1.5px solid #E2E1DE;height:44px;font-size:13px}
+  .tabs{position:absolute;left:0;right:0;bottom:0;height:62px;background:#fff;box-shadow:0 -4px 16px rgba(0,0,0,.05);display:flex;justify-content:space-around;align-items:center;font-size:10px;font-weight:600;color:#9A9CA2}
+  .lbl{font-size:12px;font-weight:600;margin:0 0 6px 2px;color:#55575c}
+  .in{height:50px;border:1.5px solid #ECECEF;border-radius:14px;padding:0 14px;display:flex;align-items:center;gap:10px;font-size:13px;color:#0D0D0D;margin-bottom:14px;background:#fff}
+  .sk{background:#EEEDEA;border-radius:8px}
+</style>
+
+<h2>6 — Umumiy holatlar (qo'shimcha)</h2>
+<p class="subtitle">Tekshiruvda chiqdi: bu holatlar har kuni uchraydi, lekin oldingi maketlarda yo'q edi. <b>Internet yo'qligi belgisi</b>, <b>xabar qutilari</b> (xato / muvaffaqiyat / ogohlantirish) va <b>yuklanish/xato holati</b>.</p>
+
+<div class="row">
+
+  <!-- 1. OFFLINE + WARN BANNER -->
+  <div class="col">
+    <div class="ph"><div class="sc">
+      <div class="hero">
+        <div class="sb"><span>08:12</span><span>▮▮▯ 64%</span></div>
+        <div class="off"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#C62828" stroke-width="2.4"><path d="M2 8.5a15 15 0 0 1 20 0M5.5 12a10 10 0 0 1 13 0M9 15.5a5 5 0 0 1 6 0"/><path d="M3 3l18 18"/></svg>Internet yo'q · 1 ta yuborilmagan</div>
+        <div class="kg" style="margin-top:8px">Davomat</div>
+        <div class="chip">12-son DMTT</div><div class="chip">200 m radius</div>
+      </div>
+      <div class="sheet">
+        <div class="bn" style="background:#FDF3E0;color:#7A5200">
+          <div class="i" style="background:#F6DFAF"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#7A5200" stroke-width="2.6"><path d="M4 12a8 8 0 0 1 14-5.3M20 12a8 8 0 0 1-14 5.3"/><path d="M18 3v4h-4M6 21v-4h4"/></svg></div>
+          <div><b>Navbatga qo'shildi.</b> Internet tiklanganda avtomatik yuboriladi.</div>
+        </div>
+        <div class="card">
+          <div class="st"><div class="line"></div>
+            <div class="dot" style="background:#FDF3E0"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#D08700" stroke-width="2.4"><path d="M4 12a8 8 0 0 1 14-5.3M20 12a8 8 0 0 1-14 5.3"/><path d="M18 3v4h-4M6 21v-4h4"/></svg></div>
+            <div><div class="ttl">Kelish</div><div class="val">Yuborilmoqda…</div><div class="det">08:10 da olindi · navbatda</div></div>
+          </div>
+          <div class="st">
+            <div class="dot" style="background:#F2F1EF"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#B5B7BB" stroke-width="2.4"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg></div>
+            <div><div class="ttl">Ketish</div><div class="val" style="color:#B5B7BB">—:—</div></div>
+          </div>
+        </div>
+      </div>
+      <div class="tabs"><span>Bosh</span><span style="color:#EF5B3C">Davomat</span><span>Xabarlar</span><span>Profil</span></div>
+    </div></div>
+    <div class="tag">Internet yo'q<small>hozirgi qizil tasma o'rniga <b>hero ichida oq "kapsula"</b> — har ekranda shu joyda. Navbat haqidagi xabar sariq qutida.</small></div>
+  </div>
+
+  <!-- 2. LOGIN ERROR -->
+  <div class="col">
+    <div class="ph"><div class="sc" style="background:#fff">
+      <div style="height:200px;background:linear-gradient(150deg,#F47A55 0%,#EF5B3C 45%,#D9431F 100%);color:#fff;padding:0 22px;position:relative;overflow:hidden">
+        <div class="sb"><span>9:41</span><span>▮▮▮ 100%</span></div>
+        <div style="width:56px;height:56px;border-radius:18px;background:#fff;display:flex;align-items:center;justify-content:center;margin-top:16px;overflow:hidden"><img src="./gt.png" style="width:84px;height:84px"></div>
+        <div style="font-size:24px;font-weight:800;letter-spacing:-.6px;margin-top:12px">Xush kelibsiz!</div>
+      </div>
+      <div style="position:absolute;top:176px;left:0;right:0;bottom:0;background:#fff;border-radius:28px 28px 0 0;padding:22px 20px">
+        <div class="bn" style="background:#FDECEA;color:#8E1C1C">
+          <div class="i" style="background:#F8C9C4"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#8E1C1C" stroke-width="3"><path d="M12 7v6M12 17h.01"/></svg></div>
+          <div>Email yoki parol noto'g'ri.</div>
+        </div>
+        <div class="lbl">Email</div>
+        <div class="in">oshpaz@globaltam.uz</div>
+        <div class="lbl">Parol</div>
+        <div class="in" style="border-color:#C62828">••••••</div>
+        <div class="btn">Kirish</div>
+      </div>
+    </div></div>
+    <div class="tag">Xato xabari<small>qizil quti maydonlar ustida, ikonka bilan. Matn doim o'zbekcha va tushunarli — "Request failed with status code 500" kabi texnik yozuvlar chiqmaydi.</small></div>
+  </div>
+
+  <!-- 3. HOME LOADING / ERROR -->
+  <div class="col">
+    <div class="ph"><div class="sc">
+      <div class="hero">
+        <div class="sb"><span>9:41</span><span>▮▮▮ 100%</span></div>
+        <div class="hi">Xayrli tong</div>
+        <div class="sk" style="width:150px;height:20px;margin-top:6px;background:rgba(255,255,255,.25)"></div>
+        <div class="chip">Payshanba, 26-noyabr</div>
+      </div>
+      <div class="sheet">
+        <div class="card" style="padding:22px 16px;text-align:center">
+          <div style="width:56px;height:56px;border-radius:50%;background:#FDECEA;display:flex;align-items:center;justify-content:center;margin:0 auto"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#C62828" stroke-width="2.2"><path d="M2 8.5a15 15 0 0 1 20 0M5.5 12a10 10 0 0 1 13 0M9 15.5a5 5 0 0 1 6 0"/><path d="M3 3l18 18"/></svg></div>
+          <div style="font-size:16px;font-weight:800;margin-top:10px">Ma'lumotni yuklab bo'lmadi</div>
+          <div style="font-size:12px;color:#77797E;margin-top:4px;line-height:1.45">Internetni tekshirib, qayta urinib ko'ring.</div>
+          <div class="btn out" style="margin-top:14px">Qayta urinish</div>
+        </div>
+        <div style="font-size:11px;color:#9A9CA2;text-align:center;margin-top:16px">Yuklanayotganda karta o'rnida kulrang "skelet" chiziqlar ko'rinadi</div>
+        <div class="card" style="padding:14px;margin-top:8px;opacity:.7">
+          <div class="sk" style="height:12px;width:60%"></div>
+          <div class="sk" style="height:12px;width:80%;margin-top:10px"></div>
+          <div class="sk" style="height:12px;width:45%;margin-top:10px"></div>
+        </div>
+      </div>
+      <div class="tabs"><span style="color:#EF5B3C">Bosh</span><span>Davomat</span><span>Xabarlar</span><span>Profil</span></div>
+    </div></div>
+    <div class="tag">Yuklanish va yuklab bo'lmaganda<small>bog'cha nomi kelguncha hero'da kulrang chiziq; xato bo'lsa — markazda tushunarli xabar va "Qayta urinish".</small></div>
+  </div>
+
+</div>

@@ -1,0 +1,122 @@
+<style>
+  .row{display:flex;gap:28px;flex-wrap:wrap;justify-content:center;align-items:flex-start;margin-top:18px}
+  .col{display:flex;flex-direction:column;align-items:center;gap:10px}
+  .ph{width:300px;height:620px;border-radius:38px;background:#111;padding:10px;box-shadow:0 20px 50px rgba(0,0,0,.25)}
+  .sc{width:100%;height:100%;border-radius:30px;overflow:hidden;position:relative;font-family:Roboto,"Segoe UI",system-ui,sans-serif;color:#0D0D0D}
+  .sb{height:26px;display:flex;justify-content:space-between;align-items:center;padding:0 18px;font-size:11px;font-weight:600}
+  .tag{font-size:13px;font-weight:700;color:#444}
+  .tag small{display:block;font-weight:400;color:#888;font-size:12px;max-width:300px;text-align:center;margin-top:3px}
+  .sel{outline:3px solid transparent;border-radius:42px;transition:.15s;cursor:pointer}
+  .option.selected .ph,.sel.selected .ph{outline:4px solid #EF5B3C;outline-offset:4px}
+  /* inputs */
+  .lbl{font-size:12px;font-weight:600;margin:0 0 6px 2px;color:#55575c}
+  .ico{width:18px;height:18px;flex:none}
+  /* current */
+  .cur .sc{background:#fff}
+  .cur .in{height:44px;border:1px solid #E8E8EA;border-radius:11px;padding:0 12px;display:flex;align-items:center;font-size:13px;color:#9A9CA2;margin-bottom:12px}
+  /* A */
+  .a .sc{background:#F6F4F1}
+  .a .card{background:#fff;border-radius:24px;margin:0 16px;padding:22px 18px;box-shadow:0 10px 30px rgba(60,40,20,.08)}
+  .a .in{height:48px;background:#F6F4F1;border-radius:14px;padding:0 14px;display:flex;align-items:center;gap:10px;font-size:13px;color:#9A9CA2;margin-bottom:14px}
+  .a .btn{height:52px;border-radius:14px;background:#EF5B3C;color:#fff;font-weight:700;display:flex;align-items:center;justify-content:center;font-size:15px;box-shadow:0 8px 18px rgba(239,91,60,.35);margin-top:6px}
+  /* B */
+  .b .sc{background:#fff}
+  .b .hero{height:250px;background:linear-gradient(150deg,#F47A55 0%,#EF5B3C 45%,#D9431F 100%);position:relative;overflow:hidden;color:#fff;padding:0 22px}
+  .b .hero:before{content:"";position:absolute;width:220px;height:220px;border-radius:50%;background:rgba(255,255,255,.09);right:-70px;top:-60px}
+  .b .hero:after{content:"";position:absolute;width:140px;height:140px;border-radius:50%;background:rgba(255,255,255,.07);left:-50px;bottom:10px}
+  .b .badge{width:64px;height:64px;border-radius:20px;background:#fff;display:flex;align-items:center;justify-content:center;margin-top:24px;box-shadow:0 8px 20px rgba(0,0,0,.15);overflow:hidden}
+  .b .badge img{width:96px;height:96px}
+  .b .sheet{position:absolute;top:222px;left:0;right:0;bottom:0;background:#fff;border-radius:28px 28px 0 0;padding:26px 20px}
+  .b .in{height:50px;border:1.5px solid #ECECEF;border-radius:14px;padding:0 14px;display:flex;align-items:center;gap:10px;font-size:13px;color:#9A9CA2;margin-bottom:14px}
+  .b .in.f{border-color:#EF5B3C;color:#0D0D0D;box-shadow:0 0 0 4px rgba(239,91,60,.12)}
+  .b .btn{height:52px;border-radius:14px;background:#0D0D0D;color:#fff;font-weight:700;display:flex;align-items:center;justify-content:center;font-size:15px;margin-top:8px}
+  /* C */
+  .c .sc{background:#fff}
+  .c .blob{position:absolute;width:260px;height:260px;border-radius:50%;background:radial-gradient(circle at 30% 30%,#FFD9CC,#FFEDE6 60%,transparent 70%);right:-90px;top:-80px}
+  .c .in{height:54px;background:#F4F4F6;border-radius:16px;padding:0 16px;display:flex;align-items:center;gap:12px;font-size:13px;color:#9A9CA2;margin-bottom:12px}
+  .c .btn{height:56px;border-radius:999px;background:linear-gradient(90deg,#F26B4A,#E5492A);color:#fff;font-weight:700;display:flex;align-items:center;justify-content:center;gap:8px;font-size:15px;box-shadow:0 10px 22px rgba(229,73,42,.32);margin-top:10px}
+</style>
+
+<h2>1 / 5 — Kirish ekrani</h2>
+<p class="subtitle">Bu birinchi ekran, shu sababli butun ilovaning <b>uslubini</b> ham shu yerda tanlaymiz. Keyingi sahifalar tanlangan uslubda chiziladi. Chapdagisi — hozirgi holat, solishtirish uchun.</p>
+
+<div class="row">
+
+  <!-- HOZIRGI -->
+  <div class="col cur">
+    <div class="ph"><div class="sc">
+      <div class="sb"><span>9:41</span><span>▮▮▮ 100%</span></div>
+      <div style="text-align:center;padding-top:40px"><img src="./logo.jpg" style="width:190px;height:76px;object-fit:contain"></div>
+      <div style="padding:14px 18px 0">
+        <div style="font-size:10px;font-weight:800;letter-spacing:1.5px;color:#EF5B3C">OSHPAZ KABINETI</div>
+        <div style="font-size:28px;font-weight:800;letter-spacing:-1px;margin-top:4px">Kirish</div>
+      </div>
+      <div style="padding:16px 18px">
+        <div style="font-size:12px;font-weight:700;margin-bottom:6px">Email</div>
+        <div class="in">email@globaltam.uz</div>
+        <div style="font-size:12px;font-weight:700;margin-bottom:6px">Parol</div>
+        <div class="in">••••••••</div>
+        <div style="height:50px;border-radius:12px;background:#EF5B3C;color:#fff;font-weight:800;display:flex;align-items:center;justify-content:center">Kirish</div>
+      </div>
+    </div></div>
+    <div class="tag">Hozirgi<small>oq fon, chiziqlar, karta yo'q</small></div>
+  </div>
+
+  <!-- A -->
+  <div class="col a option sel" data-choice="A-yumshoq" onclick="toggleSelect(this)">
+    <div class="ph"><div class="sc">
+      <div class="sb"><span>9:41</span><span>▮▮▮ 100%</span></div>
+      <div style="text-align:center;padding:34px 0 22px"><img src="./logo.jpg" style="width:180px;height:72px;object-fit:contain;mix-blend-mode:multiply"></div>
+      <div class="card">
+        <div style="font-size:22px;font-weight:800;letter-spacing:-.5px">Xush kelibsiz</div>
+        <div style="font-size:12.5px;color:#77797E;margin:4px 0 18px">Oshpaz kabinetiga kirish</div>
+        <div class="lbl">Email</div>
+        <div class="in"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="#9A9CA2" stroke-width="2"><rect x="3" y="5" width="18" height="14" rx="3"/><path d="m4 7 8 6 8-6"/></svg>email@globaltam.uz</div>
+        <div class="lbl">Parol</div>
+        <div class="in"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="#9A9CA2" stroke-width="2"><rect x="4" y="11" width="16" height="10" rx="3"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>••••••••<svg class="ico" style="margin-left:auto" viewBox="0 0 24 24" fill="none" stroke="#9A9CA2" stroke-width="2"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12Z"/><circle cx="12" cy="12" r="3"/></svg></div>
+        <div class="btn">Kirish</div>
+      </div>
+      <div style="text-align:center;font-size:11px;color:#9A9CA2;margin-top:18px">Global Ta'm · v1.1.2</div>
+    </div></div>
+    <div class="tag">A — Yumshoq kartalar<small>issiq kulrang fon, oq yumaloq karta, ichida ikonkali maydonlar. Iliq va do'stona.</small></div>
+  </div>
+
+  <!-- B -->
+  <div class="col b option sel" data-choice="B-brend-sarlavha" onclick="toggleSelect(this)">
+    <div class="ph"><div class="sc">
+      <div class="hero">
+        <div class="sb" style="padding:0;color:#fff"><span>9:41</span><span>▮▮▮ 100%</span></div>
+        <div class="badge"><img src="./gt.png"></div>
+        <div style="font-size:26px;font-weight:800;letter-spacing:-.6px;margin-top:16px;position:relative">Xush kelibsiz!</div>
+        <div style="font-size:13px;opacity:.85;margin-top:2px;position:relative">Global Ta'm · Oshpaz kabineti</div>
+      </div>
+      <div class="sheet">
+        <div class="lbl">Email</div>
+        <div class="in f"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="#EF5B3C" stroke-width="2"><rect x="3" y="5" width="18" height="14" rx="3"/><path d="m4 7 8 6 8-6"/></svg>oshpaz@globaltam.uz</div>
+        <div class="lbl">Parol</div>
+        <div class="in"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="#9A9CA2" stroke-width="2"><rect x="4" y="11" width="16" height="10" rx="3"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>••••••••<svg class="ico" style="margin-left:auto" viewBox="0 0 24 24" fill="none" stroke="#9A9CA2" stroke-width="2"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12Z"/><circle cx="12" cy="12" r="3"/></svg></div>
+        <div class="btn">Kirish</div>
+        <div style="text-align:center;font-size:11px;color:#9A9CA2;margin-top:22px">Parolni unutdingizmi? Texnologga murojaat qiling</div>
+      </div>
+    </div></div>
+    <div class="tag">B — Brend sarlavha<small>tepada marjon rangli blok va GT belgisi, pastda oq varaq. Ilova kimniki ekani darhol bilinadi.</small></div>
+  </div>
+
+  <!-- C -->
+  <div class="col c option sel" data-choice="C-toza-yorqin" onclick="toggleSelect(this)">
+    <div class="ph"><div class="sc">
+      <div class="blob"></div>
+      <div class="sb" style="position:relative"><span>9:41</span><span>▮▮▮ 100%</span></div>
+      <div style="padding:40px 22px 0;position:relative">
+        <img src="./gt.png" style="width:84px;height:84px;margin:-14px 0 0 -14px">
+        <div style="font-size:30px;font-weight:800;letter-spacing:-1px;line-height:1.05;margin-top:6px">Xayrli tong,<br><span style="color:#EF5B3C">oshpaz</span></div>
+        <div style="font-size:13px;color:#77797E;margin:8px 0 26px">Davom etish uchun hisobingizga kiring</div>
+        <div class="in"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="#77797E" stroke-width="2"><rect x="3" y="5" width="18" height="14" rx="3"/><path d="m4 7 8 6 8-6"/></svg>Email</div>
+        <div class="in"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="#77797E" stroke-width="2"><rect x="4" y="11" width="16" height="10" rx="3"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>Parol<svg class="ico" style="margin-left:auto" viewBox="0 0 24 24" fill="none" stroke="#9A9CA2" stroke-width="2"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12Z"/><circle cx="12" cy="12" r="3"/></svg></div>
+        <div class="btn">Kirish <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.4"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div>
+      </div>
+    </div></div>
+    <div class="tag">C — Toza va yorqin<small>oq fon, katta salomlashuv, kulrang to'ldirilgan maydonlar, yumaloq gradient tugma.</small></div>
+  </div>
+
+</div>
