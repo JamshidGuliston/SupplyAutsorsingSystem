@@ -25,7 +25,7 @@ use App\Http\Controllers\Api\V1\Chef\LocationEventController;
 
 Route::prefix('v1')->group(function () {
     Route::prefix('auth')->group(function () {
-        Route::post('login', [LoginController::class, 'login'])->middleware('throttle:5,1');
+        Route::post('login', [LoginController::class, 'login'])->middleware('throttle:chef-login');
         Route::post('logout', [LogoutController::class, 'logout'])->middleware('auth:sanctum');
         Route::post('device', [DeviceController::class, 'register'])->middleware('auth:sanctum');
     });

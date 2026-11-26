@@ -989,7 +989,7 @@ class TechnologController extends Controller
                         // Matn bo'lsa - nom bo'yicha qidirish
                         $ageRange = Age_range::where('age_name', $ageRangeName)->first();
                         if (!$ageRange) {
-                            $ageRange = Age_range::where('age_name', 'LIKE', '%' . $ageRangeName . '%')->first();
+                            $ageRange = Age_range::whereRaw('LOWER(age_name) LIKE ?', ['%' . mb_strtolower($ageRangeName) . '%'])->first();
                         }
                     }
                 }
@@ -1019,8 +1019,8 @@ class TechnologController extends Controller
                             ->orWhere('short_name', $menuName)
                             ->first();
                         if (!$menu) {
-                            $menu = Titlemenu::where('menu_name', 'LIKE', '%' . $menuName . '%')
-                                ->orWhere('short_name', 'LIKE', '%' . $menuName . '%')
+                            $menu = Titlemenu::whereRaw('LOWER(menu_name) LIKE ?', ['%' . mb_strtolower($menuName) . '%'])
+                                ->orWhereRaw('LOWER(short_name) LIKE ?', ['%' . mb_strtolower($menuName) . '%'])
                                 ->first();
                         }
                     }
