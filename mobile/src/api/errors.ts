@@ -44,3 +44,23 @@ export function mapServerError(payload: ServerErrorPayload | undefined): string 
       return payload.message || 'Noma\'lum xato. Qayta urinib ko\'ring.';
   }
 }
+
+export const LOAD_FAILED_TEXT = "Internetni tekshirib, qayta urinib ko'ring.";
+
+export function errorCode(err: unknown): string | undefined {
+  return (err as { response?: { data?: { error?: string } } } | null | undefined)?.response?.data?.error;
+}
+
+export function userFacingError(err: unknown): string {
+  const e = err as { response?: { data?: ServerErrorPayload }; message?: unknown } | null | undefined;
+  if (e?.response) {
+    if (e.response.data) return mapServerError(e.response.data);
+    return "Serverda xato. Birozdan keyin qayta urinib ko'ring.";
+  }
+  const msg = typeof e?.message === 'string' ? e.message : '';
+  if (msg.startsWith('GPS error')) {
+    return "Joylashuvni aniqlab bo'lmadi. GPS yoqilganini tekshirib, qayta urinib ko'ring.";
+  }
+  if (msg === 'Bekor qilindi' || msg === 'Rasm olinmadi' || msg.startsWith('Kamera xatosi')) return msg;
+  return "Internet bilan bog'lanib bo'lmadi. Qayta urinib ko'ring.";
+}
