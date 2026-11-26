@@ -14,7 +14,7 @@ describe('Section', () => {
       </Section>,
     );
     const s = flat(getByTestId('s'));
-    expect(s.paddingHorizontal).toBe(18);
+    expect(s.paddingHorizontal).toBe(14);
     expect(s.paddingVertical).toBe(16);
   });
 

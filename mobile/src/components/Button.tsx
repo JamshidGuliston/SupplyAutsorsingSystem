@@ -8,31 +8,35 @@ import {
   ViewStyle,
 } from 'react-native';
 import { AppText } from './AppText';
+import { IconProps } from './icons/types';
 import { colors } from '../theme/colors';
 import { radius, hit, spacing } from '../theme/spacing';
 
-export type ButtonVariant = 'primary' | 'outline' | 'danger';
+export type ButtonVariant = 'primary' | 'outline' | 'danger' | 'dangerSolid' | 'ghost';
+export type Progress = { step: number; total: number; label: string };
 
 type Tone = { bg: string; fg: string; borderWidth: number; borderColor: string };
 
+const NO_BORDER = { borderWidth: 0, borderColor: 'transparent' };
+
 const TONES: Record<ButtonVariant, Tone> = {
-  primary: { bg: colors.brand, fg: colors.surface, borderWidth: 0, borderColor: 'transparent' },
-  danger: { bg: colors.danger, fg: colors.surface, borderWidth: 0, borderColor: 'transparent' },
-  outline: { bg: colors.surface, fg: colors.ink, borderWidth: 2, borderColor: colors.ink },
+  primary: { bg: colors.ink, fg: colors.onHero, ...NO_BORDER },
+  dangerSolid: { bg: colors.danger, fg: colors.onHero, ...NO_BORDER },
+  outline: { bg: colors.card, fg: colors.ink, borderWidth: 1.5, borderColor: colors.outlineBorder },
+  danger: { bg: colors.card, fg: colors.danger, borderWidth: 1.5, borderColor: colors.dangerBorder },
+  ghost: { bg: 'transparent', fg: colors.inkSoft, ...NO_BORDER },
 };
 
-const DISABLED: Tone = {
-  bg: colors.disabledBg,
-  fg: colors.disabledInk,
-  borderWidth: 0,
-  borderColor: 'transparent',
-};
+const DISABLED: Tone = { bg: colors.disabledBg, fg: colors.disabledInk, ...NO_BORDER };
 
 export function Button({
   label,
   onPress,
   variant = 'primary',
+  size = 'md',
+  icon,
   loading = false,
+  progress,
   loadingLabel,
   disabled = false,
   style,
@@ -41,13 +45,17 @@ export function Button({
   label: string;
   onPress: () => void;
   variant?: ButtonVariant;
+  size?: 'md' | 'sm';
+  icon?: (p: IconProps) => JSX.Element;
   loading?: boolean;
-  loadingLabel?: string | null;
+  progress?: Progress | null;
+  loadingLabel?: string | null; // Task 9 da o'chiriladi
   disabled?: boolean;
   style?: StyleProp<ViewStyle>;
   testID?: string;
 }) {
   const tone = disabled ? DISABLED : TONES[variant];
+  const textVariant = size === 'sm' ? 'buttonSm' : 'button';
   return (
     <Pressable
       testID={testID}
@@ -55,6 +63,7 @@ export function Button({
       disabled={disabled || loading}
       style={[
         styles.btn,
+        { minHeight: size === 'sm' ? hit.buttonSm : hit.button },
         {
           backgroundColor: tone.bg,
           borderWidth: tone.borderWidth,
@@ -63,19 +72,41 @@ export function Button({
         style,
       ]}
     >
-      {loading ? (
-        <View style={styles.loadingRow}>
+      {loading && progress ? (
+        <>
+          <View
+            testID={`${testID}-fill`}
+            style={[
+              styles.fill,
+              { width: `${Math.round((progress.step / progress.total) * 100)}%` },
+            ]}
+          />
+          <View style={styles.row}>
+            <ActivityIndicator color={tone.fg} />
+            <AppText variant={textVariant} color={tone.fg} style={styles.loadingLabel}>
+              {progress.label}
+            </AppText>
+            <AppText variant={textVariant} color={tone.fg} style={styles.step}>
+              {`${progress.step}/${progress.total}`}
+            </AppText>
+          </View>
+        </>
+      ) : loading ? (
+        <View style={styles.row}>
           <ActivityIndicator color={tone.fg} />
           {!!loadingLabel && (
-            <AppText variant="button" color={tone.fg} style={styles.loadingLabel}>
+            <AppText variant={textVariant} color={tone.fg} style={styles.loadingLabel}>
               {loadingLabel}
             </AppText>
           )}
         </View>
       ) : (
-        <AppText variant="button" color={tone.fg}>
-          {label}
-        </AppText>
+        <View style={styles.row}>
+          {icon && <View style={styles.icon}>{icon({ size: 18, color: tone.fg })}</View>}
+          <AppText variant={textVariant} color={tone.fg}>
+            {label}
+          </AppText>
+        </View>
       )}
     </Pressable>
   );
@@ -83,12 +114,21 @@ export function Button({
 
 const styles = StyleSheet.create({
   btn: {
-    minHeight: hit.button,
     borderRadius: radius.button,
     paddingHorizontal: spacing.lg,
     alignItems: 'center',
     justifyContent: 'center',
+    overflow: 'hidden',
   },
-  loadingRow: { flexDirection: 'row', alignItems: 'center' },
+  fill: {
+    position: 'absolute',
+    left: 0,
+    top: 0,
+    bottom: 0,
+    backgroundColor: colors.heroChip,
+  },
+  row: { flexDirection: 'row', alignItems: 'center' },
+  icon: { marginRight: 9 },
   loadingLabel: { marginLeft: spacing.sm, flexShrink: 1 },
+  step: { marginLeft: spacing.sm, opacity: 0.6 },
 });

@@ -49,9 +49,9 @@ describe('Field', () => {
     expect(onChangeText).toHaveBeenCalledWith('x@y.uz');
   });
 
-  it('bosish maydoni kamida 52px', () => {
+  it('bosish maydoni kamida 50px', () => {
     const { getByTestId } = render(<Field label="Email" testID="f" />);
-    expect(flat(getByTestId('f')).minHeight).toBe(52);
+    expect(flat(getByTestId('f')).minHeight).toBe(50);
   });
 
   it('tashqaridan berilgan style matn rangini bekor qila olmaydi', () => {
