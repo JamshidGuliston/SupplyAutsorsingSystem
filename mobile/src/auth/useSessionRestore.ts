@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import { useAuthStore } from './authStore';
 import { loadToken } from './tokenStore';
+import { loadUser } from './userStore';
 import { api } from '../api/client';
 import { startFlusher } from '../attendance/attendanceFlusher';
 
@@ -24,7 +25,7 @@ export function useSessionRestore(): void {
       try {
         await api.get('/chef/attendance/today');
         if (!cancelled) {
-          useAuthStore.setState({ status: 'authenticated' });
+          useAuthStore.setState({ status: 'authenticated', user: loadUser() });
           startFlusher();
         }
       } catch (e: any) {

@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import { saveToken, clearToken } from './tokenStore';
+import { saveUser, clearUser } from './userStore';
 import { startFlusher, stopFlusher } from '../attendance/attendanceFlusher';
 import { registerDeviceWithBackend } from '../push/fcm';
 
@@ -26,6 +27,7 @@ export const useAuthStore = create<AuthState>((set) => ({
   setStatus: (s) => set({ status: s }),
   setSession: async (user, token) => {
     await saveToken(token);
+    saveUser(user);
     set({ user, status: 'authenticated' });
     startFlusher();
     void registerDeviceWithBackend('1.0.0').catch(() => { /* swallow — not critical */ });
@@ -33,6 +35,7 @@ export const useAuthStore = create<AuthState>((set) => ({
   clearSession: async () => {
     stopFlusher();
     await clearToken();
+    clearUser();
     set({ user: null, status: 'unauthenticated' });
   },
 }));

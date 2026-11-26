@@ -21,6 +21,7 @@ jest.mock('../src/push/fcm', () => ({
 }));
 
 import { useAuthStore } from '../src/auth/authStore';
+import { loadUser } from '../src/auth/userStore';
 
 describe('authStore', () => {
   beforeEach(() => {
@@ -36,6 +37,7 @@ describe('authStore', () => {
     await useAuthStore.getState().setSession({ id: 1, name: 'A', email: 'a@t.l', role_id: 6 }, 'tok-xyz');
     expect(useAuthStore.getState().status).toBe('authenticated');
     expect(useAuthStore.getState().user?.id).toBe(1);
+    expect(loadUser()?.name).toBe('A');
   });
 
   it('clearSession resets state', async () => {
@@ -43,5 +45,6 @@ describe('authStore', () => {
     await useAuthStore.getState().clearSession();
     expect(useAuthStore.getState().status).toBe('unauthenticated');
     expect(useAuthStore.getState().user).toBeNull();
+    expect(loadUser()).toBeNull();
   });
 });
