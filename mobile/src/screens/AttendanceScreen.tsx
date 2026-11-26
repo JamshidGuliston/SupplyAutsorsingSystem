@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useState, useCallback, useRef } from 'react';
 import { View, RefreshControl, StyleSheet } from 'react-native';
 import { HeroScreen } from '../components/HeroScreen';
 import { Section } from '../components/Section';
@@ -48,6 +48,34 @@ export function AttendanceScreen() {
   const [debugInfo, setDebugInfo] = useState<string | null>(null);
 
   useEffect(() => { void refresh(); }, [refresh]);
+
+  // Navbat MMKV dan sinxron o'qiladi: har render'da (jumladan onAction tugagandagi) yangi holat.
+  const queued = {
+    check_in: queuedCaptureToday('check_in'),
+    check_out: queuedCaptureToday('check_out'),
+  };
+  const shownQueue = useRef(queued);
+  useEffect(() => {
+    shownQueue.current = queued;
+  });
+
+  // Flusher navbatni fonda yuboradi, lekin do'konni yangilamaydi. Ekranda ko'rsatilgan navbatdagi
+  // yozuv yo'qolsa, bugungi holat qayta yuklanadi — aks holda "Yuborilmoqda…" qotib qoladi yoki
+  // keyingi render'da "Keldim" qaytadi (ikkinchi bosish).
+  useEffect(() => {
+    const tick = setInterval(() => {
+      const shown = shownQueue.current;
+      const flushed =
+        (shown.check_in !== null && queuedCaptureToday('check_in') === null) ||
+        (shown.check_out !== null && queuedCaptureToday('check_out') === null);
+      if (flushed) {
+        shownQueue.current = { check_in: null, check_out: null };
+        setEnqueued(false);
+        void refresh();
+      }
+    }, 5_000);
+    return () => clearInterval(tick);
+  }, [refresh]);
 
   const onAction = useCallback(async (kind: ActionKind) => {
     setActionError(null);
@@ -138,11 +166,7 @@ export function AttendanceScreen() {
     }
   }, [refresh, kindgarden]);
 
-  // Navbat MMKV dan sinxron o'qiladi: har render'da (jumladan onAction tugagandagi) yangi holat.
-  const timeline = buildTimeline(today, {
-    check_in: queuedCaptureToday('check_in'),
-    check_out: queuedCaptureToday('check_out'),
-  });
+  const timeline = buildTimeline(today, queued);
   const { buttons, hint } = attendanceActions(timeline);
   const sideBySide = buttons.length > 1 && buttons.every((b) => b.size === 'sm');
 

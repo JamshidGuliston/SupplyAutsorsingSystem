@@ -1,6 +1,6 @@
 import React from 'react';
 import { StyleSheet } from 'react-native';
-import { render, fireEvent } from '@testing-library/react-native';
+import { render, fireEvent, act } from '@testing-library/react-native';
 import { AttendanceScreen } from '../../src/screens/AttendanceScreen';
 import { useAttendanceStore } from '../../src/attendance/attendanceStore';
 import { enqueue, clearAll } from '../../src/attendance/attendanceQueue';
@@ -10,6 +10,7 @@ import { captureSelfie } from '../../src/attendance/selfieCapture';
 import { isMockGpsAllowed } from '../../src/attendance/mockGps';
 import { getToday, postCheckIn } from '../../src/attendance/attendanceApi';
 import type { AttendanceRow, KindgardenInfo } from '../../src/attendance/attendanceApi';
+import { colors } from '../../src/theme/colors';
 
 jest.mock('../../src/attendance/permissions', () => ({
   ensureLocation: jest.fn(),
@@ -85,6 +86,10 @@ function deviceReady() {
 }
 
 describe('AttendanceScreen', () => {
+  afterEach(() => {
+    jest.useRealTimers();
+  });
+
   beforeEach(() => {
     jest.clearAllMocks();
     clearAll();
@@ -127,7 +132,42 @@ describe('AttendanceScreen', () => {
     expect(getByText('Yuborilmoqda…')).toBeTruthy();
     expect(getByText(/da olindi · navbatda$/)).toBeTruthy();
     expect(queryByText('Keldim')).toBeNull();
-    expect(flat(getByTestId('timeline-line')).backgroundColor).toBe('#EEEDEB');
+    expect(flat(getByTestId('timeline-line')).backgroundColor).toBe(colors.linePending);
+  });
+
+  it('navbatdagi kelish fonda yuborilsa, 5 s ichida bugungi holat qayta yuklanadi', () => {
+    jest.useFakeTimers();
+    enqueue({
+      kind: 'check_in',
+      lat: kg.lat as number,
+      lng: kg.lng as number,
+      capturedAt: new Date().toISOString(),
+      isMock: false,
+      photoUri: 'file://a.jpg',
+    });
+    setStore({ loaded: true, today: null });
+    const { getByText, queryByText } = render(<AttendanceScreen />);
+    expect(getByText('Yuborilmoqda…')).toBeTruthy();
+    frozenRefresh.mockClear();
+
+    // Flusher yozuvni yubordi va navbatdan o'chirdi; server endi kelishni qaytaradi.
+    frozenRefresh.mockImplementationOnce(async () => {
+      useAttendanceStore.setState({ today: row({ check_in_at: '2026-11-26T03:10:00.000000Z' }) });
+    });
+    clearAll();
+    act(() => {
+      jest.advanceTimersByTime(5_000);
+    });
+
+    expect(frozenRefresh).toHaveBeenCalledTimes(1);
+    expect(queryByText('Yuborilmoqda…')).toBeNull();
+    expect(getByText('Keldingiz')).toBeTruthy();
+    expect(queryByText('Keldim')).toBeNull();
+
+    act(() => {
+      jest.advanceTimersByTime(10_000);
+    });
+    expect(frozenRefresh).toHaveBeenCalledTimes(1);
   });
 
   it('kelgan va kechikkan — Toshkent vaqti, "kechikkan" va "Ketdim"', () => {
@@ -144,7 +184,7 @@ describe('AttendanceScreen', () => {
     expect(getByText('Ketdim')).toBeTruthy();
     expect(getByText('Kelishni qayta yuborish')).toBeTruthy();
     expect(queryByText('Keldim')).toBeNull();
-    expect(flat(getByTestId('timeline-line')).backgroundColor).toBe('#CFE8D9');
+    expect(flat(getByTestId('timeline-line')).backgroundColor).toBe(colors.lineDone);
   });
 
   it("ikkalasi — ish vaqti, ikki kichik qayta yuborish va yakuniy izoh", () => {
