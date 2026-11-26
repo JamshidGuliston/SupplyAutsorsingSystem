@@ -1,10 +1,12 @@
 import React, { useEffect } from 'react';
-import { View, ActivityIndicator } from 'react-native';
+import { View, ActivityIndicator, StyleSheet } from 'react-native';
 import { useAuthStore } from '../auth/authStore';
 import { useSessionRestore } from '../auth/useSessionRestore';
 import { registerUnauthenticatedHandler } from '../api/client';
 import { AuthStack } from './AuthStack';
 import { MainTabs } from './MainTabs';
+import { GradientFill } from '../components/GradientFill';
+import { colors } from '../theme/colors';
 
 export function RootNavigator() {
   const status = useAuthStore((s) => s.status);
@@ -20,11 +22,16 @@ export function RootNavigator() {
 
   if (status === 'restoring') {
     return (
-      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-        <ActivityIndicator size="large" />
+      <View testID="restore-screen" style={styles.restore}>
+        <GradientFill />
+        <ActivityIndicator size="large" color={colors.onHero} />
       </View>
     );
   }
 
   return status === 'authenticated' ? <MainTabs /> : <AuthStack />;
 }
+
+const styles = StyleSheet.create({
+  restore: { flex: 1, justifyContent: 'center', alignItems: 'center' },
+});

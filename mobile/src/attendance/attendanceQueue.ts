@@ -1,4 +1,5 @@
 import { MMKV } from 'react-native-mmkv';
+import { parseServerIso, tashkentDateKey } from '../lib/uzTime';
 
 const KEY = 'attendance.queue.v1';
 const storage = new MMKV({ id: 'attendance' });
@@ -56,4 +57,22 @@ export function removeById(id: string): void {
 
 export function clearAll(): void {
   storage.delete(KEY);
+}
+
+// Profil va "Internet yo'q" kapsulasi uchun: faqat davomat yozuvlari (joylashuv hodisalarisiz).
+export function attendancePendingCount(): number {
+  return readAll().filter((i) => i.kind !== 'location_events').length;
+}
+
+// Navbatdagi bugungi (Toshkent sanasi bo'yicha) kelish/ketishning eng oxirgisi — capturedAt, yo'q bo'lsa null.
+export function queuedCaptureToday(kind: 'check_in' | 'check_out', now: Date = new Date()): string | null {
+  const today = tashkentDateKey(now);
+  const items = readAll();
+  for (let i = items.length - 1; i >= 0; i--) {
+    const item = items[i];
+    if (item.kind !== kind && item.kind !== `replace_${kind}`) continue;
+    const captured = parseServerIso(item.capturedAt);
+    if (captured && tashkentDateKey(captured) === today) return item.capturedAt;
+  }
+  return null;
 }
