@@ -6,12 +6,12 @@ import { AppText } from '../../src/components/AppText';
 const flat = (node: any) => StyleSheet.flatten(node.props.style);
 
 describe('AppText', () => {
-  it('h1 varianti tipografika shkalasini qo\'llaydi', () => {
-    const { getByText } = render(<AppText variant="h1">Davomat</AppText>);
+  it('heroTitleLg varianti tipografika shkalasini qo\'llaydi', () => {
+    const { getByText } = render(<AppText variant="heroTitleLg">Davomat</AppText>);
     const s = flat(getByText('Davomat'));
-    expect(s.fontSize).toBe(28);
+    expect(s.fontSize).toBe(26);
     expect(s.fontWeight).toBe('800');
-    expect(s.letterSpacing).toBe(-1.0);
+    expect(s.letterSpacing).toBe(-0.6);
   });
 
   it('variant berilmasa body ishlatiladi', () => {
@@ -29,11 +29,6 @@ describe('AppText', () => {
     expect(flat(getByText('Kirish')).color).toBe('#EF5B3C');
   });
 
-  it('eyebrow varianti katta harfga o\'tkazadi', () => {
-    const { getByText } = render(<AppText variant="eyebrow">bog'cha</AppText>);
-    expect(flat(getByText('bog\'cha')).textTransform).toBe('uppercase');
-  });
-
   it('noma\'lum variant kelsa body ga qaytadi', () => {
     const { getByText } = render(<AppText variant={'yoq' as any}>Salom</AppText>);
     expect(flat(getByText('Salom')).fontSize).toBe(15);
@@ -41,7 +36,7 @@ describe('AppText', () => {
 
   it('o\'ziga xos stil variantning asosini bekor qiladi', () => {
     const { getByText } = render(
-      <AppText variant="h1" style={{ fontSize: 11 }}>
+      <AppText variant="heroTitleLg" style={{ fontSize: 11 }}>
         Davomat
       </AppText>
     );
@@ -59,7 +54,7 @@ describe('AppText', () => {
 
   it('color prop variantning asosida rangni bekor qiladi', () => {
     const { getByText } = render(
-      <AppText variant="h1" color="#EF5B3C">
+      <AppText variant="heroTitleLg" color="#EF5B3C">
         Davomat
       </AppText>
     );

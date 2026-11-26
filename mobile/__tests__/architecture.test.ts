@@ -3,19 +3,28 @@ import path from 'path';
 
 const SRC_DIR = path.join(__dirname, '..', 'src');
 
-function walk(dir: string, out: string[] = []): string[] {
+function walk(dir: string, out: string[] = [], exts: string[] = ['.tsx']): string[] {
   for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
     const full = path.join(dir, entry.name);
     if (entry.isDirectory()) {
-      walk(full, out);
-    } else if (entry.isFile() && full.endsWith('.tsx')) {
+      walk(full, out, exts);
+    } else if (entry.isFile() && exts.some((e) => full.endsWith(e))) {
       out.push(full);
     }
   }
   return out;
 }
 
+const walkAll = (dir: string) => walk(dir, [], ['.ts', '.tsx']);
+
 describe('arxitektura invariantlari', () => {
+  it("src ichida emoji yoq", () => {
+    const offenders = walkAll(SRC_DIR).filter((f) =>
+      /\p{Extended_Pictographic}/u.test(fs.readFileSync(f, 'utf8')),
+    );
+    expect(offenders.map((f) => path.relative(SRC_DIR, f))).toEqual([]);
+  });
+
   // Bu test tungi rejim xatosining (oq fonda oq matn) qaytishining oldini oladi:
   // TextInput faqat Field.tsx ichida, aniq rang bilan ishlatilishi kerak.
   it('TextInput faqat Field.tsx ichida ishlatiladi', () => {

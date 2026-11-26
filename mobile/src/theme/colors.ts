@@ -4,10 +4,8 @@ export const colors = {
   inkFaint: '#9A9CA2',
 
   brand: '#EF5B3C',
-  brandPressed: '#C4401F',
 
   surface: '#FFFFFF',
-  rule: '#E8E8EA',
 
   ok: '#14884A',
   warn: '#D08700',
@@ -22,7 +20,6 @@ export const colors = {
 
   disabledBg: '#F1F1F3',
   disabledInk: '#A9ABAF',
-  statusOff: '#C7C9CD',
   brandGradient: ['#F47A55', '#EF5B3C', '#D9431F'],
   brandTop: '#F47A55',
   brandSoft: '#FFE9E2',
