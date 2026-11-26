@@ -1,34 +1,50 @@
 import React from 'react';
 import { View, StyleSheet } from 'react-native';
 import { AppText } from './AppText';
+import { AlertIcon } from './icons/AlertIcon';
+import { CheckIcon } from './icons/CheckIcon';
+import { SyncIcon } from './icons/SyncIcon';
 import { colors } from '../theme/colors';
 import { spacing, radius } from '../theme/spacing';
 
-export type BannerTone = 'error' | 'success' | 'info';
+export type BannerTone = 'error' | 'success' | 'warn';
 
-const TONES: Record<BannerTone, { bg: string; bar: string; fg: string }> = {
-  error: { bg: colors.dangerBg, bar: colors.danger, fg: colors.danger },
-  success: { bg: colors.okBg, bar: colors.ok, fg: colors.okInk },
-  info: { bg: colors.warnBg, bar: colors.warn, fg: colors.warnInk },
+const TONES: Record<
+  BannerTone,
+  { bg: string; iconBg: string; fg: string; Icon: typeof AlertIcon }
+> = {
+  error: { bg: colors.dangerBg, iconBg: colors.dangerIconBg, fg: colors.dangerInk, Icon: AlertIcon },
+  success: { bg: colors.okBg, iconBg: colors.okIconBg, fg: colors.okInk, Icon: CheckIcon },
+  warn: { bg: colors.warnBg, iconBg: colors.warnIconBg, fg: colors.warnInk, Icon: SyncIcon },
 };
 
 export function Banner({
   tone = 'error',
   message,
+  title,
   testID,
 }: {
   tone?: BannerTone;
   message?: string | null;
+  title?: string;
   testID?: string;
 }) {
   if (!message) return null;
   const t = TONES[tone];
   return (
-    <View
-      testID={testID}
-      style={[styles.box, { backgroundColor: t.bg, borderLeftColor: t.bar }]}
-    >
-      <AppText variant="body" color={t.fg}>
+    <View testID={testID} style={[styles.box, { backgroundColor: t.bg }]}>
+      <View
+        testID={testID ? `${testID}-icon` : undefined}
+        style={[styles.iconCircle, { backgroundColor: t.iconBg }]}
+      >
+        <t.Icon size={13} color={t.fg} />
+      </View>
+      <AppText variant="body" color={t.fg} style={styles.text}>
+        {title ? (
+          <AppText variant="bodyStrong" color={t.fg}>
+            {title}{' '}
+          </AppText>
+        ) : null}
         {message}
       </AppText>
     </View>
@@ -37,9 +53,20 @@ export function Banner({
 
 const styles = StyleSheet.create({
   box: {
-    borderLeftWidth: 4,
-    borderRadius: radius.field,
-    padding: spacing.md,
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    gap: 10,
+    borderRadius: radius.banner,
+    paddingVertical: 11,
+    paddingHorizontal: spacing.md,
     marginBottom: spacing.md,
   },
+  iconCircle: {
+    width: 22,
+    height: 22,
+    borderRadius: 11,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  text: { flex: 1 },
 });

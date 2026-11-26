@@ -5,6 +5,18 @@ import { HomeIcon } from '../../src/components/icons/HomeIcon';
 import { PinIcon } from '../../src/components/icons/PinIcon';
 import { BellIcon } from '../../src/components/icons/BellIcon';
 import { UserIcon } from '../../src/components/icons/UserIcon';
+import { MailIcon } from '../../src/components/icons/MailIcon';
+import { LockIcon } from '../../src/components/icons/LockIcon';
+import { EyeIcon } from '../../src/components/icons/EyeIcon';
+import { EyeOffIcon } from '../../src/components/icons/EyeOffIcon';
+import { CalendarIcon } from '../../src/components/icons/CalendarIcon';
+import { CameraIcon } from '../../src/components/icons/CameraIcon';
+import { ClockIcon } from '../../src/components/icons/ClockIcon';
+import { CheckIcon } from '../../src/components/icons/CheckIcon';
+import { LogoutIcon } from '../../src/components/icons/LogoutIcon';
+import { SyncIcon } from '../../src/components/icons/SyncIcon';
+import { WifiOffIcon } from '../../src/components/icons/WifiOffIcon';
+import { AlertIcon } from '../../src/components/icons/AlertIcon';
 
 describe('icons', () => {
   it('HomeIcon berilgan o\'lcham va rangni qo\'llaydi, o\'ziga xos yo\'lni chizadi', () => {
@@ -69,13 +81,14 @@ describe('icons', () => {
     expect(paths[0].props.d).toBe('M4.5 20.5a7.5 7.5 0 0 1 15 0');
   });
 
-  it('barcha ikonkalar umumiy chiziq uslubini (fill, strokeWidth, viewBox, burchaklar) qo\'llaydi', () => {
-    const home = render(<HomeIcon color="#000000" testID="home" />).getByTestId('home');
-    const pin = render(<PinIcon color="#000000" testID="pin" />).getByTestId('pin');
-    const bell = render(<BellIcon color="#000000" testID="bell" />).getByTestId('bell');
-    const user = render(<UserIcon color="#000000" testID="user" />).getByTestId('user');
-
-    [home, pin, bell, user].forEach((svg) => {
+  it("barcha 16 ikonka umumiy chiziq uslubini (fill, strokeWidth, viewBox, burchaklar) qo'llaydi", () => {
+    const all = [
+      HomeIcon, PinIcon, BellIcon, UserIcon, MailIcon, LockIcon, EyeIcon, EyeOffIcon,
+      CalendarIcon, CameraIcon, ClockIcon, CheckIcon, LogoutIcon, SyncIcon, WifiOffIcon, AlertIcon,
+    ];
+    expect(all).toHaveLength(16);
+    all.forEach((Icon) => {
+      const svg = render(<Icon color="#000000" testID="x" />).getByTestId('x');
       // react-native-svg parses viewBox="0 0 24 24" into these four numeric
       // props on the rendered native view; `viewBox` itself is not forwarded.
       expect(svg.props.minX).toBe(0);

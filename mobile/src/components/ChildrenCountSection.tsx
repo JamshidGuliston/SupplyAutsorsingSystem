@@ -80,7 +80,7 @@ export function ChildrenCountSection() {
         />
         <Divider />
         <Section>
-          <Banner tone="info" message={reason} />
+          <Banner tone="warn" message={reason} />
           <AppText variant="muted" color={colors.inkMuted}>
             Vaqt: {data.time_window.from} - {data.time_window.to} oralig'ida{'\n'}
             Hozir (Tashkent): {data.time_window.current_tashkent}
