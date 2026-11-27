@@ -268,6 +268,33 @@ describe('AttendanceScreen', () => {
     expect(queryByText('Keldim')).toBeNull();
   });
 
+  it("server 500 qaytarsa inglizcha 'Server Error' emas, o'zbekcha matn; navbatga qo'shilmaydi", async () => {
+    deviceReady();
+    setStore({ loaded: true });
+    (postCheckIn as jest.Mock).mockRejectedValue({
+      response: { status: 500, data: { message: 'Server Error' } },
+    });
+    const { getByText, findByText, queryByText } = render(<AttendanceScreen />);
+    fireEvent.press(getByText('Keldim'));
+    expect(await findByText("Serverda xato. Birozdan keyin qayta urinib ko'ring.")).toBeTruthy();
+    expect(queryByText('Server Error')).toBeNull();
+    expect(queryByText(/Navbatga qo'shildi\./)).toBeNull();
+    expect(getByText('Keldim')).toBeTruthy();
+  });
+
+  it("server ma'lum kod qaytarsa mapServerError matni o'zgarmagan", async () => {
+    deviceReady();
+    setStore({ loaded: true });
+    (postCheckIn as jest.Mock).mockRejectedValue({
+      response: { status: 422, data: { error: 'stale_capture', message: 'Stale' } },
+    });
+    const { getByText, findByText } = render(<AttendanceScreen />);
+    fireEvent.press(getByText('Keldim'));
+    expect(
+      await findByText("Yuborilgan vaqt server vaqtidan ko'p farq qiladi. Qayta urinib ko'ring."),
+    ).toBeTruthy();
+  });
+
   it("qurilma xatosida xom e.message emas, tushunarli matn", async () => {
     deviceReady();
     setStore({ loaded: true });

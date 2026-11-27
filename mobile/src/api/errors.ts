@@ -51,11 +51,21 @@ export function errorCode(err: unknown): string | undefined {
   return (err as { response?: { data?: { error?: string } } } | null | undefined)?.response?.data?.error;
 }
 
+const SERVER_ERROR_TEXT = "Serverda xato. Birozdan keyin qayta urinib ko'ring.";
+
 export function userFacingError(err: unknown): string {
-  const e = err as { response?: { data?: ServerErrorPayload }; message?: unknown } | null | undefined;
+  const e = err as
+    | { response?: { status?: number; data?: ServerErrorPayload }; message?: unknown }
+    | null
+    | undefined;
   if (e?.response) {
+    const status = e.response.status;
+    // Laravel 5xx va throttle (429) javoblarida faqat inglizcha `message` bo'ladi
+    // ("Server Error", "Too Many Attempts.") — u oshpazga ko'rsatilmaydi.
+    if (typeof status === 'number' && status >= 500) return SERVER_ERROR_TEXT;
+    if (status === 429) return mapServerError({ error: 'rate_limited' });
     if (e.response.data) return mapServerError(e.response.data);
-    return "Serverda xato. Birozdan keyin qayta urinib ko'ring.";
+    return SERVER_ERROR_TEXT;
   }
   const msg = typeof e?.message === 'string' ? e.message : '';
   if (msg.startsWith('GPS error')) {

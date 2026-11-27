@@ -20,7 +20,7 @@ import { isMockGpsAllowed } from '../attendance/mockGps';
 import { enqueue, queuedCaptureToday } from '../attendance/attendanceQueue';
 import { postCheckIn, postCheckOut, postReplace, SubmitParams } from '../attendance/attendanceApi';
 import { ActionKind, attendanceActions, buildTimeline } from '../attendance/timeline';
-import { mapServerError, userFacingError } from '../api/errors';
+import { userFacingError } from '../api/errors';
 import { isoNowUtc } from '../lib/tashkent';
 import { haversineMeters } from '../lib/distance';
 
@@ -142,7 +142,7 @@ export function AttendanceScreen() {
         const status = apiErr?.response?.status;
         const data = apiErr?.response?.data;
         if (data) {
-          setActionError(mapServerError(data));
+          setActionError(userFacingError(apiErr));
           setDebugInfo((prev) => `${prev ?? ''}\n\nAPI: HTTP ${status}\n${JSON.stringify(data).slice(0, 300)}`);
           return;
         }
