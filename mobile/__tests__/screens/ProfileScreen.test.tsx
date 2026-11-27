@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, fireEvent, waitFor } from '@testing-library/react-native';
+import { render, fireEvent, waitFor, act } from '@testing-library/react-native';
 import { ProfileScreen } from '../../src/screens/ProfileScreen';
 
 jest.mock('@react-navigation/native', () => {
@@ -59,6 +59,29 @@ describe('ProfileScreen', () => {
     expect(getByText('1 ta navbatda')).toBeTruthy();
     fireEvent.press(getByText('Hisobdan chiqish'));
     expect(getByText('1 ta davomat hali yuborilmagan')).toBeTruthy();
+  });
+
+  it("Profil ochiq turganda navbatga yozuv qo'shilsa, chiqish dialogi buni aytadi", () => {
+    const { getByText } = render(<ProfileScreen />);
+    expect(getByText("Navbat bo'sh")).toBeTruthy();
+    mockPending = 1; // Profil fokusda turganda davomat navbatga yozildi.
+    fireEvent.press(getByText('Hisobdan chiqish'));
+    expect(getByText('1 ta davomat hali yuborilmagan')).toBeTruthy();
+  });
+
+  it('fokusda turganda navbat qatori 5 s da yangilanadi', () => {
+    jest.useFakeTimers();
+    try {
+      const { getByText } = render(<ProfileScreen />);
+      expect(getByText("Navbat bo'sh")).toBeTruthy();
+      mockPending = 2;
+      act(() => {
+        jest.advanceTimersByTime(5_000);
+      });
+      expect(getByText('2 ta navbatda')).toBeTruthy();
+    } finally {
+      jest.useRealTimers();
+    }
   });
 
   it('bekor qilish dialogni yopadi', () => {

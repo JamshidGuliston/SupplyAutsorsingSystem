@@ -4,7 +4,7 @@ import NetInfo from '@react-native-community/netinfo';
 import { AppText } from './AppText';
 import { WifiOffIcon } from './icons/WifiOffIcon';
 import { SyncIcon } from './icons/SyncIcon';
-import { attendancePendingCount } from '../attendance/attendanceQueue';
+import { usePendingCount } from '../attendance/usePendingCount';
 import { colors } from '../theme/colors';
 import { radius } from '../theme/spacing';
 
@@ -25,17 +25,13 @@ export function offlinePillText(
 // Hero ichida, status bar ostidagi oq kapsula: internet yo'qligi va yuborilmagan davomatlar soni.
 export function OfflinePill() {
   const [online, setOnline] = useState<boolean>(true);
-  const [pending, setPending] = useState<number>(attendancePendingCount);
+  const { pending } = usePendingCount();
 
   useEffect(() => {
     const unsubscribe = NetInfo.addEventListener((state) => {
       setOnline(!!state.isConnected);
     });
-    const tick = setInterval(() => setPending(attendancePendingCount()), 5_000);
-    return () => {
-      unsubscribe();
-      clearInterval(tick);
-    };
+    return unsubscribe;
   }, []);
 
   const pill = offlinePillText(online, pending);

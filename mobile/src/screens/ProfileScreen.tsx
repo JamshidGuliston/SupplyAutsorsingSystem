@@ -17,7 +17,8 @@ import { LogoutIcon } from '../components/icons/LogoutIcon';
 import { IconProps } from '../components/icons/types';
 import { useAuthStore } from '../auth/authStore';
 import { stopFlusher } from '../attendance/attendanceFlusher';
-import { clearAll as clearQueue, attendancePendingCount } from '../attendance/attendanceQueue';
+import { clearAll as clearQueue } from '../attendance/attendanceQueue';
+import { usePendingCount } from '../attendance/usePendingCount';
 import { useChildrenCountToday } from '../api/childrenCount';
 import { displayName, initials } from '../lib/text';
 import { colors } from '../theme/colors';
@@ -53,13 +54,16 @@ export function ProfileScreen() {
   const user = useAuthStore((s) => s.user);
   const clearSession = useAuthStore((s) => s.clearSession);
   const { data } = useChildrenCountToday();
-  const [pending, setPending] = React.useState(0);
+  // Fokusda va har 5 s da (OfflinePill bilan bir xil) yangilanadi; dialog ochilayotganda ham
+  // qayta o'qiladi — aks holda Profil ochiq turganda navbatga tushgan yozuv "Navbat bo'sh"
+  // deb ko'rsatilib, chiqishda jimgina o'chiriladi.
+  const { pending, refresh: refreshPending } = usePendingCount();
   const [confirm, setConfirm] = React.useState(false);
 
   useFocusEffect(
     React.useCallback(() => {
-      setPending(attendancePendingCount());
-    }, []),
+      refreshPending();
+    }, [refreshPending]),
   );
 
   const name = displayName(user?.name);
@@ -133,7 +137,10 @@ export function ProfileScreen() {
           label="Hisobdan chiqish"
           variant="danger"
           icon={LogoutIcon}
-          onPress={() => setConfirm(true)}
+          onPress={() => {
+            refreshPending();
+            setConfirm(true);
+          }}
         />
       </View>
 
