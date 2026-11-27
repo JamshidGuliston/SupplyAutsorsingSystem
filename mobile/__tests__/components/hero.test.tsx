@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, Text } from 'react-native';
+import { RefreshControl, StyleSheet, Text } from 'react-native';
 import { render } from '@testing-library/react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import NetInfo from '@react-native-community/netinfo';
@@ -42,6 +42,36 @@ describe('HeroScreen', () => {
     expect(s.position).toBe('absolute');
     expect(s.top).toBe(0);
     expect(s.height).toBe(24);
+  });
+
+  it('pastga tortish spinneri status bar tasmasi ostida emas: progressViewOffset = safe-area tepasi', () => {
+    const { UNSAFE_getByType } = render(
+      <SafeAreaProvider initialMetrics={METRICS}>
+        <HeroScreen
+          hero={<Hero><Text>Davomat</Text></Hero>}
+          refreshControl={<RefreshControl refreshing={false} onRefresh={() => {}} />}
+        >
+          <Text>ichida</Text>
+        </HeroScreen>
+      </SafeAreaProvider>,
+    );
+    expect(UNSAFE_getByType(RefreshControl).props.progressViewOffset).toBe(24);
+  });
+
+  it("chaqiruvchi o'z progressViewOffset ini bersa, u saqlanadi", () => {
+    const { UNSAFE_getByType } = render(
+      <SafeAreaProvider initialMetrics={METRICS}>
+        <HeroScreen
+          hero={<Hero><Text>Davomat</Text></Hero>}
+          refreshControl={
+            <RefreshControl refreshing={false} onRefresh={() => {}} progressViewOffset={60} />
+          }
+        >
+          <Text>ichida</Text>
+        </HeroScreen>
+      </SafeAreaProvider>,
+    );
+    expect(UNSAFE_getByType(RefreshControl).props.progressViewOffset).toBe(60);
   });
 
   it('varaq canvas fonida, yuqori radius 24, hero ustiga 22 dp chiqadi', () => {

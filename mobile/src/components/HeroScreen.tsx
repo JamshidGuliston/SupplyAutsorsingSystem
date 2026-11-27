@@ -1,5 +1,12 @@
 import React, { ReactElement, ReactNode } from 'react';
-import { View, ScrollView, KeyboardAvoidingView, Platform, StyleSheet } from 'react-native';
+import {
+  View,
+  ScrollView,
+  KeyboardAvoidingView,
+  Platform,
+  StyleSheet,
+  RefreshControlProps,
+} from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { colors } from '../theme/colors';
 import { radius, screen } from '../theme/spacing';
@@ -19,7 +26,7 @@ export function HeroScreen({
   children: ReactNode;
   sheet?: 'canvas' | 'white';
   overlap?: number;
-  refreshControl?: ReactElement;
+  refreshControl?: ReactElement<RefreshControlProps>;
   keyboardShouldPersistTaps?: 'handled';
   testID?: string;
 }) {
@@ -27,6 +34,12 @@ export function HeroScreen({
   const white = sheet === 'white';
   const sheetBg = white ? colors.card : colors.canvas;
   const sheetRadius = white ? radius.sheetLg : radius.sheet;
+  // Android spinneri ScrollView tepasidan chiqadi — qotgan status bar tasmasi ostida qolmasin.
+  const refresh = refreshControl
+    ? React.cloneElement(refreshControl, {
+        progressViewOffset: refreshControl.props.progressViewOffset ?? insets.top,
+      })
+    : undefined;
 
   return (
     <KeyboardAvoidingView
@@ -36,7 +49,7 @@ export function HeroScreen({
     >
       <ScrollView
         contentContainerStyle={styles.content}
-        refreshControl={refreshControl}
+        refreshControl={refresh}
         keyboardShouldPersistTaps={keyboardShouldPersistTaps}
       >
         {hero}
