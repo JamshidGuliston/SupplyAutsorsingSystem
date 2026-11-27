@@ -11,21 +11,31 @@ interface AttendanceState {
   loaded: boolean;
   error: string | null;
   refresh: () => Promise<void>;
+  // Chiqishda: keyingi hisob oldingisining bog'chasi va geozonasini ko'rmasin.
+  reset: () => void;
 }
 
+const EMPTY = { today: null, kindgarden: null, loading: false, loaded: false, error: null };
+
+// reset() dan oldin boshlangan so'rov javobi tozalangan do'konga yozilmaydi.
+let generation = 0;
+
 export const useAttendanceStore = create<AttendanceState>((set) => ({
-  today: null,
-  kindgarden: null,
-  loading: false,
-  loaded: false,
-  error: null,
+  ...EMPTY,
   refresh: async () => {
+    const gen = generation;
     set({ loading: true, error: null });
     try {
       const r = await getToday();
+      if (gen !== generation) return;
       set({ today: r.attendance, kindgarden: r.kindgarden, loading: false, loaded: true });
     } catch (e) {
+      if (gen !== generation) return;
       set({ loading: false, error: userFacingError(e) });
     }
+  },
+  reset: () => {
+    generation += 1;
+    set(EMPTY);
   },
 }));
