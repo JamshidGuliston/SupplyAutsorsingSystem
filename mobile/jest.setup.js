@@ -15,10 +15,14 @@ jest.mock('react-native-config', () => ({
   default: { API_BASE_URL: 'http://test', APP_ENV: 'development', VERSION_NAME: '1.2.0' },
 }));
 
+// Haqiqiy MMKV kabi: bir xil `id` li nusxalar bitta omborni ko'radi (id yo'q — standart ombor).
 jest.mock('react-native-mmkv', () => {
+  const stores = new Map();
   class MMKV {
-    constructor() {
-      this.store = new Map();
+    constructor(config = {}) {
+      const id = config.id ?? 'mmkv.default';
+      if (!stores.has(id)) stores.set(id, new Map());
+      this.store = stores.get(id);
     }
     getString(key) {
       return this.store.get(key);
