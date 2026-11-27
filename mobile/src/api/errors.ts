@@ -52,20 +52,35 @@ export function errorCode(err: unknown): string | undefined {
 }
 
 const SERVER_ERROR_TEXT = "Serverda xato. Birozdan keyin qayta urinib ko'ring.";
+const UNKNOWN_ERROR_TEXT = "Noma'lum xato. Qayta urinib ko'ring.";
+
+// Laravel validatsiyasi (422) `error` kodisiz keladi: faqat inglizcha
+// "The given data was invalid." va maydonlar ro'yxati `errors`.
+function validationText(errors: unknown): string {
+  const fields = errors && typeof errors === 'object' ? Object.keys(errors) : [];
+  if (fields.includes('email')) return "Email manzilini to'g'ri kiriting (masalan: ism@globaltam.uz).";
+  if (fields.includes('photo')) return "Selfini yuborib bo'lmadi. Qayta suratga olib ko'ring.";
+  return "Yuborilgan ma'lumot noto'g'ri. Qayta urinib ko'ring.";
+}
 
 export function userFacingError(err: unknown): string {
   const e = err as
-    | { response?: { status?: number; data?: ServerErrorPayload }; message?: unknown }
+    | { response?: { status?: number; data?: ServerErrorPayload & { errors?: unknown } }; message?: unknown }
     | null
     | undefined;
   if (e?.response) {
     const status = e.response.status;
+    const data = e.response.data;
     // Laravel 5xx va throttle (429) javoblarida faqat inglizcha `message` bo'ladi
     // ("Server Error", "Too Many Attempts.") — u oshpazga ko'rsatilmaydi.
     if (typeof status === 'number' && status >= 500) return SERVER_ERROR_TEXT;
     if (status === 429) return mapServerError({ error: 'rate_limited' });
-    if (e.response.data) return mapServerError(e.response.data);
-    return SERVER_ERROR_TEXT;
+    if (!data) return SERVER_ERROR_TEXT;
+    // `error` kodi bo'lsa — bizning server javobi (matni o'zbekcha).
+    if (data.error) return mapServerError(data);
+    // Kodsiz javob — Laravel'ning standart inglizcha matni; ko'rsatilmaydi.
+    if (status === 422) return validationText(data.errors);
+    return UNKNOWN_ERROR_TEXT;
   }
   const msg = typeof e?.message === 'string' ? e.message : '';
   if (msg.startsWith('GPS error')) {

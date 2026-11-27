@@ -27,6 +27,42 @@ describe('userFacingError', () => {
       }),
     ).toBe("Bog'chadan 340m uzoqdasiz. Bog'chaga keling va qayta urinib ko'ring.");
   });
+  it("422 validatsiya: Laravel'ning inglizcha message'i chiqmaydi", () => {
+    expect(
+      userFacingError({
+        response: {
+          status: 422,
+          data: { message: 'The given data was invalid.', errors: { email: ['The email must be a valid email address.'] } },
+        },
+      }),
+    ).toBe("Email manzilini to'g'ri kiriting (masalan: ism@globaltam.uz).");
+    expect(
+      userFacingError({
+        response: {
+          status: 422,
+          data: { message: 'The given data was invalid.', errors: { photo: ['The photo must not be greater than 5120 kilobytes.'] } },
+        },
+      }),
+    ).toBe("Selfini yuborib bo'lmadi. Qayta suratga olib ko'ring.");
+    expect(
+      userFacingError({
+        response: { status: 422, data: { message: 'The given data was invalid.', errors: { lat: ['x'] } } },
+      }),
+    ).toBe("Yuborilgan ma'lumot noto'g'ri. Qayta urinib ko'ring.");
+  });
+  it("kodsiz boshqa 4xx javoblarda ham inglizcha matn chiqmaydi", () => {
+    expect(userFacingError({ response: { status: 404, data: { message: 'Not Found' } } })).toBe(
+      "Noma'lum xato. Qayta urinib ko'ring.",
+    );
+    expect(userFacingError({ response: { status: 403, data: { message: 'This action is unauthorized.' } } })).toBe(
+      "Noma'lum xato. Qayta urinib ko'ring.",
+    );
+  });
+  it("kodli, lekin ilovaga noma'lum xatoda server matni ko'rsatiladi", () => {
+    expect(
+      userFacingError({ response: { status: 422, data: { error: 'new_server_code', message: 'Server matni' } } }),
+    ).toBe('Server matni');
+  });
   it('GPS xatosi', () => {
     expect(userFacingError(new Error('GPS error (3): timeout'))).toBe("Joylashuvni aniqlab bo'lmadi. GPS yoqilganini tekshirib, qayta urinib ko'ring.");
   });
