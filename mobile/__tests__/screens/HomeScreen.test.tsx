@@ -1,5 +1,6 @@
 import React from 'react';
-import { render, fireEvent } from '@testing-library/react-native';
+import { RefreshControl } from 'react-native';
+import { render, fireEvent, act } from '@testing-library/react-native';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { HomeScreen } from '../../src/screens/HomeScreen';
 import { api } from '../../src/api/client';
@@ -191,6 +192,42 @@ describe('HomeScreen', () => {
     fireEvent.press(getByText('Qayta urinish'));
     expect(await findByText('Yuborish')).toBeTruthy();
     expect(getToday).toHaveBeenCalledTimes(2);
+  });
+
+  it("yuklangandan keyin yangilash xatosi: yarim to'ldirilgan forma qoladi, ogohlantirish chiqadi", async () => {
+    getToday.mockResolvedValueOnce({ data: state() });
+    const screen = renderHome();
+    fireEvent.changeText(await screen.findByLabelText('1–3 yosh'), '18');
+
+    // Pastga tortib yangilash oflaynda: react-query 5 data ni saqlaydi, lekin error ni ham qo'yadi.
+    getToday.mockRejectedValue(new Error('Network Error'));
+    await act(async () => {
+      await screen.UNSAFE_getByType(RefreshControl).props.onRefresh();
+    });
+
+    expect(screen.queryByText("Ma'lumotni yuklab bo'lmadi")).toBeNull();
+    expect(screen.getByLabelText('1–3 yosh').props.value).toBe('18');
+    expect(screen.getByText('Yuborish')).toBeTruthy();
+    expect(screen.getByText("Internet bilan bog'lanib bo'lmadi. Qayta urinib ko'ring.")).toBeTruthy();
+    expect(screen.queryByText('Network Error')).toBeNull();
+    expect(getToday).toHaveBeenCalledTimes(2);
+  });
+
+  it("yuklangandan keyin yangilash xatosi: Yuborildi kartasi qoladi", async () => {
+    getToday.mockResolvedValueOnce({
+      data: state({ submitted: true, today_counts: { '1': 18, '2': 42, '3': 5 } }),
+    });
+    const screen = renderHome();
+    expect(await screen.findByText('Yuborildi')).toBeTruthy();
+
+    getToday.mockRejectedValue({ response: { status: 500, data: { message: 'Server Error' } } });
+    await act(async () => {
+      await screen.UNSAFE_getByType(RefreshControl).props.onRefresh();
+    });
+
+    expect(screen.queryByText("Ma'lumotni yuklab bo'lmadi")).toBeNull();
+    expect(screen.getByText('Yuborildi')).toBeTruthy();
+    expect(screen.getByText('65')).toBeTruthy();
   });
 
   it("bog'cha biriktirilmagan bo'lsa Qayta urinish ko'rsatilmaydi", async () => {

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { StyleSheet } from 'react-native';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { Banner } from './Banner';
 import { Card } from './Card';
 import { Skeleton } from './Skeleton';
 import { CountForm } from './childrenCount/CountForm';
@@ -44,7 +45,9 @@ export function ChildrenCountSection() {
     );
   }
 
-  if (loadError || !data) {
+  // Bir marta kelgan ma'lumot yangilash xatosida yashirilmaydi (react-query 5 data ni saqlab,
+  // error ni ham qo'yadi): yarim to'ldirilgan forma yoki "Yuborildi" kartasi o'rnida qoladi.
+  if (!data) {
     return (
       <LoadFailed
         message={userFacingError(loadError)}
@@ -55,14 +58,28 @@ export function ChildrenCountSection() {
     );
   }
 
+  const staleWarning = loadError ? (
+    <Banner tone="warn" message={userFacingError(loadError)} testID="count-refresh-failed" />
+  ) : null;
+
   const view = childrenCountView(data);
 
   if (view === 'submitted') {
-    return <CountSubmitted data={data} />;
+    return (
+      <>
+        {staleWarning}
+        <CountSubmitted data={data} />
+      </>
+    );
   }
 
   if (view !== 'open') {
-    return <CountNotice kind={view} window={data.time_window} />;
+    return (
+      <>
+        {staleWarning}
+        <CountNotice kind={view} window={data.time_window} />
+      </>
+    );
   }
 
   // Validatsiya o'zgarmagan: barcha maydonlar to'ldirilishi shart, bo'sh maydon 0 deb yuborilmaydi.
@@ -82,15 +99,18 @@ export function ChildrenCountSection() {
   };
 
   return (
-    <CountForm
-      ageRanges={data.age_ranges}
-      window={data.time_window}
-      inputs={inputs}
-      onChangeInput={(id, t) => setInputs((p) => ({ ...p, [id]: t.replace(/[^0-9]/g, '') }))}
-      error={submitError}
-      pending={mutation.isPending}
-      onSubmit={onSubmit}
-    />
+    <>
+      {staleWarning}
+      <CountForm
+        ageRanges={data.age_ranges}
+        window={data.time_window}
+        inputs={inputs}
+        onChangeInput={(id, t) => setInputs((p) => ({ ...p, [id]: t.replace(/[^0-9]/g, '') }))}
+        error={submitError}
+        pending={mutation.isPending}
+        onSubmit={onSubmit}
+      />
+    </>
   );
 }
 
