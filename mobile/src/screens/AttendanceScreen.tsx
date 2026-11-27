@@ -171,8 +171,10 @@ export function AttendanceScreen() {
   const sideBySide = buttons.length > 1 && buttons.every((b) => b.size === 'sm');
 
   // Bugungi holat noma'lum bo'lsa (hali yuklanmagan yoki yuklab bo'lmagan) "Keldim" chizilmaydi —
-  // aks holda kelgan oshpaz "Hali kelmadingiz" ni ko'rib, ikkinchi marta bosadi.
-  const loadFailed = today === null && !!error;
+  // aks holda kelgan oshpaz "Hali kelmadingiz" ni ko'rib, ikkinchi marta bosadi. Bir marta
+  // yuklangandan keyingi yangilash xatosi esa faqat bannerda: vaqt chizig'i va tugmalar qoladi
+  // (oflayn "Keldim" navbatga yoziladi).
+  const loadFailed = !loaded && today === null && !!error;
   const unknown = today === null && (loading || !loaded);
 
   return (

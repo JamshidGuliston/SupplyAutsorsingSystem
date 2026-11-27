@@ -118,6 +118,19 @@ describe('AttendanceScreen', () => {
     expect(frozenRefresh).toHaveBeenCalled();
   });
 
+  it('yuklangandan keyin yangilash xatosi: "Keldim" qoladi, xato bannerda', () => {
+    setStore({
+      loaded: true,
+      today: null,
+      error: "Internet bilan bog'lanib bo'lmadi. Qayta urinib ko'ring.",
+    });
+    const { getByText, queryByText } = render(<AttendanceScreen />);
+    expect(queryByText("Ma'lumotni yuklab bo'lmadi")).toBeNull();
+    expect(getByText('Keldim')).toBeTruthy();
+    expect(getByText('Hali kelmadingiz')).toBeTruthy();
+    expect(getByText("Internet bilan bog'lanib bo'lmadi. Qayta urinib ko'ring.")).toBeTruthy();
+  });
+
   it('navbatda bugungi kelish bor — "Yuborilmoqda…", "Keldim" chizilmaydi', () => {
     enqueue({
       kind: 'check_in',
