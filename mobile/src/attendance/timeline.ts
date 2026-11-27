@@ -1,5 +1,5 @@
 import type { AttendanceRow } from './attendanceApi';
-import { utcIsoToTashkentHHMM, workDuration } from '../lib/uzTime';
+import { tashkentDateKey, utcIsoToTashkentHHMM, workDuration } from '../lib/uzTime';
 
 export type StepState =
   | { kind: 'pending' }
@@ -36,11 +36,23 @@ const waiting = (queuedAt: string | null): StepState => {
   return hhmm ? { kind: 'queued', capturedHHMM: hhmm } : { kind: 'pending' };
 };
 
+// Ilova fonda tunab qolsa, do'kondagi "bugungi" yozuv aslida kechagi bo'ladi. `date` (server:
+// "YYYY-MM-DD" yoki date cast "YYYY-MM-DDT00:00:00.000000Z") bugungi Toshkent sanasi bo'lmasa,
+// yozuv yo'q deb olinadi. Sana o'qilmasa yozuv saqlanadi.
+function rowForToday(row: AttendanceRow | null, now: Date): AttendanceRow | null {
+  if (!row) return null;
+  const m = typeof row.date === 'string' ? /^(\d{4}-\d{2}-\d{2})/.exec(row.date) : null;
+  if (m && m[1] !== tashkentDateKey(now)) return null;
+  return row;
+}
+
 // Server yozuvi navbatdan ustun: qadam serverda bo'lsa, navbatdagi qayta yuborish ko'rsatilmaydi.
 export function buildTimeline(
-  today: AttendanceRow | null,
+  row: AttendanceRow | null,
   queued: { check_in: string | null; check_out: string | null },
+  now: Date = new Date(),
 ): Timeline {
+  const today = rowForToday(row, now);
   const checkIn: StepState = today?.check_in_at
     ? done(today.check_in_at, today.check_in_distance_m, today.check_in_is_late)
     : waiting(queued.check_in);

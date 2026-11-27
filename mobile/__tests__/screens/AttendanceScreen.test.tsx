@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet } from 'react-native';
+import { AppState, StyleSheet } from 'react-native';
 import { render, fireEvent, act } from '@testing-library/react-native';
 import { AttendanceScreen } from '../../src/screens/AttendanceScreen';
 import { useAttendanceStore } from '../../src/attendance/attendanceStore';
@@ -11,6 +11,7 @@ import { isMockGpsAllowed } from '../../src/attendance/mockGps';
 import { getToday, postCheckIn } from '../../src/attendance/attendanceApi';
 import type { AttendanceRow, KindgardenInfo } from '../../src/attendance/attendanceApi';
 import { colors } from '../../src/theme/colors';
+import { tashkentDateKey } from '../../src/lib/uzTime';
 
 jest.mock('../../src/attendance/permissions', () => ({
   ensureLocation: jest.fn(),
@@ -33,11 +34,12 @@ jest.mock('../../src/api/childrenCount', () => ({
 
 const kg: KindgardenInfo = { id: 7, lat: 41.311, lng: 69.279, geofence_radius: 200 };
 
+// Ekran haqiqiy soat bilan ishlaydi: yozuv sanasi standart holda bugungi Toshkent sanasi.
 const row = (o: Partial<AttendanceRow> = {}): AttendanceRow => ({
   id: 1,
   user_id: 2,
   kindgarden_id: 7,
-  date: '2026-11-26',
+  date: tashkentDateKey(new Date()),
   check_in_at: null,
   check_in_lat: null,
   check_in_lng: null,
@@ -55,6 +57,18 @@ const row = (o: Partial<AttendanceRow> = {}): AttendanceRow => ({
 });
 
 const flat = (node: any) => StyleSheet.flatten(node.props.style);
+
+// RN jest mock'idagi AppState.addEventListener — ekran qo'ygan oxirgi 'change' tinglovchisi.
+const appStateCall = () => {
+  const calls = (AppState.addEventListener as jest.Mock).mock.calls;
+  const i = calls.map((c) => c[0]).lastIndexOf('change');
+  expect(i).toBeGreaterThanOrEqual(0);
+  return i;
+};
+const appStateListener = (): ((s: string) => void) =>
+  (AppState.addEventListener as jest.Mock).mock.calls[appStateCall()][1];
+const appStateSubscription = (): { remove: jest.Mock } =>
+  (AppState.addEventListener as jest.Mock).mock.results[appStateCall()].value;
 
 const initialStore = useAttendanceStore.getState();
 const frozenRefresh = jest.fn();
@@ -129,6 +143,48 @@ describe('AttendanceScreen', () => {
     expect(getByText('Keldim')).toBeTruthy();
     expect(getByText('Hali kelmadingiz')).toBeTruthy();
     expect(getByText("Internet bilan bog'lanib bo'lmadi. Qayta urinib ko'ring.")).toBeTruthy();
+  });
+
+  it(`do'konda kechagi yozuv qolgan (ilova tunab qolgan) — kechagi to'liq davomat emas, "Keldim"`, () => {
+    setStore({
+      loaded: true,
+      today: row({
+        date: tashkentDateKey(new Date(Date.now() - 24 * 60 * 60 * 1000)),
+        check_in_at: '2026-11-25T03:02:00.000000Z',
+        check_out_at: '2026-11-25T12:12:00.000000Z',
+      }),
+    });
+    const { getByText, queryByText } = render(<AttendanceScreen />);
+    expect(getByText('Hali kelmadingiz')).toBeTruthy();
+    expect(getByText('Keldim')).toBeTruthy();
+    expect(queryByText("Bugungi davomat to'liq. Ertaga ko'rishguncha!")).toBeNull();
+    expect(queryByText('Kelishni qayta')).toBeNull();
+  });
+
+  it('ilova fondan qaytganda (AppState active) bugungi holat qayta yuklanadi', () => {
+    setStore({ loaded: true });
+    const { unmount } = render(<AttendanceScreen />);
+    const onChange = appStateListener();
+    frozenRefresh.mockClear();
+
+    act(() => onChange('background'));
+    expect(frozenRefresh).not.toHaveBeenCalled();
+    act(() => onChange('active'));
+    expect(frozenRefresh).toHaveBeenCalledTimes(1);
+
+    unmount();
+    expect(appStateSubscription().remove).toHaveBeenCalled();
+  });
+
+  it("jarayon paytida (kamera/ruxsat oynasidan qaytish) AppState active qayta yuklamaydi", () => {
+    setStore({ loaded: true });
+    (ensureLocation as jest.Mock).mockReturnValue(new Promise(() => {}));
+    const { getByText, getByTestId } = render(<AttendanceScreen />);
+    fireEvent.press(getByText('Keldim'));
+    expect(getByTestId('action-progress')).toBeTruthy();
+    frozenRefresh.mockClear();
+    act(() => appStateListener()('active'));
+    expect(frozenRefresh).not.toHaveBeenCalled();
   });
 
   it('navbatda bugungi kelish bor — "Yuborilmoqda…", "Keldim" chizilmaydi', () => {

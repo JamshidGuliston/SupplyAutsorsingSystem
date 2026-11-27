@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useCallback, useRef } from 'react';
-import { View, RefreshControl, StyleSheet } from 'react-native';
+import { AppState, View, RefreshControl, StyleSheet } from 'react-native';
 import { HeroScreen } from '../components/HeroScreen';
 import { Section } from '../components/Section';
 import { Button, Progress } from '../components/Button';
@@ -48,6 +48,19 @@ export function AttendanceScreen() {
   const [debugInfo, setDebugInfo] = useState<string | null>(null);
 
   useEffect(() => { void refresh(); }, [refresh]);
+
+  // Ilova fondan qaytganda (masalan ertasi kuni ertalab) bugungi holat qayta yuklanadi. Jarayon
+  // paytida emas: ruxsat oynasi va kamera ham ilovani fonga o'tkazib qaytaradi.
+  const busy = useRef(false);
+  useEffect(() => {
+    busy.current = actionLoading !== null;
+  });
+  useEffect(() => {
+    const sub = AppState.addEventListener('change', (state) => {
+      if (state === 'active' && !busy.current) void refresh();
+    });
+    return () => sub.remove();
+  }, [refresh]);
 
   // Navbat MMKV dan sinxron o'qiladi: har render'da (jumladan onAction tugagandagi) yangi holat.
   const queued = {

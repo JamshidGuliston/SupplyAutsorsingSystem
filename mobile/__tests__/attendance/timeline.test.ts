@@ -77,6 +77,44 @@ describe('buildTimeline', () => {
   });
 });
 
+describe("buildTimeline: kechagi yozuv bugungi emas", () => {
+  // Toshkentda 26-noyabr 10:00.
+  const now = new Date('2026-11-26T05:00:00Z');
+  const yesterday = row({
+    date: '2026-11-25',
+    check_in_at: '2026-11-25T03:02:00.000000Z',
+    check_out_at: '2026-11-25T12:12:00.000000Z',
+  });
+
+  it("sanasi bugungi Toshkent sanasi bo'lmagan yozuv — kelish kutilmoqda, faqat \"Keldim\"", () => {
+    const t = buildTimeline(yesterday, none, now);
+    expect(t).toEqual({ checkIn: { kind: 'pending' }, checkOut: { kind: 'locked' }, workDuration: null });
+    expect(attendanceActions(t).buttons.map((b) => b.label)).toEqual(['Keldim']);
+  });
+
+  it("bugungi sanali yozuv saqlanadi (YYYY-MM-DD va Laravel'ning date cast shakli)", () => {
+    const at = { check_in_at: '2026-11-26T03:02:00.000000Z' };
+    expect(buildTimeline(row({ ...at, date: '2026-11-26' }), none, now).checkIn.kind).toBe('done');
+    expect(
+      buildTimeline(row({ ...at, date: '2026-11-26T00:00:00.000000Z' }), none, now).checkIn.kind,
+    ).toBe('done');
+  });
+
+  it('Toshkent yarim tun chegarasi: 25-noyabr 19:30Z — Toshkentda allaqachon 26-noyabr', () => {
+    const justAfterMidnight = new Date('2026-11-25T19:30:00Z');
+    expect(buildTimeline(yesterday, none, justAfterMidnight).checkIn.kind).toBe('pending');
+    expect(
+      buildTimeline(row({ date: '2026-11-26', check_in_at: '2026-11-25T19:20:00Z' }), none, justAfterMidnight)
+        .checkIn.kind,
+    ).toBe('done');
+  });
+
+  it("kechagi yozuv o'rnida navbatdagi bugungi kelish ko'rsatiladi", () => {
+    const t = buildTimeline(yesterday, { check_in: '2026-11-26T03:10:00Z', check_out: null }, now);
+    expect(t.checkIn).toEqual({ kind: 'queued', capturedHHMM: '08:10' });
+  });
+});
+
 describe('attendanceActions', () => {
   it('kelmagan — faqat qora "Keldim" (kamera) va izoh', () => {
     const a = attendanceActions(buildTimeline(null, none));
