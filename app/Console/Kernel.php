@@ -17,12 +17,6 @@ class Kernel extends ConsoleKernel
     {
         // $schedule->command('inspire')->hourly();
         
-        // Har kuni ertalab soat 6:00 da Nextday_namber jadvalini tozalash
-        $schedule->command('nextday:clear')
-                 ->dailyAt('06:00')
-                 ->timezone('Asia/Tashkent')
-                 ->withoutOverlapping();
-
         $schedule->command('attendance:cleanup-photos')->dailyAt('03:00');
 
         $schedule->command('chef:morning-reminder')
